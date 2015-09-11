@@ -1,0 +1,9 @@
+## Interface: 10900
+## Title: DPSMate |cFFFF8080-Shino-|r
+## Title-deDE: DPSMate |cFFFF8080-Shino-|r
+## Notes: DPSMate tracks the fight and provides statistics [TO BE EDITED]
+## Notes-deDE: [TO BE EDITED]
+## Author: Shino <Synced> - Kronos
+## SavedVariables:
+## SavedVariablesPerCharacter:
+## Version: 0.1
