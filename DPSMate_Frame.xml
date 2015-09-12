@@ -3,4 +3,206 @@
     xsi:schemaLocation="http://www.blizzard.com/wow/ui/
     ..\..\..\FrameXML\UI.xsd">
 	
+	<StatusBar name="DPSMate_StatusBar" virtual="true">
+		<Size y="12" />
+		<Anchors>
+			<Anchor point="TOPLEFT"/>
+			<Anchor point="TOPRIGHT"/>
+		</Anchors>
+		<Layers>
+			<Layer level="ARTWORK">
+				<FontString name="$parent_Name" inherits="NumberFontNormal" justifyH="LEFT">
+					<Anchors>
+						<Anchor point="TOPLEFT" />
+						<Anchor point="BOTTOMRIGHT" />
+					</Anchors>
+				</FontString>
+			</Layer>
+			<Layer level="ARTWORK">
+				<FontString name="$parent_Value" inherits="NumberFontNormal" justifyH="RIGHT">
+					<Anchors>
+						<Anchor point="TOPLEFT" />
+						<Anchor point="BOTTOMRIGHT" />
+					</Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+		<Scripts>
+			<OnLoad>
+				this:SetMinMaxValues(1,100)
+				this:SetStatusBarTexture("Interface\\AddOns\\DPSMate\\images\\statusbar\\Healbot")
+				this:SetStatusBarColor(1,0.82,0)
+				this:SetValue(100)
+			</OnLoad>
+		</Scripts>
+	</StatusBar>
+	
+	<Frame name="DPSMate_Statusframe" parent="UIParent" movable="true" enablemouse="true" resizable="true" frameStrata="low">
+		<Size x="150" y="200" />
+		<ResizeBounds>
+			<minResize x="100" y="100"/>
+			<maxResize x="400" y="600"/>
+		</ResizeBounds>
+		<Anchors>
+			<Anchor point="CENTER" />
+		</Anchors>
+		<Scripts>
+			<OnLoad>
+				this:SetClampedToScreen(true)
+			</OnLoad>
+		</Scripts>
+		<Layers>
+			<Layer leve="BACKGROUND">
+				<Texture name="$parent_Background" file="Interface\Tooltips\UI-Tooltip-Background" alphaMode="ADD">
+					<Color r="1" g="1" b="1" a="0.5"/>
+					<Anchors>
+						<Anchor point="TOPLEFT"/>
+						<Anchor point="BOTTOMRIGHT"/>
+					</Anchors>
+				</Texture>
+			</Layer>
+		</Layers>
+		<Frames>
+			<Frame name="$parent_Head">
+				<Size y="16" />
+				<Anchors>
+					<Anchor point="TOPLEFT"/>
+					<Anchor point="TOPRIGHT"/>
+				</Anchors>
+				<Layers>
+					<Layer level="BACKGROUND">
+						<Texture name="$parent_Background" file="Interface\Tooltips\UI-Tooltip-Background" alphaMode="ADD">
+							<Color r="1" g="0.82" b="0" a="1"/>
+							<Anchors>
+								<Anchor point="TOPLEFT"/>
+								<Anchor point="BOTTOMRIGHT"/>
+							</Anchors>
+						</Texture>
+					</Layer>
+					<Layer level="ARTWORK">
+						<FontString name="$parent_Font" inherits="GameFontNormalSmall" text="Damage Done" justifyH="LEFT">
+							<Size x="100" y="16" />
+							<Anchors>
+								<Anchor point="TOPLEFT" />
+							</Anchors>
+						</FontString>
+					</Layer>
+				</Layers>
+				<Scripts>
+					<OnMouseDown>
+						DPSMate_Statusframe:StartMoving()
+					</OnMouseDown>
+					<OnMouseUp>
+						DPSMate_Statusframe:StopMovingOrSizing()
+					</OnMouseUp>
+				</Scripts>
+				<Frames>
+					<Button name="$parent_Config">
+						<Size x="16" y="16" />
+						<Anchors>
+							<Anchor point="TOPRIGHT" relativeTo="$parent" relativePoint="TOPRIGHT" />
+						</Anchors>
+						<Scripts>
+						</Scripts>
+						<NormalTexture file="Interface\AddOns\DPSMate\images\icon-config"/>
+						<PushedTexture file="Interface\AddOns\DPSMate\images\icon-config"/>
+					</Button>
+					<Button name="$parent_Reset">
+						<Size x="14" y="14" />
+						<Anchors>
+							<Anchor point="RIGHT" relativeTo="$parent_Config" relativePoint="LEFT" />
+						</Anchors>
+						<Scripts>
+						</Scripts>
+						<NormalTexture file="Interface\AddOns\DPSMate\images\icon-reset"/>
+						<PushedTexture file="Interface\AddOns\DPSMate\images\icon-reset"/>
+					</Button>
+					<Button name="$parent_Segments">
+						<Size x="14" y="14" />
+						<Anchors>
+							<Anchor point="RIGHT" relativeTo="$parent_Reset" relativePoint="LEFT" />
+						</Anchors>
+						<Scripts>
+						</Scripts>
+						<NormalTexture file="Interface\AddOns\DPSMate\images\UI-GuildButton-PublicNote-Up"/>
+						<PushedTexture file="Interface\AddOns\DPSMate\images\UI-GuildButton-PublicNote-Up"/>
+					</Button>
+					<Button name="$parent_Mode">
+						<Size x="14" y="14" />
+						<Anchors>
+							<Anchor point="RIGHT" relativeTo="$parent_Segments" relativePoint="LEFT" />
+						</Anchors>
+						<Scripts>
+						</Scripts>
+						<NormalTexture file="Interface\AddOns\DPSMate\images\UI-GuildButton-PublicNote-Up"/>
+						<PushedTexture file="Interface\AddOns\DPSMate\images\UI-GuildButton-PublicNote-Up"/>
+					</Button>
+					<Button name="$parent_Report">
+						<Size x="14" y="14" />
+						<Anchors>
+							<Anchor point="RIGHT" relativeTo="$parent_Mode" relativePoint="LEFT" />
+						</Anchors>
+						<Scripts>
+						</Scripts>
+						<NormalTexture file="Interface\AddOns\DPSMate\images\UI-GuildButton-MOTD-Up"/>
+						<PushedTexture file="Interface\AddOns\DPSMate\images\UI-GuildButton-MOTD-Up"/>
+					</Button>
+				</Frames>
+			</Frame>
+			<StatusBar name="$parent_StatusBar1" inherits="DPSMate_StatusBar">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parent_Head" relativePoint="BOTTOMLEFT">
+						<Offset>
+							<AbsDimension x="0" y="-1" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</StatusBar>
+			<StatusBar name="$parent_StatusBar2" inherits="DPSMate_StatusBar">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parent_StatusBar1" relativePoint="BOTTOMLEFT">
+						<Offset>
+							<AbsDimension x="0" y="-1" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</StatusBar>
+			<StatusBar name="$parent_StatusBar3" inherits="DPSMate_StatusBar">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parent_StatusBar2" relativePoint="BOTTOMLEFT">
+						<Offset>
+							<AbsDimension x="0" y="-1" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</StatusBar>
+			<StatusBar name="$parent_StatusBar4" inherits="DPSMate_StatusBar">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parent_StatusBar3" relativePoint="BOTTOMLEFT">
+						<Offset>
+							<AbsDimension x="0" y="-1" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</StatusBar>
+			<Button name="$parent_Resize">
+				<Size x="14" y="14" />
+				<Anchors>
+					<Anchor point="BOTTOMRIGHT" relativeTo="$parent" relativePoint="BOTTOMRIGHT" />
+				</Anchors>
+				<Scripts>
+					<OnMouseDown>
+						DPSMate_Statusframe:StartSizing()
+					</OnMouseDown>
+					<OnMouseUp>
+						DPSMate_Statusframe:StopMovingOrSizing()
+					</OnMouseUp>
+				</Scripts>
+				<NormalTexture file="Interface\AddOns\DPSMate\images\UI-ChatIM-SizeGrabber-Up"/>
+				<PushedTexture file="Interface\AddOns\DPSMate\images\UI-ChatIM-SizeGrabber-Down"/>
+				<HighlightTexture file="Interface\AddOns\DPSMate\images\UI-ChatIM-SizeGrabber-Highlight" alphaMode="ADD"/>
+			</Button>
+		</Frames>
+	</Frame>
+	
 </Ui>

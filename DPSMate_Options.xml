@@ -14,7 +14,9 @@
 				this:RegisterEvent("CHAT_MSG_SPELL_PERIODIC_HOSTILEPLAYER_DAMAGE")
 				this:RegisterEvent("CHAT_MSG_SPELL_PERIODIC_CREATURE_DAMAGE")
 				
-				DPSMate:OnLoad()
+				this:RegisterEvent("CHAT_MSG_COMBAT_PARTY_HITS")
+				this:RegisterEvent("CHAT_MSG_SPELL_PARTY_DAMAGE")
+				
 				DPSMate.Parser:OnLoad()
 			</OnLoad>
 			<OnEvent>

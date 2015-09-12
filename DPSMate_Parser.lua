@@ -21,6 +21,10 @@ function DPSMate.Parser:OnEvent(event)
 		if arg1 then DPSMate.Parser:ParsePeriodicDamage(arg1) end
 	elseif event == "CHAT_MSG_SPELL_PERIODIC_CREATURE_DAMAGE" then
 		if arg1 then DPSMate.Parser:ParsePeriodicDamage(arg1) end 
+	elseif event == "CHAT_MSG_COMBAT_PARTY_HITS" then
+		if arg1 then DPSMate.Parser:ParsePartyHits(arg1) end
+	elseif event == "CHAT_MSG_SPELL_PARTY_DAMAGE" then 
+		if arg1 then DPSMate.Parser:ParsePartySpellDMG(arg1) end
 	end
 end
 
@@ -120,11 +124,76 @@ function DPSMate.Parser:ParsePeriodicDamage(msg)
 		if cause.name == "your" then
 			cause = player
 		else
-			cause.class = UnitClass(cause.name) -- not tested
+			cause.name = strsub(msg, j2+1, i-3)
 		end
 		i, j = strfind(msg, " suffers ")
 		local nmsg = strsub(msg, j)
 		amount = tonumber(strsub(nmsg, strfind(nmsg, "%d+")))
 		DPSMate.DB:BuildUserAbility(cause, ability, 1, 0, 0, 0, 0, 0, amount)
 	end
+end
+
+function DPSMate.Parser:ParsePartyHits(msg)
+	local target = ""
+	local cause = {}
+	local amount = 0
+	local i, j
+	local hit = 0
+	local crit = 0
+	
+	if strfind(msg, DPSMate.localization.parser.hits) then
+		cause.name = strsub(msg, 1, strfind(msg, DPSMate.localization.parser.hits)-1)
+		i, j = strfind(msg, DPSMate.localization.parser.hits)
+		hit = 1
+	else
+		cause.name = strsub(msg, 1, strfind(msg, DPSMate.localization.parser.crits)-1)
+		i, j = strfind(msg, DPSMate.localization.parser.crits)
+		crit = 1
+	end
+	target = strsub(msg, j+1, strfind(msg, DPSMate.localization.parser.Dfor)-1)
+	i, j = strfind(msg, "%b .")
+	amount = tonumber(strsub(msg, i+1, j-1))
+	
+	-- Hackfix will be in another event I guess
+	if (not DPSMateUser[cause.name]) then
+		for p=1, 4 do
+			if UnitName("party"..p) == cause.name then
+				cause.class = UnitClass("party"..p)
+				DPSMateUser[cause.name].class = cause.class
+				break
+			end
+		end
+	end
+	
+	DPSMate.DB:BuildUserAbility(cause, "AutoAttack", hit, crit, 0, 0, 0, 0, amount)
+end
+
+function DPSMate.Parser:ParsePartySpellDMG(msg)
+	local target = ""
+	local ability = ""
+	local cause = {}
+	local i, j, i2, j2
+	local hit = 0
+	local crit = 0
+	-- cases are missing
+	local resist = 0
+	local parry = 0
+	local dodge = 0
+	local miss = 0
+	
+	i2, j2 = strfind(msg, "%s")
+	if strfind(msg, DPSMate.localization.parser.hits) then
+		i, j = strfind(msg, DPSMate.localization.parser.hits)
+		ability = strsub(msg, i2+1, i-1)
+		hit = 1
+	else
+		i, j = strfind(msg, DPSMate.localization.parser.crits)
+		ability = strsub(msg, i2+1, i-1)
+		crit = 1
+	end
+	cause.name = strsub(msg, 1, i2-3)
+	target = strsub(msg, j+1, strfind(msg, DPSMate.localization.parser.Dfor)-1)
+	amount = tonumber(strsub(msg, strfind(msg, "%b .")))
+	
+	DPSMate.DB:BuildUserAbility(cause, ability, hit, crit, miss, parry, dodge, resist, amount)
 end
