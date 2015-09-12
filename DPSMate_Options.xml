@@ -10,6 +10,9 @@
 				this:RegisterEvent("PLAYER_ENTERING_WORLD")
 				this:RegisterEvent("CHAT_MSG_COMBAT_SELF_HITS")
 				this:RegisterEvent("CHAT_MSG_COMBAT_SELF_MISSES")
+				this:RegisterEvent("CHAT_MSG_SPELL_SELF_DAMAGE")
+				this:RegisterEvent("CHAT_MSG_SPELL_PERIODIC_HOSTILEPLAYER_DAMAGE")
+				this:RegisterEvent("CHAT_MSG_SPELL_PERIODIC_CREATURE_DAMAGE")
 				
 				DPSMate:OnLoad()
 				DPSMate.Parser:OnLoad()
