@@ -39,6 +39,8 @@ function DPSMate.DB:BuildUserAbility(Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, D
 	else
 		if (not DPSMateUser[Duser.name]) then
 			DPSMate.DB:BuildUser(Duser.name, Duser.class, Damount)
+		else
+			DPSMateUser[Duser.name].damage = DPSMateUser[Duser.name].damage + Damount
 		end
 		DPSMateUser[Duser.name][Dname] = {
 			hit = Dhit,

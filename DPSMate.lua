@@ -4,6 +4,7 @@ DPSMate.VERSION = "v0.1"
 DPSMate.Parser = {}
 DPSMate.localization = {}
 DPSMate.DB = {}
+DPSMate.Options = {}
 
 -- Local Variables
 local a = {}
@@ -53,6 +54,7 @@ function DPSMate:SetStatusBarValue()
 	if (not sortedTable) then return end
 	for i=1, DPSMate:TableLength(sortedTable) do
 		local statusbar = getglobal("DPSMate_Statusframe_StatusBar"..i)
+		if (not statusbar) then break end
 		local name = getglobal("DPSMate_Statusframe_StatusBar"..i.."_Name")
 		local value = getglobal("DPSMate_Statusframe_StatusBar"..i.."_Value")
 		statusbar:SetValue(ceil(100*(sortedTable[i]/sortedTable[1])))
@@ -63,7 +65,7 @@ function DPSMate:SetStatusBarValue()
 end
 
 function DPSMate:HideStatusBars()
-	for i=1, 4 do
+	for i=1, 5 do
 		getglobal("DPSMate_Statusframe_StatusBar"..i):Hide()
 	end
 end

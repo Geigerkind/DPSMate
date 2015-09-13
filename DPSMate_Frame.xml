@@ -11,7 +11,7 @@
 		</Anchors>
 		<Layers>
 			<Layer level="ARTWORK">
-				<FontString name="$parent_Name" inherits="NumberFontNormal" justifyH="LEFT">
+				<FontString name="$parent_Name" inherits="TextStatusBarText" justifyH="LEFT">
 					<Anchors>
 						<Anchor point="TOPLEFT" />
 						<Anchor point="BOTTOMRIGHT" />
@@ -19,7 +19,7 @@
 				</FontString>
 			</Layer>
 			<Layer level="ARTWORK">
-				<FontString name="$parent_Value" inherits="NumberFontNormal" justifyH="RIGHT">
+				<FontString name="$parent_Value" inherits="TextStatusBarText" justifyH="RIGHT">
 					<Anchors>
 						<Anchor point="TOPLEFT" />
 						<Anchor point="BOTTOMRIGHT" />
@@ -113,6 +113,9 @@
 							<Anchor point="RIGHT" relativeTo="$parent_Config" relativePoint="LEFT" />
 						</Anchors>
 						<Scripts>
+							<OnClick>
+								DPSMate_PopUp:Show()
+							</OnClick>
 						</Scripts>
 						<NormalTexture file="Interface\AddOns\DPSMate\images\icon-reset"/>
 						<PushedTexture file="Interface\AddOns\DPSMate\images\icon-reset"/>
@@ -179,6 +182,15 @@
 			<StatusBar name="$parent_StatusBar4" inherits="DPSMate_StatusBar">
 				<Anchors>
 					<Anchor point="TOPLEFT" relativeTo="$parent_StatusBar3" relativePoint="BOTTOMLEFT">
+						<Offset>
+							<AbsDimension x="0" y="-1" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</StatusBar>
+			<StatusBar name="$parent_StatusBar5" inherits="DPSMate_StatusBar">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parent_StatusBar4" relativePoint="BOTTOMLEFT">
 						<Offset>
 							<AbsDimension x="0" y="-1" />
 						</Offset>
