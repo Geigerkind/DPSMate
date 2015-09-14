@@ -125,8 +125,8 @@
 				DPSMate.Parser:OnLoad()
 			</OnLoad>
 			<OnEvent>
-				DPSMate.Parser:OnEvent(event)
 				DPSMate.DB:OnEvent(event)
+				DPSMate.Parser:OnEvent(event)
 				DPSMate.Options:OnEvent(event)
 			</OnEvent>
 		</Scripts>

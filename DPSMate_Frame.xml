@@ -90,10 +90,16 @@
 				</Layers>
 				<Scripts>
 					<OnMouseDown>
-						DPSMate_Statusframe:StartMoving()
+						if arg1 == "LeftButton" then
+							DPSMate_Statusframe:StartMoving()
+						end
 					</OnMouseDown>
 					<OnMouseUp>
-						DPSMate_Statusframe:StopMovingOrSizing()
+						if arg1 == "RightButton" then
+							DPSMate.Options:OpenMenu(true)
+						else
+							DPSMate_Statusframe:StopMovingOrSizing()
+						end
 					</OnMouseUp>
 				</Scripts>
 				<Frames>
@@ -103,6 +109,9 @@
 							<Anchor point="TOPRIGHT" relativeTo="$parent" relativePoint="TOPRIGHT" />
 						</Anchors>
 						<Scripts>
+							<OnMouseUp>
+								DPSMate.Options:OpenConfigMenu()
+							</OnMouseUp>
 						</Scripts>
 						<NormalTexture file="Interface\AddOns\DPSMate\images\icon-config"/>
 						<PushedTexture file="Interface\AddOns\DPSMate\images\icon-config"/>
@@ -126,16 +135,9 @@
 							<Anchor point="RIGHT" relativeTo="$parent_Reset" relativePoint="LEFT" />
 						</Anchors>
 						<Scripts>
-						</Scripts>
-						<NormalTexture file="Interface\AddOns\DPSMate\images\UI-GuildButton-PublicNote-Up"/>
-						<PushedTexture file="Interface\AddOns\DPSMate\images\UI-GuildButton-PublicNote-Up"/>
-					</Button>
-					<Button name="$parent_Mode">
-						<Size x="14" y="14" />
-						<Anchors>
-							<Anchor point="RIGHT" relativeTo="$parent_Segments" relativePoint="LEFT" />
-						</Anchors>
-						<Scripts>
+							<OnMouseUp>
+								DPSMate.Options:OpenMenu(false)
+							</OnMouseUp>
 						</Scripts>
 						<NormalTexture file="Interface\AddOns\DPSMate\images\UI-GuildButton-PublicNote-Up"/>
 						<PushedTexture file="Interface\AddOns\DPSMate\images\UI-GuildButton-PublicNote-Up"/>
@@ -143,7 +145,7 @@
 					<Button name="$parent_Report">
 						<Size x="14" y="14" />
 						<Anchors>
-							<Anchor point="RIGHT" relativeTo="$parent_Mode" relativePoint="LEFT" />
+							<Anchor point="RIGHT" relativeTo="$parent_Segments" relativePoint="LEFT" />
 						</Anchors>
 						<Scripts>
 						</Scripts>

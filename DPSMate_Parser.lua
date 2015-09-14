@@ -30,6 +30,7 @@ function DPSMate.Parser:OnEvent(event)
 	end
 end
 
+-- Include fall damage?
 function DPSMate.Parser:ParseSelfHits(msg)
 	local target = ""
 	local hit = 0
@@ -126,7 +127,7 @@ function DPSMate.Parser:ParsePeriodicDamage(msg)
 		if cause.name == DPSMate.localization.parser.your2 then
 			cause = player
 		else
-			cause.name = strsub(msg, j2+1, i-3)
+			cause.name = strsub(msg, j2+1, i-9)
 		end
 		i, j = strfind(msg, DPSMate.localization.parser.suffers)
 		local nmsg = strsub(msg, j)
