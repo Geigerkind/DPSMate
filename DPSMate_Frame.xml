@@ -80,7 +80,7 @@
 						</Texture>
 					</Layer>
 					<Layer level="ARTWORK">
-						<FontString name="$parent_Font" inherits="GameFontNormalSmall" text="Damage Done" justifyH="LEFT">
+						<FontString name="$parent_Font" inherits="GameFontNormalSmall" justifyH="LEFT">
 							<Size x="100" y="16" />
 							<Anchors>
 								<Anchor point="TOPLEFT" />
@@ -96,7 +96,7 @@
 					</OnMouseDown>
 					<OnMouseUp>
 						if arg1 == "RightButton" then
-							DPSMate.Options:OpenMenu(true)
+							DPSMate.Options:OpenMenu(1)
 						else
 							DPSMate_Statusframe:StopMovingOrSizing()
 						end
@@ -110,7 +110,7 @@
 						</Anchors>
 						<Scripts>
 							<OnMouseUp>
-								DPSMate.Options:OpenConfigMenu()
+								DPSMate.Options:OpenMenu(3)
 							</OnMouseUp>
 						</Scripts>
 						<NormalTexture file="Interface\AddOns\DPSMate\images\icon-config"/>
@@ -136,7 +136,7 @@
 						</Anchors>
 						<Scripts>
 							<OnMouseUp>
-								DPSMate.Options:OpenMenu(false)
+								DPSMate.Options:OpenMenu(2)
 							</OnMouseUp>
 						</Scripts>
 						<NormalTexture file="Interface\AddOns\DPSMate\images\UI-GuildButton-PublicNote-Up"/>

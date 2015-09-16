@@ -5,22 +5,217 @@ local LastPopUp = GetTime()
 local TimeToNextPopUp = 60
 local PartyNum = GetNumPartyMembers()
 local Dewdrop = AceLibrary("Dewdrop-2.0")
-local DewDropListModes = {}
-DewDropListModes[1] = "DPS"
-DewDropListModes[2] = "Damage"
-DewDropListModes[3] = "Damage taken"
-DewDropListModes[4] = "Enemy damage done"
-DewDropListModes[5] = "Enemy damage taken"
-DewDropListModes[6] = "Healing"
-DewDropListModes[7] = "Healing and Absorbs"
-DewDropListModes[8] = "Healing taken"
-DewDropListModes[9] = "Overhealing"
-DewDropListModes[10] = "Interrupts"
-DewDropListModes[11] = "Deaths"
-DewDropListModes[12] = "Dispels"
-local DewDropListSegments = {}
-DewDropListSegments[1] = "Total"
-DewDropListSegments[2] = "Current fight"
+local Options = {
+	[1] = {
+		type = 'group',
+		args = {
+			dps = {
+				order = 10,
+				type = 'toggle',
+				name = "DPS",
+				desc = "desc",
+				get = function() return DPSMateSettings["options"][1]["dps"] end,
+				set = function() DPSMate.Options:ToggleDrewDrop(1, "dps") end,
+			},
+			damage = {
+				order = 20,
+				type = 'toggle',
+				name = "Damage",
+				desc = "desc",
+				get = function() return DPSMateSettings["options"][1]["damage"] end,
+				set = function() DPSMate.Options:ToggleDrewDrop(1, "damage") end,
+			},
+			damagetaken = {
+				order = 30,
+				type = 'toggle',
+				name = "Damage taken",
+				desc = "desc",
+				get = function() return DPSMateSettings["options"][1]["damagetaken"] end,
+				set = function() DPSMate.Options:ToggleDrewDrop(1, "damagetaken") end,
+			},
+			enemydamagedone = {
+				order = 40,
+				type = 'toggle',
+				name = "Enemy damage done",
+				desc = "desc",
+				get = function() return DPSMateSettings["options"][1]["enemydamagedone"] end,
+				set = function() DPSMate.Options:ToggleDrewDrop(1, "enemydamagedone") end,
+			},
+			enemydamagetaken = {
+				order = 50,
+				type = 'toggle',
+				name = "Enemy damage taken",
+				desc = "desc",
+				get = function() return DPSMateSettings["options"][1]["enemydamagetaken"] end,
+				set = function() DPSMate.Options:ToggleDrewDrop(1, "enemydamagetaken") end,
+			},
+			healing = {
+				order = 60,
+				type = 'toggle',
+				name = "Healing",
+				desc = "desc",
+				get = function() return DPSMateSettings["options"][1]["healing"] end,
+				set = function() DPSMate.Options:ToggleDrewDrop(1, "healing") end,
+			},
+			healingandabsorbs = {
+				order = 70,
+				type = 'toggle',
+				name = "Healing and Absorbs",
+				desc = "desc",
+				get = function() return DPSMateSettings["options"][1]["healingandabsorbs"] end,
+				set = function() DPSMate.Options:ToggleDrewDrop(1, "healingandabsorbs") end,
+			},
+			healingtaken = {
+				order = 80,
+				type = 'toggle',
+				name = "Healing taken",
+				desc = "desc",
+				get = function() return DPSMateSettings["options"][1]["healingtaken"] end,
+				set = function() DPSMate.Options:ToggleDrewDrop(1, "healingtaken") end,
+			},
+			overhealing = {
+				order = 90,
+				type = 'toggle',
+				name = "Overhealing",
+				desc = "desc",
+				get = function() return DPSMateSettings["options"][1]["overhealing"] end,
+				set = function() DPSMate.Options:ToggleDrewDrop(1, "overhealing") end,
+			},
+			interrupts = {
+				order = 100,
+				type = 'toggle',
+				name = "Interrupts",
+				desc = "desc",
+				get = function() return DPSMateSettings["options"][1]["interrupts"] end,
+				set = function() DPSMate.Options:ToggleDrewDrop(1, "interrupts") end,
+			},
+			deaths = {
+				order = 110,
+				type = 'toggle',
+				name = "Deaths",
+				desc = "desc",
+				get = function() return DPSMateSettings["options"][1]["deaths"] end,
+				set = function() DPSMate.Options:ToggleDrewDrop(1, "deaths") end,
+			},
+			dispels = {
+				order = 120,
+				type = 'toggle',
+				name = "Dispels",
+				desc = "desc",
+				get = function() return DPSMateSettings["options"][1]["dispels"] end,
+				set = function() DPSMate.Options:ToggleDrewDrop(1, "dispels") end,
+			},
+		},
+		handler = DPSMate.Options,
+	},
+	[2] = {
+		type = 'group',
+		args = {
+			total = {
+				order = 10,
+				type = 'toggle',
+				name = "Total",
+				desc = "desc",
+				get = function() return DPSMateSettings["options"][2]["total"] end,
+				set = function() DPSMate.Options:ToggleDrewDrop(2, "total") end,
+			},
+			currentFight = {
+				order = 20,
+				type = 'toggle',
+				name = "Current fight",
+				desc = "desc",
+				get = function() return DPSMateSettings["options"][2]["currentfight"] end,
+				set = function() DPSMate.Options:ToggleDrewDrop(2, "currentfight") end,
+			},
+		},
+		handler = DPSMate.Options,
+	},
+	[3] = {
+		type = 'group',
+		args = {
+			report = {
+				order = 10,
+				type = 'execute',
+				name = "Report",
+				desc = "Report desc",
+				func = "PopUpAccept",
+			},
+			reset = {
+				order = 11,
+				type = 'execute',
+				name = "Reset",
+				desc = "Reset desc",
+				func = "PopUpAccept",
+			},
+			blank1 = {
+				order = 20,
+				type = 'header',
+			},
+			startnewsegment = {
+				order = 25,
+				type = 'execute',
+				name = "Start new segment",
+				desc = "Start new segment desc",
+				func = "PopUpAccept",
+			},
+			deletesegment = {
+				order = 30,
+				type = 'group',
+				name = "Delete segment",
+				desc = "Delete segment desc",
+				args = {
+					sub1 = {
+						type = "execute",
+						name = "Test 1",
+						desc = "Test 1 desc",
+						func = "PopUpAccept",
+					}, 
+					sub2 = {
+						type = "execute",
+						name = "Test 2",
+						desc = "Test 2 desc",
+						func = "PopUpAccept",
+					},
+				},
+			},
+			blank2 = {
+				order = 35,
+				type = 'header',
+			},
+			lock = {
+				order = 40,
+				type = 'toggle',
+				name = "Lock window",
+				desc = "lock desc",
+				get = function() return DPSMateSettings["options"][3]["lock"] end,
+				set = function() DPSMate.Options:ToggleDrewDrop(3, "lock") end,
+			},
+			hide = {
+				order = 50,
+				type = 'execute',
+				name = "Hide window",
+				desc = "Hide window desc",
+				func = "PopUpAccept",
+			},
+			configure = {
+				order = 80,
+				type = 'execute',
+				name = "Configure",
+				desc = "Configure desc",
+				func = "PopUpAccept",
+			},
+			close = {
+				order = 90,
+				type = 'execute',
+				name = "Close",
+				desc = "Close desc",
+				func = "PopUpAccept",
+			},
+		},
+		handler = DPSMate.Options,
+	},
+}
+local CurMode = "damage"
 
 -- Begin Functions
 
@@ -64,102 +259,28 @@ function DPSMate.Options:OpenMenu(b)
 		Dewdrop:Close()
 		return
 	end
-	local list
-	if b then list = DewDropListModes else list = DewDropListSegments end
 	if Dewdrop:IsRegistered(DPSMate_Statusframe) then Dewdrop:Unregister(DPSMate_Statusframe) end
 	Dewdrop:Register(DPSMate_Statusframe,
-		'children', function()
-			for _, text in pairs(list) do
-				Dewdrop:AddLine('text', text)
-			end
+		'children', function() 
+			Dewdrop:FeedAceOptionsTable(Options[b]) 
 		end,
-		'point', 'BOTTOMLEFT',
-		'relativeTo', DPSMate_Statusframe,
-		'relativePoint', 'TOPLEFT'
+		'cursorX', true,
+		'cursorY', true,
+		'dontHook', true
 	)
 	Dewdrop:Open(DPSMate_Statusframe)
 end
 
-function DPSMate.Options:OpenConfigMenu()
-	if Dewdrop:IsOpen(DPSMate_Statusframe) then
-		Dewdrop:Close()
-		return
+function DPSMate.Options:ToggleDrewDrop(i, obj)
+	for cat, _ in pairs(DPSMateSettings["options"][i]) do
+		DPSMateSettings["options"][i][cat] = false
 	end
-	if Dewdrop:IsRegistered(DPSMate_Statusframe) then Dewdrop:Unregister(DPSMate_Statusframe) end
-	Dewdrop:Register(DPSMate_Statusframe,
-		'children', function() 
-			Dewdrop:FeedAceOptionsTable({
-				type = 'group',
-				args = {
-					report = {
-						type = 'execute',
-						name = "Report",
-						desc = "Report desc",
-						func = "PopUpAccept",
-					},
-					deletesegment = {
-						type = 'group',
-						name = "Delete segment",
-						desc = "Delete segment desc",
-						args = {
-							sub1 = {
-								type = "execute",
-								name = "Test 1",
-								desc = "Test 1 desc",
-								func = "PopUpAccept",
-							}, 
-							sub2 = {
-								type = "execute",
-								name = "Test 2",
-								desc = "Test 2 desc",
-								func = "PopUpAccept",
-							},
-						},
-					},
-					lock = {
-						type = 'toggle',
-						name = "Lock window",
-						desc = "lock desc",
-						get = "PopUpAccept",
-						set = function() return true end,
-					},
-					hide = {
-						type = 'execute',
-						name = "Hide window",
-						desc = "Hide window desc",
-						func = "PopUpAccept",
-					},
-					reset = {
-						type = 'execute',
-						name = "Reset",
-						desc = "Reset desc",
-						func = "PopUpAccept",
-					},
-					startnewsegment = {
-						type = 'execute',
-						name = "Start new segment",
-						desc = "Start new segment desc",
-						func = "PopUpAccept",
-					},
-					configure = {
-						type = 'execute',
-						name = "Configure",
-						desc = "Configure desc",
-						func = "PopUpAccept",
-					},
-					close = {
-						type = 'execute',
-						name = "Close",
-						desc = "Close desc",
-						func = "PopUpAccept",
-					},
-				},
-				handler = DPSMate.Options,
-			}) 
-		end,
-		'point', 'BOTTOMLEFT',
-		'relativeTo', DPSMate_Statusframe,
-		'relativePoint', 'TOPLEFT'
-	)
-	Dewdrop:Open(DPSMate_Statusframe)
+	DPSMateSettings["options"][i][obj] = true
+	if i == 1 then
+		DPSMate_Statusframe_Head_Font:SetText(Options[i]["args"][obj].name)
+		CurMode = obj
+	elseif i == 2 then
+	elseif i == 3 then end
+	Dewdrop:Close()
+	return true
 end

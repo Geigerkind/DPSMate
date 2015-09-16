@@ -7,8 +7,37 @@ DPSMate.DB.loaded = false
 
 function DPSMate.DB:OnEvent(event)
 	if event == "ADDON_LOADED" and (not DPSMate.DB.loaded) then
+		if DPSMateSettings == nil then
+			DPSMateSettings = {
+				options = {
+					[1] = {
+						dps = false,
+						damage = true,
+						damagetaken = false,
+						enemydamagetaken = false,
+						enemydamagedone = false,
+						healing = false,
+						healingandabsorbs = false,
+						overhealing = false,
+						interrupts = false,
+						deaths = false,
+						dispels = false,
+					},
+					[2] = {
+						total = true,
+						currentfight = false,
+					},
+					[3] = {
+						lock = false,
+					},
+				},
+			}
+		end
 		if DPSMateUser == nil then DPSMateUser = {} end
 		DPSMate:OnLoad()
+		DPSMate.Options:ToggleDrewDrop(1, DPSMate.DB:GetOptionsTrue(1))
+		DPSMate.Options:ToggleDrewDrop(2, DPSMate.DB:GetOptionsTrue(2))
+		DPSMate.Options:ToggleDrewDrop(3, DPSMateSettings["options"][3]["lock"])
 		DPSMate.DB.loaded = true
 	end
 end
@@ -66,4 +95,12 @@ function DPSMate.DB:DataExist(uname, aname)
 		end
 	end
 	return false
+end
+
+function DPSMate.DB:GetOptionsTrue(i)
+	for cat,val in pairs(DPSMateSettings["options"][i]) do
+		if val == true then
+			return cat
+		end
+	end
 end
