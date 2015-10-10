@@ -5,6 +5,7 @@ local LastPopUp = GetTime()
 local TimeToNextPopUp = 60
 local PartyNum = GetNumPartyMembers()
 local Dewdrop = AceLibrary("Dewdrop-2.0")
+local graph = AceLibrary("Graph-1.0")
 local Options = {
 	[1] = {
 		type = 'group',
@@ -216,6 +217,11 @@ local Options = {
 	},
 }
 local CurMode = "damage"
+local DetailsUser = ""
+local DetailsSelected = 1
+local DetailsArr, DetailsTotal
+local PieChart = true
+local g
 
 -- Begin Functions
 
@@ -251,6 +257,7 @@ end
 function DPSMate.Options:PopUpAccept()
 	DPSMate_PopUp:Hide()
 	DPSMateUser = {}
+	DPSMateUserCurrent = {}
 	DPSMate:HideStatusBars()
 end
 
@@ -284,4 +291,93 @@ function DPSMate.Options:ToggleDrewDrop(i, obj)
 	Dewdrop:Close()
 	DPSMate:SetStatusBarValue()
 	return true
+end
+
+function DPSMate.Options:ScrollFrame_Update()
+	local line, lineplusoffset
+	local obj = getglobal("DPSMate_Details_Log_ScrollFrame")
+	local arr = DPSMate:GetMode()
+	DetailsArr, DetailsTotal = DPSMate.Options:EvalTable(arr[DetailsUser])
+	FauxScrollFrame_Update(obj,DPSMate:TableLength(arr[DetailsUser])-3,4,24)
+	for line=1,4 do
+		lineplusoffset = line + FauxScrollFrame_GetOffset(obj)
+		if DetailsArr[lineplusoffset] ~= nil then
+			getglobal("DPSMate_Details_Log_ScrollButton"..line.."_Name"):SetText(DetailsArr[lineplusoffset])
+			getglobal("DPSMate_Details_Log_ScrollButton"..line.."_Value"):SetText(arr[DetailsUser][DetailsArr[lineplusoffset]].amount.." ("..string.format("%.2f", (arr[DetailsUser][DetailsArr[lineplusoffset]].amount*100/DetailsTotal)).."%)")
+			getglobal("DPSMate_Details_Log_ScrollButton"..line):Show()
+		else
+			getglobal("DPSMate_Details_Log_ScrollButton"..line):Hide()
+		end
+		getglobal("DPSMate_Details_Log_ScrollButton"..line.."_selected"):Hide()
+		if DetailsSelected == lineplusoffset then
+			getglobal("DPSMate_Details_Log_ScrollButton"..line.."_selected"):Show()
+		end
+	end
+end
+
+function DPSMate.Options:EvalTable(t)
+	local a = {}
+	local i = 0
+	for cat, val in pairs(t) do
+		if (type(val) == "table") then
+			local i = 1
+			while true do
+				if (not a[i]) then
+					table.insert(a, i, cat)
+					break
+				else
+					if (t[a[i]].amount < val.amount) then
+						table.insert(a, i, cat)
+						break
+					end
+				end
+				i = i + 1
+			end
+		end
+	end
+	return a, t.damage
+end
+
+function DPSMate.Options:SelectDetailsButton(i)
+	local obj = getglobal("DPSMate_Details_Log_ScrollFrame")
+	local lineplusoffset = i + FauxScrollFrame_GetOffset(obj)
+	local arr = DPSMate:GetMode()
+	DetailsSelected = lineplusoffset
+	for p=1, 4 do
+		getglobal("DPSMate_Details_Log_ScrollButton"..p.."_selected"):Hide()
+	end
+	getglobal("DPSMate_Details_Log_ScrollButton"..i.."_selected"):Show()
+	getglobal("DPSMate_Details_LogDetails_Hit"):SetText("Hit: "..arr[DetailsUser][DetailsArr[lineplusoffset]].hit)
+	getglobal("DPSMate_Details_LogDetails_HitMax"):SetText("HitMax: "..arr[DetailsUser][DetailsArr[lineplusoffset]].hithigh)
+	getglobal("DPSMate_Details_LogDetails_HitMin"):SetText("HitMin: "..arr[DetailsUser][DetailsArr[lineplusoffset]].hitlow)
+	getglobal("DPSMate_Details_LogDetails_Crit"):SetText("Crit: "..arr[DetailsUser][DetailsArr[lineplusoffset]].crit)
+	getglobal("DPSMate_Details_LogDetails_CritMax"):SetText("CritMax: "..arr[DetailsUser][DetailsArr[lineplusoffset]].crithigh)
+	getglobal("DPSMate_Details_LogDetails_CritMin"):SetText("CritMin: "..arr[DetailsUser][DetailsArr[lineplusoffset]].critlow)
+	getglobal("DPSMate_Details_LogDetails_Miss"):SetText("Miss: "..arr[DetailsUser][DetailsArr[lineplusoffset]].miss)
+	getglobal("DPSMate_Details_LogDetails_Parry"):SetText("Parry: "..arr[DetailsUser][DetailsArr[lineplusoffset]].parry)
+	getglobal("DPSMate_Details_LogDetails_Dodge"):SetText("Dodge: "..arr[DetailsUser][DetailsArr[lineplusoffset]].dodge)
+	getglobal("DPSMate_Details_LogDetails_Resist"):SetText("Resist: "..arr[DetailsUser][DetailsArr[lineplusoffset]].resist)
+end
+
+function DPSMate.Options:UpdatePie()
+	local i = 1
+	local arr = DPSMate:GetMode()
+	g:ResetPie()
+	for cat, val in pairs(DetailsArr) do
+		local percent = (arr[DetailsUser][DetailsArr[i]].amount*100/DetailsTotal)
+		g:AddPie(percent, 0)
+		i = i + 1
+	end
+end
+
+function DPSMate.Options:UpdateDetails(obj)
+	DetailsUser = obj.user
+	if (PieChart) then
+		g=graph:CreateGraphPieChart("PieChart", DPSMate_Details_Diagram, "CENTER", "CENTER", 0, 0, 200, 200)		
+		PieChart = false
+	end
+	DPSMate_Details:Show()
+	DPSMate.Options:ScrollFrame_Update()
+	DPSMate.Options:SelectDetailsButton(1)
+	DPSMate.Options:UpdatePie()
 end

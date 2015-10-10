@@ -1,0 +1,71 @@
+------------------------------------------------------------------------
+r36224 | cryect | 2007-05-22 00:13:57 -0400 (Tue, 22 May 2007) | 1 line
+Changed paths:
+   M /trunk/GraphLib/Graph-1.0/Graph-1.0.lua
+
+GraphLib - Adds Y Labels for Tick Marks can set them for either the left side, right side, or both :SetYLabels(Left,Right) Works for Line Graphs and Scatter Plots
+------------------------------------------------------------------------
+r35669 | cryect | 2007-05-17 01:55:21 -0400 (Thu, 17 May 2007) | 1 line
+Changed paths:
+   M /trunk/GraphLib/Graph-1.0/Graph-1.0.lua
+
+GraphLib - Can lock axis limits for Line Graphs & Scatter Charts with autoscaling on via :LockXMin([state]), :LockXMax([state]), :LockYMin([state]), and :LockYMax([state]) (reminder there is no clipping yet)
+------------------------------------------------------------------------
+r35479 | cryect | 2007-05-15 01:19:42 -0400 (Tue, 15 May 2007) | 1 line
+Changed paths:
+   M /trunk/GraphLib/Graph-1.0/Graph-1.0.lua
+   A /trunk/GraphLib/GraphTextures/Pie/1-1.tga
+
+GraphLib - Special case added to :CompletePie if the piece should be 100% it now uses a single complete circle image (instead of a circle with a sliver left out)
+------------------------------------------------------------------------
+r35475 | cryect | 2007-05-15 01:03:00 -0400 (Tue, 15 May 2007) | 1 line
+Changed paths:
+   M /trunk/GraphLib/Graph-1.0/Graph-1.0.lua
+
+GraphLib - If no color is passed to :AddPie or :CompletePie it selects an unused color from its color table (26 colors at the moment if more than 26 pieces it will randomly generate a color for 27 and up). Both functions now return the used color.
+------------------------------------------------------------------------
+r35466 | cryect | 2007-05-14 23:22:49 -0400 (Mon, 14 May 2007) | 1 line
+Changed paths:
+   M /trunk/GraphLib/Graph-1.0/Graph-1.0.lua
+
+GraphLib - Fixes selection function not being called on entering a pie piece from outside the pie
+------------------------------------------------------------------------
+r35462 | cryect | 2007-05-14 23:00:32 -0400 (Mon, 14 May 2007) | 1 line
+Changed paths:
+   M /trunk/GraphLib/Graph-1.0/Graph-1.0.lua
+
+GraphLib - Fixed a bug with pie chart selection functions being called every frame if over a pie piece
+------------------------------------------------------------------------
+r35301 | cryect | 2007-05-12 23:39:01 -0400 (Sat, 12 May 2007) | 2 lines
+Changed paths:
+   M /trunk/GraphLib/Graph-1.0/Graph-1.0.lua
+
+GraphLib - Fixed Line Length being too long in recent PTR patch
+-Line & Scatter graphs will only update a max of once a frame now (previously every time you issued a command it would refresh right away)
+------------------------------------------------------------------------
+r35144 | cryect | 2007-05-11 15:41:59 -0400 (Fri, 11 May 2007) | 1 line
+Changed paths:
+   M /trunk/GraphLib/Graph-1.0/Graph-1.0.lua
+
+GraphLib - Fixed an issue with the texture directory being determined incorrectly for addons in a folder of any decent string length
+------------------------------------------------------------------------
+r34956 | cryect | 2007-05-10 03:00:02 -0400 (Thu, 10 May 2007) | 3 lines
+Changed paths:
+   M /trunk/GraphLib/Graph-1.0/Graph-1.0.lua
+   M /trunk/GraphLib/GraphLib.toc
+   A /trunk/GraphLib/GraphTextures
+   A /trunk/GraphLib/GraphTextures/Pie
+   A /trunk/GraphLib/GraphTextures/Pie/1-128.tga
+   A /trunk/GraphLib/GraphTextures/Pie/1-16.tga
+   A /trunk/GraphLib/GraphTextures/Pie/1-2.tga
+   A /trunk/GraphLib/GraphTextures/Pie/1-32.tga
+   A /trunk/GraphLib/GraphTextures/Pie/1-4.tga
+   A /trunk/GraphLib/GraphTextures/Pie/1-64.tga
+   A /trunk/GraphLib/GraphTextures/Pie/1-8.tga
+   A /trunk/GraphLib/GraphTextures/line.tga
+   D /trunk/GraphLib/Textures
+
+GraphLib - Fixed several errors involving width instead of height (Thanks to Nelson Minar)
+-Determines the proper texture directory so can be included instead of used as standalone library
+-Renamed the texture directory
+------------------------------------------------------------------------

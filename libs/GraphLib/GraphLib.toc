@@ -1,0 +1,14 @@
+## Interface: 20003
+## LoadOnDemand: 1
+## Title: Lib: GraphLib
+## Version: 1.0
+## Notes: A library allowing for easy creation of graphs
+## Author: Cryect
+## X-Category: Library
+## X-AceLibrary-Graph-1.0: true
+## OptionalDeps: Ace2
+## X-Embeds: Ace2
+
+AceLibrary\AceLibrary.lua
+Graph-1.0\Graph-1.0.lua
+

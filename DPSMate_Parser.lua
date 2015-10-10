@@ -3,7 +3,8 @@
 -- Local Variables
 local player = {}
 player["name"] = UnitName("player")
-player["class"] = UnitClass("player")
+local a,b,c = UnitClass("player")
+player["class"] = strlower(b)
 
 -- Begin Functions
 
@@ -108,6 +109,8 @@ function DPSMate.Parser:ParseSelfSpellDMG(msg)
 		i, j = strfind(msg, DPSMate.localization.parser.missed)
 		ability = strsub(msg, string.len(DPSMate.localization.parser.your)+1, i-1)
 		target = strsub(msg, j+1, string.len(msg)-1)
+	elseif strfind(msg, DPSMate.localization.parser.immune) then
+		-- Decided not to collect immune data
 	else
 		if strfind(msg, DPSMate.localization.parser.hits) then
 			i, j = strfind(msg, DPSMate.localization.parser.hits)
@@ -127,6 +130,7 @@ function DPSMate.Parser:ParseSelfSpellDMG(msg)
 	DPSMate.DB:BuildUserAbility(player, ability, hit, crit, miss, parry, dodge, resist, amount, 0)
 end
 
+-- Error for (...) suffers from blblblaa's Curse of Agony. (32 resisted)
 function DPSMate.Parser:ParsePeriodicDamage(msg)
 	local target = ""
 	local ability = ""

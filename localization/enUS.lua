@@ -24,4 +24,8 @@ DPSMate.localization.parser.wasdodgedby = " was dodged by "
 DPSMate.localization.parser.missed = " missed "
 DPSMate.localization.parser.misses = " misses "
 DPSMate.localization.parser.suffers = " suffers "
+DPSMate.localization.parser.immune = " immune"
 DPSMate.localization.parser.from = " from "
+
+DPSMate.localization.details = {}
+DPSMate.localization.details.close = "Close details"
