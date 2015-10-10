@@ -282,5 +282,6 @@ function DPSMate.Options:ToggleDrewDrop(i, obj)
 	elseif i == 2 then
 	elseif i == 3 then end
 	Dewdrop:Close()
+	DPSMate:SetStatusBarValue()
 	return true
 end

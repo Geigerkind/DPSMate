@@ -23,11 +23,11 @@ function DPSMate:TableLength(t)
 	return count
 end
 
-function DPSMate:GetSortedTable()
+function DPSMate:GetSortedTable(arr)
 	local b = {}
 	local total = 0
 	local CurMax = 0
-	for cat,arr in pairs(DPSMateUser) do
+	for cat,arr in pairs(arr) do
 		a[arr["damage"]] = cat
 		local i = 1
 		while true do
@@ -49,7 +49,7 @@ function DPSMate:GetSortedTable()
 end
 
 function DPSMate:SetStatusBarValue()
-	local sortedTable, total = DPSMate:GetSortedTable()
+	local sortedTable, total = DPSMate:GetSortedTable(DPSMate:GetMode())
 	DPSMate:HideStatusBars()
 	if (not sortedTable) then return end
 	for i=1, DPSMate:TableLength(sortedTable) do
@@ -62,6 +62,13 @@ function DPSMate:SetStatusBarValue()
 		value:SetText(sortedTable[i].." ("..string.format("%.1f", 100*sortedTable[i]/total)..")%")
 		statusbar:Show()
 	end
+end
+
+function DPSMate:GetMode()
+	if DPSMateSettings["options"][2]["total"] then
+		return DPSMateUser
+	end
+	return DPSMateUserCurrent
 end
 
 function DPSMate:HideStatusBars()

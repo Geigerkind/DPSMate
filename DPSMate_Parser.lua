@@ -18,7 +18,7 @@ function DPSMate.Parser:OnEvent(event)
 	elseif event == "CHAT_MSG_SPELL_SELF_DAMAGE" then
 		if arg1 then DPSMate.Parser:ParseSelfSpellDMG(arg1) end
 	elseif event == "CHAT_MSG_SPELL_PERIODIC_HOSTILEPLAYER_DAMAGE" then
-		if arg1 then DPSMate.Parser:ParsePeriodicDamage(arg1) end
+		--if arg1 then DPSMate.Parser:ParsePeriodicDamage(arg1) end
 	elseif event == "CHAT_MSG_SPELL_PERIODIC_CREATURE_DAMAGE" then
 		if arg1 then DPSMate.Parser:ParsePeriodicDamage(arg1) end 
 	elseif event == "CHAT_MSG_COMBAT_PARTY_HITS" then
@@ -30,22 +30,37 @@ function DPSMate.Parser:OnEvent(event)
 	end
 end
 
--- Include fall damage?
 function DPSMate.Parser:ParseSelfHits(msg)
 	local target = ""
 	local hit = 0
 	local crit = 0
-	if strfind(msg, DPSMate.localization.parser.youhit) then
-		target = strsub(msg, string.len(DPSMate.localization.parser.youhit)+1, strfind(msg, DPSMate.localization.parser.Dfor)-1)
-		hit = 1
-	else
-		target = strsub(msg, string.len(DPSMate.localization.parser.youcrit)+1, strfind(msg, DPSMate.localization.parser.Dfor)-1)
-		crit = 1
+	
+	-- Fall damage
+	if strfind(msg, DPSMate.localization.parser.youfall) then
+		amount = tonumber(strsub(msg, strfind(msg, "%d+")))
+		DPSMate.DB:BuildUserAbility(player, "Falling", 1, 0, 0, 0, 0, 0, amount, 1)
+	-- Drown damage
+	elseif strfind(msg, DPSMate.localization.parser.youdrown) then
+		amount = tonumber(strsub(msg, strfind(msg, "%d+")))
+		DPSMate.DB:BuildUserAbility(player, "Drowning", 1, 0, 0, 0, 0, 0, amount, 1)
+	-- Lava damage
+	elseif strfind(msg, DPSMate.localization.parser.swimminginlava) then
+		amount = tonumber(strsub(msg, strfind(msg, "%d+")))
+		DPSMate.DB:BuildUserAbility(player, "Lava", 1, 0, 0, 0, 0, 0, amount, 1)
+	-- White hit Damage
+	elseif strfind(msg, DPSMate.localization.parser.youhit) or strfind(msg, DPSMate.localization.parser.youcrit) then
+		if strfind(msg, DPSMate.localization.parser.youhit) then
+			target = strsub(msg, string.len(DPSMate.localization.parser.youhit)+1, strfind(msg, DPSMate.localization.parser.Dfor)-1)
+			hit = 1
+		else
+			target = strsub(msg, string.len(DPSMate.localization.parser.youcrit)+1, strfind(msg, DPSMate.localization.parser.Dfor)-1)
+			crit = 1
+		end
+		local i, j = strfind(msg, DPSMate.localization.parser.Dfor)
+		local nmsg = strsub(msg, j)
+		local amount = tonumber(strsub(nmsg, strfind(nmsg, "%d+")))
+		DPSMate.DB:BuildUserAbility(player, "AutoAttack", hit, crit, 0, 0, 0, 0, amount, 0)
 	end
-	local i, j = strfind(msg, DPSMate.localization.parser.Dfor)
-	local nmsg = strsub(msg, j)
-	local amount = tonumber(strsub(nmsg, strfind(nmsg, "%d+")))
-	DPSMate.DB:BuildUserAbility(player, "AutoAttack", hit, crit, 0, 0, 0, 0, amount)
 end
 
 function DPSMate.Parser:ParseSelfMisses(msg)
@@ -59,7 +74,7 @@ function DPSMate.Parser:ParseSelfMisses(msg)
 	elseif strfind(msg, DPSMate.localization.parser.dodges) then
 		dodge = 1
 	end
-	DPSMate.DB:BuildUserAbility(player, "AutoAttack", 0, 0, miss, parry, dodge, 0, 0)
+	DPSMate.DB:BuildUserAbility(player, "AutoAttack", 0, 0, miss, parry, dodge, 0, 0, 0)
 end
 
 function DPSMate.Parser:ParseSelfSpellDMG(msg)
@@ -109,7 +124,7 @@ function DPSMate.Parser:ParseSelfSpellDMG(msg)
 		local nmsg = strsub(msg, j)
 		amount = tonumber(strsub(nmsg, strfind(nmsg, "%d+")))	
 	end
-	DPSMate.DB:BuildUserAbility(player, ability, hit, crit, miss, parry, dodge, resist, amount)
+	DPSMate.DB:BuildUserAbility(player, ability, hit, crit, miss, parry, dodge, resist, amount, 0)
 end
 
 function DPSMate.Parser:ParsePeriodicDamage(msg)
@@ -127,12 +142,12 @@ function DPSMate.Parser:ParsePeriodicDamage(msg)
 		if cause.name == DPSMate.localization.parser.your2 then
 			cause = player
 		else
-			cause.name = strsub(msg, j2+1, i-9)
+			cause.name = strsub(msg, j2+1, i-3)
 		end
 		i, j = strfind(msg, DPSMate.localization.parser.suffers)
 		local nmsg = strsub(msg, j)
 		amount = tonumber(strsub(nmsg, strfind(nmsg, "%d+")))
-		DPSMate.DB:BuildUserAbility(cause, ability, 1, 0, 0, 0, 0, 0, amount)
+		DPSMate.DB:BuildUserAbility(cause, ability.."(Periodic)", 1, 0, 0, 0, 0, 0, amount, 0)
 	end
 end
 
@@ -168,7 +183,7 @@ function DPSMate.Parser:ParsePartyHits(msg)
 		end
 	end
 	
-	DPSMate.DB:BuildUserAbility(cause, "AutoAttack", hit, crit, 0, 0, 0, 0, amount)
+	DPSMate.DB:BuildUserAbility(cause, "AutoAttack", hit, crit, 0, 0, 0, 0, amount, 0)
 end
 
 function DPSMate.Parser:ParsePartyMisses(msg)
@@ -185,7 +200,7 @@ function DPSMate.Parser:ParsePartyMisses(msg)
 		dodge = 1
 	end
 	cause.name = strsub(msg, 1, strfind(msg, "%s")-1)
-	DPSMate.DB:BuildUserAbility(cause, "AutoAttack", 0, 0, miss, parry, dodge, 0, 0)
+	DPSMate.DB:BuildUserAbility(cause, "AutoAttack", 0, 0, miss, parry, dodge, 0, 0, 0)
 end
 
 function DPSMate.Parser:ParsePartySpellDMG(msg)
@@ -236,5 +251,5 @@ function DPSMate.Parser:ParsePartySpellDMG(msg)
 	end
 	cause.name = strsub(msg, 1, i2-3)
 	
-	DPSMate.DB:BuildUserAbility(cause, ability, hit, crit, miss, parry, dodge, resist, amount)
+	DPSMate.DB:BuildUserAbility(cause, ability, hit, crit, miss, parry, dodge, resist, amount, 0)
 end

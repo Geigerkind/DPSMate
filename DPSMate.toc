@@ -5,7 +5,7 @@
 ## Notes-deDE: [TO BE EDITED]
 ## Author: Shino <Synced> - Kronos
 ## SavedVariables: DPSMateSettings
-## SavedVariablesPerCharacter: DPSMateUser
+## SavedVariablesPerCharacter: DPSMateUser, DPSMateUserCurrent
 ## Version: 0.1
 DPSMate.lua
 DPSMate_Parser.lua
@@ -13,6 +13,8 @@ DPSMate_Options.lua
 DPSMate_DataBuilder.lua
 
 localization\enUS.lua
+
+libs\Dewdrop-2.0\Dewdrop-2.0.lua
 
 DPSMate_Options.xml
 DPSMate_Frame.xml
