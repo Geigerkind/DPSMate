@@ -77,6 +77,7 @@ function DPSMate.Parser:ParseSelfSpellDMG(msg)
 		for a, t in string.gfind(msg, "Your (.+) was blocked by (.+).") do block=1; ability=a; target=t; end
 	elseif strfind(msg, DPSMate.localization.parser.immune) then
 		-- Decided not to collect immune data
+		return
 	else
 		-- School and target to be added
 		for ab, t, a in string.gfind(msg, "Your (.+) hits (.+) for (.+).") do ability = ab; target = t; amount = tonumber(strsub(a, strfind(a, "%d+"))); hit=1; end
@@ -88,10 +89,10 @@ end
 function DPSMate.Parser:ParsePeriodicDamage(msg)
 	local cause = {}
 	-- School has to be added and target
-	for tar, dmg, name, ab in string.gfind(msg, "(.+) suffers (.+) from (.-) (.+).") do
+	for tar, dmg, name, ab in string.gfind(msg, "(.+) suffers (.+) from (.-) (.+)") do
 		cause.name = name
 		if cause.name == DPSMate.localization.parser.your2 then cause = player; else cause.name = strsub(cause.name, 1, strfind(cause.name, "'s")-1); end
-		DPSMate.DB:BuildUserAbility(cause, ab.."(Periodic)", 1, 0, 0, 0, 0, 0, tonumber(strsub(dmg, strfind(dmg, "%d+"))), 0)
+		DPSMate.DB:BuildUserAbility(cause, strsub(ab, 1, strfind(ab, "%.")-1).."(Periodic)", 1, 0, 0, 0, 0, 0, tonumber(strsub(dmg, strfind(dmg, "%d+"))), 0)
 	end
 end
 
@@ -125,6 +126,7 @@ function DPSMate.Parser:ParsePartySpellDMG(msg)
 		for c, ab, t in string.gfind(msg, "(.-)'s (.+) was blocked by (.+).") do block=1; cause.name=c; ability=ab; target=t; end
 	elseif strfind(msg, DPSMate.localization.parser.immune) then
 		-- Decided not to collect immune data
+		return
 	else
 		for c, ab, t, a in string.gfind(msg, "(.-)'s (.+) hits (.+) for (.+).") do hit=1; cause.name=c; ability=ab; target=t; amount=tonumber(strsub(a, strfind(a, "%d+"))); end
 		for c, ab, t, a in string.gfind(msg, "(.-)'s (.+) crits (.+) for (.+).") do crit=1; cause.name=c; ability=ab; target=t; amount=tonumber(strsub(a, strfind(a, "%d+"))); end
