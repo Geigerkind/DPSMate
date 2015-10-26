@@ -399,7 +399,6 @@ end
 function DPSMate.Options:ChannelDropDown()
 	local channel, i = {[1]="Whisper",[2]="Raid",[3]="Party",[4]="Say",[5]="Officer",[6]="Guild"}, 1
 	
-	UIDropDownMenu_SetSelectedValue(DPSMate_Report_Channel, "Raid")
     local function on_click()
         UIDropDownMenu_SetSelectedValue(DPSMate_Report_Channel, this.value)
     end
@@ -420,6 +419,8 @@ function DPSMate.Options:ChannelDropDown()
 			func = on_click,
 		}
 	end
+	
+	UIDropDownMenu_SetSelectedValue(DPSMate_Report_Channel, "Raid")
 end
 
 function DPSMate.Options:Report()

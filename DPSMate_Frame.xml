@@ -151,7 +151,6 @@
 						</Anchors>
 						<Scripts>
 							<OnClick>
-								UIDropDownMenu_Initialize(DPSMate_Report_Channel, DPSMate.Options.ChannelDropDown)
 								DPSMate_Report:Show()
 							</OnClick>
 						</Scripts>

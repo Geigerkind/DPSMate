@@ -81,7 +81,7 @@ function DPSMate:PlayerExist(arr, name)
 end
 
 function DPSMate:SetStatusBarValue()
-	local arr = DPSMate:GetMode()
+	local arr, cbt = DPSMate:GetMode()
 	local sortedTable, total, a = DPSMate:GetSortedTable(arr)
 	DPSMate:HideStatusBars()
 	if (not sortedTable) then return end
@@ -95,7 +95,7 @@ function DPSMate:SetStatusBarValue()
 		statusbar:SetStatusBarColor(r,g,b, 1)
 		name:SetText(i..". "..a[sortedTable[i]])
 		
-		value:SetText(sortedTable[i].." ("..string.format("%.1f", 100*sortedTable[i]/total).."%)")
+		value:SetText(sortedTable[i].." ("..ceil(sortedTable[i]/cbt).."DPS) ("..string.format("%.1f", 100*sortedTable[i]/total).."%)")
 		statusbar:SetValue(ceil(100*(sortedTable[i]/sortedTable[1])))
 		
 		statusbar.user = a[sortedTable[i]]
@@ -113,9 +113,9 @@ end
 
 function DPSMate:GetMode()
 	if DPSMateSettings["options"][2]["total"] then
-		return DPSMateUser
+		return DPSMateUser, DPSMateCombatTimeTotal
 	end
-	return DPSMateUserCurrent
+	return DPSMateUserCurrent,  DPSMateCombatTimeCurrent
 end
 
 function DPSMate:GetModeName()

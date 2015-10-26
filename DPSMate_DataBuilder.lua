@@ -3,6 +3,7 @@ DPSMate.DB.loaded = false
 
 -- Local Variables
 local lastCurReset = GetTime()
+local CombatState = false
 
 -- Begin Functions
 
@@ -36,15 +37,24 @@ function DPSMate.DB:OnEvent(event)
 		end
 		if DPSMateUser == nil then DPSMateUser = {} end
 		if DPSMateUserCurrent == nil then DPSMateUserCurrent = {} end
+		if DPSMateCombatTimeTotal == nil then DPSMateCombatTimeTotal = 1 end
+		if DPSMateCombatTimeCurrent == nil then DPSMateCombatTimeCurrent = 1 end
 		DPSMate:OnLoad()
 		DPSMate.Options:ToggleDrewDrop(1, DPSMate.DB:GetOptionsTrue(1))
 		DPSMate.Options:ToggleDrewDrop(2, DPSMate.DB:GetOptionsTrue(2))
 		DPSMate.Options:ToggleDrewDrop(3, DPSMateSettings["options"][3]["lock"])
+		
+		DPSMate.DB:CombatTime()
+		
 		DPSMate.DB.loaded = true
 	elseif event == "PLAYER_REGEN_DISABLED" and (lastCurReset+5 < GetTime()) then
 		DPSMateUserCurrent = {}
 		DPSMate:SetStatusBarValue()
 		lastCurReset = GetTime()
+		DPSMateCombatTimeCurrent = 1
+		CombatState = true
+	elseif event == "PLAYER_REGEN_ENABLED" then
+		CombatState = false
 	end
 	-- Performance!!!
 	DPSMate.DB:AssignPet()
@@ -241,4 +251,14 @@ function DPSMate.DB:GetOptionsTrue(i)
 			return cat
 		end
 	end
+end
+
+function DPSMate.DB:CombatTime()
+	local f = CreateFrame("Frame", "CombatFrame", UIParent)
+	f:SetScript("OnUpdate", function(self, elapsed)
+		if (CombatState) then
+			DPSMateCombatTimeTotal = DPSMateCombatTimeTotal + arg1
+			DPSMateCombatTimeCurrent = DPSMateCombatTimeCurrent + arg1
+		end
+	end)
 end

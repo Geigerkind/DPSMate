@@ -321,6 +321,7 @@
 				this:RegisterEvent("CHAT_MSG_COMBAT_PARTY_MISSES")
 				
 				this:RegisterEvent("PLAYER_REGEN_DISABLED")
+				this:RegisterEvent("PLAYER_REGEN_ENABLED")
 				
 				DPSMate.Parser:OnLoad()
 			</OnLoad>
