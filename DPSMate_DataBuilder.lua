@@ -46,6 +46,73 @@ function DPSMate.DB:OnEvent(event)
 		DPSMate:SetStatusBarValue()
 		lastCurReset = GetTime()
 	end
+	-- Performance!!!
+	DPSMate.DB:AssignPet()
+	DPSMate.DB:AssignClass()
+end
+
+function DPSMate.DB:GetPets()
+	local pets = {}
+	if UnitInParty("player") then
+		for i=1, 4 do
+			if UnitName("partypet"..i) then
+				pets[UnitName("party"..i)] = UnitName("partypet"..i)
+			end
+		end
+	elseif UnitInRaid("player") then
+		for i=1, 40 do
+			if UnitName("raidpet"..i) then
+				pets[UnitName("raid"..i)] = UnitName("raidpet"..i)
+			end
+		end
+	else
+		if UnitName("pet") then
+			pets[UnitName("player")] = UnitName("pet")
+		end
+	end
+	return pets
+end
+
+function DPSMate.DB:AssignPet()
+	local pets = DPSMate.DB:GetPets()
+	for cat, val in pairs(DPSMateUser) do
+		if (pets[cat]) then
+			DPSMateUser[cat]["pet"] = pets[cat]
+			if (DPSMateUser[pets[cat]]) then
+				DPSMateUser[pets[cat]]["isPet"] = true
+			end
+		end
+	end
+end
+
+function DPSMate.DB:AssignClass()
+	local classEng
+	if DPSMate.DB:PlayerInParty() then
+		for i=1,4 do
+			if DPSMateUser[UnitName("party"..i)] then
+				if (not DPSMateUser[UnitName("party"..i)].class) then
+					_,classEng,_ = UnitClass("party"..i)
+					DPSMateUser[UnitName("party"..i)].class = strlower(classEng)
+				end
+			end
+		end
+	elseif UnitInRaid("player") then
+		for i=1,40 do
+			if DPSMateUser[UnitName("raid"..i)] then
+				if (not DPSMateUser[UnitName("raid"..i)].class) then
+					_,classEng,_ = UnitClass("raid"..i)
+					DPSMateUser[UnitName("raid"..i)].class = strlower(classEng)
+				end
+			end
+		end
+	end
+end
+
+function DPSMate.DB:PlayerInParty()
+	if GetNumPartyMembers() > 0 and (not UnitInRaid("player")) then
+		return true
+	end
+	return false
 end
 
 function DPSMate.DB:BuildUser(Dname, Dclass)
@@ -66,6 +133,7 @@ function DPSMate.DB:BuildUser(Dname, Dclass)
 end
 
 function DPSMate.DB:BuildUserAbility(Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, Ddodge, Dresist, Damount, Dtype)
+	if (not Duser or Duser == {}) then return end -- Parsing failure, I guess at AEO periodic abilitys
 	-- Total
 	if DPSMate.DB:DataExist(Duser.name, Dname, DPSMateUser) then
 		if Dtype == 0 then

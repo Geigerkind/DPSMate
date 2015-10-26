@@ -104,6 +104,196 @@
 		</Frames>
 	</Frame>
 	
+	<Frame name="DPSMate_Report" movable="true" hidden="false">
+		<Size x="180" y="170" />
+		<Anchors>
+			<Anchor point="CENTER" />
+		</Anchors>
+		<Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background" edgeFile="Interface\DialogFrame\UI-DialogBox-Border" tile="true">
+			<BackgroundInsets>
+				<AbsInset left="4" right="4" top="4" bottom="4" />
+			</BackgroundInsets>
+			<TileSize>
+				<AbsValue val="12" />
+			</TileSize>
+			<EdgeSize>
+				<AbsValue val="12" />
+			</EdgeSize>
+        </Backdrop>
+		<Layers>
+			<Layer level="ARTWORK">
+				<FontString name="$parent_Text" inherits="GameFontNormalSmall" justifyH="CENTER" alphaMode="ADD">
+					<Size x="160" y="20" />
+					<Anchors>
+						<Anchor point="TOP" />
+					</Anchors>
+					<Color r="1" g="1" b="1" a="1" />
+				</FontString>
+			</Layer>
+		</Layers>
+		<Scripts>
+			<OnMouseDown>
+				this:StartMoving()
+			</OnMouseDown>
+			<OnMouseUp>
+				this:StopMovingOrSizing()
+			</OnMouseUp>
+			<OnLoad>
+				DPSMate_Report_Text:SetText(DPSMate.localization.report.." - DPSMate")
+			</OnLoad>
+		</Scripts>
+		<Frames>
+			<Button>
+				<Size x="20" y="20" />
+				<Anchors>
+					<Anchor point="TOPRIGHT" />
+				</Anchors>
+				<Scripts>
+					<OnEnter>
+						GameTooltip:SetOwner(this, "ANCHOR_RIGHT")
+						GameTooltip:SetText(DPSMate.localization.close, nil, nil, nil, nil, 1)
+					</OnEnter>
+					<OnLeave>
+						GameTooltip:Hide()
+					</OnLeave>
+					<OnClick>
+						DPSMate_Report:Hide()
+					</OnClick>
+				</Scripts>
+				<NormalTexture file="Interface\Buttons\UI-Panel-MinimizeButton-Up"/>
+				<PushedTexture file="Interface\Buttons\UI-Panel-MinimizeButton-Down"/>
+				<HighlightTexture file="Interface\Buttons\UI-Panel-MinimizeButton-Highlight" alphaMode="ADD"/>
+			</Button>
+			<Frame name="$parent_Channel" inherits="UIDropDownMenuTemplate" id="1">
+				<Size x="100" y="24" />
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parent_Text" relativePoint="BOTTOMLEFT">
+						<Offset x="-20" y="-10" />
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnEnter>
+						GameTooltip:SetOwner(this, "ANCHOR_RIGHT")
+						GameTooltip:SetText(DPSMate.localization.channelTooltip, nil, nil, nil, nil, 1)
+					</OnEnter>
+					<OnLeave>
+						GameTooltip:Hide()
+					</OnLeave>
+					<OnLoad>
+						getglobal(this:GetName().."_Text"):SetText(DPSMate.localization.channel)
+					</OnLoad>
+				</Scripts>
+				<Layers>
+					<Layer level="ARTWORK">
+						<FontString name="$parent_Text" inherits="GameFontNormalSmall" justifyH="LEFT" alphaMode="ADD">
+							<Size x="100" y="20" />
+							<Anchors>
+								<Anchor point="TOP">
+									<Offset x="20" y="15" />
+								</Anchor>
+							</Anchors>
+						</FontString>
+					</Layer>
+				</Layers>
+			</Frame>
+			<Slider name="$parent_Lines" inherits="OptionsSliderTemplate">
+				<Size>
+					<AbsDimension x="160" y="14" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parent_Text" relativePoint="BOTTOMLEFT">
+						<Offset x="0" y="-55" />
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnEnter>
+						GameTooltip:SetOwner(this, "ANCHOR_RIGHT")
+						GameTooltip:SetText(DPSMate.localization.SliderTooltip, nil, nil, nil, nil, 1)
+					</OnEnter>
+					<OnLeave>
+						GameTooltip:Hide()
+					</OnLeave>
+					<OnLoad>
+						this:SetMinMaxValues(1,25)
+						this:SetValue(6)
+						this:SetValueStep(1)
+						getglobal(this:GetName().."Text"):SetText(DPSMate.localization.Slider)
+						getglobal(this:GetName().."Low"):SetText("1")
+						getglobal(this:GetName().."High"):SetText("25")
+					</OnLoad>
+				</Scripts>
+			</Slider>
+			<EditBox name="$parent_Editbox" autoFocus="false" inherits="InputBoxTemplate">
+				<Size x="160" y="14" />
+				<Anchors>
+					<Anchor point="TOP" relativeTo="$parent_Lines" relativePoint="BOTTOM">
+						<Offset x="3" y="-32" />
+					</Anchor>
+				</Anchors>
+				<FontString inherits="ChatFontNormal" bytes="32"/>
+				<Scripts>
+					<OnLoad>
+						this:SetMaxLetters(32)
+						getglobal(this:GetName().."_Text"):SetText(DPSMate.localization.EditboxTitle)
+					</OnLoad>
+					<OnEnterPressed>
+						this:ClearFocus()
+					</OnEnterPressed>
+					<OnEnter>
+						GameTooltip:SetOwner(this, "ANCHOR_RIGHT")
+						GameTooltip:SetText(DPSMate.localization.EditboxTooltip, nil, nil, nil, nil, 1)
+					</OnEnter>
+					<OnLeave>
+						GameTooltip:Hide()
+					</OnLeave>
+				</Scripts>
+				<Layers>
+					<Layer level="OVERLAY">
+						<FontString name="$parent_Text" inherits="GameFontNormalSmall" justifyH="LEFT">
+							<Size>
+								<AbsDimension x="120" y="20"/>
+							</Size>
+							<Anchors>
+								<Anchor point="BOTTOMLEFT" relativeTo="$parent" relativePoint="TOPLEFT">
+									<Offset x="-5" y="0" />
+								</Anchor>
+							</Anchors>
+						</FontString>
+					</Layer>
+				</Layers>
+			</EditBox>
+			<Button name="$parent_ReportButton">
+				<Size x="160" y="26" />
+				<Anchors>
+					<Anchor point="BOTTOM" />
+				</Anchors>
+				<Layers>
+					<Layer level="ARTWORK">
+						<FontString name="$parentText" inherits="GameFontNormalSmall">
+							<Size x="80" y="24" />
+							<Anchors>
+								<Anchor point="TOP">
+									<Offset x="0" y="4" />
+								</Anchor>
+							</Anchors>
+						</FontString>
+					</Layer>
+				</Layers>
+				<Scripts>
+					<OnClick>
+						DPSMate_Report:Hide()
+					</OnClick>
+					<OnLoad>
+						getglobal(this:GetName().."Text"):SetText(DPSMate.localization.report)
+					</OnLoad>
+				</Scripts>
+				<NormalTexture file="Interface\Buttons\UI-DialogBox-Button-Up"/>
+				<PushedTexture file="Interface\Buttons\UI-DialogBox-Button-Down"/>
+				<HighlightTexture file="Interface\Buttons\UI-DialogBox-Button-Highlight" alphaMode="ADD"/>
+			</Button>
+		</Frames>
+	</Frame>
+	
 	<Frame name="DPSMate_Options">
 		<Scripts>
 			<OnLoad>

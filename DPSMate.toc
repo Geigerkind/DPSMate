@@ -19,6 +19,6 @@ DPSMate_DataBuilder.lua
 
 localization\enUS.lua
 
-DPSMate_Options.xml
 DPSMate_Frame.xml
 DPSMate_Details.xml
+DPSMate_Options.xml

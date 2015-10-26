@@ -2,7 +2,7 @@
 
 -- Local Variables
 local LastPopUp = GetTime()
-local TimeToNextPopUp = 60
+local TimeToNextPopUp = 300
 local PartyNum = GetNumPartyMembers()
 local Dewdrop = AceLibrary("Dewdrop-2.0")
 local graph = AceLibrary("Graph-1.0")
@@ -227,7 +227,7 @@ local g
 
 function DPSMate.Options:OnEvent(event)
 	if event == "PARTY_MEMBERS_CHANGED" and DPSMate.Options:IsInParty() and DPSMate.Options:PartyMemberAmountChanged() then
-		if (GetTime()-LastPopUp) > TimeToNextPopUp then -- To prevent spam
+		if (GetTime()-LastPopUp) > TimeToNextPopUp and (DPSMateUser ~= {} and DPSMateUserCurrent ~= {}) then -- To prevent spam
 			LastPopUp = GetTime()
 			DPSMate_PopUp:Show()
 		end
@@ -297,13 +297,15 @@ function DPSMate.Options:ScrollFrame_Update()
 	local line, lineplusoffset
 	local obj = getglobal("DPSMate_Details_Log_ScrollFrame")
 	local arr = DPSMate:GetMode()
-	DetailsArr, DetailsTotal = DPSMate.Options:EvalTable(arr[DetailsUser])
-	FauxScrollFrame_Update(obj,DPSMate:TableLength(arr[DetailsUser])-3,4,24)
+	local user, pet = "",0
+	DetailsArr, DetailsTotal = DPSMate.Options:EvalTable(DetailsUser)
+	FauxScrollFrame_Update(obj,DPSMate:TableLength(DetailsArr),4,24)
 	for line=1,4 do
 		lineplusoffset = line + FauxScrollFrame_GetOffset(obj)
 		if DetailsArr[lineplusoffset] ~= nil then
+			if (arr[DetailsUser][DetailsArr[lineplusoffset]]) then user=DetailsUser;pet=0; else user=arr[DetailsUser].pet;pet=5; end
 			getglobal("DPSMate_Details_Log_ScrollButton"..line.."_Name"):SetText(DetailsArr[lineplusoffset])
-			getglobal("DPSMate_Details_Log_ScrollButton"..line.."_Value"):SetText(arr[DetailsUser][DetailsArr[lineplusoffset]].amount.." ("..string.format("%.2f", (arr[DetailsUser][DetailsArr[lineplusoffset]].amount*100/DetailsTotal)).."%)")
+			getglobal("DPSMate_Details_Log_ScrollButton"..line.."_Value"):SetText(arr[user][strsub(DetailsArr[lineplusoffset], 1, strlen(DetailsArr[lineplusoffset])-pet)].amount.." ("..string.format("%.2f", (arr[user][strsub(DetailsArr[lineplusoffset], 1, strlen(DetailsArr[lineplusoffset])-pet)].amount*100/DetailsTotal)).."%)")
 			getglobal("DPSMate_Details_Log_ScrollButton"..line):Show()
 		else
 			getglobal("DPSMate_Details_Log_ScrollButton"..line):Hide()
@@ -316,55 +318,67 @@ function DPSMate.Options:ScrollFrame_Update()
 end
 
 function DPSMate.Options:EvalTable(t)
-	local a = {}
-	local i = 0
-	for cat, val in pairs(t) do
-		if (type(val) == "table") then
-			local i = 1
-			while true do
-				if (not a[i]) then
-					table.insert(a, i, cat)
-					break
-				else
-					if (t[a[i]].amount < val.amount) then
-						table.insert(a, i, cat)
+	local a, u, p = {}, {}, {}
+	local total, pet = 0, ""
+	local arr = DPSMate:GetMode()
+	if (arr[t].pet and arr[t].pet ~= "Unknown") then u={a=t, b=arr[t].pet} else u={a=t} end
+	for c, v in pairs(u) do
+		for cat, val in pairs(arr[v]) do
+			if (type(val) == "table") then
+				if (arr[v].isPet) then pet="(Pet)"; else pet=""; end
+				local i = 1
+				while true do
+					if (not a[i]) then
+						table.insert(a, i, cat..pet)
+						p[cat..pet] = arr[v][cat].amount
 						break
+					else
+						if (p[a[i]] < val.amount) then
+							table.insert(a, i, cat..pet)
+							p[cat..pet] = arr[v][cat].amount
+							break
+						end
 					end
+					i = i + 1
 				end
-				i = i + 1
 			end
 		end
+		total=total+arr[v].damage
 	end
-	return a, t.damage
+	return a, total
 end
 
 function DPSMate.Options:SelectDetailsButton(i)
 	local obj = getglobal("DPSMate_Details_Log_ScrollFrame")
 	local lineplusoffset = i + FauxScrollFrame_GetOffset(obj)
 	local arr = DPSMate:GetMode()
+	local user, pet = "", 0
 	DetailsSelected = lineplusoffset
 	for p=1, 4 do
 		getglobal("DPSMate_Details_Log_ScrollButton"..p.."_selected"):Hide()
 	end
+	if (arr[DetailsUser][DetailsArr[lineplusoffset]]) then user=DetailsUser; pet=0; else user=arr[DetailsUser].pet; pet=5; end
 	getglobal("DPSMate_Details_Log_ScrollButton"..i.."_selected"):Show()
-	getglobal("DPSMate_Details_LogDetails_Hit"):SetText("Hit: "..arr[DetailsUser][DetailsArr[lineplusoffset]].hit)
-	getglobal("DPSMate_Details_LogDetails_HitMax"):SetText("HitMax: "..arr[DetailsUser][DetailsArr[lineplusoffset]].hithigh)
-	getglobal("DPSMate_Details_LogDetails_HitMin"):SetText("HitMin: "..arr[DetailsUser][DetailsArr[lineplusoffset]].hitlow)
-	getglobal("DPSMate_Details_LogDetails_Crit"):SetText("Crit: "..arr[DetailsUser][DetailsArr[lineplusoffset]].crit)
-	getglobal("DPSMate_Details_LogDetails_CritMax"):SetText("CritMax: "..arr[DetailsUser][DetailsArr[lineplusoffset]].crithigh)
-	getglobal("DPSMate_Details_LogDetails_CritMin"):SetText("CritMin: "..arr[DetailsUser][DetailsArr[lineplusoffset]].critlow)
-	getglobal("DPSMate_Details_LogDetails_Miss"):SetText("Miss: "..arr[DetailsUser][DetailsArr[lineplusoffset]].miss)
-	getglobal("DPSMate_Details_LogDetails_Parry"):SetText("Parry: "..arr[DetailsUser][DetailsArr[lineplusoffset]].parry)
-	getglobal("DPSMate_Details_LogDetails_Dodge"):SetText("Dodge: "..arr[DetailsUser][DetailsArr[lineplusoffset]].dodge)
-	getglobal("DPSMate_Details_LogDetails_Resist"):SetText("Resist: "..arr[DetailsUser][DetailsArr[lineplusoffset]].resist)
+	getglobal("DPSMate_Details_LogDetails_Hit"):SetText("Hit: "..arr[user][strsub(DetailsArr[lineplusoffset], 1, strlen(DetailsArr[lineplusoffset])-pet)].hit)
+	getglobal("DPSMate_Details_LogDetails_HitMax"):SetText("HitMax: "..arr[user][strsub(DetailsArr[lineplusoffset], 1, strlen(DetailsArr[lineplusoffset])-pet)].hithigh)
+	getglobal("DPSMate_Details_LogDetails_HitMin"):SetText("HitMin: "..arr[user][strsub(DetailsArr[lineplusoffset], 1, strlen(DetailsArr[lineplusoffset])-pet)].hitlow)
+	getglobal("DPSMate_Details_LogDetails_Crit"):SetText("Crit: "..arr[user][strsub(DetailsArr[lineplusoffset], 1, strlen(DetailsArr[lineplusoffset])-pet)].crit)
+	getglobal("DPSMate_Details_LogDetails_CritMax"):SetText("CritMax: "..arr[user][strsub(DetailsArr[lineplusoffset], 1, strlen(DetailsArr[lineplusoffset])-pet)].crithigh)
+	getglobal("DPSMate_Details_LogDetails_CritMin"):SetText("CritMin: "..arr[user][strsub(DetailsArr[lineplusoffset], 1, strlen(DetailsArr[lineplusoffset])-pet)].critlow)
+	getglobal("DPSMate_Details_LogDetails_Miss"):SetText("Miss: "..arr[user][strsub(DetailsArr[lineplusoffset], 1, strlen(DetailsArr[lineplusoffset])-pet)].miss)
+	getglobal("DPSMate_Details_LogDetails_Parry"):SetText("Parry: "..arr[user][strsub(DetailsArr[lineplusoffset], 1, strlen(DetailsArr[lineplusoffset])-pet)].parry)
+	getglobal("DPSMate_Details_LogDetails_Dodge"):SetText("Dodge: "..arr[user][strsub(DetailsArr[lineplusoffset], 1, strlen(DetailsArr[lineplusoffset])-pet)].dodge)
+	getglobal("DPSMate_Details_LogDetails_Resist"):SetText("Resist: "..arr[user][strsub(DetailsArr[lineplusoffset], 1, strlen(DetailsArr[lineplusoffset])-pet)].resist)
 end
 
 function DPSMate.Options:UpdatePie()
 	local i = 1
 	local arr = DPSMate:GetMode()
+	local user,pet = "",0
 	g:ResetPie()
 	for cat, val in pairs(DetailsArr) do
-		local percent = (arr[DetailsUser][DetailsArr[i]].amount*100/DetailsTotal)
+		if (arr[DetailsUser][DetailsArr[i]]) then user=DetailsUser;pet=0; else user=arr[DetailsUser].pet;pet=5; end
+		local percent = (arr[user][strsub(DetailsArr[i], 1, strlen(DetailsArr[i])-pet)].amount*100/DetailsTotal)
 		g:AddPie(percent, 0)
 		i = i + 1
 	end

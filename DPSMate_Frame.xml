@@ -31,7 +31,6 @@
 			<OnLoad>
 				this:SetMinMaxValues(1,100)
 				this:SetStatusBarTexture("Interface\\AddOns\\DPSMate\\images\\statusbar\\Healbot")
-				this:SetStatusBarColor(1,0.82,0)
 				this:SetValue(100)
 			</OnLoad>
 			<OnMouseUp>
@@ -41,7 +40,7 @@
 	</StatusBar>
 	
 	<Frame name="DPSMate_Statusframe" parent="UIParent" movable="true" enablemouse="true" resizable="true" frameStrata="low">
-		<Size x="150" y="200" />
+		<Size x="150" y="100" />
 		<ResizeBounds>
 			<minResize x="100" y="100"/>
 			<maxResize x="400" y="600"/>
@@ -438,6 +437,7 @@
 					</OnMouseDown>
 					<OnMouseUp>
 						DPSMate_Statusframe:StopMovingOrSizing()
+						DPSMate:SetStatusBarValue()
 					</OnMouseUp>
 				</Scripts>
 				<NormalTexture file="Interface\AddOns\DPSMate\images\UI-ChatIM-SizeGrabber-Up"/>

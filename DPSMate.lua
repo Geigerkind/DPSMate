@@ -12,7 +12,7 @@ local classcolor = {
 	rogue = {r=1.0, g=0.96, b=0.41},
 	priest = {r=1,g=1,b=1},
 	druid = {r=1,g=0.49,b=0.04},
-	warrior = {r=0.78,g=0.61,b=0.43},
+	warrior = {r=0.58,g=0.51,b=0.33},
 	warlock = {r=0.58,g=0.51,b=0.79},
 	mage = {r=0.41,g=0.8,b=0.94},
 	hunter = {r=0.67,g=0.83,b=0.45},
@@ -37,26 +37,39 @@ end
 function DPSMate:GetSortedTable(arr)
 	local b = {}
 	local total = 0
-	local CurMax = 0
-	for cat,arr in pairs(arr) do
-		a[arr["damage"]] = cat
-		local i = 1
-		while true do
-			if (not b[i]) then
-				table.insert(b, i, arr["damage"])
-				break
-			else
-				if b[i] < arr["damage"] then
-					table.insert(b, i, arr["damage"])
-					break
-				end
+	for cat, val in pairs(arr) do
+		if (not val.isPet) then
+			local CV = val.damage
+			if DPSMate:PlayerExist(arr, val.pet) then
+				CV=CV+arr[val.pet].damage
 			end
-			i=i+1
+			a[CV] = cat
+			local i = 1
+			while true do
+				if (not b[i]) then
+					table.insert(b, i, CV)
+					break
+				else
+					if b[i] < CV then
+						table.insert(b, i, CV)
+						break
+					end
+				end
+				i=i+1
+			end
+			total = total + CV
 		end
-		
-		total = total + arr["damage"]
 	end
 	return b, total
+end
+
+function DPSMate:PlayerExist(arr, name)
+	for cat, val in pairs(arr) do
+		if (cat == name) then
+			return true
+		end
+	end
+	return false
 end
 
 function DPSMate:SetStatusBarValue()
@@ -64,16 +77,19 @@ function DPSMate:SetStatusBarValue()
 	local sortedTable, total = DPSMate:GetSortedTable(arr)
 	DPSMate:HideStatusBars()
 	if (not sortedTable) then return end
-	for i=1, DPSMate:TableLength(sortedTable) do
-		if DPSMate_Statusframe:GetHeight() < (i*3) then return end
+	for i=1, 30 do
+		if DPSMate_Statusframe:GetHeight() < (i*13+18) or (not sortedTable[i]) then break end -- To prevent visual issues
 		local statusbar = getglobal("DPSMate_Statusframe_StatusBar"..i)
-		if (not statusbar) then break end
 		local name = getglobal("DPSMate_Statusframe_StatusBar"..i.."_Name")
 		local value = getglobal("DPSMate_Statusframe_StatusBar"..i.."_Value")
-		statusbar:SetValue(ceil(100*(sortedTable[i]/sortedTable[1])))
-		statusbar:SetStatusBarColor(DPSMate:GetClassColor(arr[a[sortedTable[i]]].class), 1)
+		
+		local r,g,b = DPSMate:GetClassColor(arr[a[sortedTable[i]]].class)
+		statusbar:SetStatusBarColor(r,g,b, 1)
 		name:SetText(i..". "..a[sortedTable[i]])
+		
 		value:SetText(sortedTable[i].." ("..string.format("%.1f", 100*sortedTable[i]/total)..")%")
+		statusbar:SetValue(ceil(100*(sortedTable[i]/sortedTable[1])))
+		
 		statusbar.user = a[sortedTable[i]]
 		statusbar:Show()
 	end

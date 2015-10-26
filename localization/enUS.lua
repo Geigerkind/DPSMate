@@ -2,7 +2,16 @@ DPSMate.localization.name = "DPSMate"
 DPSMate.localization.popup = "Do you want to reset DPSMate?"
 DPSMate.localization.accept = "Accept"
 DPSMate.localization.cancel = "Cancel"
+DPSMate.localization.report = "Report"
+DPSMate.localization.Slider = "Lines"
+DPSMate.localization.SliderTooltip = "Move this to set the amount of lines that will be reported."
+DPSMate.localization.EditboxTitle = "Whisper Target"
+DPSMate.localization.EditboxTooltip = "Enter the name you'd like to report to."
+DPSMate.localization.channel = "Channel"
+DPSMate.localization.channelTooltip = "Select the channel you'd like to submit your report."
+DPSMate.localization.close = "Close"
 
+-- Need to sort out some of them below
 DPSMate.localization.parser = {}
 DPSMate.localization.parser.youhit = "You hit "
 DPSMate.localization.parser.youcrit = "You crit "
