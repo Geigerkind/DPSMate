@@ -118,6 +118,13 @@ function DPSMate:GetMode()
 	return DPSMateUserCurrent
 end
 
+function DPSMate:GetModeName()
+	if DPSMateSettings["options"][2]["total"] then
+		return "Total"
+	end
+	return "Current fight"
+end
+
 function DPSMate:HideStatusBars()
 	for i=1, 30 do
 		getglobal("DPSMate_Statusframe_StatusBar"..i):Hide()

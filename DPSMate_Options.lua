@@ -424,7 +424,7 @@ end
 
 function DPSMate.Options:Report()
 	local channel = UIDropDownMenu_GetSelectedValue(DPSMate_Report_Channel)
-	local chn, index, sortedTable, total, a = nil, nil, DPSMate:GetSortedTable(DPSMateUser)
+	local chn, index, sortedTable, total, a = nil, nil, DPSMate:GetSortedTable(DPSMate:GetMode())
 	if (channel == "Whisper") then
 		chn = "WHISPER"; index = DPSMate_Report_Editbox:GetText();
 	elseif DPSMate:TContains({[1]="Raid",[2]="Party",[3]="Say",[4]="Officer",[5]="Guild"}, channel) then
@@ -432,7 +432,7 @@ function DPSMate.Options:Report()
 	else
 		chn = "CHANNEL"; index = GetChannelName(channel)
 	end
-	SendChatMessage("DPSMate - Report for Total", chn, nil, index)
+	SendChatMessage("DPSMate - "..DPSMate.localization.reportfor..DPSMate:GetModeName(), chn, nil, index)
 	for i=1, DPSMate_Report_Lines:GetValue() do
 		if (not sortedTable[i]) then break end
 		SendChatMessage(i..". "..a[sortedTable[i]].." ................... "..sortedTable[i].." ("..string.format("%.1f", 100*sortedTable[i]/total).."%)", chn, nil, index)
