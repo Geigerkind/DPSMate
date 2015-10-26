@@ -82,25 +82,45 @@ end
 
 function DPSMate:SetStatusBarValue()
 	local arr, cbt = DPSMate:GetMode()
-	local sortedTable, total, a = DPSMate:GetSortedTable(arr)
+	local user, val, perc = DPSMate:GetSettingValues(arr,cbt)
 	DPSMate:HideStatusBars()
-	if (not sortedTable) then return end
+	if (user == {}) then return end
 	for i=1, 30 do
-		if DPSMate_Statusframe:GetHeight() < (i*13+18) or (not sortedTable[i]) then break end -- To prevent visual issues
+		if DPSMate_Statusframe:GetHeight() < (i*13+18) or (not user[i]) then break end -- To prevent visual issues
 		local statusbar = getglobal("DPSMate_Statusframe_StatusBar"..i)
 		local name = getglobal("DPSMate_Statusframe_StatusBar"..i.."_Name")
 		local value = getglobal("DPSMate_Statusframe_StatusBar"..i.."_Value")
 		
-		local r,g,b = DPSMate:GetClassColor(arr[a[sortedTable[i]]].class)
+		local r,g,b = DPSMate:GetClassColor(arr[user[i]].class)
 		statusbar:SetStatusBarColor(r,g,b, 1)
-		name:SetText(i..". "..a[sortedTable[i]])
 		
-		value:SetText(sortedTable[i].." ("..ceil(sortedTable[i]/cbt).."DPS) ("..string.format("%.1f", 100*sortedTable[i]/total).."%)")
-		statusbar:SetValue(ceil(100*(sortedTable[i]/sortedTable[1])))
+		name:SetText(i..". "..user[i])
+		value:SetText(val[i])
+		statusbar:SetValue(perc[i])
 		
-		statusbar.user = a[sortedTable[i]]
+		statusbar.user = user[i]
 		statusbar:Show()
 	end
+end
+
+function DPSMate:GetSettingValues(arr, cbt)
+	local name, value, perc = {}, {}, {}
+	if (DPSMate.Options.CurMode == "dps") then
+		local sortedTable, total, a = DPSMate:GetSortedTable(arr)
+		for cat, val in pairs(sortedTable) do
+			table.insert(name, a[val])
+			table.insert(value, ceil(val/cbt).." ("..string.format("%.1f", 100*val/total).."%)")
+			table.insert(perc, ceil(100*(val/sortedTable[1])))
+		end
+	elseif (DPSMate.Options.CurMode == "damage") then
+		local sortedTable, total, a = DPSMate:GetSortedTable(arr)
+		for cat, val in pairs(sortedTable) do
+			table.insert(name, a[val])
+			table.insert(value, val.." ("..string.format("%.1f", 100*val/total).."%)")
+			table.insert(perc, ceil(100*(val/sortedTable[1])))
+		end
+	end
+	return name, value, perc
 end
 
 function DPSMate:GetClassColor(class)

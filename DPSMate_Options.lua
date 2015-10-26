@@ -1,4 +1,5 @@
 -- Global Variables
+DPSMate.Options.CurMode = "damage"
 
 -- Local Variables
 local LastPopUp = GetTime()
@@ -216,7 +217,6 @@ local Options = {
 		handler = DPSMate.Options,
 	},
 }
-local CurMode = "damage"
 local DetailsUser = ""
 local DetailsSelected = 1
 local DetailsArr, DetailsTotal
@@ -258,6 +258,8 @@ function DPSMate.Options:PopUpAccept()
 	DPSMate_PopUp:Hide()
 	DPSMateUser = {}
 	DPSMateUserCurrent = {}
+	DPSMateCombatTimeTotal = 1
+	DPSMateCombatTimeCurrent = 1
 	DPSMate:HideStatusBars()
 end
 
@@ -285,7 +287,7 @@ function DPSMate.Options:ToggleDrewDrop(i, obj)
 	DPSMateSettings["options"][i][obj] = true
 	if i == 1 then
 		DPSMate_Statusframe_Head_Font:SetText(Options[i]["args"][obj].name)
-		CurMode = obj
+		DPSMate.Options.CurMode = obj
 	elseif i == 2 then
 	elseif i == 3 then end
 	Dewdrop:Close()
