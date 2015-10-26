@@ -7,12 +7,11 @@ DPSMate.DB = {}
 DPSMate.Options = {}
 
 -- Local Variables
-local a = {}
 local classcolor = {
 	rogue = {r=1.0, g=0.96, b=0.41},
 	priest = {r=1,g=1,b=1},
 	druid = {r=1,g=0.49,b=0.04},
-	warrior = {r=0.58,g=0.51,b=0.33},
+	warrior = {r=0.78,g=0.61,b=0.43},
 	warlock = {r=0.58,g=0.51,b=0.79},
 	mage = {r=0.41,g=0.8,b=0.94},
 	hunter = {r=0.67,g=0.83,b=0.45},
@@ -34,8 +33,17 @@ function DPSMate:TableLength(t)
 	return count
 end
 
+function DPSMate:TContains(t, value)
+	for cat, val in pairs(t) do
+		if val == value then
+			return true
+		end
+	end
+	return false
+end
+
 function DPSMate:GetSortedTable(arr)
-	local b = {}
+	local b, a = {}, {}
 	local total = 0
 	for cat, val in pairs(arr) do
 		if (not val.isPet) then
@@ -60,7 +68,7 @@ function DPSMate:GetSortedTable(arr)
 			total = total + CV
 		end
 	end
-	return b, total
+	return b, total, a
 end
 
 function DPSMate:PlayerExist(arr, name)
@@ -74,7 +82,7 @@ end
 
 function DPSMate:SetStatusBarValue()
 	local arr = DPSMate:GetMode()
-	local sortedTable, total = DPSMate:GetSortedTable(arr)
+	local sortedTable, total, a = DPSMate:GetSortedTable(arr)
 	DPSMate:HideStatusBars()
 	if (not sortedTable) then return end
 	for i=1, 30 do
@@ -87,7 +95,7 @@ function DPSMate:SetStatusBarValue()
 		statusbar:SetStatusBarColor(r,g,b, 1)
 		name:SetText(i..". "..a[sortedTable[i]])
 		
-		value:SetText(sortedTable[i].." ("..string.format("%.1f", 100*sortedTable[i]/total)..")%")
+		value:SetText(sortedTable[i].." ("..string.format("%.1f", 100*sortedTable[i]/total).."%)")
 		statusbar:SetValue(ceil(100*(sortedTable[i]/sortedTable[1])))
 		
 		statusbar.user = a[sortedTable[i]]

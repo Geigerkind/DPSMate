@@ -395,3 +395,47 @@ function DPSMate.Options:UpdateDetails(obj)
 	DPSMate.Options:SelectDetailsButton(1)
 	DPSMate.Options:UpdatePie()
 end
+
+function DPSMate.Options:ChannelDropDown()
+	local channel, i = {[1]="Whisper",[2]="Raid",[3]="Party",[4]="Say",[5]="Officer",[6]="Guild"}, 1
+	
+	UIDropDownMenu_SetSelectedValue(DPSMate_Report_Channel, "Raid")
+    local function on_click()
+        UIDropDownMenu_SetSelectedValue(DPSMate_Report_Channel, this.value)
+    end
+	
+	-- Adding dynamic channel
+	while true do
+		local id, name = GetChannelName(i);
+		if (not name) then break end
+		table.insert(channel, name)
+		i=i+1
+	end
+	
+	-- Initializing channel
+	for cat, val in pairs(channel) do
+		UIDropDownMenu_AddButton{
+			text = val,
+			value = val,
+			func = on_click,
+		}
+	end
+end
+
+function DPSMate.Options:Report()
+	local channel = UIDropDownMenu_GetSelectedValue(DPSMate_Report_Channel)
+	local chn, index, sortedTable, total, a = nil, nil, DPSMate:GetSortedTable(DPSMateUser)
+	if (channel == "Whisper") then
+		chn = "WHISPER"; index = DPSMate_Report_Editbox:GetText();
+	elseif DPSMate:TContains({[1]="Raid",[2]="Party",[3]="Say",[4]="Officer",[5]="Guild"}, channel) then
+		chn = channel
+	else
+		chn = "CHANNEL"; index = GetChannelName(channel)
+	end
+	SendChatMessage("DPSMate - Report for Total", chn, nil, index)
+	for i=1, DPSMate_Report_Lines:GetValue() do
+		if (not sortedTable[i]) then break end
+		SendChatMessage(i..". "..a[sortedTable[i]].." ................... "..sortedTable[i].." ("..string.format("%.1f", 100*sortedTable[i]/total).."%)", chn, nil, index)
+	end
+	DPSMate_Report:Hide()
+end

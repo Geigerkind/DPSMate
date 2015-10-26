@@ -150,6 +150,10 @@
 							<Anchor point="RIGHT" relativeTo="$parent_Segments" relativePoint="LEFT" />
 						</Anchors>
 						<Scripts>
+							<OnClick>
+								UIDropDownMenu_Initialize(DPSMate_Report_Channel, DPSMate.Options.ChannelDropDown)
+								DPSMate_Report:Show()
+							</OnClick>
 						</Scripts>
 						<NormalTexture file="Interface\AddOns\DPSMate\images\UI-GuildButton-MOTD-Up"/>
 						<PushedTexture file="Interface\AddOns\DPSMate\images\UI-GuildButton-MOTD-Up"/>
