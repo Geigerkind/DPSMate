@@ -5,7 +5,7 @@
 ## Notes-deDE: [TO BE EDITED]
 ## Author: Shino <Synced> - Kronos
 ## SavedVariables: DPSMateSettings
-## SavedVariablesPerCharacter: DPSMateUser, DPSMateUserCurrent, DPSMateCombatTimeTotal, DPSMateCombatTimeCurrent
+## SavedVariablesPerCharacter: DPSMateUser, DPSMateUserCurrent, DPSMateCombatTimeTotal, DPSMateCombatTimeCurrent, DPSMateHistory
 ## Version: 0.1
 
 libs\AceLibrary\AceLibrary.lua

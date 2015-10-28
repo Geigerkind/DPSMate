@@ -323,6 +323,8 @@
 				this:RegisterEvent("PLAYER_REGEN_DISABLED")
 				this:RegisterEvent("PLAYER_REGEN_ENABLED")
 				
+				this:RegisterEvent("PLAYER_AURAS_CHANGED")
+				
 				DPSMate.Parser:OnLoad()
 			</OnLoad>
 			<OnEvent>

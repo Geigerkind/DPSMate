@@ -450,4 +450,11 @@
 		</Frames>
 	</Frame>
 	
+	<GameTooltip name="DPSMate_Tooltip" frameStrata="TOOLTIP" hidden="false" parent="UIParent" inherits="GameTooltipTemplate">
+		<Scripts>
+			<Onload>
+				this:SetOwner(WorldFrame, "ANCHOR_NONE")
+			</Onload>
+	   </Scripts>
+	</GameTooltip>
 </Ui>

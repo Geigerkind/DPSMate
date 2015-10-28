@@ -42,6 +42,32 @@ function DPSMate:TContains(t, value)
 	return false
 end
 
+function DPSMate:GetKeyByVal(t, value)
+	for cat, val in pairs(t) do
+		if val == value then
+			return cat
+		end
+	end
+end
+
+function DPSMate:GetKeyByValInTT(t, x, y)
+	for cat, val in pairs(t) do
+		if (type(val) == "table") then
+			if (x==val[1] and y==val[2]) then
+				return cat
+			end
+		end
+	end
+end
+
+function DPSMate:InvertTable(t)
+	local s={}
+	for cat, val in pairs(t) do
+		s[val]=cat
+	end
+	return s
+end
+
 function DPSMate:GetSortedTable(arr)
 	local b, a = {}, {}
 	local total = 0

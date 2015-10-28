@@ -221,7 +221,7 @@ local DetailsUser = ""
 local DetailsSelected = 1
 local DetailsArr, DetailsTotal
 local PieChart = true
-local g
+local g, g2
 
 -- Begin Functions
 
@@ -326,7 +326,7 @@ function DPSMate.Options:EvalTable(t)
 	if (arr[t].pet and arr[t].pet ~= "Unknown") then u={a=t, b=arr[t].pet} else u={a=t} end
 	for c, v in pairs(u) do
 		for cat, val in pairs(arr[v]) do
-			if (type(val) == "table") then
+			if (type(val) == "table" and cat~="dmgTime") then
 				if (arr[v].isPet) then pet="(Pet)"; else pet=""; end
 				local i = 1
 				while true do
@@ -389,13 +389,96 @@ end
 function DPSMate.Options:UpdateDetails(obj)
 	DetailsUser = obj.user
 	if (PieChart) then
-		g=graph:CreateGraphPieChart("PieChart", DPSMate_Details_Diagram, "CENTER", "CENTER", 0, 0, 200, 200)		
+		g=graph:CreateGraphPieChart("PieChart", DPSMate_Details_Diagram, "CENTER", "CENTER", 0, 0, 200, 200)
+		g2=graph:CreateGraphLine("LineGraph",DPSMate_Details_DiagramLine,"CENTER","CENTER",0,0,470,135)
 		PieChart = false
 	end
+	DPSMate_Details_Title:SetText("Combat details of "..obj.user)
 	DPSMate_Details:Show()
 	DPSMate.Options:ScrollFrame_Update()
 	DPSMate.Options:SelectDetailsButton(1)
 	DPSMate.Options:UpdatePie()
+	DPSMate.Options:UpdateLineGraph()
+end
+
+function DPSMate.Options:UpdateLineGraph()
+	local arr, cbt = DPSMate:GetMode()
+	local sumTable = DPSMate.Options:GetSummarizedTable()
+	local max = DPSMate.Options:GetMaxLineVal(sumTable)
+	
+	g2:ResetData()
+	g2:SetXAxis(0,cbt)
+	g2:SetYAxis(0,max+200)
+	g2:SetGridSpacing(cbt/18,max/7)
+	g2:SetGridColor({0.5,0.5,0.5,0.5})
+	g2:SetAxisDrawing(true,true)
+	g2:SetAxisColor({1.0,1.0,1.0,1.0})
+	g2:SetAutoScale(true)
+	g2:SetYLabels(true, false)
+	g2:SetXLabels(true)
+
+	local Data1={{0,0}}
+	for cat, val in pairs(DPSMate.Options:SortLineTable(sumTable)) do
+		table.insert(Data1, {val[1],val[2]})
+	end
+
+	g2:AddDataSeries(Data1,{1.0,0.0,0.0,0.8})
+end
+
+function DPSMate.Options:GetSummarizedTable()
+	local arr,_ = DPSMate:GetMode()
+	local newArr, lastCBT, x, y, lastCBTVal = {}, 0, 0, 0, {}
+	
+	for cat, val in pairs(arr[DetailsUser]["dmgTime"]) do
+		if (cat>=(lastCBT-0.05) and cat<=(lastCBT+0.05)) then
+			local key = DPSMate:GetKeyByValInTT(newArr, x, y)
+			y = newArr[key][2]+val
+			table.remove(newArr, key)
+			table.insert(newArr, {lastCBT,y})
+		else
+			x=tonumber(string.format("%.1f", cat))
+			y=val
+			table.insert(newArr, {x, y})
+			lastCBT=x
+			lastCBTVal={x,y}
+		end
+	end
+	
+	return newArr
+end
+
+function DPSMate.Options:SortLineTable(t)
+	local newArr, minVal = {}, 10000000
+	for cat, val in pairs(t) do
+		if val[1]<minVal then
+			table.insert(newArr, 1, val)
+			minVal=val[1]
+		else
+			local i=1
+			while true do
+				if (not newArr[i]) then 
+					table.insert(newArr, i, val)
+					break
+				end
+				if val[1]<newArr[i][1] then
+					table.insert(newArr, i, val)
+					break
+				end
+				i=i+1
+			end
+		end
+	end
+	return newArr
+end
+
+function DPSMate.Options:GetMaxLineVal(t)
+	local max = 0
+	for cat, val in pairs(t) do
+		if val[2]>max then
+			max=val[2]
+		end
+	end
+	return max
 end
 
 function DPSMate.Options:ChannelDropDown()

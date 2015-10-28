@@ -2,8 +2,8 @@
 DPSMate.DB.loaded = false
 
 -- Local Variables
-local lastCurReset = GetTime()
 local CombatState = false
+local cheatCombat = 0
 
 -- Begin Functions
 
@@ -35,6 +35,7 @@ function DPSMate.DB:OnEvent(event)
 				},
 			}
 		end
+		if DPSMateHistory == nil then DPSMateHistory = {} end
 		if DPSMateUser == nil then DPSMateUser = {} end
 		if DPSMateUserCurrent == nil then DPSMateUserCurrent = {} end
 		if DPSMateCombatTimeTotal == nil then DPSMateCombatTimeTotal = 1 end
@@ -47,14 +48,19 @@ function DPSMate.DB:OnEvent(event)
 		DPSMate.DB:CombatTime()
 		
 		DPSMate.DB.loaded = true
-	elseif event == "PLAYER_REGEN_DISABLED" and (lastCurReset+5 < GetTime()) then
-		DPSMateUserCurrent = {}
-		DPSMate:SetStatusBarValue()
-		lastCurReset = GetTime()
-		DPSMateCombatTimeCurrent = 1
+	elseif event == "PLAYER_REGEN_DISABLED" then
+		if (cheatCombat+10<GetTime()) then
+			table.insert(DPSMateHistory, 1, DPSMateUserCurrent)
+			table.remove(DPSMateHistory, 6)
+			DPSMateUserCurrent = {}
+			DPSMate:SetStatusBarValue()
+			DPSMateCombatTimeCurrent = 1
+		end
 		CombatState = true
 	elseif event == "PLAYER_REGEN_ENABLED" then
 		CombatState = false
+	elseif event == "PLAYER_AURAS_CHANGED" then
+		DPSMate.DB:hasVanishedFeignDeath()
 	end
 	-- Performance!!!
 	DPSMate.DB:AssignPet()
@@ -131,6 +137,7 @@ function DPSMate.DB:BuildUser(Dname, Dclass)
 			class = Dclass,
 			damage = 0,
 			damagetaken = 0,
+			dmgTime = {},
 		}
 	end
 	if (not DPSMateUserCurrent[Dname]) then
@@ -138,6 +145,7 @@ function DPSMate.DB:BuildUser(Dname, Dclass)
 			class = Dclass,
 			damage = 0,
 			damagetaken = 0,
+			dmgTime = {},
 		}
 	end
 end
@@ -233,6 +241,8 @@ function DPSMate.DB:BuildUserAbility(Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, D
 		if (Dhit == 1) then DPSMateUserCurrent[Duser.name][Dname].hitlow = Damount; DPSMateUserCurrent[Duser.name][Dname].hithigh = Damount end
 		if (Dcrit == 1) then DPSMateUserCurrent[Duser.name][Dname].critlow = Damount; DPSMateUserCurrent[Duser.name][Dname].crithigh = Damount end
 	end
+	DPSMateUser[Duser.name]["dmgTime"][DPSMateCombatTimeTotal] = Damount
+	DPSMateUserCurrent[Duser.name]["dmgTime"][DPSMateCombatTimeCurrent] = Damount
 	DPSMate:SetStatusBarValue()
 end
 
@@ -261,4 +271,19 @@ function DPSMate.DB:CombatTime()
 			DPSMateCombatTimeCurrent = DPSMateCombatTimeCurrent + arg1
 		end
 	end)
+end
+
+function DPSMate.DB:hasVanishedFeignDeath()
+	for i=0, 31 do
+		DPSMate_Tooltip:SetOwner(UIParent, "ANCHOR_NONE")
+		DPSMate_Tooltip:ClearLines()
+		DPSMate_Tooltip:SetPlayerBuff(GetPlayerBuff(i, "HELPFUL"))
+		local buff = DPSMate_TooltipTextLeft1:GetText()
+		if (not buff) then break end
+		if (strfind(buff, "Vanish") or strfind(buff, "Feign Death")) then
+			cheatCombat = GetTime()
+			return true
+		end
+		DPSMate_Tooltip:Hide()
+	end
 end

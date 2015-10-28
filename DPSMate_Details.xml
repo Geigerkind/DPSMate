@@ -56,7 +56,7 @@
 	</Button>
 	
 	<Frame name="DPSMate_Details" parent="UIParent" movable="true" hidden="true">
-		<Size x="500" y="250" />
+		<Size x="500" y="400" />
 		<Anchors>
 			<Anchor point="CENTER" />
 		</Anchors>
@@ -126,11 +126,31 @@
 				<PushedTexture file="Interface\Buttons\UI-Panel-MinimizeButton-Down"/>
 				<HighlightTexture file="Interface\Buttons\UI-Panel-MinimizeButton-Highlight" alphaMode="ADD"/>
 			</Button>
-			<Frame name="$parent_Diagram">
-				<Size x="245" y="220" />
+			<Frame name="$parent_DiagramLine">
+				<Size x="490" y="150" />
 				<Anchors>
 					<Anchor point="TOPLEFT">
 						<Offset x="5" y="-25" />
+					</Anchor>
+				</Anchors>
+				<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+					<BackgroundInsets>
+						<AbsInset left="3" right="3" top="3" bottom="3" />
+					</BackgroundInsets>
+					<TileSize>
+						<AbsValue val="9" />
+					</TileSize>
+					<EdgeSize>
+						<AbsValue val="9" />
+					</EdgeSize>
+					<Color r="0" g="0" b="0" a="0.5" />
+				</Backdrop>
+			</Frame>
+			<Frame name="$parent_Diagram">
+				<Size x="245" y="220" />
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parent_DiagramLine" relativePoint="BOTTOMLEFT">
+						<Offset x="0" y="0" />
 					</Anchor>
 				</Anchors>
 				<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">

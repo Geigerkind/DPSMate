@@ -65,7 +65,7 @@ function lib:CreateGraphRealtime(name,parent,relative,relativeTo,offsetX,offsetY
 	graph.SetXAxis=GraphFunctions.SetXAxis
 	graph.SetYMax=GraphFunctions.SetYMax
 	graph.AddTimeData=GraphFunctions.AddTimeData
-	graph.OnUpdate=GraphFunctions.OnUpdateGraphRealtime
+	--graph.OnUpdate=GraphFunctions.OnUpdateGraphRealtime
 	graph.CreateGridlines=GraphFunctions.CreateGridlines
 	graph.RefreshGraph=GraphFunctions.RefreshRealtimeGraph
 	graph.SetAxisDrawing=GraphFunctions.SetAxisDrawing
@@ -83,7 +83,7 @@ function lib:CreateGraphRealtime(name,parent,relative,relativeTo,offsetX,offsetY
 
 
 	--Set the update function
-	graph:SetScript("OnUpdate", graph.OnUpdate)
+	--graph:SetScript("OnUpdate", graph.OnUpdate)
 
 	--Initialize Data
 	graph.GraphType="REALTIME"
@@ -139,6 +139,7 @@ function lib:CreateGraphLine(name,parent,relative,relativeTo,offsetX,offsetY,Wid
 	graph.SetGridColor=GraphFunctions.SetGridColor	
 	graph.SetAutoScale=GraphFunctions.SetAutoScale
 	graph.SetYLabels=GraphFunctions.SetYLabels
+	graph.SetXLabels=GraphFunctions.SetXLabels
 	graph.OnUpdate=GraphFunctions.OnUpdateGraph
 
 	graph.LockXMin=GraphFunctions.LockXMin
@@ -152,6 +153,7 @@ function lib:CreateGraphLine(name,parent,relative,relativeTo,offsetX,offsetY,Wid
 	graph.HideLines=self.HideLines
 	graph.HideFontStrings=GraphFunctions.HideFontStrings
 	graph.FindFontString=GraphFunctions.FindFontString
+	graph.ShowFontStrings=GraphFunctions.ShowFontStrings
 
 	--Set the update function
 	graph:SetScript("OnUpdate", graph.OnUpdate)
@@ -205,7 +207,7 @@ function lib:CreateGraphScatterPlot(name,parent,relative,relativeTo,offsetX,offs
 	graph.ResetData=GraphFunctions.ResetData
 	graph.RefreshGraph=GraphFunctions.RefreshScatterPlot
 	graph.CreateGridlines=GraphFunctions.CreateGridlines
-	graph.OnUpdate=GraphFunctions.OnUpdateGraph
+	--graph.OnUpdate=GraphFunctions.OnUpdateGraph
 	
 	graph.LinearRegression=GraphFunctions.LinearRegression
 	graph.SetAxisDrawing=GraphFunctions.SetAxisDrawing
@@ -229,8 +231,8 @@ function lib:CreateGraphScatterPlot(name,parent,relative,relativeTo,offsetX,offs
 	graph.FindFontString=GraphFunctions.FindFontString
 
 	--Set the update function
-	graph:SetScript("OnUpdate", graph.OnUpdate)
-	graph.NeedsUpdate=false
+	--graph:SetScript("OnUpdate", graph.OnUpdate)
+	--graph.NeedsUpdate=false
 
 	--Initialize Data
 	graph.GraphType="SCATTER"
@@ -383,8 +385,6 @@ function GraphFunctions:SetLinearFit(fit)
 	self.NeedsUpdate=true
 end
 
-
-
 function GraphFunctions:HideTextures()
 	if not self.Textures then
 		self.Textures={}
@@ -412,6 +412,15 @@ function GraphFunctions:HideFontStrings()
 	end
 	for k, t in pairs(self.FontStrings) do
 		t:Hide()
+	end
+end
+
+function GraphFunctions:ShowFontStrings()
+	if not self.FontStrings then
+		self.FontStrings={}
+	end
+	for k, t in pairs(self.FontStrings) do
+		t:Show()
 	end
 end
 
@@ -850,6 +859,9 @@ function GraphFunctions:SetYLabels(Left,Right)
 	self.YLabelsRight=Right
 end
 
+function GraphFunctions:SetXLabels(bool)
+	self.XLabels=bool
+end
 
 function GraphFunctions:CreateGridlines()
 	local Width=self:GetWidth()
@@ -877,7 +889,7 @@ function GraphFunctions:CreateGridlines()
 						F:SetTextColor(1,1,1)
 						F:ClearAllPoints()
 						F:SetPoint("BOTTOMLEFT",T,"LEFT",2,2)
-						F:SetText(i*self.YGridInterval)
+						F:SetText(ceil(i*self.YGridInterval))
 						F:Show()
 					end
 
@@ -890,6 +902,7 @@ function GraphFunctions:CreateGridlines()
 						F:SetText(i*self.YGridInterval)
 						F:Show()
 					end
+					
 				end
 			end
 		end
@@ -904,9 +917,19 @@ function GraphFunctions:CreateGridlines()
 
 		for i=LowerXGridLine,UpperXGridLine do
 			if i~=0 or not self.XAxisDrawn then
-				local XPos
+				local XPos, T, F
 				XPos=Width*(i*self.XGridInterval-self.XMin)/(self.XMax-self.XMin)
-				self:DrawLine(self,XPos,0,XPos,Height,24,self.GridColor,"BACKGROUND")
+				T=self:DrawLine(self,XPos,0,XPos,Height,24,self.GridColor,"BACKGROUND")
+				
+				if self.XLabels then
+					F=self:FindFontString()
+					F:SetFontObject("GameFontHighlightSmall")
+					F:SetTextColor(1,1,1)
+					F:ClearAllPoints()
+					F:SetPoint("BOTTOM",T,"BOTTOM",0,0)
+					F:SetText(ceil(i*self.XGridInterval))
+					F:Show()
+				end
 			end
 		end
 	end
@@ -956,9 +979,9 @@ end
 --------------------------------------------------------------------------------
 
 function GraphFunctions:OnUpdateGraph()
-	if self.NeedsUpdate and self.RefreshGraph then
-		self:RefreshGraph()
-		self.NeedsUpdate=false
+	if this.NeedsUpdate and this.RefreshGraph then
+		this:RefreshGraph()
+		this.NeedsUpdate=false
 	end
 end
 
@@ -1086,8 +1109,8 @@ function GraphFunctions:RefreshLineGraph()
 	local k1, k2, series
 	self:HideLines(self)
 
-	if self.AutoScale and self.Data then
-		local MinX, MaxX, MinY, MaxY = math.huge, -math.huge, math.huge, -math.huge
+	if self.AutoScale and self.Data then -- math.huge not implemented
+		local MinX, MaxX, MinY, MaxY = 1, -3, 200, -900
 		for k1, series in pairs(self.Data) do
 			for k2, point in pairs(series.Points) do
 				MinX=math.min(point[1],MinX)
@@ -1142,6 +1165,8 @@ function GraphFunctions:RefreshLineGraph()
 			end
 		end
 	end
+	
+	self:ShowFontStrings()
 end
 
 --Scatter Plot Refresh
@@ -1378,7 +1403,7 @@ end
 function TestLineGraph()
 	local Graph=AceLibrary("Graph-1.0")
 	local g=Graph:CreateGraphLine("TestLineGraph",UIParent,"CENTER","CENTER",90,90,150,150)
-
+	
 	g:SetXAxis(-1,1)
 	g:SetYAxis(-1,1)
 	g:SetGridSpacing(0.25,0.25)
@@ -1425,7 +1450,7 @@ end
 
 function TestGraphLib()
 	--TestRealtimeGraph()
-	--TestLineGraph()
+	TestLineGraph()
 	--TestScatterPlot()
-	TestPieChart()
+	--TestPieChart()
 end
