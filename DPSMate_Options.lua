@@ -15,7 +15,7 @@ local Options = {
 				order = 10,
 				type = 'toggle',
 				name = "DPS",
-				desc = "desc",
+				desc = DPSMate.localization.desc.dps,
 				get = function() return DPSMateSettings["options"][1]["dps"] end,
 				set = function() DPSMate.Options:ToggleDrewDrop(1, "dps") end,
 			},
@@ -23,7 +23,7 @@ local Options = {
 				order = 20,
 				type = 'toggle',
 				name = "Damage",
-				desc = "desc",
+				desc = DPSMate.localization.desc.damage,
 				get = function() return DPSMateSettings["options"][1]["damage"] end,
 				set = function() DPSMate.Options:ToggleDrewDrop(1, "damage") end,
 			},
@@ -31,7 +31,7 @@ local Options = {
 				order = 30,
 				type = 'toggle',
 				name = "Damage taken",
-				desc = "desc",
+				desc = DPSMate.localization.desc.damagetaken,
 				get = function() return DPSMateSettings["options"][1]["damagetaken"] end,
 				set = function() DPSMate.Options:ToggleDrewDrop(1, "damagetaken") end,
 			},
@@ -39,7 +39,7 @@ local Options = {
 				order = 40,
 				type = 'toggle',
 				name = "Enemy damage done",
-				desc = "desc",
+				desc = DPSMate.localization.desc.enemydmgdone,
 				get = function() return DPSMateSettings["options"][1]["enemydamagedone"] end,
 				set = function() DPSMate.Options:ToggleDrewDrop(1, "enemydamagedone") end,
 			},
@@ -47,7 +47,7 @@ local Options = {
 				order = 50,
 				type = 'toggle',
 				name = "Enemy damage taken",
-				desc = "desc",
+				desc = DPSMate.localization.desc.enemydmgtaken,
 				get = function() return DPSMateSettings["options"][1]["enemydamagetaken"] end,
 				set = function() DPSMate.Options:ToggleDrewDrop(1, "enemydamagetaken") end,
 			},
@@ -55,7 +55,7 @@ local Options = {
 				order = 60,
 				type = 'toggle',
 				name = "Healing",
-				desc = "desc",
+				desc = DPSMate.localization.desc.healing,
 				get = function() return DPSMateSettings["options"][1]["healing"] end,
 				set = function() DPSMate.Options:ToggleDrewDrop(1, "healing") end,
 			},
@@ -63,7 +63,7 @@ local Options = {
 				order = 70,
 				type = 'toggle',
 				name = "Healing and Absorbs",
-				desc = "desc",
+				desc = DPSMate.localization.desc.healingandabsorbs,
 				get = function() return DPSMateSettings["options"][1]["healingandabsorbs"] end,
 				set = function() DPSMate.Options:ToggleDrewDrop(1, "healingandabsorbs") end,
 			},
@@ -71,7 +71,7 @@ local Options = {
 				order = 80,
 				type = 'toggle',
 				name = "Healing taken",
-				desc = "desc",
+				desc = DPSMate.localization.desc.healingtaken,
 				get = function() return DPSMateSettings["options"][1]["healingtaken"] end,
 				set = function() DPSMate.Options:ToggleDrewDrop(1, "healingtaken") end,
 			},
@@ -79,7 +79,7 @@ local Options = {
 				order = 90,
 				type = 'toggle',
 				name = "Overhealing",
-				desc = "desc",
+				desc = DPSMate.localization.desc.overhealing,
 				get = function() return DPSMateSettings["options"][1]["overhealing"] end,
 				set = function() DPSMate.Options:ToggleDrewDrop(1, "overhealing") end,
 			},
@@ -87,7 +87,7 @@ local Options = {
 				order = 100,
 				type = 'toggle',
 				name = "Interrupts",
-				desc = "desc",
+				desc = DPSMate.localization.desc.interrupts,
 				get = function() return DPSMateSettings["options"][1]["interrupts"] end,
 				set = function() DPSMate.Options:ToggleDrewDrop(1, "interrupts") end,
 			},
@@ -95,7 +95,7 @@ local Options = {
 				order = 110,
 				type = 'toggle',
 				name = "Deaths",
-				desc = "desc",
+				desc = DPSMate.localization.desc.deaths,
 				get = function() return DPSMateSettings["options"][1]["deaths"] end,
 				set = function() DPSMate.Options:ToggleDrewDrop(1, "deaths") end,
 			},
@@ -103,7 +103,7 @@ local Options = {
 				order = 120,
 				type = 'toggle',
 				name = "Dispels",
-				desc = "desc",
+				desc = DPSMate.localization.desc.dispels,
 				get = function() return DPSMateSettings["options"][1]["dispels"] end,
 				set = function() DPSMate.Options:ToggleDrewDrop(1, "dispels") end,
 			},
@@ -117,7 +117,7 @@ local Options = {
 				order = 10,
 				type = 'toggle',
 				name = "Total",
-				desc = "desc",
+				desc = DPSMate.localization.desc.total,
 				get = function() return DPSMateSettings["options"][2]["total"] end,
 				set = function() DPSMate.Options:ToggleDrewDrop(2, "total") end,
 			},
@@ -125,7 +125,7 @@ local Options = {
 				order = 20,
 				type = 'toggle',
 				name = "Current fight",
-				desc = "desc",
+				desc = DPSMate.localization.desc.current,
 				get = function() return DPSMateSettings["options"][2]["currentfight"] end,
 				set = function() DPSMate.Options:ToggleDrewDrop(2, "currentfight") end,
 			},
@@ -139,14 +139,14 @@ local Options = {
 				order = 10,
 				type = 'execute',
 				name = "Report",
-				desc = "Report desc",
+				desc = DPSMate.localization.desc.report,
 				func = "PopUpAccept",
 			},
 			reset = {
 				order = 11,
 				type = 'execute',
 				name = "Reset",
-				desc = "Reset desc",
+				desc = DPSMate.localization.desc.reset,
 				func = "PopUpAccept",
 			},
 			blank1 = {
@@ -157,14 +157,14 @@ local Options = {
 				order = 25,
 				type = 'execute',
 				name = "Start new segment",
-				desc = "Start new segment desc",
-				func = "PopUpAccept",
+				desc = DPSMate.localization.desc.newsegment,
+				func = function() DPSMate.Options:NewSegment(); Dewdrop:Close() end,
 			},
 			deletesegment = {
 				order = 30,
 				type = 'group',
-				name = "Delete segment",
-				desc = "Delete segment desc",
+				name = "Remove segment",
+				desc = DPSMate.localization.desc.removesegment,
 				args = {
 					sub1 = {
 						type = "execute",
@@ -188,7 +188,7 @@ local Options = {
 				order = 40,
 				type = 'toggle',
 				name = "Lock window",
-				desc = "lock desc",
+				desc = DPSMate.localization.desc.lock,
 				get = function() return DPSMateSettings["options"][3]["lock"] end,
 				set = function() DPSMate.Options:ToggleDrewDrop(3, "lock") end,
 			},
@@ -196,21 +196,21 @@ local Options = {
 				order = 50,
 				type = 'execute',
 				name = "Hide window",
-				desc = "Hide window desc",
+				desc = DPSMate.localization.desc.hide,
 				func = "PopUpAccept",
 			},
 			configure = {
 				order = 80,
 				type = 'execute',
 				name = "Configure",
-				desc = "Configure desc",
+				desc = DPSMate.localization.desc.config,
 				func = "PopUpAccept",
 			},
 			close = {
 				order = 90,
 				type = 'execute',
 				name = "Close",
-				desc = "Close desc",
+				desc = DPSMate.localization.desc.close,
 				func = "PopUpAccept",
 			},
 		},
@@ -232,7 +232,9 @@ function DPSMate.Options:OnEvent(event)
 			DPSMate_PopUp:Show()
 		end
 	elseif event == "PLAYER_ENTERING_WORLD" then
-		DPSMate_PopUp:Show()
+		if (DPSMateUser ~= {} and DPSMateUserCurrent ~= {}) then
+			DPSMate_PopUp:Show()
+		end
 	end
 end
 
@@ -258,8 +260,12 @@ function DPSMate.Options:PopUpAccept()
 	DPSMate_PopUp:Hide()
 	DPSMateUser = {}
 	DPSMateUserCurrent = {}
-	DPSMateCombatTimeTotal = 1
-	DPSMateCombatTimeCurrent = 1
+	DPSMateHistory = {}
+	DPSMateCombatTime = {
+		total = 1,
+		current = 1,
+		segments = {},
+	}
 	DPSMate:HideStatusBars()
 end
 
@@ -409,7 +415,7 @@ function DPSMate.Options:UpdateLineGraph()
 	g2:ResetData()
 	g2:SetXAxis(0,cbt)
 	g2:SetYAxis(0,max+200)
-	g2:SetGridSpacing(cbt/18,max/7)
+	g2:SetGridSpacing(cbt/10,max/7)
 	g2:SetGridColor({0.5,0.5,0.5,0.5})
 	g2:SetAxisDrawing(true,true)
 	g2:SetAxisColor({1.0,1.0,1.0,1.0})
@@ -524,4 +530,68 @@ function DPSMate.Options:Report()
 		SendChatMessage(i..". "..a[sortedTable[i]].." ................... "..sortedTable[i].." ("..string.format("%.1f", 100*sortedTable[i]/total).."%)", chn, nil, index)
 	end
 	DPSMate_Report:Hide()
+end
+
+function DPSMate.Options:NewSegment()
+	if DPSMateUserCurrent ~= {} then
+		table.insert(DPSMateHistory, 1, DPSMateUserCurrent)
+		table.insert(DPSMateCombatTime["segments"], 1, DPSMateCombatTime["current"])
+		if DPSMate:TableLength(DPSMateHistory)>5 then
+			table.remove(DPSMateHistory, 6)
+		end
+		if DPSMate:TableLength(DPSMateCombatTime["segments"])>5 then
+			table.remove(DPSMateCombatTime["segments"], 6)
+		end
+		DPSMateUserCurrent = {}
+		DPSMateCombatTime["current"] = 1
+		DPSMate:SetStatusBarValue()
+	end
+	DPSMate.Options:InitializeSegments()
+end
+
+function DPSMate.Options:InitializeSegments()
+	local i=1
+	for cat, val in pairs(DPSMateHistory) do
+		Options[2]["args"]["segment"..i] = {
+			order = 20+i*10,
+			type = 'toggle',
+			name = "Segment "..i,
+			desc = "Fight deatails for segment "..i,
+			get = "DropDownGetSegment"..i,
+			set = "DropDownSetSegment"..i,
+		}
+		i=i+1
+	end
+end
+
+function DPSMate.Options:DropDownGetSegment1()
+	return DPSMateSettings["options"][2]["segment1"]
+end
+function DPSMate.Options:DropDownGetSegment2()
+	return DPSMateSettings["options"][2]["segment2"]
+end
+function DPSMate.Options:DropDownGetSegment3()
+	return DPSMateSettings["options"][2]["segment3"]
+end
+function DPSMate.Options:DropDownGetSegment4()
+	return DPSMateSettings["options"][2]["segment4"]
+end
+function DPSMate.Options:DropDownGetSegment5()
+	return DPSMateSettings["options"][2]["segment5"]
+end
+
+function DPSMate.Options:DropDownSetSegment1()
+	DPSMate.Options:ToggleDrewDrop(2, "segment1")
+end
+function DPSMate.Options:DropDownSetSegment2()
+	DPSMate.Options:ToggleDrewDrop(2, "segment2")
+end
+function DPSMate.Options:DropDownSetSegment3()
+	DPSMate.Options:ToggleDrewDrop(2, "segment3")
+end
+function DPSMate.Options:DropDownSetSegment4()
+	DPSMate.Options:ToggleDrewDrop(2, "segment4")
+end
+function DPSMate.Options:DropDownSetSegment5()
+	DPSMate.Options:ToggleDrewDrop(2, "segment5")
 end

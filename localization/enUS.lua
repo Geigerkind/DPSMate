@@ -11,6 +11,8 @@ DPSMate.localization.EditboxTooltip = "Enter the name you'd like to report to."
 DPSMate.localization.channel = "Channel"
 DPSMate.localization.channelTooltip = "Select the channel you'd like to submit your report."
 DPSMate.localization.close = "Close"
+DPSMate.localization.vanish = "Vanish"
+DPSMate.localization.feigndeath = "Feign Death"
 
 -- Need to sort out some of them below
 DPSMate.localization.parser = {}
@@ -42,3 +44,27 @@ DPSMate.localization.parser.from = " from "
 
 DPSMate.localization.details = {}
 DPSMate.localization.details.close = "Close details"
+
+DPSMate.localization.desc = {}
+DPSMate.localization.desc.dps = "Show dps."
+DPSMate.localization.desc.damage = "Show damage done."
+DPSMate.localization.desc.damagetaken = "Show damage taken."
+DPSMate.localization.desc.enemydmgdone = "Show the damage done by enemies."
+DPSMate.localization.desc.enemydmgtaken = "Show the damage that enemies took."
+DPSMate.localization.desc.healing = "Show efficient healing."
+DPSMate.localization.desc.healingandabsorbs = "Show efficient healing with absorbs."
+DPSMate.localization.desc.healingtaken = "Show healing taken."
+DPSMate.localization.desc.overhealing = "Show overhealing done."
+DPSMate.localization.desc.interrupts = "Show interrupts done."
+DPSMate.localization.desc.deaths = "Show deaths."
+DPSMate.localization.desc.dispels = "Show dispels done."
+DPSMate.localization.desc.total = "Set to total mode."
+DPSMate.localization.desc.current = "Set to current mode."
+DPSMate.localization.desc.report = "Report this segment."
+DPSMate.localization.desc.reset = "Reset DPSMate."
+DPSMate.localization.desc.newsegment = "Start a new segment."
+DPSMate.localization.desc.removesegment = "Remove an segment."
+DPSMate.localization.desc.lock = "Lock the DPSMate frame."
+DPSMate.localization.desc.hide = "Hide the DPSMate frame."
+DPSMate.localization.desc.config = "Open the configuration frame."
+DPSMate.localization.desc.close = "Close DPSMate."

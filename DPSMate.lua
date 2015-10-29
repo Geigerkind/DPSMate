@@ -159,14 +159,34 @@ end
 
 function DPSMate:GetMode()
 	if DPSMateSettings["options"][2]["total"] then
-		return DPSMateUser, DPSMateCombatTimeTotal
+		return DPSMateUser, DPSMateCombatTime["total"]
+	elseif DPSMateSettings["options"][2]["segment1"] then
+		return DPSMateHistory[1], DPSMateCombatTime["segments"][1]
+	elseif DPSMateSettings["options"][2]["segment2"] then
+		return DPSMateHistory[2], DPSMateCombatTime["segments"][2]
+	elseif DPSMateSettings["options"][2]["segment3"] then
+		return DPSMateHistory[3], DPSMateCombatTime["segments"][3]
+	elseif DPSMateSettings["options"][2]["segment4"] then
+		return DPSMateHistory[4], DPSMateCombatTime["segments"][4]
+	elseif DPSMateSettings["options"][2]["segment5"] then
+		return DPSMateHistory[5], DPSMateCombatTime["segments"][5]
 	end
-	return DPSMateUserCurrent,  DPSMateCombatTimeCurrent
+	return DPSMateUserCurrent, DPSMateCombatTime["current"]
 end
 
 function DPSMate:GetModeName()
 	if DPSMateSettings["options"][2]["total"] then
 		return "Total"
+	elseif DPSMateSettings["options"][2]["segment1"] then
+		return "Segment 1"
+	elseif DPSMateSettings["options"][2]["segment2"] then
+		return "Segment 2"
+	elseif DPSMateSettings["options"][2]["segment3"] then
+		return "Segment 3"
+	elseif DPSMateSettings["options"][2]["segment4"] then
+		return "Segment 4"
+	elseif DPSMateSettings["options"][2]["segment5"] then
+		return "Segment 5"
 	end
 	return "Current fight"
 end
