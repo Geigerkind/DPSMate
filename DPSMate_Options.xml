@@ -356,7 +356,7 @@
 	----------------------------------------------------------------------------------
 	
 	<Frame name="DPSMate_ConfigMenu" movable="true" hidden="false">
-		<Size x="550" y="400" />
+		<Size x="450" y="300" />
 		<Anchors>
 			<Anchor point="CENTER" />
 		</Anchors>
@@ -366,13 +366,31 @@
 			<EdgeSize val="12" />
 			<Color r="0.157" g="0.08" b="0.06" a="1" />
         </Backdrop>
+		<Layers>
+			<Layer level="ARTWORK">
+				<FontString name="$parent_Title" inherits="GameFontNormalLarge" justifyH="LEFT" justifyV="CENTER" text="DPSMate">
+					<Size x="450" y="40" />
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset x="10" y="0" />
+						</Anchor>
+					</Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+		<Scripts>
+			<OnMouseDown>
+				this:StartMoving()
+			</OnMouseDown>
+			<OnMouseUp>
+				this:StopMovingOrSizing()
+			</OnMouseUp>
+		</Scripts>
 		<Frames>
 			<Frame name="$parent_Menu">
-				<Size x="128" y="350" />
+				<Size x="128" y="250" />
 				<Anchors>
-					<Anchor point="TOPLEFT">
-						<Offset x="10" y="-20" />
-					</Anchor>
+					<Anchor point="TOPLEFT" relativeTo="$parent_Title" relativePoint="BOTTOMLEFT" />
 				</Anchors>
 				<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
 					<BackgroundInsets left="4" right="4" top="4" bottom="4" />
@@ -479,11 +497,16 @@
 				</Frames>
 			</Frame>
 			<ScrollFrame name="$parent_ScrollFrame">
-				<Size x="300" y="400" />
+				<Size x="300" y="250" />
 				<Anchors>
-					<Anchor point="TOPRIGHT" />
+					<Anchor point="LEFT" relativeTo="$parent_Menu" relativePoint="RIGHT" />
 				</Anchors>
-				<HitRectInsets left="0" right="0" top="0" bottom="0"/>
+				<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+					<BackgroundInsets left="4" right="4" top="4" bottom="4" />
+					<TileSize val="12" />
+					<EdgeSize val="12" />
+					<Color r="0.157" g="0.08" b="0.06" a="0.5" />
+				</Backdrop>
 				<Scripts>
 					<OnLoad>
 						this:SetVerticalScroll(0)
@@ -496,17 +519,6 @@
 				<ScrollChild>
 					<Frame>
 					<Size x="300" y="800" />
-					<Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background" edgeFile="Interface\DialogFrame\UI-DialogBox-Border" tile="true">
-						<BackgroundInsets>
-							<AbsInset left="4" right="4" top="4" bottom="4" />
-						</BackgroundInsets>
-						<TileSize>
-							<AbsValue val="12" />
-						</TileSize>
-						<EdgeSize>
-							<AbsValue val="12" />
-						</EdgeSize>
-					</Backdrop>
 					</Frame>
 				</ScrollChild>
 			</ScrollFrame>
