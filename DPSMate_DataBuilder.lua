@@ -115,7 +115,9 @@ function DPSMate.DB:AssignClass()
 			if DPSMateUser[UnitName("party"..i)] then
 				if (not DPSMateUser[UnitName("party"..i)].class) then
 					_,classEng,_ = UnitClass("party"..i)
-					DPSMateUser[UnitName("party"..i)].class = strlower(classEng)
+					if (classEng) then
+						DPSMateUser[UnitName("party"..i)].class = strlower(classEng)
+					end
 				end
 			end
 		end
@@ -124,13 +126,16 @@ function DPSMate.DB:AssignClass()
 			if DPSMateUser[UnitName("raid"..i)] then
 				if (not DPSMateUser[UnitName("raid"..i)].class) then
 					_,classEng,_ = UnitClass("raid"..i)
-					DPSMateUser[UnitName("raid"..i)].class = strlower(classEng)
+					if (classEng) then
+						DPSMateUser[UnitName("raid"..i)].class = strlower(classEng)
+					end
 				end
 			end
 		end
 	end
 end
 
+-- Duplicated at options?
 function DPSMate.DB:PlayerInParty()
 	if GetNumPartyMembers() > 0 and (not UnitInRaid("player")) then
 		return true

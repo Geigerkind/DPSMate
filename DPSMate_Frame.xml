@@ -52,6 +52,12 @@
 			<OnLoad>
 				this:SetClampedToScreen(true)
 			</OnLoad>
+			<OnSizeChanged>
+				if DPSMate_Statusframe_ScrollFrame then
+					DPSMate_Statusframe_ScrollFrame_Child:SetWidth(2061.2*arg1)
+					DPSMate_Statusframe_ScrollFrame:SetHeight(2061.2*arg2-16)
+				end
+			</OnSizeChanged>
 		</Scripts>
 		<Layers>
 			<Layer leve="BACKGROUND">
@@ -65,6 +71,24 @@
 			</Layer>
 		</Layers>
 		<Frames>
+			<Button name="$parent_Resize" frameStrata="HIGH">
+				<Size x="14" y="14" />
+				<Anchors>
+					<Anchor point="BOTTOMRIGHT" relativeTo="$parent" relativePoint="BOTTOMRIGHT" />
+				</Anchors>
+				<Scripts>
+					<OnMouseDown>
+						DPSMate_Statusframe:StartSizing()
+					</OnMouseDown>
+					<OnMouseUp>
+						DPSMate_Statusframe:StopMovingOrSizing()
+						DPSMate:SetStatusBarValue()
+					</OnMouseUp>
+				</Scripts>
+				<NormalTexture file="Interface\AddOns\DPSMate\images\UI-ChatIM-SizeGrabber-Up"/>
+				<PushedTexture file="Interface\AddOns\DPSMate\images\UI-ChatIM-SizeGrabber-Down"/>
+				<HighlightTexture file="Interface\AddOns\DPSMate\images\UI-ChatIM-SizeGrabber-Highlight" alphaMode="ADD"/>
+			</Button>
 			<Frame name="$parent_Head">
 				<Size y="16" />
 				<Anchors>
@@ -159,294 +183,301 @@
 					</Button>
 				</Frames>
 			</Frame>
-			<StatusBar name="$parent_StatusBar1" inherits="DPSMate_StatusBar">
+			<ScrollFrame name="$parent_ScrollFrame">
+				<Size y="84" />
 				<Anchors>
 					<Anchor point="TOPLEFT" relativeTo="$parent_Head" relativePoint="BOTTOMLEFT">
-						<Offset>
-							<AbsDimension x="0" y="-1" />
-						</Offset>
+						<Offset x="0.5" y="-1" />
 					</Anchor>
-				</Anchors>
-			</StatusBar>
-			<StatusBar name="$parent_StatusBar2" inherits="DPSMate_StatusBar">
-				<Anchors>
-					<Anchor point="TOPLEFT" relativeTo="$parent_StatusBar1" relativePoint="BOTTOMLEFT">
-						<Offset>
-							<AbsDimension x="0" y="-1" />
-						</Offset>
-					</Anchor>
-				</Anchors>
-			</StatusBar>
-			<StatusBar name="$parent_StatusBar3" inherits="DPSMate_StatusBar">
-				<Anchors>
-					<Anchor point="TOPLEFT" relativeTo="$parent_StatusBar2" relativePoint="BOTTOMLEFT">
-						<Offset>
-							<AbsDimension x="0" y="-1" />
-						</Offset>
-					</Anchor>
-				</Anchors>
-			</StatusBar>
-			<StatusBar name="$parent_StatusBar4" inherits="DPSMate_StatusBar">
-				<Anchors>
-					<Anchor point="TOPLEFT" relativeTo="$parent_StatusBar3" relativePoint="BOTTOMLEFT">
-						<Offset>
-							<AbsDimension x="0" y="-1" />
-						</Offset>
-					</Anchor>
-				</Anchors>
-			</StatusBar>
-			<StatusBar name="$parent_StatusBar5" inherits="DPSMate_StatusBar">
-				<Anchors>
-					<Anchor point="TOPLEFT" relativeTo="$parent_StatusBar4" relativePoint="BOTTOMLEFT">
-						<Offset>
-							<AbsDimension x="0" y="-1" />
-						</Offset>
-					</Anchor>
-				</Anchors>
-			</StatusBar>
-			<StatusBar name="$parent_StatusBar6" inherits="DPSMate_StatusBar">
-				<Anchors>
-					<Anchor point="TOPLEFT" relativeTo="$parent_StatusBar5" relativePoint="BOTTOMLEFT">
-						<Offset>
-							<AbsDimension x="0" y="-1" />
-						</Offset>
-					</Anchor>
-				</Anchors>
-			</StatusBar>
-			<StatusBar name="$parent_StatusBar7" inherits="DPSMate_StatusBar">
-				<Anchors>
-					<Anchor point="TOPLEFT" relativeTo="$parent_StatusBar6" relativePoint="BOTTOMLEFT">
-						<Offset>
-							<AbsDimension x="0" y="-1" />
-						</Offset>
-					</Anchor>
-				</Anchors>
-			</StatusBar>
-			<StatusBar name="$parent_StatusBar8" inherits="DPSMate_StatusBar">
-				<Anchors>
-					<Anchor point="TOPLEFT" relativeTo="$parent_StatusBar7" relativePoint="BOTTOMLEFT">
-						<Offset>
-							<AbsDimension x="0" y="-1" />
-						</Offset>
-					</Anchor>
-				</Anchors>
-			</StatusBar>
-			<StatusBar name="$parent_StatusBar9" inherits="DPSMate_StatusBar">
-				<Anchors>
-					<Anchor point="TOPLEFT" relativeTo="$parent_StatusBar8" relativePoint="BOTTOMLEFT">
-						<Offset>
-							<AbsDimension x="0" y="-1" />
-						</Offset>
-					</Anchor>
-				</Anchors>
-			</StatusBar>
-			<StatusBar name="$parent_StatusBar10" inherits="DPSMate_StatusBar">
-				<Anchors>
-					<Anchor point="TOPLEFT" relativeTo="$parent_StatusBar9" relativePoint="BOTTOMLEFT">
-						<Offset>
-							<AbsDimension x="0" y="-1" />
-						</Offset>
-					</Anchor>
-				</Anchors>
-			</StatusBar>
-			<StatusBar name="$parent_StatusBar11" inherits="DPSMate_StatusBar">
-				<Anchors>
-					<Anchor point="TOPLEFT" relativeTo="$parent_StatusBar10" relativePoint="BOTTOMLEFT">
-						<Offset>
-							<AbsDimension x="0" y="-1" />
-						</Offset>
-					</Anchor>
-				</Anchors>
-			</StatusBar>
-			<StatusBar name="$parent_StatusBar12" inherits="DPSMate_StatusBar">
-				<Anchors>
-					<Anchor point="TOPLEFT" relativeTo="$parent_StatusBar11" relativePoint="BOTTOMLEFT">
-						<Offset>
-							<AbsDimension x="0" y="-1" />
-						</Offset>
-					</Anchor>
-				</Anchors>
-			</StatusBar>
-			<StatusBar name="$parent_StatusBar13" inherits="DPSMate_StatusBar">
-				<Anchors>
-					<Anchor point="TOPLEFT" relativeTo="$parent_StatusBar12" relativePoint="BOTTOMLEFT">
-						<Offset>
-							<AbsDimension x="0" y="-1" />
-						</Offset>
-					</Anchor>
-				</Anchors>
-			</StatusBar>
-			<StatusBar name="$parent_StatusBar14" inherits="DPSMate_StatusBar">
-				<Anchors>
-					<Anchor point="TOPLEFT" relativeTo="$parent_StatusBar13" relativePoint="BOTTOMLEFT">
-						<Offset>
-							<AbsDimension x="0" y="-1" />
-						</Offset>
-					</Anchor>
-				</Anchors>
-			</StatusBar>
-			<StatusBar name="$parent_StatusBar15" inherits="DPSMate_StatusBar">
-				<Anchors>
-					<Anchor point="TOPLEFT" relativeTo="$parent_StatusBar14" relativePoint="BOTTOMLEFT">
-						<Offset>
-							<AbsDimension x="0" y="-1" />
-						</Offset>
-					</Anchor>
-				</Anchors>
-			</StatusBar>
-			<StatusBar name="$parent_StatusBar16" inherits="DPSMate_StatusBar">
-				<Anchors>
-					<Anchor point="TOPLEFT" relativeTo="$parent_StatusBar15" relativePoint="BOTTOMLEFT">
-						<Offset>
-							<AbsDimension x="0" y="-1" />
-						</Offset>
-					</Anchor>
-				</Anchors>
-			</StatusBar>
-			<StatusBar name="$parent_StatusBar17" inherits="DPSMate_StatusBar">
-				<Anchors>
-					<Anchor point="TOPLEFT" relativeTo="$parent_StatusBar16" relativePoint="BOTTOMLEFT">
-						<Offset>
-							<AbsDimension x="0" y="-1" />
-						</Offset>
-					</Anchor>
-				</Anchors>
-			</StatusBar>
-			<StatusBar name="$parent_StatusBar18" inherits="DPSMate_StatusBar">
-				<Anchors>
-					<Anchor point="TOPLEFT" relativeTo="$parent_StatusBar17" relativePoint="BOTTOMLEFT">
-						<Offset>
-							<AbsDimension x="0" y="-1" />
-						</Offset>
-					</Anchor>
-				</Anchors>
-			</StatusBar>
-			<StatusBar name="$parent_StatusBar19" inherits="DPSMate_StatusBar">
-				<Anchors>
-					<Anchor point="TOPLEFT" relativeTo="$parent_StatusBar18" relativePoint="BOTTOMLEFT">
-						<Offset>
-							<AbsDimension x="0" y="-1" />
-						</Offset>
-					</Anchor>
-				</Anchors>
-			</StatusBar>
-			<StatusBar name="$parent_StatusBar20" inherits="DPSMate_StatusBar">
-				<Anchors>
-					<Anchor point="TOPLEFT" relativeTo="$parent_StatusBar19" relativePoint="BOTTOMLEFT">
-						<Offset>
-							<AbsDimension x="0" y="-1" />
-						</Offset>
-					</Anchor>
-				</Anchors>
-			</StatusBar>
-			<StatusBar name="$parent_StatusBar21" inherits="DPSMate_StatusBar">
-				<Anchors>
-					<Anchor point="TOPLEFT" relativeTo="$parent_StatusBar20" relativePoint="BOTTOMLEFT">
-						<Offset>
-							<AbsDimension x="0" y="-1" />
-						</Offset>
-					</Anchor>
-				</Anchors>
-			</StatusBar>
-			<StatusBar name="$parent_StatusBar22" inherits="DPSMate_StatusBar">
-				<Anchors>
-					<Anchor point="TOPLEFT" relativeTo="$parent_StatusBar21" relativePoint="BOTTOMLEFT">
-						<Offset>
-							<AbsDimension x="0" y="-1" />
-						</Offset>
-					</Anchor>
-				</Anchors>
-			</StatusBar>
-			<StatusBar name="$parent_StatusBar23" inherits="DPSMate_StatusBar">
-				<Anchors>
-					<Anchor point="TOPLEFT" relativeTo="$parent_StatusBar22" relativePoint="BOTTOMLEFT">
-						<Offset>
-							<AbsDimension x="0" y="-1" />
-						</Offset>
-					</Anchor>
-				</Anchors>
-			</StatusBar>
-			<StatusBar name="$parent_StatusBar24" inherits="DPSMate_StatusBar">
-				<Anchors>
-					<Anchor point="TOPLEFT" relativeTo="$parent_StatusBar23" relativePoint="BOTTOMLEFT">
-						<Offset>
-							<AbsDimension x="0" y="-1" />
-						</Offset>
-					</Anchor>
-				</Anchors>
-			</StatusBar>
-			<StatusBar name="$parent_StatusBar25" inherits="DPSMate_StatusBar">
-				<Anchors>
-					<Anchor point="TOPLEFT" relativeTo="$parent_StatusBar24" relativePoint="BOTTOMLEFT">
-						<Offset>
-							<AbsDimension x="0" y="-1" />
-						</Offset>
-					</Anchor>
-				</Anchors>
-			</StatusBar>
-			<StatusBar name="$parent_StatusBar26" inherits="DPSMate_StatusBar">
-				<Anchors>
-					<Anchor point="TOPLEFT" relativeTo="$parent_StatusBar25" relativePoint="BOTTOMLEFT">
-						<Offset>
-							<AbsDimension x="0" y="-1" />
-						</Offset>
-					</Anchor>
-				</Anchors>
-			</StatusBar>
-			<StatusBar name="$parent_StatusBar27" inherits="DPSMate_StatusBar">
-				<Anchors>
-					<Anchor point="TOPLEFT" relativeTo="$parent_StatusBar26" relativePoint="BOTTOMLEFT">
-						<Offset>
-							<AbsDimension x="0" y="-1" />
-						</Offset>
-					</Anchor>
-				</Anchors>
-			</StatusBar>
-			<StatusBar name="$parent_StatusBar28" inherits="DPSMate_StatusBar">
-				<Anchors>
-					<Anchor point="TOPLEFT" relativeTo="$parent_StatusBar27" relativePoint="BOTTOMLEFT">
-						<Offset>
-							<AbsDimension x="0" y="-1" />
-						</Offset>
-					</Anchor>
-				</Anchors>
-			</StatusBar>
-			<StatusBar name="$parent_StatusBar29" inherits="DPSMate_StatusBar">
-				<Anchors>
-					<Anchor point="TOPLEFT" relativeTo="$parent_StatusBar28" relativePoint="BOTTOMLEFT">
-						<Offset>
-							<AbsDimension x="0" y="-1" />
-						</Offset>
-					</Anchor>
-				</Anchors>
-			</StatusBar>
-			<StatusBar name="$parent_StatusBar30" inherits="DPSMate_StatusBar">
-				<Anchors>
-					<Anchor point="TOPLEFT" relativeTo="$parent_StatusBar29" relativePoint="BOTTOMLEFT">
-						<Offset>
-							<AbsDimension x="0" y="-1" />
-						</Offset>
-					</Anchor>
-				</Anchors>
-			</StatusBar>
-			<Button name="$parent_Resize">
-				<Size x="14" y="14" />
-				<Anchors>
-					<Anchor point="BOTTOMRIGHT" relativeTo="$parent" relativePoint="BOTTOMRIGHT" />
+					<Anchor point="TOPRIGHT" relativeTo="$parent_Head" relativePoint="BOTTOMRIGHT" />
 				</Anchors>
 				<Scripts>
-					<OnMouseDown>
-						DPSMate_Statusframe:StartSizing()
-					</OnMouseDown>
-					<OnMouseUp>
-						DPSMate_Statusframe:StopMovingOrSizing()
-						DPSMate:SetStatusBarValue()
-					</OnMouseUp>
+					<OnLoad>
+						this:SetVerticalScroll(0)
+					</OnLoad>
+					<OnMouseWheel>
+						DPSMate.Options:OnVerticalScroll(this, arg1)
+					</OnMouseWheel>
 				</Scripts>
-				<NormalTexture file="Interface\AddOns\DPSMate\images\UI-ChatIM-SizeGrabber-Up"/>
-				<PushedTexture file="Interface\AddOns\DPSMate\images\UI-ChatIM-SizeGrabber-Down"/>
-				<HighlightTexture file="Interface\AddOns\DPSMate\images\UI-ChatIM-SizeGrabber-Highlight" alphaMode="ADD"/>
-			</Button>
+				<ScrollChild>
+					<Frame name="$parent_Child">
+						<Size x="400" y="360" />
+						<Anchor point="TOPLEFT" relativeTo="DPSMate_Statusframe" relativePoint="BOTTOMLEFT" />
+						<Frames>
+					<StatusBar name="$parent_StatusBar1" inherits="DPSMate_StatusBar">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent_ScrollFrame" relativePoint="BOTTOMLEFT">
+								<Offset>
+									<AbsDimension x="0" y="-1" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</StatusBar>
+					<StatusBar name="$parent_StatusBar2" inherits="DPSMate_StatusBar">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent_StatusBar1" relativePoint="BOTTOMLEFT">
+								<Offset>
+									<AbsDimension x="0" y="-1" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</StatusBar>
+					<StatusBar name="$parent_StatusBar3" inherits="DPSMate_StatusBar">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent_StatusBar2" relativePoint="BOTTOMLEFT">
+								<Offset>
+									<AbsDimension x="0" y="-1" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</StatusBar>
+					<StatusBar name="$parent_StatusBar4" inherits="DPSMate_StatusBar">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent_StatusBar3" relativePoint="BOTTOMLEFT">
+								<Offset>
+									<AbsDimension x="0" y="-1" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</StatusBar>
+					<StatusBar name="$parent_StatusBar5" inherits="DPSMate_StatusBar">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent_StatusBar4" relativePoint="BOTTOMLEFT">
+								<Offset>
+									<AbsDimension x="0" y="-1" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</StatusBar>
+					<StatusBar name="$parent_StatusBar6" inherits="DPSMate_StatusBar">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent_StatusBar5" relativePoint="BOTTOMLEFT">
+								<Offset>
+									<AbsDimension x="0" y="-1" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</StatusBar>
+					<StatusBar name="$parent_StatusBar7" inherits="DPSMate_StatusBar">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent_StatusBar6" relativePoint="BOTTOMLEFT">
+								<Offset>
+									<AbsDimension x="0" y="-1" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</StatusBar>
+					<StatusBar name="$parent_StatusBar8" inherits="DPSMate_StatusBar">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent_StatusBar7" relativePoint="BOTTOMLEFT">
+								<Offset>
+									<AbsDimension x="0" y="-1" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</StatusBar>
+					<StatusBar name="$parent_StatusBar9" inherits="DPSMate_StatusBar">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent_StatusBar8" relativePoint="BOTTOMLEFT">
+								<Offset>
+									<AbsDimension x="0" y="-1" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</StatusBar>
+					<StatusBar name="$parent_StatusBar10" inherits="DPSMate_StatusBar">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent_StatusBar9" relativePoint="BOTTOMLEFT">
+								<Offset>
+									<AbsDimension x="0" y="-1" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</StatusBar>
+					<StatusBar name="$parent_StatusBar11" inherits="DPSMate_StatusBar">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent_StatusBar10" relativePoint="BOTTOMLEFT">
+								<Offset>
+									<AbsDimension x="0" y="-1" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</StatusBar>
+					<StatusBar name="$parent_StatusBar12" inherits="DPSMate_StatusBar">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent_StatusBar11" relativePoint="BOTTOMLEFT">
+								<Offset>
+									<AbsDimension x="0" y="-1" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</StatusBar>
+					<StatusBar name="$parent_StatusBar13" inherits="DPSMate_StatusBar">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent_StatusBar12" relativePoint="BOTTOMLEFT">
+								<Offset>
+									<AbsDimension x="0" y="-1" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</StatusBar>
+					<StatusBar name="$parent_StatusBar14" inherits="DPSMate_StatusBar">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent_StatusBar13" relativePoint="BOTTOMLEFT">
+								<Offset>
+									<AbsDimension x="0" y="-1" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</StatusBar>
+					<StatusBar name="$parent_StatusBar15" inherits="DPSMate_StatusBar">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent_StatusBar14" relativePoint="BOTTOMLEFT">
+								<Offset>
+									<AbsDimension x="0" y="-1" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</StatusBar>
+					<StatusBar name="$parent_StatusBar16" inherits="DPSMate_StatusBar">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent_StatusBar15" relativePoint="BOTTOMLEFT">
+								<Offset>
+									<AbsDimension x="0" y="-1" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</StatusBar>
+					<StatusBar name="$parent_StatusBar17" inherits="DPSMate_StatusBar">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent_StatusBar16" relativePoint="BOTTOMLEFT">
+								<Offset>
+									<AbsDimension x="0" y="-1" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</StatusBar>
+					<StatusBar name="$parent_StatusBar18" inherits="DPSMate_StatusBar">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent_StatusBar17" relativePoint="BOTTOMLEFT">
+								<Offset>
+									<AbsDimension x="0" y="-1" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</StatusBar>
+					<StatusBar name="$parent_StatusBar19" inherits="DPSMate_StatusBar">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent_StatusBar18" relativePoint="BOTTOMLEFT">
+								<Offset>
+									<AbsDimension x="0" y="-1" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</StatusBar>
+					<StatusBar name="$parent_StatusBar20" inherits="DPSMate_StatusBar">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent_StatusBar19" relativePoint="BOTTOMLEFT">
+								<Offset>
+									<AbsDimension x="0" y="-1" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</StatusBar>
+					<StatusBar name="$parent_StatusBar21" inherits="DPSMate_StatusBar">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent_StatusBar20" relativePoint="BOTTOMLEFT">
+								<Offset>
+									<AbsDimension x="0" y="-1" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</StatusBar>
+					<StatusBar name="$parent_StatusBar22" inherits="DPSMate_StatusBar">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent_StatusBar21" relativePoint="BOTTOMLEFT">
+								<Offset>
+									<AbsDimension x="0" y="-1" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</StatusBar>
+					<StatusBar name="$parent_StatusBar23" inherits="DPSMate_StatusBar">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent_StatusBar22" relativePoint="BOTTOMLEFT">
+								<Offset>
+									<AbsDimension x="0" y="-1" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</StatusBar>
+					<StatusBar name="$parent_StatusBar24" inherits="DPSMate_StatusBar">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent_StatusBar23" relativePoint="BOTTOMLEFT">
+								<Offset>
+									<AbsDimension x="0" y="-1" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</StatusBar>
+					<StatusBar name="$parent_StatusBar25" inherits="DPSMate_StatusBar">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent_StatusBar24" relativePoint="BOTTOMLEFT">
+								<Offset>
+									<AbsDimension x="0" y="-1" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</StatusBar>
+					<StatusBar name="$parent_StatusBar26" inherits="DPSMate_StatusBar">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent_StatusBar25" relativePoint="BOTTOMLEFT">
+								<Offset>
+									<AbsDimension x="0" y="-1" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</StatusBar>
+					<StatusBar name="$parent_StatusBar27" inherits="DPSMate_StatusBar">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent_StatusBar26" relativePoint="BOTTOMLEFT">
+								<Offset>
+									<AbsDimension x="0" y="-1" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</StatusBar>
+					<StatusBar name="$parent_StatusBar28" inherits="DPSMate_StatusBar">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent_StatusBar27" relativePoint="BOTTOMLEFT">
+								<Offset>
+									<AbsDimension x="0" y="-1" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</StatusBar>
+					<StatusBar name="$parent_StatusBar29" inherits="DPSMate_StatusBar">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent_StatusBar28" relativePoint="BOTTOMLEFT">
+								<Offset>
+									<AbsDimension x="0" y="-1" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</StatusBar>
+					<StatusBar name="$parent_StatusBar30" inherits="DPSMate_StatusBar">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent_StatusBar29" relativePoint="BOTTOMLEFT">
+								<Offset>
+									<AbsDimension x="0" y="-1" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</StatusBar>
+						</Frames>
+					</Frame>
+				</ScrollChild>
+			</ScrollFrame>
 		</Frames>
 	</Frame>
 	

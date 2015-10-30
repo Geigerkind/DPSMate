@@ -112,10 +112,10 @@ function DPSMate:SetStatusBarValue()
 	DPSMate:HideStatusBars()
 	if (user == {}) then return end
 	for i=1, 30 do
-		if DPSMate_Statusframe:GetHeight() < (i*13+18) or (not user[i]) then break end -- To prevent visual issues
-		local statusbar = getglobal("DPSMate_Statusframe_StatusBar"..i)
-		local name = getglobal("DPSMate_Statusframe_StatusBar"..i.."_Name")
-		local value = getglobal("DPSMate_Statusframe_StatusBar"..i.."_Value")
+		if (not user[i]) then break end -- To prevent visual issues
+		local statusbar = getglobal("DPSMate_Statusframe_ScrollFrame_Child_StatusBar"..i)
+		local name = getglobal("DPSMate_Statusframe_ScrollFrame_Child_StatusBar"..i.."_Name")
+		local value = getglobal("DPSMate_Statusframe_ScrollFrame_Child_StatusBar"..i.."_Value")
 		
 		local r,g,b = DPSMate:GetClassColor(arr[user[i]].class)
 		statusbar:SetStatusBarColor(r,g,b, 1)
@@ -193,7 +193,7 @@ end
 
 function DPSMate:HideStatusBars()
 	for i=1, 30 do
-		getglobal("DPSMate_Statusframe_StatusBar"..i):Hide()
+		getglobal("DPSMate_Statusframe_ScrollFrame_Child_StatusBar"..i):Hide()
 	end
 end
 

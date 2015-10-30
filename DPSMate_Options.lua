@@ -595,3 +595,16 @@ end
 function DPSMate.Options:DropDownSetSegment5()
 	DPSMate.Options:ToggleDrewDrop(2, "segment5")
 end
+
+function DPSMate.Options:OnVerticalScroll(obj, arg1)
+	local maxScroll = obj:GetVerticalScrollRange()
+	local Scroll = obj:GetVerticalScroll()
+	local toScroll = (Scroll - (20*arg1))
+	if toScroll < 0 then
+		obj:SetVerticalScroll(0)
+	elseif toScroll > maxScroll then
+		obj:SetVerticalScroll(maxScroll)
+	else
+		obj:SetVerticalScroll(toScroll)
+	end
+end
