@@ -204,7 +204,7 @@ local Options = {
 				type = 'execute',
 				name = "Configure",
 				desc = DPSMate.localization.desc.config,
-				func = "PopUpAccept",
+				func = function() DPSMate_ConfigMenu:Show(); Dewdrop:Close() end,
 			},
 			close = {
 				order = 90,
