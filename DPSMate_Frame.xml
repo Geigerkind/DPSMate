@@ -39,7 +39,7 @@
 		</Scripts>
 	</StatusBar>
 	
-	<Frame name="DPSMate_Statusframe" parent="UIParent" movable="true" enablemouse="true" resizable="true" frameStrata="low">
+	<Frame name="DPSMate_Statusframe" parent="UIParent" movable="true" enablemouse="true" resizable="true" frameStrata="low" virtual="true">
 		<Size x="150" y="100" />
 		<ResizeBounds>
 			<minResize x="100" y="100"/>
@@ -53,9 +53,9 @@
 				this:SetClampedToScreen(true)
 			</OnLoad>
 			<OnSizeChanged>
-				if DPSMate_Statusframe_ScrollFrame then
-					DPSMate_Statusframe_ScrollFrame_Child:SetWidth(2061.2*arg1)
-					DPSMate_Statusframe_ScrollFrame:SetHeight(2061.2*arg2-16)
+				if getglobal(this:GetName().."_ScrollFrame") then
+					getglobal(this:GetName().."_ScrollFrame_Child"):SetWidth(2061.2*arg1)
+					getglobal(this:GetName().."_ScrollFrame"):SetHeight(2061.2*arg2-16)
 				end
 			</OnSizeChanged>
 		</Scripts>
@@ -78,10 +78,10 @@
 				</Anchors>
 				<Scripts>
 					<OnMouseDown>
-						DPSMate_Statusframe:StartSizing()
+						this:GetParent():StartSizing()
 					</OnMouseDown>
 					<OnMouseUp>
-						DPSMate_Statusframe:StopMovingOrSizing()
+						this:GetParent():StopMovingOrSizing()
 						DPSMate:SetStatusBarValue()
 					</OnMouseUp>
 				</Scripts>
@@ -117,14 +117,14 @@
 				<Scripts>
 					<OnMouseDown>
 						if arg1 == "LeftButton" then
-							DPSMate_Statusframe:StartMoving()
+							this:GetParent():StartMoving()
 						end
 					</OnMouseDown>
 					<OnMouseUp>
 						if arg1 == "RightButton" then
-							DPSMate.Options:OpenMenu(1)
+							DPSMate.Options:OpenMenu(1, this:GetParent())
 						else
-							DPSMate_Statusframe:StopMovingOrSizing()
+							this:GetParent():StopMovingOrSizing()
 						end
 					</OnMouseUp>
 				</Scripts>
@@ -136,7 +136,7 @@
 						</Anchors>
 						<Scripts>
 							<OnMouseUp>
-								DPSMate.Options:OpenMenu(3)
+								DPSMate.Options:OpenMenu(3, this:GetParent():GetParent())
 							</OnMouseUp>
 						</Scripts>
 						<NormalTexture file="Interface\AddOns\DPSMate\images\icon-config"/>
@@ -162,7 +162,7 @@
 						</Anchors>
 						<Scripts>
 							<OnMouseUp>
-								DPSMate.Options:OpenMenu(2)
+								DPSMate.Options:OpenMenu(2, this:GetParent():GetParent())
 							</OnMouseUp>
 						</Scripts>
 						<NormalTexture file="Interface\AddOns\DPSMate\images\UI-GuildButton-PublicNote-Up"/>
@@ -175,6 +175,7 @@
 						</Anchors>
 						<Scripts>
 							<OnClick>
+								DPSMate_Report.PaKey=this:GetParent():GetParent().Key 
 								DPSMate_Report:Show()
 							</OnClick>
 						</Scripts>

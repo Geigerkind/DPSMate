@@ -22,21 +22,44 @@ local classcolor = {
 -- Begin functions
 
 function DPSMate:OnLoad()
+	DPSMate:InitializeFrames()
 	DPSMate:SetStatusBarValue()
+end
+
+function DPSMate:InitializeFrames()
+	if not DPSMate:WindowsExist() then return end
+	for k, val in pairs(DPSMateSettings["windows"]) do
+		local f=CreateFrame("Frame", "DPSMate_"..val["name"], UIParent, "DPSMate_Statusframe")
+		f.Key=k
+		DPSMate.Options:ToggleDrewDrop(1, DPSMate.DB:GetOptionsTrue(1, k), f)
+		DPSMate.Options:ToggleDrewDrop(2, DPSMate.DB:GetOptionsTrue(2, k), f)
+		--DPSMate.Options:ToggleDrewDrop(3, DPSMateSettings["windows"][k]["options"][3]["lock"], f)
+	end
+end
+
+function DPSMate:WindowsExist()
+	if (DPSMate:TableLength(DPSMateSettings.windows)==0) then
+		return false
+	end
+	return true
 end
 
 function DPSMate:TableLength(t)
 	local count = 0
-	for _,_ in pairs(t) do
-		count = count + 1
+	if (t) then
+		for _,_ in pairs(t) do
+			count = count + 1
+		end
 	end
 	return count
 end
 
 function DPSMate:TContains(t, value)
-	for cat, val in pairs(t) do
-		if val == value then
-			return true
+	if (t) then
+		for cat, val in pairs(t) do
+			if val == value then
+				return true
+			end
 		end
 	end
 	return false
@@ -53,7 +76,7 @@ end
 function DPSMate:GetKeyByValInTT(t, x, y)
 	for cat, val in pairs(t) do
 		if (type(val) == "table") then
-			if (x==val[1] and y==val[2]) then
+			if (x==val[y]) then
 				return cat
 			end
 		end
@@ -107,38 +130,41 @@ function DPSMate:PlayerExist(arr, name)
 end
 
 function DPSMate:SetStatusBarValue()
-	local arr, cbt = DPSMate:GetMode()
-	local user, val, perc = DPSMate:GetSettingValues(arr,cbt)
+	if not DPSMate:WindowsExist() then return end
 	DPSMate:HideStatusBars()
-	if (user == {}) then return end
-	for i=1, 30 do
-		if (not user[i]) then break end -- To prevent visual issues
-		local statusbar = getglobal("DPSMate_Statusframe_ScrollFrame_Child_StatusBar"..i)
-		local name = getglobal("DPSMate_Statusframe_ScrollFrame_Child_StatusBar"..i.."_Name")
-		local value = getglobal("DPSMate_Statusframe_ScrollFrame_Child_StatusBar"..i.."_Value")
-		
-		local r,g,b = DPSMate:GetClassColor(arr[user[i]].class)
-		statusbar:SetStatusBarColor(r,g,b, 1)
-		
-		name:SetText(i..". "..user[i])
-		value:SetText(val[i])
-		statusbar:SetValue(perc[i])
-		
-		statusbar.user = user[i]
-		statusbar:Show()
+	for k,c in pairs(DPSMateSettings.windows) do
+		local arr, cbt = DPSMate:GetMode(k)
+		local user, val, perc = DPSMate:GetSettingValues(arr,cbt,k)
+		if (user == {}) then return end
+		for i=1, 30 do
+			if (not user[i]) then break end -- To prevent visual issues
+			local statusbar = getglobal("DPSMate_"..c["name"].."_ScrollFrame_Child_StatusBar"..i)
+			local name = getglobal("DPSMate_"..c["name"].."_ScrollFrame_Child_StatusBar"..i.."_Name")
+			local value = getglobal("DPSMate_"..c["name"].."_ScrollFrame_Child_StatusBar"..i.."_Value")
+			
+			local r,g,b = DPSMate:GetClassColor(arr[user[i]].class)
+			statusbar:SetStatusBarColor(r,g,b, 1)
+			
+			name:SetText(i..". "..user[i])
+			value:SetText(val[i])
+			statusbar:SetValue(perc[i])
+			
+			statusbar.user = user[i]
+			statusbar:Show()
+		end
 	end
 end
 
-function DPSMate:GetSettingValues(arr, cbt)
+function DPSMate:GetSettingValues(arr, cbt, k)
 	local name, value, perc = {}, {}, {}
-	if (DPSMate.Options.CurMode == "dps") then
+	if (DPSMateSettings["windows"][k]["CurMode"] == "dps") then
 		local sortedTable, total, a = DPSMate:GetSortedTable(arr)
 		for cat, val in pairs(sortedTable) do
 			table.insert(name, a[val])
 			table.insert(value, ceil(val/cbt).." ("..string.format("%.1f", 100*val/total).."%)")
 			table.insert(perc, ceil(100*(val/sortedTable[1])))
 		end
-	elseif (DPSMate.Options.CurMode == "damage") then
+	elseif (DPSMateSettings["windows"][k]["CurMode"] == "damage") then
 		local sortedTable, total, a = DPSMate:GetSortedTable(arr)
 		for cat, val in pairs(sortedTable) do
 			table.insert(name, a[val])
@@ -157,43 +183,45 @@ function DPSMate:GetClassColor(class)
 	end
 end
 
-function DPSMate:GetMode()
-	if DPSMateSettings["options"][2]["total"] then
+function DPSMate:GetMode(k)
+	if DPSMateSettings["windows"][k]["options"][2]["total"] then
 		return DPSMateUser, DPSMateCombatTime["total"]
-	elseif DPSMateSettings["options"][2]["segment1"] then
+	elseif DPSMateSettings["windows"][k]["options"][2]["segment1"] then
 		return DPSMateHistory[1], DPSMateCombatTime["segments"][1]
-	elseif DPSMateSettings["options"][2]["segment2"] then
+	elseif DPSMateSettings["windows"][k]["options"][2]["segment2"] then
 		return DPSMateHistory[2], DPSMateCombatTime["segments"][2]
-	elseif DPSMateSettings["options"][2]["segment3"] then
+	elseif DPSMateSettings["windows"][k]["options"][2]["segment3"] then
 		return DPSMateHistory[3], DPSMateCombatTime["segments"][3]
-	elseif DPSMateSettings["options"][2]["segment4"] then
+	elseif DPSMateSettings["windows"][k]["options"][2]["segment4"] then
 		return DPSMateHistory[4], DPSMateCombatTime["segments"][4]
-	elseif DPSMateSettings["options"][2]["segment5"] then
+	elseif DPSMateSettings["windows"][k]["options"][2]["segment5"] then
 		return DPSMateHistory[5], DPSMateCombatTime["segments"][5]
 	end
 	return DPSMateUserCurrent, DPSMateCombatTime["current"]
 end
 
-function DPSMate:GetModeName()
-	if DPSMateSettings["options"][2]["total"] then
+function DPSMate:GetModeName(k)
+	if DPSMateSettings["windows"][k]["options"][2]["total"] then
 		return "Total"
-	elseif DPSMateSettings["options"][2]["segment1"] then
+	elseif DPSMateSettings["windows"][k]["options"][2]["segment1"] then
 		return "Segment 1"
-	elseif DPSMateSettings["options"][2]["segment2"] then
+	elseif DPSMateSettings["windows"][k]["options"][2]["segment2"] then
 		return "Segment 2"
-	elseif DPSMateSettings["options"][2]["segment3"] then
+	elseif DPSMateSettings["windows"][k]["options"][2]["segment3"] then
 		return "Segment 3"
-	elseif DPSMateSettings["options"][2]["segment4"] then
+	elseif DPSMateSettings["windows"][k]["options"][2]["segment4"] then
 		return "Segment 4"
-	elseif DPSMateSettings["options"][2]["segment5"] then
+	elseif DPSMateSettings["windows"][k]["options"][2]["segment5"] then
 		return "Segment 5"
 	end
 	return "Current fight"
 end
 
 function DPSMate:HideStatusBars()
-	for i=1, 30 do
-		getglobal("DPSMate_Statusframe_ScrollFrame_Child_StatusBar"..i):Hide()
+	for _,val in pairs(DPSMateSettings.windows) do
+		for i=1, 30 do
+			getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar"..i):Hide()
+		end
 	end
 end
 

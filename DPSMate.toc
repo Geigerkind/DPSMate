@@ -4,8 +4,7 @@
 ## Notes: DPSMate tracks the fight and provides statistics [TO BE EDITED]
 ## Notes-deDE: [TO BE EDITED]
 ## Author: Shino <Synced> - Kronos
-## SavedVariables: DPSMateSettings
-## SavedVariablesPerCharacter: DPSMateUser, DPSMateUserCurrent, DPSMateCombatTime, DPSMateHistory
+## SavedVariablesPerCharacter: DPSMateSettings, DPSMateUser, DPSMateUserCurrent, DPSMateCombatTime, DPSMateHistory
 ## Version: 0.1
 
 libs\AceLibrary\AceLibrary.lua

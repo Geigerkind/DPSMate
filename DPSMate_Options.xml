@@ -410,7 +410,7 @@
 	--------------                 DPSMate Config Menu                  --------------                                  
 	----------------------------------------------------------------------------------
 	
-	<Frame name="DPSMate_ConfigMenu" movable="true" hidden="false">
+	<Frame name="DPSMate_ConfigMenu" movable="true" hidden="true">
 		<Size x="450" y="300" />
 		<Anchors>
 			<Anchor point="CENTER" />
@@ -485,7 +485,7 @@
 							<OnLoad>
 								this.selected=true
 								getglobal(this:GetName().."Texture"):Show()
-								getglobal(this:GetName().."Text"):SetText("Windows")
+								getglobal(this:GetName().."Text"):SetText(DPSMate.localization.config.window)
 								getglobal(this:GetName().."Text"):SetTextColor(1,1,1,1)
 							</OnLoad>
 						</Scripts>
@@ -496,7 +496,7 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								getglobal(this:GetName().."Text"):SetText("Bars")
+								getglobal(this:GetName().."Text"):SetText(DPSMate.localization.config.bars)
 							</OnLoad>
 						</Scripts>
 					</Button>
@@ -506,7 +506,7 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								getglobal(this:GetName().."Text"):SetText("Title bar")
+								getglobal(this:GetName().."Text"):SetText(DPSMate.localization.config.titlebar)
 							</OnLoad>
 						</Scripts>
 					</Button>
@@ -516,7 +516,7 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								getglobal(this:GetName().."Text"):SetText("Window")
+								getglobal(this:GetName().."Text"):SetText(DPSMate.localization.config.content)
 							</OnLoad>
 						</Scripts>
 					</Button>
@@ -526,7 +526,7 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								getglobal(this:GetName().."Text"):SetText("Mode Switching")
+								getglobal(this:GetName().."Text"):SetText(DPSMate.localization.config.modeswitching)
 							</OnLoad>
 						</Scripts>
 					</Button>
@@ -536,7 +536,7 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								getglobal(this:GetName().."Text"):SetText("Data resets")
+								getglobal(this:GetName().."Text"):SetText(DPSMate.localization.config.dataresets)
 							</OnLoad>
 						</Scripts>
 					</Button>
@@ -546,7 +546,7 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								getglobal(this:GetName().."Text"):SetText("General options")
+								getglobal(this:GetName().."Text"):SetText(DPSMate.localization.config.generaloptions)
 							</OnLoad>
 						</Scripts>
 					</Button>
@@ -556,7 +556,7 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								getglobal(this:GetName().."Text"):SetText("Columns")
+								getglobal(this:GetName().."Text"):SetText(DPSMate.localization.config.columns)
 							</OnLoad>
 						</Scripts>
 					</Button>
@@ -566,7 +566,7 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								getglobal(this:GetName().."Text"):SetText("Tooltips")
+								getglobal(this:GetName().."Text"):SetText(DPSMate.localization.config.tooltips)
 							</OnLoad>
 						</Scripts>
 					</Button>
@@ -576,14 +576,14 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								getglobal(this:GetName().."Text"):SetText("About")
+								getglobal(this:GetName().."Text"):SetText(DPSMate.localization.config.about)
 							</OnLoad>
 						</Scripts>
 					</Button>
 				</Frames>
 			</Frame>
 			
-			<Frame name="$parent_Tab_Windows">
+			<Frame name="$parent_Tab_Window">
 				<Size x="301" y="250" />
 				<Anchors>
 					<Anchor point="LEFT" relativeTo="$parent_Menu" relativePoint="RIGHT" />
@@ -607,7 +607,7 @@
 						<Scripts>
 							<OnLoad>
 								this.aide = "Test"
-								getglobal(this:GetName().."Text"):SetText("Create window")
+								getglobal(this:GetName().."Text"):SetText(DPSMate.localization.config.createwindow)
 							</OnLoad>
 						</Scripts>
 					</EditBox>
@@ -620,8 +620,11 @@
 						<Scripts>
 							<OnLoad>
 								this.aide = "Test"
-								getglobal(this:GetName().."Text"):SetText("Submit")
+								getglobal(this:GetName().."Text"):SetText(DPSMate.localization.config.submit)
 							</OnLoad>
+							<OnClick>
+								DPSMate.Options:CreateWindow()
+							</OnClick>
 						</Scripts>
 					</Button>
 				</Frames>
