@@ -56,7 +56,7 @@
 	</Button>
 	
 	<Frame name="DPSMate_Details" parent="UIParent" movable="true" hidden="true">
-		<Size x="500" y="400" />
+		<Size x="500" y="450" />
 		<Anchors>
 			<Anchor point="CENTER" />
 		</Anchors>
@@ -146,12 +146,63 @@
 					<Color r="0" g="0" b="0" a="0.5" />
 				</Backdrop>
 			</Frame>
+			<Frame name="$parent_DiagramLegend">
+				<Size x="245" y="50" />
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parent_DiagramLine" relativePoint="BOTTOMLEFT" />
+				</Anchors>
+				<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+					<BackgroundInsets>
+						<AbsInset left="3" right="3" top="3" bottom="3" />
+					</BackgroundInsets>
+					<TileSize>
+						<AbsValue val="9" />
+					</TileSize>
+					<EdgeSize>
+						<AbsValue val="9" />
+					</EdgeSize>
+					<Color r="0" g="0" b="0" a="0.5" />
+				</Backdrop>
+				<Frames>
+					<Frame name="$parent_Procs" inherits="UIDropDownMenuTemplate" id="1">
+						<Size x="200" y="24" />
+						<Anchors>
+							<Anchor point="CENTER">
+								<Offset x="0" y="-10" />
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnEnter>
+								GameTooltip:SetOwner(this, "ANCHOR_RIGHT")
+								GameTooltip:SetText(DPSMate.localization.details.procsTooltip, nil, nil, nil, nil, 1)
+							</OnEnter>
+							<OnLeave>
+								GameTooltip:Hide()
+							</OnLeave>
+							<OnLoad>
+								UIDropDownMenu_SetWidth(200)
+								getglobal(this:GetName().."_Text"):SetText(DPSMate.localization.details.procs)
+							</OnLoad>
+						</Scripts>
+						<Layers>
+							<Layer level="ARTWORK">
+								<FontString name="$parent_Text" inherits="GameFontNormalSmall" alphaMode="ADD">
+									<Size x="200" y="20" />
+									<Anchors>
+										<Anchor point="TOP">
+											<Offset x="0" y="15" />
+										</Anchor>
+									</Anchors>
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+				</Frames>
+			</Frame>
 			<Frame name="$parent_Diagram">
 				<Size x="245" y="220" />
 				<Anchors>
-					<Anchor point="TOPLEFT" relativeTo="$parent_DiagramLine" relativePoint="BOTTOMLEFT">
-						<Offset x="0" y="0" />
-					</Anchor>
+					<Anchor point="TOP" relativeTo="$parent_DiagramLegend" relativePoint="BOTTOM" />
 				</Anchors>
 				<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
 					<BackgroundInsets>
@@ -169,9 +220,7 @@
 			<Frame name="$parent_Log">
 				<Size x="245" y="110" />
 				<Anchors>
-					<Anchor point="TOPLEFT" relativeTo="$parent_Diagram" relativePoint="TOPRIGHT">
-						<Offset x="0" y="0" />
-					</Anchor>
+					<Anchor point="TOPLEFT" relativeTo="$parent_DiagramLegend" relativePoint="TOPRIGHT" />
 				</Anchors>
 				<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
 					<BackgroundInsets>
@@ -236,11 +285,9 @@
 				</Frames>
 			</Frame>
 			<Frame name="$parent_LogDetails">
-				<Size x="245" y="110" />
+				<Size x="245" y="160" />
 				<Anchors>
-					<Anchor point="TOP" relativeTo="$parent_Log" relativePoint="BOTTOM">
-						<Offset x="0" y="0" />
-					</Anchor>
+					<Anchor point="TOP" relativeTo="$parent_Log" relativePoint="BOTTOM" />
 				</Anchors>
 				<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
 					<BackgroundInsets>

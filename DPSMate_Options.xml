@@ -677,6 +677,8 @@
 				this:RegisterEvent("CHAT_MSG_SPELL_PARTY_DAMAGE")
 				this:RegisterEvent("CHAT_MSG_COMBAT_PARTY_MISSES")
 				
+				this:RegisterEvent("COMBAT_TEXT_UPDATE")
+				
 				this:RegisterEvent("PLAYER_REGEN_DISABLED")
 				this:RegisterEvent("PLAYER_REGEN_ENABLED")
 				

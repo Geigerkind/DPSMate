@@ -334,7 +334,7 @@ function DPSMate.Options:EvalTable(t)
 	if (arr[t].pet and arr[t].pet ~= "Unknown") then u={a=t, b=arr[t].pet} else u={a=t} end
 	for c, v in pairs(u) do
 		for cat, val in pairs(arr[v]) do
-			if (type(val) == "table" and cat~="dmgTime") then
+			if (type(val) == "table" and cat~="dmgTime" and cat~="procs") then
 				if (arr[v].isPet) then pet="(Pet)"; else pet=""; end
 				local i = 1
 				while true do
@@ -404,6 +404,7 @@ function DPSMate.Options:UpdateDetails(obj)
 	end
 	DPSMate_Details_Title:SetText("Combat details of "..obj.user)
 	DPSMate_Details:Show()
+	UIDropDownMenu_Initialize(DPSMate_Details_DiagramLegend_Procs, DPSMate.Options.ProcsDropDown)
 	DPSMate.Options:ScrollFrame_Update()
 	DPSMate.Options:SelectDetailsButton(1)
 	DPSMate.Options:UpdatePie()
@@ -428,10 +429,24 @@ function DPSMate.Options:UpdateLineGraph()
 
 	local Data1={{0,0}}
 	for cat, val in pairs(DPSMate.Options:SortLineTable(sumTable)) do
-		table.insert(Data1, {val[1],val[2]})
+		
+		if DPSMate.Options:CheckProcs(DPSMate_Details.proc, arr, val[1]) then
+			table.insert(Data1, {val[1],val[2], true})
+		else
+			table.insert(Data1, {val[1],val[2], false})
+		end
 	end
 
-	g2:AddDataSeries(Data1,{1.0,0.0,0.0,0.8})
+	g2:AddDataSeries(Data1,{{1.0,0.0,0.0,0.8}, {1.0,1.0,0.0,0.8}})
+end
+
+function DPSMate.Options:CheckProcs(name, arr, val)
+	for i=1, DPSMate:TableLength(arr[DetailsUser]["procs"][name]["start"]) do
+		if val >  DPSMateUser[DetailsUser]["procs"][name]["start"][i] and val < DPSMateUser[DetailsUser]["procs"][name]["ending"][i] then
+			return true
+		end
+	end
+	return false
 end
 
 function DPSMate.Options:GetSummarizedTable(k)
@@ -515,6 +530,31 @@ function DPSMate.Options:ChannelDropDown()
 	end
 	
 	UIDropDownMenu_SetSelectedValue(DPSMate_Report_Channel, "Raid")
+end
+
+function DPSMate.Options:ProcsDropDown()
+	local arr, cbt = DPSMate:GetMode(DPSMate_Details.PaKey)
+	
+    local function on_click()
+        UIDropDownMenu_SetSelectedValue(DPSMate_Details_DiagramLegend_Procs, this.value)
+		DPSMate_Details.proc = this.value
+		DPSMate.Options:UpdateLineGraph()
+    end
+	
+	-- Adding dynamic channel
+	for cat,_ in pairs(arr[DetailsUser]["procs"]) do
+		UIDropDownMenu_AddButton{
+			text = cat,
+			value = cat,
+			func = on_click,
+		}
+		DPSMate_Details.proc = cat
+	end
+	
+	if DPSMate_Details.LastUser~=DetailsUser then
+		UIDropDownMenu_SetSelectedValue(DPSMate_Details_DiagramLegend_Procs, DPSMate_Details.proc)
+	end
+	DPSMate_Details.LastUser = DetailsUser
 end
 
 function DPSMate.Options:Report()

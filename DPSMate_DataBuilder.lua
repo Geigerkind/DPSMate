@@ -153,6 +153,7 @@ function DPSMate.DB:BuildUser(Dname, Dclass)
 			damage = 0,
 			damagetaken = 0,
 			dmgTime = {},
+			procs = {},
 		}
 	end
 	if (not DPSMateUserCurrent[Dname]) then
@@ -161,6 +162,7 @@ function DPSMate.DB:BuildUser(Dname, Dclass)
 			damage = 0,
 			damagetaken = 0,
 			dmgTime = {},
+			procs = {},
 		}
 	end
 end
@@ -270,6 +272,15 @@ function DPSMate.DB:DataExist(uname, aname, arr)
 	return false
 end
 
+function DPSMate.DB:DataExistProcs(uname, aname, arr)
+	if arr[uname] ~= nil then
+		if arr[uname]["procs"][aname] ~= nil then
+			return true
+		end
+	end
+	return false
+end
+
 function DPSMate.DB:GetOptionsTrue(i,k)
 	for cat,val in pairs(DPSMateSettings["windows"][k]["options"][i]) do
 		if val == true then
@@ -300,5 +311,28 @@ function DPSMate.DB:hasVanishedFeignDeath()
 			return true
 		end
 		DPSMate_Tooltip:Hide()
+	end
+end
+
+function DPSMate.DB:BuildUserProcs(Duser, Dname)
+	for cat, val in pairs({total=DPSMateUser, current=DPSMateUserCurrent}) do
+		if DPSMate.DB:DataExistProcs(Duser.name, Dname, val) then
+			local len = DPSMate:TableLength(val[Duser.name]["procs"][Dname]["start"])
+			if val[Duser.name]["procs"][Dname]["start"][len] and not val[Duser.name]["procs"][Dname]["ending"][len] then
+				val[Duser.name]["procs"][Dname]["ending"][len] = DPSMateCombatTime[cat]
+			else
+				val[Duser.name]["procs"][Dname]["start"][len+1] = DPSMateCombatTime[cat]
+			end
+		else
+			if (not val[Duser.name])  then
+				DPSMate.DB:BuildUser(Duser.name, Duser.class)
+			end
+			val[Duser.name]["procs"][Dname] = {
+				start = {
+					[1] = DPSMateCombatTime[cat],
+				},
+				ending = {},
+			}
+		end
 	end
 end

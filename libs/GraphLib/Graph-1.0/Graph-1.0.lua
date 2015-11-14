@@ -1154,8 +1154,12 @@ function GraphFunctions:RefreshLineGraph()
 
 				TPoint.x=Width*(TPoint.x-self.XMin)/(self.XMax-self.XMin)
 				TPoint.y=Height*(TPoint.y-self.YMin)/(self.YMax-self.YMin)
-
-				self:DrawLine(self,LastPoint.x,LastPoint.y,TPoint.x,TPoint.y,32,series.Color)
+				
+				if point[3] then
+					self:DrawLine(self,LastPoint.x,LastPoint.y,TPoint.x,TPoint.y,32,series.Color[2])
+				else
+					self:DrawLine(self,LastPoint.x,LastPoint.y,TPoint.x,TPoint.y,32,series.Color[1])
+				end
 
 				LastPoint=TPoint
 			else

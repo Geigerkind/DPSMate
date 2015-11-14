@@ -44,6 +44,8 @@ DPSMate.localization.parser.from = " from "
 
 DPSMate.localization.details = {}
 DPSMate.localization.details.close = "Close details"
+DPSMate.localization.details.procs = "Procs"
+DPSMate.localization.details.procsTooltip = "Select a proc to display it in the LineGraph."
 
 DPSMate.localization.desc = {}
 DPSMate.localization.desc.dps = "Show dps."

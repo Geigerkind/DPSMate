@@ -54,8 +54,8 @@
 			</OnLoad>
 			<OnSizeChanged>
 				if getglobal(this:GetName().."_ScrollFrame") then
-					getglobal(this:GetName().."_ScrollFrame_Child"):SetWidth(2061.2*arg1)
-					getglobal(this:GetName().."_ScrollFrame"):SetHeight(2061.2*arg2-16)
+					getglobal(this:GetName().."_ScrollFrame_Child"):SetWidth(this:GetWidth())
+					getglobal(this:GetName().."_ScrollFrame"):SetHeight(this:GetHeight()-16)
 				end
 			</OnSizeChanged>
 		</Scripts>

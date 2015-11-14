@@ -9,6 +9,35 @@ player["name"] = UnitName("player")
 local a,b,c = UnitClass("player")
 player["class"] = strlower(b)
 
+local procs = {
+	-- General
+	"Earthstrike",
+	"Juju Flurry",
+	"Holy Strength",
+	"Ephemeral Power",
+	"Chromatic Infusion",
+	"Brittle Armor",
+	"Unstable Power",
+	"Zandalarian Hero Medallion",
+	"Ascendance",
+	"Essence of Sapphiron",
+	
+	-- Rogue
+	"Slice and Dice",
+	"Blade Flurry",
+	"Sprint",
+	"Adrenaline Rush",
+	"Vanish",
+	
+	-- Mage
+	"Arcane Power",
+	"Combustion",
+	"Mind Quickening",
+	
+	-- Priest
+	"Power Infusion",
+}
+
 -- Begin Functions
 
 function DPSMate.Parser:OnLoad()
@@ -31,6 +60,8 @@ function DPSMate.Parser:OnEvent(event)
 		if arg1 then DPSMate.Parser:ParsePartyMisses(arg1) end 
 	elseif event == "CHAT_MSG_SPELL_PARTY_DAMAGE" then 
 		if arg1 then DPSMate.Parser:ParsePartySpellDMG(arg1) end
+	elseif event == "COMBAT_TEXT_UPDATE" then -- Hackfix cause for some reason this event is only fired here
+		DPSMate.Parser:ParseTextUpdate(arg1,arg2,arg3)
 	end
 end
 
@@ -133,4 +164,12 @@ function DPSMate.Parser:ParsePartySpellDMG(msg)
 	end
 	if (not cause.name) then return; end
 	DPSMate.DB:BuildUserAbility(cause, ability, hit, crit, miss, parry, dodge, resist, amount, 0)
+end
+
+function DPSMate.Parser:ParseTextUpdate(arg1,arg2,arg3) 
+	if arg1 == "AURA_START" or arg1 == "AURA_END" then
+		if DPSMate:TContains(procs, arg2) then
+			DPSMate.DB:BuildUserProcs(player, arg2)
+		end
+	end
 end
