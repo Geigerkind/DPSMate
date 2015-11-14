@@ -221,6 +221,20 @@ local DetailsSelected = 1
 local DetailsArr, DetailsTotal
 local PieChart = true
 local g, g2
+local icons = {
+	-- General
+	["AutoAttack"] = "Interface\\ICONS\\inv_sword_39",
+	["Lightning Strike"] = "Interface\\ICONS\\spell_holy_mindvision",
+	["Fatal Wound"] = "Interface\\ICONS\\ability_backstab",
+	["Falling"] = "Interface\\ICONS\\spell_magic_featherfall",
+	
+	-- Rogues
+	["Sinister Strike"] = "Interface\\ICONS\\spell_shadow_ritualofsacrifice",
+	["Blade Flurry"] = "Interface\\ICONS\\ability_warrior_punishingblow",
+	["Eviscerate"] = "Interface\\ICONS\\ability_rogue_eviscerate",
+	["Garrote(Periodic)"] = "Interface\\ICONS\\ability_rogue_garrote",
+	["Rupture(Periodic)"] = "Interface\\ICONS\\ability_rogue_rupture",
+}
 
 -- Begin Functions
 
@@ -307,15 +321,28 @@ function DPSMate.Options:ScrollFrame_Update()
 	local line, lineplusoffset
 	local obj = getglobal("DPSMate_Details_Log_ScrollFrame")
 	local arr = DPSMate:GetMode(DPSMate_Details.PaKey)
-	local user, pet = "",0
+	local user, pet, len = "", 0, DPSMate:TableLength(arr[DetailsUser])-5
 	DetailsArr, DetailsTotal = DPSMate.Options:EvalTable(DetailsUser)
-	FauxScrollFrame_Update(obj,DPSMate:TableLength(DetailsArr),4,24)
-	for line=1,4 do
+	FauxScrollFrame_Update(obj,DPSMate:TableLength(arr),10,24)
+	for line=1,10 do
 		lineplusoffset = line + FauxScrollFrame_GetOffset(obj)
 		if DetailsArr[lineplusoffset] ~= nil then
 			if (arr[DetailsUser][DetailsArr[lineplusoffset]]) then user=DetailsUser;pet=0; else user=arr[DetailsUser].pet;pet=5; end
+			local ability = strsub(DetailsArr[lineplusoffset], 1, strlen(DetailsArr[lineplusoffset])-pet)
 			getglobal("DPSMate_Details_Log_ScrollButton"..line.."_Name"):SetText(DetailsArr[lineplusoffset])
-			getglobal("DPSMate_Details_Log_ScrollButton"..line.."_Value"):SetText(arr[user][strsub(DetailsArr[lineplusoffset], 1, strlen(DetailsArr[lineplusoffset])-pet)].amount.." ("..string.format("%.2f", (arr[user][strsub(DetailsArr[lineplusoffset], 1, strlen(DetailsArr[lineplusoffset])-pet)].amount*100/DetailsTotal)).."%)")
+			getglobal("DPSMate_Details_Log_ScrollButton"..line.."_Value"):SetText(arr[user][ability].amount.." ("..string.format("%.2f", (arr[user][ability].amount*100/DetailsTotal)).."%)")
+			if icons[ability] then
+				getglobal("DPSMate_Details_Log_ScrollButton"..line.."_Icon"):SetTexture(icons[ability])
+			else
+				getglobal("DPSMate_Details_Log_ScrollButton"..line.."_Icon"):SetTexture("Interface\\AddOns\\DPSMate\\images\\dummy")
+			end
+			if len < 10 then
+				getglobal("DPSMate_Details_Log_ScrollButton"..line):SetWidth(235)
+				getglobal("DPSMate_Details_Log_ScrollButton"..line.."_Name"):SetWidth(125)
+			else
+				getglobal("DPSMate_Details_Log_ScrollButton"..line):SetWidth(220)
+				getglobal("DPSMate_Details_Log_ScrollButton"..line.."_Name"):SetWidth(110)
+			end
 			getglobal("DPSMate_Details_Log_ScrollButton"..line):Show()
 		else
 			getglobal("DPSMate_Details_Log_ScrollButton"..line):Hide()
@@ -363,22 +390,71 @@ function DPSMate.Options:SelectDetailsButton(i)
 	local lineplusoffset = i + FauxScrollFrame_GetOffset(obj)
 	local arr = DPSMate:GetMode(DPSMate_Details.PaKey)
 	local user, pet = "", 0
+	
 	DetailsSelected = lineplusoffset
-	for p=1, 4 do
+	for p=1, 10 do
 		getglobal("DPSMate_Details_Log_ScrollButton"..p.."_selected"):Hide()
 	end
 	if (arr[DetailsUser][DetailsArr[lineplusoffset]]) then user=DetailsUser; pet=0; else user=arr[DetailsUser].pet; pet=5; end
 	getglobal("DPSMate_Details_Log_ScrollButton"..i.."_selected"):Show()
-	getglobal("DPSMate_Details_LogDetails_Hit"):SetText("Hit: "..arr[user][strsub(DetailsArr[lineplusoffset], 1, strlen(DetailsArr[lineplusoffset])-pet)].hit)
-	getglobal("DPSMate_Details_LogDetails_HitMax"):SetText("HitMax: "..arr[user][strsub(DetailsArr[lineplusoffset], 1, strlen(DetailsArr[lineplusoffset])-pet)].hithigh)
-	getglobal("DPSMate_Details_LogDetails_HitMin"):SetText("HitMin: "..arr[user][strsub(DetailsArr[lineplusoffset], 1, strlen(DetailsArr[lineplusoffset])-pet)].hitlow)
-	getglobal("DPSMate_Details_LogDetails_Crit"):SetText("Crit: "..arr[user][strsub(DetailsArr[lineplusoffset], 1, strlen(DetailsArr[lineplusoffset])-pet)].crit)
-	getglobal("DPSMate_Details_LogDetails_CritMax"):SetText("CritMax: "..arr[user][strsub(DetailsArr[lineplusoffset], 1, strlen(DetailsArr[lineplusoffset])-pet)].crithigh)
-	getglobal("DPSMate_Details_LogDetails_CritMin"):SetText("CritMin: "..arr[user][strsub(DetailsArr[lineplusoffset], 1, strlen(DetailsArr[lineplusoffset])-pet)].critlow)
-	getglobal("DPSMate_Details_LogDetails_Miss"):SetText("Miss: "..arr[user][strsub(DetailsArr[lineplusoffset], 1, strlen(DetailsArr[lineplusoffset])-pet)].miss)
-	getglobal("DPSMate_Details_LogDetails_Parry"):SetText("Parry: "..arr[user][strsub(DetailsArr[lineplusoffset], 1, strlen(DetailsArr[lineplusoffset])-pet)].parry)
-	getglobal("DPSMate_Details_LogDetails_Dodge"):SetText("Dodge: "..arr[user][strsub(DetailsArr[lineplusoffset], 1, strlen(DetailsArr[lineplusoffset])-pet)].dodge)
-	getglobal("DPSMate_Details_LogDetails_Resist"):SetText("Resist: "..arr[user][strsub(DetailsArr[lineplusoffset], 1, strlen(DetailsArr[lineplusoffset])-pet)].resist)
+	
+	local ability = strsub(DetailsArr[lineplusoffset], 1, strlen(DetailsArr[lineplusoffset])-pet)
+	local hit, crit, miss, parry, dodge, resist, hitMin, hitMax, critMin, critMax = arr[user][ability].hit, arr[user][ability].crit, arr[user][ability].miss, arr[user][ability].parry, arr[user][ability].dodge, arr[user][ability].resist, arr[user][ability].hitlow, arr[user][ability].hithigh, arr[user][ability].critlow, arr[user][ability].crithigh
+	local total, max = hit+crit+miss+parry+dodge+resist, DPSMate:TMax({hit, crit, miss, parry, dodge, resist})
+	
+	-- Hit
+	getglobal("DPSMate_Details_LogDetails_Amount1_Amount"):SetText(hit)
+	getglobal("DPSMate_Details_LogDetails_Amount1_Percent"):SetText(ceil(100*hit/total).."%")
+	getglobal("DPSMate_Details_LogDetails_Amount1_StatusBar"):SetValue(ceil(100*hit/max))
+	getglobal("DPSMate_Details_LogDetails_Amount1_StatusBar"):SetStatusBarColor(0.9,0.0,0.0,1)
+	getglobal("DPSMate_Details_LogDetails_Average1"):SetText((hitMin+hitMax)/2)
+	getglobal("DPSMate_Details_LogDetails_Min1"):SetText(hitMin)
+	getglobal("DPSMate_Details_LogDetails_Max1"):SetText(hitMax)
+	
+	-- Crit
+	getglobal("DPSMate_Details_LogDetails_Amount2_Amount"):SetText(crit)
+	getglobal("DPSMate_Details_LogDetails_Amount2_Percent"):SetText(ceil(100*crit/total).."%")
+	getglobal("DPSMate_Details_LogDetails_Amount2_StatusBar"):SetValue(ceil(100*crit/max))
+	getglobal("DPSMate_Details_LogDetails_Amount2_StatusBar"):SetStatusBarColor(0.0,0.9,0.0,1)
+	getglobal("DPSMate_Details_LogDetails_Average2"):SetText((critMin+critMax)/2)
+	getglobal("DPSMate_Details_LogDetails_Min2"):SetText(critMin)
+	getglobal("DPSMate_Details_LogDetails_Max2"):SetText(critMax)
+	
+	-- Miss
+	getglobal("DPSMate_Details_LogDetails_Amount3_Amount"):SetText(miss)
+	getglobal("DPSMate_Details_LogDetails_Amount3_Percent"):SetText(ceil(100*miss/total).."%")
+	getglobal("DPSMate_Details_LogDetails_Amount3_StatusBar"):SetValue(ceil(100*miss/max))
+	getglobal("DPSMate_Details_LogDetails_Amount3_StatusBar"):SetStatusBarColor(0.0,0.0,1.0,1)
+	getglobal("DPSMate_Details_LogDetails_Average3"):SetText("-")
+	getglobal("DPSMate_Details_LogDetails_Min3"):SetText("-")
+	getglobal("DPSMate_Details_LogDetails_Max3"):SetText("-")
+	
+	-- Parry
+	getglobal("DPSMate_Details_LogDetails_Amount4_Amount"):SetText(parry)
+	getglobal("DPSMate_Details_LogDetails_Amount4_Percent"):SetText(ceil(100*parry/total).."%")
+	getglobal("DPSMate_Details_LogDetails_Amount4_StatusBar"):SetValue(ceil(100*parry/max))
+	getglobal("DPSMate_Details_LogDetails_Amount4_StatusBar"):SetStatusBarColor(1.0,1.0,0.0,1)
+	getglobal("DPSMate_Details_LogDetails_Average4"):SetText("-")
+	getglobal("DPSMate_Details_LogDetails_Min4"):SetText("-")
+	getglobal("DPSMate_Details_LogDetails_Max4"):SetText("-")
+	
+	-- Dodge
+	getglobal("DPSMate_Details_LogDetails_Amount5_Amount"):SetText(dodge)
+	getglobal("DPSMate_Details_LogDetails_Amount5_Percent"):SetText(ceil(100*dodge/total).."%")
+	getglobal("DPSMate_Details_LogDetails_Amount5_StatusBar"):SetValue(ceil(100*dodge/max))
+	getglobal("DPSMate_Details_LogDetails_Amount5_StatusBar"):SetStatusBarColor(1.0,0.0,1.0,1)
+	getglobal("DPSMate_Details_LogDetails_Average5"):SetText("-")
+	getglobal("DPSMate_Details_LogDetails_Min5"):SetText("-")
+	getglobal("DPSMate_Details_LogDetails_Max5"):SetText("-")
+	
+	-- Resist
+	getglobal("DPSMate_Details_LogDetails_Amount6_Amount"):SetText(resist)
+	getglobal("DPSMate_Details_LogDetails_Amount6_Percent"):SetText(ceil(100*resist/total).."%")
+	getglobal("DPSMate_Details_LogDetails_Amount6_StatusBar"):SetValue(ceil(100*resist/max))
+	getglobal("DPSMate_Details_LogDetails_Amount6_StatusBar"):SetStatusBarColor(0.0,1.0,1.0,1)
+	getglobal("DPSMate_Details_LogDetails_Average6"):SetText("-")
+	getglobal("DPSMate_Details_LogDetails_Min6"):SetText("-")
+	getglobal("DPSMate_Details_LogDetails_Max6"):SetText("-")
 end
 
 function DPSMate.Options:UpdatePie()
@@ -399,7 +475,7 @@ function DPSMate.Options:UpdateDetails(obj)
 	DetailsUser = obj.user
 	if (PieChart) then
 		g=graph:CreateGraphPieChart("PieChart", DPSMate_Details_Diagram, "CENTER", "CENTER", 0, 0, 200, 200)
-		g2=graph:CreateGraphLine("LineGraph",DPSMate_Details_DiagramLine,"CENTER","CENTER",0,0,470,135)
+		g2=graph:CreateGraphLine("LineGraph",DPSMate_Details_DiagramLine,"CENTER","CENTER",0,0,850,230)
 		PieChart = false
 	end
 	DPSMate_Details_Title:SetText("Combat details of "..obj.user)
@@ -441,9 +517,12 @@ function DPSMate.Options:UpdateLineGraph()
 end
 
 function DPSMate.Options:CheckProcs(name, arr, val)
-	for i=1, DPSMate:TableLength(arr[DetailsUser]["procs"][name]["start"]) do
-		if val >  DPSMateUser[DetailsUser]["procs"][name]["start"][i] and val < DPSMateUser[DetailsUser]["procs"][name]["ending"][i] then
-			return true
+	if DPSMate.DB:DataExistProcs(DetailsUser, name, arr) then
+		for i=1, DPSMate:TableLength(arr[DetailsUser]["procs"][name]["start"]) do
+			if not DPSMateUser[DetailsUser]["procs"][name]["start"][i] or not DPSMateUser[DetailsUser]["procs"][name]["ending"][i] then return false end
+			if val >  DPSMateUser[DetailsUser]["procs"][name]["start"][i] and val < DPSMateUser[DetailsUser]["procs"][name]["ending"][i] then
+				return true
+			end
 		end
 	end
 	return false
@@ -534,12 +613,19 @@ end
 
 function DPSMate.Options:ProcsDropDown()
 	local arr, cbt = DPSMate:GetMode(DPSMate_Details.PaKey)
+	DPSMate_Details.proc = "None"
 	
     local function on_click()
         UIDropDownMenu_SetSelectedValue(DPSMate_Details_DiagramLegend_Procs, this.value)
 		DPSMate_Details.proc = this.value
 		DPSMate.Options:UpdateLineGraph()
     end
+	
+	UIDropDownMenu_AddButton{
+		text = "None",
+		value = "None",
+		func = on_click,
+	}
 	
 	-- Adding dynamic channel
 	for cat,_ in pairs(arr[DetailsUser]["procs"]) do
@@ -548,11 +634,10 @@ function DPSMate.Options:ProcsDropDown()
 			value = cat,
 			func = on_click,
 		}
-		DPSMate_Details.proc = cat
 	end
 	
 	if DPSMate_Details.LastUser~=DetailsUser then
-		UIDropDownMenu_SetSelectedValue(DPSMate_Details_DiagramLegend_Procs, DPSMate_Details.proc)
+		UIDropDownMenu_SetSelectedValue(DPSMate_Details_DiagramLegend_Procs, "None")
 	end
 	DPSMate_Details.LastUser = DetailsUser
 end
@@ -693,4 +778,25 @@ function DPSMate.Options:CreateWindow()
 		getglobal("DPSMate_"..na.."_ScrollFrame"):SetHeight(84)
 		DPSMate:SetStatusBarValue()
 	end
+end
+
+function DPSMate.Options:CreateGraphTable()
+	local lines = {}
+	for i=1, 7 do
+		-- Horizontal
+		lines[i] = graph:DrawLine(DPSMate_Details_Log, 252, 270-i*30, 617, 270-i*30, 20, {0.5,0.5,0.5,0.5}, "BACKGROUND")
+		lines[i]:Show()
+	end
+	-- Vertical
+	lines[8] = graph:DrawLine(DPSMate_Details_Log, 302, 260, 302, 45, 20, {0.5,0.5,0.5,0.5}, "BACKGROUND")
+	lines[8]:Show()
+	
+	lines[9] = graph:DrawLine(DPSMate_Details_Log, 437, 260, 437, 45, 20, {0.5,0.5,0.5,0.5}, "BACKGROUND")
+	lines[9]:Show()
+	
+	lines[10] = graph:DrawLine(DPSMate_Details_Log, 497, 260, 497, 45, 20, {0.5,0.5,0.5,0.5}, "BACKGROUND")
+	lines[10]:Show()
+	
+	lines[11] = graph:DrawLine(DPSMate_Details_Log, 557, 260, 557, 45, 20, {0.5,0.5,0.5,0.5}, "BACKGROUND")
+	lines[11]:Show()
 end

@@ -44,6 +44,16 @@ function DPSMate:WindowsExist()
 	return true
 end
 
+function DPSMate:TMax(t)
+	local max = 0
+	for _,val in pairs(t) do
+		if val>max then
+			max=val
+		end
+	end
+	return max
+end
+
 function DPSMate:TableLength(t)
 	local count = 0
 	if (t) then
