@@ -638,6 +638,34 @@ function DPSMate.Options:ProcsDropDown()
 	DPSMate_Details.LastUser = DetailsUser
 end
 
+function DPSMate.Options:WindowDropDown()
+	DPSMate_ConfigMenu.Selected = "None"
+
+	local function on_click()
+        UIDropDownMenu_SetSelectedValue(DPSMate_ConfigMenu_Tab_Window_Remove, this.value)
+		DPSMate_ConfigMenu.Selected = this.value
+    end
+	
+	UIDropDownMenu_AddButton{
+		text = "None",
+		value = "None",
+		func = on_click,
+	}
+
+	for _, val in pairs(DPSMateSettings["windows"]) do
+		UIDropDownMenu_AddButton{
+			text = val["name"],
+			value = val["name"],
+			func = on_click,
+		}
+	end
+	
+	if not DPSMate_ConfigMenu.vis then
+		UIDropDownMenu_SetSelectedValue(DPSMate_ConfigMenu_Tab_Window_Remove, "None")
+	end
+	DPSMate_ConfigMenu.vis = true
+end
+
 function DPSMate.Options:Report()
 	local channel = UIDropDownMenu_GetSelectedValue(DPSMate_Report_Channel)
 	local chn, index, sortedTable, total, a = nil, nil, DPSMate:GetSortedTable(DPSMate:GetMode(DPSMate_Report.Key))
@@ -783,6 +811,15 @@ function DPSMate.Options:CreateWindow()
 	end
 end
 
+function DPSMate.Options:RemoveWindow()
+	local frame = getglobal("DPSMate_"..DPSMate_ConfigMenu.Selected)
+	if frame then
+		frame:Hide()
+		table.remove(DPSMateSettings["windows"], frame.Key)
+		UIDropDownMenu_SetSelectedValue(DPSMate_ConfigMenu_Tab_Window_Remove, "None")
+	end
+end
+
 function DPSMate.Options:CreateGraphTable()
 	local lines = {}
 	for i=1, 7 do
@@ -809,6 +846,7 @@ function DPSMate.Options:Lock()
 	for _,val in pairs(DPSMateSettings["windows"]) do
 		getglobal("DPSMate_"..val["name"].."_Resize"):Hide()
 	end
+	DPSMate:SendMessage("Locked all windows.")
 end
 
 function DPSMate.Options:Unlock()
@@ -816,6 +854,7 @@ function DPSMate.Options:Unlock()
 	for _,val in pairs(DPSMateSettings["windows"]) do
 		getglobal("DPSMate_"..val["name"].."_Resize"):Show()
 	end
+	DPSMate:SendMessage("Unlocked all windows.")
 end
 
 function DPSMate.Options:Hide(frame)
@@ -839,3 +878,7 @@ function DPSMate.Options:deletesegment2() DPSMate.Options:RemoveSegment(2) end
 function DPSMate.Options:deletesegment3() DPSMate.Options:RemoveSegment(3) end
 function DPSMate.Options:deletesegment4() DPSMate.Options:RemoveSegment(4) end
 function DPSMate.Options:deletesegment5() DPSMate.Options:RemoveSegment(5) end
+
+function DPSMate.Options:InitializeConfigMenu()
+	getglobal("DPSMate_ConfigMenu_Tab_Window_Lock"):SetChecked(DPSMateSettings["lock"])
+end

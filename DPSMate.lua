@@ -26,6 +26,7 @@ function DPSMate:OnLoad()
 	SlashCmdList["DPSMate"] = function(msg) DPSMate:SlashCMDHandler(msg) end
 
 	DPSMate:InitializeFrames()
+	DPSMate.Options:InitializeConfigMenu()
 	DPSMate:SetStatusBarValue()
 end
 
@@ -34,10 +35,8 @@ function DPSMate:SlashCMDHandler(msg)
 		local cmd = msg
 		if cmd == "lock" then
 			DPSMate.Options:Lock()
-			DPSMate:SendMessage("Locked all windows.")
 		elseif cmd == "unlock" then
 			DPSMate.Options:Unlock()
-			DPSMate:SendMessage("Unlocked all windows.")
 		elseif cmd == "config" then
 			DPSMate_ConfigMenu:Show()
 		elseif strsub(cmd, 1, 4) == "show" then

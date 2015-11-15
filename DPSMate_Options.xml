@@ -405,12 +405,27 @@
 			</Layer>
 		</Layers>
 	</EditBox>
+	<CheckButton name="DPSMate_Template_CheckButton" inherits="OptionsCheckButtonTemplate" virtual="true">
+		<Size x="20" y="20" />
+		<Layers>
+			<Layer level="ARTWORK">
+				<FontString name="$parent_Title" inherits="GameFontNormalSmall" justifyH="LEFT" justifyV="CENTER">
+					<Size x="100" y="20" />
+					<Anchors>
+						<Anchor point="LEFT">
+							<Offset x="20" y="0" />
+						</Anchor>
+					</Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+	</CheckButton>
 	
 	----------------------------------------------------------------------------------
 	--------------                 DPSMate Config Menu                  --------------                                  
 	----------------------------------------------------------------------------------
 	
-	<Frame name="DPSMate_ConfigMenu" movable="true" hidden="true">
+	<Frame name="DPSMate_ConfigMenu" movable="true" hidden="false">
 		<Size x="450" y="300" />
 		<Anchors>
 			<Anchor point="CENTER" />
@@ -456,6 +471,7 @@
 						GameTooltip:Hide()
 					</OnLeave>
 					<OnClick>
+						DPSMate_ConfigMenu.vis = false
 						DPSMate_ConfigMenu:Hide()
 					</OnClick>
 				</Scripts>
@@ -606,7 +622,7 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								this.aide = "Test"
+								this.aide = DPSMate.localization.config.createwindowTooltip
 								getglobal(this:GetName().."Text"):SetText(DPSMate.localization.config.createwindow)
 							</OnLoad>
 						</Scripts>
@@ -619,7 +635,7 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								this.aide = "Test"
+								this.aide = DPSMate.localization.config.submitTooltip
 								getglobal(this:GetName().."Text"):SetText(DPSMate.localization.config.submit)
 							</OnLoad>
 							<OnClick>
@@ -627,6 +643,81 @@
 							</OnClick>
 						</Scripts>
 					</Button>
+					<Frame name="$parent_Remove" inherits="UIDropDownMenuTemplate" id="1">
+						<Size x="148" y="24" />
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent_Editbox" relativePoint="BOTTOMLEFT">
+								<Offset x="-22" y="-20" />
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnEnter>
+								GameTooltip:SetOwner(this, "ANCHOR_RIGHT")
+								GameTooltip:SetText(DPSMate.localization.config.availwindowsTooltip, nil, nil, nil, nil, 1)
+							</OnEnter>
+							<OnLeave>
+								GameTooltip:Hide()
+							</OnLeave>
+							<OnLoad>
+								UIDropDownMenu_SetWidth(148)
+								getglobal(this:GetName().."_Text"):SetText(DPSMate.localization.config.availwindows)
+							</OnLoad>
+							<OnShow>
+								if DPSMate.DB.loaded then
+									UIDropDownMenu_Initialize(this, DPSMate.Options.WindowDropDown)
+								end
+							</OnShow>
+						</Scripts>
+						<Layers>
+							<Layer level="ARTWORK">
+								<FontString name="$parent_Text" inherits="GameFontNormalSmall" justifyH="LEFT" alphaMode="ADD">
+									<Size x="150" y="20" />
+									<Anchors>
+										<Anchor point="TOP">
+											<Offset x="-2" y="15" />
+										</Anchor>
+									</Anchors>
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+					<Button name="$parent_ButtonRemove" inherits="DPSMate_Template_Button">
+						<Anchors>
+							<Anchor point="LEFT" relativeTo="$parent_Remove" relativePoint="RIGHT">
+								<Offset x="4" y="-2" />
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								this.aide = "Test"
+								getglobal(this:GetName().."Text"):SetText("Remove")
+							</OnLoad>
+							<OnClick>
+								DPSMate.Options:RemoveWindow()
+							</OnClick>
+						</Scripts>
+					</Button>
+					<CheckButton name="$parent_Lock" inherits="DPSMate_Template_CheckButton">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$Parent_Remove" relativePoint="BOTTOMLEFT">
+								<Offset x="15" y="-5" />
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.lock)
+							</OnLoad>
+							<OnClick>
+								if DPSMateSettings["lock"] then
+									DPSMateSettings["lock"] = false
+									DPSMate.Options:Unlock()
+								else
+									DPSMateSettings["lock"] = true
+									DPSMate.Options:Lock()
+								end
+							</OnClick>
+						</Scripts>
+					</CheckButton>
 				</Frames>
 			</Frame>
 			
