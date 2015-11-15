@@ -46,6 +46,7 @@ function DPSMate.DB:OnEvent(event)
 					}
 				},
 				lock = true,
+				barfont = "ARIALN",
 			}
 		end
 		if DPSMateHistory == nil then DPSMateHistory = {} end

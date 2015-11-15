@@ -1,4 +1,28 @@
 -- Global Variables
+DPSMate.Options.fonts = {
+	["FRIZQT"] = "Fonts\\FRIZQT__.TTF",
+	["ARIALN"] = "Fonts\\ARIALN.TTF",
+	["MORPHEUS"] = "Fonts\\MORPHEUS.TTF",
+	["ABF"] = "Interface\\AddOns\\DPSMate\\fonts\\ABF.TTF",
+	["Accidental Presidency"] = "Interface\\AddOns\\DPSMate\\fonts\\Accidental Presidency.TTF",
+	["Adventure"] = "Interface\\AddOns\\DPSMate\\fonts\\Adventure.TTF",
+	["Avqest"] = "Interface\\AddOns\\DPSMate\\fonts\\Avqest.TTF",
+	["Bazooka"] = "Interface\\AddOns\\DPSMate\\fonts\\Bazooka.TTF",
+	["BigNoodleTitling"] = "Interface\\AddOns\\DPSMate\\fonts\\BigNoodleTitling.TTF",
+	["BigNoodleTitling-Oblique"] = "Interface\\AddOns\\DPSMate\\fonts\\BigNoodleTitling-Oblique.TTF",
+	["BlackChancery"] = "Interface\\AddOns\\DPSMate\\fonts\\BlackChancery.TTF",
+	["Emblem"] = "Interface\\AddOns\\DPSMate\\fonts\\Emblem.TTF",
+	["Enigma__2"] = "Interface\\AddOns\\DPSMate\\fonts\\Enigma__2.TTF",
+	["Movie_Poster-Bold"] = "Interface\\AddOns\\DPSMate\\fonts\\Movie_Poster-Bold.TTF",
+	["Porky"] = "Interface\\AddOns\\DPSMate\\fonts\\Porky.TTF",
+	["rm_midse"] = "Interface\\AddOns\\DPSMate\\fonts\\rm_midse.TTF",
+	["Tangerin"] = "Interface\\AddOns\\DPSMate\\fonts\\Tangerin.TTF",
+	["Tw_Cen_MT_Bold"] = "Interface\\AddOns\\DPSMate\\fonts\\Tw_Cen_MT_Bold.TTF",
+	["Ultima_Campagnoli"] = "Interface\\AddOns\\DPSMate\\fonts\\Ultima_Campagnoli.TTF",
+	["VeraSe"] = "Interface\\AddOns\\DPSMate\\fonts\\VeraSe.TTF",
+	["Yellowjacket"] = "Interface\\AddOns\\DPSMate\\fonts\\Yellowjacket.TTF",
+}
+
 
 -- Local Variables
 local LastPopUp = GetTime()
@@ -580,8 +604,15 @@ function DPSMate.Options:GetMaxLineVal(t)
 	return max
 end
 
+function DPSMate.Options:DropDownStyleReset()
+	for i=1, 20 do
+		getglobal("DropDownList1Button"..i.."NormalText"):SetFont(DPSMate.Options.fonts["FRIZQT"], 12)
+	end
+end
+
 function DPSMate.Options:ChannelDropDown()
 	local channel, i = {[1]="Whisper",[2]="Raid",[3]="Party",[4]="Say",[5]="Officer",[6]="Guild"}, 1
+	DPSMate.Options:DropDownStyleReset()
 	
     local function on_click()
         UIDropDownMenu_SetSelectedValue(DPSMate_Report_Channel, this.value)
@@ -610,6 +641,7 @@ end
 function DPSMate.Options:ProcsDropDown()
 	local arr, cbt = DPSMate:GetMode(DPSMate_Details.PaKey)
 	DPSMate_Details.proc = "None"
+	DPSMate.Options:DropDownStyleReset()
 	
     local function on_click()
         UIDropDownMenu_SetSelectedValue(DPSMate_Details_DiagramLegend_Procs, this.value)
@@ -640,7 +672,8 @@ end
 
 function DPSMate.Options:WindowDropDown()
 	DPSMate_ConfigMenu.Selected = "None"
-
+	DPSMate.Options:DropDownStyleReset()
+	
 	local function on_click()
         UIDropDownMenu_SetSelectedValue(DPSMate_ConfigMenu_Tab_Window_Remove, this.value)
 		DPSMate_ConfigMenu.Selected = this.value
@@ -664,6 +697,38 @@ function DPSMate.Options:WindowDropDown()
 		UIDropDownMenu_SetSelectedValue(DPSMate_ConfigMenu_Tab_Window_Remove, "None")
 	end
 	DPSMate_ConfigMenu.vis = true
+end
+
+function DPSMate.Options:BarFontDropDown()
+	local i = 1
+	
+	local function on_click()
+        UIDropDownMenu_SetSelectedValue(DPSMate_ConfigMenu_Tab_Bars_BarFont, this.value)
+		DPSMate_ConfigMenu_Tab_Bars_BarFontText:SetFont(DPSMate.Options.fonts[this.value], 12)
+		DPSMateSettings["barfont"] = this.value
+		for _, val in pairs(DPSMateSettings["windows"]) do
+			for i=1, 30 do
+				getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar"..i.."_Name"):SetFont(DPSMate.Options.fonts[this.value], 14, "OUTLINE")
+				getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar"..i.."_Value"):SetFont(DPSMate.Options.fonts[this.value], 14, "OUTLINE")
+			end
+		end
+    end
+	
+	for name, path in pairs(DPSMate.Options.fonts) do
+		UIDropDownMenu_AddButton{
+			text = name,
+			value = name,
+			func = on_click,
+		}
+		getglobal("DropDownList1Button"..i.."NormalText"):SetFont(path, 16)
+		i=i+1
+	end
+	
+	if not DPSMate_ConfigMenu.visBars then
+		UIDropDownMenu_SetSelectedValue(DPSMate_ConfigMenu_Tab_Bars_BarFont, DPSMateSettings["barfont"])
+		DPSMate_ConfigMenu_Tab_Bars_BarFontText:SetFont(DPSMate.Options.fonts[DPSMateSettings["barfont"]], 12)
+	end
+	DPSMate_ConfigMenu.visBars = true
 end
 
 function DPSMate.Options:Report()

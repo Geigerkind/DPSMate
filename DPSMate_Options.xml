@@ -343,10 +343,8 @@
 				this.selected=true
 				getglobal(this:GetName().."Texture"):Show()
 				getglobal(this:GetName().."Text"):SetTextColor(1,1,1,1)
+				this.func()
 			</OnClick>
-			<OnLoad>
-				this.selected=false
-			</OnLoad>
 		</Scripts>
 		<HighlightTexture file="Interface\AddOns\DPSMate\images\UI-Listbox-Highlight2" alphaMode="ADD" />
 	</Button>
@@ -420,6 +418,37 @@
 			</Layer>
 		</Layers>
 	</CheckButton>
+	<Frame name="DPSMate_Template_DropDown" inherits="UIDropDownMenuTemplate" virtual="true">
+		<Size x="148" y="24" />
+		<Scripts>
+			<OnEnter>
+				GameTooltip:SetOwner(this, "ANCHOR_RIGHT")
+				GameTooltip:SetText(this.aide, nil, nil, nil, nil, 1)
+			</OnEnter>
+			<OnLeave>
+				GameTooltip:Hide()
+			</OnLeave>
+			<OnShow>
+				if DPSMate.DB.loaded then
+					UIDropDownMenu_Initialize(this, this.func)
+				end
+			</OnShow>
+		</Scripts>
+		<Layers>
+			<Layer level="ARTWORK">
+				<FontString name="$parent_Text" inherits="GameFontNormalSmall" justifyH="LEFT" alphaMode="ADD">
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset x="21" y="10" />
+						</Anchor>
+						<Anchor pont="BOTTOMRIGHT">
+							<Offset x="0" y="0" />
+						</Anchor>
+					</Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+	</Frame>
 	
 	----------------------------------------------------------------------------------
 	--------------                 DPSMate Config Menu                  --------------                                  
@@ -500,9 +529,15 @@
 						<Scripts>
 							<OnLoad>
 								this.selected=true
+								this:GetParent().selected = "_Tab_Window"
 								getglobal(this:GetName().."Texture"):Show()
 								getglobal(this:GetName().."Text"):SetText(DPSMate.localization.config.window)
 								getglobal(this:GetName().."Text"):SetTextColor(1,1,1,1)
+								this.func = function()
+									getglobal(this:GetParent():GetParent():GetName()..this:GetParent().selected):Hide()
+									getglobal(this:GetParent():GetParent():GetName().."_Tab_Window"):Show()
+									this:GetParent().selected = "_Tab_Window"
+								end
 							</OnLoad>
 						</Scripts>
 					</Button>
@@ -513,6 +548,11 @@
 						<Scripts>
 							<OnLoad>
 								getglobal(this:GetName().."Text"):SetText(DPSMate.localization.config.bars)
+								this.func = function()
+									getglobal(this:GetParent():GetParent():GetName()..this:GetParent().selected):Hide()
+									getglobal(this:GetParent():GetParent():GetName().."_Tab_Bars"):Show()
+									this:GetParent().selected = "_Tab_Bars"
+								end
 							</OnLoad>
 						</Scripts>
 					</Button>
@@ -643,43 +683,21 @@
 							</OnClick>
 						</Scripts>
 					</Button>
-					<Frame name="$parent_Remove" inherits="UIDropDownMenuTemplate" id="1">
-						<Size x="148" y="24" />
+					<Frame name="$parent_Remove" inherits="DPSMate_Template_DropDown">
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="$parent_Editbox" relativePoint="BOTTOMLEFT">
 								<Offset x="-22" y="-20" />
 							</Anchor>
 						</Anchors>
 						<Scripts>
-							<OnEnter>
-								GameTooltip:SetOwner(this, "ANCHOR_RIGHT")
-								GameTooltip:SetText(DPSMate.localization.config.availwindowsTooltip, nil, nil, nil, nil, 1)
-							</OnEnter>
-							<OnLeave>
-								GameTooltip:Hide()
-							</OnLeave>
 							<OnLoad>
+								this.aide = DPSMate.localization.config.availwindowsTooltip
+								this.func = DPSMate.Options.WindowDropDown
+								this.title = DPSMate.localization.config.availwindows
 								UIDropDownMenu_SetWidth(148)
-								getglobal(this:GetName().."_Text"):SetText(DPSMate.localization.config.availwindows)
+								getglobal(this:GetName().."_Text"):SetText(this.title)
 							</OnLoad>
-							<OnShow>
-								if DPSMate.DB.loaded then
-									UIDropDownMenu_Initialize(this, DPSMate.Options.WindowDropDown)
-								end
-							</OnShow>
 						</Scripts>
-						<Layers>
-							<Layer level="ARTWORK">
-								<FontString name="$parent_Text" inherits="GameFontNormalSmall" justifyH="LEFT" alphaMode="ADD">
-									<Size x="150" y="20" />
-									<Anchors>
-										<Anchor point="TOP">
-											<Offset x="-2" y="15" />
-										</Anchor>
-									</Anchors>
-								</FontString>
-							</Layer>
-						</Layers>
 					</Frame>
 					<Button name="$parent_ButtonRemove" inherits="DPSMate_Template_Button">
 						<Anchors>
@@ -718,6 +736,38 @@
 							</OnClick>
 						</Scripts>
 					</CheckButton>
+				</Frames>
+			</Frame>
+			
+			<Frame name="$parent_Tab_Bars" hidden="true">
+				<Size x="301" y="250" />
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="$parent_Menu" relativePoint="RIGHT" />
+				</Anchors>
+				<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+					<BackgroundInsets left="4" right="4" top="4" bottom="4" />
+					<TileSize val="12" />
+					<EdgeSize val="12" />
+					<Color r="0.157" g="0.08" b="0.06" a="0.5" />
+				</Backdrop>
+				<Frames>
+					<Frame name="$parent_BarFont" inherits="DPSMate_Template_DropDown">
+						<Size x="120" y="24" />
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT">
+								<Offset x="-10" y="-20" />
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								this.aide = DPSMate.localization.config.barfontTooltip
+								this.func = DPSMate.Options.BarFontDropDown
+								this.title = DPSMate.localization.config.barfont
+								UIDropDownMenu_SetWidth(120)
+								getglobal(this:GetName().."_Text"):SetText(this.title)
+							</OnLoad>
+						</Scripts>
+					</Frame>
 				</Frames>
 			</Frame>
 			

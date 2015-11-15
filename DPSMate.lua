@@ -82,6 +82,12 @@ function DPSMate:InitializeFrames()
 		if DPSMateSettings.lock then
 			getglobal("DPSMate_"..val["name"].."_Resize"):Hide()
 		end
+		
+		-- Styles // Bars
+		for i=1, 30 do
+			getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar"..i.."_Name"):SetFont(DPSMate.Options.fonts[DPSMateSettings["barfont"]], 14, "OUTLINE")
+			getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar"..i.."_Value"):SetFont(DPSMate.Options.fonts[DPSMateSettings["barfont"]], 14, "OUTLINE")
+		end
 	end
 end
 
