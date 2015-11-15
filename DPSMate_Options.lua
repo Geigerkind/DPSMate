@@ -139,7 +139,7 @@ local Options = {
 				type = 'execute',
 				name = "Report",
 				desc = DPSMate.localization.desc.report,
-				func = "PopUpAccept",
+				func = function() DPSMate_Report:Show(); Dewdrop:Close() end,
 			},
 			reset = {
 				order = 11,
@@ -164,20 +164,7 @@ local Options = {
 				type = 'group',
 				name = "Remove segment",
 				desc = DPSMate.localization.desc.removesegment,
-				args = {
-					sub1 = {
-						type = "execute",
-						name = "Test 1",
-						desc = "Test 1 desc",
-						func = "PopUpAccept",
-					}, 
-					sub2 = {
-						type = "execute",
-						name = "Test 2",
-						desc = "Test 2 desc",
-						func = "PopUpAccept",
-					},
-				},
+				args = {},
 			},
 			blank2 = {
 				order = 35,
@@ -188,15 +175,23 @@ local Options = {
 				type = 'toggle',
 				name = "Lock window",
 				desc = DPSMate.localization.desc.lock,
-				get = function() return DPSMateSettings["windows"][Dewdrop:GetOpenedParent().Key]["options"][3]["lock"] end,
-				set = function() DPSMate.Options:ToggleDrewDrop(3, "lock", Dewdrop:GetOpenedParent()) end,
+				get = function() return DPSMateSettings["lock"] end,
+				set = function() DPSMate.Options:Lock(); Dewdrop:Close() end,
+			},
+			unlock = {
+				order = 40,
+				type = 'toggle',
+				name = "Unlock window",
+				desc = DPSMate.localization.desc.lock,
+				get = function() return not DPSMateSettings["lock"] end,
+				set = function() DPSMate.Options:Unlock(); Dewdrop:Close() end,
 			},
 			hide = {
 				order = 50,
 				type = 'execute',
 				name = "Hide window",
 				desc = DPSMate.localization.desc.hide,
-				func = "PopUpAccept",
+				func = function() DPSMate.Options:Hide(Dewdrop:GetOpenedParent()); Dewdrop:Close() end,
 			},
 			configure = {
 				order = 80,
@@ -210,7 +205,7 @@ local Options = {
 				type = 'execute',
 				name = "Close",
 				desc = DPSMate.localization.desc.close,
-				func = "PopUpAccept",
+				func = function() Dewdrop:Close() end,
 			},
 		},
 		handler = DPSMate.Options,
@@ -473,6 +468,7 @@ end
 function DPSMate.Options:UpdateDetails(obj)
 	DPSMate_Details.PaKey = obj:GetParent():GetParent():GetParent().Key
 	DetailsUser = obj.user
+	DPSMate_Details.LastUser = ""
 	if (PieChart) then
 		g=graph:CreateGraphPieChart("PieChart", DPSMate_Details_Diagram, "CENTER", "CENTER", 0, 0, 200, 200)
 		g2=graph:CreateGraphLine("LineGraph",DPSMate_Details_DiagramLine,"CENTER","CENTER",0,0,850,230)
@@ -675,10 +671,30 @@ function DPSMate.Options:NewSegment()
 		DPSMate:SetStatusBarValue()
 	end
 	DPSMate.Options:InitializeSegments()
+	Dewdrop:Close()
 end
 
 function DPSMate.Options:InitializeSegments()
 	local i=1
+	Options[2]["args"] = {
+		total = {
+			order = 10,
+			type = 'toggle',
+			name = "Total",
+			desc = DPSMate.localization.desc.total,
+			get = function() return DPSMateSettings["windows"][Dewdrop:GetOpenedParent().Key]["options"][2]["total"] end,
+			set = function() DPSMate.Options:ToggleDrewDrop(2, "total", Dewdrop:GetOpenedParent()) end,
+		},
+		currentFight = {
+			order = 20,
+			type = 'toggle',
+			name = "Current fight",
+			desc = DPSMate.localization.desc.current,
+			get = function() return DPSMateSettings["windows"][Dewdrop:GetOpenedParent().Key]["options"][2]["currentfight"] end,
+			set = function() DPSMate.Options:ToggleDrewDrop(2, "currentfight", Dewdrop:GetOpenedParent()) end,
+		},
+	}
+	Options[3]["args"]["deletesegment"]["args"] = {}
 	for cat, val in pairs(DPSMateHistory) do
 		Options[2]["args"]["segment"..i] = {
 			order = 20+i*10,
@@ -688,41 +704,28 @@ function DPSMate.Options:InitializeSegments()
 			get = "DropDownGetSegment"..i,
 			set = "DropDownSetSegment"..i,
 		}
+		Options[3]["args"]["deletesegment"]["args"]["segment"..i] = {
+			order = i*10,
+			type = 'execute',
+			name = "Segment "..i,
+			desc = "Remove segment "..i,
+			func = "deletesegment"..i,
+		}
 		i=i+1
 	end
 end
 
-function DPSMate.Options:DropDownGetSegment1()
-	return DPSMateSettings["windows"][Dewdrop:GetOpenedParent().Key]["options"][2]["segment1"]
-end
-function DPSMate.Options:DropDownGetSegment2()
-	return DPSMateSettings["windows"][Dewdrop:GetOpenedParent().Key]["options"][2]["segment2"]
-end
-function DPSMate.Options:DropDownGetSegment3()
-	return DPSMateSettings["windows"][Dewdrop:GetOpenedParent().Key]["options"][2]["segment3"]
-end
-function DPSMate.Options:DropDownGetSegment4()
-	return DPSMateSettings["windows"][Dewdrop:GetOpenedParent().Key]["options"][2]["segment4"]
-end
-function DPSMate.Options:DropDownGetSegment5()
-	return DPSMateSettings["windows"][Dewdrop:GetOpenedParent().Key]["options"][2]["segment5"]
-end
+function DPSMate.Options:DropDownGetSegment1() return DPSMateSettings["windows"][Dewdrop:GetOpenedParent().Key]["options"][2]["segment1"] end
+function DPSMate.Options:DropDownGetSegment2() return DPSMateSettings["windows"][Dewdrop:GetOpenedParent().Key]["options"][2]["segment2"] end
+function DPSMate.Options:DropDownGetSegment3() return DPSMateSettings["windows"][Dewdrop:GetOpenedParent().Key]["options"][2]["segment3"] end
+function DPSMate.Options:DropDownGetSegment4() return DPSMateSettings["windows"][Dewdrop:GetOpenedParent().Key]["options"][2]["segment4"] end
+function DPSMate.Options:DropDownGetSegment5() return DPSMateSettings["windows"][Dewdrop:GetOpenedParent().Key]["options"][2]["segment5"] end
 
-function DPSMate.Options:DropDownSetSegment1()
-	DPSMate.Options:ToggleDrewDrop(2, "segment1", Dewdrop:GetOpenedParent())
-end
-function DPSMate.Options:DropDownSetSegment2()
-	DPSMate.Options:ToggleDrewDrop(2, "segment2", Dewdrop:GetOpenedParent())
-end
-function DPSMate.Options:DropDownSetSegment3()
-	DPSMate.Options:ToggleDrewDrop(2, "segment3", Dewdrop:GetOpenedParent())
-end
-function DPSMate.Options:DropDownSetSegment4()
-	DPSMate.Options:ToggleDrewDrop(2, "segment4", Dewdrop:GetOpenedParent())
-end
-function DPSMate.Options:DropDownSetSegment5()
-	DPSMate.Options:ToggleDrewDrop(2, "segment5", Dewdrop:GetOpenedParent())
-end
+function DPSMate.Options:DropDownSetSegment1() DPSMate.Options:ToggleDrewDrop(2, "segment1", Dewdrop:GetOpenedParent()) end
+function DPSMate.Options:DropDownSetSegment2() DPSMate.Options:ToggleDrewDrop(2, "segment2", Dewdrop:GetOpenedParent()) end
+function DPSMate.Options:DropDownSetSegment3() DPSMate.Options:ToggleDrewDrop(2, "segment3", Dewdrop:GetOpenedParent()) end
+function DPSMate.Options:DropDownSetSegment4() DPSMate.Options:ToggleDrewDrop(2, "segment4", Dewdrop:GetOpenedParent()) end
+function DPSMate.Options:DropDownSetSegment5() DPSMate.Options:ToggleDrewDrop(2, "segment5", Dewdrop:GetOpenedParent()) end
 
 function DPSMate.Options:OnVerticalScroll(obj, arg1)
 	local maxScroll = obj:GetVerticalScrollRange()
@@ -800,3 +803,39 @@ function DPSMate.Options:CreateGraphTable()
 	lines[11] = graph:DrawLine(DPSMate_Details_Log, 557, 260, 557, 45, 20, {0.5,0.5,0.5,0.5}, "BACKGROUND")
 	lines[11]:Show()
 end
+
+function DPSMate.Options:Lock()
+	DPSMateSettings.lock = true
+	for _,val in pairs(DPSMateSettings["windows"]) do
+		getglobal("DPSMate_"..val["name"].."_Resize"):Hide()
+	end
+end
+
+function DPSMate.Options:Unlock()
+	DPSMateSettings.lock = false
+	for _,val in pairs(DPSMateSettings["windows"]) do
+		getglobal("DPSMate_"..val["name"].."_Resize"):Show()
+	end
+end
+
+function DPSMate.Options:Hide(frame)
+	DPSMateSettings["windows"][frame.Key]["hidden"] = true
+	frame:Hide()
+end
+
+function DPSMate.Options:Show(frame)
+	DPSMateSettings["windows"][frame.Key]["hidden"] = false
+	frame:Show()
+end
+
+function DPSMate.Options:RemoveSegment(i)
+	table.remove(DPSMateHistory, i)
+	DPSMate.Options:InitializeSegments()
+	Dewdrop:Close()
+end
+
+function DPSMate.Options:deletesegment1() DPSMate.Options:RemoveSegment(1) end
+function DPSMate.Options:deletesegment2() DPSMate.Options:RemoveSegment(2) end
+function DPSMate.Options:deletesegment3() DPSMate.Options:RemoveSegment(3) end
+function DPSMate.Options:deletesegment4() DPSMate.Options:RemoveSegment(4) end
+function DPSMate.Options:deletesegment5() DPSMate.Options:RemoveSegment(5) end

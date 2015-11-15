@@ -22,8 +22,54 @@ local classcolor = {
 -- Begin functions
 
 function DPSMate:OnLoad()
+	SLASH_DPSMate1 = "/dps"
+	SlashCmdList["DPSMate"] = function(msg) DPSMate:SlashCMDHandler(msg) end
+
 	DPSMate:InitializeFrames()
 	DPSMate:SetStatusBarValue()
+end
+
+function DPSMate:SlashCMDHandler(msg)
+	if (msg) then
+		local cmd = msg
+		if cmd == "lock" then
+			DPSMate.Options:Lock()
+			DPSMate:SendMessage("Locked all windows.")
+		elseif cmd == "unlock" then
+			DPSMate.Options:Unlock()
+			DPSMate:SendMessage("Unlocked all windows.")
+		elseif cmd == "config" then
+			DPSMate_ConfigMenu:Show()
+		elseif strsub(cmd, 1, 4) == "show" then
+			local frame = getglobal("DPSMate_"..strsub(cmd, 6))
+			if frame then
+				DPSMate.Options:Show(frame)
+			else
+				DPSMate:SendMessage("Following frames are available. If there is none type /config.")
+				for _, val in pairs(DPSMateSettings["windows"]) do
+					DPSMate:SendMessage("|c3ffddd80- "..val["name"].."|r")
+				end
+			end
+		elseif strsub(cmd, 1, 4) == "hide" then
+			local frame = getglobal("DPSMate_"..strsub(cmd, 6))
+			if frame then
+				DPSMate.Options:Hide(frame)
+			else
+				DPSMate:SendMessage("Following frames are available. If there is none type /config.")
+				for _, val in pairs(DPSMateSettings["windows"]) do
+					DPSMate:SendMessage("|c3ffddd80- "..val["name"].."|r")
+				end
+			end
+		else
+			DPSMate:SendMessage("|c3ffddd80About:|r A damage meter.")
+			DPSMate:SendMessage("|c3ffddd80Usage:|r /dps {lock|unlock|show|hide|config}")
+			DPSMate:SendMessage("|c3ffddd80- lock:|r Lock your windows.")
+			DPSMate:SendMessage("|c3ffddd80- unlock:|r Unlock your windows.")
+			DPSMate:SendMessage("|c3ffddd80- show {name}:|r Show the window with the name {name}.")
+			DPSMate:SendMessage("|c3ffddd80- hide {name}:|r Hide the window with the name {name}.")
+			DPSMate:SendMessage("|c3ffddd80- config:|r Opens the config menu.")
+		end
+	end
 end
 
 function DPSMate:InitializeFrames()
@@ -33,7 +79,10 @@ function DPSMate:InitializeFrames()
 		f.Key=k
 		DPSMate.Options:ToggleDrewDrop(1, DPSMate.DB:GetOptionsTrue(1, k), f)
 		DPSMate.Options:ToggleDrewDrop(2, DPSMate.DB:GetOptionsTrue(2, k), f)
-		--DPSMate.Options:ToggleDrewDrop(3, DPSMateSettings["windows"][k]["options"][3]["lock"], f)
+		
+		if DPSMateSettings.lock then
+			getglobal("DPSMate_"..val["name"].."_Resize"):Hide()
+		end
 	end
 end
 

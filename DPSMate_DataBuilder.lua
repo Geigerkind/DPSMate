@@ -42,8 +42,10 @@ function DPSMate.DB:OnEvent(event)
 							},
 						},
 						CurMode = "damage",
+						hidden = "false",
 					}
-				}
+				},
+				lock = true,
 			}
 		end
 		if DPSMateHistory == nil then DPSMateHistory = {} end

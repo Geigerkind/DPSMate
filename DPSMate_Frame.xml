@@ -82,7 +82,6 @@
 					</OnMouseDown>
 					<OnMouseUp>
 						this:GetParent():StopMovingOrSizing()
-						DPSMate:SetStatusBarValue()
 					</OnMouseUp>
 				</Scripts>
 				<NormalTexture file="Interface\AddOns\DPSMate\images\UI-ChatIM-SizeGrabber-Up"/>
@@ -116,7 +115,7 @@
 				</Layers>
 				<Scripts>
 					<OnMouseDown>
-						if arg1 == "LeftButton" then
+						if arg1 == "LeftButton" and not DPSMateSettings.lock then
 							this:GetParent():StartMoving()
 						end
 					</OnMouseDown>
@@ -139,7 +138,10 @@
 								DPSMate.Options:OpenMenu(3, this:GetParent():GetParent())
 							</OnMouseUp>
 						</Scripts>
-						<NormalTexture file="Interface\AddOns\DPSMate\images\icon-config"/>
+						<HighlightTexture file="Interface\AddOns\DPSMate\images\icon-config" alphaMode="ADD">
+							<Color r="0" g="0" b="0" a="1" />
+						</HighlightTexture>
+ 						<NormalTexture file="Interface\AddOns\DPSMate\images\icon-config"/>
 						<PushedTexture file="Interface\AddOns\DPSMate\images\icon-config"/>
 					</Button>
 					<Button name="$parent_Reset">
@@ -152,6 +154,9 @@
 								DPSMate_PopUp:Show()
 							</OnClick>
 						</Scripts>
+						<HighlightTexture file="Interface\AddOns\DPSMate\images\icon-reset" alphaMode="ADD">
+							<Color r="0" g="0" b="0" a="1" />
+						</HighlightTexture>
 						<NormalTexture file="Interface\AddOns\DPSMate\images\icon-reset"/>
 						<PushedTexture file="Interface\AddOns\DPSMate\images\icon-reset"/>
 					</Button>
@@ -165,6 +170,9 @@
 								DPSMate.Options:OpenMenu(2, this:GetParent():GetParent())
 							</OnMouseUp>
 						</Scripts>
+						<HighlightTexture file="Interface\AddOns\DPSMate\images\UI-GuildButton-PublicNote-Up" alphaMode="ADD">
+							<Color r="0" g="0" b="0" a="1" />
+						</HighlightTexture>
 						<NormalTexture file="Interface\AddOns\DPSMate\images\UI-GuildButton-PublicNote-Up"/>
 						<PushedTexture file="Interface\AddOns\DPSMate\images\UI-GuildButton-PublicNote-Up"/>
 					</Button>
@@ -179,6 +187,9 @@
 								DPSMate_Report:Show()
 							</OnClick>
 						</Scripts>
+						<HighlightTexture file="Interface\AddOns\DPSMate\images\UI-GuildButton-MOTD-Up" alphaMode="ADD">
+							<Color r="0" g="0" b="0" a="1" />
+						</HighlightTexture>
 						<NormalTexture file="Interface\AddOns\DPSMate\images\UI-GuildButton-MOTD-Up"/>
 						<PushedTexture file="Interface\AddOns\DPSMate\images\UI-GuildButton-MOTD-Up"/>
 					</Button>
