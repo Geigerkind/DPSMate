@@ -449,12 +449,57 @@
 			</Layer>
 		</Layers>
 	</Frame>
+	<Slider name="DPSMate_Template_Slider" inherits="OptionsSliderTemplate" virtual="true">
+		<Size x="120" y="16" />
+		<Scripts>
+			<OnEnter>
+				if (this.aide) then
+					GameTooltip:SetOwner(this, "ANCHOR_RIGHT")
+					GameTooltip:SetText(this.aide, nil, nil, nil, nil, 1)
+				end
+			</OnEnter>
+			<OnLeave>
+				GameTooltip:Hide()
+			</OnLeave>
+			<OnValueChanged>
+				getglobal(this:GetName().."_Editbox"):SetText(this:GetValue())
+				if this.func and DPSMate.DB.loaded then this.func() end
+			</OnValueChanged>
+		</Scripts>
+		<Frames>
+			<EditBox name="$parent_Editbox" autoFocus="false" inherits="InputBoxTemplate">
+				<Size x="40" y="10" />
+				<Anchors>
+					<Anchor point="TOP" relativeTo="$parent" relativePoint="BOTTOM">
+						<Offset x="4" y="-3" />
+					</Anchor>
+				</Anchors>
+				<FontString inherits="ChatFontNormal" bytes="200"/>
+				<Scripts>
+					<OnLoad>
+						this:SetMaxLetters(200)
+						this:SetScale(0.6)
+					</OnLoad>
+					<OnEnterPressed>
+						this:ClearFocus()
+						local num = tonumber(this:GetText())
+						if num then this:GetParent():SetValue(num) end
+					</OnEnterPressed>
+					<OnEscapePressed>
+						this:ClearFocus()
+						local num = tonumber(this:GetText())
+						if num then this:GetParent():SetValue(num) end
+					</OnEscapePressed>
+				</Scripts>
+			</EditBox>
+		</Frames>
+	</Slider>
 	
 	----------------------------------------------------------------------------------
 	--------------                 DPSMate Config Menu                  --------------                                  
 	----------------------------------------------------------------------------------
 	
-	<Frame name="DPSMate_ConfigMenu" movable="true" hidden="false">
+	<Frame name="DPSMate_ConfigMenu" movable="true" hidden="true">
 		<Size x="450" y="300" />
 		<Anchors>
 			<Anchor point="CENTER" />
@@ -768,6 +813,122 @@
 							</OnLoad>
 						</Scripts>
 					</Frame>
+					<Slider name="$parent_BarFontSize" inherits="DPSMate_Template_Slider">
+						<Anchors>
+							<Anchor point="LEFT" relativeTo="$parent_BarFont" relativePoint="RIGHT">
+								<Offset x="0" y="5" />
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								this.aide = DPSMate.localization.config.barfontsizeTooltip
+								this.func = function() 
+									DPSMateSettings["barfontsize"] = this:GetValue()
+									for _, val in pairs(DPSMateSettings["windows"]) do
+										for i=1, 30 do
+											getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar"..i.."_Name"):SetFont(DPSMate.Options.fonts[DPSMateSettings["barfont"]], DPSMateSettings["barfontsize"], DPSMate.Options.fontflags[DPSMateSettings["barfontflag"]])
+											getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar"..i.."_Value"):SetFont(DPSMate.Options.fonts[DPSMateSettings["barfont"]], DPSMateSettings["barfontsize"], DPSMate.Options.fontflags[DPSMateSettings["barfontflag"]])
+										end
+									end
+								end
+								this:SetMinMaxValues(1,32)
+								this:SetValueStep(1)
+								getglobal(this:GetName().."Text"):SetText(DPSMate.localization.config.barfontsize)
+								getglobal(this:GetName().."Low"):SetText("1")
+								getglobal(this:GetName().."High"):SetText("32")
+							</OnLoad>
+						</Scripts>
+					</Slider>
+					<Frame name="$parent_BarFontFlag" inherits="DPSMate_Template_DropDown">
+						<Size x="120" y="24" />
+						<Anchors>
+							<Anchor point="TOP" relativeTo="$parent_BarFont" relativePoint="BOTTOM">
+								<Offset x="0" y="-10" />
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								this.aide = DPSMate.localization.config.barfontflagsTooltip
+								this.func = DPSMate.Options.BarFontFlagsDropDown
+								this.title = DPSMate.localization.config.barfontflags
+								UIDropDownMenu_SetWidth(120)
+								getglobal(this:GetName().."_Text"):SetText(this.title)
+							</OnLoad>
+						</Scripts>
+					</Frame>
+					<Frame name="$parent_BarTexture" inherits="DPSMate_Template_DropDown">
+						<Size x="120" y="24" />
+						<Anchors>
+							<Anchor point="LEFT" relativeTo="$parent_BarFontFlag" relativePoint="RIGHT">
+								<Offset x="-20" y="0" />
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								this.aide = DPSMate.localization.config.bartextureTooltip
+								this.func = DPSMate.Options.BarTextureDropDown
+								this.title = DPSMate.localization.config.bartexture
+								UIDropDownMenu_SetWidth(120)
+								getglobal(this:GetName().."_Text"):SetText(this.title)
+							</OnLoad>
+						</Scripts>
+					</Frame>
+					<Slider name="$parent_BarSpacing" inherits="DPSMate_Template_Slider">
+						<Anchors>
+							<Anchor point="TOP" relativeTo="$parent_BarFontFlag" relativePoint="BOTTOM">
+								<Offset x="0" y="-10" />
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								this.aide = DPSMate.localization.config.barspacingTooltip
+								this.func = function()
+									DPSMateSettings["barspacing"] = this:GetValue() 
+									for _, val in pairs(DPSMateSettings["windows"]) do
+										for i=1, 30 do
+											local bar = getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar"..i)
+											bar:ClearAllPoints()
+											bar:SetPoint("TOPLEFT", getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child"), "TOPLEFT")
+											bar:SetPoint("TOPRIGHT", getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child"), "TOPRIGHT")
+											if i>1 then
+												bar:SetPoint("TOPLEFT", getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar"..(i-1)), "BOTTOMLEFT", 0, -1*DPSMateSettings["barspacing"])
+											end
+										end
+									end
+								end
+								this:SetMinMaxValues(1,10)
+								this:SetValueStep(1)
+								getglobal(this:GetName().."Text"):SetText(DPSMate.localization.config.barspacing)
+								getglobal(this:GetName().."Low"):SetText("1")
+								getglobal(this:GetName().."High"):SetText("10")
+							</OnLoad>
+						</Scripts>
+					</Slider>
+					<Slider name="$parent_BarHeight" inherits="DPSMate_Template_Slider">
+						<Anchors>
+							<Anchor point="LEFT" relativeTo="$parent_BarSpacing" relativePoint="RIGHT">
+								<Offset x="25" y="0" />
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								this.aide = DPSMate.localization.config.barheightTooltip
+								this.func = function()
+									DPSMateSettings["barheight"] = this:GetValue() 
+									for _, val in pairs(DPSMateSettings["windows"]) do
+										for i=1, 30 do
+											getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar"..i):SetHeight(DPSMateSettings["barheight"])
+										end
+									end
+								end
+								this:SetMinMaxValues(10,25)
+								this:SetValueStep(1)
+								getglobal(this:GetName().."Text"):SetText(DPSMate.localization.config.barheight)
+								getglobal(this:GetName().."Low"):SetText("10")
+								getglobal(this:GetName().."High"):SetText("25")
+							</OnLoad>
+						</Scripts>
+					</Slider>
 				</Frames>
 			</Frame>
 			

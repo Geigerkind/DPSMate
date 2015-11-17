@@ -47,6 +47,11 @@ function DPSMate.DB:OnEvent(event)
 				},
 				lock = true,
 				barfont = "ARIALN",
+				barfontsize = 14,
+				barfontflag = "Outline",
+				bartexture = "Healbot",
+				barspacing = 1,
+				barheight = 12,
 			}
 		end
 		if DPSMateHistory == nil then DPSMateHistory = {} end

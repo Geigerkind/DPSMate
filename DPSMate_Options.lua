@@ -22,6 +22,31 @@ DPSMate.Options.fonts = {
 	["VeraSe"] = "Interface\\AddOns\\DPSMate\\fonts\\VeraSe.TTF",
 	["Yellowjacket"] = "Interface\\AddOns\\DPSMate\\fonts\\Yellowjacket.TTF",
 }
+DPSMate.Options.fontflags = {
+	["None"] = "NONE",
+	["Outline"] = "OUTLINE",
+	["Monochrome"] = "MONOCHROME",
+	["Outlined monochrome"] = "OUTLINE, MONOCHROME",
+	["Tick outlined"] = "THICKOUTLINE",
+}
+DPSMate.Options.statusbars = {
+	["Aluminium"] = "Interface\\AddOns\\DPSMate\\images\\statusbar\\Aluminium", 
+	["Armory"] = "Interface\\AddOns\\DPSMate\\images\\statusbar\\Armory", 
+	["BantoBar"] = "Interface\\AddOns\\DPSMate\\images\\statusbar\\BantoBar", 
+	["Glaze2"] = "Interface\\AddOns\\DPSMate\\images\\statusbar\\Glaze2", 
+	["Gloss"] = "Interface\\AddOns\\DPSMate\\images\\statusbar\\Gloss", 
+	["Graphite"] = "Interface\\AddOns\\DPSMate\\images\\statusbar\\Graphite", 
+	["Grid"] = "Interface\\AddOns\\DPSMate\\images\\statusbar\\Grid", 
+	["Healbot"] = "Interface\\AddOns\\DPSMate\\images\\statusbar\\Healbot", 
+	["LiteStep"] = "Interface\\AddOns\\DPSMate\\images\\statusbar\\LiteStep", 
+	["Minimalist"] = "Interface\\AddOns\\DPSMate\\images\\statusbar\\Minimalist", 
+	["normTex"] = "Interface\\AddOns\\DPSMate\\images\\statusbar\\normTex", 
+	["Otravi"] = "Interface\\AddOns\\DPSMate\\images\\statusbar\\Otravi", 
+	["Outline"] = "Interface\\AddOns\\DPSMate\\images\\statusbar\\Outline", 
+	["Perl"] = "Interface\\AddOns\\DPSMate\\images\\statusbar\\Perl", 
+	["Round"] = "Interface\\AddOns\\DPSMate\\images\\statusbar\\Round", 
+	["Smooth"] = "Interface\\AddOns\\DPSMate\\images\\statusbar\\Smooth", 
+}
 
 
 -- Local Variables
@@ -525,12 +550,7 @@ function DPSMate.Options:UpdateLineGraph()
 
 	local Data1={{0,0}}
 	for cat, val in pairs(DPSMate.Options:SortLineTable(sumTable)) do
-		
-		if DPSMate.Options:CheckProcs(DPSMate_Details.proc, arr, val[1]) then
-			table.insert(Data1, {val[1],val[2], true})
-		else
-			table.insert(Data1, {val[1],val[2], false})
-		end
+		table.insert(Data1, {val[1],val[2], DPSMate.Options:CheckProcs(DPSMate_Details.proc, arr, val[1])})
 	end
 
 	g2:AddDataSeries(Data1,{{1.0,0.0,0.0,0.8}, {1.0,1.0,0.0,0.8}})
@@ -539,8 +559,8 @@ end
 function DPSMate.Options:CheckProcs(name, arr, val)
 	if DPSMate.DB:DataExistProcs(DetailsUser, name, arr) then
 		for i=1, DPSMate:TableLength(arr[DetailsUser]["procs"][name]["start"]) do
-			if not DPSMateUser[DetailsUser]["procs"][name]["start"][i] or not DPSMateUser[DetailsUser]["procs"][name]["ending"][i] then return false end
-			if val >  DPSMateUser[DetailsUser]["procs"][name]["start"][i] and val < DPSMateUser[DetailsUser]["procs"][name]["ending"][i] then
+			if not arr[DetailsUser]["procs"][name]["start"][i] or not arr[DetailsUser]["procs"][name]["ending"][i] then return false end
+			if val >  arr[DetailsUser]["procs"][name]["start"][i] and val < arr[DetailsUser]["procs"][name]["ending"][i] then
 				return true
 			end
 		end
@@ -606,7 +626,11 @@ end
 
 function DPSMate.Options:DropDownStyleReset()
 	for i=1, 20 do
+		local button = getglobal("DropDownList1Button"..i)
 		getglobal("DropDownList1Button"..i.."NormalText"):SetFont(DPSMate.Options.fonts["FRIZQT"], 12)
+		if button.tex then
+			button.tex:Hide()
+		end
 	end
 end
 
@@ -701,6 +725,7 @@ end
 
 function DPSMate.Options:BarFontDropDown()
 	local i = 1
+	DPSMate.Options:DropDownStyleReset()
 	
 	local function on_click()
         UIDropDownMenu_SetSelectedValue(DPSMate_ConfigMenu_Tab_Bars_BarFont, this.value)
@@ -708,8 +733,8 @@ function DPSMate.Options:BarFontDropDown()
 		DPSMateSettings["barfont"] = this.value
 		for _, val in pairs(DPSMateSettings["windows"]) do
 			for i=1, 30 do
-				getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar"..i.."_Name"):SetFont(DPSMate.Options.fonts[this.value], 14, "OUTLINE")
-				getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar"..i.."_Value"):SetFont(DPSMate.Options.fonts[this.value], 14, "OUTLINE")
+				getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar"..i.."_Name"):SetFont(DPSMate.Options.fonts[this.value], DPSMateSettings["barfontsize"], DPSMate.Options.fontflags[DPSMateSettings["barfontflag"]])
+				getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar"..i.."_Value"):SetFont(DPSMate.Options.fonts[this.value], DPSMateSettings["barfontsize"], DPSMate.Options.fontflags[DPSMateSettings["barfontflag"]])
 			end
 		end
     end
@@ -729,6 +754,86 @@ function DPSMate.Options:BarFontDropDown()
 		DPSMate_ConfigMenu_Tab_Bars_BarFontText:SetFont(DPSMate.Options.fonts[DPSMateSettings["barfont"]], 12)
 	end
 	DPSMate_ConfigMenu.visBars = true
+end
+
+function DPSMate.Options:BarFontFlagsDropDown()
+	local i = 1
+	DPSMate.Options:DropDownStyleReset()
+	
+	local function on_click()
+        UIDropDownMenu_SetSelectedValue(DPSMate_ConfigMenu_Tab_Bars_BarFontFlag, this.value)
+		DPSMate_ConfigMenu_Tab_Bars_BarFontFlagText:SetFont(DPSMate.Options.fonts["FRIZQT"], 12, DPSMate.Options.fontflags[this.value])
+		DPSMateSettings["barfontflag"] = this.value
+		for _, val in pairs(DPSMateSettings["windows"]) do
+			for i=1, 30 do
+				getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar"..i.."_Name"):SetFont(DPSMate.Options.fonts[DPSMateSettings["barfont"]], DPSMateSettings["barfontsize"], DPSMate.Options.fontflags[DPSMateSettings["barfontflag"]])
+				getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar"..i.."_Value"):SetFont(DPSMate.Options.fonts[DPSMateSettings["barfont"]], DPSMateSettings["barfontsize"], DPSMate.Options.fontflags[DPSMateSettings["barfontflag"]])
+			end
+		end
+    end
+	
+	for name, flag in pairs(DPSMate.Options.fontflags) do
+		UIDropDownMenu_AddButton{
+			text = name,
+			value = name,
+			func = on_click,
+		}
+		getglobal("DropDownList1Button"..i.."NormalText"):SetFont(DPSMate.Options.fonts["FRIZQT"], 12, flag)
+		i=i+1
+	end
+	
+	if not DPSMate_ConfigMenu.visBars2 then
+		UIDropDownMenu_SetSelectedValue(DPSMate_ConfigMenu_Tab_Bars_BarFontFlag, DPSMateSettings["barfontflag"])
+		DPSMate_ConfigMenu_Tab_Bars_BarFontFlagText:SetFont(DPSMate.Options.fonts["FRIZQT"], 12, DPSMate.Options.fontflags[DPSMateSettings["barfontflag"]])
+	end
+	DPSMate_ConfigMenu.visBars2 = true
+end
+
+function DPSMate.Options:BarTextureDropDown()
+	local i = 1
+	DPSMate.Options:DropDownStyleReset()
+	
+	local function on_click()
+        UIDropDownMenu_SetSelectedValue(DPSMate_ConfigMenu_Tab_Bars_BarTexture, this.value)
+		DPSMateSettings["bartexture"] = this.value
+		DPSMate_ConfigMenu_Tab_Bars_BarTexture.tex:SetTexture(DPSMate.Options.statusbars[this.value])
+		DPSMate_ConfigMenu_Tab_Bars_BarTexture.tex:Show()
+		for _, val in pairs(DPSMateSettings["windows"]) do
+			for i=1, 30 do
+				getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar"..i):SetStatusBarTexture(DPSMate.Options.statusbars[this.value])
+			end
+		end
+    end
+	
+	for name, path in pairs(DPSMate.Options.statusbars) do
+		UIDropDownMenu_AddButton{
+			text = name,
+			value = name,
+			func = on_click,
+		}
+		local button = getglobal("DropDownList1Button"..i)
+		if not button.tex then
+			button.tex = button:CreateTexture("BG", "BACKGROUND")
+			button.tex:SetTexture(path)
+			button.tex:SetWidth(100)
+			button.tex:SetHeight(20)
+			button.tex:SetPoint("TOPLEFT", button, "TOPLEFT")
+		end
+		button.tex:Show()
+		i=i+1
+	end
+	
+	if not DPSMate_ConfigMenu.visBars3 then
+		UIDropDownMenu_SetSelectedValue(DPSMate_ConfigMenu_Tab_Bars_BarTexture, DPSMateSettings["bartexture"])
+		if not DPSMate_ConfigMenu_Tab_Bars_BarTexture.tex then
+			DPSMate_ConfigMenu_Tab_Bars_BarTexture.tex = DPSMate_ConfigMenu_Tab_Bars_BarTexture:CreateTexture("BG", "ARTWORK")
+			DPSMate_ConfigMenu_Tab_Bars_BarTexture.tex:SetWidth(110)
+			DPSMate_ConfigMenu_Tab_Bars_BarTexture.tex:SetHeight(15)
+			DPSMate_ConfigMenu_Tab_Bars_BarTexture.tex:SetPoint("TOPLEFT", DPSMate_ConfigMenu_Tab_Bars_BarTexture, "TOPLEFT", 23, -7)
+		end
+		DPSMate_ConfigMenu_Tab_Bars_BarTexture.tex:SetTexture(DPSMate.Options.statusbars[DPSMateSettings["bartexture"]])
+	end
+	DPSMate_ConfigMenu.visBars3 = true
 end
 
 function DPSMate.Options:Report()
@@ -945,5 +1050,11 @@ function DPSMate.Options:deletesegment4() DPSMate.Options:RemoveSegment(4) end
 function DPSMate.Options:deletesegment5() DPSMate.Options:RemoveSegment(5) end
 
 function DPSMate.Options:InitializeConfigMenu()
+	-- Tab Window
 	getglobal("DPSMate_ConfigMenu_Tab_Window_Lock"):SetChecked(DPSMateSettings["lock"])
+	
+	-- Tab Bars
+	getglobal("DPSMate_ConfigMenu_Tab_Bars_BarFontSize"):SetValue(DPSMateSettings["barfontsize"])
+	getglobal("DPSMate_ConfigMenu_Tab_Bars_BarSpacing"):SetValue(DPSMateSettings["barspacing"])
+	getglobal("DPSMate_ConfigMenu_Tab_Bars_BarHeight"):SetValue(DPSMateSettings["barheight"])
 end

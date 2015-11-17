@@ -84,9 +84,24 @@ function DPSMate:InitializeFrames()
 		end
 		
 		-- Styles // Bars
+		local child = getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child")
 		for i=1, 30 do
-			getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar"..i.."_Name"):SetFont(DPSMate.Options.fonts[DPSMateSettings["barfont"]], 14, "OUTLINE")
-			getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar"..i.."_Value"):SetFont(DPSMate.Options.fonts[DPSMateSettings["barfont"]], 14, "OUTLINE")
+			local bar = getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar"..i)
+			bar.name = getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar"..i.."_Name")
+			bar.value = getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar"..i.."_Value")
+			
+			-- Postition
+			bar:SetPoint("TOPLEFT", child, "TOPLEFT")
+			bar:SetPoint("TOPRIGHT", child, "TOPRIGHT")
+			if i>1 then
+				bar:SetPoint("TOPLEFT", getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar"..(i-1)), "BOTTOMLEFT", 0, -1*DPSMateSettings["barspacing"])
+			end
+		
+			-- Styles
+			bar.name:SetFont(DPSMate.Options.fonts[DPSMateSettings["barfont"]], DPSMateSettings["barfontsize"], DPSMate.Options.fontflags[DPSMateSettings["barfontflag"]])
+			bar.value:SetFont(DPSMate.Options.fonts[DPSMateSettings["barfont"]], DPSMateSettings["barfontsize"], DPSMate.Options.fontflags[DPSMateSettings["barfontflag"]])
+			bar:SetStatusBarTexture(DPSMate.Options.statusbars[DPSMateSettings["bartexture"]])
+			bar:SetHeight(DPSMateSettings["barheight"])
 		end
 	end
 end
