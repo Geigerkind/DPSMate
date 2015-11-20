@@ -13,14 +13,20 @@
 						<Anchor point="BOTTOMRIGHT" />
 					</Anchors>
 				</FontString>
-			</Layer>
-			<Layer level="ARTWORK">
 				<FontString name="$parent_Value" inherits="TextStatusBarText" justifyH="RIGHT">
 					<Anchors>
 						<Anchor point="TOPLEFT" />
 						<Anchor point="BOTTOMRIGHT" />
 					</Anchors>
 				</FontString>
+			</Layer>
+			<Layer level="OVERLAY">
+				<Texture name="$parent_Icon" file="Interface\AddOns\DPSMate\images\class\hunter" hidden="true">
+					<Size x="13" y="13" />
+					<Anchors>
+						<Anchor point="LEFT" />
+					</Anchors>
+				</Texture>
 			</Layer>
 		</Layers>
 		<Scripts>

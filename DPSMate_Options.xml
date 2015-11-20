@@ -929,6 +929,65 @@
 							</OnLoad>
 						</Scripts>
 					</Slider>
+					<CheckButton name="$parent_ClassIcons" inherits="DPSMate_Template_CheckButton">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$Parent_BarSpacing" relativePoint="BOTTOMLEFT">
+								<Offset x="-5" y="-15" />
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.classicons)
+							</OnLoad>
+							<OnClick>
+								if DPSMateSettings["classicons"] then
+									DPSMateSettings["classicons"] = false
+									for _, val in pairs(DPSMateSettings["windows"]) do
+										for i=1, 30 do
+											local bar = getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar"..i)
+											bar.name = getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar"..i.."_Name")
+											bar.icon = getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar"..i.."_Icon")
+											bar.name:ClearAllPoints()
+											bar.name:SetPoint("TOPLEFT", bar, "TOPLEFT")
+											bar.name:SetPoint("BOTTOMRIGHT", bar, "BOTTOMRIGHT")
+											bar.icon:Hide()
+										end
+									end
+								else
+									DPSMateSettings["classicons"] = true
+									for _, val in pairs(DPSMateSettings["windows"]) do
+										for i=1, 30 do
+											local bar = getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar"..i)
+											bar.name = getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar"..i.."_Name")
+											bar.icon = getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar"..i.."_Icon")
+											bar.name:ClearAllPoints()
+											bar.name:SetPoint("TOPLEFT", bar, "TOPLEFT", DPSMateSettings["barheight"], 0)
+											bar.name:SetPoint("BOTTOMRIGHT", bar, "BOTTOMRIGHT")
+											bar.icon:Show()
+										end
+									end
+								end
+							</OnClick>
+						</Scripts>
+					</CheckButton>
+					<CheckButton name="$parent_Ranks" inherits="DPSMate_Template_CheckButton">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$Parent_ClassIcons" relativePoint="BOTTOMLEFT" />
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.ranks)
+							</OnLoad>
+							<OnClick>
+								if DPSMateSettings["ranks"] then
+									DPSMateSettings["ranks"] = false
+								else
+									DPSMateSettings["ranks"] = true
+								end
+								DPSMate:SetStatusBarValue()
+							</OnClick>
+						</Scripts>
+					</CheckButton>
 				</Frames>
 			</Frame>
 			

@@ -282,6 +282,19 @@ local icons = {
 
 -- Begin Functions
 
+function DPSMate.Options:InitializeConfigMenu()
+	-- Tab Window
+	getglobal("DPSMate_ConfigMenu_Tab_Window_Lock"):SetChecked(DPSMateSettings["lock"])
+	
+	-- Tab Bars
+	getglobal("DPSMate_ConfigMenu_Tab_Bars_BarFontSize"):SetValue(DPSMateSettings["barfontsize"])
+	getglobal("DPSMate_ConfigMenu_Tab_Bars_BarSpacing"):SetValue(DPSMateSettings["barspacing"])
+	getglobal("DPSMate_ConfigMenu_Tab_Bars_BarHeight"):SetValue(DPSMateSettings["barheight"])
+	getglobal("DPSMate_ConfigMenu_Tab_Bars_ClassIcons"):SetChecked(DPSMateSettings["classicons"])
+	getglobal("DPSMate_ConfigMenu_Tab_Bars_ClassIcons"):SetChecked(DPSMateSettings["classicons"])
+	getglobal("DPSMate_ConfigMenu_Tab_Bars_Ranks"):SetChecked(DPSMateSettings["ranks"])
+end
+
 function DPSMate.Options:OnEvent(event)
 	if event == "PARTY_MEMBERS_CHANGED" and DPSMate.Options:IsInParty() and DPSMate.Options:PartyMemberAmountChanged() then
 		if (GetTime()-LastPopUp) > TimeToNextPopUp and (DPSMateUser ~= {} and DPSMateUserCurrent ~= {}) then -- To prevent spam
@@ -534,7 +547,7 @@ end
 
 function DPSMate.Options:UpdateLineGraph()
 	local arr, cbt = DPSMate:GetMode(DPSMate_Details.PaKey)
-	local sumTable = DPSMate.Options:GetSummarizedTable(DPSMate_Details.PaKey)
+	local sumTable = DPSMate.Options:GetSummarizedTable(arr, cbt)
 	local max = DPSMate.Options:GetMaxLineVal(sumTable)
 	
 	g2:ResetData()
@@ -549,7 +562,7 @@ function DPSMate.Options:UpdateLineGraph()
 	g2:SetXLabels(true)
 
 	local Data1={{0,0}}
-	for cat, val in pairs(DPSMate.Options:SortLineTable(sumTable)) do
+	for cat, val in pairs(sumTable) do
 		table.insert(Data1, {val[1],val[2], DPSMate.Options:CheckProcs(DPSMate_Details.proc, arr, val[1])})
 	end
 
@@ -568,22 +581,23 @@ function DPSMate.Options:CheckProcs(name, arr, val)
 	return false
 end
 
-function DPSMate.Options:GetSummarizedTable(k)
-	local arr,_ = DPSMate:GetMode(k)
-	local newArr, lastCBT, x, y, lastCBTVal = {}, 0, 0, 0, {}
+function DPSMate.Options:GetSummarizedTable(arr, cbt)
+	arr = DPSMate.Options:SortLineTable(arr)
+	local newArr, lastCBT, i = {}, 0, 1
 	
-	for cat, val in pairs(arr[DetailsUser]["dmgTime"]) do
-		if (cat>=(lastCBT-0.05) and cat<=(lastCBT+0.05)) then
-			local key = DPSMate:GetKeyByValInTT(newArr, x, 1)
-			y = newArr[key][2]+val
-			table.remove(newArr, key)
-			table.insert(newArr, {lastCBT,y})
+	for cat, val in pairs(arr) do
+		if lastCBT+cbt*0.0008>val[1] then -- to prevent heavy load values are summerized
+			if (newArr[i-1]) then
+				newArr[i-1][2] = (newArr[i-1][2] + val[2])/2
+			else
+				table.insert(newArr, i, {val[1], val[2]})
+				lastCBT = val[1]
+				i=i+1
+			end
 		else
-			x=tonumber(string.format("%.1f", cat))
-			y=val
-			table.insert(newArr, {x, y})
-			lastCBT=x
-			lastCBTVal={x,y}
+			table.insert(newArr, i, {val[1], val[2]})
+			lastCBT = val[1]
+			i=i+1
 		end
 	end
 	
@@ -591,24 +605,19 @@ function DPSMate.Options:GetSummarizedTable(k)
 end
 
 function DPSMate.Options:SortLineTable(t)
-	local newArr, minVal = {}, 10000000
-	for cat, val in pairs(t) do
-		if val[1]<minVal then
-			table.insert(newArr, 1, val)
-			minVal=val[1]
-		else
-			local i=1
-			while true do
-				if (not newArr[i]) then 
-					table.insert(newArr, i, val)
-					break
-				end
-				if val[1]<newArr[i][1] then
-					table.insert(newArr, i, val)
-					break
-				end
-				i=i+1
+	local newArr = {}
+	for cat, val in pairs(t[DetailsUser]["dmgTime"]) do
+		local i=1
+		while true do
+			if (not newArr[i]) then 
+				table.insert(newArr, i, {cat, val})
+				break
 			end
+			if cat<newArr[i][1] then
+				table.insert(newArr, i, {cat, val})
+				break
+			end
+			i=i+1
 		end
 	end
 	return newArr
@@ -634,9 +643,20 @@ function DPSMate.Options:DropDownStyleReset()
 	end
 end
 
+DPSMate.Options.ShowMenu = UnitPopup_ShowMenu
+function UnitPopup_ShowMenu(dropdownMenu, which, unit, name, userData)
+	DPSMate.Options:DropDownStyleReset()
+	DPSMate.Options.ShowMenu(dropdownMenu, which, unit, name, userData)
+end
+
+DPSMate.Options.UIDDI = UIDropDownMenu_Initialize
+function UIDropDownMenu_Initialize(frame, initFunction, displayMode, level)
+	DPSMate.Options:DropDownStyleReset()
+	DPSMate.Options.UIDDI(frame, initFunction, displayMode, level)
+end
+
 function DPSMate.Options:ChannelDropDown()
 	local channel, i = {[1]="Whisper",[2]="Raid",[3]="Party",[4]="Say",[5]="Officer",[6]="Guild"}, 1
-	DPSMate.Options:DropDownStyleReset()
 	
     local function on_click()
         UIDropDownMenu_SetSelectedValue(DPSMate_Report_Channel, this.value)
@@ -665,7 +685,6 @@ end
 function DPSMate.Options:ProcsDropDown()
 	local arr, cbt = DPSMate:GetMode(DPSMate_Details.PaKey)
 	DPSMate_Details.proc = "None"
-	DPSMate.Options:DropDownStyleReset()
 	
     local function on_click()
         UIDropDownMenu_SetSelectedValue(DPSMate_Details_DiagramLegend_Procs, this.value)
@@ -696,7 +715,6 @@ end
 
 function DPSMate.Options:WindowDropDown()
 	DPSMate_ConfigMenu.Selected = "None"
-	DPSMate.Options:DropDownStyleReset()
 	
 	local function on_click()
         UIDropDownMenu_SetSelectedValue(DPSMate_ConfigMenu_Tab_Window_Remove, this.value)
@@ -725,7 +743,6 @@ end
 
 function DPSMate.Options:BarFontDropDown()
 	local i = 1
-	DPSMate.Options:DropDownStyleReset()
 	
 	local function on_click()
         UIDropDownMenu_SetSelectedValue(DPSMate_ConfigMenu_Tab_Bars_BarFont, this.value)
@@ -758,7 +775,6 @@ end
 
 function DPSMate.Options:BarFontFlagsDropDown()
 	local i = 1
-	DPSMate.Options:DropDownStyleReset()
 	
 	local function on_click()
         UIDropDownMenu_SetSelectedValue(DPSMate_ConfigMenu_Tab_Bars_BarFontFlag, this.value)
@@ -791,7 +807,6 @@ end
 
 function DPSMate.Options:BarTextureDropDown()
 	local i = 1
-	DPSMate.Options:DropDownStyleReset()
 	
 	local function on_click()
         UIDropDownMenu_SetSelectedValue(DPSMate_ConfigMenu_Tab_Bars_BarTexture, this.value)
@@ -940,7 +955,7 @@ end
 
 function DPSMate.Options:CreateWindow()
 	local na = DPSMate_ConfigMenu_Tab_Window_Editbox:GetText()
-	if (na and not DPSMate:GetKeyByValInTT(DPSMateSettings["windows"], na, "name") and na~="") then -- Contains fkn needs update
+	if (na and not DPSMate:GetKeyByValInTT(DPSMateSettings["windows"], na, "name") and na~="") then
 		local f=CreateFrame("Frame", "DPSMate_"..na, UIParent, "DPSMate_Statusframe")
 		table.insert(DPSMateSettings["windows"], {
 			name = na,
@@ -1049,12 +1064,3 @@ function DPSMate.Options:deletesegment3() DPSMate.Options:RemoveSegment(3) end
 function DPSMate.Options:deletesegment4() DPSMate.Options:RemoveSegment(4) end
 function DPSMate.Options:deletesegment5() DPSMate.Options:RemoveSegment(5) end
 
-function DPSMate.Options:InitializeConfigMenu()
-	-- Tab Window
-	getglobal("DPSMate_ConfigMenu_Tab_Window_Lock"):SetChecked(DPSMateSettings["lock"])
-	
-	-- Tab Bars
-	getglobal("DPSMate_ConfigMenu_Tab_Bars_BarFontSize"):SetValue(DPSMateSettings["barfontsize"])
-	getglobal("DPSMate_ConfigMenu_Tab_Bars_BarSpacing"):SetValue(DPSMateSettings["barspacing"])
-	getglobal("DPSMate_ConfigMenu_Tab_Bars_BarHeight"):SetValue(DPSMateSettings["barheight"])
-end

@@ -89,12 +89,19 @@ function DPSMate:InitializeFrames()
 			local bar = getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar"..i)
 			bar.name = getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar"..i.."_Name")
 			bar.value = getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar"..i.."_Value")
+			bar.icon = getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar"..i.."_Icon")
 			
 			-- Postition
 			bar:SetPoint("TOPLEFT", child, "TOPLEFT")
 			bar:SetPoint("TOPRIGHT", child, "TOPRIGHT")
 			if i>1 then
 				bar:SetPoint("TOPLEFT", getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar"..(i-1)), "BOTTOMLEFT", 0, -1*DPSMateSettings["barspacing"])
+			end
+			if DPSMateSettings["classicons"] then
+				bar.name:ClearAllPoints()
+				bar.name:SetPoint("TOPLEFT", bar, "TOPLEFT", DPSMateSettings["barheight"], 0)
+				bar.name:SetPoint("BOTTOMRIGHT", bar, "BOTTOMRIGHT")
+				bar.icon:Show()
 			end
 		
 			-- Styles
@@ -217,15 +224,15 @@ function DPSMate:SetStatusBarValue()
 		if (user == {}) then return end
 		for i=1, 30 do
 			if (not user[i]) then break end -- To prevent visual issues
-			local statusbar = getglobal("DPSMate_"..c["name"].."_ScrollFrame_Child_StatusBar"..i)
-			local name = getglobal("DPSMate_"..c["name"].."_ScrollFrame_Child_StatusBar"..i.."_Name")
-			local value = getglobal("DPSMate_"..c["name"].."_ScrollFrame_Child_StatusBar"..i.."_Value")
+			local statusbar, name, value, texture, p = getglobal("DPSMate_"..c["name"].."_ScrollFrame_Child_StatusBar"..i), getglobal("DPSMate_"..c["name"].."_ScrollFrame_Child_StatusBar"..i.."_Name"), getglobal("DPSMate_"..c["name"].."_ScrollFrame_Child_StatusBar"..i.."_Value"), getglobal("DPSMate_"..c["name"].."_ScrollFrame_Child_StatusBar"..i.."_Icon"), ""
 			
-			local r,g,b = DPSMate:GetClassColor(arr[user[i]].class)
+			local r,g,b, img = DPSMate:GetClassColor(arr[user[i]].class)
 			statusbar:SetStatusBarColor(r,g,b, 1)
 			
-			name:SetText(i..". "..user[i])
+			if DPSMateSettings["ranks"] then p=i..". " else p="" end
+			name:SetText(p..user[i])
 			value:SetText(val[i])
+			texture:SetTexture("Interface\\AddOns\\DPSMate\\images\\class\\"..img)
 			statusbar:SetValue(perc[i])
 			
 			statusbar.user = user[i]
@@ -256,9 +263,9 @@ end
 
 function DPSMate:GetClassColor(class)
 	if (class) then
-		return classcolor[class].r, classcolor[class].g, classcolor[class].b
+		return classcolor[class].r, classcolor[class].g, classcolor[class].b, class
 	else
-		return 0.1,0,0.1
+		return 0.1,0,0.1, "None"
 	end
 end
 

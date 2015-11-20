@@ -52,6 +52,8 @@ function DPSMate.DB:OnEvent(event)
 				bartexture = "Healbot",
 				barspacing = 1,
 				barheight = 12,
+				classicons = false,
+				ranks = true,
 			}
 		end
 		if DPSMateHistory == nil then DPSMateHistory = {} end
@@ -109,11 +111,13 @@ end
 
 function DPSMate.DB:AssignPet()
 	local pets = DPSMate.DB:GetPets()
-	for cat, val in pairs(DPSMateUser) do
-		if (pets[cat]) then
-			DPSMateUser[cat]["pet"] = pets[cat]
-			if (DPSMateUser[pets[cat]]) then
-				DPSMateUser[pets[cat]]["isPet"] = true
+	for _, v in pairs({DPSMateUser, DPSMateUserCurrent}) do
+		for cat, val in pairs(v) do
+			if (pets[cat]) then
+				v[cat]["pet"] = pets[cat]
+				if (v[pets[cat]]) then
+					v[pets[cat]]["isPet"] = true
+				end
 			end
 		end
 	end
@@ -123,22 +127,26 @@ function DPSMate.DB:AssignClass()
 	local classEng
 	if DPSMate.DB:PlayerInParty() then
 		for i=1,4 do
-			if DPSMateUser[UnitName("party"..i)] then
-				if (not DPSMateUser[UnitName("party"..i)].class) then
-					_,classEng,_ = UnitClass("party"..i)
-					if (classEng) then
-						DPSMateUser[UnitName("party"..i)].class = strlower(classEng)
+			for _, v in pairs({DPSMateUser, DPSMateUserCurrent}) do
+				if v[UnitName("party"..i)] then
+					if (not v[UnitName("party"..i)].class) then
+						_,classEng,_ = UnitClass("party"..i)
+						if (classEng) then
+							v[UnitName("party"..i)].class = strlower(classEng)
+						end
 					end
 				end
 			end
 		end
 	elseif UnitInRaid("player") then
 		for i=1,40 do
-			if DPSMateUser[UnitName("raid"..i)] then
-				if (not DPSMateUser[UnitName("raid"..i)].class) then
-					_,classEng,_ = UnitClass("raid"..i)
-					if (classEng) then
-						DPSMateUser[UnitName("raid"..i)].class = strlower(classEng)
+			for _, v in pairs({DPSMateUser, DPSMateUserCurrent}) do
+				if v[UnitName("raid"..i)] then
+					if (not v[UnitName("raid"..i)].class) then
+						_,classEng,_ = UnitClass("raid"..i)
+						if (classEng) then
+							v[UnitName("raid"..i)].class = strlower(classEng)
+						end
 					end
 				end
 			end
