@@ -335,7 +335,7 @@
 				end
 			</OnLeave>
 			<OnClick>
-				for i=1, 10 do
+				for i=1, 9 do
 					getglobal("DPSMate_ConfigMenu_Menu_Button"..i).selected=false
 					getglobal("DPSMate_ConfigMenu_Menu_Button"..i.."Texture"):Hide()
 					getglobal("DPSMate_ConfigMenu_Menu_Button"..i.."Text"):SetTextColor(1,0.82,0,1)
@@ -408,12 +408,13 @@
 		<Layers>
 			<Layer level="ARTWORK">
 				<FontString name="$parent_Title" inherits="GameFontNormalSmall" justifyH="LEFT" justifyV="CENTER">
-					<Size x="100" y="20" />
+					<Size x="160" y="20" />
 					<Anchors>
 						<Anchor point="LEFT">
 							<Offset x="20" y="0" />
 						</Anchor>
 					</Anchors>
+					<Color r="1" g="1" b="1" />
 				</FontString>
 			</Layer>
 		</Layers>
@@ -494,6 +495,89 @@
 			</EditBox>
 		</Frames>
 	</Slider>
+	<Button name="DPSMate_Template_Colorpicker" virtual="true">
+		<Size x="16" y="16"/>
+		<Layers>
+			<Layer level="ARTWORK">
+				<FontString name="$parent_Font" inherits="GameFontNormalSmall" text="Select font color" justifyH="LEFT">
+					<Size x="200" y="16" />
+					<Anchors>
+						<Anchor point="LEFT" relativeTo="$parent" relativePoint="RIGHT">
+							<Offset x="5" y="0" />
+						</Anchor>
+					</Anchors>
+					<Color r="1" g="1" b="1" />
+				</FontString>
+			</Layer>
+			<Layer level="BACKGROUND">
+				<Texture name="$parent_SwatchBg">
+					<Size x="14" y="14"/>
+					<Anchors>
+						<Anchor point="CENTER" />
+					</Anchors>
+					<Color r="1.0" g="1.0" b="1.0"/>
+				</Texture>
+			</Layer>
+		</Layers>
+		<Scripts>
+			<OnClick>
+				VCB_BF_OpenColorPicker(this, "WP_TIMER_font", nil, "WPTimer")
+			</OnClick>
+			<OnEnter>
+				getglobal(this:GetName().."_SwatchBg"):SetVertexColor(NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b)
+				if this.aide then
+					GameTooltip:SetOwner(this, "ANCHOR_RIGHT")
+					GameTooltip:SetText(this.aide, nil, nil, nil, nil, 1)
+				end
+			</OnEnter>
+			<OnLeave>
+				getglobal(this:GetName().."_SwatchBg"):SetVertexColor(HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b)
+				GameTooltip:Hide()
+			</OnLeave>
+		</Scripts>
+		<NormalTexture name="$parentNormalTexture" file="Interface\ChatFrame\ChatFrameColorSwatch"/>
+	</Button>
+	<Frame name="DPSMate_Template_BGDropDown" inherits="DPSMate_Template_DropDown" virtual="true">
+		<Frames>
+			<Frame name="$parent_Texture">
+				<Size x="30" y="30" />
+				<Anchors>
+					<Anchor point="RIGHT" relativeTo="$parent" relativePoint="LEFT">
+						<Offset x="15" y="5" />
+					</Anchor>
+				</Anchors>
+				<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+					<BackgroundInsets left="4" right="4" top="4" bottom="4" />
+					<TileSize val="12" />
+					<EdgeSize val="12" />
+					<Color r="0.157" g="0.08" b="0.06" a="1" />
+				</Backdrop>
+			</Frame>
+		</Frames>
+	</Frame>
+	<Frame name="DPSMate_Template_Box" virtual="true">
+		<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+			<BackgroundInsets left="4" right="4" top="4" bottom="4" />
+			<TileSize val="12" />
+			<EdgeSize val="12" />
+			<Color r="0.157" g="0.08" b="0.06" a="0.5" />
+		</Backdrop>
+	</Frame>
+	<Frame name="DPSMate_Template_BoxColumns" inherits="DPSMate_Template_Box" virtual="true">
+		<Size x="280" y="35" />
+		<Layers>
+			<Layer level="ARTWORK">
+				<FontString name="$parent_Title" inherits="GameFontNormalSmall" justifyH="LEFT" justifyV="CENTER">
+					<Size x="450" y="20" />
+					<Anchors>
+						<Anchor point="BOTTOMLEFT" relativeTo="$parent" relativePoint="TOPLEFT">
+							<Offset x="5" y="-6" />
+						</Anchor>
+					</Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+	</Frame>
 	
 	----------------------------------------------------------------------------------
 	--------------                 DPSMate Config Menu                  --------------                                  
@@ -553,17 +637,11 @@
 				<PushedTexture file="Interface\Buttons\UI-Panel-MinimizeButton-Down"/>
 				<HighlightTexture file="Interface\Buttons\UI-Panel-MinimizeButton-Highlight" alphaMode="ADD"/>
 			</Button>
-			<Frame name="$parent_Menu">
+			<Frame name="$parent_Menu" inherits="DPSMate_Template_Box">
 				<Size x="128" y="250" />
 				<Anchors>
 					<Anchor point="TOPLEFT" relativeTo="$parent_Title" relativePoint="BOTTOMLEFT" />
 				</Anchors>
-				<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
-					<BackgroundInsets left="4" right="4" top="4" bottom="4" />
-					<TileSize val="12" />
-					<EdgeSize val="12" />
-					<Color r="0.157" g="0.08" b="0.06" a="0.5" />
-				</Backdrop>
 				<Frames>
 					<Button name="$parent_Button1" inherits="DPSMate_Template_MenuButton">
 						<Anchors>
@@ -608,6 +686,11 @@
 						<Scripts>
 							<OnLoad>
 								getglobal(this:GetName().."Text"):SetText(DPSMate.localization.config.titlebar)
+								this.func = function()
+									getglobal(this:GetParent():GetParent():GetName()..this:GetParent().selected):Hide()
+									getglobal(this:GetParent():GetParent():GetName().."_Tab_TitleBar"):Show()
+									this:GetParent().selected = "_Tab_TitleBar"
+								end
 							</OnLoad>
 						</Scripts>
 					</Button>
@@ -618,6 +701,11 @@
 						<Scripts>
 							<OnLoad>
 								getglobal(this:GetName().."Text"):SetText(DPSMate.localization.config.content)
+								this.func = function()
+									getglobal(this:GetParent():GetParent():GetName()..this:GetParent().selected):Hide()
+									getglobal(this:GetParent():GetParent():GetName().."_Tab_Content"):Show()
+									this:GetParent().selected = "_Tab_Content"
+								end
 							</OnLoad>
 						</Scripts>
 					</Button>
@@ -627,7 +715,12 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								getglobal(this:GetName().."Text"):SetText(DPSMate.localization.config.modeswitching)
+								getglobal(this:GetName().."Text"):SetText(DPSMate.localization.config.dataresets)
+								this.func = function()
+									getglobal(this:GetParent():GetParent():GetName()..this:GetParent().selected):Hide()
+									getglobal(this:GetParent():GetParent():GetName().."_Tab_DataResets"):Show()
+									this:GetParent().selected = "_Tab_DataResets"
+								end
 							</OnLoad>
 						</Scripts>
 					</Button>
@@ -637,7 +730,12 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								getglobal(this:GetName().."Text"):SetText(DPSMate.localization.config.dataresets)
+								getglobal(this:GetName().."Text"):SetText(DPSMate.localization.config.generaloptions)
+								this.func = function()
+									getglobal(this:GetParent():GetParent():GetName()..this:GetParent().selected):Hide()
+									getglobal(this:GetParent():GetParent():GetName().."_Tab_GeneralOptions"):Show()
+									this:GetParent().selected = "_Tab_GeneralOptions"
+								end
 							</OnLoad>
 						</Scripts>
 					</Button>
@@ -647,7 +745,12 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								getglobal(this:GetName().."Text"):SetText(DPSMate.localization.config.generaloptions)
+								getglobal(this:GetName().."Text"):SetText(DPSMate.localization.config.columns)
+								this.func = function()
+									getglobal(this:GetParent():GetParent():GetName()..this:GetParent().selected):Hide()
+									getglobal(this:GetParent():GetParent():GetName().."_Tab_Columns"):Show()
+									this:GetParent().selected = "_Tab_Columns"
+								end
 							</OnLoad>
 						</Scripts>
 					</Button>
@@ -657,7 +760,12 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								getglobal(this:GetName().."Text"):SetText(DPSMate.localization.config.columns)
+								getglobal(this:GetName().."Text"):SetText(DPSMate.localization.config.tooltips)
+								this.func = function()
+									getglobal(this:GetParent():GetParent():GetName()..this:GetParent().selected):Hide()
+									getglobal(this:GetParent():GetParent():GetName().."_Tab_Tooltips"):Show()
+									this:GetParent().selected = "_Tab_Tooltips"
+								end
 							</OnLoad>
 						</Scripts>
 					</Button>
@@ -667,34 +775,23 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								getglobal(this:GetName().."Text"):SetText(DPSMate.localization.config.tooltips)
-							</OnLoad>
-						</Scripts>
-					</Button>
-					<Button name="$parent_Button10" inherits="DPSMate_Template_MenuButton">
-						<Anchors>
-							<Anchor point="TOP" relativeTo="$parent_Button9" relativePoint="BOTTOM" />
-						</Anchors>
-						<Scripts>
-							<OnLoad>
 								getglobal(this:GetName().."Text"):SetText(DPSMate.localization.config.about)
+								this.func = function()
+									getglobal(this:GetParent():GetParent():GetName()..this:GetParent().selected):Hide()
+									getglobal(this:GetParent():GetParent():GetName().."_Tab_About"):Show()
+									this:GetParent().selected = "_Tab_About"
+								end
 							</OnLoad>
 						</Scripts>
 					</Button>
 				</Frames>
 			</Frame>
 			
-			<Frame name="$parent_Tab_Window">
+			<Frame name="$parent_Tab_Window" inherits="DPSMate_Template_Box">
 				<Size x="301" y="250" />
 				<Anchors>
 					<Anchor point="LEFT" relativeTo="$parent_Menu" relativePoint="RIGHT" />
 				</Anchors>
-				<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
-					<BackgroundInsets left="4" right="4" top="4" bottom="4" />
-					<TileSize val="12" />
-					<EdgeSize val="12" />
-					<Color r="0.157" g="0.08" b="0.06" a="0.5" />
-				</Backdrop>
 				<Frames>
 					<EditBox name="$parent_Editbox" inherits="DPSMate_Template_Editbox">
 						<Size x="160" y="20" />
@@ -784,17 +881,11 @@
 				</Frames>
 			</Frame>
 			
-			<Frame name="$parent_Tab_Bars" hidden="true">
+			<Frame name="$parent_Tab_Bars" inherits="DPSMate_Template_Box" hidden="true">
 				<Size x="301" y="250" />
 				<Anchors>
 					<Anchor point="LEFT" relativeTo="$parent_Menu" relativePoint="RIGHT" />
 				</Anchors>
-				<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
-					<BackgroundInsets left="4" right="4" top="4" bottom="4" />
-					<TileSize val="12" />
-					<EdgeSize val="12" />
-					<Color r="0.157" g="0.08" b="0.06" a="0.5" />
-				</Backdrop>
 				<Frames>
 					<Frame name="$parent_BarFont" inherits="DPSMate_Template_DropDown">
 						<Size x="120" y="24" />
@@ -998,17 +1089,537 @@
 				</Frames>
 			</Frame>
 			
-			<ScrollFrame name="$parent_ScrollFrame" hidden="true">
+			<Frame name="$parent_Tab_TitleBar" inherits="DPSMate_Template_Box" hidden="true">
 				<Size x="301" y="250" />
 				<Anchors>
 					<Anchor point="LEFT" relativeTo="$parent_Menu" relativePoint="RIGHT" />
 				</Anchors>
-				<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
-					<BackgroundInsets left="4" right="4" top="4" bottom="4" />
-					<TileSize val="12" />
-					<EdgeSize val="12" />
-					<Color r="0.157" g="0.08" b="0.06" a="0.5" />
-				</Backdrop>
+				<Frames>
+					<Frame name="$parent_BarFont" inherits="DPSMate_Template_DropDown">
+						<Size x="120" y="24" />
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT">
+								<Offset x="-10" y="-20" />
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								this.aide = DPSMate.localization.config.barfontTooltip
+								this.func = DPSMate.Options.BarFontDropDown
+								this.title = DPSMate.localization.config.barfont
+								UIDropDownMenu_SetWidth(120)
+								getglobal(this:GetName().."_Text"):SetText(this.title)
+							</OnLoad>
+						</Scripts>
+					</Frame>
+					<Slider name="$parent_BarFontSize" inherits="DPSMate_Template_Slider">
+						<Anchors>
+							<Anchor point="LEFT" relativeTo="$parent_BarFont" relativePoint="RIGHT">
+								<Offset x="0" y="5" />
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								this.aide = DPSMate.localization.config.barfontsizeTooltip
+								this.func = function() 
+									DPSMateSettings["barfontsize"] = this:GetValue()
+									for _, val in pairs(DPSMateSettings["windows"]) do
+										for i=1, 30 do
+											getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar"..i.."_Name"):SetFont(DPSMate.Options.fonts[DPSMateSettings["barfont"]], DPSMateSettings["barfontsize"], DPSMate.Options.fontflags[DPSMateSettings["barfontflag"]])
+											getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar"..i.."_Value"):SetFont(DPSMate.Options.fonts[DPSMateSettings["barfont"]], DPSMateSettings["barfontsize"], DPSMate.Options.fontflags[DPSMateSettings["barfontflag"]])
+										end
+									end
+								end
+								this:SetMinMaxValues(1,32)
+								this:SetValueStep(1)
+								getglobal(this:GetName().."Text"):SetText(DPSMate.localization.config.barfontsize)
+								getglobal(this:GetName().."Low"):SetText("1")
+								getglobal(this:GetName().."High"):SetText("32")
+							</OnLoad>
+						</Scripts>
+					</Slider>
+					<Frame name="$parent_BarFontFlag" inherits="DPSMate_Template_DropDown">
+						<Size x="120" y="24" />
+						<Anchors>
+							<Anchor point="TOP" relativeTo="$parent_BarFont" relativePoint="BOTTOM">
+								<Offset x="0" y="-10" />
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								this.aide = DPSMate.localization.config.barfontflagsTooltip
+								this.func = DPSMate.Options.BarFontFlagsDropDown
+								this.title = DPSMate.localization.config.barfontflags
+								UIDropDownMenu_SetWidth(120)
+								getglobal(this:GetName().."_Text"):SetText(this.title)
+							</OnLoad>
+						</Scripts>
+					</Frame>
+					<Frame name="$parent_BarTexture" inherits="DPSMate_Template_DropDown">
+						<Size x="120" y="24" />
+						<Anchors>
+							<Anchor point="LEFT" relativeTo="$parent_BarFontFlag" relativePoint="RIGHT">
+								<Offset x="-20" y="0" />
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								this.aide = DPSMate.localization.config.bartextureTooltip
+								this.func = DPSMate.Options.BarTextureDropDown
+								this.title = DPSMate.localization.config.bartexture
+								UIDropDownMenu_SetWidth(120)
+								getglobal(this:GetName().."_Text"):SetText(this.title)
+							</OnLoad>
+						</Scripts>
+					</Frame>
+					<Slider name="$parent_BarHeight" inherits="DPSMate_Template_Slider">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent_BarFontFlag" relativePoint="BOTTOMLEFT">
+								<Offset x="20" y="-10" />
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								this.aide = DPSMate.localization.config.barheightTooltip
+								this.func = function()
+									DPSMateSettings["barheight"] = this:GetValue() 
+									for _, val in pairs(DPSMateSettings["windows"]) do
+										for i=1, 30 do
+											local bar = getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar"..i)
+											local icon = getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar"..i.."_Icon")
+											local name = getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar"..i.."_Name")
+											bar:SetHeight(DPSMateSettings["barheight"])
+											icon:SetWidth(DPSMateSettings["barheight"])
+											icon:SetHeight(DPSMateSettings["barheight"])
+											name:ClearAllPoints()
+											name:SetPoint("LEFT", bar, "LEFT", DPSMateSettings["barheight"], 0)
+										end
+									end
+								end
+								this:SetMinMaxValues(10,25)
+								this:SetValueStep(1)
+								getglobal(this:GetName().."Text"):SetText(DPSMate.localization.config.barheight)
+								getglobal(this:GetName().."Low"):SetText("10")
+								getglobal(this:GetName().."High"):SetText("25")
+							</OnLoad>
+						</Scripts>
+					</Slider>
+					<Button name="$parent_BGColor" inherits="DPSMate_Template_Colorpicker">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent_BarTexture" relativePoint="BOTTOMLEFT">
+								<Offset x="20" y="-10" />
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								getglobal(this:GetName().."_Font"):SetText(DPSMate.localization.config.bgcolor)
+								getglobal(this:GetName().."_SwatchBg").r = 1.0
+								getglobal(this:GetName().."_SwatchBg").g = 1.0
+								getglobal(this:GetName().."_SwatchBg").b = 1.0
+								this.aide=DPSMate.localization.config.bgcolorTooltip
+							</OnLoad>
+						</Scripts>
+					</Button>
+					<Frame name="$parent_Box1" inherits="DPSMate_Template_Box">
+						<Size x="281" y="50" />
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent_BarHeight" relativePoint="BOTTOMLEFT">
+								<Offset x="0" y="-25" />
+							</Anchor>
+						</Anchors>
+						<Layers>
+							<Layer levle="ARTWORK">
+								<FontString name="$parent_Title" inherits="GameFontNormalSmall" justifyH="LEFT" justifyV="CENTER" text="Buttons">
+									<Size x="280" y="20" />
+									<Anchors>
+										<Anchor point="BOTTOMLEFT" relativeTo="$parent" relativePoint="TOPLEFT">
+											<Offset x="2" y="-5" />
+										</Anchor>
+									</Anchors>
+								</FontString>
+							</Layer>
+						</Layers>
+						<Frames>
+							<CheckButton name="$parent_Report" inherits="DPSMate_Template_CheckButton">
+								<Anchors>
+									<Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT">
+										<Offset x="5" y="-5" />
+									</Anchor>
+								</Anchors>
+								<Scripts>
+									<OnLoad>
+										getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.report)
+									</OnLoad>
+									<OnClick>
+										if DPSMateSettings["classicons"] then
+											DPSMateSettings["classicons"] = false
+											for _, val in pairs(DPSMateSettings["windows"]) do
+												for i=1, 30 do
+													local bar = getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar"..i)
+													bar.name = getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar"..i.."_Name")
+													bar.icon = getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar"..i.."_Icon")
+													bar.name:ClearAllPoints()
+													bar.name:SetPoint("TOPLEFT", bar, "TOPLEFT")
+													bar.name:SetPoint("BOTTOMRIGHT", bar, "BOTTOMRIGHT")
+													bar.icon:Hide()
+												end
+											end
+										else
+											DPSMateSettings["classicons"] = true
+											for _, val in pairs(DPSMateSettings["windows"]) do
+												for i=1, 30 do
+													local bar = getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar"..i)
+													bar.name = getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar"..i.."_Name")
+													bar.icon = getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar"..i.."_Icon")
+													bar.name:ClearAllPoints()
+													bar.name:SetPoint("TOPLEFT", bar, "TOPLEFT", DPSMateSettings["barheight"], 0)
+													bar.name:SetPoint("BOTTOMRIGHT", bar, "BOTTOMRIGHT")
+													bar.icon:Show()
+												end
+											end
+										end
+									</OnClick>
+								</Scripts>
+							</CheckButton>
+							<CheckButton name="$parent_Mode" inherits="DPSMate_Template_CheckButton">
+								<Anchors>
+									<Anchor point="TOPLEFT" relativeTo="$Parent_Report" relativePoint="BOTTOMLEFT" />
+								</Anchors>
+								<Scripts>
+									<OnLoad>
+										getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.mode)
+									</OnLoad>
+									<OnClick>
+										if DPSMateSettings["ranks"] then
+											DPSMateSettings["ranks"] = false
+										else
+											DPSMateSettings["ranks"] = true
+										end
+										DPSMate:SetStatusBarValue()
+									</OnClick>
+								</Scripts>
+							</CheckButton>
+							<CheckButton name="$parent_Reset" inherits="DPSMate_Template_CheckButton">
+								<Anchors>
+									<Anchor point="LEFT" relativeTo="$Parent_Report" relativePoint="RIGHT">
+										<Offset x="100" y="0" />
+									</Anchor>
+								</Anchors>
+								<Scripts>
+									<OnLoad>
+										getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.reset)
+									</OnLoad>
+									<OnClick>
+										if DPSMateSettings["ranks"] then
+											DPSMateSettings["ranks"] = false
+										else
+											DPSMateSettings["ranks"] = true
+										end
+										DPSMate:SetStatusBarValue()
+									</OnClick>
+								</Scripts>
+							</CheckButton>
+							<CheckButton name="$parent_Config" inherits="DPSMate_Template_CheckButton">
+								<Anchors>
+									<Anchor point="LEFT" relativeTo="$Parent_Mode" relativePoint="RIGHT">
+										<Offset x="100" y="0" />
+									</Anchor>
+								</Anchors>
+								<Scripts>
+									<OnLoad>
+										getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.config)
+									</OnLoad>
+									<OnClick>
+										if DPSMateSettings["ranks"] then
+											DPSMateSettings["ranks"] = false
+										else
+											DPSMateSettings["ranks"] = true
+										end
+										DPSMate:SetStatusBarValue()
+									</OnClick>
+								</Scripts>
+							</CheckButton>
+						</Frames>
+					</Frame>
+				</Frames>
+			</Frame>
+			
+			<Frame name="$parent_Tab_Content" inherits="DPSMate_Template_Box" hidden="true">
+				<Size x="301" y="250" />
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="$parent_Menu" relativePoint="RIGHT" />
+				</Anchors>
+				<Frames>
+					<Frame name="$parent_BGDropDown" inherits="DPSMate_Template_BGDropDown">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset x="25" y="-20" />
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								this.aide = DPSMate.localization.config.bgtexTooltip
+								this.func = DPSMate.Options.BarFontDropDown
+								this.title = DPSMate.localization.config.bgtex
+								UIDropDownMenu_SetWidth(120)
+								getglobal(this:GetName().."_Text"):SetText(this.title)
+							</OnLoad>
+						</Scripts>
+					</Frame>
+					<Slider name="$parent_Scale" inherits="DPSMate_Template_Slider">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent_BGDropDown" relativePoint="BOTTOMLEFT">
+								<Offset x="-15" y="-10" />
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								this.aide = DPSMate.localization.config.scaleTooltip
+								this.func = function() 
+									
+								end
+								this:SetMinMaxValues(1,32)
+								this:SetValueStep(1)
+								getglobal(this:GetName().."Text"):SetText(DPSMate.localization.config.scale)
+								getglobal(this:GetName().."Low"):SetText("1")
+								getglobal(this:GetName().."High"):SetText("32")
+							</OnLoad>
+						</Scripts>
+					</Slider>
+					<Button name="$parent_BGColor" inherits="DPSMate_Template_Colorpicker">
+						<Anchors>
+							<Anchor point="LEFT" relativeTo="$parent_Scale" relativePoint="RIGHT">
+								<Offset x="30" y="0" />
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								getglobal(this:GetName().."_Font"):SetText(DPSMate.localization.config.bgcolor)
+								getglobal(this:GetName().."_SwatchBg").r = 1.0
+								getglobal(this:GetName().."_SwatchBg").g = 1.0
+								getglobal(this:GetName().."_SwatchBg").b = 1.0
+								this.aide=DPSMate.localization.config.bgcolorTooltip
+							</OnLoad>
+						</Scripts>
+					</Button>
+				</Frames>
+			</Frame>
+			
+			<Frame name="$parent_Tab_DataResets" inherits="DPSMate_Template_Box" hidden="true">
+				<Size x="301" y="250" />
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="$parent_Menu" relativePoint="RIGHT" />
+				</Anchors>
+				<Frames>
+					<Frame name="$parent_EnteringWorld" inherits="DPSMate_Template_DropDown">
+						<Size x="120" y="24" />
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT">
+								<Offset x="-10" y="-20" />
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								this.aide = DPSMate.localization.config.enterworldinstanceTooltip
+								this.func = DPSMate.Options.BarFontDropDown
+								this.title = DPSMate.localization.config.enterworldinstance
+								UIDropDownMenu_SetWidth(120)
+								getglobal(this:GetName().."_Text"):SetText(this.title)
+							</OnLoad>
+						</Scripts>
+					</Frame>
+					<Frame name="$parent_JoinParty" inherits="DPSMate_Template_DropDown">
+						<Size x="120" y="24" />
+						<Anchors>
+							<Anchor point="LEFT" relativeTo="$parent_EnteringWorld" relativePoint="RIGHT">
+								<Offset x="-20" y="0" />
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								this.aide = DPSMate.localization.config.joinpartyTooltip
+								this.func = DPSMate.Options.BarFontDropDown
+								this.title = DPSMate.localization.config.joinparty
+								UIDropDownMenu_SetWidth(120)
+								getglobal(this:GetName().."_Text"):SetText(this.title)
+							</OnLoad>
+						</Scripts>
+					</Frame>
+					<Frame name="$parent_PartyMemberChanged" inherits="DPSMate_Template_DropDown">
+						<Size x="120" y="24" />
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent_EnteringWorld" relativePoint="BOTTOMLEFT">
+								<Offset x="0" y="-10" />
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								this.aide = DPSMate.localization.config.partymemberchangedTooltip
+								this.func = DPSMate.Options.BarFontDropDown
+								this.title = DPSMate.localization.config.partymemberchanged
+								UIDropDownMenu_SetWidth(120)
+								getglobal(this:GetName().."_Text"):SetText(this.title)
+							</OnLoad>
+						</Scripts>
+					</Frame>
+					<Frame name="$parent_LeaveParty" inherits="DPSMate_Template_DropDown">
+						<Size x="120" y="24" />
+						<Anchors>
+							<Anchor point="LEFT" relativeTo="$parent_PartyMemberChanged" relativePoint="RIGHT">
+								<Offset x="-20" y="0" />
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								this.aide = DPSMate.localization.config.leavingpartyTooltip
+								this.func = DPSMate.Options.BarFontDropDown
+								this.title = DPSMate.localization.config.leavingparty
+								UIDropDownMenu_SetWidth(120)
+								getglobal(this:GetName().."_Text"):SetText(this.title)
+							</OnLoad>
+						</Scripts>
+					</Frame>
+				</Frames>
+			</Frame>
+			
+			<Frame name="$parent_Tab_GeneralOptions" inherits="DPSMate_Template_Box" hidden="true">
+				<Size x="301" y="250" />
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="$parent_Menu" relativePoint="RIGHT" />
+				</Anchors>
+				<Frames>
+					<CheckButton name="$parent_Minimap" inherits="DPSMate_Template_CheckButton">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset x="10" y="-10" />
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.minimap)
+							</OnLoad>
+							<OnClick>
+							</OnClick>
+						</Scripts>
+					</CheckButton>
+					<CheckButton name="$parent_Total" inherits="DPSMate_Template_CheckButton">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent_Minimap" relativePoint="BOTTOMLEFT" />
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.total)
+							</OnLoad>
+							<OnClick>
+							</OnClick>
+						</Scripts>
+					</CheckButton>
+					<CheckButton name="$parent_Solo" inherits="DPSMate_Template_CheckButton">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent_Total" relativePoint="BOTTOMLEFT" />
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.solo)
+							</OnLoad>
+							<OnClick>
+							</OnClick>
+						</Scripts>
+					</CheckButton>
+					<CheckButton name="$parent_Combat" inherits="DPSMate_Template_CheckButton">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent_Solo" relativePoint="BOTTOMLEFT" />
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.combat)
+							</OnLoad>
+							<OnClick>
+							</OnClick>
+						</Scripts>
+					</CheckButton>
+					<CheckButton name="$parent_BossFights" inherits="DPSMate_Template_CheckButton">
+						<Anchors>
+							<Anchor point="LEFT" relativeTo="$parent_Minimap" relativePoint="RIGHT">
+								<Offset x="115" y="0" />
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.bossfights)
+							</OnLoad>
+							<OnClick>
+							</OnClick>
+						</Scripts>
+					</CheckButton>
+					<CheckButton name="$parent_PVP" inherits="DPSMate_Template_CheckButton">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent_BossFights" relativePoint="BOTTOMLEFT" />
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.pvp)
+							</OnLoad>
+							<OnClick>
+							</OnClick>
+						</Scripts>
+					</CheckButton>
+					<CheckButton name="$parent_Disable" inherits="DPSMate_Template_CheckButton">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent_PVP" relativePoint="BOTTOMLEFT" />
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.disable)
+							</OnLoad>
+							<OnClick>
+							</OnClick>
+						</Scripts>
+					</CheckButton>
+					<Frame name="$parent_NumberFormat" inherits="DPSMate_Template_DropDown">
+						<Size x="120" y="24" />
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent_Combat" relativePoint="BOTTOMLEFT">
+								<Offset x="-15" y="-15" />
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								this.aide = DPSMate.localization.config.numberformatTooltip
+								this.func = DPSMate.Options.BarFontDropDown
+								this.title = DPSMate.localization.config.numberformat
+								UIDropDownMenu_SetWidth(120)
+								getglobal(this:GetName().."_Text"):SetText(this.title)
+							</OnLoad>
+						</Scripts>
+					</Frame>
+					<Slider name="$parent_Segments" inherits="DPSMate_Template_Slider">
+						<Anchors>
+							<Anchor point="LEFT" relativeTo="$parent_NumberFormat" relativePoint="RIGHT">
+								<Offset x="0" y="5" />
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								this.aide = DPSMate.localization.config.segmentsTooltip
+								this.func = function() 
+								end
+								this:SetMinMaxValues(1,32)
+								this:SetValueStep(1)
+								getglobal(this:GetName().."Text"):SetText(DPSMate.localization.config.segments)
+								getglobal(this:GetName().."Low"):SetText("1")
+								getglobal(this:GetName().."High"):SetText("32")
+							</OnLoad>
+						</Scripts>
+					</Slider>
+				</Frames>
+			</Frame>
+			
+			<ScrollFrame name="$parent_Tab_Columns" inherits="DPSMate_Template_Box" hidden="true">
+				<Size x="301" y="250" />
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="$parent_Menu" relativePoint="RIGHT" />
+				</Anchors>
 				<Scripts>
 					<OnLoad>
 						this:SetVerticalScroll(0)
@@ -1018,12 +1629,771 @@
 						--this:UpdateScrollChildRect()
 					</OnMouseWheel>
 				</Scripts>
+				<HitRectInsets left="0" right="0" top="10" bottom="10"/> 
 				<ScrollChild>
-					<Frame>
-					<Size x="300" y="800" />
+					<Frame name="$parent_Container">
+						<Size x="300" y="680" />
+						<Frames>
+							<Frame name="$parent_DPS" inherits="DPSMate_Template_BoxColumns">
+								<Anchors>
+									<Anchor point="TOP">
+										<Offset x="0" y="-20" />
+									</Anchor>
+								</Anchors>
+								<Scripts>
+									<OnLoad>
+										getglobal(this:GetName().."_Title"):SetText("DPS")
+									</OnLoad>
+								</Scripts>
+								<Frames>
+									<CheckButton name="$parent_Check1" inherits="DPSMate_Template_CheckButton">
+										<Anchors>
+											<Anchor point="TOPLEFT">
+												<Offset x="10" y="-8" />
+											</Anchor>
+										</Anchors>
+										<Scripts>
+											<OnLoad>
+												getglobal(this:GetName().."_Title"):SetText("Damage")
+											</OnLoad>
+											<OnClick>
+											</OnClick>
+										</Scripts>
+									</CheckButton>
+									<CheckButton name="$parent_Check2" inherits="DPSMate_Template_CheckButton">
+										<Anchors>
+											<Anchor point="LEFT" relativeTo="$parent_Check1" relativePoint="RIGHT">
+												<Offset x="65" y="0" />
+											</Anchor>
+										</Anchors>
+										<Scripts>
+											<OnLoad>
+												getglobal(this:GetName().."_Title"):SetText("DPS")
+											</OnLoad>
+											<OnClick>
+											</OnClick>
+										</Scripts>
+									</CheckButton>
+									<CheckButton name="$parent_Check3" inherits="DPSMate_Template_CheckButton">
+										<Anchors>
+											<Anchor point="LEFT" relativeTo="$parent_Check2" relativePoint="RIGHT">
+												<Offset x="65" y="0" />
+											</Anchor>
+										</Anchors>
+										<Scripts>
+											<OnLoad>
+												getglobal(this:GetName().."_Title"):SetText("Percent")
+											</OnLoad>
+											<OnClick>
+											</OnClick>
+										</Scripts>
+									</CheckButton>
+								</Frames>
+							</Frame>
+							<Frame name="$parent_Damage" inherits="DPSMate_Template_BoxColumns">
+								<Anchors>
+									<Anchor point="TOP" relativeTo="$parent_DPS" relativePoint="BOTTOM">
+										<Offset x="0" y="-20" />
+									</Anchor>
+								</Anchors>
+								<Scripts>
+									<OnLoad>
+										getglobal(this:GetName().."_Title"):SetText("Damage")
+									</OnLoad>
+								</Scripts>
+								<Frames>
+									<CheckButton name="$parent_Check1" inherits="DPSMate_Template_CheckButton">
+										<Anchors>
+											<Anchor point="TOPLEFT">
+												<Offset x="10" y="-8" />
+											</Anchor>
+										</Anchors>
+										<Scripts>
+											<OnLoad>
+												getglobal(this:GetName().."_Title"):SetText("Damage")
+											</OnLoad>
+											<OnClick>
+											</OnClick>
+										</Scripts>
+									</CheckButton>
+									<CheckButton name="$parent_Check2" inherits="DPSMate_Template_CheckButton">
+										<Anchors>
+											<Anchor point="LEFT" relativeTo="$parent_Check1" relativePoint="RIGHT">
+												<Offset x="65" y="0" />
+											</Anchor>
+										</Anchors>
+										<Scripts>
+											<OnLoad>
+												getglobal(this:GetName().."_Title"):SetText("DPS")
+											</OnLoad>
+											<OnClick>
+											</OnClick>
+										</Scripts>
+									</CheckButton>
+									<CheckButton name="$parent_Check3" inherits="DPSMate_Template_CheckButton">
+										<Anchors>
+											<Anchor point="LEFT" relativeTo="$parent_Check2" relativePoint="RIGHT">
+												<Offset x="65" y="0" />
+											</Anchor>
+										</Anchors>
+										<Scripts>
+											<OnLoad>
+												getglobal(this:GetName().."_Title"):SetText("Percent")
+											</OnLoad>
+											<OnClick>
+											</OnClick>
+										</Scripts>
+									</CheckButton>
+								</Frames>
+							</Frame>
+							<Frame name="$parent_DamageTaken" inherits="DPSMate_Template_BoxColumns">
+								<Anchors>
+									<Anchor point="TOP" relativeTo="$parent_Damage" relativePoint="BOTTOM">
+										<Offset x="0" y="-20" />
+									</Anchor>
+								</Anchors>
+								<Scripts>
+									<OnLoad>
+										getglobal(this:GetName().."_Title"):SetText("Damage taken")
+									</OnLoad>
+								</Scripts>
+								<Frames>
+									<CheckButton name="$parent_Check1" inherits="DPSMate_Template_CheckButton">
+										<Anchors>
+											<Anchor point="TOPLEFT">
+												<Offset x="10" y="-8" />
+											</Anchor>
+										</Anchors>
+										<Scripts>
+											<OnLoad>
+												getglobal(this:GetName().."_Title"):SetText("Damage")
+											</OnLoad>
+											<OnClick>
+											</OnClick>
+										</Scripts>
+									</CheckButton>
+									<CheckButton name="$parent_Check2" inherits="DPSMate_Template_CheckButton">
+										<Anchors>
+											<Anchor point="LEFT" relativeTo="$parent_Check1" relativePoint="RIGHT">
+												<Offset x="65" y="0" />
+											</Anchor>
+										</Anchors>
+										<Scripts>
+											<OnLoad>
+												getglobal(this:GetName().."_Title"):SetText("DPS")
+											</OnLoad>
+											<OnClick>
+											</OnClick>
+										</Scripts>
+									</CheckButton>
+									<CheckButton name="$parent_Check3" inherits="DPSMate_Template_CheckButton">
+										<Anchors>
+											<Anchor point="LEFT" relativeTo="$parent_Check2" relativePoint="RIGHT">
+												<Offset x="65" y="0" />
+											</Anchor>
+										</Anchors>
+										<Scripts>
+											<OnLoad>
+												getglobal(this:GetName().."_Title"):SetText("Percent")
+											</OnLoad>
+											<OnClick>
+											</OnClick>
+										</Scripts>
+									</CheckButton>
+								</Frames>
+							</Frame>
+							<Frame name="$parent_EDD" inherits="DPSMate_Template_BoxColumns">
+								<Anchors>
+									<Anchor point="TOP" relativeTo="$parent_DamageTaken" relativePoint="BOTTOM">
+										<Offset x="0" y="-20" />
+									</Anchor>
+								</Anchors>
+								<Scripts>
+									<OnLoad>
+										getglobal(this:GetName().."_Title"):SetText("Enemy damage done")
+									</OnLoad>
+								</Scripts>
+								<Frames>
+									<CheckButton name="$parent_Check1" inherits="DPSMate_Template_CheckButton">
+										<Anchors>
+											<Anchor point="TOPLEFT">
+												<Offset x="10" y="-8" />
+											</Anchor>
+										</Anchors>
+										<Scripts>
+											<OnLoad>
+												getglobal(this:GetName().."_Title"):SetText("Damage")
+											</OnLoad>
+											<OnClick>
+											</OnClick>
+										</Scripts>
+									</CheckButton>
+									<CheckButton name="$parent_Check2" inherits="DPSMate_Template_CheckButton">
+										<Anchors>
+											<Anchor point="LEFT" relativeTo="$parent_Check1" relativePoint="RIGHT">
+												<Offset x="65" y="0" />
+											</Anchor>
+										</Anchors>
+										<Scripts>
+											<OnLoad>
+												getglobal(this:GetName().."_Title"):SetText("DPS")
+											</OnLoad>
+											<OnClick>
+											</OnClick>
+										</Scripts>
+									</CheckButton>
+									<CheckButton name="$parent_Check3" inherits="DPSMate_Template_CheckButton">
+										<Anchors>
+											<Anchor point="LEFT" relativeTo="$parent_Check2" relativePoint="RIGHT">
+												<Offset x="65" y="0" />
+											</Anchor>
+										</Anchors>
+										<Scripts>
+											<OnLoad>
+												getglobal(this:GetName().."_Title"):SetText("Percent")
+											</OnLoad>
+											<OnClick>
+											</OnClick>
+										</Scripts>
+									</CheckButton>
+								</Frames>
+							</Frame>
+							<Frame name="$parent_EDT" inherits="DPSMate_Template_BoxColumns">
+								<Anchors>
+									<Anchor point="TOP" relativeTo="$parent_EDD" relativePoint="BOTTOM">
+										<Offset x="0" y="-20" />
+									</Anchor>
+								</Anchors>
+								<Scripts>
+									<OnLoad>
+										getglobal(this:GetName().."_Title"):SetText("Enemy damage taken")
+									</OnLoad>
+								</Scripts>
+								<Frames>
+									<CheckButton name="$parent_Check1" inherits="DPSMate_Template_CheckButton">
+										<Anchors>
+											<Anchor point="TOPLEFT">
+												<Offset x="10" y="-8" />
+											</Anchor>
+										</Anchors>
+										<Scripts>
+											<OnLoad>
+												getglobal(this:GetName().."_Title"):SetText("Damage")
+											</OnLoad>
+											<OnClick>
+											</OnClick>
+										</Scripts>
+									</CheckButton>
+									<CheckButton name="$parent_Check2" inherits="DPSMate_Template_CheckButton">
+										<Anchors>
+											<Anchor point="LEFT" relativeTo="$parent_Check1" relativePoint="RIGHT">
+												<Offset x="65" y="0" />
+											</Anchor>
+										</Anchors>
+										<Scripts>
+											<OnLoad>
+												getglobal(this:GetName().."_Title"):SetText("DPS")
+											</OnLoad>
+											<OnClick>
+											</OnClick>
+										</Scripts>
+									</CheckButton>
+									<CheckButton name="$parent_Check3" inherits="DPSMate_Template_CheckButton">
+										<Anchors>
+											<Anchor point="LEFT" relativeTo="$parent_Check2" relativePoint="RIGHT">
+												<Offset x="65" y="0" />
+											</Anchor>
+										</Anchors>
+										<Scripts>
+											<OnLoad>
+												getglobal(this:GetName().."_Title"):SetText("Percent")
+											</OnLoad>
+											<OnClick>
+											</OnClick>
+										</Scripts>
+									</CheckButton>
+								</Frames>
+							</Frame>
+							<Frame name="$parent_Healing" inherits="DPSMate_Template_BoxColumns">
+								<Anchors>
+									<Anchor point="TOP" relativeTo="$parent_EDT" relativePoint="BOTTOM">
+										<Offset x="0" y="-20" />
+									</Anchor>
+								</Anchors>
+								<Scripts>
+									<OnLoad>
+										getglobal(this:GetName().."_Title"):SetText("Healing")
+									</OnLoad>
+								</Scripts>
+								<Frames>
+									<CheckButton name="$parent_Check1" inherits="DPSMate_Template_CheckButton">
+										<Anchors>
+											<Anchor point="TOPLEFT">
+												<Offset x="10" y="-8" />
+											</Anchor>
+										</Anchors>
+										<Scripts>
+											<OnLoad>
+												getglobal(this:GetName().."_Title"):SetText("Damage")
+											</OnLoad>
+											<OnClick>
+											</OnClick>
+										</Scripts>
+									</CheckButton>
+									<CheckButton name="$parent_Check2" inherits="DPSMate_Template_CheckButton">
+										<Anchors>
+											<Anchor point="LEFT" relativeTo="$parent_Check1" relativePoint="RIGHT">
+												<Offset x="65" y="0" />
+											</Anchor>
+										</Anchors>
+										<Scripts>
+											<OnLoad>
+												getglobal(this:GetName().."_Title"):SetText("DPS")
+											</OnLoad>
+											<OnClick>
+											</OnClick>
+										</Scripts>
+									</CheckButton>
+									<CheckButton name="$parent_Check3" inherits="DPSMate_Template_CheckButton">
+										<Anchors>
+											<Anchor point="LEFT" relativeTo="$parent_Check2" relativePoint="RIGHT">
+												<Offset x="65" y="0" />
+											</Anchor>
+										</Anchors>
+										<Scripts>
+											<OnLoad>
+												getglobal(this:GetName().."_Title"):SetText("Percent")
+											</OnLoad>
+											<OnClick>
+											</OnClick>
+										</Scripts>
+									</CheckButton>
+								</Frames>
+							</Frame>
+							<Frame name="$parent_HAB" inherits="DPSMate_Template_BoxColumns">
+								<Anchors>
+									<Anchor point="TOP" relativeTo="$parent_Healing" relativePoint="BOTTOM">
+										<Offset x="0" y="-20" />
+									</Anchor>
+								</Anchors>
+								<Scripts>
+									<OnLoad>
+										getglobal(this:GetName().."_Title"):SetText("Healing and Absorbs")
+									</OnLoad>
+								</Scripts>
+								<Frames>
+									<CheckButton name="$parent_Check1" inherits="DPSMate_Template_CheckButton">
+										<Anchors>
+											<Anchor point="TOPLEFT">
+												<Offset x="10" y="-8" />
+											</Anchor>
+										</Anchors>
+										<Scripts>
+											<OnLoad>
+												getglobal(this:GetName().."_Title"):SetText("Damage")
+											</OnLoad>
+											<OnClick>
+											</OnClick>
+										</Scripts>
+									</CheckButton>
+									<CheckButton name="$parent_Check2" inherits="DPSMate_Template_CheckButton">
+										<Anchors>
+											<Anchor point="LEFT" relativeTo="$parent_Check1" relativePoint="RIGHT">
+												<Offset x="65" y="0" />
+											</Anchor>
+										</Anchors>
+										<Scripts>
+											<OnLoad>
+												getglobal(this:GetName().."_Title"):SetText("DPS")
+											</OnLoad>
+											<OnClick>
+											</OnClick>
+										</Scripts>
+									</CheckButton>
+									<CheckButton name="$parent_Check3" inherits="DPSMate_Template_CheckButton">
+										<Anchors>
+											<Anchor point="LEFT" relativeTo="$parent_Check2" relativePoint="RIGHT">
+												<Offset x="65" y="0" />
+											</Anchor>
+										</Anchors>
+										<Scripts>
+											<OnLoad>
+												getglobal(this:GetName().."_Title"):SetText("Percent")
+											</OnLoad>
+											<OnClick>
+											</OnClick>
+										</Scripts>
+									</CheckButton>
+								</Frames>
+							</Frame>
+							<Frame name="$parent_HealingTaken" inherits="DPSMate_Template_BoxColumns">
+								<Anchors>
+									<Anchor point="TOP" relativeTo="$parent_HAB" relativePoint="BOTTOM">
+										<Offset x="0" y="-20" />
+									</Anchor>
+								</Anchors>
+								<Scripts>
+									<OnLoad>
+										getglobal(this:GetName().."_Title"):SetText("Healing taken")
+									</OnLoad>
+								</Scripts>
+								<Frames>
+									<CheckButton name="$parent_Check1" inherits="DPSMate_Template_CheckButton">
+										<Anchors>
+											<Anchor point="TOPLEFT">
+												<Offset x="10" y="-8" />
+											</Anchor>
+										</Anchors>
+										<Scripts>
+											<OnLoad>
+												getglobal(this:GetName().."_Title"):SetText("Damage")
+											</OnLoad>
+											<OnClick>
+											</OnClick>
+										</Scripts>
+									</CheckButton>
+									<CheckButton name="$parent_Check2" inherits="DPSMate_Template_CheckButton">
+										<Anchors>
+											<Anchor point="LEFT" relativeTo="$parent_Check1" relativePoint="RIGHT">
+												<Offset x="65" y="0" />
+											</Anchor>
+										</Anchors>
+										<Scripts>
+											<OnLoad>
+												getglobal(this:GetName().."_Title"):SetText("DPS")
+											</OnLoad>
+											<OnClick>
+											</OnClick>
+										</Scripts>
+									</CheckButton>
+									<CheckButton name="$parent_Check3" inherits="DPSMate_Template_CheckButton">
+										<Anchors>
+											<Anchor point="LEFT" relativeTo="$parent_Check2" relativePoint="RIGHT">
+												<Offset x="65" y="0" />
+											</Anchor>
+										</Anchors>
+										<Scripts>
+											<OnLoad>
+												getglobal(this:GetName().."_Title"):SetText("Percent")
+											</OnLoad>
+											<OnClick>
+											</OnClick>
+										</Scripts>
+									</CheckButton>
+								</Frames>
+							</Frame>
+							<Frame name="$parent_Overhealing" inherits="DPSMate_Template_BoxColumns">
+								<Anchors>
+									<Anchor point="TOP" relativeTo="$parent_HealingTaken" relativePoint="BOTTOM">
+										<Offset x="0" y="-20" />
+									</Anchor>
+								</Anchors>
+								<Scripts>
+									<OnLoad>
+										getglobal(this:GetName().."_Title"):SetText("Overhealing")
+									</OnLoad>
+								</Scripts>
+								<Frames>
+									<CheckButton name="$parent_Check1" inherits="DPSMate_Template_CheckButton">
+										<Anchors>
+											<Anchor point="TOPLEFT">
+												<Offset x="10" y="-8" />
+											</Anchor>
+										</Anchors>
+										<Scripts>
+											<OnLoad>
+												getglobal(this:GetName().."_Title"):SetText("Damage")
+											</OnLoad>
+											<OnClick>
+											</OnClick>
+										</Scripts>
+									</CheckButton>
+									<CheckButton name="$parent_Check2" inherits="DPSMate_Template_CheckButton">
+										<Anchors>
+											<Anchor point="LEFT" relativeTo="$parent_Check1" relativePoint="RIGHT">
+												<Offset x="65" y="0" />
+											</Anchor>
+										</Anchors>
+										<Scripts>
+											<OnLoad>
+												getglobal(this:GetName().."_Title"):SetText("DPS")
+											</OnLoad>
+											<OnClick>
+											</OnClick>
+										</Scripts>
+									</CheckButton>
+									<CheckButton name="$parent_Check3" inherits="DPSMate_Template_CheckButton">
+										<Anchors>
+											<Anchor point="LEFT" relativeTo="$parent_Check2" relativePoint="RIGHT">
+												<Offset x="65" y="0" />
+											</Anchor>
+										</Anchors>
+										<Scripts>
+											<OnLoad>
+												getglobal(this:GetName().."_Title"):SetText("Percent")
+											</OnLoad>
+											<OnClick>
+											</OnClick>
+										</Scripts>
+									</CheckButton>
+								</Frames>
+							</Frame>
+							<Frame name="$parent_Interrupts" inherits="DPSMate_Template_BoxColumns">
+								<Anchors>
+									<Anchor point="TOP" relativeTo="$parent_Overhealing" relativePoint="BOTTOM">
+										<Offset x="0" y="-20" />
+									</Anchor>
+								</Anchors>
+								<Scripts>
+									<OnLoad>
+										getglobal(this:GetName().."_Title"):SetText("Interrupts")
+									</OnLoad>
+								</Scripts>
+								<Frames>
+									<CheckButton name="$parent_Check1" inherits="DPSMate_Template_CheckButton">
+										<Anchors>
+											<Anchor point="TOPLEFT">
+												<Offset x="10" y="-8" />
+											</Anchor>
+										</Anchors>
+										<Scripts>
+											<OnLoad>
+												getglobal(this:GetName().."_Title"):SetText("Damage")
+											</OnLoad>
+											<OnClick>
+											</OnClick>
+										</Scripts>
+									</CheckButton>
+									<CheckButton name="$parent_Check2" inherits="DPSMate_Template_CheckButton">
+										<Anchors>
+											<Anchor point="LEFT" relativeTo="$parent_Check1" relativePoint="RIGHT">
+												<Offset x="65" y="0" />
+											</Anchor>
+										</Anchors>
+										<Scripts>
+											<OnLoad>
+												getglobal(this:GetName().."_Title"):SetText("DPS")
+											</OnLoad>
+											<OnClick>
+											</OnClick>
+										</Scripts>
+									</CheckButton>
+									<CheckButton name="$parent_Check3" inherits="DPSMate_Template_CheckButton">
+										<Anchors>
+											<Anchor point="LEFT" relativeTo="$parent_Check2" relativePoint="RIGHT">
+												<Offset x="65" y="0" />
+											</Anchor>
+										</Anchors>
+										<Scripts>
+											<OnLoad>
+												getglobal(this:GetName().."_Title"):SetText("Percent")
+											</OnLoad>
+											<OnClick>
+											</OnClick>
+										</Scripts>
+									</CheckButton>
+								</Frames>
+							</Frame>
+							<Frame name="$parent_Deaths" inherits="DPSMate_Template_BoxColumns">
+								<Anchors>
+									<Anchor point="TOP" relativeTo="$parent_Interrupts" relativePoint="BOTTOM">
+										<Offset x="0" y="-20" />
+									</Anchor>
+								</Anchors>
+								<Scripts>
+									<OnLoad>
+										getglobal(this:GetName().."_Title"):SetText("Deaths")
+									</OnLoad>
+								</Scripts>
+								<Frames>
+									<CheckButton name="$parent_Check1" inherits="DPSMate_Template_CheckButton">
+										<Anchors>
+											<Anchor point="TOPLEFT">
+												<Offset x="10" y="-8" />
+											</Anchor>
+										</Anchors>
+										<Scripts>
+											<OnLoad>
+												getglobal(this:GetName().."_Title"):SetText("Damage")
+											</OnLoad>
+											<OnClick>
+											</OnClick>
+										</Scripts>
+									</CheckButton>
+									<CheckButton name="$parent_Check2" inherits="DPSMate_Template_CheckButton">
+										<Anchors>
+											<Anchor point="LEFT" relativeTo="$parent_Check1" relativePoint="RIGHT">
+												<Offset x="65" y="0" />
+											</Anchor>
+										</Anchors>
+										<Scripts>
+											<OnLoad>
+												getglobal(this:GetName().."_Title"):SetText("DPS")
+											</OnLoad>
+											<OnClick>
+											</OnClick>
+										</Scripts>
+									</CheckButton>
+									<CheckButton name="$parent_Check3" inherits="DPSMate_Template_CheckButton">
+										<Anchors>
+											<Anchor point="LEFT" relativeTo="$parent_Check2" relativePoint="RIGHT">
+												<Offset x="65" y="0" />
+											</Anchor>
+										</Anchors>
+										<Scripts>
+											<OnLoad>
+												getglobal(this:GetName().."_Title"):SetText("Percent")
+											</OnLoad>
+											<OnClick>
+											</OnClick>
+										</Scripts>
+									</CheckButton>
+								</Frames>
+							</Frame>
+							<Frame name="$parent_Dispels" inherits="DPSMate_Template_BoxColumns">
+								<Anchors>
+									<Anchor point="TOP" relativeTo="$parent_Deaths" relativePoint="BOTTOM">
+										<Offset x="0" y="-20" />
+									</Anchor>
+								</Anchors>
+								<Scripts>
+									<OnLoad>
+										getglobal(this:GetName().."_Title"):SetText("Dispels")
+									</OnLoad>
+								</Scripts>
+								<Frames>
+									<CheckButton name="$parent_Check1" inherits="DPSMate_Template_CheckButton">
+										<Anchors>
+											<Anchor point="TOPLEFT">
+												<Offset x="10" y="-8" />
+											</Anchor>
+										</Anchors>
+										<Scripts>
+											<OnLoad>
+												getglobal(this:GetName().."_Title"):SetText("Damage")
+											</OnLoad>
+											<OnClick>
+											</OnClick>
+										</Scripts>
+									</CheckButton>
+									<CheckButton name="$parent_Check2" inherits="DPSMate_Template_CheckButton">
+										<Anchors>
+											<Anchor point="LEFT" relativeTo="$parent_Check1" relativePoint="RIGHT">
+												<Offset x="65" y="0" />
+											</Anchor>
+										</Anchors>
+										<Scripts>
+											<OnLoad>
+												getglobal(this:GetName().."_Title"):SetText("DPS")
+											</OnLoad>
+											<OnClick>
+											</OnClick>
+										</Scripts>
+									</CheckButton>
+									<CheckButton name="$parent_Check3" inherits="DPSMate_Template_CheckButton">
+										<Anchors>
+											<Anchor point="LEFT" relativeTo="$parent_Check2" relativePoint="RIGHT">
+												<Offset x="65" y="0" />
+											</Anchor>
+										</Anchors>
+										<Scripts>
+											<OnLoad>
+												getglobal(this:GetName().."_Title"):SetText("Percent")
+											</OnLoad>
+											<OnClick>
+											</OnClick>
+										</Scripts>
+									</CheckButton>
+								</Frames>
+							</Frame>
+						</Frames>
 					</Frame>
 				</ScrollChild>
 			</ScrollFrame>
+			
+			<Frame name="$parent_Tab_Tooltips" inherits="DPSMate_Template_Box" hidden="true">
+				<Size x="301" y="250" />
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="$parent_Menu" relativePoint="RIGHT" />
+				</Anchors>
+				<Frames>
+					<CheckButton name="$parent_Tooltips" inherits="DPSMate_Template_CheckButton">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset x="10" y="-10" />
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								getglobal(this:GetName().."_Title"):SetText("Show tooltips")
+							</OnLoad>
+							<OnClick>
+							</OnClick>
+						</Scripts>
+					</CheckButton>
+					<CheckButton name="$parent_InformativeTooltips" inherits="DPSMate_Template_CheckButton">
+						<Anchors>
+							<Anchor point="LEFT" relativeTo="$parent_Tooltips" relativePoint="RIGHT">
+								<Offset x="115" y="0" />
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								getglobal(this:GetName().."_Title"):SetText("Informative tooltips")
+							</OnLoad>
+							<OnClick>
+							</OnClick>
+						</Scripts>
+					</CheckButton>
+					<Slider name="$parent_Rows" inherits="DPSMate_Template_Slider">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent_Tooltips" relativePoint="BOTTOMLEFT">
+								<Offset x="0" y="-15" />
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								this.aide = "HELP"
+								this.func = function() 
+									
+								end
+								this:SetMinMaxValues(1,32)
+								this:SetValueStep(1)
+								getglobal(this:GetName().."Text"):SetText("Subview rows")
+								getglobal(this:GetName().."Low"):SetText("1")
+								getglobal(this:GetName().."High"):SetText("10")
+							</OnLoad>
+						</Scripts>
+					</Slider>
+					<Frame name="$parent_Position" inherits="DPSMate_Template_DropDown">
+						<Size x="120" y="24" />
+						<Anchors>
+							<Anchor point="LEFT" relativeTo="$parent_Rows" relativePoint="RIGHT">
+								<Offset x="0" y="-10" />
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								this.aide = "HELP"
+								this.func = DPSMate.Options.BarFontDropDown
+								this.title = "Tooltip position"
+								UIDropDownMenu_SetWidth(120)
+								getglobal(this:GetName().."_Text"):SetText(this.title)
+							</OnLoad>
+						</Scripts>
+					</Frame>
+				</Frames>
+			</Frame>
+			
+			<Frame name="$parent_Tab_About" inherits="DPSMate_Template_Box" hidden="true">
+				<Size x="301" y="250" />
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="$parent_Menu" relativePoint="RIGHT" />
+				</Anchors>
+				<Frames>
+					
+				</Frames>
+			</Frame>
 		</Frames>
 	</Frame>
 	
