@@ -90,6 +90,7 @@ function DPSMate:InitializeFrames()
 			bar.name = getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar"..i.."_Name")
 			bar.value = getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar"..i.."_Value")
 			bar.icon = getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar"..i.."_Icon")
+			bar.bg = getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar"..i.."_BG")
 			
 			-- Postition
 			bar:SetPoint("TOPLEFT", child, "TOPLEFT")
@@ -101,6 +102,8 @@ function DPSMate:InitializeFrames()
 				bar.name:ClearAllPoints()
 				bar.name:SetPoint("TOPLEFT", bar, "TOPLEFT", DPSMateSettings["barheight"], 0)
 				bar.name:SetPoint("BOTTOMRIGHT", bar, "BOTTOMRIGHT")
+				bar.icon:SetWidth(DPSMateSettings["barheight"])
+				bar.icon:SetHeight(DPSMateSettings["barheight"])
 				bar.icon:Show()
 			end
 		
@@ -108,6 +111,7 @@ function DPSMate:InitializeFrames()
 			bar.name:SetFont(DPSMate.Options.fonts[DPSMateSettings["barfont"]], DPSMateSettings["barfontsize"], DPSMate.Options.fontflags[DPSMateSettings["barfontflag"]])
 			bar.value:SetFont(DPSMate.Options.fonts[DPSMateSettings["barfont"]], DPSMateSettings["barfontsize"], DPSMate.Options.fontflags[DPSMateSettings["barfontflag"]])
 			bar:SetStatusBarTexture(DPSMate.Options.statusbars[DPSMateSettings["bartexture"]])
+			bar.bg:SetTexture(DPSMate.Options.statusbars[DPSMateSettings["bartexture"]])
 			bar:SetHeight(DPSMateSettings["barheight"])
 		end
 	end

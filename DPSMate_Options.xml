@@ -917,7 +917,14 @@
 									DPSMateSettings["barheight"] = this:GetValue() 
 									for _, val in pairs(DPSMateSettings["windows"]) do
 										for i=1, 30 do
-											getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar"..i):SetHeight(DPSMateSettings["barheight"])
+											local bar = getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar"..i)
+											local icon = getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar"..i.."_Icon")
+											local name = getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar"..i.."_Name")
+											bar:SetHeight(DPSMateSettings["barheight"])
+											icon:SetWidth(DPSMateSettings["barheight"])
+											icon:SetHeight(DPSMateSettings["barheight"])
+											name:ClearAllPoints()
+											name:SetPoint("LEFT", bar, "LEFT", DPSMateSettings["barheight"], 0)
 										end
 									end
 								end

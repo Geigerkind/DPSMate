@@ -415,7 +415,7 @@ function DPSMate.Options:EvalTable(t)
 	local a, u, p = {}, {}, {}
 	local total, pet = 0, ""
 	local arr = DPSMate:GetMode(DPSMate_Details.PaKey)
-	if (arr[t].pet and arr[t].pet ~= "Unknown") then u={a=t, b=arr[t].pet} else u={a=t} end
+	if (arr[t].pet and arr[t].pet ~= "Unknown" and arr[arr[t].pet]) then u={a=t, b=arr[t].pet} else u={a=t} end
 	for c, v in pairs(u) do
 		for cat, val in pairs(arr[v]) do
 			if (type(val) == "table" and cat~="dmgTime" and cat~="procs") then
@@ -566,19 +566,30 @@ function DPSMate.Options:UpdateLineGraph()
 		table.insert(Data1, {val[1],val[2], DPSMate.Options:CheckProcs(DPSMate_Details.proc, arr, val[1])})
 	end
 
-	g2:AddDataSeries(Data1,{{1.0,0.0,0.0,0.8}, {1.0,1.0,0.0,0.8}})
+	g2:AddDataSeries(Data1,{{1.0,0.0,0.0,0.8}, {1.0,1.0,0.0,0.8}}, DPSMate.Options:AddProcPoints(DPSMate_Details.proc, arr))
 end
 
 function DPSMate.Options:CheckProcs(name, arr, val)
 	if DPSMate.DB:DataExistProcs(DetailsUser, name, arr) then
 		for i=1, DPSMate:TableLength(arr[DetailsUser]["procs"][name]["start"]) do
 			if not arr[DetailsUser]["procs"][name]["start"][i] or not arr[DetailsUser]["procs"][name]["ending"][i] then return false end
-			if val >  arr[DetailsUser]["procs"][name]["start"][i] and val < arr[DetailsUser]["procs"][name]["ending"][i] then
+			if val >  arr[DetailsUser]["procs"][name]["start"][i] and val < arr[DetailsUser]["procs"][name]["ending"][i] and not arr[DetailsUser]["procs"][name]["point"] then
 				return true
 			end
 		end
 	end
 	return false
+end
+
+function DPSMate.Options:AddProcPoints(name, arr)
+	local bool, data = false, {}
+	if DPSMate.DB:DataExistProcs(DetailsUser, name, arr) and arr[DetailsUser]["procs"][name]["point"] then
+		for i=1, DPSMate:TableLength(arr[DetailsUser]["procs"][name]["start"]) do
+			bool = true
+			table.insert(data, arr[DetailsUser]["procs"][name]["start"][i])
+		end
+	end
+	return {bool, data}
 end
 
 function DPSMate.Options:GetSummarizedTable(arr, cbt)
@@ -816,6 +827,7 @@ function DPSMate.Options:BarTextureDropDown()
 		for _, val in pairs(DPSMateSettings["windows"]) do
 			for i=1, 30 do
 				getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar"..i):SetStatusBarTexture(DPSMate.Options.statusbars[this.value])
+				getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar"..i.."_BG"):SetTexture(DPSMate.Options.statusbars[this.value])
 			end
 		end
     end

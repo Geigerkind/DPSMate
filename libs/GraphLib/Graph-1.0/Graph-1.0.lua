@@ -362,13 +362,13 @@ end
 --Functions for Line Graph Data
 -------------------------------------------------------------------------------
 
-function GraphFunctions:AddDataSeries(points,color)
+function GraphFunctions:AddDataSeries(points,color,Dp)
 	--Make sure there is data points
 	if not points then
 		return
 	end
 	
-	table.insert(self.Data,{Points=points;Color=color})
+	table.insert(self.Data,{Points=points;Color=color;Dpoints=Dp})
 	
 	self.NeedsUpdate=true
 end
@@ -889,7 +889,7 @@ function GraphFunctions:CreateGridlines()
 						F:SetTextColor(1,1,1)
 						F:ClearAllPoints()
 						F:SetPoint("BOTTOMLEFT",T,"LEFT",2,2)
-						F:SetText(ceil(i*self.YGridInterval))
+						F:SetText(floor(i*self.YGridInterval))
 						F:Show()
 					end
 
@@ -927,7 +927,7 @@ function GraphFunctions:CreateGridlines()
 					F:SetTextColor(1,1,1)
 					F:ClearAllPoints()
 					F:SetPoint("BOTTOM",T,"BOTTOM",0,0)
-					F:SetText(ceil(i*self.XGridInterval))
+					F:SetText(floor(i*self.XGridInterval))
 					F:Show()
 				end
 			end
@@ -938,14 +938,14 @@ function GraphFunctions:CreateGridlines()
 		local YPos,T
 
 		YPos=Height*(-self.YMin)/(self.YMax-self.YMin)
-		T=self:DrawLine(self,0,YPos,Width,YPos,24,self.AxisColor,"BACKGROUND")
+		self.yAxis = self:DrawLine(self,0,YPos,Width,YPos,24,self.AxisColor,"BACKGROUND")
 
 		if self.YLabelsLeft  then
 			F=self:FindFontString()
 			F:SetFontObject("GameFontHighlightSmall")
 			F:SetTextColor(1,1,1)
 			F:ClearAllPoints()
-			F:SetPoint("BOTTOMLEFT",T,"LEFT",2,2)
+			F:SetPoint("BOTTOMLEFT",self.yAxis,"LEFT",2,2)
 			F:SetText(0)
 			F:Show()
 		end
@@ -954,7 +954,7 @@ function GraphFunctions:CreateGridlines()
 			F:SetFontObject("GameFontHighlightSmall")
 			F:SetTextColor(1,1,1)
 			F:ClearAllPoints()
-			F:SetPoint("BOTTOMRIGHT",T,"RIGHT",-2,2)
+			F:SetPoint("BOTTOMRIGHT",self.yAxis,"RIGHT",-2,2)
 			F:SetText(0)
 			F:Show()
 		end
@@ -964,7 +964,7 @@ function GraphFunctions:CreateGridlines()
 		local XPos;
 
 		XPos=Width*(-self.XMin)/(self.XMax-self.XMin)
-		self:DrawLine(self,XPos,0,XPos,Height,24,self.AxisColor,"BACKGROUND")
+		self.xAxis = self:DrawLine(self,XPos,0,XPos,Height,24,self.AxisColor,"BACKGROUND")
 	end
 end
 
@@ -1168,6 +1168,19 @@ function GraphFunctions:RefreshLineGraph()
 				LastPoint.y=Height*(LastPoint.y-self.YMin)/(self.YMax-self.YMin)
 			end
 		end
+		
+		if series.Dpoints[1] then
+			self.ppoints = {}
+			for k3, p2 in pairs(series.Dpoints[2]) do
+				-- Needs fine tuning
+				local PPoint = self:CreateTexture()
+				PPoint:SetTexture("Interface\\AddOns\\!ShinoUI\\modules\\modmaps\\blips\\party") -- Adjust path later
+				PPoint:SetPoint("LEFT", self.yAxis, "LEFT", self:GetWidth()*(p2/self.XMax)+40, 0)
+				PPoint:SetHeight(20)
+				PPoint:SetWidth(20)
+				table.insert(self.ppoints, PPoint)
+			end
+		end
 	end
 	
 	self:ShowFontStrings()
@@ -1355,6 +1368,14 @@ function lib:HideLines(C)
 	end
 
 	for k,v in pairs(C.GraphLib_Lines) do
+		v:Hide()
+	end
+	
+	if not C.ppoints then
+		return
+	end
+
+	for k,v in pairs(C.ppoints) do
 		v:Hide()
 	end
 end

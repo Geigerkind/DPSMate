@@ -330,7 +330,7 @@ function DPSMate.DB:hasVanishedFeignDeath()
 	end
 end
 
-function DPSMate.DB:BuildUserProcs(Duser, Dname)
+function DPSMate.DB:BuildUserProcs(Duser, Dname, Dbool)
 	for cat, val in pairs({total=DPSMateUser, current=DPSMateUserCurrent}) do
 		if DPSMate.DB:DataExistProcs(Duser.name, Dname, val) then
 			local len = DPSMate:TableLength(val[Duser.name]["procs"][Dname]["start"])
@@ -348,6 +348,7 @@ function DPSMate.DB:BuildUserProcs(Duser, Dname)
 					[1] = DPSMateCombatTime[cat],
 				},
 				ending = {},
+				point = Dbool,
 			}
 		end
 	end

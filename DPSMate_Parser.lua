@@ -169,7 +169,15 @@ end
 function DPSMate.Parser:ParseTextUpdate(arg1,arg2,arg3) 
 	if arg1 == "AURA_START" or arg1 == "AURA_END" then
 		if DPSMate:TContains(procs, arg2) then
-			DPSMate.DB:BuildUserProcs(player, arg2)
+			DPSMate.DB:BuildUserProcs(player, arg2, false)
+		end
+	elseif arg1 == "ENERGY" then
+		if arg2 == "25" then
+			DPSMate.DB:BuildUserProcs(player, "Relentless Strikes", true)
+			DPSMate.DB:BuildUserProcs(player, "Relentless Strikes", true)
+		elseif arg2 == "35" then
+			DPSMate.DB:BuildUserProcs(player, "Rogue Armor Energize", true)
+			DPSMate.DB:BuildUserProcs(player, "Rogue Armor Energize", true)
 		end
 	end
 end
