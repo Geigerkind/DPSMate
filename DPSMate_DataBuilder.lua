@@ -54,6 +54,15 @@ function DPSMate.DB:OnEvent(event)
 				barheight = 12,
 				classicons = false,
 				ranks = true,
+				titlebar = true,
+				titlebarfontsize = 12,
+				titlebarheight = 18,
+				titlebarreport = true,
+				titlebarreset = true,
+				titlebarsegments = true,
+				titlebarconfig = true,
+				titlebarsync = true,
+				titlebartexture = "Healbot",
 			}
 		end
 		if DPSMateHistory == nil then DPSMateHistory = {} end

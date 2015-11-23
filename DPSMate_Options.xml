@@ -408,7 +408,7 @@
 		<Layers>
 			<Layer level="ARTWORK">
 				<FontString name="$parent_Title" inherits="GameFontNormalSmall" justifyH="LEFT" justifyV="CENTER">
-					<Size x="160" y="20" />
+					<Size x="120" y="20" />
 					<Anchors>
 						<Anchor point="LEFT">
 							<Offset x="20" y="0" />
@@ -1121,8 +1121,16 @@
 								getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.enable)
 							</OnLoad>
 							<OnClick>
-								if DPSMateSettings["classicons"] then
+								if DPSMateSettings["titlebar"] then
+									DPSMateSettings["titlebar"] = false
+									for _,val in pairs(DPSMateSettings["windows"]) do
+										getglobal("DPSMate_"..val["name"].."_Head"):Hide()
+									end
 								else
+									DPSMateSettings["titlebar"] = true
+									for _,val in pairs(DPSMateSettings["windows"]) do
+										getglobal("DPSMate_"..val["name"].."_Head"):Show()
+									end
 								end
 							</OnClick>
 						</Scripts>
@@ -1154,12 +1162,9 @@
 							<OnLoad>
 								this.aide = DPSMate.localization.config.barfontsizeTooltip
 								this.func = function() 
-									DPSMateSettings["barfontsize"] = this:GetValue()
+									DPSMateSettings["titlebarfontsize"] = this:GetValue()
 									for _, val in pairs(DPSMateSettings["windows"]) do
-										for i=1, 30 do
-											getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar"..i.."_Name"):SetFont(DPSMate.Options.fonts[DPSMateSettings["barfont"]], DPSMateSettings["barfontsize"], DPSMate.Options.fontflags[DPSMateSettings["barfontflag"]])
-											getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar"..i.."_Value"):SetFont(DPSMate.Options.fonts[DPSMateSettings["barfont"]], DPSMateSettings["barfontsize"], DPSMate.Options.fontflags[DPSMateSettings["barfontflag"]])
-										end
+										getglobal("DPSMate_"..val["name"].."_Head_Font"):SetFont("Fonts\\FRIZQT__.TTF", DPSMateSettings["titlebarfontsize"])
 									end
 								end
 								this:SetMinMaxValues(1,32)
@@ -1197,7 +1202,7 @@
 						<Scripts>
 							<OnLoad>
 								this.aide = DPSMate.localization.config.bartextureTooltip
-								this.func = DPSMate.Options.BarTextureDropDown
+								this.func = DPSMate.Options.TitleBarTextureDropDown
 								this.title = DPSMate.localization.config.bartexture
 								UIDropDownMenu_SetWidth(120)
 								getglobal(this:GetName().."_Text"):SetText(this.title)
@@ -1214,25 +1219,16 @@
 							<OnLoad>
 								this.aide = DPSMate.localization.config.barheightTooltip
 								this.func = function()
-									DPSMateSettings["barheight"] = this:GetValue() 
+									DPSMateSettings["titlebarheight"] = this:GetValue() 
 									for _, val in pairs(DPSMateSettings["windows"]) do
-										for i=1, 30 do
-											local bar = getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar"..i)
-											local icon = getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar"..i.."_Icon")
-											local name = getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar"..i.."_Name")
-											bar:SetHeight(DPSMateSettings["barheight"])
-											icon:SetWidth(DPSMateSettings["barheight"])
-											icon:SetHeight(DPSMateSettings["barheight"])
-											name:ClearAllPoints()
-											name:SetPoint("LEFT", bar, "LEFT", DPSMateSettings["barheight"], 0)
-										end
+										getglobal("DPSMate_"..val["name"].."_Head"):SetHeight(DPSMateSettings["titlebarheight"])
 									end
 								end
-								this:SetMinMaxValues(10,25)
+								this:SetMinMaxValues(10,32)
 								this:SetValueStep(1)
 								getglobal(this:GetName().."Text"):SetText(DPSMate.localization.config.barheight)
 								getglobal(this:GetName().."Low"):SetText("10")
-								getglobal(this:GetName().."High"):SetText("25")
+								getglobal(this:GetName().."High"):SetText("32")
 							</OnLoad>
 						</Scripts>
 					</Slider>
@@ -1283,33 +1279,12 @@
 										getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.report)
 									</OnLoad>
 									<OnClick>
-										if DPSMateSettings["classicons"] then
-											DPSMateSettings["classicons"] = false
-											for _, val in pairs(DPSMateSettings["windows"]) do
-												for i=1, 30 do
-													local bar = getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar"..i)
-													bar.name = getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar"..i.."_Name")
-													bar.icon = getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar"..i.."_Icon")
-													bar.name:ClearAllPoints()
-													bar.name:SetPoint("TOPLEFT", bar, "TOPLEFT")
-													bar.name:SetPoint("BOTTOMRIGHT", bar, "BOTTOMRIGHT")
-													bar.icon:Hide()
-												end
-											end
+										if DPSMateSettings["titlebarreport"] then
+											DPSMateSettings["titlebarreport"] = false
 										else
-											DPSMateSettings["classicons"] = true
-											for _, val in pairs(DPSMateSettings["windows"]) do
-												for i=1, 30 do
-													local bar = getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar"..i)
-													bar.name = getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar"..i.."_Name")
-													bar.icon = getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar"..i.."_Icon")
-													bar.name:ClearAllPoints()
-													bar.name:SetPoint("TOPLEFT", bar, "TOPLEFT", DPSMateSettings["barheight"], 0)
-													bar.name:SetPoint("BOTTOMRIGHT", bar, "BOTTOMRIGHT")
-													bar.icon:Show()
-												end
-											end
+											DPSMateSettings["titlebarreport"] = true
 										end
+										DPSMate.Options:ToggleTitleBarButtonState()
 									</OnClick>
 								</Scripts>
 							</CheckButton>
@@ -1322,19 +1297,19 @@
 										getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.mode)
 									</OnLoad>
 									<OnClick>
-										if DPSMateSettings["ranks"] then
-											DPSMateSettings["ranks"] = false
+										if DPSMateSettings["titlebarsegments"] then
+											DPSMateSettings["titlebarsegments"] = false
 										else
-											DPSMateSettings["ranks"] = true
+											DPSMateSettings["titlebarsegments"] = true
 										end
-										DPSMate:SetStatusBarValue()
+										DPSMate.Options:ToggleTitleBarButtonState()
 									</OnClick>
 								</Scripts>
 							</CheckButton>
 							<CheckButton name="$parent_Reset" inherits="DPSMate_Template_CheckButton">
 								<Anchors>
 									<Anchor point="LEFT" relativeTo="$Parent_Report" relativePoint="RIGHT">
-										<Offset x="100" y="0" />
+										<Offset x="67" y="0" />
 									</Anchor>
 								</Anchors>
 								<Scripts>
@@ -1342,19 +1317,19 @@
 										getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.reset)
 									</OnLoad>
 									<OnClick>
-										if DPSMateSettings["ranks"] then
-											DPSMateSettings["ranks"] = false
+										if DPSMateSettings["titlebarreset"] then
+											DPSMateSettings["titlebarreset"] = false
 										else
-											DPSMateSettings["ranks"] = true
+											DPSMateSettings["titlebarreset"] = true
 										end
-										DPSMate:SetStatusBarValue()
+										DPSMate.Options:ToggleTitleBarButtonState()
 									</OnClick>
 								</Scripts>
 							</CheckButton>
 							<CheckButton name="$parent_Config" inherits="DPSMate_Template_CheckButton">
 								<Anchors>
 									<Anchor point="LEFT" relativeTo="$Parent_Mode" relativePoint="RIGHT">
-										<Offset x="100" y="0" />
+										<Offset x="67" y="0" />
 									</Anchor>
 								</Anchors>
 								<Scripts>
@@ -1362,12 +1337,32 @@
 										getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.config)
 									</OnLoad>
 									<OnClick>
-										if DPSMateSettings["ranks"] then
-											DPSMateSettings["ranks"] = false
+										if DPSMateSettings["titlebarconfig"] then
+											DPSMateSettings["titlebarconfig"] = false
 										else
-											DPSMateSettings["ranks"] = true
+											DPSMateSettings["titlebarconfig"] = true
 										end
-										DPSMate:SetStatusBarValue()
+										DPSMate.Options:ToggleTitleBarButtonState()
+									</OnClick>
+								</Scripts>
+							</CheckButton>
+							<CheckButton name="$parent_Sync" inherits="DPSMate_Template_CheckButton">
+								<Anchors>
+									<Anchor point="LEFT" relativeTo="$Parent_Reset" relativePoint="RIGHT">
+										<Offset x="67" y="0" />
+									</Anchor>
+								</Anchors>
+								<Scripts>
+									<OnLoad>
+										getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.sync)
+									</OnLoad>
+									<OnClick>
+										if DPSMateSettings["titlebarsync"] then
+											DPSMateSettings["titlebarsync"] = false
+										else
+											DPSMateSettings["titlebarsync"] = true
+										end
+										DPSMate.Options:ToggleTitleBarButtonState()
 									</OnClick>
 								</Scripts>
 							</CheckButton>

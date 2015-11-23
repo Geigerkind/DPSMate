@@ -79,9 +79,19 @@ function DPSMate:InitializeFrames()
 		DPSMate.Options:ToggleDrewDrop(1, DPSMate.DB:GetOptionsTrue(1, k), f)
 		DPSMate.Options:ToggleDrewDrop(2, DPSMate.DB:GetOptionsTrue(2, k), f)
 		
-		if DPSMateSettings.lock then
+		local head = getglobal("DPSMate_"..val["name"].."_Head")
+		head.font = getglobal("DPSMate_"..val["name"].."_Head_Font")
+		head.bg = getglobal("DPSMate_"..val["name"].."_Head_Background")
+		
+		if DPSMateSettings["lock"] then
 			getglobal("DPSMate_"..val["name"].."_Resize"):Hide()
 		end
+		if not DPSMateSettings["titlebar"] then
+			head:Hide()
+		end
+		head.bg:SetTexture(DPSMate.Options.statusbars[DPSMateSettings["titlebartexture"]])
+		head.font:SetFont("Fonts\\FRIZQT__.TTF", DPSMateSettings["titlebarfontsize"])
+		head:SetHeight(DPSMateSettings["titlebarheight"])
 		
 		-- Styles // Bars
 		local child = getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child")
@@ -115,6 +125,7 @@ function DPSMate:InitializeFrames()
 			bar:SetHeight(DPSMateSettings["barheight"])
 		end
 	end
+	DPSMate.Options:ToggleTitleBarButtonState()
 end
 
 function DPSMate:WindowsExist()

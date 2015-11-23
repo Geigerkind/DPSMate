@@ -293,6 +293,16 @@ function DPSMate.Options:InitializeConfigMenu()
 	getglobal("DPSMate_ConfigMenu_Tab_Bars_ClassIcons"):SetChecked(DPSMateSettings["classicons"])
 	getglobal("DPSMate_ConfigMenu_Tab_Bars_ClassIcons"):SetChecked(DPSMateSettings["classicons"])
 	getglobal("DPSMate_ConfigMenu_Tab_Bars_Ranks"):SetChecked(DPSMateSettings["ranks"])
+	
+	-- Tab Title Bar
+	getglobal("DPSMate_ConfigMenu_Tab_TitleBar_Enable"):SetChecked(DPSMateSettings["titlebar"])
+	getglobal("DPSMate_ConfigMenu_Tab_TitleBar_BarFontSize"):SetValue(DPSMateSettings["titlebarfontsize"])
+	getglobal("DPSMate_ConfigMenu_Tab_TitleBar_BarHeight"):SetValue(DPSMateSettings["titlebarheight"])
+	getglobal("DPSMate_ConfigMenu_Tab_TitleBar_Box1_Report"):SetChecked(DPSMateSettings["titlebarreport"])
+	getglobal("DPSMate_ConfigMenu_Tab_TitleBar_Box1_Reset"):SetChecked(DPSMateSettings["titlebarreset"])
+	getglobal("DPSMate_ConfigMenu_Tab_TitleBar_Box1_Mode"):SetChecked(DPSMateSettings["titlebarsegments"])
+	getglobal("DPSMate_ConfigMenu_Tab_TitleBar_Box1_Config"):SetChecked(DPSMateSettings["titlebarconfig"])
+	getglobal("DPSMate_ConfigMenu_Tab_TitleBar_Box1_Sync"):SetChecked(DPSMateSettings["titlebarsync"])
 end
 
 function DPSMate.Options:OnEvent(event)
@@ -863,9 +873,53 @@ function DPSMate.Options:BarTextureDropDown()
 	DPSMate_ConfigMenu.visBars3 = true
 end
 
+function DPSMate.Options:TitleBarTextureDropDown()
+	local i = 1
+	
+	local function on_click()
+        UIDropDownMenu_SetSelectedValue(DPSMate_ConfigMenu_Tab_TitleBar_BarTexture, this.value)
+		DPSMateSettings["titlebartexture"] = this.value
+		DPSMate_ConfigMenu_Tab_TitleBar_BarTexture.tex:SetTexture(DPSMate.Options.statusbars[this.value])
+		DPSMate_ConfigMenu_Tab_TitleBar_BarTexture.tex:Show()
+		for _, val in pairs(DPSMateSettings["windows"]) do
+			getglobal("DPSMate_"..val["name"].."_Head_Background"):SetTexture(DPSMate.Options.statusbars[this.value])
+		end
+    end
+	
+	for name, path in pairs(DPSMate.Options.statusbars) do
+		UIDropDownMenu_AddButton{
+			text = name,
+			value = name,
+			func = on_click,
+		}
+		local button = getglobal("DropDownList1Button"..i)
+		if not button.tex then
+			button.tex = button:CreateTexture("BG", "BACKGROUND")
+			button.tex:SetTexture(path)
+			button.tex:SetWidth(100)
+			button.tex:SetHeight(20)
+			button.tex:SetPoint("TOPLEFT", button, "TOPLEFT")
+		end
+		button.tex:Show()
+		i=i+1
+	end
+	
+	if not DPSMate_ConfigMenu.visBars4 then
+		UIDropDownMenu_SetSelectedValue(DPSMate_ConfigMenu_Tab_TitleBar_BarTexture, DPSMateSettings["titlebartexture"])
+		if not DPSMate_ConfigMenu_Tab_TitleBar_BarTexture.tex then
+			DPSMate_ConfigMenu_Tab_TitleBar_BarTexture.tex = DPSMate_ConfigMenu_Tab_TitleBar_BarTexture:CreateTexture("BG", "ARTWORK")
+			DPSMate_ConfigMenu_Tab_TitleBar_BarTexture.tex:SetWidth(110)
+			DPSMate_ConfigMenu_Tab_TitleBar_BarTexture.tex:SetHeight(15)
+			DPSMate_ConfigMenu_Tab_TitleBar_BarTexture.tex:SetPoint("TOPLEFT", DPSMate_ConfigMenu_Tab_TitleBar_BarTexture, "TOPLEFT", 23, -7)
+		end
+		DPSMate_ConfigMenu_Tab_TitleBar_BarTexture.tex:SetTexture(DPSMate.Options.statusbars[DPSMateSettings["titlebartexture"]])
+	end
+	DPSMate_ConfigMenu.visBars4 = true
+end
+
 function DPSMate.Options:Report()
 	local channel = UIDropDownMenu_GetSelectedValue(DPSMate_Report_Channel)
-	local chn, index, sortedTable, total, a = nil, nil, DPSMate:GetSortedTable(DPSMate:GetMode(DPSMate_Report.Key))
+	local chn, index, sortedTable, total, a = nil, nil, DPSMate:GetSortedTable(DPSMate:GetMode(DPSMate_Report.PaKey))
 	if (channel == "Whisper") then
 		chn = "WHISPER"; index = DPSMate_Report_Editbox:GetText();
 	elseif DPSMate:TContains({[1]="Raid",[2]="Party",[3]="Say",[4]="Officer",[5]="Guild"}, channel) then
@@ -873,10 +927,10 @@ function DPSMate.Options:Report()
 	else
 		chn = "CHANNEL"; index = GetChannelName(channel)
 	end
-	SendChatMessage("DPSMate - "..DPSMate.localization.reportfor..DPSMate:GetModeName(DPSMate_Report.Key), chn, nil, index)
+	SendChatMessage("DPSMate - "..DPSMate.localization.reportfor..DPSMate:GetModeName(DPSMate_Report.PaKey), chn, nil, index)
 	for i=1, DPSMate_Report_Lines:GetValue() do
 		if (not sortedTable[i]) then break end
-		SendChatMessage(i..". "..a[sortedTable[i]].." ................... "..sortedTable[i].." ("..string.format("%.1f", 100*sortedTable[i]/total).."%)", chn, nil, index)
+		SendChatMessage(i..". "..a[sortedTable[i]].." - "..sortedTable[i].." ("..string.format("%.1f", 100*sortedTable[i]/total).."%)", chn, nil, index)
 	end
 	DPSMate_Report:Hide()
 end
@@ -1076,3 +1130,20 @@ function DPSMate.Options:deletesegment3() DPSMate.Options:RemoveSegment(3) end
 function DPSMate.Options:deletesegment4() DPSMate.Options:RemoveSegment(4) end
 function DPSMate.Options:deletesegment5() DPSMate.Options:RemoveSegment(5) end
 
+function DPSMate.Options:ToggleTitleBarButtonState()
+	local buttons = {"Config", "Reset", "Segments", "Report", "Sync"}
+	for _, val in pairs(DPSMateSettings["windows"]) do
+		local parent, i = getglobal("DPSMate_"..val["name"].."_Head"), 0
+		for _, name in pairs(buttons) do
+			local button = getglobal("DPSMate_"..val["name"].."_Head_"..name)
+			if DPSMateSettings["titlebar"..strlower(name)] then
+				button:ClearAllPoints()
+				button:SetPoint("RIGHT", parent, "RIGHT", -i*15-2, 0)
+				button:Show()
+				i=i+1
+			else
+				button:Hide()
+			end
+		end
+	end
+end

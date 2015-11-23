@@ -70,17 +70,6 @@
 				end
 			</OnSizeChanged>
 		</Scripts>
-		<Layers>
-			<Layer leve="BACKGROUND">
-				<Texture name="$parent_Background" file="Interface\Tooltips\UI-Tooltip-Background" alphaMode="ADD">
-					<Color r="1" g="1" b="1" a="0.5"/>
-					<Anchors>
-						<Anchor point="TOPLEFT"/>
-						<Anchor point="BOTTOMRIGHT"/>
-					</Anchors>
-				</Texture>
-			</Layer>
-		</Layers>
 		<Frames>
 			<Button name="$parent_Resize" frameStrata="HIGH">
 				<Size x="14" y="14" />
@@ -107,7 +96,7 @@
 				</Anchors>
 				<Layers>
 					<Layer level="BACKGROUND">
-						<Texture name="$parent_Background" file="Interface\Tooltips\UI-Tooltip-Background" alphaMode="ADD">
+						<Texture name="$parent_Background" alphaMode="ADD">
 							<Color r="1" g="0.82" b="0" a="1"/>
 							<Anchors>
 								<Anchor point="TOPLEFT"/>
@@ -117,9 +106,9 @@
 					</Layer>
 					<Layer level="ARTWORK">
 						<FontString name="$parent_Font" inherits="GameFontNormalSmall" justifyH="LEFT">
-							<Size x="100" y="16" />
+							<Size x="200" y="16" />
 							<Anchors>
-								<Anchor point="TOPLEFT" />
+								<Anchor point="LEFT" />
 							</Anchors>
 						</FontString>
 					</Layer>
@@ -141,68 +130,61 @@
 				<Frames>
 					<Button name="$parent_Config">
 						<Size x="16" y="16" />
-						<Anchors>
-							<Anchor point="TOPRIGHT" relativeTo="$parent" relativePoint="TOPRIGHT" />
-						</Anchors>
 						<Scripts>
 							<OnMouseUp>
 								DPSMate.Options:OpenMenu(3, this:GetParent():GetParent())
 							</OnMouseUp>
 						</Scripts>
-						<HighlightTexture file="Interface\AddOns\DPSMate\images\icon-config" alphaMode="ADD">
-							<Color r="0" g="0" b="0" a="1" />
-						</HighlightTexture>
+						<HighlightTexture file="Interface\AddOns\DPSMate\images\icon-config" alphaMode="ADD"/>
  						<NormalTexture file="Interface\AddOns\DPSMate\images\icon-config"/>
 						<PushedTexture file="Interface\AddOns\DPSMate\images\icon-config"/>
 					</Button>
 					<Button name="$parent_Reset">
 						<Size x="14" y="14" />
-						<Anchors>
-							<Anchor point="RIGHT" relativeTo="$parent_Config" relativePoint="LEFT" />
-						</Anchors>
 						<Scripts>
 							<OnClick>
 								DPSMate_PopUp:Show()
 							</OnClick>
 						</Scripts>
-						<HighlightTexture file="Interface\AddOns\DPSMate\images\icon-reset" alphaMode="ADD">
-							<Color r="0" g="0" b="0" a="1" />
-						</HighlightTexture>
+						<HighlightTexture file="Interface\AddOns\DPSMate\images\icon-reset" alphaMode="ADD"/>
 						<NormalTexture file="Interface\AddOns\DPSMate\images\icon-reset"/>
 						<PushedTexture file="Interface\AddOns\DPSMate\images\icon-reset"/>
 					</Button>
 					<Button name="$parent_Segments">
 						<Size x="14" y="14" />
-						<Anchors>
-							<Anchor point="RIGHT" relativeTo="$parent_Reset" relativePoint="LEFT" />
-						</Anchors>
 						<Scripts>
 							<OnMouseUp>
 								DPSMate.Options:OpenMenu(2, this:GetParent():GetParent())
 							</OnMouseUp>
 						</Scripts>
-						<HighlightTexture file="Interface\AddOns\DPSMate\images\UI-GuildButton-PublicNote-Up" alphaMode="ADD">
-							<Color r="0" g="0" b="0" a="1" />
-						</HighlightTexture>
+						<HighlightTexture file="Interface\AddOns\DPSMate\images\UI-GuildButton-PublicNote-Up" alphaMode="ADD"/>
 						<NormalTexture file="Interface\AddOns\DPSMate\images\UI-GuildButton-PublicNote-Up"/>
 						<PushedTexture file="Interface\AddOns\DPSMate\images\UI-GuildButton-PublicNote-Up"/>
 					</Button>
 					<Button name="$parent_Report">
 						<Size x="14" y="14" />
-						<Anchors>
-							<Anchor point="RIGHT" relativeTo="$parent_Segments" relativePoint="LEFT" />
-						</Anchors>
 						<Scripts>
 							<OnClick>
 								DPSMate_Report.PaKey=this:GetParent():GetParent().Key 
 								DPSMate_Report:Show()
 							</OnClick>
 						</Scripts>
-						<HighlightTexture file="Interface\AddOns\DPSMate\images\UI-GuildButton-MOTD-Up" alphaMode="ADD">
-							<Color r="0" g="0" b="0" a="1" />
-						</HighlightTexture>
+						<HighlightTexture file="Interface\AddOns\DPSMate\images\UI-GuildButton-MOTD-Up" alphaMode="ADD"/>
 						<NormalTexture file="Interface\AddOns\DPSMate\images\UI-GuildButton-MOTD-Up"/>
 						<PushedTexture file="Interface\AddOns\DPSMate\images\UI-GuildButton-MOTD-Up"/>
+					</Button>
+					<Button name="$parent_Sync">
+						<Size x="14" y="14" />
+						<Scripts>
+							<OnLoad>
+								this:GetNormalTexture():SetVertexColor(1,0,0,1)
+							</OnLoad>
+							<OnClick>
+							</OnClick>
+						</Scripts>
+						<HighlightTexture file="Interface\AddOns\DPSMate\images\sync" alphaMode="ADD"/>
+						<NormalTexture file="Interface\AddOns\DPSMate\images\sync"/>
+						<PushedTexture file="Interface\AddOns\DPSMate\images\sync"/>
 					</Button>
 				</Frames>
 			</Frame>
@@ -214,6 +196,17 @@
 					</Anchor>
 					<Anchor point="TOPRIGHT" relativeTo="$parent_Head" relativePoint="BOTTOMRIGHT" />
 				</Anchors>
+				<Layers>
+					<Layer leve="BACKGROUND">
+						<Texture name="$parent_Background" file="Interface\Tooltips\UI-Tooltip-Background" alphaMode="ADD">
+							<Color r="1" g="1" b="1" a="0.5"/>
+							<Anchors>
+								<Anchor point="TOPLEFT"/>
+								<Anchor point="BOTTOMRIGHT"/>
+							</Anchors>
+						</Texture>
+					</Layer>
+				</Layers>
 				<Scripts>
 					<OnLoad>
 						this:SetVerticalScroll(0)
