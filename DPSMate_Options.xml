@@ -463,7 +463,7 @@
 				GameTooltip:Hide()
 			</OnLeave>
 			<OnValueChanged>
-				getglobal(this:GetName().."_Editbox"):SetText(this:GetValue())
+				getglobal(this:GetName().."_Editbox"):SetText(string.format("%.1f", this:GetValue()))
 				if this.func and DPSMate.DB.loaded then this.func() end
 			</OnValueChanged>
 		</Scripts>
@@ -1392,7 +1392,7 @@
 						<Scripts>
 							<OnLoad>
 								this.aide = DPSMate.localization.config.bgtexTooltip
-								this.func = DPSMate.Options.BarFontDropDown
+								this.func = DPSMate.Options.ContentBGTextureDropDown
 								this.title = DPSMate.localization.config.bgtex
 								UIDropDownMenu_SetWidth(120)
 								getglobal(this:GetName().."_Text"):SetText(this.title)
@@ -1409,13 +1409,16 @@
 							<OnLoad>
 								this.aide = DPSMate.localization.config.scaleTooltip
 								this.func = function() 
-									
+									DPSMateSettings["scale"] = this:GetValue()
+									for _, val in pairs(DPSMateSettings["windows"]) do
+										getglobal("DPSMate_"..val["name"]):SetScale(DPSMateSettings["scale"])
+									end
 								end
-								this:SetMinMaxValues(1,32)
-								this:SetValueStep(1)
+								this:SetMinMaxValues(0.5,3)
+								this:SetValueStep(0.1)
 								getglobal(this:GetName().."Text"):SetText(DPSMate.localization.config.scale)
-								getglobal(this:GetName().."Low"):SetText("1")
-								getglobal(this:GetName().."High"):SetText("32")
+								getglobal(this:GetName().."Low"):SetText("0.5")
+								getglobal(this:GetName().."High"):SetText("3")
 							</OnLoad>
 						</Scripts>
 					</Slider>
@@ -1432,6 +1435,13 @@
 								getglobal(this:GetName().."_SwatchBg").g = 1.0
 								getglobal(this:GetName().."_SwatchBg").b = 1.0
 								this.aide=DPSMate.localization.config.bgcolorTooltip
+								this.var = "contentbgcolor"
+								this.func = function()
+									for _, val in pairs(DPSMateSettings["windows"]) do
+										getglobal("DPSMate_"..val["name"].."_ScrollFrame_Background"):SetVertexColor(DPSMateSettings["contentbgcolor"][1], DPSMateSettings["contentbgcolor"][2], DPSMateSettings["contentbgcolor"][3])
+									end
+									getglobal("DPSMate_ConfigMenu_Tab_Content_BGDropDown_Texture"):SetBackdropColor(DPSMateSettings["contentbgcolor"][1], DPSMateSettings["contentbgcolor"][2], DPSMateSettings["contentbgcolor"][3])
+								end
 							</OnLoad>
 						</Scripts>
 					</Button>

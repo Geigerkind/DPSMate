@@ -93,6 +93,9 @@ function DPSMate:InitializeFrames()
 		head.bg:SetVertexColor(DPSMateSettings["titlebarbgcolor"][1], DPSMateSettings["titlebarbgcolor"][2], DPSMateSettings["titlebarbgcolor"][3])
 		head.font:SetFont(DPSMate.Options.fonts[DPSMateSettings["titlebarfont"]], DPSMateSettings["titlebarfontsize"], DPSMate.Options.fontflags[DPSMateSettings["titlebarfontflag"]])
 		head:SetHeight(DPSMateSettings["titlebarheight"])
+		getglobal("DPSMate_"..val["name"].."_ScrollFrame_Background"):SetTexture(DPSMate.Options.bgtexture[DPSMateSettings["contentbgtexture"]])
+		getglobal("DPSMate_"..val["name"].."_ScrollFrame_Background"):SetVertexColor(DPSMateSettings["contentbgcolor"][1], DPSMateSettings["contentbgcolor"][2], DPSMateSettings["contentbgcolor"][3])
+		f:SetScale(DPSMateSettings["scale"])
 		
 		-- Styles // Bars
 		local child = getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child")

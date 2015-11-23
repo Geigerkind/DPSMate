@@ -47,6 +47,10 @@ DPSMate.Options.statusbars = {
 	["Round"] = "Interface\\AddOns\\DPSMate\\images\\statusbar\\Round", 
 	["Smooth"] = "Interface\\AddOns\\DPSMate\\images\\statusbar\\Smooth", 
 }
+DPSMate.Options.bgtexture = {
+	["Solid Background"] = "Interface\\CHATFRAME\\CHATFRAMEBACKGROUND",
+	["UI-Tooltip-Background"] = "Interface\\Tooltips\\UI-Tooltip-Background",
+}
 
 
 -- Local Variables
@@ -304,6 +308,16 @@ function DPSMate.Options:InitializeConfigMenu()
 	getglobal("DPSMate_ConfigMenu_Tab_TitleBar_Box1_Config"):SetChecked(DPSMateSettings["titlebarconfig"])
 	getglobal("DPSMate_ConfigMenu_Tab_TitleBar_Box1_Sync"):SetChecked(DPSMateSettings["titlebarsync"])
 	getglobal("DPSMate_ConfigMenu_Tab_TitleBar_BGColorNormalTexture"):SetVertexColor(DPSMateSettings["titlebarbgcolor"][1], DPSMateSettings["titlebarbgcolor"][2], DPSMateSettings["titlebarbgcolor"][3])
+	
+	-- Tab Content
+	getglobal("DPSMate_ConfigMenu_Tab_Content_BGDropDown_Texture"):SetBackdrop({ 
+		bgFile = DPSMate.Options.bgtexture[DPSMateSettings["contentbgtexture"]], 
+		edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 12, edgeSize = 12, 
+		insets = { left = 4, right = 4, top = 4, bottom = 4 }
+	})
+	getglobal("DPSMate_ConfigMenu_Tab_Content_Scale"):SetValue(DPSMateSettings["scale"])
+	getglobal("DPSMate_ConfigMenu_Tab_Content_BGDropDown_Texture"):SetBackdropColor(DPSMateSettings["contentbgcolor"][1], DPSMateSettings["contentbgcolor"][2], DPSMateSettings["contentbgcolor"][3])
+	getglobal("DPSMate_ConfigMenu_Tab_Content_BGColorNormalTexture"):SetVertexColor(DPSMateSettings["contentbgcolor"][1], DPSMateSettings["contentbgcolor"][2], DPSMateSettings["contentbgcolor"][3])
 end
 
 function DPSMate.Options:OnEvent(event)
@@ -659,6 +673,14 @@ function DPSMate.Options:DropDownStyleReset()
 	for i=1, 20 do
 		local button = getglobal("DropDownList1Button"..i)
 		getglobal("DropDownList1Button"..i.."NormalText"):SetFont(DPSMate.Options.fonts["FRIZQT"], 12)
+		getglobal("DropDownList1Button"..i):SetScript("OnEnter", function()
+			getglobal(this:GetName().."Highlight"):Show()
+		end)
+		getglobal("DropDownList1Backdrop"):SetBackdrop({ 
+			bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background", 
+			edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border", tile = true, tileSize = 32, edgeSize = 32, 
+			insets = { left = 11, right = 12, top = 12, bottom = 11 }
+		})
 		if button.tex then
 			button.tex:Hide()
 		end
@@ -976,12 +998,55 @@ function DPSMate.Options:TitleBarFontFlagsDropDown()
 	DPSMate_ConfigMenu.visBars6 = true
 end
 
+function DPSMate.Options:ContentBGTextureDropDown()
+	local i = 1
+	
+	local function on_click()
+        UIDropDownMenu_SetSelectedValue(DPSMate_ConfigMenu_Tab_Content_BGDropDown, this.value)
+		DPSMateSettings["contentbgtexture"] = this.value
+		getglobal("DPSMate_ConfigMenu_Tab_Content_BGDropDown_Texture"):SetBackdrop({ 
+			bgFile = DPSMate.Options.bgtexture[this.value], 
+			edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 12, edgeSize = 12, 
+			insets = { left = 4, right = 4, top = 4, bottom = 4 }
+		})
+		for _, val in pairs(DPSMateSettings["windows"]) do
+			getglobal("DPSMate_"..val["name"].."_ScrollFrame_Background"):SetTexture(DPSMate.Options.bgtexture[this.value])
+		end
+    end
+	
+	for name, path in pairs(DPSMate.Options.bgtexture) do
+		UIDropDownMenu_AddButton{
+			text = name,
+			value = name,
+			func = on_click,
+		}
+		local button = getglobal("DropDownList1Button"..i)
+		button.path = path
+		button.i = i
+		button:SetScript("OnEnter", function()
+			getglobal(this:GetName().."Highlight"):Show()
+			getglobal("DropDownList1Backdrop"):SetBackdrop({ 
+				bgFile = this.path, 
+				edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border", tile = true, tileSize = 32, edgeSize = 32, 
+				insets = { left = 11, right = 12, top = 12, bottom = 11 }
+			})
+			getglobal("DropDownList1Backdrop"):SetBackdropColor(DPSMateSettings["contentbgcolor"][1], DPSMateSettings["contentbgcolor"][2], DPSMateSettings["contentbgcolor"][3])
+		end)
+		i=i+1
+	end
+	
+	if not DPSMate_ConfigMenu.visBars7 then
+		UIDropDownMenu_SetSelectedValue(DPSMate_ConfigMenu_Tab_Content_BGDropDown, DPSMateSettings["contentbgtexture"])
+	end
+	DPSMate_ConfigMenu.visBars7 = true
+end
+
 function DPSMate.Options:Report()
 	local channel = UIDropDownMenu_GetSelectedValue(DPSMate_Report_Channel)
 	local chn, index, sortedTable, total, a = nil, nil, DPSMate:GetSortedTable(DPSMate:GetMode(DPSMate_Report.PaKey))
 	if (channel == "Whisper") then
 		chn = "WHISPER"; index = DPSMate_Report_Editbox:GetText();
-	elseif DPSMate:TContains({[1]="Raid",[2]="Party",[3]="Say",[4]="Officer",[5]="Guild"}, channel) then
+	elseif DPSMate:TContains({"Raid","Party","Say","Officer","Guild"}, channel) then
 		chn = channel
 	else
 		chn = "CHANNEL"; index = GetChannelName(channel)

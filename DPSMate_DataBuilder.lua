@@ -46,6 +46,7 @@ function DPSMate.DB:OnEvent(event)
 					}
 				},
 				lock = true,
+				scale = 1,
 				barfont = "ARIALN",
 				barfontsize = 14,
 				barfontflag = "Outline",
@@ -66,6 +67,8 @@ function DPSMate.DB:OnEvent(event)
 				titlebarsync = true,
 				titlebartexture = "Healbot",
 				titlebarbgcolor = {1,1,1},
+				contentbgtexture = "UI-Tooltip-Background",
+				contentbgcolor = {1,1,1},
 			}
 		end
 		if DPSMateHistory == nil then DPSMateHistory = {} end
