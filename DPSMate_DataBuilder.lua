@@ -55,6 +55,8 @@ function DPSMate.DB:OnEvent(event)
 				classicons = false,
 				ranks = true,
 				titlebar = true,
+				titlebarfont = "FRIZQT",
+				titlebarfontflags = "None",
 				titlebarfontsize = 12,
 				titlebarheight = 18,
 				titlebarreport = true,
@@ -63,6 +65,7 @@ function DPSMate.DB:OnEvent(event)
 				titlebarconfig = true,
 				titlebarsync = true,
 				titlebartexture = "Healbot",
+				titlebarbgcolor = {1,1,1},
 			}
 		end
 		if DPSMateHistory == nil then DPSMateHistory = {} end

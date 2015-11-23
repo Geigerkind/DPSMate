@@ -90,7 +90,8 @@ function DPSMate:InitializeFrames()
 			head:Hide()
 		end
 		head.bg:SetTexture(DPSMate.Options.statusbars[DPSMateSettings["titlebartexture"]])
-		head.font:SetFont("Fonts\\FRIZQT__.TTF", DPSMateSettings["titlebarfontsize"])
+		head.bg:SetVertexColor(DPSMateSettings["titlebarbgcolor"][1], DPSMateSettings["titlebarbgcolor"][2], DPSMateSettings["titlebarbgcolor"][3])
+		head.font:SetFont(DPSMate.Options.fonts[DPSMateSettings["titlebarfont"]], DPSMateSettings["titlebarfontsize"], DPSMate.Options.fontflags[DPSMateSettings["titlebarfontflag"]])
 		head:SetHeight(DPSMateSettings["titlebarheight"])
 		
 		-- Styles // Bars

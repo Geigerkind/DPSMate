@@ -521,7 +521,7 @@
 		</Layers>
 		<Scripts>
 			<OnClick>
-				VCB_BF_OpenColorPicker(this, "WP_TIMER_font", nil, "WPTimer")
+				DPSMate.Options:OpenColorPicker(this, this.var, this.func)
 			</OnClick>
 			<OnEnter>
 				getglobal(this:GetName().."_SwatchBg"):SetVertexColor(NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b)
@@ -1145,7 +1145,7 @@
 						<Scripts>
 							<OnLoad>
 								this.aide = DPSMate.localization.config.barfontTooltip
-								this.func = DPSMate.Options.BarFontDropDown
+								this.func = DPSMate.Options.TitleBarFontDropDown
 								this.title = DPSMate.localization.config.barfont
 								UIDropDownMenu_SetWidth(120)
 								getglobal(this:GetName().."_Text"):SetText(this.title)
@@ -1164,7 +1164,7 @@
 								this.func = function() 
 									DPSMateSettings["titlebarfontsize"] = this:GetValue()
 									for _, val in pairs(DPSMateSettings["windows"]) do
-										getglobal("DPSMate_"..val["name"].."_Head_Font"):SetFont("Fonts\\FRIZQT__.TTF", DPSMateSettings["titlebarfontsize"])
+										getglobal("DPSMate_"..val["name"].."_Head_Font"):SetFont(DPSMate.Options.fonts[DPSMateSettings["titlebarfont"]], DPSMateSettings["titlebarfontsize"], DPSMate.Options.fontflags[DPSMateSettings["titlebarfontflag"]])
 									end
 								end
 								this:SetMinMaxValues(1,32)
@@ -1185,7 +1185,7 @@
 						<Scripts>
 							<OnLoad>
 								this.aide = DPSMate.localization.config.barfontflagsTooltip
-								this.func = DPSMate.Options.BarFontFlagsDropDown
+								this.func = DPSMate.Options.TitleBarFontFlagsDropDown
 								this.title = DPSMate.localization.config.barfontflags
 								UIDropDownMenu_SetWidth(120)
 								getglobal(this:GetName().."_Text"):SetText(this.title)
@@ -1244,7 +1244,13 @@
 								getglobal(this:GetName().."_SwatchBg").r = 1.0
 								getglobal(this:GetName().."_SwatchBg").g = 1.0
 								getglobal(this:GetName().."_SwatchBg").b = 1.0
-								this.aide=DPSMate.localization.config.bgcolorTooltip
+								this.aide = DPSMate.localization.config.bgcolorTooltip
+								this.var = "titlebarbgcolor"
+								this.func = function()
+									for _, val in pairs(DPSMateSettings["windows"]) do
+										getglobal("DPSMate_"..val["name"].."_Head_Background"):SetVertexColor(DPSMateSettings["titlebarbgcolor"][1], DPSMateSettings["titlebarbgcolor"][2], DPSMateSettings["titlebarbgcolor"][3])
+									end
+								end
 							</OnLoad>
 						</Scripts>
 					</Button>

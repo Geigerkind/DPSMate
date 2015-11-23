@@ -303,6 +303,7 @@ function DPSMate.Options:InitializeConfigMenu()
 	getglobal("DPSMate_ConfigMenu_Tab_TitleBar_Box1_Mode"):SetChecked(DPSMateSettings["titlebarsegments"])
 	getglobal("DPSMate_ConfigMenu_Tab_TitleBar_Box1_Config"):SetChecked(DPSMateSettings["titlebarconfig"])
 	getglobal("DPSMate_ConfigMenu_Tab_TitleBar_Box1_Sync"):SetChecked(DPSMateSettings["titlebarsync"])
+	getglobal("DPSMate_ConfigMenu_Tab_TitleBar_BGColorNormalTexture"):SetVertexColor(DPSMateSettings["titlebarbgcolor"][1], DPSMateSettings["titlebarbgcolor"][2], DPSMateSettings["titlebarbgcolor"][3])
 end
 
 function DPSMate.Options:OnEvent(event)
@@ -917,6 +918,64 @@ function DPSMate.Options:TitleBarTextureDropDown()
 	DPSMate_ConfigMenu.visBars4 = true
 end
 
+function DPSMate.Options:TitleBarFontDropDown()
+	local i = 1
+	
+	local function on_click()
+        UIDropDownMenu_SetSelectedValue(DPSMate_ConfigMenu_Tab_TitleBar_BarFont, this.value)
+		DPSMate_ConfigMenu_Tab_TitleBar_BarFontText:SetFont(DPSMate.Options.fonts[this.value], 12)
+		DPSMateSettings["titlebarfont"] = this.value
+		for _, val in pairs(DPSMateSettings["windows"]) do
+			getglobal("DPSMate_"..val["name"].."_Head_Font"):SetFont(DPSMate.Options.fonts[this.value], DPSMateSettings["titlebarfontsize"], DPSMate.Options.fontflags[DPSMateSettings["titlebarfontflag"]])
+		end
+    end
+	
+	for name, path in pairs(DPSMate.Options.fonts) do
+		UIDropDownMenu_AddButton{
+			text = name,
+			value = name,
+			func = on_click,
+		}
+		getglobal("DropDownList1Button"..i.."NormalText"):SetFont(path, 16)
+		i=i+1
+	end
+	
+	if not DPSMate_ConfigMenu.visBars5 then
+		UIDropDownMenu_SetSelectedValue(DPSMate_ConfigMenu_Tab_TitleBar_BarFont, DPSMateSettings["titlebarfont"])
+		DPSMate_ConfigMenu_Tab_TitleBar_BarFontText:SetFont(DPSMate.Options.fonts[DPSMateSettings["titlebarfont"]], 12)
+	end
+	DPSMate_ConfigMenu.visBars5 = true
+end
+
+function DPSMate.Options:TitleBarFontFlagsDropDown()
+	local i = 1
+	
+	local function on_click()
+        UIDropDownMenu_SetSelectedValue(DPSMate_ConfigMenu_Tab_TitleBar_BarFontFlag, this.value)
+		DPSMate_ConfigMenu_Tab_TitleBar_BarFontFlagText:SetFont(DPSMate.Options.fonts["FRIZQT"], 12, DPSMate.Options.fontflags[this.value])
+		DPSMateSettings["titlebarfontflag"] = this.value
+		for _, val in pairs(DPSMateSettings["windows"]) do
+			getglobal("DPSMate_"..val["name"].."_Head_Font"):SetFont(DPSMate.Options.fonts[DPSMateSettings["titlebarfont"]], DPSMateSettings["titlebarfontsize"], DPSMate.Options.fontflags[this.value])
+		end
+    end
+	
+	for name, flag in pairs(DPSMate.Options.fontflags) do
+		UIDropDownMenu_AddButton{
+			text = name,
+			value = name,
+			func = on_click,
+		}
+		getglobal("DropDownList1Button"..i.."NormalText"):SetFont(DPSMate.Options.fonts["FRIZQT"], 12, flag)
+		i=i+1
+	end
+	
+	if not DPSMate_ConfigMenu.visBars6 then
+		UIDropDownMenu_SetSelectedValue(DPSMate_ConfigMenu_Tab_TitleBar_BarFontFlag, DPSMateSettings["titlebarfontflag"])
+		DPSMate_ConfigMenu_Tab_TitleBar_BarFontFlagText:SetFont(DPSMate.Options.fonts["FRIZQT"], 12, DPSMate.Options.fontflags[DPSMateSettings["titlebarfontflag"]])
+	end
+	DPSMate_ConfigMenu.visBars6 = true
+end
+
 function DPSMate.Options:Report()
 	local channel = UIDropDownMenu_GetSelectedValue(DPSMate_Report_Channel)
 	local chn, index, sortedTable, total, a = nil, nil, DPSMate:GetSortedTable(DPSMate:GetMode(DPSMate_Report.PaKey))
@@ -1146,4 +1205,55 @@ function DPSMate.Options:ToggleTitleBarButtonState()
 			end
 		end
 	end
+end
+
+function DPSMate.Options:SetColor()
+	local r,g,b = ColorPickerFrame:GetColorRGB()
+	local swatch,frame
+	swatch = getglobal(ColorPickerFrame.obj:GetName().."NormalTexture")
+	frame = getglobal(ColorPickerFrame.obj:GetName().."_SwatchBg")
+	swatch:SetVertexColor(r,g,b)
+	frame.r = r
+	frame.g = g
+	frame.b = b
+
+	DPSMateSettings[ColorPickerFrame.var] = {r,g,b}
+	
+	ColorPickerFrame.rfunc()
+end
+
+function DPSMate.Options:CancelColor()
+	local r = ColorPickerFrame.previousValues.r
+	local g = ColorPickerFrame.previousValues.g
+	local b = ColorPickerFrame.previousValues.b
+	local swatch,frame
+	swatch = getglobal(ColorPickerFrame.obj:GetName().."NormalTexture")
+	frame = getglobal(ColorPickerFrame.obj:GetName().."_SwatchBg")
+	swatch:SetVertexColor(r,g,b)
+	frame.r = r
+	frame.g = g
+	frame.b = b
+	
+	DPSMateSettings[ColorPickerFrame.var] = {r,g,b}
+	
+	ColorPickerFrame.rfunc()
+end
+
+function DPSMate.Options:OpenColorPicker(obj, var, func)
+	CloseMenus()
+	
+	button = getglobal(obj:GetName().."_SwatchBg")
+	
+	ColorPickerFrame.obj = obj
+	ColorPickerFrame.var = var
+	ColorPickerFrame.rfunc = func
+	
+	ColorPickerFrame.func = DPSMate.Options.SetColor
+	ColorPickerFrame:SetColorRGB(button.r, button.g, button.b)
+	ColorPickerFrame.previousValues = {r = button.r, g = button.g, b = button.b, opacity = button.opacity}
+	ColorPickerFrame.cancelFunc = DPSMate.Options.CancelColor
+
+	ColorPickerFrame:SetPoint("TOPLEFT", obj, "TOPRIGHT", 0, 0)
+
+	ColorPickerFrame:Show()
 end
