@@ -1464,7 +1464,7 @@
 						<Scripts>
 							<OnLoad>
 								this.aide = DPSMate.localization.config.enterworldinstanceTooltip
-								this.func = DPSMate.Options.BarFontDropDown
+								this.func = DPSMate.Options.DataResetsDropDown
 								this.title = DPSMate.localization.config.enterworldinstance
 								UIDropDownMenu_SetWidth(120)
 								getglobal(this:GetName().."_Text"):SetText(this.title)
@@ -1481,7 +1481,7 @@
 						<Scripts>
 							<OnLoad>
 								this.aide = DPSMate.localization.config.joinpartyTooltip
-								this.func = DPSMate.Options.BarFontDropDown
+								this.func = DPSMate.Options.DataResetsDropDown
 								this.title = DPSMate.localization.config.joinparty
 								UIDropDownMenu_SetWidth(120)
 								getglobal(this:GetName().."_Text"):SetText(this.title)
@@ -1498,7 +1498,7 @@
 						<Scripts>
 							<OnLoad>
 								this.aide = DPSMate.localization.config.partymemberchangedTooltip
-								this.func = DPSMate.Options.BarFontDropDown
+								this.func = DPSMate.Options.DataResetsDropDown
 								this.title = DPSMate.localization.config.partymemberchanged
 								UIDropDownMenu_SetWidth(120)
 								getglobal(this:GetName().."_Text"):SetText(this.title)
@@ -1515,7 +1515,7 @@
 						<Scripts>
 							<OnLoad>
 								this.aide = DPSMate.localization.config.leavingpartyTooltip
-								this.func = DPSMate.Options.BarFontDropDown
+								this.func = DPSMate.Options.DataResetsDropDown
 								this.title = DPSMate.localization.config.leavingparty
 								UIDropDownMenu_SetWidth(120)
 								getglobal(this:GetName().."_Text"):SetText(this.title)

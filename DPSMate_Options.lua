@@ -1041,6 +1041,36 @@ function DPSMate.Options:ContentBGTextureDropDown()
 	DPSMate_ConfigMenu.visBars7 = true
 end
 
+function DPSMate.Options:SelectDataResets(obj, case)
+	local vars = {["DPSMate_ConfigMenu_Tab_DataResets_EnteringWorld"] = "dataresetsworld", ["DPSMate_ConfigMenu_Tab_DataResets_PartyMemberChanged"] = "dataresetspartyamount", ["DPSMate_ConfigMenu_Tab_DataResets_JoinParty"] = "dataresetsjoinparty", ["DPSMate_ConfigMenu_Tab_DataResets_LeaveParty"] = "dataresetsleaveparty"}
+	DPSMateSettings[vars[obj:GetName()]] = case
+	UIDropDownMenu_SetSelectedValue(obj, case)
+end
+
+function DPSMate.Options:DataResetsDropDown()
+	local btns = {"Yes", "No", "Ask"}
+	
+	local function on_click()
+		DPSMate.Options:SelectDataResets(getglobal(UIDROPDOWNMENU_OPEN_MENU), this.value)
+	end
+	
+	for val, name in pairs(btns) do
+		UIDropDownMenu_AddButton{
+			text = name,
+			value = val,
+			func = on_click,
+		}
+	end
+	
+	if not DPSMate_ConfigMenu.visBars8 then
+		UIDropDownMenu_SetSelectedValue(DPSMate_ConfigMenu_Tab_DataResets_EnteringWorld, DPSMateSettings["dataresetsworld"])
+		UIDropDownMenu_SetSelectedValue(DPSMate_ConfigMenu_Tab_DataResets_JoinParty, DPSMateSettings["dataresetsjoinparty"])
+		UIDropDownMenu_SetSelectedValue(DPSMate_ConfigMenu_Tab_DataResets_PartyMemberChanged, DPSMateSettings["dataresetspartyamount"])
+		UIDropDownMenu_SetSelectedValue(DPSMate_ConfigMenu_Tab_DataResets_LeaveParty, DPSMateSettings["dataresetsleaveparty"])
+	end
+	DPSMate_ConfigMenu.visBars8 = true
+end
+
 function DPSMate.Options:Report()
 	local channel = UIDropDownMenu_GetSelectedValue(DPSMate_Report_Channel)
 	local chn, index, sortedTable, total, a = nil, nil, DPSMate:GetSortedTable(DPSMate:GetMode(DPSMate_Report.PaKey))
