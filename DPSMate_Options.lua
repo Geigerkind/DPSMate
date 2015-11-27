@@ -54,9 +54,9 @@ DPSMate.Options.bgtexture = {
 
 
 -- Local Variables
-local LastPopUp = GetTime()
-local TimeToNextPopUp = 300
-local PartyNum = GetNumPartyMembers()
+local LastPopUp = 0
+local TimeToNextPopUp = 1
+local PartyNum, LastPartyNum = 0, 0
 local Dewdrop = AceLibrary("Dewdrop-2.0")
 local graph = AceLibrary("Graph-1.0")
 local Options = {
@@ -321,14 +321,31 @@ function DPSMate.Options:InitializeConfigMenu()
 end
 
 function DPSMate.Options:OnEvent(event)
-	if event == "PARTY_MEMBERS_CHANGED" and DPSMate.Options:IsInParty() and DPSMate.Options:PartyMemberAmountChanged() then
-		if (GetTime()-LastPopUp) > TimeToNextPopUp and (DPSMateUser ~= {} and DPSMateUserCurrent ~= {}) then -- To prevent spam
-			LastPopUp = GetTime()
-			DPSMate_PopUp:Show()
+	if event == "PARTY_MEMBERS_CHANGED" then
+		if DPSMate.Options:IsInParty() then
+			if LastPartyNum == 0 then
+				-- Party joined
+			else
+				if DPSMateSettings["dataresetspartyamount"] == 3 then
+					if (GetTime()-LastPopUp) > TimeToNextPopUp and (DPSMate:TableLength(DPSMateUser) ~= 0 or DPSMate:TableLength(DPSMateUserCurrent) ~= 0) then
+						DPSMate_PopUp:Show()
+						LastPopUp = GetTime()
+					end
+				elseif DPSMateSettings["dataresetspartyamount"] == 1 then
+					DPSMate.Options:PopUpAccept()
+				end
+			end
+		else
+			-- Party left
 		end
 	elseif event == "PLAYER_ENTERING_WORLD" then
-		if (DPSMateUser ~= {} and DPSMateUserCurrent ~= {}) then
-			DPSMate_PopUp:Show()
+		if DPSMateSettings["dataresetsworld"] == 3 then
+			if (GetTime()-LastPopUp) > TimeToNextPopUp and (DPSMate:TableLength(DPSMateUser) ~= 0 or DPSMate:TableLength(DPSMateUserCurrent) ~= 0) then
+				DPSMate_PopUp:Show()
+				LastPopUp = GetTime()
+			end
+		elseif DPSMateSettings["dataresetsworld"] == 1 then
+			DPSMate.Options:PopUpAccept()
 		end
 	end
 end
@@ -337,16 +354,8 @@ function DPSMate.Options:IsInParty()
 	if GetNumPartyMembers() > 0 or UnitInRaid("player") then
 		return true
 	else
+		LastPartyNum = PartyNum
 		PartyNum = GetNumPartyMembers()
-		return false
-	end
-end
-
-function DPSMate.Options:PartyMemberAmountChanged()
-	if GetNumPartyMembers() ~= PartyNum then
-		PartyNum = GetNumPartyMembers()
-		return true
-	else
 		return false
 	end
 end
