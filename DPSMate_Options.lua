@@ -324,7 +324,14 @@ function DPSMate.Options:OnEvent(event)
 	if event == "PARTY_MEMBERS_CHANGED" then
 		if DPSMate.Options:IsInParty() then
 			if LastPartyNum == 0 then
-				-- Party joined
+				if DPSMateSettings["dataresetsjoinparty"] == 3 then
+					if (GetTime()-LastPopUp) > TimeToNextPopUp and (DPSMate:TableLength(DPSMateUser) ~= 0 or DPSMate:TableLength(DPSMateUserCurrent) ~= 0) then
+						DPSMate_PopUp:Show()
+						LastPopUp = GetTime()
+					end
+				elseif DPSMateSettings["dataresetsjoinparty"] == 1 then
+					DPSMate.Options:PopUpAccept()
+				end
 			else
 				if DPSMateSettings["dataresetspartyamount"] == 3 then
 					if (GetTime()-LastPopUp) > TimeToNextPopUp and (DPSMate:TableLength(DPSMateUser) ~= 0 or DPSMate:TableLength(DPSMateUserCurrent) ~= 0) then
@@ -336,7 +343,14 @@ function DPSMate.Options:OnEvent(event)
 				end
 			end
 		else
-			-- Party left
+			if DPSMateSettings["dataresetsleaveparty"] == 3 then
+				if (GetTime()-LastPopUp) > TimeToNextPopUp and (DPSMate:TableLength(DPSMateUser) ~= 0 or DPSMate:TableLength(DPSMateUserCurrent) ~= 0) then
+					DPSMate_PopUp:Show()
+					LastPopUp = GetTime()
+				end
+			elseif DPSMateSettings["dataresetsleaveparty"] == 1 then
+				DPSMate.Options:PopUpAccept()
+			end
 		end
 	elseif event == "PLAYER_ENTERING_WORLD" then
 		if DPSMateSettings["dataresetsworld"] == 3 then

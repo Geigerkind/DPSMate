@@ -69,10 +69,10 @@ function DPSMate.DB:OnEvent(event)
 				titlebarbgcolor = {1,1,1},
 				contentbgtexture = "UI-Tooltip-Background",
 				contentbgcolor = {1,1,1},
-				dataresetsworld = false,
-				dataresetsjoinparty = 0,
-				dataresetsleaveparty = 0,
-				dataresetspartyamount = 0,
+				dataresetsworld = 3,
+				dataresetsjoinparty = 1,
+				dataresetsleaveparty = 2,
+				dataresetspartyamount = 3,
 			}
 		end
 		if DPSMateHistory == nil then DPSMateHistory = {} end
