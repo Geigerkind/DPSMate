@@ -13,6 +13,8 @@ DPSMate.localization.channelTooltip = "Select the channel you'd like to submit y
 DPSMate.localization.close = "Close"
 DPSMate.localization.vanish = "Vanish"
 DPSMate.localization.feigndeath = "Feign Death"
+DPSMate.localization.MiniMapLeft = "LeftClick-Drag to move the icon."
+DPSMate.localization.MiniMapRight = "RightClick to open the menu."
 
 -- Need to sort out some of them below
 DPSMate.localization.parser = {}
