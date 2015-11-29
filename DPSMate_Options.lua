@@ -325,10 +325,12 @@ function DPSMate.Options:InitializeConfigMenu()
 		DPSMate_MiniMap:Hide()
 	end
 	getglobal("DPSMate_ConfigMenu_Tab_GeneralOptions_Total"):SetChecked(DPSMateSettings["showtotals"])
+	getglobal("DPSMate_ConfigMenu_Tab_GeneralOptions_Solo"):SetChecked(DPSMateSettings["hidewhensolo"])
 end
 
 function DPSMate.Options:OnEvent(event)
 	if event == "PARTY_MEMBERS_CHANGED" then
+		DPSMate.Options:HideWhenSolo()
 		if DPSMate.Options:IsInParty() then
 			if LastPartyNum == 0 then
 				if DPSMateSettings["dataresetsjoinparty"] == 3 then
@@ -367,6 +369,21 @@ function DPSMate.Options:OnEvent(event)
 			end
 		elseif DPSMateSettings["dataresetsworld"] == 1 then
 			DPSMate.Options:PopUpAccept()
+		end
+	end
+end
+
+function DPSMate.Options:HideWhenSolo()
+	for _, val in pairs(DPSMateSettings["windows"]) do
+		local frame = getglobal("DPSMate_"..val["name"])
+		if DPSMateSettings["hidewhensolo"] then
+			if GetNumPartyMembers() == 0 then
+				frame:Hide()
+			else
+				frame:Show()
+			end
+		else
+			frame:Show()
 		end
 	end
 end

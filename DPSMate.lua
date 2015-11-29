@@ -147,6 +147,7 @@ function DPSMate:InitializeFrames()
 		end
 	end
 	DPSMate.Options:ToggleTitleBarButtonState()
+	DPSMate.Options:HideWhenSolo()
 end
 
 function DPSMate:WindowsExist()

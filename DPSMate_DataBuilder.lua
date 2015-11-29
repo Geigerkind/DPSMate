@@ -75,6 +75,7 @@ function DPSMate.DB:OnEvent(event)
 				dataresetspartyamount = 3,
 				showminimapbutton = true,
 				showtotals = false,
+				hidewhensolo = false,
 			}
 		end
 		if DPSMateHistory == nil then DPSMateHistory = {} end

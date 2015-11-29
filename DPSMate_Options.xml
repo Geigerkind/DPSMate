@@ -1664,6 +1664,12 @@
 								getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.solo)
 							</OnLoad>
 							<OnClick>
+								if DPSMateSettings["hidewhensolo"] then
+									DPSMateSettings["hidewhensolo"] = false
+								else
+									DPSMateSettings["hidewhensolo"] = true
+								end
+								DPSMate.Options:HideWhenSolo()
 							</OnClick>
 						</Scripts>
 					</CheckButton>
