@@ -326,6 +326,7 @@ function DPSMate.Options:InitializeConfigMenu()
 	end
 	getglobal("DPSMate_ConfigMenu_Tab_GeneralOptions_Total"):SetChecked(DPSMateSettings["showtotals"])
 	getglobal("DPSMate_ConfigMenu_Tab_GeneralOptions_Solo"):SetChecked(DPSMateSettings["hidewhensolo"])
+	getglobal("DPSMate_ConfigMenu_Tab_GeneralOptions_Combat"):SetChecked(DPSMateSettings["hideincombat"])
 end
 
 function DPSMate.Options:OnEvent(event)
