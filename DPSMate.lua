@@ -99,6 +99,17 @@ function DPSMate:InitializeFrames()
 		
 		-- Styles // Bars
 		local child = getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child")
+		getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_Total"):SetPoint("TOPLEFT", child, "TOPLEFT")
+		getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_Total"):SetPoint("TOPRIGHT", child, "TOPRIGHT")
+		if DPSMateSettings["showtotals"] then
+			getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_Total"):SetHeight(DPSMateSettings["barheight"])
+		else
+			getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_Total"):SetHeight(0.00001)
+		end
+		getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_Total"):SetStatusBarTexture(DPSMate.Options.statusbars[DPSMateSettings["bartexture"]])
+		getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_Total_BG"):SetTexture(DPSMate.Options.statusbars[DPSMateSettings["bartexture"]])
+		getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_Total_Name"):SetFont(DPSMate.Options.fonts[DPSMateSettings["barfont"]], DPSMateSettings["barfontsize"], DPSMate.Options.fontflags[DPSMateSettings["barfontflag"]])
+		getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_Total_Value"):SetFont(DPSMate.Options.fonts[DPSMateSettings["barfont"]], DPSMateSettings["barfontsize"], DPSMate.Options.fontflags[DPSMateSettings["barfontflag"]])
 		for i=1, 30 do
 			local bar = getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar"..i)
 			bar.name = getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar"..i.."_Name")
@@ -111,6 +122,12 @@ function DPSMate:InitializeFrames()
 			bar:SetPoint("TOPRIGHT", child, "TOPRIGHT")
 			if i>1 then
 				bar:SetPoint("TOPLEFT", getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar"..(i-1)), "BOTTOMLEFT", 0, -1*DPSMateSettings["barspacing"])
+			else
+				if DPSMateSettings["showtotals"] then
+					bar:SetPoint("TOPLEFT", getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_Total"), "BOTTOMLEFT", 0, -1*DPSMateSettings["barspacing"])
+				else
+					bar:SetPoint("TOPLEFT", getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_Total"), "BOTTOMLEFT", 0, -1)
+				end
 			end
 			if DPSMateSettings["classicons"] then
 				bar.name:ClearAllPoints()
@@ -239,8 +256,12 @@ function DPSMate:SetStatusBarValue()
 	DPSMate:HideStatusBars()
 	for k,c in pairs(DPSMateSettings.windows) do
 		local arr, cbt = DPSMate:GetMode(k)
-		local user, val, perc = DPSMate:GetSettingValues(arr,cbt,k)
-		if (user == {}) then return end
+		local user, val, perc, total = DPSMate:GetSettingValues(arr,cbt,k)
+		if DPSMateSettings["showtotals"] then
+			getglobal("DPSMate_"..c["name"].."_ScrollFrame_Child_Total_Name"):SetText("Total")
+			getglobal("DPSMate_"..c["name"].."_ScrollFrame_Child_Total_Value"):SetText("("..ceil(total/cbt).." DPS) "..total.." (100%)")
+		end
+		if (not user[1]) then return end
 		for i=1, 30 do
 			if (not user[i]) then break end -- To prevent visual issues
 			local statusbar, name, value, texture, p = getglobal("DPSMate_"..c["name"].."_ScrollFrame_Child_StatusBar"..i), getglobal("DPSMate_"..c["name"].."_ScrollFrame_Child_StatusBar"..i.."_Name"), getglobal("DPSMate_"..c["name"].."_ScrollFrame_Child_StatusBar"..i.."_Value"), getglobal("DPSMate_"..c["name"].."_ScrollFrame_Child_StatusBar"..i.."_Icon"), ""
@@ -261,23 +282,23 @@ function DPSMate:SetStatusBarValue()
 end
 
 function DPSMate:GetSettingValues(arr, cbt, k)
-	local name, value, perc = {}, {}, {}
+	local name, value, perc, sortedTable, total, a = {}, {}, {}, {}, 0, 0
 	if (DPSMateSettings["windows"][k]["CurMode"] == "dps") then
-		local sortedTable, total, a = DPSMate:GetSortedTable(arr)
+		sortedTable, total, a = DPSMate:GetSortedTable(arr)
 		for cat, val in pairs(sortedTable) do
 			table.insert(name, a[val])
 			table.insert(value, ceil(val/cbt).." ("..string.format("%.1f", 100*val/total).."%)")
 			table.insert(perc, ceil(100*(val/sortedTable[1])))
 		end
 	elseif (DPSMateSettings["windows"][k]["CurMode"] == "damage") then
-		local sortedTable, total, a = DPSMate:GetSortedTable(arr)
+		sortedTable, total, a = DPSMate:GetSortedTable(arr)
 		for cat, val in pairs(sortedTable) do
 			table.insert(name, a[val])
 			table.insert(value, val.." ("..string.format("%.1f", 100*val/total).."%)")
 			table.insert(perc, ceil(100*(val/sortedTable[1])))
 		end
 	end
-	return name, value, perc
+	return name, value, perc, total
 end
 
 function DPSMate:GetClassColor(class)

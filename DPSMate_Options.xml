@@ -1000,6 +1000,8 @@
 								this.func = function() 
 									DPSMateSettings["barfontsize"] = this:GetValue()
 									for _, val in pairs(DPSMateSettings["windows"]) do
+										getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_Total_Name"):SetFont(DPSMate.Options.fonts[DPSMateSettings["barfont"]], DPSMateSettings["barfontsize"], DPSMate.Options.fontflags[DPSMateSettings["barfontflag"]])
+										getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_Total_Value"):SetFont(DPSMate.Options.fonts[DPSMateSettings["barfont"]], DPSMateSettings["barfontsize"], DPSMate.Options.fontflags[DPSMateSettings["barfontflag"]])
 										for i=1, 30 do
 											getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar"..i.."_Name"):SetFont(DPSMate.Options.fonts[DPSMateSettings["barfont"]], DPSMateSettings["barfontsize"], DPSMate.Options.fontflags[DPSMateSettings["barfontflag"]])
 											getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar"..i.."_Value"):SetFont(DPSMate.Options.fonts[DPSMateSettings["barfont"]], DPSMateSettings["barfontsize"], DPSMate.Options.fontflags[DPSMateSettings["barfontflag"]])
@@ -1067,6 +1069,12 @@
 											bar:SetPoint("TOPRIGHT", getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child"), "TOPRIGHT")
 											if i>1 then
 												bar:SetPoint("TOPLEFT", getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar"..(i-1)), "BOTTOMLEFT", 0, -1*DPSMateSettings["barspacing"])
+											else
+												if DPSMateSettings["showtotals"] then
+													bar:SetPoint("TOPLEFT", getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_Total"), "BOTTOMLEFT", 0, -1*DPSMateSettings["barspacing"])
+												else
+													bar:SetPoint("TOPLEFT", getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_Total"), "BOTTOMLEFT", 0, -1)
+												end
 											end
 										end
 									end
@@ -1091,6 +1099,7 @@
 								this.func = function()
 									DPSMateSettings["barheight"] = this:GetValue() 
 									for _, val in pairs(DPSMateSettings["windows"]) do
+										getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_Total"):SetHeight(DPSMateSettings["barheight"])
 										for i=1, 30 do
 											local bar = getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar"..i)
 											local icon = getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar"..i.."_Icon")
@@ -1611,6 +1620,13 @@
 								getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.minimap)
 							</OnLoad>
 							<OnClick>
+								if DPSMateSettings["showminimapbutton"] then
+									DPSMateSettings["showminimapbutton"] = false
+									DPSMate_MiniMap:Hide()
+								else
+									DPSMateSettings["showminimapbutton"] = true
+									DPSMate_MiniMap:Show()
+								end
 							</OnClick>
 						</Scripts>
 					</CheckButton>
@@ -1623,6 +1639,19 @@
 								getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.total)
 							</OnLoad>
 							<OnClick>
+								if DPSMateSettings["showtotals"] then
+									DPSMateSettings["showtotals"] = false
+									for _, val in pairs(DPSMateSettings["windows"]) do
+										getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_Total"):SetHeight(0.000001)
+										getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar1"):SetPoint("TOPLEFT", getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_Total"), "BOTTOMLEFT", 0, -1)
+									end
+								else
+									DPSMateSettings["showtotals"] = true
+									for _, val in pairs(DPSMateSettings["windows"]) do
+										getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_Total"):SetHeight(DPSMateSettings["barheight"])
+										getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar1"):SetPoint("TOPLEFT", getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_Total"), "BOTTOMLEFT", 0, -1*DPSMateSettings["barspacing"])
+									end
+								end
 							</OnClick>
 						</Scripts>
 					</CheckButton>

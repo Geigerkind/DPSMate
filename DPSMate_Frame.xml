@@ -219,6 +219,7 @@
 					<Frame name="$parent_Child">
 						<Size x="400" y="360" />
 						<Frames>
+							<StatusBar name="$parent_Total" inherits="DPSMate_StatusBar" />
 							<StatusBar name="$parent_StatusBar1" inherits="DPSMate_StatusBar" />
 							<StatusBar name="$parent_StatusBar2" inherits="DPSMate_StatusBar" />
 							<StatusBar name="$parent_StatusBar3" inherits="DPSMate_StatusBar" />

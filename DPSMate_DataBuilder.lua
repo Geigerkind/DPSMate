@@ -73,6 +73,8 @@ function DPSMate.DB:OnEvent(event)
 				dataresetsjoinparty = 1,
 				dataresetsleaveparty = 2,
 				dataresetspartyamount = 3,
+				showminimapbutton = true,
+				showtotals = false,
 			}
 		end
 		if DPSMateHistory == nil then DPSMateHistory = {} end
