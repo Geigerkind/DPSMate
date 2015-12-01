@@ -102,7 +102,6 @@ function DPSMate.DB:OnEvent(event)
 		if (cheatCombat+10<GetTime()) then
 			DPSMate.Options:NewSegment()
 		end
-		CombatState = true
 		if DPSMateSettings["hideincombat"] then
 			for _, val in pairs(DPSMateSettings["windows"]) do
 				DPSMate.Options:Hide(getglobal("DPSMate_"..val["name"]))
@@ -110,6 +109,9 @@ function DPSMate.DB:OnEvent(event)
 			if DPSMateSettings["disablewhilehidden"] then
 				DPSMate:Disable()
 			end
+		end
+		if DPSMate.Registered then
+			CombatState = true
 		end
 	elseif event == "PLAYER_REGEN_ENABLED" then
 		CombatState = false
