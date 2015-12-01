@@ -77,6 +77,8 @@ function DPSMate.DB:OnEvent(event)
 				showtotals = false,
 				hidewhensolo = false,
 				hideincombat = false,
+				hideinpvp = false,
+				disablewhilehidden = false,
 			}
 		end
 		if DPSMateHistory == nil then DPSMateHistory = {} end
@@ -104,6 +106,9 @@ function DPSMate.DB:OnEvent(event)
 			for _, val in pairs(DPSMateSettings["windows"]) do
 				getglobal("DPSMate_"..val["name"]):Hide()
 			end
+			if DPSMateSettings["disablewhilehidden"] then
+				DPSMate:Disable()
+			end
 		end
 	elseif event == "PLAYER_REGEN_ENABLED" then
 		CombatState = false
@@ -111,6 +116,7 @@ function DPSMate.DB:OnEvent(event)
 			for _, val in pairs(DPSMateSettings["windows"]) do
 				getglobal("DPSMate_"..val["name"]):Show()
 			end
+			DPSMate:Enable()
 		end
 	elseif event == "PLAYER_AURAS_CHANGED" then
 		DPSMate.DB:hasVanishedFeignDeath()

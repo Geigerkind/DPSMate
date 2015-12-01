@@ -327,6 +327,8 @@ function DPSMate.Options:InitializeConfigMenu()
 	getglobal("DPSMate_ConfigMenu_Tab_GeneralOptions_Total"):SetChecked(DPSMateSettings["showtotals"])
 	getglobal("DPSMate_ConfigMenu_Tab_GeneralOptions_Solo"):SetChecked(DPSMateSettings["hidewhensolo"])
 	getglobal("DPSMate_ConfigMenu_Tab_GeneralOptions_Combat"):SetChecked(DPSMateSettings["hideincombat"])
+	getglobal("DPSMate_ConfigMenu_Tab_GeneralOptions_PVP"):SetChecked(DPSMateSettings["hideinpvp"])
+	getglobal("DPSMate_ConfigMenu_Tab_GeneralOptions_Disable"):SetChecked(DPSMateSettings["disablewhilehidden"])
 end
 
 function DPSMate.Options:OnEvent(event)
@@ -371,30 +373,61 @@ function DPSMate.Options:OnEvent(event)
 		elseif DPSMateSettings["dataresetsworld"] == 1 then
 			DPSMate.Options:PopUpAccept()
 		end
+		DPSMate.Options:HideInPvP()
+	end
+end
+
+function DPSMate.Options:IsInBattleground()
+	for i=1, 4 do
+		local status, mapName, instanceID, lowestlevel, highestlevel, teamSize, registeredMatch = GetBattlefieldStatus(i)
+		if status == "active" and DPSMateSettings["hideinpvp"] then
+			return true
+		end
+	end
+	return false
+end
+
+function DPSMate.Options:HideInPvP()
+	for _, val in pairs(DPSMateSettings["windows"]) do
+		local frame = getglobal("DPSMate_"..val["name"])
+		if DPSMate.Options:IsInBattleground() then
+			frame:Hide()
+			if DPSMateSettings["disablewhilehidden"] then
+				DPSMate:Disable()
+			end
+		else
+			frame:Show()
+			DPSMate:Enable()
+		end
 	end
 end
 
 function DPSMate.Options:HideWhenSolo()
 	for _, val in pairs(DPSMateSettings["windows"]) do
 		local frame = getglobal("DPSMate_"..val["name"])
-		if DPSMateSettings["hidewhensolo"] then
+		if DPSMateSettings["hidewhensolo"] and not DPSMate.Options:IsInBattleground() then
 			if GetNumPartyMembers() == 0 then
 				frame:Hide()
+				if DPSMateSettings["disablewhilehidden"] then
+					DPSMate:Disable()
+				end
 			else
 				frame:Show()
+				DPSMate:Enable()
 			end
 		else
 			frame:Show()
+			DPSMate:Enable()
 		end
 	end
 end
 
 function DPSMate.Options:IsInParty()
+	LastPartyNum = PartyNum
+	PartyNum = GetNumPartyMembers()
 	if GetNumPartyMembers() > 0 or UnitInRaid("player") then
 		return true
 	else
-		LastPartyNum = PartyNum
-		PartyNum = GetNumPartyMembers()
 		return false
 	end
 end

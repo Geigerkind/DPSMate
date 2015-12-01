@@ -1721,6 +1721,12 @@
 								getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.pvp)
 							</OnLoad>
 							<OnClick>
+								if DPSMateSettings["hideinpvp"] then
+									DPSMateSettings["hideinpvp"] = false
+								else
+									DPSMateSettings["hideinpvp"] = true
+								end
+								DPSMate.Options:HideInPvP()
 							</OnClick>
 						</Scripts>
 					</CheckButton>
@@ -1733,6 +1739,12 @@
 								getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.disable)
 							</OnLoad>
 							<OnClick>
+								if DPSMateSettings["disablewhilehidden"] then
+									DPSMateSettings["disablewhilehidden"] = false
+									DPSMate:Enable()
+								else
+									DPSMateSettings["disablewhilehidden"] = true
+								end
 							</OnClick>
 						</Scripts>
 					</CheckButton>

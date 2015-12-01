@@ -5,6 +5,20 @@ DPSMate.Parser = {}
 DPSMate.localization = {}
 DPSMate.DB = {}
 DPSMate.Options = {}
+DPSMate.Events = {
+	"CHAT_MSG_COMBAT_SELF_HITS",
+	"CHAT_MSG_COMBAT_SELF_MISSES",
+	"CHAT_MSG_SPELL_SELF_DAMAGE",
+	"CHAT_MSG_SPELL_PERIODIC_HOSTILEPLAYER_DAMAGE",
+	"CHAT_MSG_SPELL_PERIODIC_CREATURE_DAMAGE",
+	"CHAT_MSG_COMBAT_PARTY_HITS",
+	"CHAT_MSG_SPELL_PARTY_DAMAGE",
+	"CHAT_MSG_COMBAT_PARTY_MISSES",
+	"COMBAT_TEXT_UPDATE",
+	
+	"PLAYER_AURAS_CHANGED",
+}
+DPSMate.Registered = true
 
 -- Local Variables
 local classcolor = {
@@ -262,7 +276,7 @@ function DPSMate:SetStatusBarValue()
 			getglobal("DPSMate_"..c["name"].."_ScrollFrame_Child_Total_Name"):SetText("Total")
 			getglobal("DPSMate_"..c["name"].."_ScrollFrame_Child_Total_Value"):SetText("("..ceil(total/cbt).." DPS) "..total.." (100%)")
 		end
-		if (not user[1]) then return end
+		if (not user[1]) then break end
 		for i=1, 30 do
 			if (not user[i]) then break end -- To prevent visual issues
 			local statusbar, name, value, texture, p = getglobal("DPSMate_"..c["name"].."_ScrollFrame_Child_StatusBar"..i), getglobal("DPSMate_"..c["name"].."_ScrollFrame_Child_StatusBar"..i.."_Name"), getglobal("DPSMate_"..c["name"].."_ScrollFrame_Child_StatusBar"..i.."_Value"), getglobal("DPSMate_"..c["name"].."_ScrollFrame_Child_StatusBar"..i.."_Icon"), ""
@@ -349,6 +363,24 @@ function DPSMate:HideStatusBars()
 		for i=1, 30 do
 			getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar"..i):Hide()
 		end
+	end
+end
+
+function DPSMate:Disable()
+	if DPSMate.Registered then
+		for _, event in pairs(DPSMate.Events) do
+			DPSMate_Options:UnregisterEvent(event)
+		end
+		DPSMate.Registered = false
+	end
+end
+
+function DPSMate:Enable()
+	if not DPSMate.Registered then
+		for _, event in pairs(DPSMate.Events) do
+			DPSMate_Options:RegisterEvent(event)
+		end
+		DPSMate.Registered = true
 	end
 end
 
