@@ -79,6 +79,7 @@ function DPSMate.DB:OnEvent(event)
 				hideincombat = false,
 				hideinpvp = false,
 				disablewhilehidden = false,
+				numberformat = 1,
 			}
 		end
 		if DPSMateHistory == nil then DPSMateHistory = {} end
@@ -104,7 +105,7 @@ function DPSMate.DB:OnEvent(event)
 		CombatState = true
 		if DPSMateSettings["hideincombat"] then
 			for _, val in pairs(DPSMateSettings["windows"]) do
-				getglobal("DPSMate_"..val["name"]):Hide()
+				DPSMate.Options:Hide(getglobal("DPSMate_"..val["name"]))
 			end
 			if DPSMateSettings["disablewhilehidden"] then
 				DPSMate:Disable()
@@ -114,7 +115,7 @@ function DPSMate.DB:OnEvent(event)
 		CombatState = false
 		if DPSMateSettings["hideincombat"] then
 			for _, val in pairs(DPSMateSettings["windows"]) do
-				getglobal("DPSMate_"..val["name"]):Show()
+				DPSMate.Options:Show(getglobal("DPSMate_"..val["name"]))
 			end
 			DPSMate:Enable()
 		end

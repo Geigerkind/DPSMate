@@ -391,12 +391,12 @@ function DPSMate.Options:HideInPvP()
 	for _, val in pairs(DPSMateSettings["windows"]) do
 		local frame = getglobal("DPSMate_"..val["name"])
 		if DPSMate.Options:IsInBattleground() then
-			frame:Hide()
+			DPSMate.Options:Hide(frame)
 			if DPSMateSettings["disablewhilehidden"] then
 				DPSMate:Disable()
 			end
 		else
-			frame:Show()
+			DPSMate.Options:Show(frame)
 			DPSMate:Enable()
 		end
 	end
@@ -407,16 +407,16 @@ function DPSMate.Options:HideWhenSolo()
 		local frame = getglobal("DPSMate_"..val["name"])
 		if DPSMateSettings["hidewhensolo"] and not DPSMate.Options:IsInBattleground() then
 			if GetNumPartyMembers() == 0 then
-				frame:Hide()
+				DPSMate.Options:Hide(frame)
 				if DPSMateSettings["disablewhilehidden"] then
 					DPSMate:Disable()
 				end
 			else
-				frame:Show()
+				DPSMate.Options:Show(frame)
 				DPSMate:Enable()
 			end
 		else
-			frame:Show()
+			DPSMate.Options:Show(frame)
 			DPSMate:Enable()
 		end
 	end
