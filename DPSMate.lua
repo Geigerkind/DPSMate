@@ -274,7 +274,7 @@ function DPSMate:SetStatusBarValue()
 		local user, val, perc, total = DPSMate:GetSettingValues(arr,cbt,k)
 		if DPSMateSettings["showtotals"] then
 			getglobal("DPSMate_"..c["name"].."_ScrollFrame_Child_Total_Name"):SetText("Total")
-			getglobal("DPSMate_"..c["name"].."_ScrollFrame_Child_Total_Value"):SetText("("..ceil(total/cbt).." DPS) "..total.." (100%)")
+			getglobal("DPSMate_"..c["name"].."_ScrollFrame_Child_Total_Value"):SetText("("..string.format("%.1f", total/cbt).." DPS) "..total.." (100%)")
 		end
 		if (not user[1]) then break end
 		for i=1, 30 do
@@ -296,23 +296,36 @@ function DPSMate:SetStatusBarValue()
 	end
 end
 
+function DPSMate:FormatNumbers(dmg,total,sort)
+	if DPSMateSettings["numberformat"] == 2 then
+		dmg = string.format("%.1f", (dmg/1000))
+		total = string.format("%.1f", (total/1000))
+		sort = string.format("%.1f", (sort/1000))
+	end
+	return dmg, total, sort
+end
+
 function DPSMate:GetSettingValues(arr, cbt, k)
-	local name, value, perc, sortedTable, total, a = {}, {}, {}, {}, 0, 0
+	local name, value, perc, sortedTable, total, a, p = {}, {}, {}, {}, 0, 0, ""
+	if DPSMateSettings["numberformat"] == 2 then p = "K" end
 	if (DPSMateSettings["windows"][k]["CurMode"] == "dps") then
 		sortedTable, total, a = DPSMate:GetSortedTable(arr)
 		for cat, val in pairs(sortedTable) do
+			local dmg, tot, sort = DPSMate:FormatNumbers(val, total, sortedTable[1])
 			table.insert(name, a[val])
-			table.insert(value, ceil(val/cbt).." ("..string.format("%.1f", 100*val/total).."%)")
-			table.insert(perc, ceil(100*(val/sortedTable[1])))
+			table.insert(value, string.format("%.1f", (dmg/cbt))..p.." ("..string.format("%.1f", 100*dmg/tot).."%)")
+			table.insert(perc, ceil(100*(val/sort)))
 		end
 	elseif (DPSMateSettings["windows"][k]["CurMode"] == "damage") then
 		sortedTable, total, a = DPSMate:GetSortedTable(arr)
 		for cat, val in pairs(sortedTable) do
+			local dmg, tot, sort = DPSMate:FormatNumbers(val, total, sortedTable[1])
 			table.insert(name, a[val])
-			table.insert(value, val.." ("..string.format("%.1f", 100*val/total).."%)")
-			table.insert(perc, ceil(100*(val/sortedTable[1])))
+			table.insert(value, dmg..p.." ("..string.format("%.1f", 100*dmg/tot).."%)")
+			table.insert(perc, ceil(100*(dmg/sort)))
 		end
 	end
+	_,total,_=DPSMate:FormatNumbers(0,total,0)
 	return name, value, perc, total
 end
 

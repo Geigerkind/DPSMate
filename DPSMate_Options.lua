@@ -1158,6 +1158,29 @@ function DPSMate.Options:DataResetsDropDown()
 	DPSMate_ConfigMenu.visBars8 = true
 end
 
+function DPSMate.Options:NumberFormatDropDown()
+	local btns = {"Normal", "Condensed"}
+	
+	local function on_click()
+		DPSMateSettings["numberformat"] = this.value
+		UIDropDownMenu_SetSelectedValue(DPSMate_ConfigMenu_Tab_GeneralOptions_NumberFormat, DPSMateSettings["numberformat"])
+		DPSMate:SetStatusBarValue()
+	end
+	
+	for val, name in pairs(btns) do
+		UIDropDownMenu_AddButton{
+			text = name,
+			value = val,
+			func = on_click,
+		}
+	end
+	
+	if not DPSMate_ConfigMenu.visBars9 then
+		UIDropDownMenu_SetSelectedValue(DPSMate_ConfigMenu_Tab_GeneralOptions_NumberFormat, DPSMateSettings["numberformat"])
+	end
+	DPSMate_ConfigMenu.visBars9 = true
+end
+
 function DPSMate.Options:Report()
 	local channel = UIDropDownMenu_GetSelectedValue(DPSMate_Report_Channel)
 	local chn, index, sortedTable, total, a = nil, nil, DPSMate:GetSortedTable(DPSMate:GetMode(DPSMate_Report.PaKey))

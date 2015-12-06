@@ -1758,7 +1758,7 @@
 						<Scripts>
 							<OnLoad>
 								this.aide = DPSMate.localization.config.numberformatTooltip
-								this.func = DPSMate.Options.BarFontDropDown
+								this.func = DPSMate.Options.NumberFormatDropDown
 								this.title = DPSMate.localization.config.numberformat
 								UIDropDownMenu_SetWidth(120)
 								getglobal(this:GetName().."_Text"):SetText(this.title)
