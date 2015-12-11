@@ -89,6 +89,16 @@ function DPSMate.DB:OnEvent(event)
 				disablewhilehidden = false,
 				numberformat = 1,
 				datasegments = 5,
+				columnsdps = {
+					[1] = false,
+					[2] = true,
+					[3] = true,
+				},
+				columnsdmg = {
+					[1] = true,
+					[2] = false,
+					[3] = true,
+				},
 			}
 		end
 		if DPSMateHistory == nil then DPSMateHistory = {} end
@@ -101,6 +111,7 @@ function DPSMate.DB:OnEvent(event)
 				segments = {},
 			}
 		end
+		
 		DPSMate:OnLoad()
 		DPSMate.Options:InitializeSegments()
 		

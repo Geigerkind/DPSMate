@@ -1861,6 +1861,12 @@
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.damage)
 											</OnLoad>
 											<OnClick>
+												if DPSMateSettings["columnsdps"][1] then
+													DPSMateSettings["columnsdps"][1] = false
+												else
+													DPSMateSettings["columnsdps"][1] = true
+												end
+												DPSMate:SetStatusBarValue()
 											</OnClick>
 										</Scripts>
 									</CheckButton>
@@ -1875,6 +1881,12 @@
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.dps)
 											</OnLoad>
 											<OnClick>
+												if DPSMateSettings["columnsdps"][2] then
+													DPSMateSettings["columnsdps"][2] = false
+												else
+													DPSMateSettings["columnsdps"][2] = true
+												end
+												DPSMate:SetStatusBarValue()
 											</OnClick>
 										</Scripts>
 									</CheckButton>
@@ -1889,6 +1901,12 @@
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.percent)
 											</OnLoad>
 											<OnClick>
+												if DPSMateSettings["columnsdps"][3] then
+													DPSMateSettings["columnsdps"][3] = false
+												else
+													DPSMateSettings["columnsdps"][3] = true
+												end
+												DPSMate:SetStatusBarValue()
 											</OnClick>
 										</Scripts>
 									</CheckButton>
@@ -1917,6 +1935,12 @@
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.damage)
 											</OnLoad>
 											<OnClick>
+												if DPSMateSettings["columnsdmg"][1] then
+													DPSMateSettings["columnsdmg"][1] = false
+												else
+													DPSMateSettings["columnsdmg"][1] = true
+												end
+												DPSMate:SetStatusBarValue()
 											</OnClick>
 										</Scripts>
 									</CheckButton>
@@ -1931,6 +1955,12 @@
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.dps)
 											</OnLoad>
 											<OnClick>
+												if DPSMateSettings["columnsdmg"][2] then
+													DPSMateSettings["columnsdmg"][2] = false
+												else
+													DPSMateSettings["columnsdmg"][2] = true
+												end
+												DPSMate:SetStatusBarValue()
 											</OnClick>
 										</Scripts>
 									</CheckButton>
@@ -1945,6 +1975,12 @@
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.percent)
 											</OnLoad>
 											<OnClick>
+												if DPSMateSettings["columnsdmg"][3] then
+													DPSMateSettings["columnsdmg"][3] = false
+												else
+													DPSMateSettings["columnsdmg"][3] = true
+												end
+												DPSMate:SetStatusBarValue()
 											</OnClick>
 										</Scripts>
 									</CheckButton>

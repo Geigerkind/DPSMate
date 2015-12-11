@@ -330,6 +330,14 @@ function DPSMate.Options:InitializeConfigMenu()
 	getglobal("DPSMate_ConfigMenu_Tab_GeneralOptions_PVP"):SetChecked(DPSMateSettings["hideinpvp"])
 	getglobal("DPSMate_ConfigMenu_Tab_GeneralOptions_Disable"):SetChecked(DPSMateSettings["disablewhilehidden"])
 	getglobal("DPSMate_ConfigMenu_Tab_GeneralOptions_Segments"):SetValue(DPSMateSettings["datasegments"])
+	
+	-- Tab Columns
+	getglobal("DPSMate_ConfigMenu_Tab_Columns_Container_DPS_Check1"):SetChecked(DPSMateSettings["columnsdps"][1])
+	getglobal("DPSMate_ConfigMenu_Tab_Columns_Container_DPS_Check2"):SetChecked(DPSMateSettings["columnsdps"][2])
+	getglobal("DPSMate_ConfigMenu_Tab_Columns_Container_DPS_Check3"):SetChecked(DPSMateSettings["columnsdps"][3])
+	getglobal("DPSMate_ConfigMenu_Tab_Columns_Container_Damage_Check1"):SetChecked(DPSMateSettings["columnsdmg"][1])
+	getglobal("DPSMate_ConfigMenu_Tab_Columns_Container_Damage_Check2"):SetChecked(DPSMateSettings["columnsdmg"][2])
+	getglobal("DPSMate_ConfigMenu_Tab_Columns_Container_Damage_Check3"):SetChecked(DPSMateSettings["columnsdmg"][3])
 end
 
 function DPSMate.Options:OnEvent(event)

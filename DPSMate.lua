@@ -312,16 +312,24 @@ function DPSMate:GetSettingValues(arr, cbt, k)
 		sortedTable, total, a = DPSMate:GetSortedTable(arr)
 		for cat, val in pairs(sortedTable) do
 			local dmg, tot, sort = DPSMate:FormatNumbers(val, total, sortedTable[1])
+			local str = {[1]="",[2]="",[3]=""}
+			if DPSMateSettings["columnsdps"][1] then str[1] = "("..dmg..p..")" end
+			if DPSMateSettings["columnsdps"][2] then str[2] = " "..string.format("%.1f", (dmg/cbt))..p end
+			if DPSMateSettings["columnsdps"][3] then str[3] = " ("..string.format("%.1f", 100*dmg/tot).."%)" end
 			table.insert(name, a[val])
-			table.insert(value, string.format("%.1f", (dmg/cbt))..p.." ("..string.format("%.1f", 100*dmg/tot).."%)")
+			table.insert(value, str[1]..str[2]..str[3])
 			table.insert(perc, ceil(100*(val/sort)))
 		end
 	elseif (DPSMateSettings["windows"][k]["CurMode"] == "damage") then
 		sortedTable, total, a = DPSMate:GetSortedTable(arr)
 		for cat, val in pairs(sortedTable) do
 			local dmg, tot, sort = DPSMate:FormatNumbers(val, total, sortedTable[1])
+			local str = {[1]="",[2]="",[3]=""}
+			if DPSMateSettings["columnsdmg"][1] then str[1] = " "..dmg..p end
+			if DPSMateSettings["columnsdmg"][2] then str[2] = "("..string.format("%.1f", (dmg/cbt))..p..")" end
+			if DPSMateSettings["columnsdmg"][3] then str[3] = " ("..string.format("%.1f", 100*dmg/tot).."%)" end
 			table.insert(name, a[val])
-			table.insert(value, dmg..p.." ("..string.format("%.1f", 100*dmg/tot).."%)")
+			table.insert(value, str[2]..str[1]..str[3])
 			table.insert(perc, ceil(100*(dmg/sort)))
 		end
 	end
