@@ -1205,10 +1205,15 @@ function DPSMate.Options:NewSegment()
 		table.insert(DPSMateHistory, 1, DPSMateUserCurrent)
 		table.insert(DPSMateCombatTime["segments"], 1, DPSMateCombatTime["current"])
 		if DPSMate:TableLength(DPSMateHistory)>DPSMateSettings["datasegments"] then
+			for i=DPSMateSettings["datasegments"]+1, DPSMate:TableLength(DPSMateHistory) do
+				table.remove(DPSMateHistory, i)
+			end
 			table.remove(DPSMateHistory, DPSMateSettings["datasegments"]+1)
 		end
 		if DPSMate:TableLength(DPSMateCombatTime["segments"])>DPSMateSettings["datasegments"] then
-			table.remove(DPSMateCombatTime["segments"], DPSMateSettings["datasegments"]+1)
+			for i=DPSMateSettings["datasegments"]+1, DPSMate:TableLength(DPSMateCombatTime["segments"]) do
+				table.remove(DPSMateCombatTime["segments"], i)
+			end
 		end
 		DPSMateUserCurrent = {}
 		DPSMateCombatTime["current"] = 1

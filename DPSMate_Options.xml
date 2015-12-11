@@ -1776,12 +1776,43 @@
 								this.aide = DPSMate.localization.config.segmentsTooltip
 								this.func = function() 
 									DPSMateSettings["datasegments"] = this:GetValue()
+									if DPSMate:TableLength(DPSMateHistory)>DPSMateSettings["datasegments"] then
+										for i=(DPSMateSettings["datasegments"]+1), DPSMate:TableLength(DPSMateHistory) do
+											for p=1, DPSMate:TableLength(DPSMateSettings["windows"]) do
+												DPSMateSettings["windows"][p]["options"][2]["segment"..i] = false
+											end
+											table.remove(DPSMateHistory, i)
+										end
+									end
+									if DPSMate:TableLength(DPSMateCombatTime["segments"])>DPSMateSettings["datasegments"] then
+										for i=DPSMateSettings["datasegments"]+1, DPSMate:TableLength(DPSMateCombatTime["segments"]) do
+											for p=1, DPSMate:TableLength(DPSMateSettings["windows"]) do
+												DPSMateSettings["windows"][p]["options"][2]["segment"..i] = false
+											end
+											table.remove(DPSMateCombatTime["segments"], i)
+										end
+									end
+									for p=1, DPSMate:TableLength(DPSMateSettings["windows"]) do
+										local TL = DPSMate:TableLength(DPSMateSettings["windows"][p]["options"][2])
+										local i = 1
+										for _,val in pairs(DPSMateSettings["windows"][p]["options"][2]) do
+											i=i+1
+											if val==true then
+												break 
+											end
+											if i==TL then
+												DPSMateSettings["windows"][p]["options"][2]["total"] = true
+											end
+										end
+									end
+									DPSMate.Options:InitializeSegments()
+									DPSMate:SetStatusBarValue()
 								end
-								this:SetMinMaxValues(1,32)
+								this:SetMinMaxValues(1,13)
 								this:SetValueStep(1)
 								getglobal(this:GetName().."Text"):SetText(DPSMate.localization.config.segments)
 								getglobal(this:GetName().."Low"):SetText("1")
-								getglobal(this:GetName().."High"):SetText("32")
+								getglobal(this:GetName().."High"):SetText("13")
 							</OnLoad>
 						</Scripts>
 					</Slider>
