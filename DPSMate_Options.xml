@@ -1775,6 +1775,7 @@
 							<OnLoad>
 								this.aide = DPSMate.localization.config.segmentsTooltip
 								this.func = function() 
+									DPSMateSettings["datasegments"] = this:GetValue()
 								end
 								this:SetMinMaxValues(1,32)
 								this:SetValueStep(1)

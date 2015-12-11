@@ -51,13 +51,13 @@ DPSMate.Options.bgtexture = {
 	["Solid Background"] = "Interface\\CHATFRAME\\CHATFRAMEBACKGROUND",
 	["UI-Tooltip-Background"] = "Interface\\Tooltips\\UI-Tooltip-Background",
 }
+DPSMate.Options.Dewdrop = AceLibrary("Dewdrop-2.0")
 
 
 -- Local Variables
 local LastPopUp = 0
 local TimeToNextPopUp = 1
 local PartyNum, LastPartyNum = 0, 0
-local Dewdrop = AceLibrary("Dewdrop-2.0")
 local graph = AceLibrary("Graph-1.0")
 local Options = {
 	[1] = {
@@ -68,96 +68,96 @@ local Options = {
 				type = 'toggle',
 				name = DPSMate.localization.config.dps,
 				desc = DPSMate.localization.desc.dps,
-				get = function() return DPSMateSettings["windows"][Dewdrop:GetOpenedParent().Key]["options"][1]["dps"] end,
-				set = function() DPSMate.Options:ToggleDrewDrop(1, "dps", Dewdrop:GetOpenedParent()) end,
+				get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["options"][1]["dps"] end,
+				set = function() DPSMate.Options:ToggleDrewDrop(1, "dps", DPSMate.Options.Dewdrop:GetOpenedParent()) end,
 			},
 			damage = {
 				order = 20,
 				type = 'toggle',
 				name = DPSMate.localization.config.damage,
 				desc = DPSMate.localization.desc.damage,
-				get = function() return DPSMateSettings["windows"][Dewdrop:GetOpenedParent().Key]["options"][1]["damage"] end,
-				set = function() DPSMate.Options:ToggleDrewDrop(1, "damage", Dewdrop:GetOpenedParent()) end,
+				get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["options"][1]["damage"] end,
+				set = function() DPSMate.Options:ToggleDrewDrop(1, "damage", DPSMate.Options.Dewdrop:GetOpenedParent()) end,
 			},
 			damagetaken = {
 				order = 30,
 				type = 'toggle',
 				name = DPSMate.localization.config.damagetaken,
 				desc = DPSMate.localization.desc.damagetaken,
-				get = function() return DPSMateSettings["windows"][Dewdrop:GetOpenedParent().Key]["options"][1]["damagetaken"] end,
-				set = function() DPSMate.Options:ToggleDrewDrop(1, "damagetaken", Dewdrop:GetOpenedParent()) end,
+				get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["options"][1]["damagetaken"] end,
+				set = function() DPSMate.Options:ToggleDrewDrop(1, "damagetaken", DPSMate.Options.Dewdrop:GetOpenedParent()) end,
 			},
 			enemydamagedone = {
 				order = 40,
 				type = 'toggle',
 				name = DPSMate.localization.config.enemydamagedone,
 				desc = DPSMate.localization.desc.enemydmgdone,
-				get = function() return DPSMateSettings["windows"][Dewdrop:GetOpenedParent().Key]["options"][1]["enemydamagedone"] end,
-				set = function() DPSMate.Options:ToggleDrewDrop(1, "enemydamagedone", Dewdrop:GetOpenedParent()) end,
+				get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["options"][1]["enemydamagedone"] end,
+				set = function() DPSMate.Options:ToggleDrewDrop(1, "enemydamagedone", DPSMate.Options.Dewdrop:GetOpenedParent()) end,
 			},
 			enemydamagetaken = {
 				order = 50,
 				type = 'toggle',
 				name = DPSMate.localization.config.enemydamagetaken,
 				desc = DPSMate.localization.desc.enemydmgtaken,
-				get = function() return DPSMateSettings["windows"][Dewdrop:GetOpenedParent().Key]["options"][1]["enemydamagetaken"] end,
-				set = function() DPSMate.Options:ToggleDrewDrop(1, "enemydamagetaken", Dewdrop:GetOpenedParent()) end,
+				get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["options"][1]["enemydamagetaken"] end,
+				set = function() DPSMate.Options:ToggleDrewDrop(1, "enemydamagetaken", DPSMate.Options.Dewdrop:GetOpenedParent()) end,
 			},
 			healing = {
 				order = 60,
 				type = 'toggle',
 				name = DPSMate.localization.config.healing,
 				desc = DPSMate.localization.desc.healing,
-				get = function() return DPSMateSettings["windows"][Dewdrop:GetOpenedParent().Key]["options"][1]["healing"] end,
-				set = function() DPSMate.Options:ToggleDrewDrop(1, "healing", Dewdrop:GetOpenedParent()) end,
+				get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["options"][1]["healing"] end,
+				set = function() DPSMate.Options:ToggleDrewDrop(1, "healing", DPSMate.Options.Dewdrop:GetOpenedParent()) end,
 			},
 			healingandabsorbs = {
 				order = 70,
 				type = 'toggle',
 				name = DPSMate.localization.config.healingandabsorbs,
 				desc = DPSMate.localization.desc.healingandabsorbs,
-				get = function() return DPSMateSettings["windows"][Dewdrop:GetOpenedParent().Key]["options"][1]["healingandabsorbs"] end,
-				set = function() DPSMate.Options:ToggleDrewDrop(1, "healingandabsorbs", Dewdrop:GetOpenedParent()) end,
+				get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["options"][1]["healingandabsorbs"] end,
+				set = function() DPSMate.Options:ToggleDrewDrop(1, "healingandabsorbs", DPSMate.Options.Dewdrop:GetOpenedParent()) end,
 			},
 			healingtaken = {
 				order = 80,
 				type = 'toggle',
 				name = DPSMate.localization.config.healingtaken,
 				desc = DPSMate.localization.desc.healingtaken,
-				get = function() return DPSMateSettings["windows"][Dewdrop:GetOpenedParent().Key]["options"][1]["healingtaken"] end,
-				set = function() DPSMate.Options:ToggleDrewDrop(1, "healingtaken", Dewdrop:GetOpenedParent()) end,
+				get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["options"][1]["healingtaken"] end,
+				set = function() DPSMate.Options:ToggleDrewDrop(1, "healingtaken", DPSMate.Options.Dewdrop:GetOpenedParent()) end,
 			},
 			overhealing = {
 				order = 90,
 				type = 'toggle',
 				name = DPSMate.localization.config.overhealing,
 				desc = DPSMate.localization.desc.overhealing,
-				get = function() return DPSMateSettings["windows"][Dewdrop:GetOpenedParent().Key]["options"][1]["overhealing"] end,
-				set = function() DPSMate.Options:ToggleDrewDrop(1, "overhealing", Dewdrop:GetOpenedParent()) end,
+				get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["options"][1]["overhealing"] end,
+				set = function() DPSMate.Options:ToggleDrewDrop(1, "overhealing", DPSMate.Options.Dewdrop:GetOpenedParent()) end,
 			},
 			interrupts = {
 				order = 100,
 				type = 'toggle',
 				name = DPSMate.localization.config.interrupts,
 				desc = DPSMate.localization.desc.interrupts,
-				get = function() return DPSMateSettings["windows"][Dewdrop:GetOpenedParent().Key]["options"][1]["interrupts"] end,
-				set = function() DPSMate.Options:ToggleDrewDrop(1, "interrupts", Dewdrop:GetOpenedParent()) end,
+				get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["options"][1]["interrupts"] end,
+				set = function() DPSMate.Options:ToggleDrewDrop(1, "interrupts", DPSMate.Options.Dewdrop:GetOpenedParent()) end,
 			},
 			deaths = {
 				order = 110,
 				type = 'toggle',
 				name = DPSMate.localization.config.deaths,
 				desc = DPSMate.localization.desc.deaths,
-				get = function() return DPSMateSettings["windows"][Dewdrop:GetOpenedParent().Key]["options"][1]["deaths"] end,
-				set = function() DPSMate.Options:ToggleDrewDrop(1, "deaths", Dewdrop:GetOpenedParent()) end,
+				get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["options"][1]["deaths"] end,
+				set = function() DPSMate.Options:ToggleDrewDrop(1, "deaths", DPSMate.Options.Dewdrop:GetOpenedParent()) end,
 			},
 			dispels = {
 				order = 120,
 				type = 'toggle',
 				name = DPSMate.localization.config.dispels,
 				desc = DPSMate.localization.desc.dispels,
-				get = function() return DPSMateSettings["windows"][Dewdrop:GetOpenedParent().Key]["options"][1]["dispels"] end,
-				set = function() DPSMate.Options:ToggleDrewDrop(1, "dispels", Dewdrop:GetOpenedParent()) end,
+				get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["options"][1]["dispels"] end,
+				set = function() DPSMate.Options:ToggleDrewDrop(1, "dispels", DPSMate.Options.Dewdrop:GetOpenedParent()) end,
 			},
 		},
 		handler = DPSMate.Options,
@@ -170,16 +170,16 @@ local Options = {
 				type = 'toggle',
 				name = "Total",
 				desc = DPSMate.localization.desc.total,
-				get = function() return DPSMateSettings["windows"][Dewdrop:GetOpenedParent().Key]["options"][2]["total"] end,
-				set = function() DPSMate.Options:ToggleDrewDrop(2, "total", Dewdrop:GetOpenedParent()) end,
+				get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["options"][2]["total"] end,
+				set = function() DPSMate.Options:ToggleDrewDrop(2, "total", DPSMate.Options.Dewdrop:GetOpenedParent()) end,
 			},
 			currentFight = {
 				order = 20,
 				type = 'toggle',
 				name = "Current fight",
 				desc = DPSMate.localization.desc.current,
-				get = function() return DPSMateSettings["windows"][Dewdrop:GetOpenedParent().Key]["options"][2]["currentfight"] end,
-				set = function() DPSMate.Options:ToggleDrewDrop(2, "currentfight", Dewdrop:GetOpenedParent()) end,
+				get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["options"][2]["currentfight"] end,
+				set = function() DPSMate.Options:ToggleDrewDrop(2, "currentfight", DPSMate.Options.Dewdrop:GetOpenedParent()) end,
 			},
 		},
 		handler = DPSMate.Options,
@@ -192,7 +192,7 @@ local Options = {
 				type = 'execute',
 				name = "Report",
 				desc = DPSMate.localization.desc.report,
-				func = function() DPSMate_Report:Show(); Dewdrop:Close() end,
+				func = function() DPSMate_Report:Show(); DPSMate.Options.Dewdrop:Close() end,
 			},
 			reset = {
 				order = 11,
@@ -210,7 +210,7 @@ local Options = {
 				type = 'execute',
 				name = "Start new segment",
 				desc = DPSMate.localization.desc.newsegment,
-				func = function() DPSMate.Options:NewSegment(); Dewdrop:Close() end,
+				func = function() DPSMate.Options:NewSegment(); DPSMate.Options.Dewdrop:Close() end,
 			},
 			deletesegment = {
 				order = 30,
@@ -229,7 +229,7 @@ local Options = {
 				name = "Lock window",
 				desc = DPSMate.localization.desc.lock,
 				get = function() return DPSMateSettings["lock"] end,
-				set = function() DPSMate.Options:Lock(); Dewdrop:Close() end,
+				set = function() DPSMate.Options:Lock(); DPSMate.Options.Dewdrop:Close() end,
 			},
 			unlock = {
 				order = 40,
@@ -237,28 +237,28 @@ local Options = {
 				name = "Unlock window",
 				desc = DPSMate.localization.desc.lock,
 				get = function() return not DPSMateSettings["lock"] end,
-				set = function() DPSMate.Options:Unlock(); Dewdrop:Close() end,
+				set = function() DPSMate.Options:Unlock(); DPSMate.Options.Dewdrop:Close() end,
 			},
 			hide = {
 				order = 50,
 				type = 'execute',
 				name = "Hide window",
 				desc = DPSMate.localization.desc.hide,
-				func = function() DPSMate.Options:Hide(Dewdrop:GetOpenedParent()); Dewdrop:Close() end,
+				func = function() DPSMate.Options:Hide(DPSMate.Options.Dewdrop:GetOpenedParent()); DPSMate.Options.Dewdrop:Close() end,
 			},
 			configure = {
 				order = 80,
 				type = 'execute',
 				name = "Configure",
 				desc = DPSMate.localization.desc.config,
-				func = function() DPSMate_ConfigMenu:Show(); Dewdrop:Close() end,
+				func = function() DPSMate_ConfigMenu:Show(); DPSMate.Options.Dewdrop:Close() end,
 			},
 			close = {
 				order = 90,
 				type = 'execute',
 				name = "Close",
 				desc = DPSMate.localization.desc.close,
-				func = function() Dewdrop:Close() end,
+				func = function() DPSMate.Options.Dewdrop:Close() end,
 			},
 		},
 		handler = DPSMate.Options,
@@ -329,6 +329,7 @@ function DPSMate.Options:InitializeConfigMenu()
 	getglobal("DPSMate_ConfigMenu_Tab_GeneralOptions_Combat"):SetChecked(DPSMateSettings["hideincombat"])
 	getglobal("DPSMate_ConfigMenu_Tab_GeneralOptions_PVP"):SetChecked(DPSMateSettings["hideinpvp"])
 	getglobal("DPSMate_ConfigMenu_Tab_GeneralOptions_Disable"):SetChecked(DPSMateSettings["disablewhilehidden"])
+	getglobal("DPSMate_ConfigMenu_Tab_GeneralOptions_Segments"):SetValue(DPSMateSettings["datasegments"])
 end
 
 function DPSMate.Options:OnEvent(event)
@@ -447,21 +448,21 @@ end
 
 function DPSMate.Options:OpenMenu(b, obj)
 	for _, val in pairs(DPSMateSettings.windows) do
-		if Dewdrop:IsOpen(getglobal("DPSMate_"..val["name"])) then
-			Dewdrop:Close()
+		if DPSMate.Options.Dewdrop:IsOpen(getglobal("DPSMate_"..val["name"])) then
+			DPSMate.Options.Dewdrop:Close()
 			return
 		end
-	if Dewdrop:IsRegistered(getglobal("DPSMate_"..val["name"])) then Dewdrop:Unregister(getglobal("DPSMate_"..val["name"])) end
+	if DPSMate.Options.Dewdrop:IsRegistered(getglobal("DPSMate_"..val["name"])) then DPSMate.Options.Dewdrop:Unregister(getglobal("DPSMate_"..val["name"])) end
 	end
-	Dewdrop:Register(obj,
+	DPSMate.Options.Dewdrop:Register(obj,
 		'children', function() 
-			Dewdrop:FeedAceOptionsTable(Options[b]) 
+			DPSMate.Options.Dewdrop:FeedAceOptionsTable(Options[b]) 
 		end,
 		'cursorX', true,
 		'cursorY', true,
 		'dontHook', true
 	)
-	Dewdrop:Open(obj)
+	DPSMate.Options.Dewdrop:Open(obj)
 end
 
 function DPSMate.Options:ToggleDrewDrop(i, obj, pa)
@@ -475,7 +476,7 @@ function DPSMate.Options:ToggleDrewDrop(i, obj, pa)
 		DPSMateSettings["windows"][pa.Key]["CurMode"] = obj
 	elseif i == 2 then
 	elseif i == 3 then end
-	Dewdrop:Close()
+	DPSMate.Options.Dewdrop:Close()
 	if DPSMate.DB.loaded then DPSMate:SetStatusBarValue() end
 	return true
 end
@@ -1203,18 +1204,18 @@ function DPSMate.Options:NewSegment()
 	if DPSMateUserCurrent ~= {} then
 		table.insert(DPSMateHistory, 1, DPSMateUserCurrent)
 		table.insert(DPSMateCombatTime["segments"], 1, DPSMateCombatTime["current"])
-		if DPSMate:TableLength(DPSMateHistory)>5 then
-			table.remove(DPSMateHistory, 6)
+		if DPSMate:TableLength(DPSMateHistory)>DPSMateSettings["datasegments"] then
+			table.remove(DPSMateHistory, DPSMateSettings["datasegments"]+1)
 		end
-		if DPSMate:TableLength(DPSMateCombatTime["segments"])>5 then
-			table.remove(DPSMateCombatTime["segments"], 6)
+		if DPSMate:TableLength(DPSMateCombatTime["segments"])>DPSMateSettings["datasegments"] then
+			table.remove(DPSMateCombatTime["segments"], DPSMateSettings["datasegments"]+1)
 		end
 		DPSMateUserCurrent = {}
 		DPSMateCombatTime["current"] = 1
 		DPSMate:SetStatusBarValue()
 	end
 	DPSMate.Options:InitializeSegments()
-	Dewdrop:Close()
+	DPSMate.Options.Dewdrop:Close()
 end
 
 function DPSMate.Options:InitializeSegments()
@@ -1225,16 +1226,16 @@ function DPSMate.Options:InitializeSegments()
 			type = 'toggle',
 			name = "Total",
 			desc = DPSMate.localization.desc.total,
-			get = function() return DPSMateSettings["windows"][Dewdrop:GetOpenedParent().Key]["options"][2]["total"] end,
-			set = function() DPSMate.Options:ToggleDrewDrop(2, "total", Dewdrop:GetOpenedParent()) end,
+			get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["options"][2]["total"] end,
+			set = function() DPSMate.Options:ToggleDrewDrop(2, "total", DPSMate.Options.Dewdrop:GetOpenedParent()) end,
 		},
 		currentFight = {
 			order = 20,
 			type = 'toggle',
 			name = "Current fight",
 			desc = DPSMate.localization.desc.current,
-			get = function() return DPSMateSettings["windows"][Dewdrop:GetOpenedParent().Key]["options"][2]["currentfight"] end,
-			set = function() DPSMate.Options:ToggleDrewDrop(2, "currentfight", Dewdrop:GetOpenedParent()) end,
+			get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["options"][2]["currentfight"] end,
+			set = function() DPSMate.Options:ToggleDrewDrop(2, "currentfight", DPSMate.Options.Dewdrop:GetOpenedParent()) end,
 		},
 	}
 	Options[3]["args"]["deletesegment"]["args"] = {}
@@ -1244,31 +1245,19 @@ function DPSMate.Options:InitializeSegments()
 			type = 'toggle',
 			name = "Segment "..i,
 			desc = "Fight deatails for segment "..i,
-			get = "DropDownGetSegment"..i,
-			set = "DropDownSetSegment"..i,
+			get = loadstring('return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["options"][2]["segment'..i..'"];'),
+			set = loadstring('DPSMate.Options:ToggleDrewDrop(2, "segment'..i..'", DPSMate.Options.Dewdrop:GetOpenedParent());'),
 		}
 		Options[3]["args"]["deletesegment"]["args"]["segment"..i] = {
 			order = i*10,
 			type = 'execute',
 			name = "Segment "..i,
 			desc = "Remove segment "..i,
-			func = "deletesegment"..i,
+			func = loadstring('DPSMate.Options:RemoveSegment('..i..');'),
 		}
 		i=i+1
 	end
 end
-
-function DPSMate.Options:DropDownGetSegment1() return DPSMateSettings["windows"][Dewdrop:GetOpenedParent().Key]["options"][2]["segment1"] end
-function DPSMate.Options:DropDownGetSegment2() return DPSMateSettings["windows"][Dewdrop:GetOpenedParent().Key]["options"][2]["segment2"] end
-function DPSMate.Options:DropDownGetSegment3() return DPSMateSettings["windows"][Dewdrop:GetOpenedParent().Key]["options"][2]["segment3"] end
-function DPSMate.Options:DropDownGetSegment4() return DPSMateSettings["windows"][Dewdrop:GetOpenedParent().Key]["options"][2]["segment4"] end
-function DPSMate.Options:DropDownGetSegment5() return DPSMateSettings["windows"][Dewdrop:GetOpenedParent().Key]["options"][2]["segment5"] end
-
-function DPSMate.Options:DropDownSetSegment1() DPSMate.Options:ToggleDrewDrop(2, "segment1", Dewdrop:GetOpenedParent()) end
-function DPSMate.Options:DropDownSetSegment2() DPSMate.Options:ToggleDrewDrop(2, "segment2", Dewdrop:GetOpenedParent()) end
-function DPSMate.Options:DropDownSetSegment3() DPSMate.Options:ToggleDrewDrop(2, "segment3", Dewdrop:GetOpenedParent()) end
-function DPSMate.Options:DropDownSetSegment4() DPSMate.Options:ToggleDrewDrop(2, "segment4", Dewdrop:GetOpenedParent()) end
-function DPSMate.Options:DropDownSetSegment5() DPSMate.Options:ToggleDrewDrop(2, "segment5", Dewdrop:GetOpenedParent()) end
 
 function DPSMate.Options:OnVerticalScroll(obj, arg1)
 	local maxScroll = obj:GetVerticalScrollRange()
@@ -1385,14 +1374,8 @@ end
 function DPSMate.Options:RemoveSegment(i)
 	table.remove(DPSMateHistory, i)
 	DPSMate.Options:InitializeSegments()
-	Dewdrop:Close()
+	DPSMate.Options.Dewdrop:Close()
 end
-
-function DPSMate.Options:deletesegment1() DPSMate.Options:RemoveSegment(1) end
-function DPSMate.Options:deletesegment2() DPSMate.Options:RemoveSegment(2) end
-function DPSMate.Options:deletesegment3() DPSMate.Options:RemoveSegment(3) end
-function DPSMate.Options:deletesegment4() DPSMate.Options:RemoveSegment(4) end
-function DPSMate.Options:deletesegment5() DPSMate.Options:RemoveSegment(5) end
 
 function DPSMate.Options:ToggleTitleBarButtonState()
 	local buttons = {"Config", "Reset", "Segments", "Report", "Sync"}

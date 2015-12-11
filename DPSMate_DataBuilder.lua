@@ -80,6 +80,7 @@ function DPSMate.DB:OnEvent(event)
 				hideinpvp = false,
 				disablewhilehidden = false,
 				numberformat = 1,
+				datasegments = 5,
 			}
 		end
 		if DPSMateHistory == nil then DPSMateHistory = {} end
