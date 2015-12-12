@@ -271,10 +271,10 @@ function DPSMate:SetStatusBarValue()
 	DPSMate:HideStatusBars()
 	for k,c in pairs(DPSMateSettings.windows) do
 		local arr, cbt = DPSMate:GetMode(k)
-		local user, val, perc, total = DPSMate:GetSettingValues(arr,cbt,k)
+		local user, val, perc, strt = DPSMate:GetSettingValues(arr,cbt,k)
 		if DPSMateSettings["showtotals"] then
 			getglobal("DPSMate_"..c["name"].."_ScrollFrame_Child_Total_Name"):SetText("Total")
-			getglobal("DPSMate_"..c["name"].."_ScrollFrame_Child_Total_Value"):SetText("("..string.format("%.1f", total/cbt).." DPS) "..total.." (100%)")
+			getglobal("DPSMate_"..c["name"].."_ScrollFrame_Child_Total_Value"):SetText(strt[1]..strt[2])
 		end
 		if (not user[1]) then break end
 		for i=1, 30 do
@@ -306,15 +306,15 @@ function DPSMate:FormatNumbers(dmg,total,sort)
 end
 
 function DPSMate:GetSettingValues(arr, cbt, k)
-	local name, value, perc, sortedTable, total, a, p = {}, {}, {}, {}, 0, 0, ""
+	local name, value, perc, sortedTable, total, a, p, strt = {}, {}, {}, {}, 0, 0, "", {[1]="",[2]=""}
 	if DPSMateSettings["numberformat"] == 2 then p = "K" end
 	if (DPSMateSettings["windows"][k]["CurMode"] == "dps") then
 		sortedTable, total, a = DPSMate:GetSortedTable(arr)
 		for cat, val in pairs(sortedTable) do
 			local dmg, tot, sort = DPSMate:FormatNumbers(val, total, sortedTable[1])
 			local str = {[1]="",[2]="",[3]=""}
-			if DPSMateSettings["columnsdps"][1] then str[1] = "("..dmg..p..")" end
-			if DPSMateSettings["columnsdps"][2] then str[2] = " "..string.format("%.1f", (dmg/cbt))..p end
+			if DPSMateSettings["columnsdps"][1] then str[1] = "("..dmg..p..")"; strt[1] = "("..tot..p..")" end
+			if DPSMateSettings["columnsdps"][2] then str[2] = " "..string.format("%.1f", (dmg/cbt))..p; strt[2] = " "..string.format("%.1f", (tot/cbt))..p end
 			if DPSMateSettings["columnsdps"][3] then str[3] = " ("..string.format("%.1f", 100*dmg/tot).."%)" end
 			table.insert(name, a[val])
 			table.insert(value, str[1]..str[2]..str[3])
@@ -325,16 +325,15 @@ function DPSMate:GetSettingValues(arr, cbt, k)
 		for cat, val in pairs(sortedTable) do
 			local dmg, tot, sort = DPSMate:FormatNumbers(val, total, sortedTable[1])
 			local str = {[1]="",[2]="",[3]=""}
-			if DPSMateSettings["columnsdmg"][1] then str[1] = " "..dmg..p end
-			if DPSMateSettings["columnsdmg"][2] then str[2] = "("..string.format("%.1f", (dmg/cbt))..p..")" end
+			if DPSMateSettings["columnsdmg"][1] then str[1] = " "..dmg..p; strt[2] = tot..p end
+			if DPSMateSettings["columnsdmg"][2] then str[2] = "("..string.format("%.1f", (dmg/cbt))..p..")"; strt[1] = "("..string.format("%.1f", (tot/cbt))..p..") " end
 			if DPSMateSettings["columnsdmg"][3] then str[3] = " ("..string.format("%.1f", 100*dmg/tot).."%)" end
 			table.insert(name, a[val])
 			table.insert(value, str[2]..str[1]..str[3])
 			table.insert(perc, ceil(100*(dmg/sort)))
 		end
 	end
-	_,total,_=DPSMate:FormatNumbers(0,total,0)
-	return name, value, perc, total
+	return name, value, perc, strt
 end
 
 function DPSMate:GetClassColor(class)
