@@ -573,7 +573,7 @@ function DPSMate.Options:SelectDetailsButton(i)
 	for p=1, 10 do
 		getglobal("DPSMate_Details_Log_ScrollButton"..p.."_selected"):Hide()
 	end
-	if (arr[DetailsUser][DetailsArr[lineplusoffset]]) then user=DetailsUser; pet=0; else user=arr[DetailsUser].pet; pet=5; end
+	if (arr[DetailsUser][DetailsArr[lineplusoffset]]) then user=DetailsUser; pet=0; else if arr[DetailsUser].pet then user=arr[DetailsUser].pet; pet=5; else user=DetailsUser; pet=0; end; end
 	getglobal("DPSMate_Details_Log_ScrollButton"..i.."_selected"):Show()
 	
 	local ability = strsub(DetailsArr[lineplusoffset], 1, strlen(DetailsArr[lineplusoffset])-pet)
@@ -1196,6 +1196,28 @@ function DPSMate.Options:NumberFormatDropDown()
 	DPSMate_ConfigMenu.visBars9 = true
 end
 
+function DPSMate.Options:TooltipPositionDropDown()
+	local btns = {"Default", "Top Right", "Top Left", "Left", "Top"}
+	
+	local function on_click()
+		DPSMateSettings["tooltipanchor"] = this.value
+		UIDropDownMenu_SetSelectedValue(DPSMate_ConfigMenu_Tab_Tooltips_Position, DPSMateSettings["tooltipanchor"])
+	end
+	
+	for val, name in pairs(btns) do
+		UIDropDownMenu_AddButton{
+			text = name,
+			value = val,
+			func = on_click,
+		}
+	end
+	
+	if not DPSMate_ConfigMenu.visBars10 then
+		UIDropDownMenu_SetSelectedValue(DPSMate_ConfigMenu_Tab_Tooltips_Position, DPSMateSettings["tooltipanchor"])
+	end
+	DPSMate_ConfigMenu.visBars10 = true
+end
+
 function DPSMate.Options:Report()
 	local channel = UIDropDownMenu_GetSelectedValue(DPSMate_Report_Channel)
 	local chn, index, sortedTable, total, a = nil, nil, DPSMate:GetSortedTable(DPSMate:GetMode(DPSMate_Report.PaKey))
@@ -1472,8 +1494,17 @@ function DPSMate.Options:ShowTooltip()
 		local arr = DPSMate:GetMode(DPSMate_Details.PaKey)
 		local user, pet = "", 0
 		DetailsArr, DetailsTotal = DPSMate.Options:EvalTable(this.user)
-		
-		GameTooltip:SetOwner(this:GetParent():GetParent():GetParent(), "TOPRIGHT")
+		if DPSMateSettings["tooltipanchor"] == 1 then
+			GameTooltip:SetOwner(UIParent, "BOTTOMRIGHT")
+		elseif DPSMateSettings["tooltipanchor"] == 2 then
+			GameTooltip:SetOwner(this:GetParent():GetParent():GetParent(), "RIGHT")
+		elseif DPSMateSettings["tooltipanchor"] == 3 then
+			GameTooltip:SetOwner(this:GetParent():GetParent():GetParent(), "LEFT")
+		elseif DPSMateSettings["tooltipanchor"] == 4 then
+			GameTooltip:SetOwner(this:GetParent():GetParent():GetParent(), "TOP")
+		elseif DPSMateSettings["tooltipanchor"] == 5 then
+			GameTooltip:SetOwner(this:GetParent():GetParent():GetParent(), "TOPRIGHT")
+		end
 		GameTooltip:AddLine(this.user.."'s damage done", 1,1,1)
 		if DPSMateSettings["informativetooltips"] then
 			for i=1, DPSMateSettings["subviewrows"] do

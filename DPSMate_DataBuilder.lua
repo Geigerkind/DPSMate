@@ -102,7 +102,7 @@ function DPSMate.DB:OnEvent(event)
 				showtooltips = true,
 				informativetooltips = true,
 				subviewrows = 3,
-				tooltipanchor = "Default",
+				tooltipanchor = 5,
 			}
 		end
 		if DPSMateHistory == nil then DPSMateHistory = {} end
