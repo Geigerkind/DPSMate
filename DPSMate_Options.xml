@@ -2706,6 +2706,11 @@
 				this:RegisterEvent("CHAT_MSG_COMBAT_PARTY_HITS")
 				this:RegisterEvent("CHAT_MSG_SPELL_PARTY_DAMAGE")
 				this:RegisterEvent("CHAT_MSG_COMBAT_PARTY_MISSES")
+				this:RegisterEvent("CHAT_MSG_SPELL_PERIODIC_PARTY_DAMAGE") --
+				this:RegisterEvent("CHAT_MSG_SPELL_FRIENDLYPLAYER_DAMAGE")
+				this:RegisterEvent("CHAT_MSG_SPELL_PERIODIC_FRIENDLYPLAYER_DAMAGE") --
+				this:RegisterEvent("CHAT_MSG_COMBAT_FRIENDLYPLAYER_HITS")
+				this:RegisterEvent("CHAT_MSG_COMBAT_FRIENDLYPLAYER_MISSES") --
 				
 				this:RegisterEvent("COMBAT_TEXT_UPDATE")
 				
