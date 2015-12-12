@@ -118,6 +118,7 @@ function DPSMate.DB:OnEvent(event)
 		
 		DPSMate:OnLoad()
 		DPSMate.Options:InitializeSegments()
+		DPSMate.Options:InitializeHideShowWindow()
 		
 		DPSMate.DB:CombatTime()
 		

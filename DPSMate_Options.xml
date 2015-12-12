@@ -906,6 +906,7 @@
 							</OnLoad>
 							<OnClick>
 								DPSMate.Options:CreateWindow()
+								DPSMate.Options:InitializeHideShowWindow()
 							</OnClick>
 						</Scripts>
 					</Button>
@@ -938,6 +939,7 @@
 							</OnLoad>
 							<OnClick>
 								DPSMate.Options:RemoveWindow()
+								DPSMate.Options:InitializeHideShowWindow()
 							</OnClick>
 						</Scripts>
 					</Button>

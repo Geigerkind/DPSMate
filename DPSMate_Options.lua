@@ -223,6 +223,24 @@ local Options = {
 				order = 35,
 				type = 'header',
 			},
+			showwindow = {
+				order = 36,
+				type = 'group',
+				name = "Show window",
+				desc = DPSMate.localization.desc.showwindow,
+				args = {},
+			},
+			hidewindow = {
+				order = 37,
+				type = 'group',
+				name = "Hide window",
+				desc = DPSMate.localization.desc.hidewindow,
+				args = {},
+			},
+			blank3 = {
+				order = 38,
+				type = 'header',
+			},
 			lock = {
 				order = 40,
 				type = 'toggle',
@@ -232,19 +250,12 @@ local Options = {
 				set = function() DPSMate.Options:Lock(); DPSMate.Options.Dewdrop:Close() end,
 			},
 			unlock = {
-				order = 40,
+				order = 50,
 				type = 'toggle',
 				name = "Unlock window",
 				desc = DPSMate.localization.desc.lock,
 				get = function() return not DPSMateSettings["lock"] end,
 				set = function() DPSMate.Options:Unlock(); DPSMate.Options.Dewdrop:Close() end,
-			},
-			hide = {
-				order = 50,
-				type = 'execute',
-				name = "Hide window",
-				desc = DPSMate.localization.desc.hide,
-				func = function() DPSMate.Options:Hide(DPSMate.Options.Dewdrop:GetOpenedParent()); DPSMate.Options.Dewdrop:Close() end,
 			},
 			configure = {
 				order = 80,
@@ -368,7 +379,7 @@ function DPSMate.Options:OnEvent(event)
 					DPSMate.Options:PopUpAccept()
 				end
 			end
-		else LastPartyNum > PartyNum then
+		elseif LastPartyNum > PartyNum then
 			if DPSMateSettings["dataresetsleaveparty"] == 3 then
 				if (GetTime()-LastPopUp) > TimeToNextPopUp and (DPSMate:TableLength(DPSMateUser) ~= 0 or DPSMate:TableLength(DPSMateUserCurrent) ~= 0) then
 					DPSMate_PopUp:Show()
@@ -1316,7 +1327,6 @@ end
 function DPSMate.Options:CreateWindow()
 	local na = DPSMate_ConfigMenu_Tab_Window_Editbox:GetText()
 	if (na and not DPSMate:GetKeyByValInTT(DPSMateSettings["windows"], na, "name") and na~="") then
-		local f=CreateFrame("Frame", "DPSMate_"..na, UIParent, "DPSMate_Statusframe")
 		table.insert(DPSMateSettings["windows"], {
 			name = na,
 			options = {
@@ -1341,6 +1351,14 @@ function DPSMate.Options:CreateWindow()
 					segment3 = false,
 					segment4 = false,
 					segment5 = false,
+					segment6 = false,
+					segment7 = false,
+					segment8 = false,
+					segment9 = false,
+					segment10 = false,
+					segment11 = false,
+					segment12 = false,
+					segment13 = false,
 				},
 				[3] = {
 					lock = false,
@@ -1348,7 +1366,7 @@ function DPSMate.Options:CreateWindow()
 			},
 			CurMode = "damage",
 		})
-		f.Key=DPSMate:TableLength(DPSMateSettings["windows"])
+		DPSMate:InitializeFrames()
 		getglobal("DPSMate_"..na.."_Head_Font"):SetText("Damage")
 		getglobal("DPSMate_"..na.."_ScrollFrame_Child"):SetWidth(150)
 		getglobal("DPSMate_"..na.."_ScrollFrame"):SetHeight(84)
@@ -1508,6 +1526,7 @@ function DPSMate.Options:ShowTooltip()
 		GameTooltip:AddLine(this.user.."'s damage done", 1,1,1)
 		if DPSMateSettings["informativetooltips"] then
 			for i=1, DPSMateSettings["subviewrows"] do
+				if not DetailsArr[i] then break end
 				if (arr[this.user][DetailsArr[i]]) then pet=0; else pet=5; end
 				local ability = strsub(DetailsArr[i], 1, strlen(DetailsArr[i])-pet)
 				GameTooltip:AddDoubleLine(i..". "..ability,arr[this.user][DetailsArr[i]].amount,1,1,1,1,1,1)
@@ -1518,3 +1537,29 @@ function DPSMate.Options:ShowTooltip()
 		GameTooltip:Show()
 	end
 end
+
+function DPSMate.Options:InitializeHideShowWindow()
+	local i = 1
+	Options[3]["args"]["hidewindow"]["args"] = {}
+	Options[3]["args"]["showwindow"]["args"] = {}
+	for _,val in pairs(DPSMateSettings["windows"]) do
+		Options[3]["args"]["hidewindow"]["args"][val["name"]] = {
+			order = i*10,
+			type = 'execute',
+			name = val["name"],
+			desc = "Hide "..val["name"],
+			func = loadstring('getglobal("DPSMate_'..val["name"]..'"):Hide(); DPSMate.Options.Dewdrop:Close();'),
+		}
+		Options[3]["args"]["showwindow"]["args"][val["name"]] = {
+			order = i*10,
+			type = 'execute',
+			name = val["name"],
+			desc = "Show "..val["name"],
+			func = loadstring('getglobal("DPSMate_'..val["name"]..'"):Show(); DPSMate.Options.Dewdrop:Close();'),
+		}
+		i=i+1
+	end
+end
+
+
+
