@@ -2568,6 +2568,11 @@
 								getglobal(this:GetName().."_Title"):SetText("Show tooltips")
 							</OnLoad>
 							<OnClick>
+								if DPSMateSettings["showtooltips"] then
+									DPSMateSettings["showtooltips"] = false
+								else
+									DPSMateSettings["showtooltips"] = true
+								end
 							</OnClick>
 						</Scripts>
 					</CheckButton>
@@ -2582,6 +2587,11 @@
 								getglobal(this:GetName().."_Title"):SetText("Informative tooltips")
 							</OnLoad>
 							<OnClick>
+								if DPSMateSettings["informativetooltips"] then
+									DPSMateSettings["informativetooltips"] = false
+								else
+									DPSMateSettings["informativetooltips"] = true
+								end
 							</OnClick>
 						</Scripts>
 					</CheckButton>
@@ -2595,9 +2605,9 @@
 							<OnLoad>
 								this.aide = "HELP"
 								this.func = function() 
-									
+									DPSMateSettings["subviewrows"] = this:GetValue()
 								end
-								this:SetMinMaxValues(1,32)
+								this:SetMinMaxValues(1,10)
 								this:SetValueStep(1)
 								getglobal(this:GetName().."Text"):SetText("Subview rows")
 								getglobal(this:GetName().."Low"):SetText("1")

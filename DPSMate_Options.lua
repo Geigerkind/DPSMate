@@ -338,6 +338,11 @@ function DPSMate.Options:InitializeConfigMenu()
 	getglobal("DPSMate_ConfigMenu_Tab_Columns_Container_Damage_Check1"):SetChecked(DPSMateSettings["columnsdmg"][1])
 	getglobal("DPSMate_ConfigMenu_Tab_Columns_Container_Damage_Check2"):SetChecked(DPSMateSettings["columnsdmg"][2])
 	getglobal("DPSMate_ConfigMenu_Tab_Columns_Container_Damage_Check3"):SetChecked(DPSMateSettings["columnsdmg"][3])
+	
+	-- Tab Tooltips
+	getglobal("DPSMate_ConfigMenu_Tab_Tooltips_Tooltips"):SetChecked(DPSMateSettings["showtooltips"])
+	getglobal("DPSMate_ConfigMenu_Tab_Tooltips_InformativeTooltips"):SetChecked(DPSMateSettings["informativetooltips"])
+	getglobal("DPSMate_ConfigMenu_Tab_Tooltips_Rows"):SetValue(DPSMateSettings["subviewrows"])
 end
 
 function DPSMate.Options:OnEvent(event)
@@ -530,6 +535,7 @@ function DPSMate.Options:EvalTable(t)
 	local a, u, p = {}, {}, {}
 	local total, pet = 0, ""
 	local arr = DPSMate:GetMode(DPSMate_Details.PaKey)
+	if not arr[t] then return end
 	if (arr[t].pet and arr[t].pet ~= "Unknown" and arr[arr[t].pet]) then u={a=t, b=arr[t].pet} else u={a=t} end
 	for c, v in pairs(u) do
 		for cat, val in pairs(arr[v]) do
@@ -1457,4 +1463,27 @@ function DPSMate.Options:OpenColorPicker(obj, var, func)
 	ColorPickerFrame:SetPoint("TOPLEFT", obj, "TOPRIGHT", 0, 0)
 
 	ColorPickerFrame:Show()
+end
+
+function DPSMate.Options:ShowTooltip()
+	if not this.user then return end
+	if DPSMateSettings["showtooltips"] then
+		DPSMate_Details.PaKey = this:GetParent():GetParent():GetParent().Key
+		local arr = DPSMate:GetMode(DPSMate_Details.PaKey)
+		local user, pet = "", 0
+		DetailsArr, DetailsTotal = DPSMate.Options:EvalTable(this.user)
+		
+		GameTooltip:SetOwner(this:GetParent():GetParent():GetParent(), "TOPRIGHT")
+		GameTooltip:AddLine(this.user.."'s damage done", 1,1,1)
+		if DPSMateSettings["informativetooltips"] then
+			for i=1, DPSMateSettings["subviewrows"] do
+				if (arr[this.user][DetailsArr[i]]) then pet=0; else pet=5; end
+				local ability = strsub(DetailsArr[i], 1, strlen(DetailsArr[i])-pet)
+				GameTooltip:AddDoubleLine(i..". "..ability,arr[this.user][DetailsArr[i]].amount,1,1,1,1,1,1)
+			end
+		end
+		GameTooltip:AddLine(" ")
+		GameTooltip:AddLine("LeftClick to open the details.")
+		GameTooltip:Show()
+	end
 end

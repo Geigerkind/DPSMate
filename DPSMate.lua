@@ -318,7 +318,7 @@ function DPSMate:GetSettingValues(arr, cbt, k)
 			if DPSMateSettings["columnsdps"][3] then str[3] = " ("..string.format("%.1f", 100*dmg/tot).."%)" end
 			table.insert(name, a[val])
 			table.insert(value, str[1]..str[2]..str[3])
-			table.insert(perc, ceil(100*(val/sort)))
+			table.insert(perc, ceil(100*(dmg/sort)))
 		end
 	elseif (DPSMateSettings["windows"][k]["CurMode"] == "damage") then
 		sortedTable, total, a = DPSMate:GetSortedTable(arr)

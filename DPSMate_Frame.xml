@@ -47,6 +47,12 @@
 			<OnMouseUp>
 				DPSMate.Options:UpdateDetails(this)
 			</OnMouseUp>
+			<OnEnter>
+				DPSMate.Options:ShowTooltip()
+			</OnEnter>
+			<OnLeave>
+				GameTooltip:Hide()
+			</OnLeave>
 		</Scripts>
 	</StatusBar>
 	
