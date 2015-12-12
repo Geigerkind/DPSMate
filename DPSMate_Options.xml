@@ -651,10 +651,10 @@
 		<Layers>
 			<Layer level="ARTWORK">
 				<FontString name="$parent_Text" inherits="GameFontNormalSmall" justifyH="LEFT" justifyV="TOP">
-					<Size x="270" y="20" />
+					<Size x="270" y="50" />
 					<Anchors>
 						<Anchor point="BOTTOMLEFT" relativeTo="$parent" relativePoint="TOPLEFT">
-							<Offset x="5" y="-25" />
+							<Offset x="5" y="-55" />
 						</Anchor>
 					</Anchors>
 					<Color r="1" g="1" b="1" />
@@ -2603,13 +2603,13 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								this.aide = "HELP"
+								this.aide = DPSMate.localization.config.subviewrowsTooltip
 								this.func = function() 
 									DPSMateSettings["subviewrows"] = this:GetValue()
 								end
 								this:SetMinMaxValues(1,10)
 								this:SetValueStep(1)
-								getglobal(this:GetName().."Text"):SetText("Subview rows")
+								getglobal(this:GetName().."Text"):SetText(DPSMate.localization.config.subviewrows)
 								getglobal(this:GetName().."Low"):SetText("1")
 								getglobal(this:GetName().."High"):SetText("10")
 							</OnLoad>
@@ -2624,9 +2624,9 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								this.aide = "HELP"
+								this.aide = DPSMate.localization.config.TooltipPositionDropDownTooltip
 								this.func = DPSMate.Options.TooltipPositionDropDown
-								this.title = "Tooltip position"
+								this.title = DPSMate.localization.config.TooltipPositionDropDown
 								UIDropDownMenu_SetWidth(120)
 								getglobal(this:GetName().."_Text"):SetText(this.title)
 							</OnLoad>
@@ -2642,6 +2642,7 @@
 				</Anchors>
 				<Frames>
 					<Frame name="$parent_What" inherits="DPSMate_Template_TextBox">
+						<Size x="280" y="50" />
 						<Anchors>
 							<Anchor point="TOP" relativeTo="$parent" relativePoint="TOP">
 								<Offset x="0" y="-17" />
@@ -2649,34 +2650,35 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								getglobal(this:GetName().."_Title"):SetText("What is DPSMate?")
-								getglobal(this:GetName().."_Text"):SetText("TESTESTESTEYXSS TESTESTESTEYXSS TESTESTESTEYXSS TESTESTESTEYXSS TESTESTESTEYXSS TESTESTESTEYXSS")
+								getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.whatisdpsmate)
+								getglobal(this:GetName().."_Text"):SetText(DPSMate.localization.config.whatisdpsmateText)
 							</OnLoad>
 						</Scripts>
 					</Frame>
 					<Frame name="$parent_Who" inherits="DPSMate_Template_TextBox">
+						<Size x="280" y="50" />
 						<Anchors>
-							<Anchor point="TOP" relativeTo="$parent_What" relativePoint="BOTTOm">
+							<Anchor point="TOP" relativeTo="$parent_What" relativePoint="BOTTOM">
 								<Offset x="0" y="-17" />
 							</Anchor>
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								getglobal(this:GetName().."_Title"):SetText("Who created DPSMate?")
-								getglobal(this:GetName().."_Text"):SetText("Shino :D")
+								getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.whocreateddpsmate)
+								getglobal(this:GetName().."_Text"):SetText(DPSMate.localization.config.whocreateddpsmateText)
 							</OnLoad>
 						</Scripts>
 					</Frame>
 					<Frame name="$parent_Thanks" inherits="DPSMate_Template_TextBox">
 						<Anchors>
-							<Anchor point="TOP" relativeTo="$parent_Who" relativePoint="BOTTOm">
+							<Anchor point="TOP" relativeTo="$parent_Who" relativePoint="BOTTOM">
 								<Offset x="0" y="-17" />
 							</Anchor>
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								getglobal(this:GetName().."_Title"):SetText("Thanks to following supporters:")
-								getglobal(this:GetName().."_Text"):SetText("Shino :D")
+								getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.thanksto)
+								getglobal(this:GetName().."_Text"):SetText(DPSMate.localization.config.thankstoText)
 							</OnLoad>
 						</Scripts>
 					</Frame>
