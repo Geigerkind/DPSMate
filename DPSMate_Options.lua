@@ -368,7 +368,7 @@ function DPSMate.Options:OnEvent(event)
 					DPSMate.Options:PopUpAccept()
 				end
 			end
-		else
+		else LastPartyNum > PartyNum then
 			if DPSMateSettings["dataresetsleaveparty"] == 3 then
 				if (GetTime()-LastPopUp) > TimeToNextPopUp and (DPSMate:TableLength(DPSMateUser) ~= 0 or DPSMate:TableLength(DPSMateUserCurrent) ~= 0) then
 					DPSMate_PopUp:Show()
