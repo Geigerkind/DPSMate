@@ -129,6 +129,7 @@ function DPSMate.DB:OnEvent(event)
 		end
 		if DPSMateSettings["hideincombat"] then
 			for _, val in pairs(DPSMateSettings["windows"]) do
+				if not val then break end
 				DPSMate.Options:Hide(getglobal("DPSMate_"..val["name"]))
 			end
 			if DPSMateSettings["disablewhilehidden"] then
@@ -142,6 +143,7 @@ function DPSMate.DB:OnEvent(event)
 		CombatState = false
 		if DPSMateSettings["hideincombat"] then
 			for _, val in pairs(DPSMateSettings["windows"]) do
+				if not val then break end
 				DPSMate.Options:Show(getglobal("DPSMate_"..val["name"]))
 			end
 			DPSMate:Enable()
@@ -179,7 +181,9 @@ end
 function DPSMate.DB:AssignPet()
 	local pets = DPSMate.DB:GetPets()
 	for _, v in pairs({DPSMateUser, DPSMateUserCurrent}) do
+		if not v then break end
 		for cat, val in pairs(v) do
+			if not val then break end
 			if (pets[cat]) then
 				v[cat]["pet"] = pets[cat]
 				if (v[pets[cat]]) then
@@ -194,12 +198,15 @@ function DPSMate.DB:AssignClass()
 	local classEng
 	if DPSMate.DB:PlayerInParty() then
 		for i=1,4 do
-			for _, v in pairs({DPSMateUser, DPSMateUserCurrent}) do
-				if v[UnitName("party"..i)] then
-					if (not v[UnitName("party"..i)].class) then
-						_,classEng,_ = UnitClass("party"..i)
-						if (classEng) then
-							v[UnitName("party"..i)].class = strlower(classEng)
+			if UnitExists("party"..i) then
+				for _, v in pairs({DPSMateUser, DPSMateUserCurrent}) do
+					if not v then break end
+					if v[UnitName("party"..i)] then
+						if (not v[UnitName("party"..i)].class) then
+							t,classEng = UnitClass("party"..i)
+							if (classEng) then
+								v[UnitName("party"..i)].class = strlower(classEng)
+							end
 						end
 					end
 				end
@@ -207,12 +214,15 @@ function DPSMate.DB:AssignClass()
 		end
 	elseif UnitInRaid("player") then
 		for i=1,40 do
-			for _, v in pairs({DPSMateUser, DPSMateUserCurrent}) do
-				if v[UnitName("raid"..i)] then
-					if (not v[UnitName("raid"..i)].class) then
-						_,classEng,_ = UnitClass("raid"..i)
-						if (classEng) then
-							v[UnitName("raid"..i)].class = strlower(classEng)
+			if UnitExists("raid"..i) then
+				for _, v in pairs({DPSMateUser, DPSMateUserCurrent}) do
+					if not v then break end
+					if v[UnitName("raid"..i)] then
+						if (not v[UnitName("raid"..i)].class) then
+							t,classEng = UnitClass("raid"..i)
+							if (classEng) then
+								v[UnitName("raid"..i)].class = strlower(classEng)
+							end
 						end
 					end
 				end
@@ -221,7 +231,6 @@ function DPSMate.DB:AssignClass()
 	end
 end
 
--- Duplicated at options?
 function DPSMate.DB:PlayerInParty()
 	if GetNumPartyMembers() > 0 and (not UnitInRaid("player")) then
 		return true
@@ -236,7 +245,7 @@ function DPSMate.DB:BuildUser(Dname, Dclass)
 			damage = 0,
 			damagetaken = 0,
 			dmgTime = {},
-			procs = {},
+			procs = {}
 		}
 	end
 	if (not DPSMateUserCurrent[Dname]) then
@@ -245,101 +254,57 @@ function DPSMate.DB:BuildUser(Dname, Dclass)
 			damage = 0,
 			damagetaken = 0,
 			dmgTime = {},
-			procs = {},
+			procs = {}
 		}
 	end
 end
 
 function DPSMate.DB:BuildUserAbility(Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, Ddodge, Dresist, Damount, Dtype)
-	if (not Duser or Duser == {}) then return end -- Parsing failure, I guess at AEO periodic abilitys
-	-- Total
-	if DPSMate.DB:DataExist(Duser.name, Dname, DPSMateUser) then
-		if Dtype == 0 then
-			DPSMateUser[Duser.name].damage = DPSMateUser[Duser.name].damage + Damount
-		elseif Dtype == 1 then
-			DPSMateUser[Duser.name].damagetaken = DPSMateUser[Duser.name].damagetaken + Damount
-		end
-		DPSMateUser[Duser.name][Dname].hit = DPSMateUser[Duser.name][Dname].hit + Dhit
-		DPSMateUser[Duser.name][Dname].crit = DPSMateUser[Duser.name][Dname].crit + Dcrit
-		DPSMateUser[Duser.name][Dname].miss = DPSMateUser[Duser.name][Dname].miss + Dmiss
-		DPSMateUser[Duser.name][Dname].parry = DPSMateUser[Duser.name][Dname].parry + Dparry
-		DPSMateUser[Duser.name][Dname].dodge = DPSMateUser[Duser.name][Dname].dodge + Ddodge
-		DPSMateUser[Duser.name][Dname].resist = DPSMateUser[Duser.name][Dname].resist + Dresist
-		DPSMateUser[Duser.name][Dname].amount = DPSMateUser[Duser.name][Dname].amount + Damount
-		if (Damount < DPSMateUser[Duser.name][Dname].hitlow or DPSMateUser[Duser.name][Dname].hitlow == 0) and Dhit == 1 then DPSMateUser[Duser.name][Dname].hitlow = Damount end
-		if Damount > DPSMateUser[Duser.name][Dname].hithigh and Dhit == 1 then DPSMateUser[Duser.name][Dname].hithigh = Damount end
-		if (Damount < DPSMateUser[Duser.name][Dname].critlow or DPSMateUser[Duser.name][Dname].critlow == 0) and Dcrit == 1 then DPSMateUser[Duser.name][Dname].critlow = Damount end
-		if Damount > DPSMateUser[Duser.name][Dname].crithigh and Dcrit == 1 then DPSMateUser[Duser.name][Dname].crithigh = Damount end
-	else
-		if (not DPSMateUser[Duser.name])  then
-			DPSMate.DB:BuildUser(Duser.name, Duser.class)
-		end
-		if Dtype == 0 then
-			DPSMateUser[Duser.name].damage = DPSMateUser[Duser.name].damage + Damount
-		elseif Dtype == 1 then
-			DPSMateUser[Duser.name].damagetaken = DPSMateUser[Duser.name].damagetaken + Damount
-		end
-		DPSMateUser[Duser.name][Dname] = {
-			hit = Dhit,
-			hitlow = 0,
-			hithigh = 0,
-			crit = Dcrit,
-			critlow = 0,
-			crithigh = 0,
-			miss = Dmiss,
-			parry = Dparry,
-			dodge = Ddodge,
-			resist = Dresist,
-			amount = Damount,
-			type = Dtype,
-		}
-		if (Dhit == 1) then DPSMateUser[Duser.name][Dname].hitlow = Damount; DPSMateUser[Duser.name][Dname].hithigh = Damount end
-		if (Dcrit == 1) then DPSMateUser[Duser.name][Dname].critlow = Damount; DPSMateUser[Duser.name][Dname].crithigh = Damount end
-	end
+	if (DPSMate:TableLength(Duser)==0 or not Dname or not Damount) then return end -- Parsing failure, I guess at AEO periodic abilitys
 	
-	-- Current data
-	if DPSMate.DB:DataExist(Duser.name, Dname, DPSMateUserCurrent) then
-		if Dtype == 0 then
-			DPSMateUserCurrent[Duser.name].damage = DPSMateUserCurrent[Duser.name].damage + Damount
-		elseif Dtype == 1 then
-			DPSMateUserCurrent[Duser.name].damagetaken = DPSMateUserCurrent[Duser.name].damagetaken + Damount
-		end
-		DPSMateUserCurrent[Duser.name][Dname].hit = DPSMateUserCurrent[Duser.name][Dname].hit + Dhit
-		DPSMateUserCurrent[Duser.name][Dname].crit = DPSMateUserCurrent[Duser.name][Dname].crit + Dcrit
-		DPSMateUserCurrent[Duser.name][Dname].miss = DPSMateUserCurrent[Duser.name][Dname].miss + Dmiss
-		DPSMateUserCurrent[Duser.name][Dname].parry = DPSMateUserCurrent[Duser.name][Dname].parry + Dparry
-		DPSMateUserCurrent[Duser.name][Dname].dodge = DPSMateUserCurrent[Duser.name][Dname].dodge + Ddodge
-		DPSMateUserCurrent[Duser.name][Dname].resist = DPSMateUserCurrent[Duser.name][Dname].resist + Dresist
-		DPSMateUserCurrent[Duser.name][Dname].amount = DPSMateUserCurrent[Duser.name][Dname].amount + Damount
-		if (Damount < DPSMateUserCurrent[Duser.name][Dname].hitlow or DPSMateUserCurrent[Duser.name][Dname].hitlow == 0) and Dhit == 1 then DPSMateUserCurrent[Duser.name][Dname].hitlow = Damount end
-		if Damount > DPSMateUserCurrent[Duser.name][Dname].hithigh and Dhit == 1 then DPSMateUserCurrent[Duser.name][Dname].hithigh = Damount end
-		if (Damount < DPSMateUserCurrent[Duser.name][Dname].critlow or DPSMateUserCurrent[Duser.name][Dname].critlow == 0) and Dcrit == 1 then DPSMateUserCurrent[Duser.name][Dname].critlow = Damount end
-		if Damount > DPSMateUserCurrent[Duser.name][Dname].crithigh and Dcrit == 1 then DPSMateUserCurrent[Duser.name][Dname].crithigh = Damount end
-	else
-		if (not DPSMateUserCurrent[Duser.name])  then
+	-- Total
+	for _, val in pairs({DPSMateUser, DPSMateUserCurrent}) do
+		if DPSMate.DB:DataExist(Duser.name, Dname, val) then
+			if Dtype == 0 then
+				val[Duser.name].damage = val[Duser.name].damage + Damount
+			elseif Dtype == 1 then
+				val[Duser.name].damagetaken = val[Duser.name].damagetaken + Damount
+			end
+			val[Duser.name][Dname].hit = val[Duser.name][Dname].hit + Dhit
+			val[Duser.name][Dname].crit = val[Duser.name][Dname].crit + Dcrit
+			val[Duser.name][Dname].miss = val[Duser.name][Dname].miss + Dmiss
+			val[Duser.name][Dname].parry = val[Duser.name][Dname].parry + Dparry
+			val[Duser.name][Dname].dodge = val[Duser.name][Dname].dodge + Ddodge
+			val[Duser.name][Dname].resist = val[Duser.name][Dname].resist + Dresist
+			val[Duser.name][Dname].amount = val[Duser.name][Dname].amount + Damount
+			if (Damount < val[Duser.name][Dname].hitlow or val[Duser.name][Dname].hitlow == 0) and Dhit == 1 then val[Duser.name][Dname].hitlow = Damount end
+			if Damount > val[Duser.name][Dname].hithigh and Dhit == 1 then val[Duser.name][Dname].hithigh = Damount end
+			if (Damount < val[Duser.name][Dname].critlow or val[Duser.name][Dname].critlow == 0) and Dcrit == 1 then val[Duser.name][Dname].critlow = Damount end
+			if Damount > val[Duser.name][Dname].crithigh and Dcrit == 1 then val[Duser.name][Dname].crithigh = Damount end
+		else
 			DPSMate.DB:BuildUser(Duser.name, Duser.class)
+			if Dtype == 0 then
+				val[Duser.name].damage = val[Duser.name].damage + Damount
+			elseif Dtype == 1 then
+				val[Duser.name].damagetaken = val[Duser.name].damagetaken + Damount
+			end
+			val[Duser.name][Dname] = {
+				hit = Dhit,
+				hitlow = 0,
+				hithigh = 0,
+				crit = Dcrit,
+				critlow = 0,
+				crithigh = 0,
+				miss = Dmiss,
+				parry = Dparry,
+				dodge = Ddodge,
+				resist = Dresist,
+				amount = Damount,
+				type = Dtype,
+			}
+			if (Dhit == 1) then val[Duser.name][Dname].hitlow = Damount; val[Duser.name][Dname].hithigh = Damount end
+			if (Dcrit == 1) then val[Duser.name][Dname].critlow = Damount; val[Duser.name][Dname].crithigh = Damount end
 		end
-		if Dtype == 0 then
-			DPSMateUserCurrent[Duser.name].damage = DPSMateUserCurrent[Duser.name].damage + Damount
-		elseif Dtype == 1 then
-			DPSMateUserCurrent[Duser.name].damagetaken = DPSMateUserCurrent[Duser.name].damagetaken + Damount
-		end
-		DPSMateUserCurrent[Duser.name][Dname] = {
-			hit = Dhit,
-			hitlow = 0,
-			hithigh = 0,
-			crit = Dcrit,
-			critlow = 0,
-			crithigh = 0,
-			miss = Dmiss,
-			parry = Dparry,
-			dodge = Ddodge,
-			resist = Dresist,
-			amount = Damount,
-			type = Dtype,
-		}
-		if (Dhit == 1) then DPSMateUserCurrent[Duser.name][Dname].hitlow = Damount; DPSMateUserCurrent[Duser.name][Dname].hithigh = Damount end
-		if (Dcrit == 1) then DPSMateUserCurrent[Duser.name][Dname].critlow = Damount; DPSMateUserCurrent[Duser.name][Dname].crithigh = Damount end
 	end
 	DPSMateUser[Duser.name]["dmgTime"][DPSMateCombatTime["total"]] = Damount
 	DPSMateUserCurrent[Duser.name]["dmgTime"][DPSMateCombatTime["current"]] = Damount

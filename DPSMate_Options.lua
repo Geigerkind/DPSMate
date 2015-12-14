@@ -476,7 +476,7 @@ function DPSMate.Options:OpenMenu(b, obj)
 			DPSMate.Options.Dewdrop:Close()
 			return
 		end
-	if DPSMate.Options.Dewdrop:IsRegistered(getglobal("DPSMate_"..val["name"])) then DPSMate.Options.Dewdrop:Unregister(getglobal("DPSMate_"..val["name"])) end
+		if DPSMate.Options.Dewdrop:IsRegistered(getglobal("DPSMate_"..val["name"])) then DPSMate.Options.Dewdrop:Unregister(getglobal("DPSMate_"..val["name"])) end
 	end
 	DPSMate.Options.Dewdrop:Register(obj,
 		'children', function() 
@@ -1292,6 +1292,7 @@ function DPSMate.Options:InitializeSegments()
 	}
 	Options[3]["args"]["deletesegment"]["args"] = {}
 	for cat, val in pairs(DPSMateHistory) do
+		if not val then break end
 		Options[2]["args"]["segment"..i] = {
 			order = 20+i*10,
 			type = 'toggle',

@@ -286,7 +286,7 @@ function DPSMate:SetStatusBarValue()
 		end
 		if (not user[1]) then break end
 		for i=1, 30 do
-			if (not user[i]) then break end -- To prevent visual issues
+			if (not user[i] or perc[i]==0) then break end -- To prevent visual issues
 			local statusbar, name, value, texture, p = getglobal("DPSMate_"..c["name"].."_ScrollFrame_Child_StatusBar"..i), getglobal("DPSMate_"..c["name"].."_ScrollFrame_Child_StatusBar"..i.."_Name"), getglobal("DPSMate_"..c["name"].."_ScrollFrame_Child_StatusBar"..i.."_Value"), getglobal("DPSMate_"..c["name"].."_ScrollFrame_Child_StatusBar"..i.."_Icon"), ""
 			
 			local r,g,b, img = DPSMate:GetClassColor(arr[user[i]].class)
@@ -326,7 +326,7 @@ function DPSMate:GetSettingValues(arr, cbt, k)
 			if DPSMateSettings["columnsdps"][3] then str[3] = " ("..string.format("%.1f", 100*dmg/tot).."%)" end
 			table.insert(name, a[val])
 			table.insert(value, str[1]..str[2]..str[3])
-			table.insert(perc, ceil(100*(dmg/sort)))
+			table.insert(perc, 100*(dmg/sort))
 		end
 	elseif (DPSMateSettings["windows"][k]["CurMode"] == "damage") then
 		sortedTable, total, a = DPSMate:GetSortedTable(arr)
@@ -338,7 +338,7 @@ function DPSMate:GetSettingValues(arr, cbt, k)
 			if DPSMateSettings["columnsdmg"][3] then str[3] = " ("..string.format("%.1f", 100*dmg/tot).."%)" end
 			table.insert(name, a[val])
 			table.insert(value, str[2]..str[1]..str[3])
-			table.insert(perc, ceil(100*(dmg/sort)))
+			table.insert(perc, 100*(dmg/sort))
 		end
 	end
 	return name, value, perc, strt
