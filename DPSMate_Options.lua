@@ -459,15 +459,24 @@ end
 
 function DPSMate.Options:PopUpAccept()
 	DPSMate_PopUp:Hide()
-	DPSMateUser = {}
-	DPSMateUserCurrent = {}
+	for cat, val in pairs(DPSMateDamageDone) do
+		for c,_ in pairs(val) do
+			DPSMateDamageDone[cat][c] = {
+				info = {
+					[1] = {},
+					[2] = {},
+					[3] = 0,
+				},
+			}
+		end
+	end
 	DPSMateHistory = {}
 	DPSMateCombatTime = {
 		total = 1,
 		current = 1,
 		segments = {},
 	}
-	DPSMate:HideStatusBars()
+	DPSMate:SetStatusBarValue()
 end
 
 function DPSMate.Options:OpenMenu(b, obj)
@@ -509,16 +518,16 @@ function DPSMate.Options:ScrollFrame_Update()
 	local line, lineplusoffset
 	local obj = getglobal("DPSMate_Details_Log_ScrollFrame")
 	local arr = DPSMate:GetMode(DPSMate_Details.PaKey)
-	local user, pet, len = "", 0, DPSMate:TableLength(arr[DetailsUser])-5
-	DetailsArr, DetailsTotal = DPSMate.Options:EvalTable(DetailsUser)
+	local user, pet, len = "", 0, DPSMate:TableLength(arr[DPSMateUser[DetailsUser]["id"]])-5
+	DetailsArr, DetailsTotal = DPSMate.Options:EvalTable(DPSMateUser[DetailsUser]["id"])
 	FauxScrollFrame_Update(obj,DPSMate:TableLength(arr),10,24)
 	for line=1,10 do
 		lineplusoffset = line + FauxScrollFrame_GetOffset(obj)
 		if DetailsArr[lineplusoffset] ~= nil then
-			if (arr[DetailsUser][DetailsArr[lineplusoffset]]) then user=DetailsUser;pet=0; else user=arr[DetailsUser].pet;pet=5; end
+			if (arr[DPSMateUser[DetailsUser]["id"]][DetailsArr[lineplusoffset]]) then user=DetailsUser;pet=0; else user=DPSMateUser[DetailsUser].pet;pet=5; end
 			local ability = strsub(DetailsArr[lineplusoffset], 1, strlen(DetailsArr[lineplusoffset])-pet)
 			getglobal("DPSMate_Details_Log_ScrollButton"..line.."_Name"):SetText(DetailsArr[lineplusoffset])
-			getglobal("DPSMate_Details_Log_ScrollButton"..line.."_Value"):SetText(arr[user][ability].amount.." ("..string.format("%.2f", (arr[user][ability].amount*100/DetailsTotal)).."%)")
+			getglobal("DPSMate_Details_Log_ScrollButton"..line.."_Value"):SetText(arr[DPSMateUser[DetailsUser]["id"]][ability]["amount"].." ("..string.format("%.2f", (arr[DPSMateUser[DetailsUser]["id"]][ability]["amount"]*100/DetailsTotal)).."%)")
 			if icons[ability] then
 				getglobal("DPSMate_Details_Log_ScrollButton"..line.."_Icon"):SetTexture(icons[ability])
 			else
@@ -547,10 +556,10 @@ function DPSMate.Options:EvalTable(t)
 	local total, pet = 0, ""
 	local arr = DPSMate:GetMode(DPSMate_Details.PaKey)
 	if not arr[t] then return end
-	if (arr[t].pet and arr[t].pet ~= "Unknown" and arr[arr[t].pet]) then u={a=t, b=arr[t].pet} else u={a=t} end
-	for c, v in pairs(u) do
+	if (arr[t].pet and arr[t].pet ~= "Unknown" and arr[arr[t].pet]) then u={t,arr[t].pet} else u={t} end
+	for _, v in pairs(u) do
 		for cat, val in pairs(arr[v]) do
-			if (type(val) == "table" and cat~="dmgTime" and cat~="procs") then
+			if (type(val) == "table" and cat~="info") then
 				if (arr[v].isPet) then pet="(Pet)"; else pet=""; end
 				local i = 1
 				while true do
@@ -569,7 +578,7 @@ function DPSMate.Options:EvalTable(t)
 				end
 			end
 		end
-		total=total+arr[v].damage
+		total=total+arr[v]["info"][3]
 	end
 	return a, total
 end
@@ -584,11 +593,11 @@ function DPSMate.Options:SelectDetailsButton(i)
 	for p=1, 10 do
 		getglobal("DPSMate_Details_Log_ScrollButton"..p.."_selected"):Hide()
 	end
-	if (arr[DetailsUser][DetailsArr[lineplusoffset]]) then user=DetailsUser; pet=0; else if arr[DetailsUser].pet then user=arr[DetailsUser].pet; pet=5; else user=DetailsUser; pet=0; end; end
+	if (arr[DPSMateUser[DetailsUser]["id"]][DetailsArr[lineplusoffset]]) then user=DPSMateUser[DetailsUser]["id"]; pet=0; else if DPSMateUser[DetailsUser]["id"].pet then user=DPSMateUser[DetailsUser]["id"].pet; pet=5; else user=DPSMateUser[DetailsUser]["id"]; pet=0; end; end
 	getglobal("DPSMate_Details_Log_ScrollButton"..i.."_selected"):Show()
 	
 	local ability = strsub(DetailsArr[lineplusoffset], 1, strlen(DetailsArr[lineplusoffset])-pet)
-	local hit, crit, miss, parry, dodge, resist, hitMin, hitMax, critMin, critMax = arr[user][ability].hit, arr[user][ability].crit, arr[user][ability].miss, arr[user][ability].parry, arr[user][ability].dodge, arr[user][ability].resist, arr[user][ability].hitlow, arr[user][ability].hithigh, arr[user][ability].critlow, arr[user][ability].crithigh
+	local hit, crit, miss, parry, dodge, resist, hitMin, hitMax, critMin, critMax, hitav, critav = arr[user][ability].hit, arr[user][ability].crit, arr[user][ability].miss, arr[user][ability].parry, arr[user][ability].dodge, arr[user][ability].resist, arr[user][ability].hitlow, arr[user][ability].hithigh, arr[user][ability].critlow, arr[user][ability].crithigh,  arr[user][ability].hitaverage,  arr[user][ability].critaverage
 	local total, max = hit+crit+miss+parry+dodge+resist, DPSMate:TMax({hit, crit, miss, parry, dodge, resist})
 	
 	-- Hit
@@ -596,7 +605,7 @@ function DPSMate.Options:SelectDetailsButton(i)
 	getglobal("DPSMate_Details_LogDetails_Amount1_Percent"):SetText(ceil(100*hit/total).."%")
 	getglobal("DPSMate_Details_LogDetails_Amount1_StatusBar"):SetValue(ceil(100*hit/max))
 	getglobal("DPSMate_Details_LogDetails_Amount1_StatusBar"):SetStatusBarColor(0.9,0.0,0.0,1)
-	getglobal("DPSMate_Details_LogDetails_Average1"):SetText((hitMin+hitMax)/2)
+	getglobal("DPSMate_Details_LogDetails_Average1"):SetText(ceil(hitav))
 	getglobal("DPSMate_Details_LogDetails_Min1"):SetText(hitMin)
 	getglobal("DPSMate_Details_LogDetails_Max1"):SetText(hitMax)
 	
@@ -605,7 +614,7 @@ function DPSMate.Options:SelectDetailsButton(i)
 	getglobal("DPSMate_Details_LogDetails_Amount2_Percent"):SetText(ceil(100*crit/total).."%")
 	getglobal("DPSMate_Details_LogDetails_Amount2_StatusBar"):SetValue(ceil(100*crit/max))
 	getglobal("DPSMate_Details_LogDetails_Amount2_StatusBar"):SetStatusBarColor(0.0,0.9,0.0,1)
-	getglobal("DPSMate_Details_LogDetails_Average2"):SetText((critMin+critMax)/2)
+	getglobal("DPSMate_Details_LogDetails_Average2"):SetText(ceil(critav))
 	getglobal("DPSMate_Details_LogDetails_Min2"):SetText(critMin)
 	getglobal("DPSMate_Details_LogDetails_Max2"):SetText(critMax)
 	
@@ -652,7 +661,7 @@ function DPSMate.Options:UpdatePie()
 	local user,pet = "",0
 	g:ResetPie()
 	for cat, val in pairs(DetailsArr) do
-		if (arr[DetailsUser][DetailsArr[i]]) then user=DetailsUser;pet=0; else user=arr[DetailsUser].pet;pet=5; end
+		if (arr[DPSMateUser[DetailsUser]["id"]][DetailsArr[i]]) then user=DPSMateUser[DetailsUser]["id"];pet=0; else user=DPSMateUser[DetailsUser]["id"].pet;pet=5; end
 		local percent = (arr[user][strsub(DetailsArr[i], 1, strlen(DetailsArr[i])-pet)].amount*100/DetailsTotal)
 		g:AddPie(percent, 0)
 		i = i + 1
@@ -703,9 +712,9 @@ end
 
 function DPSMate.Options:CheckProcs(name, arr, val)
 	if DPSMate.DB:DataExistProcs(DetailsUser, name, arr) then
-		for i=1, DPSMate:TableLength(arr[DetailsUser]["procs"][name]["start"]) do
-			if not arr[DetailsUser]["procs"][name]["start"][i] or not arr[DetailsUser]["procs"][name]["ending"][i] then return false end
-			if val >  arr[DetailsUser]["procs"][name]["start"][i] and val < arr[DetailsUser]["procs"][name]["ending"][i] and not arr[DetailsUser]["procs"][name]["point"] then
+		for i=1, DPSMate:TableLength(arr[DPSMateUser[DetailsUser]["id"]]["info"][1][name]["start"]) do
+			if not arr[DPSMateUser[DetailsUser]["id"]]["info"][1][name]["start"][i] or not arr[DPSMateUser[DetailsUser]["id"]]["info"][1][name]["ending"][i] then return false end
+			if val >  arr[DPSMateUser[DetailsUser]["id"]]["info"][1][name]["start"][i] and val < arr[DPSMateUser[DetailsUser]["id"]]["info"][1][name]["ending"][i] and not arr[DPSMateUser[DetailsUser]["id"]]["info"][1][name]["point"] then
 				return true
 			end
 		end
@@ -715,10 +724,10 @@ end
 
 function DPSMate.Options:AddProcPoints(name, arr)
 	local bool, data = false, {}
-	if DPSMate.DB:DataExistProcs(DetailsUser, name, arr) and arr[DetailsUser]["procs"][name]["point"] then
-		for i=1, DPSMate:TableLength(arr[DetailsUser]["procs"][name]["start"]) do
+	if DPSMate.DB:DataExistProcs(DetailsUser, name, arr) and arr[DPSMateUser[DetailsUser]["id"]]["info"][1][name]["point"] then
+		for i=1, DPSMate:TableLength(arr[DPSMateUser[DetailsUser]["id"]]["info"][1][name]["start"]) do
 			bool = true
-			table.insert(data, arr[DetailsUser]["procs"][name]["start"][i])
+			table.insert(data, arr[DPSMateUser[DetailsUser]["id"]]["info"][1][name]["start"][i])
 		end
 	end
 	return {bool, data}
@@ -749,7 +758,7 @@ end
 
 function DPSMate.Options:SortLineTable(t)
 	local newArr = {}
-	for cat, val in pairs(t[DetailsUser]["dmgTime"]) do
+	for cat, val in pairs(t[DPSMateUser[DetailsUser]["id"]]["info"][2]) do
 		local i=1
 		while true do
 			if (not newArr[i]) then 
@@ -850,7 +859,7 @@ function DPSMate.Options:ProcsDropDown()
 	}
 	
 	-- Adding dynamic channel
-	for cat,_ in pairs(arr[DetailsUser]["procs"]) do
+	for cat,_ in pairs(arr[DPSMateUser[DetailsUser]["id"]]["info"][1]) do
 		UIDropDownMenu_AddButton{
 			text = cat,
 			value = cat,
@@ -1248,21 +1257,31 @@ function DPSMate.Options:Report()
 end
 
 function DPSMate.Options:NewSegment()
-	if DPSMateUserCurrent ~= {} then
-		table.insert(DPSMateHistory, 1, DPSMateUserCurrent)
+	a,b,c = DPSMate:GetSortedTable(DPSMateDamageDone[2])
+	if b ~= 0 then
+		if not DPSMateHistory["DMGDone"] then DPSMateHistory["DMGDone"] = {} end
+		table.insert(DPSMateHistory["DMGDone"], 1, DPSMateDamageDone[2])
 		table.insert(DPSMateCombatTime["segments"], 1, DPSMateCombatTime["current"])
-		if DPSMate:TableLength(DPSMateHistory)>DPSMateSettings["datasegments"] then
-			for i=DPSMateSettings["datasegments"]+1, DPSMate:TableLength(DPSMateHistory) do
-				table.remove(DPSMateHistory, i)
+		if DPSMate:TableLength(DPSMateHistory["DMGDone"])>DPSMateSettings["datasegments"] then
+			for i=DPSMateSettings["datasegments"]+1, DPSMate:TableLength(DPSMateHistory["DMGDone"]) do
+				table.remove(DPSMateHistory["DMGDone"], i)
 			end
-			table.remove(DPSMateHistory, DPSMateSettings["datasegments"]+1)
+			table.remove(DPSMateHistory["DMGDone"], DPSMateSettings["datasegments"]+1)
 		end
 		if DPSMate:TableLength(DPSMateCombatTime["segments"])>DPSMateSettings["datasegments"] then
 			for i=DPSMateSettings["datasegments"]+1, DPSMate:TableLength(DPSMateCombatTime["segments"]) do
 				table.remove(DPSMateCombatTime["segments"], i)
 			end
 		end
-		DPSMateUserCurrent = {}
+		for c,_ in pairs(DPSMateDamageDone[2]) do
+			DPSMateDamageDone[2][c] = {
+				info = {
+					[1] = {},
+					[2] = {},
+					[3] = 0,
+				},
+			}
+		end
 		DPSMateCombatTime["current"] = 1
 		DPSMate:SetStatusBarValue()
 	end
@@ -1512,7 +1531,7 @@ function DPSMate.Options:ShowTooltip()
 		DPSMate_Details.PaKey = this:GetParent():GetParent():GetParent().Key
 		local arr = DPSMate:GetMode(DPSMate_Details.PaKey)
 		local user, pet = "", 0
-		DetailsArr, DetailsTotal = DPSMate.Options:EvalTable(this.user)
+		DetailsArr, DetailsTotal = DPSMate.Options:EvalTable(DPSMateUser[this.user]["id"])
 		if DPSMateSettings["tooltipanchor"] == 1 then
 			GameTooltip:SetOwner(UIParent, "BOTTOMRIGHT")
 		elseif DPSMateSettings["tooltipanchor"] == 2 then
@@ -1528,9 +1547,9 @@ function DPSMate.Options:ShowTooltip()
 		if DPSMateSettings["informativetooltips"] then
 			for i=1, DPSMateSettings["subviewrows"] do
 				if not DetailsArr[i] then break end
-				if (arr[this.user][DetailsArr[i]]) then pet=0; else pet=5; end
+				if (arr[DPSMateUser[this.user]["id"]][DetailsArr[i]]) then pet=0; else pet=5; end
 				local ability = strsub(DetailsArr[i], 1, strlen(DetailsArr[i])-pet)
-				GameTooltip:AddDoubleLine(i..". "..ability,arr[this.user][DetailsArr[i]].amount,1,1,1,1,1,1)
+				GameTooltip:AddDoubleLine(i..". "..ability,arr[DPSMateUser[this.user]["id"]][DetailsArr[i]]["amount"],1,1,1,1,1,1)
 			end
 		end
 		GameTooltip:AddLine(" ")

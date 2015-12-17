@@ -236,30 +236,40 @@ function DPSMate:InvertTable(t)
 	return s
 end
 
+function DPSMate:GetUserById(id)
+	for cat, val in pairs(DPSMateUser) do
+		if val["id"] == id then
+			return cat
+		end
+	end
+end
+
 function DPSMate:GetSortedTable(arr)
 	local b, a = {}, {}
 	local total = 0
-	for cat, val in pairs(arr) do
-		if (not val.isPet) then
-			local CV = val.damage
-			if DPSMate:PlayerExist(arr, val.pet) then
-				CV=CV+arr[val.pet].damage
-			end
-			a[CV] = cat
-			local i = 1
-			while true do
-				if (not b[i]) then
-					table.insert(b, i, CV)
-					break
-				else
-					if b[i] < CV then
+	if arr then
+		for cat, val in pairs(arr) do
+			if (not val.isPet) then
+				local CV = val["info"][3]
+				if DPSMate:PlayerExist(arr, val.pet) then
+					CV=CV+arr[val.pet].damage
+				end
+				a[CV] = DPSMate:GetUserById(cat)
+				local i = 1
+				while true do
+					if (not b[i]) then
 						table.insert(b, i, CV)
 						break
+					else
+						if b[i] < CV then
+							table.insert(b, i, CV)
+							break
+						end
 					end
+					i=i+1
 				end
-				i=i+1
+				total = total + CV
 			end
-			total = total + CV
 		end
 	end
 	return b, total, a
@@ -289,7 +299,7 @@ function DPSMate:SetStatusBarValue()
 			if (not user[i] or perc[i]==0) then break end -- To prevent visual issues
 			local statusbar, name, value, texture, p = getglobal("DPSMate_"..c["name"].."_ScrollFrame_Child_StatusBar"..i), getglobal("DPSMate_"..c["name"].."_ScrollFrame_Child_StatusBar"..i.."_Name"), getglobal("DPSMate_"..c["name"].."_ScrollFrame_Child_StatusBar"..i.."_Value"), getglobal("DPSMate_"..c["name"].."_ScrollFrame_Child_StatusBar"..i.."_Icon"), ""
 			
-			local r,g,b, img = DPSMate:GetClassColor(arr[user[i]].class)
+			local r,g,b, img = DPSMate:GetClassColor(DPSMateUser[user[i]]["class"])
 			statusbar:SetStatusBarColor(r,g,b, 1)
 			
 			if DPSMateSettings["ranks"] then p=i..". " else p="" end
@@ -354,19 +364,19 @@ end
 
 function DPSMate:GetMode(k)
 	if DPSMateSettings["windows"][k]["options"][2]["total"] then
-		return DPSMateUser, DPSMateCombatTime["total"]
+		return DPSMateDamageDone[1], DPSMateCombatTime["total"]
 	elseif DPSMateSettings["windows"][k]["options"][2]["segment1"] then
-		return DPSMateHistory[1], DPSMateCombatTime["segments"][1]
+		return DPSMateHistory["DMGDone"][1], DPSMateCombatTime["segments"][1]
 	elseif DPSMateSettings["windows"][k]["options"][2]["segment2"] then
-		return DPSMateHistory[2], DPSMateCombatTime["segments"][2]
+		return DPSMateHistory["DMGDone"][2], DPSMateCombatTime["segments"][2]
 	elseif DPSMateSettings["windows"][k]["options"][2]["segment3"] then
-		return DPSMateHistory[3], DPSMateCombatTime["segments"][3]
+		return DPSMateHistory["DMGDone"][3], DPSMateCombatTime["segments"][3]
 	elseif DPSMateSettings["windows"][k]["options"][2]["segment4"] then
-		return DPSMateHistory[4], DPSMateCombatTime["segments"][4]
+		return DPSMateHistory["DMGDone"][4], DPSMateCombatTime["segments"][4]
 	elseif DPSMateSettings["windows"][k]["options"][2]["segment5"] then
-		return DPSMateHistory[5], DPSMateCombatTime["segments"][5]
+		return DPSMateHistory["DMGDone"][5], DPSMateCombatTime["segments"][5]
 	end
-	return DPSMateUserCurrent, DPSMateCombatTime["current"]
+	return DPSMateDamageDone[2], DPSMateCombatTime["current"]
 end
 
 function DPSMate:GetModeName(k)

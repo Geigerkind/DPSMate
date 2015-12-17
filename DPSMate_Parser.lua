@@ -6,7 +6,7 @@
 -- Local Variables
 local player = {}
 player["name"] = UnitName("player")
-local a,b,c = UnitClass("player")
+local a,b = UnitClass("player")
 player["class"] = strlower(b)
 
 local procs = {
@@ -210,7 +210,7 @@ end
 
 function DPSMate.Parser:FriendlyPlayerHits(msg)
 	-- (...). (608 absorbed/resisted)
-	local target, ability, cause, hit, crit, amount = "", "", {}, 0, 0, 0
+	local target, cause, hit, crit, amount = "", {}, 0, 0, 0
 	if strfind(msg, "lava") then
 		for c, a in string.gfind(msg, "(.-) loses (%d+) health for swimming in lava.") do cause.name=c; amount=tonumber(a); end
 		DPSMate.DB:BuildUserAbility(cause, "Lava", 1, 0, 0, 0, 0, 0, amount, 1)
@@ -229,13 +229,7 @@ end
 
 function DPSMate.Parser:FriendlyPlayerMisses(msg)
 	local miss, parry, dodge, cause = 0, 0, 0, {}
-	if strfind(msg, "misses") then
-		miss = 1
-	elseif strfind(msg, "parries") then
-		parry = 1
-	elseif strfind(msg, "dodges") then
-		dodge = 1
-	end
+	if strfind(msg, "misses") then miss = 1 elseif strfind(msg, "parries") then parry = 1 elseif strfind(msg, "dodges") then dodge = 1 end
 	cause.name = strsub(msg, 1, strfind(msg, " ")-1)
 	DPSMate.DB:BuildUserAbility(cause, "AutoAttack", 0, 0, miss, parry, dodge, 0, 0, 0)
 end
