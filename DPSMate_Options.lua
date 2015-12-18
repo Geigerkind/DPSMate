@@ -459,9 +459,13 @@ end
 
 function DPSMate.Options:PopUpAccept()
 	DPSMate_PopUp:Hide()
-	for cat, val in pairs(DPSMateDamageDone) do
-		for c,_ in pairs(val) do
-			DPSMateDamageDone[cat][c] = {
+	DPSMateDamageDone = {
+		[1] = {},
+		[2] = {},
+	}
+	for cat, val in pairs(DPSMateUser) do
+		for i=1, 2 do
+			DPSMateDamageDone[i][val["id"]] = {
 				info = {
 					[1] = {},
 					[2] = {},
@@ -877,8 +881,10 @@ function DPSMate.Options:WindowDropDown()
 	DPSMate_ConfigMenu.Selected = "None"
 	
 	local function on_click()
-        UIDropDownMenu_SetSelectedValue(DPSMate_ConfigMenu_Tab_Window_Remove, this.value)
-		DPSMate_ConfigMenu.Selected = this.value
+        UIDropDownMenu_SetSelectedValue(getglobal(UIDROPDOWNMENU_OPEN_MENU), this.value)
+		if UIDROPDOWNMENU_OPEN_MENU == "DPSMate_ConfigMenu_Tab_Window_Remove" then
+			DPSMate_ConfigMenu.Selected = this.value
+		end
     end
 	
 	UIDropDownMenu_AddButton{
@@ -897,6 +903,8 @@ function DPSMate.Options:WindowDropDown()
 	
 	if not DPSMate_ConfigMenu.vis then
 		UIDropDownMenu_SetSelectedValue(DPSMate_ConfigMenu_Tab_Window_Remove, "None")
+		UIDropDownMenu_SetSelectedValue(DPSMate_ConfigMenu_Tab_Window_ConfigFrom, "None")
+		UIDropDownMenu_SetSelectedValue(DPSMate_ConfigMenu_Tab_Window_ConfigTo, "None")
 	end
 	DPSMate_ConfigMenu.vis = true
 end

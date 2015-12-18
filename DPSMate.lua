@@ -294,22 +294,23 @@ function DPSMate:SetStatusBarValue()
 			getglobal("DPSMate_"..c["name"].."_ScrollFrame_Child_Total_Name"):SetText("Total")
 			getglobal("DPSMate_"..c["name"].."_ScrollFrame_Child_Total_Value"):SetText(strt[1]..strt[2])
 		end
-		if (not user[1]) then break end
-		for i=1, 30 do
-			if (not user[i] or perc[i]==0) then break end -- To prevent visual issues
-			local statusbar, name, value, texture, p = getglobal("DPSMate_"..c["name"].."_ScrollFrame_Child_StatusBar"..i), getglobal("DPSMate_"..c["name"].."_ScrollFrame_Child_StatusBar"..i.."_Name"), getglobal("DPSMate_"..c["name"].."_ScrollFrame_Child_StatusBar"..i.."_Value"), getglobal("DPSMate_"..c["name"].."_ScrollFrame_Child_StatusBar"..i.."_Icon"), ""
-			
-			local r,g,b, img = DPSMate:GetClassColor(DPSMateUser[user[i]]["class"])
-			statusbar:SetStatusBarColor(r,g,b, 1)
-			
-			if DPSMateSettings["ranks"] then p=i..". " else p="" end
-			name:SetText(p..user[i])
-			value:SetText(val[i])
-			texture:SetTexture("Interface\\AddOns\\DPSMate\\images\\class\\"..img)
-			statusbar:SetValue(perc[i])
-			
-			statusbar.user = user[i]
-			statusbar:Show()
+		if (user[1] and tonumber(strt[2])>0) then
+			for i=1, 30 do
+				if (not user[i] or perc[i]==0) then break end -- To prevent visual issues
+				local statusbar, name, value, texture, p = getglobal("DPSMate_"..c["name"].."_ScrollFrame_Child_StatusBar"..i), getglobal("DPSMate_"..c["name"].."_ScrollFrame_Child_StatusBar"..i.."_Name"), getglobal("DPSMate_"..c["name"].."_ScrollFrame_Child_StatusBar"..i.."_Value"), getglobal("DPSMate_"..c["name"].."_ScrollFrame_Child_StatusBar"..i.."_Icon"), ""
+				
+				local r,g,b, img = DPSMate:GetClassColor(DPSMateUser[user[i]]["class"])
+				statusbar:SetStatusBarColor(r,g,b, 1)
+				
+				if DPSMateSettings["ranks"] then p=i..". " else p="" end
+				name:SetText(p..user[i])
+				value:SetText(val[i])
+				texture:SetTexture("Interface\\AddOns\\DPSMate\\images\\class\\"..img)
+				statusbar:SetValue(perc[i])
+				
+				statusbar.user = user[i]
+				statusbar:Show()
+			end
 		end
 	end
 end

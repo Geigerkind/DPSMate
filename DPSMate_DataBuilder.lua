@@ -107,7 +107,7 @@ function DPSMate.DB:OnEvent(event)
 		end
 		if DPSMateHistory == nil then DPSMateHistory = {} end
 		if DPSMateUser == nil then DPSMateUser = {} end
-		if DPSMateDamageDone == nil then DPSMateDamageDone = {} end
+		if DPSMateDamageDone == nil then DPSMateDamageDone = {[1]={},[2]={}} end
 		if DPSMateCombatTime == nil then
 			DPSMateCombatTime = {
 				total = 1,
@@ -245,13 +245,11 @@ function DPSMate.DB:BuildUser(Dname, Dclass, Damount)
 			class = Dclass,
 		}
 		for i=1, 2 do 
-			DPSMateDamageDone[i] = {
-				[DPSMateUser[Dname]["id"]] = {
-					info = {
-						[1] = {},
-						[2] = {},
-						[3] = 0,
-					},
+			DPSMateDamageDone[i][DPSMateUser[Dname]["id"]] = {
+				info = {
+					[1] = {},
+					[2] = {},
+					[3] = 0,
 				},
 			}
 		end

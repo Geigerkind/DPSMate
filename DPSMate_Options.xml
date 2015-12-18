@@ -934,8 +934,8 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								this.aide = "Test"
-								getglobal(this:GetName().."Text"):SetText("Remove")
+								this.aide = DPSMate.localization.config.removeTooltip
+								getglobal(this:GetName().."Text"):SetText(DPSMate.localization.config.remove)
 							</OnLoad>
 							<OnClick>
 								DPSMate.Options:RemoveWindow()
@@ -943,9 +943,56 @@
 							</OnClick>
 						</Scripts>
 					</Button>
+					<Frame name="$parent_ConfigFrom" inherits="DPSMate_Template_DropDown">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent_Remove" relativePoint="BOTTOMLEFT">
+								<Offset x="0" y="-15" />
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								this.aide = DPSMate.localization.config.configfromTooltip
+								this.func = DPSMate.Options.WindowDropDown
+								this.title = DPSMate.localization.config.configfrom
+								UIDropDownMenu_SetWidth(148)
+								getglobal(this:GetName().."_Text"):SetText(this.title)
+							</OnLoad>
+						</Scripts>
+					</Frame>
+					<Frame name="$parent_ConfigTo" inherits="DPSMate_Template_DropDown">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent_ConfigFrom" relativePoint="BOTTOMLEFT">
+								<Offset x="0" y="-15" />
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								this.aide = DPSMate.localization.config.configtoTooltip
+								this.func = DPSMate.Options.WindowDropDown
+								this.title = DPSMate.localization.config.configto
+								UIDropDownMenu_SetWidth(148)
+								getglobal(this:GetName().."_Text"):SetText(this.title)
+							</OnLoad>
+						</Scripts>
+					</Frame>
+					<Button name="$parent_ButtonCopy" inherits="DPSMate_Template_Button">
+						<Anchors>
+							<Anchor point="LEFT" relativeTo="$parent_ConfigFrom" relativePoint="RIGHT">
+								<Offset x="4" y="-26" />
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								this.aide = DPSMate.localization.config.copyTooltip
+								getglobal(this:GetName().."Text"):SetText(DPSMate.localization.config.copy)
+							</OnLoad>
+							<OnClick>
+							</OnClick>
+						</Scripts>
+					</Button>
 					<CheckButton name="$parent_Lock" inherits="DPSMate_Template_CheckButton">
 						<Anchors>
-							<Anchor point="TOPLEFT" relativeTo="$Parent_Remove" relativePoint="BOTTOMLEFT">
+							<Anchor point="TOPLEFT" relativeTo="$Parent_ConfigTo" relativePoint="BOTTOMLEFT">
 								<Offset x="15" y="-5" />
 							</Anchor>
 						</Anchors>
