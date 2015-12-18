@@ -96,76 +96,77 @@ function DPSMate:InitializeFrames()
 		if not getglobal("DPSMate_"..val["name"]) then
 			local f=CreateFrame("Frame", "DPSMate_"..val["name"], UIParent, "DPSMate_Statusframe")
 			f.Key=k
+		end
+		local frame = getglobal("DPSMate_"..val["name"])
 			
-			DPSMate.Options:ToggleDrewDrop(1, DPSMate.DB:GetOptionsTrue(1, k), f)
-			DPSMate.Options:ToggleDrewDrop(2, DPSMate.DB:GetOptionsTrue(2, k), f)
+		DPSMate.Options:ToggleDrewDrop(1, DPSMate.DB:GetOptionsTrue(1, k), frame)
+		DPSMate.Options:ToggleDrewDrop(2, DPSMate.DB:GetOptionsTrue(2, k), frame)
+		
+		local head = getglobal("DPSMate_"..val["name"].."_Head")
+		head.font = getglobal("DPSMate_"..val["name"].."_Head_Font")
+		head.bg = getglobal("DPSMate_"..val["name"].."_Head_Background")
+		
+		if DPSMateSettings["lock"] then
+			getglobal("DPSMate_"..val["name"].."_Resize"):Hide()
+		end
+		if not val["titlebar"] then
+			head:Hide()
+		end
+		head.bg:SetTexture(DPSMate.Options.statusbars[val["titlebartexture"]])
+		head.bg:SetVertexColor(val["titlebarbgcolor"][1], val["titlebarbgcolor"][2], val["titlebarbgcolor"][3])
+		head.font:SetFont(DPSMate.Options.fonts[val["titlebarfont"]], val["titlebarfontsize"], DPSMate.Options.fontflags[val["titlebarfontflag"]])
+		head:SetHeight(val["titlebarheight"])
+		getglobal("DPSMate_"..val["name"].."_ScrollFrame_Background"):SetTexture(DPSMate.Options.bgtexture[val["contentbgtexture"]])
+		getglobal("DPSMate_"..val["name"].."_ScrollFrame_Background"):SetVertexColor(val["contentbgcolor"][1], val["contentbgcolor"][2], val["contentbgcolor"][3])
+		frame:SetScale(val["scale"])
+		
+		-- Styles // Bars
+		local child = getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child")
+		getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_Total"):SetPoint("TOPLEFT", child, "TOPLEFT")
+		getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_Total"):SetPoint("TOPRIGHT", child, "TOPRIGHT")
+		if DPSMateSettings["showtotals"] then
+			getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_Total"):SetHeight(val["barheight"])
+		else
+			getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_Total"):SetHeight(0.00001)
+		end
+		getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_Total"):SetStatusBarTexture(DPSMate.Options.statusbars[val["bartexture"]])
+		getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_Total_BG"):SetTexture(DPSMate.Options.statusbars[val["bartexture"]])
+		getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_Total_Name"):SetFont(DPSMate.Options.fonts[val["barfont"]], val["barfontsize"], DPSMate.Options.fontflags[val["barfontflag"]])
+		getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_Total_Value"):SetFont(DPSMate.Options.fonts[val["barfont"]], val["barfontsize"], DPSMate.Options.fontflags[val["barfontflag"]])
+		for i=1, 30 do
+			local bar = getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar"..i)
+			bar.name = getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar"..i.."_Name")
+			bar.value = getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar"..i.."_Value")
+			bar.icon = getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar"..i.."_Icon")
+			bar.bg = getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar"..i.."_BG")
 			
-			local head = getglobal("DPSMate_"..val["name"].."_Head")
-			head.font = getglobal("DPSMate_"..val["name"].."_Head_Font")
-			head.bg = getglobal("DPSMate_"..val["name"].."_Head_Background")
-			
-			if DPSMateSettings["lock"] then
-				getglobal("DPSMate_"..val["name"].."_Resize"):Hide()
-			end
-			if not DPSMateSettings["titlebar"] then
-				head:Hide()
-			end
-			head.bg:SetTexture(DPSMate.Options.statusbars[DPSMateSettings["titlebartexture"]])
-			head.bg:SetVertexColor(DPSMateSettings["titlebarbgcolor"][1], DPSMateSettings["titlebarbgcolor"][2], DPSMateSettings["titlebarbgcolor"][3])
-			head.font:SetFont(DPSMate.Options.fonts[DPSMateSettings["titlebarfont"]], DPSMateSettings["titlebarfontsize"], DPSMate.Options.fontflags[DPSMateSettings["titlebarfontflag"]])
-			head:SetHeight(DPSMateSettings["titlebarheight"])
-			getglobal("DPSMate_"..val["name"].."_ScrollFrame_Background"):SetTexture(DPSMate.Options.bgtexture[DPSMateSettings["contentbgtexture"]])
-			getglobal("DPSMate_"..val["name"].."_ScrollFrame_Background"):SetVertexColor(DPSMateSettings["contentbgcolor"][1], DPSMateSettings["contentbgcolor"][2], DPSMateSettings["contentbgcolor"][3])
-			f:SetScale(DPSMateSettings["scale"])
-			
-			-- Styles // Bars
-			local child = getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child")
-			getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_Total"):SetPoint("TOPLEFT", child, "TOPLEFT")
-			getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_Total"):SetPoint("TOPRIGHT", child, "TOPRIGHT")
-			if DPSMateSettings["showtotals"] then
-				getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_Total"):SetHeight(DPSMateSettings["barheight"])
+			-- Postition
+			bar:SetPoint("TOPLEFT", child, "TOPLEFT")
+			bar:SetPoint("TOPRIGHT", child, "TOPRIGHT")
+			if i>1 then
+				bar:SetPoint("TOPLEFT", getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar"..(i-1)), "BOTTOMLEFT", 0, -1*val["barspacing"])
 			else
-				getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_Total"):SetHeight(0.00001)
-			end
-			getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_Total"):SetStatusBarTexture(DPSMate.Options.statusbars[DPSMateSettings["bartexture"]])
-			getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_Total_BG"):SetTexture(DPSMate.Options.statusbars[DPSMateSettings["bartexture"]])
-			getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_Total_Name"):SetFont(DPSMate.Options.fonts[DPSMateSettings["barfont"]], DPSMateSettings["barfontsize"], DPSMate.Options.fontflags[DPSMateSettings["barfontflag"]])
-			getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_Total_Value"):SetFont(DPSMate.Options.fonts[DPSMateSettings["barfont"]], DPSMateSettings["barfontsize"], DPSMate.Options.fontflags[DPSMateSettings["barfontflag"]])
-			for i=1, 30 do
-				local bar = getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar"..i)
-				bar.name = getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar"..i.."_Name")
-				bar.value = getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar"..i.."_Value")
-				bar.icon = getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar"..i.."_Icon")
-				bar.bg = getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar"..i.."_BG")
-				
-				-- Postition
-				bar:SetPoint("TOPLEFT", child, "TOPLEFT")
-				bar:SetPoint("TOPRIGHT", child, "TOPRIGHT")
-				if i>1 then
-					bar:SetPoint("TOPLEFT", getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar"..(i-1)), "BOTTOMLEFT", 0, -1*DPSMateSettings["barspacing"])
+				if DPSMateSettings["showtotals"] then
+					bar:SetPoint("TOPLEFT", getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_Total"), "BOTTOMLEFT", 0, -1*val["barspacing"])
 				else
-					if DPSMateSettings["showtotals"] then
-						bar:SetPoint("TOPLEFT", getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_Total"), "BOTTOMLEFT", 0, -1*DPSMateSettings["barspacing"])
-					else
-						bar:SetPoint("TOPLEFT", getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_Total"), "BOTTOMLEFT", 0, -1)
-					end
+					bar:SetPoint("TOPLEFT", getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_Total"), "BOTTOMLEFT", 0, -1)
 				end
-				if DPSMateSettings["classicons"] then
-					bar.name:ClearAllPoints()
-					bar.name:SetPoint("TOPLEFT", bar, "TOPLEFT", DPSMateSettings["barheight"], 0)
-					bar.name:SetPoint("BOTTOMRIGHT", bar, "BOTTOMRIGHT")
-					bar.icon:SetWidth(DPSMateSettings["barheight"])
-					bar.icon:SetHeight(DPSMateSettings["barheight"])
-					bar.icon:Show()
-				end
-			
-				-- Styles
-				bar.name:SetFont(DPSMate.Options.fonts[DPSMateSettings["barfont"]], DPSMateSettings["barfontsize"], DPSMate.Options.fontflags[DPSMateSettings["barfontflag"]])
-				bar.value:SetFont(DPSMate.Options.fonts[DPSMateSettings["barfont"]], DPSMateSettings["barfontsize"], DPSMate.Options.fontflags[DPSMateSettings["barfontflag"]])
-				bar:SetStatusBarTexture(DPSMate.Options.statusbars[DPSMateSettings["bartexture"]])
-				bar.bg:SetTexture(DPSMate.Options.statusbars[DPSMateSettings["bartexture"]])
-				bar:SetHeight(DPSMateSettings["barheight"])
 			end
+			if val["classicons"] then
+				bar.name:ClearAllPoints()
+				bar.name:SetPoint("TOPLEFT", bar, "TOPLEFT", val["barheight"], 0)
+				bar.name:SetPoint("BOTTOMRIGHT", bar, "BOTTOMRIGHT")
+				bar.icon:SetWidth(val["barheight"])
+				bar.icon:SetHeight(val["barheight"])
+				bar.icon:Show()
+			end
+		
+			-- Styles
+			bar.name:SetFont(DPSMate.Options.fonts[val["barfont"]], val["barfontsize"], DPSMate.Options.fontflags[val["barfontflag"]])
+			bar.value:SetFont(DPSMate.Options.fonts[val["barfont"]], val["barfontsize"], DPSMate.Options.fontflags[val["barfontflag"]])
+			bar:SetStatusBarTexture(DPSMate.Options.statusbars[val["bartexture"]])
+			bar.bg:SetTexture(DPSMate.Options.statusbars[val["bartexture"]])
+			bar:SetHeight(val["barheight"])
 		end
 	end
 	DPSMate.Options:ToggleTitleBarButtonState()
@@ -294,15 +295,15 @@ function DPSMate:SetStatusBarValue()
 			getglobal("DPSMate_"..c["name"].."_ScrollFrame_Child_Total_Name"):SetText("Total")
 			getglobal("DPSMate_"..c["name"].."_ScrollFrame_Child_Total_Value"):SetText(strt[1]..strt[2])
 		end
-		if (user[1] and tonumber(strt[2])>0) then
+		if (user[1] and strt[3]>0) then
 			for i=1, 30 do
-				if (not user[i] or perc[i]==0) then break end -- To prevent visual issues
+				if (not user[i] or strt[3]==0) then break end -- To prevent visual issues
 				local statusbar, name, value, texture, p = getglobal("DPSMate_"..c["name"].."_ScrollFrame_Child_StatusBar"..i), getglobal("DPSMate_"..c["name"].."_ScrollFrame_Child_StatusBar"..i.."_Name"), getglobal("DPSMate_"..c["name"].."_ScrollFrame_Child_StatusBar"..i.."_Value"), getglobal("DPSMate_"..c["name"].."_ScrollFrame_Child_StatusBar"..i.."_Icon"), ""
 				
 				local r,g,b, img = DPSMate:GetClassColor(DPSMateUser[user[i]]["class"])
 				statusbar:SetStatusBarColor(r,g,b, 1)
 				
-				if DPSMateSettings["ranks"] then p=i..". " else p="" end
+				if c["ranks"] then p=i..". " else p="" end
 				name:SetText(p..user[i])
 				value:SetText(val[i])
 				texture:SetTexture("Interface\\AddOns\\DPSMate\\images\\class\\"..img)
@@ -315,8 +316,8 @@ function DPSMate:SetStatusBarValue()
 	end
 end
 
-function DPSMate:FormatNumbers(dmg,total,sort)
-	if DPSMateSettings["numberformat"] == 2 then
+function DPSMate:FormatNumbers(dmg,total,sort,k)
+	if DPSMateSettings["windows"][k]["numberformat"] == 2 then
 		dmg = string.format("%.1f", (dmg/1000))
 		total = string.format("%.1f", (total/1000))
 		sort = string.format("%.1f", (sort/1000))
@@ -326,11 +327,12 @@ end
 
 function DPSMate:GetSettingValues(arr, cbt, k)
 	local name, value, perc, sortedTable, total, a, p, strt = {}, {}, {}, {}, 0, 0, "", {[1]="",[2]=""}
-	if DPSMateSettings["numberformat"] == 2 then p = "K" end
+	if DPSMateSettings["windows"][k]["numberformat"] == 2 then p = "K" end
 	if (DPSMateSettings["windows"][k]["CurMode"] == "dps") then
 		sortedTable, total, a = DPSMate:GetSortedTable(arr)
+		strt[3] = total
 		for cat, val in pairs(sortedTable) do
-			local dmg, tot, sort = DPSMate:FormatNumbers(val, total, sortedTable[1])
+			local dmg, tot, sort = DPSMate:FormatNumbers(val, total, sortedTable[1], k)
 			local str = {[1]="",[2]="",[3]=""}
 			if DPSMateSettings["columnsdps"][1] then str[1] = "("..dmg..p..")"; strt[1] = "("..tot..p..")" end
 			if DPSMateSettings["columnsdps"][2] then str[2] = " "..string.format("%.1f", (dmg/cbt))..p; strt[2] = " "..string.format("%.1f", (tot/cbt))..p end
@@ -341,8 +343,9 @@ function DPSMate:GetSettingValues(arr, cbt, k)
 		end
 	elseif (DPSMateSettings["windows"][k]["CurMode"] == "damage") then
 		sortedTable, total, a = DPSMate:GetSortedTable(arr)
+		strt[3] = total
 		for cat, val in pairs(sortedTable) do
-			local dmg, tot, sort = DPSMate:FormatNumbers(val, total, sortedTable[1])
+			local dmg, tot, sort = DPSMate:FormatNumbers(val, total, sortedTable[1], k)
 			local str = {[1]="",[2]="",[3]=""}
 			if DPSMateSettings["columnsdmg"][1] then str[1] = " "..dmg..p; strt[2] = tot..p end
 			if DPSMateSettings["columnsdmg"][2] then str[2] = "("..string.format("%.1f", (dmg/cbt))..p..")"; strt[1] = "("..string.format("%.1f", (tot/cbt))..p..") " end

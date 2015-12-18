@@ -571,6 +571,20 @@
 							getglobal(this:GetParent():GetParent():GetParent():GetName()..this:GetParent():GetParent().selected):Hide()
 							getglobal(this:GetParent():GetParent():GetParent():GetName().."_Tab_Bars"):Show()
 							this:GetParent():GetParent().selected = "_Tab_Bars"
+							this:GetParent():GetParent().Key = this:GetParent().Key
+							DPSMate_ConfigMenu_Tab_Bars_BarFontSize:SetValue(DPSMateSettings["windows"][this:GetParent().Key]["barfontsize"])
+							DPSMate_ConfigMenu_Tab_Bars_BarSpacing:SetValue(DPSMateSettings["windows"][this:GetParent().Key]["barspacing"])
+							DPSMate_ConfigMenu_Tab_Bars_BarHeight:SetValue(DPSMateSettings["windows"][this:GetParent().Key]["barheight"])
+							DPSMate_ConfigMenu_Tab_Bars_ClassIcons:SetChecked(DPSMateSettings["windows"][this:GetParent().Key]["classicons"])
+							DPSMate_ConfigMenu_Tab_Bars_ClassIcons:SetChecked(DPSMateSettings["windows"][this:GetParent().Key]["classicons"])
+							DPSMate_ConfigMenu_Tab_Bars_Ranks:SetChecked(DPSMateSettings["windows"][this:GetParent().Key]["ranks"])
+							UIDropDownMenu_SetSelectedValue(DPSMate_ConfigMenu_Tab_Bars_BarFont, DPSMateSettings["windows"][this:GetParent().Key]["barfont"])
+							DPSMate_ConfigMenu_Tab_Bars_BarFontText:SetFont(DPSMate.Options.fonts[DPSMateSettings["windows"][this:GetParent().Key]["barfont"]], 12)
+							DPSMate_ConfigMenu_Tab_Bars_BarFontText:SetText(DPSMateSettings["windows"][this:GetParent().Key]["barfont"])
+							UIDropDownMenu_SetSelectedValue(DPSMate_ConfigMenu_Tab_Bars_BarFontFlag, DPSMateSettings["windows"][this:GetParent().Key]["barfontflag"])
+							DPSMate_ConfigMenu_Tab_Bars_BarFontFlagText:SetFont(DPSMate.Options.fonts["FRIZQT"], 12, DPSMate.Options.fontflags[DPSMateSettings["windows"][this:GetParent().Key]["barfontflag"]])
+							UIDropDownMenu_SetSelectedValue(DPSMate_ConfigMenu_Tab_Bars_BarTexture, DPSMateSettings["windows"][this:GetParent().Key]["bartexture"])
+							DPSMate_ConfigMenu_Tab_Bars_BarTexture.tex:SetTexture(DPSMate.Options.statusbars[DPSMateSettings["windows"][this:GetParent().Key]["bartexture"]])
 						end
 					</OnLoad>
 				</Scripts>
@@ -586,6 +600,23 @@
 							getglobal(this:GetParent():GetParent():GetParent():GetName()..this:GetParent():GetParent().selected):Hide()
 							getglobal(this:GetParent():GetParent():GetParent():GetName().."_Tab_TitleBar"):Show()
 							this:GetParent():GetParent().selected = "_Tab_TitleBar"
+							this:GetParent():GetParent().Key = this:GetParent().Key
+							DPSMate_ConfigMenu_Tab_TitleBar_Enable:SetChecked(DPSMateSettings["windows"][this:GetParent().Key]["titlebar"])
+							DPSMate_ConfigMenu_Tab_TitleBar_BarFontSize:SetValue(DPSMateSettings["windows"][this:GetParent().Key]["titlebarfontsize"])
+							DPSMate_ConfigMenu_Tab_TitleBar_BarHeight:SetValue(DPSMateSettings["windows"][this:GetParent().Key]["titlebarheight"])
+							DPSMate_ConfigMenu_Tab_TitleBar_Box1_Report:SetChecked(DPSMateSettings["windows"][this:GetParent().Key]["titlebarreport"])
+							DPSMate_ConfigMenu_Tab_TitleBar_Box1_Reset:SetChecked(DPSMateSettings["windows"][this:GetParent().Key]["titlebarreset"])
+							DPSMate_ConfigMenu_Tab_TitleBar_Box1_Mode:SetChecked(DPSMateSettings["windows"][this:GetParent().Key]["titlebarsegments"])
+							DPSMate_ConfigMenu_Tab_TitleBar_Box1_Config:SetChecked(DPSMateSettings["windows"][this:GetParent().Key]["titlebarconfig"])
+							DPSMate_ConfigMenu_Tab_TitleBar_Box1_Sync:SetChecked(DPSMateSettings["windows"][this:GetParent().Key]["titlebarsync"])
+							DPSMate_ConfigMenu_Tab_TitleBar_BGColorNormalTexture:SetVertexColor(DPSMateSettings["windows"][this:GetParent().Key]["titlebarbgcolor"][1], DPSMateSettings["windows"][this:GetParent().Key]["titlebarbgcolor"][2], DPSMateSettings["windows"][this:GetParent().Key]["titlebarbgcolor"][3])
+							UIDropDownMenu_SetSelectedValue(DPSMate_ConfigMenu_Tab_TitleBar_BarTexture, DPSMateSettings["windows"][this:GetParent().Key]["titlebartexture"])
+							DPSMate_ConfigMenu_Tab_TitleBar_BarTexture.tex:SetTexture(DPSMate.Options.statusbars[DPSMateSettings["windows"][this:GetParent().Key]["titlebartexture"]])
+							UIDropDownMenu_SetSelectedValue(DPSMate_ConfigMenu_Tab_TitleBar_BarFont, DPSMateSettings["windows"][this:GetParent().Key]["titlebarfont"])
+							DPSMate_ConfigMenu_Tab_TitleBar_BarFontText:SetFont(DPSMate.Options.fonts[DPSMateSettings["windows"][this:GetParent().Key]["titlebarfont"]], 12)
+							UIDropDownMenu_SetSelectedValue(DPSMate_ConfigMenu_Tab_TitleBar_BarFontFlag, DPSMateSettings["windows"][this:GetParent().Key]["titlebarfontflag"])
+							DPSMate_ConfigMenu_Tab_TitleBar_BarFontFlagText:SetFont(DPSMate.Options.fonts["FRIZQT"], 12, DPSMate.Options.fontflags[DPSMateSettings["windows"][this:GetParent().Key]["titlebarfontflag"]])
+							DPSMate_ConfigMenu_Tab_TitleBar_BarFontFlagText:SetText(DPSMateSettings["windows"][this:GetParent().Key]["titlebarfontflag"])
 						end
 					</OnLoad>
 				</Scripts>
@@ -601,6 +632,18 @@
 							getglobal(this:GetParent():GetParent():GetParent():GetName()..this:GetParent():GetParent().selected):Hide()
 							getglobal(this:GetParent():GetParent():GetParent():GetName().."_Tab_Content"):Show()
 							this:GetParent():GetParent().selected = "_Tab_Content"
+							this:GetParent():GetParent().Key = this:GetParent().Key
+							DPSMate_ConfigMenu_Tab_Content_BGDropDown_Texture:SetBackdrop({ 
+								bgFile = DPSMate.Options.bgtexture[DPSMateSettings["windows"][this:GetParent().Key]["contentbgtexture"]], 
+								edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 12, edgeSize = 12, 
+								insets = { left = 4, right = 4, top = 4, bottom = 4 }
+							})
+							DPSMate_ConfigMenu_Tab_Content_Scale:SetValue(DPSMateSettings["windows"][this:GetParent().Key]["scale"])
+							DPSMate_ConfigMenu_Tab_Content_BGDropDown_Texture:SetBackdropColor(DPSMateSettings["windows"][this:GetParent().Key]["contentbgcolor"][1], DPSMateSettings["windows"][this:GetParent().Key]["contentbgcolor"][2], DPSMateSettings["windows"][this:GetParent().Key]["contentbgcolor"][3])
+							DPSMate_ConfigMenu_Tab_Content_BGColorNormalTexture:SetVertexColor(DPSMateSettings["windows"][this:GetParent().Key]["contentbgcolor"][1], DPSMateSettings["windows"][this:GetParent().Key]["contentbgcolor"][2], DPSMateSettings["windows"][this:GetParent().Key]["contentbgcolor"][3])
+							UIDropDownMenu_SetSelectedValue(DPSMate_ConfigMenu_Tab_Content_NumberFormat, DPSMateSettings["windows"][this:GetParent().Key]["numberformat"])
+							UIDropDownMenu_SetSelectedValue(DPSMate_ConfigMenu_Tab_Content_BGDropDown, DPSMateSettings["windows"][this:GetParent().Key]["contentbgtexture"])
+							DPSMate_ConfigMenu_Tab_Content_BGDropDownText:SetText(DPSMateSettings["windows"][this:GetParent().Key]["contentbgtexture"])
 						end
 					</OnLoad>
 				</Scripts>
@@ -1136,6 +1179,7 @@
 								getglobal(this:GetName().."Text"):SetText(DPSMate.localization.config.copy)
 							</OnLoad>
 							<OnClick>
+								DPSMate.Options:CopyConfiguration()
 							</OnClick>
 						</Scripts>
 					</Button>
@@ -1196,14 +1240,12 @@
 							<OnLoad>
 								this.aide = DPSMate.localization.config.barfontsizeTooltip
 								this.func = function() 
-									DPSMateSettings["barfontsize"] = this:GetValue()
-									for _, val in pairs(DPSMateSettings["windows"]) do
-										getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_Total_Name"):SetFont(DPSMate.Options.fonts[DPSMateSettings["barfont"]], DPSMateSettings["barfontsize"], DPSMate.Options.fontflags[DPSMateSettings["barfontflag"]])
-										getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_Total_Value"):SetFont(DPSMate.Options.fonts[DPSMateSettings["barfont"]], DPSMateSettings["barfontsize"], DPSMate.Options.fontflags[DPSMateSettings["barfontflag"]])
-										for i=1, 30 do
-											getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar"..i.."_Name"):SetFont(DPSMate.Options.fonts[DPSMateSettings["barfont"]], DPSMateSettings["barfontsize"], DPSMate.Options.fontflags[DPSMateSettings["barfontflag"]])
-											getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar"..i.."_Value"):SetFont(DPSMate.Options.fonts[DPSMateSettings["barfont"]], DPSMateSettings["barfontsize"], DPSMate.Options.fontflags[DPSMateSettings["barfontflag"]])
-										end
+									DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["barfontsize"] = this:GetValue()
+									getglobal("DPSMate_"..DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["name"].."_ScrollFrame_Child_Total_Name"):SetFont(DPSMate.Options.fonts[DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["barfont"]], DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["barfontsize"], DPSMate.Options.fontflags[DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["barfontflag"]])
+									getglobal("DPSMate_"..DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["name"].."_ScrollFrame_Child_Total_Value"):SetFont(DPSMate.Options.fonts[DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["barfont"]], DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["barfontsize"], DPSMate.Options.fontflags[DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["barfontflag"]])
+									for i=1, 30 do
+										getglobal("DPSMate_"..DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["name"].."_ScrollFrame_Child_StatusBar"..i.."_Name"):SetFont(DPSMate.Options.fonts[DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["barfont"]], DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["barfontsize"], DPSMate.Options.fontflags[DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["barfontflag"]])
+										getglobal("DPSMate_"..DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["name"].."_ScrollFrame_Child_StatusBar"..i.."_Value"):SetFont(DPSMate.Options.fonts[DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["barfont"]], DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["barfontsize"], DPSMate.Options.fontflags[DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["barfontflag"]])
 									end
 								end
 								this:SetMinMaxValues(1,32)
@@ -1258,21 +1300,19 @@
 							<OnLoad>
 								this.aide = DPSMate.localization.config.barspacingTooltip
 								this.func = function()
-									DPSMateSettings["barspacing"] = this:GetValue() 
-									for _, val in pairs(DPSMateSettings["windows"]) do
-										for i=1, 30 do
-											local bar = getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar"..i)
-											bar:ClearAllPoints()
-											bar:SetPoint("TOPLEFT", getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child"), "TOPLEFT")
-											bar:SetPoint("TOPRIGHT", getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child"), "TOPRIGHT")
-											if i>1 then
-												bar:SetPoint("TOPLEFT", getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar"..(i-1)), "BOTTOMLEFT", 0, -1*DPSMateSettings["barspacing"])
+									DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["barspacing"] = this:GetValue() 
+									for i=1, 30 do
+										local bar = getglobal("DPSMate_"..DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["name"].."_ScrollFrame_Child_StatusBar"..i)
+										bar:ClearAllPoints()
+										bar:SetPoint("TOPLEFT", getglobal("DPSMate_"..DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["name"].."_ScrollFrame_Child"), "TOPLEFT")
+										bar:SetPoint("TOPRIGHT", getglobal("DPSMate_"..DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["name"].."_ScrollFrame_Child"), "TOPRIGHT")
+										if i>1 then
+											bar:SetPoint("TOPLEFT", getglobal("DPSMate_"..DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["name"].."_ScrollFrame_Child_StatusBar"..(i-1)), "BOTTOMLEFT", 0, -1*DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["barspacing"])
+										else
+											if DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["showtotals"] then
+												bar:SetPoint("TOPLEFT", getglobal("DPSMate_"..DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["name"].."_ScrollFrame_Child_Total"), "BOTTOMLEFT", 0, -1*DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["barspacing"])
 											else
-												if DPSMateSettings["showtotals"] then
-													bar:SetPoint("TOPLEFT", getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_Total"), "BOTTOMLEFT", 0, -1*DPSMateSettings["barspacing"])
-												else
-													bar:SetPoint("TOPLEFT", getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_Total"), "BOTTOMLEFT", 0, -1)
-												end
+												bar:SetPoint("TOPLEFT", getglobal("DPSMate_"..DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["name"].."_ScrollFrame_Child_Total"), "BOTTOMLEFT", 0, -1)
 											end
 										end
 									end
@@ -1295,18 +1335,18 @@
 							<OnLoad>
 								this.aide = DPSMate.localization.config.barheightTooltip
 								this.func = function()
-									DPSMateSettings["barheight"] = this:GetValue() 
-									for _, val in pairs(DPSMateSettings["windows"]) do
-										getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_Total"):SetHeight(DPSMateSettings["barheight"])
-										for i=1, 30 do
-											local bar = getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar"..i)
-											local icon = getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar"..i.."_Icon")
-											local name = getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar"..i.."_Name")
-											bar:SetHeight(DPSMateSettings["barheight"])
-											icon:SetWidth(DPSMateSettings["barheight"])
-											icon:SetHeight(DPSMateSettings["barheight"])
+									DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["barheight"] = this:GetValue() 
+									if DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["showtotals"] then getglobal("DPSMate_"..DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["name"].."_ScrollFrame_Child_Total"):SetHeight(DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["barheight"]) end
+									for i=1, 30 do
+										local bar = getglobal("DPSMate_"..DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["name"].."_ScrollFrame_Child_StatusBar"..i)
+										bar:SetHeight(DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["barheight"])
+										local icon = getglobal("DPSMate_"..DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["name"].."_ScrollFrame_Child_StatusBar"..i.."_Icon")
+										icon:SetWidth(DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["barheight"])
+										icon:SetHeight(DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["barheight"])
+										if DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["classicons"] then
+											local name = getglobal("DPSMate_"..DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["name"].."_ScrollFrame_Child_StatusBar"..i.."_Name")
 											name:ClearAllPoints()
-											name:SetPoint("LEFT", bar, "LEFT", DPSMateSettings["barheight"], 0)
+											name:SetPoint("LEFT", bar, "LEFT", DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["barheight"], 0)
 										end
 									end
 								end
@@ -1329,31 +1369,27 @@
 								getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.classicons)
 							</OnLoad>
 							<OnClick>
-								if DPSMateSettings["classicons"] then
-									DPSMateSettings["classicons"] = false
-									for _, val in pairs(DPSMateSettings["windows"]) do
-										for i=1, 30 do
-											local bar = getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar"..i)
-											bar.name = getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar"..i.."_Name")
-											bar.icon = getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar"..i.."_Icon")
-											bar.name:ClearAllPoints()
-											bar.name:SetPoint("TOPLEFT", bar, "TOPLEFT")
-											bar.name:SetPoint("BOTTOMRIGHT", bar, "BOTTOMRIGHT")
-											bar.icon:Hide()
-										end
+								if DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["classicons"] then
+									DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["classicons"] = false
+									for i=1, 30 do
+										local bar = getglobal("DPSMate_"..DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["name"].."_ScrollFrame_Child_StatusBar"..i)
+										bar.name = getglobal("DPSMate_"..DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["name"].."_ScrollFrame_Child_StatusBar"..i.."_Name")
+										bar.icon = getglobal("DPSMate_"..DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["name"].."_ScrollFrame_Child_StatusBar"..i.."_Icon")
+										bar.name:ClearAllPoints()
+										bar.name:SetPoint("TOPLEFT", bar, "TOPLEFT")
+										bar.name:SetPoint("BOTTOMRIGHT", bar, "BOTTOMRIGHT")
+										bar.icon:Hide()
 									end
 								else
-									DPSMateSettings["classicons"] = true
-									for _, val in pairs(DPSMateSettings["windows"]) do
-										for i=1, 30 do
-											local bar = getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar"..i)
-											bar.name = getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar"..i.."_Name")
-											bar.icon = getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar"..i.."_Icon")
-											bar.name:ClearAllPoints()
-											bar.name:SetPoint("TOPLEFT", bar, "TOPLEFT", DPSMateSettings["barheight"], 0)
-											bar.name:SetPoint("BOTTOMRIGHT", bar, "BOTTOMRIGHT")
-											bar.icon:Show()
-										end
+									DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["classicons"] = true
+									for i=1, 30 do
+										local bar = getglobal("DPSMate_"..DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["name"].."_ScrollFrame_Child_StatusBar"..i)
+										bar.name = getglobal("DPSMate_"..DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["name"].."_ScrollFrame_Child_StatusBar"..i.."_Name")
+										bar.icon = getglobal("DPSMate_"..DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["name"].."_ScrollFrame_Child_StatusBar"..i.."_Icon")
+										bar.name:ClearAllPoints()
+										bar.name:SetPoint("TOPLEFT", bar, "TOPLEFT", DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["barheight"], 0)
+										bar.name:SetPoint("BOTTOMRIGHT", bar, "BOTTOMRIGHT")
+										bar.icon:Show()
 									end
 								end
 							</OnClick>
@@ -1368,10 +1404,10 @@
 								getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.ranks)
 							</OnLoad>
 							<OnClick>
-								if DPSMateSettings["ranks"] then
-									DPSMateSettings["ranks"] = false
+								if DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["ranks"] then
+									DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["ranks"] = false
 								else
-									DPSMateSettings["ranks"] = true
+									DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["ranks"] = true
 								end
 								DPSMate:SetStatusBarValue()
 							</OnClick>
@@ -1397,16 +1433,12 @@
 								getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.enable)
 							</OnLoad>
 							<OnClick>
-								if DPSMateSettings["titlebar"] then
-									DPSMateSettings["titlebar"] = false
-									for _,val in pairs(DPSMateSettings["windows"]) do
-										getglobal("DPSMate_"..val["name"].."_Head"):Hide()
-									end
+								if DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["titlebar"] then
+									DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["titlebar"] = false
+									getglobal("DPSMate_"..DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["name"].."_Head"):Hide()
 								else
-									DPSMateSettings["titlebar"] = true
-									for _,val in pairs(DPSMateSettings["windows"]) do
-										getglobal("DPSMate_"..val["name"].."_Head"):Show()
-									end
+									DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["titlebar"] = true
+									getglobal("DPSMate_"..DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["name"].."_Head"):Show()
 								end
 							</OnClick>
 						</Scripts>
@@ -1438,10 +1470,8 @@
 							<OnLoad>
 								this.aide = DPSMate.localization.config.barfontsizeTooltip
 								this.func = function() 
-									DPSMateSettings["titlebarfontsize"] = this:GetValue()
-									for _, val in pairs(DPSMateSettings["windows"]) do
-										getglobal("DPSMate_"..val["name"].."_Head_Font"):SetFont(DPSMate.Options.fonts[DPSMateSettings["titlebarfont"]], DPSMateSettings["titlebarfontsize"], DPSMate.Options.fontflags[DPSMateSettings["titlebarfontflag"]])
-									end
+									DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["titlebarfontsize"] = this:GetValue()
+									getglobal("DPSMate_"..DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["name"].."_Head_Font"):SetFont(DPSMate.Options.fonts[DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["titlebarfont"]], DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["titlebarfontsize"], DPSMate.Options.fontflags[DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["titlebarfontflag"]])
 								end
 								this:SetMinMaxValues(1,32)
 								this:SetValueStep(1)
@@ -1495,10 +1525,8 @@
 							<OnLoad>
 								this.aide = DPSMate.localization.config.barheightTooltip
 								this.func = function()
-									DPSMateSettings["titlebarheight"] = this:GetValue() 
-									for _, val in pairs(DPSMateSettings["windows"]) do
-										getglobal("DPSMate_"..val["name"].."_Head"):SetHeight(DPSMateSettings["titlebarheight"])
-									end
+									DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["titlebarheight"] = this:GetValue()
+									getglobal("DPSMate_"..DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["name"].."_Head"):SetHeight(DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["titlebarheight"])
 								end
 								this:SetMinMaxValues(10,32)
 								this:SetValueStep(1)
@@ -1523,9 +1551,7 @@
 								this.aide = DPSMate.localization.config.bgcolorTooltip
 								this.var = "titlebarbgcolor"
 								this.func = function()
-									for _, val in pairs(DPSMateSettings["windows"]) do
-										getglobal("DPSMate_"..val["name"].."_Head_Background"):SetVertexColor(DPSMateSettings["titlebarbgcolor"][1], DPSMateSettings["titlebarbgcolor"][2], DPSMateSettings["titlebarbgcolor"][3])
-									end
+									getglobal("DPSMate_"..DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["name"].."_Head_Background"):SetVertexColor(DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["titlebarbgcolor"][1], DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["titlebarbgcolor"][2], DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["titlebarbgcolor"][3])
 								end
 							</OnLoad>
 						</Scripts>
@@ -1561,10 +1587,10 @@
 										getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.report)
 									</OnLoad>
 									<OnClick>
-										if DPSMateSettings["titlebarreport"] then
-											DPSMateSettings["titlebarreport"] = false
+										if DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["titlebarreport"] then
+											DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["titlebarreport"] = false
 										else
-											DPSMateSettings["titlebarreport"] = true
+											DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["titlebarreport"] = true
 										end
 										DPSMate.Options:ToggleTitleBarButtonState()
 									</OnClick>
@@ -1579,10 +1605,10 @@
 										getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.mode)
 									</OnLoad>
 									<OnClick>
-										if DPSMateSettings["titlebarsegments"] then
-											DPSMateSettings["titlebarsegments"] = false
+										if DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["titlebarsegments"] then
+											DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["titlebarsegments"] = false
 										else
-											DPSMateSettings["titlebarsegments"] = true
+											DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["titlebarsegments"] = true
 										end
 										DPSMate.Options:ToggleTitleBarButtonState()
 									</OnClick>
@@ -1599,10 +1625,10 @@
 										getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.reset)
 									</OnLoad>
 									<OnClick>
-										if DPSMateSettings["titlebarreset"] then
-											DPSMateSettings["titlebarreset"] = false
+										if DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["titlebarreset"] then
+											DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["titlebarreset"] = false
 										else
-											DPSMateSettings["titlebarreset"] = true
+											DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["titlebarreset"] = true
 										end
 										DPSMate.Options:ToggleTitleBarButtonState()
 									</OnClick>
@@ -1619,10 +1645,10 @@
 										getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.config)
 									</OnLoad>
 									<OnClick>
-										if DPSMateSettings["titlebarconfig"] then
-											DPSMateSettings["titlebarconfig"] = false
+										if DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["titlebarconfig"] then
+											DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["titlebarconfig"] = false
 										else
-											DPSMateSettings["titlebarconfig"] = true
+											DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["titlebarconfig"] = true
 										end
 										DPSMate.Options:ToggleTitleBarButtonState()
 									</OnClick>
@@ -1639,10 +1665,10 @@
 										getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.sync)
 									</OnLoad>
 									<OnClick>
-										if DPSMateSettings["titlebarsync"] then
-											DPSMateSettings["titlebarsync"] = false
+										if DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["titlebarsync"] then
+											DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["titlebarsync"] = false
 										else
-											DPSMateSettings["titlebarsync"] = true
+											DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["titlebarsync"] = true
 										end
 										DPSMate.Options:ToggleTitleBarButtonState()
 									</OnClick>
@@ -1685,10 +1711,8 @@
 							<OnLoad>
 								this.aide = DPSMate.localization.config.scaleTooltip
 								this.func = function() 
-									DPSMateSettings["scale"] = this:GetValue()
-									for _, val in pairs(DPSMateSettings["windows"]) do
-										getglobal("DPSMate_"..val["name"]):SetScale(DPSMateSettings["scale"])
-									end
+									DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["scale"] = this:GetValue()
+									getglobal("DPSMate_"..DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["name"]):SetScale(DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["scale"])
 								end
 								this:SetMinMaxValues(0.5,3)
 								this:SetValueStep(0.1)
@@ -1713,14 +1737,29 @@
 								this.aide=DPSMate.localization.config.bgcolorTooltip
 								this.var = "contentbgcolor"
 								this.func = function()
-									for _, val in pairs(DPSMateSettings["windows"]) do
-										getglobal("DPSMate_"..val["name"].."_ScrollFrame_Background"):SetVertexColor(DPSMateSettings["contentbgcolor"][1], DPSMateSettings["contentbgcolor"][2], DPSMateSettings["contentbgcolor"][3])
-									end
-									getglobal("DPSMate_ConfigMenu_Tab_Content_BGDropDown_Texture"):SetBackdropColor(DPSMateSettings["contentbgcolor"][1], DPSMateSettings["contentbgcolor"][2], DPSMateSettings["contentbgcolor"][3])
+									getglobal("DPSMate_"..DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["name"].."_ScrollFrame_Background"):SetVertexColor(DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["contentbgcolor"][1], DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["contentbgcolor"][2], DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["contentbgcolor"][3])
+									DPSMate_ConfigMenu_Tab_Content_BGDropDown_Texture:SetBackdropColor(DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["contentbgcolor"][1], DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["contentbgcolor"][2], DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["contentbgcolor"][3])
 								end
 							</OnLoad>
 						</Scripts>
 					</Button>
+					<Frame name="$parent_NumberFormat" inherits="DPSMate_Template_DropDown">
+						<Size x="120" y="24" />
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent_Scale" relativePoint="BOTTOMLEFT">
+								<Offset x="-15" y="-28" />
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								this.aide = DPSMate.localization.config.numberformatTooltip
+								this.func = DPSMate.Options.NumberFormatDropDown
+								this.title = DPSMate.localization.config.numberformat
+								UIDropDownMenu_SetWidth(120)
+								getglobal(this:GetName().."_Text"):SetText(this.title)
+							</OnLoad>
+						</Scripts>
+					</Frame>
 				</Frames>
 			</Frame>
 			
@@ -1846,8 +1885,8 @@
 								else
 									DPSMateSettings["showtotals"] = true
 									for _, val in pairs(DPSMateSettings["windows"]) do
-										getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_Total"):SetHeight(DPSMateSettings["barheight"])
-										getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar1"):SetPoint("TOPLEFT", getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_Total"), "BOTTOMLEFT", 0, -1*DPSMateSettings["barspacing"])
+										getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_Total"):SetHeight(val["barheight"])
+										getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar1"):SetPoint("TOPLEFT", getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_Total"), "BOTTOMLEFT", 0, -1*val["barspacing"])
 									end
 								end
 							</OnClick>
@@ -1946,27 +1985,10 @@
 							</OnClick>
 						</Scripts>
 					</CheckButton>
-					<Frame name="$parent_NumberFormat" inherits="DPSMate_Template_DropDown">
-						<Size x="120" y="24" />
-						<Anchors>
-							<Anchor point="TOPLEFT" relativeTo="$parent_Combat" relativePoint="BOTTOMLEFT">
-								<Offset x="-15" y="-15" />
-							</Anchor>
-						</Anchors>
-						<Scripts>
-							<OnLoad>
-								this.aide = DPSMate.localization.config.numberformatTooltip
-								this.func = DPSMate.Options.NumberFormatDropDown
-								this.title = DPSMate.localization.config.numberformat
-								UIDropDownMenu_SetWidth(120)
-								getglobal(this:GetName().."_Text"):SetText(this.title)
-							</OnLoad>
-						</Scripts>
-					</Frame>
 					<Slider name="$parent_Segments" inherits="DPSMate_Template_Slider">
 						<Anchors>
-							<Anchor point="LEFT" relativeTo="$parent_NumberFormat" relativePoint="RIGHT">
-								<Offset x="0" y="5" />
+							<Anchor point="TOPLEFT" relativeTo="$parent_Combat" relativePoint="BOTTOMLEFT">
+								<Offset x="3" y="-15" />
 							</Anchor>
 						</Anchors>
 						<Scripts>
