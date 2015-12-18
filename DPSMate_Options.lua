@@ -298,6 +298,27 @@ local icons = {
 -- Begin Functions
 
 function DPSMate.Options:InitializeConfigMenu()
+	-- Inialize Extra Buttons
+	for cat, val in pairs(DPSMateSettings["windows"]) do
+		local f = CreateFrame("Button", "DPSMate_ConfigMenu_Menu_Button"..(6+cat), DPSMate_ConfigMenu_Menu, "DPSMate_Template_WindowButton")
+		getglobal("DPSMate_ConfigMenu_Menu_Button"..(6+cat).."Text"):SetText(val["name"])
+		if cat>1 then
+			f:SetPoint("TOP", getglobal("DPSMate_ConfigMenu_Menu_Button"..(5+cat)), "BOTTOM")
+			getglobal("DPSMate_ConfigMenu_Menu_Button"..(5+cat)).after = f
+		else
+			f:SetPoint("TOP", DPSMate_ConfigMenu_Menu_Button1, "BOTTOM")
+		end
+		f.after = DPSMate_ConfigMenu_Menu_Button2
+		DPSMate_ConfigMenu.num = 6+cat
+		f.func = function()
+			getglobal(this:GetParent():GetParent():GetName()..this:GetParent().selected):Hide()
+			getglobal(this:GetParent():GetParent():GetName().."_Tab_Window"):Show()
+			this:GetParent().selected = "_Tab_Window"
+		end
+	end
+	DPSMate_ConfigMenu_Menu_Button2:ClearAllPoints()
+	DPSMate_ConfigMenu_Menu_Button2:SetPoint("TOP", getglobal("DPSMate_ConfigMenu_Menu_Button"..(6+DPSMate:TableLength(DPSMateSettings["windows"]))), "BOTTOM")
+		
 	-- Tab Window
 	getglobal("DPSMate_ConfigMenu_Tab_Window_Lock"):SetChecked(DPSMateSettings["lock"])
 	
