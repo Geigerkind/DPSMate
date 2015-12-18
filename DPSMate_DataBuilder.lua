@@ -147,6 +147,8 @@ function DPSMate.DB:OnEvent(event)
 		end
 	elseif event == "PLAYER_AURAS_CHANGED" then
 		DPSMate.DB:hasVanishedFeignDeath()
+	elseif event == "PLAYER_TARGET_CHANGED" then
+		DPSMate.DB:PlayerTargetChanged()
 	end
 	-- Performance!!!
 	DPSMate.DB:AssignPet()
@@ -228,6 +230,18 @@ function DPSMate.DB:AssignClass()
 	end
 end
 
+function DPSMate.DB:PlayerTargetChanged()
+	if UnitIsPlayer("target") then
+		local name = UnitName("target")
+		local a, class = UnitClass("target")
+		if DPSMateUser[name] then
+			DPSMateUser[name]["class"] = strlower(class)
+		else
+			DPSMate.DB:BuildUser(name, strlower(class))
+		end
+	end
+end
+
 function DPSMate.DB:PlayerInParty()
 	if GetNumPartyMembers() > 0 and (not UnitInRaid("player")) then
 		return true
@@ -235,7 +249,7 @@ function DPSMate.DB:PlayerInParty()
 	return false
 end
 
-function DPSMate.DB:BuildUser(Dname, Dclass, Damount)
+function DPSMate.DB:BuildUser(Dname, Dclass)
 	if (not DPSMateUser[Dname]) then
 		DPSMateUser[Dname] = {
 			id = DPSMate:TableLength(DPSMateUser)+1,
@@ -276,7 +290,7 @@ function DPSMate.DB:BuildUserAbility(Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, D
 				DPSMateDamageDone[cat][DPSMateUser[Duser.name]["id"]][Dname]["critaverage"] = (DPSMateDamageDone[cat][DPSMateUser[Duser.name]["id"]][Dname]["critaverage"]+Damount)/2
 			end
 		else
-			DPSMate.DB:BuildUser(Duser.name, Duser.class, Damount)
+			DPSMate.DB:BuildUser(Duser.name, Duser.class)
 			DPSMateDamageDone[cat][DPSMateUser[Duser.name]["id"]][Dname] = {
 				hit = Dhit,
 				hitlow = 0,

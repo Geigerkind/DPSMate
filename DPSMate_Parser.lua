@@ -129,11 +129,12 @@ end
 
 function DPSMate.Parser:ParsePeriodicDamage(msg)
 	local cause = {}
+	-- (NAME) is afflicted by (ABILITY). => Filtered out for now.
 	-- School has to be added and target
 	for tar, dmg, name, ab in string.gfind(msg, "(.+) suffers (.+) from (.-) (.+)") do -- Here might be some loss
 		if not name then return end
 		cause.name = name
-		if cause.name == DPSMate.localization.parser.your2 then cause = player; else cause.name = strsub(cause.name, 1, strfind(cause.name, "'s")-1); end
+		if cause.name == DPSMate.localization.parser.your2 then cause = player; else cause.name = strsub(cause.name, 1, strlen(cause.name)-2); end
 		DPSMate.DB:BuildUserAbility(cause, strsub(ab, 1, strfind(ab, "%.")-1).."(Periodic)", 1, 0, 0, 0, 0, 0, tonumber(strsub(dmg, strfind(dmg, "%d+"))), 0)
 	end
 end

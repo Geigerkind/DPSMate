@@ -2936,6 +2936,7 @@
 				this:RegisterEvent("PLAYER_REGEN_ENABLED")
 				
 				this:RegisterEvent("PLAYER_AURAS_CHANGED")
+				this:RegisterEvent("PLAYER_TARGET_CHANGED")
 				
 				DPSMate.Parser:OnLoad()
 			</OnLoad>
