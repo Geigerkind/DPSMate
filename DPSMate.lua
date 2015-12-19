@@ -378,37 +378,31 @@ function DPSMate:GetClassColor(class)
 end
 
 function DPSMate:GetMode(k)
-	if DPSMateSettings["windows"][k]["options"][2]["total"] then
-		return DPSMateDamageDone[1], DPSMateCombatTime["total"]
-	elseif DPSMateSettings["windows"][k]["options"][2]["segment1"] then
-		return DPSMateHistory["DMGDone"][1], DPSMateCombatTime["segments"][1]
-	elseif DPSMateSettings["windows"][k]["options"][2]["segment2"] then
-		return DPSMateHistory["DMGDone"][2], DPSMateCombatTime["segments"][2]
-	elseif DPSMateSettings["windows"][k]["options"][2]["segment3"] then
-		return DPSMateHistory["DMGDone"][3], DPSMateCombatTime["segments"][3]
-	elseif DPSMateSettings["windows"][k]["options"][2]["segment4"] then
-		return DPSMateHistory["DMGDone"][4], DPSMateCombatTime["segments"][4]
-	elseif DPSMateSettings["windows"][k]["options"][2]["segment5"] then
-		return DPSMateHistory["DMGDone"][5], DPSMateCombatTime["segments"][5]
+	local result = {total={DPSMateDamageDone[1], DPSMateCombatTime["total"]}, currentfight={DPSMateDamageDone[2], DPSMateCombatTime["current"]}}
+	for cat, val in pairs(DPSMateSettings["windows"][k]["options"][2]) do
+		if val then
+			if strfind(cat, "segment") then
+				local num = tonumber(strsub(cat, 8))
+				return DPSMateHistory["DMGDone"][num], DPSMateCombatTime["segments"][num]
+			else
+				return result[cat][1], result[cat][2]
+			end
+		end
 	end
-	return DPSMateDamageDone[2], DPSMateCombatTime["current"]
 end
 
 function DPSMate:GetModeName(k)
-	if DPSMateSettings["windows"][k]["options"][2]["total"] then
-		return "Total"
-	elseif DPSMateSettings["windows"][k]["options"][2]["segment1"] then
-		return "Segment 1"
-	elseif DPSMateSettings["windows"][k]["options"][2]["segment2"] then
-		return "Segment 2"
-	elseif DPSMateSettings["windows"][k]["options"][2]["segment3"] then
-		return "Segment 3"
-	elseif DPSMateSettings["windows"][k]["options"][2]["segment4"] then
-		return "Segment 4"
-	elseif DPSMateSettings["windows"][k]["options"][2]["segment5"] then
-		return "Segment 5"
+	local result = {total="Total", currentfight="Current fight"}
+	for cat, val in pairs(DPSMateSettings["windows"][k]["options"][2]) do
+		if val then 
+			if strfind(cat, "segment") then
+				local num = tonumber(strsub(cat, 8))
+				return "Segment "..num
+			else
+				return result[cat]
+			end
+		end
 	end
-	return "Current fight"
 end
 
 function DPSMate:HideStatusBars()
