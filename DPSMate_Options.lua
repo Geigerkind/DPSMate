@@ -475,17 +475,6 @@ function DPSMate.Options:PopUpAccept()
 		[1] = {},
 		[2] = {},
 	}
-	for cat, val in pairs(DPSMateUser) do
-		for i=1, 2 do
-			DPSMateDamageDone[i][val["id"]] = {
-				info = {
-					[1] = {},
-					[2] = {},
-					[3] = 0,
-				},
-			}
-		end
-	end
 	DPSMateHistory = {
 		DMGDone = {},
 	}

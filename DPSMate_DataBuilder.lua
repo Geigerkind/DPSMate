@@ -268,6 +268,8 @@ function DPSMate.DB:BuildUser(Dname, Dclass)
 			id = DPSMate:TableLength(DPSMateUser)+1,
 			class = Dclass,
 		}
+	end
+	if (not DPSMateDamageDone[1][DPSMateUser[Dname]["id"]]) then
 		for i=1, 2 do 
 			DPSMateDamageDone[i][DPSMateUser[Dname]["id"]] = {
 				info = {
