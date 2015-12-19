@@ -4,6 +4,8 @@ DPSMate.DB.loaded = false
 -- Local Variables
 local CombatState = false
 local cheatCombat = 0
+local UpdateTime = 0.25
+local LastUpdate = 0
 
 -- Begin Functions
 
@@ -133,11 +135,7 @@ function DPSMate.DB:OnEvent(event)
 				DPSMate:Disable()
 			end
 		end
-		if DPSMate.Registered then
-			CombatState = true
-		end
 	elseif event == "PLAYER_REGEN_ENABLED" then
-		CombatState = false
 		if DPSMateSettings["hideincombat"] then
 			for _, val in pairs(DPSMateSettings["windows"]) do
 				if not val then break end
@@ -175,6 +173,23 @@ function DPSMate.DB:GetPets()
 		end
 	end
 	return pets
+end
+
+function DPSMate.DB:AffectingCombat()
+	if DPSMate.DB:PlayerInParty() then
+		for i=1, 4 do
+			if UnitAffectingCombat("party"..i) then
+				return true
+			end
+		end
+	elseif UnitInRaid("player") then
+		for i=1, 40 do
+			if UnitAffectingCombat("raid"..i) then
+				return true
+			end
+		end
+	end
+	if UnitAffectingCombat("player") then return true else return false end
 end
 
 function DPSMate.DB:AssignPet()
@@ -269,7 +284,11 @@ end
 
 -- First crit/hit av value will be half if it is not the first hit actually. Didnt want to add an exception for it though. Maybe later :/
 function DPSMate.DB:BuildUserAbility(Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, Ddodge, Dresist, Damount, Dtype)
-	if (DPSMate:TableLength(Duser)==0 or not Dname or not Damount) then return end -- Parsing failure, I guess at AEO periodic abilitys
+	if (DPSMate:TableLength(Duser)==0 or not Dname or not Damount) then return end -- Parsing failure, I guess at AEO periodic abilities
+	if (not CombatState and cheatCombat+10<GetTime()) then
+		DPSMate.Options:NewSegment()
+	end
+	CombatState = true
 	
 	for cat, val in pairs({[1]="total", [2]="current"}) do 
 		if DPSMate.DB:DataExist(Duser.name, Dname, DPSMateDamageDone[cat]) then
@@ -349,8 +368,13 @@ function DPSMate.DB:CombatTime()
 	local f = CreateFrame("Frame", "CombatFrame", UIParent)
 	f:SetScript("OnUpdate", function(self, elapsed)
 		if (CombatState) then
-			DPSMateCombatTime["total"] = DPSMateCombatTime["total"] + arg1
-			DPSMateCombatTime["current"] = DPSMateCombatTime["current"] + arg1
+			LastUpdate = LastUpdate + arg1
+			if LastUpdate>=UpdateTime then
+				DPSMateCombatTime["total"] = DPSMateCombatTime["total"] + LastUpdate
+				DPSMateCombatTime["current"] = DPSMateCombatTime["current"] + LastUpdate
+				if not DPSMate.DB:AffectingCombat() then CombatState = false end
+				LastUpdate = 0
+			end
 		end
 	end)
 end
