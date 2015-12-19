@@ -261,12 +261,13 @@ function DPSMate:GetSortedTable(arr)
 	local total = 0
 	if arr then
 		for cat, val in pairs(arr) do
-			if (not val.isPet) then
+			local name = DPSMate:GetUserById(cat)
+			if (not DPSMateUser[name]["isPet"]) then
 				local CV = val["info"][3]
-				if DPSMate:PlayerExist(arr, val.pet) then
-					CV=CV+arr[val.pet].damage
+				if DPSMate:PlayerExist(DPSMateUser, DPSMateUser[name]["pet"]) then
+					CV=CV+arr[DPSMateUser[DPSMateUser[name]["pet"]]["id"]]["info"][3]
 				end
-				a[CV] = DPSMate:GetUserById(cat)
+				a[CV] = name
 				local i = 1
 				while true do
 					if (not b[i]) then
