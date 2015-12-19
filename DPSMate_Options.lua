@@ -486,12 +486,15 @@ function DPSMate.Options:PopUpAccept()
 			}
 		end
 	end
-	DPSMateHistory = {}
+	DPSMateHistory = {
+		DMGDone = {},
+	}
 	DPSMateCombatTime = {
 		total = 1,
 		current = 1,
 		segments = {},
 	}
+	DPSMate.Options:InitializeSegments()
 	DPSMate:SetStatusBarValue()
 end
 
@@ -1208,7 +1211,7 @@ function DPSMate.Options:NewSegment()
 	a,b,c = DPSMate:GetSortedTable(DPSMateDamageDone[2])
 	if b ~= 0 then
 		if not DPSMateHistory["DMGDone"] then DPSMateHistory["DMGDone"] = {} end
-		table.insert(DPSMateHistory["DMGDone"], 1, DPSMateDamageDone[2])
+		table.insert(DPSMateHistory["DMGDone"], 1, DPSMate:CopyTable(DPSMateDamageDone[2]))
 		table.insert(DPSMateCombatTime["segments"], 1, DPSMateCombatTime["current"])
 		if DPSMate:TableLength(DPSMateHistory["DMGDone"])>DPSMateSettings["datasegments"] then
 			for i=DPSMateSettings["datasegments"]+1, DPSMate:TableLength(DPSMateHistory["DMGDone"]) do
@@ -1258,7 +1261,7 @@ function DPSMate.Options:InitializeSegments()
 		},
 	}
 	Options[3]["args"]["deletesegment"]["args"] = {}
-	for cat, val in pairs(DPSMateHistory) do
+	for cat, val in pairs(DPSMateHistory["DMGDone"]) do
 		if not val then break end
 		Options[2]["args"]["segment"..i] = {
 			order = 20+i*10,

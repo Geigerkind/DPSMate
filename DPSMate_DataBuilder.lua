@@ -123,9 +123,6 @@ function DPSMate.DB:OnEvent(event)
 		
 		DPSMate.DB.loaded = true
 	elseif event == "PLAYER_REGEN_DISABLED" then
-		if (cheatCombat+10<GetTime()) then
-			DPSMate.Options:NewSegment()
-		end
 		if DPSMateSettings["hideincombat"] then
 			for _, val in pairs(DPSMateSettings["windows"]) do
 				if not val then break end
@@ -208,6 +205,7 @@ function DPSMate.DB:AssignPet()
 	end
 end
 
+-- Decrease load if the group has been scanned once
 function DPSMate.DB:AssignClass()
 	local classEng
 	if DPSMate.DB:PlayerInParty() then

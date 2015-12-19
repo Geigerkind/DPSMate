@@ -1,3 +1,6 @@
+-- Notes
+-- Need to prevent scrolling if there is not enough statusbars
+
 -- Global Variables
 DPSMate = {}
 DPSMate.VERSION = "v0.1"
@@ -237,6 +240,14 @@ function DPSMate:InvertTable(t)
 	return s
 end
 
+function DPSMate:CopyTable(t)
+	local s={}
+	for cat, val in pairs(t) do
+		s[cat] = val
+	end
+	return s
+end
+
 function DPSMate:GetUserById(id)
 	for cat, val in pairs(DPSMateUser) do
 		if val["id"] == id then
@@ -295,9 +306,9 @@ function DPSMate:SetStatusBarValue()
 			getglobal("DPSMate_"..c["name"].."_ScrollFrame_Child_Total_Name"):SetText("Total")
 			getglobal("DPSMate_"..c["name"].."_ScrollFrame_Child_Total_Value"):SetText(strt[1]..strt[2])
 		end
-		if (user[1] and strt[3]>0) then
+		if (user[1]) then
 			for i=1, 30 do
-				if (not user[i] or strt[3]==0) then break end -- To prevent visual issues
+				if (not user[i]) then break end -- To prevent visual issues
 				local statusbar, name, value, texture, p = getglobal("DPSMate_"..c["name"].."_ScrollFrame_Child_StatusBar"..i), getglobal("DPSMate_"..c["name"].."_ScrollFrame_Child_StatusBar"..i.."_Name"), getglobal("DPSMate_"..c["name"].."_ScrollFrame_Child_StatusBar"..i.."_Value"), getglobal("DPSMate_"..c["name"].."_ScrollFrame_Child_StatusBar"..i.."_Icon"), ""
 				
 				local r,g,b, img = DPSMate:GetClassColor(DPSMateUser[user[i]]["class"])
@@ -330,9 +341,9 @@ function DPSMate:GetSettingValues(arr, cbt, k)
 	if DPSMateSettings["windows"][k]["numberformat"] == 2 then p = "K" end
 	if (DPSMateSettings["windows"][k]["CurMode"] == "dps") then
 		sortedTable, total, a = DPSMate:GetSortedTable(arr)
-		strt[3] = total
 		for cat, val in pairs(sortedTable) do
 			local dmg, tot, sort = DPSMate:FormatNumbers(val, total, sortedTable[1], k)
+			if dmg==0 then break end
 			local str = {[1]="",[2]="",[3]=""}
 			if DPSMateSettings["columnsdps"][1] then str[1] = "("..dmg..p..")"; strt[1] = "("..tot..p..")" end
 			if DPSMateSettings["columnsdps"][2] then str[2] = " "..string.format("%.1f", (dmg/cbt))..p; strt[2] = " "..string.format("%.1f", (tot/cbt))..p end
@@ -343,9 +354,9 @@ function DPSMate:GetSettingValues(arr, cbt, k)
 		end
 	elseif (DPSMateSettings["windows"][k]["CurMode"] == "damage") then
 		sortedTable, total, a = DPSMate:GetSortedTable(arr)
-		strt[3] = total
 		for cat, val in pairs(sortedTable) do
 			local dmg, tot, sort = DPSMate:FormatNumbers(val, total, sortedTable[1], k)
+			if dmg==0 then break end
 			local str = {[1]="",[2]="",[3]=""}
 			if DPSMateSettings["columnsdmg"][1] then str[1] = " "..dmg..p; strt[2] = tot..p end
 			if DPSMateSettings["columnsdmg"][2] then str[2] = "("..string.format("%.1f", (dmg/cbt))..p..")"; strt[1] = "("..string.format("%.1f", (tot/cbt))..p..") " end
