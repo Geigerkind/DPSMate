@@ -145,9 +145,6 @@ function DPSMate.DB:OnEvent(event)
 	elseif event == "PLAYER_TARGET_CHANGED" then
 		DPSMate.DB:PlayerTargetChanged()
 	end
-	-- Performance!!!
-	DPSMate.DB:AssignPet()
-	DPSMate.DB:AssignClass()
 end
 
 function DPSMate.DB:GetPets()

@@ -168,7 +168,7 @@ local Options = {
 			total = {
 				order = 10,
 				type = 'toggle',
-				name = "Total",
+				name = DPSMate.localization.config.total,
 				desc = DPSMate.localization.desc.total,
 				get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["options"][2]["total"] end,
 				set = function() DPSMate.Options:ToggleDrewDrop(2, "total", DPSMate.Options.Dewdrop:GetOpenedParent()) end,
@@ -176,7 +176,7 @@ local Options = {
 			currentFight = {
 				order = 20,
 				type = 'toggle',
-				name = "Current fight",
+				name = DPSMate.localization.config.current,
 				desc = DPSMate.localization.desc.current,
 				get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["options"][2]["currentfight"] end,
 				set = function() DPSMate.Options:ToggleDrewDrop(2, "currentfight", DPSMate.Options.Dewdrop:GetOpenedParent()) end,
@@ -190,14 +190,14 @@ local Options = {
 			report = {
 				order = 10,
 				type = 'execute',
-				name = "Report",
+				name = DPSMate.localization.config.report,
 				desc = DPSMate.localization.desc.report,
 				func = function() DPSMate_Report:Show(); DPSMate.Options.Dewdrop:Close() end,
 			},
 			reset = {
 				order = 11,
 				type = 'execute',
-				name = "Reset",
+				name = DPSMate.localization.config.reset,
 				desc = DPSMate.localization.desc.reset,
 				func = "PopUpAccept",
 			},
@@ -208,14 +208,14 @@ local Options = {
 			startnewsegment = {
 				order = 25,
 				type = 'execute',
-				name = "Start new segment",
+				name = DPSMate.localization.config.newsegment,
 				desc = DPSMate.localization.desc.newsegment,
 				func = function() DPSMate.Options:NewSegment(); DPSMate.Options.Dewdrop:Close() end,
 			},
 			deletesegment = {
 				order = 30,
 				type = 'group',
-				name = "Remove segment",
+				name = DPSMate.localization.config.removesegment,
 				desc = DPSMate.localization.desc.removesegment,
 				args = {},
 			},
@@ -226,14 +226,14 @@ local Options = {
 			showwindow = {
 				order = 36,
 				type = 'group',
-				name = "Show window",
+				name = DPSMate.localization.config.showwindow,
 				desc = DPSMate.localization.desc.showwindow,
 				args = {},
 			},
 			hidewindow = {
 				order = 37,
 				type = 'group',
-				name = "Hide window",
+				name = DPSMate.localization.config.hidewindow,
 				desc = DPSMate.localization.desc.hidewindow,
 				args = {},
 			},
@@ -244,7 +244,7 @@ local Options = {
 			lock = {
 				order = 40,
 				type = 'toggle',
-				name = "Lock window",
+				name = DPSMate.localization.config.lock,
 				desc = DPSMate.localization.desc.lock,
 				get = function() return DPSMateSettings["lock"] end,
 				set = function() DPSMate.Options:Lock(); DPSMate.Options.Dewdrop:Close() end,
@@ -252,7 +252,7 @@ local Options = {
 			unlock = {
 				order = 50,
 				type = 'toggle',
-				name = "Unlock window",
+				name = DPSMate.localization.config.unlock,
 				desc = DPSMate.localization.desc.lock,
 				get = function() return not DPSMateSettings["lock"] end,
 				set = function() DPSMate.Options:Unlock(); DPSMate.Options.Dewdrop:Close() end,
@@ -260,14 +260,14 @@ local Options = {
 			configure = {
 				order = 80,
 				type = 'execute',
-				name = "Configure",
+				name = DPSMate.localization.config.config,
 				desc = DPSMate.localization.desc.config,
 				func = function() DPSMate_ConfigMenu:Show(); DPSMate.Options.Dewdrop:Close() end,
 			},
 			close = {
 				order = 90,
 				type = 'execute',
-				name = "Close",
+				name = DPSMate.localization.close,
 				desc = DPSMate.localization.desc.close,
 				func = function() DPSMate.Options.Dewdrop:Close() end,
 			},
@@ -390,6 +390,8 @@ function DPSMate.Options:OnEvent(event)
 				elseif DPSMateSettings["dataresetspartyamount"] == 1 then
 					DPSMate.Options:PopUpAccept()
 				end
+				DPSMate.DB:AssignPet()
+				DPSMate.DB:AssignClass()
 			end
 		elseif LastPartyNum > PartyNum then
 			if DPSMateSettings["dataresetsleaveparty"] == 3 then
@@ -1241,7 +1243,7 @@ function DPSMate.Options:InitializeSegments()
 		total = {
 			order = 10,
 			type = 'toggle',
-			name = "Total",
+			name = DPSMate.localization.config.total,
 			desc = DPSMate.localization.desc.total,
 			get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["options"][2]["total"] end,
 			set = function() DPSMate.Options:ToggleDrewDrop(2, "total", DPSMate.Options.Dewdrop:GetOpenedParent()) end,
@@ -1249,7 +1251,7 @@ function DPSMate.Options:InitializeSegments()
 		currentFight = {
 			order = 20,
 			type = 'toggle',
-			name = "Current fight",
+			name = DPSMate.localization.config.current,
 			desc = DPSMate.localization.desc.current,
 			get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["options"][2]["currentfight"] end,
 			set = function() DPSMate.Options:ToggleDrewDrop(2, "currentfight", DPSMate.Options.Dewdrop:GetOpenedParent()) end,
