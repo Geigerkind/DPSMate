@@ -494,6 +494,11 @@ function DPSMate.Options:PopUpAccept()
 		current = 1,
 		segments = {},
 	}
+	for _, val in pairs(DPSMateSettings["windows"]) do
+		if not val["options"][2]["total"] and not val["options"][2]["currentfight"] then
+			val["options"][2]["total"] = true
+		end
+	end
 	DPSMate.Options:InitializeSegments()
 	DPSMate:SetStatusBarValue()
 end
