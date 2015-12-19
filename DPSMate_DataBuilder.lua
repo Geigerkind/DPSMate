@@ -107,6 +107,7 @@ function DPSMate.DB:OnEvent(event)
 		if DPSMateHistory == nil then DPSMateHistory = {} end
 		if DPSMateUser == nil then DPSMateUser = {} end
 		if DPSMateDamageDone == nil then DPSMateDamageDone = {[1]={},[2]={}} end
+		if DPSMateDamageTaken == nil then DPSMateDamageTaken = {[1]={},[2]={}} end
 		if DPSMateCombatTime == nil then
 			DPSMateCombatTime = {
 				total = 1,
@@ -266,21 +267,10 @@ function DPSMate.DB:BuildUser(Dname, Dclass)
 			class = Dclass,
 		}
 	end
-	if (not DPSMateDamageDone[1][DPSMateUser[Dname]["id"]]) then
-		for i=1, 2 do 
-			DPSMateDamageDone[i][DPSMateUser[Dname]["id"]] = {
-				info = {
-					[1] = {},
-					[2] = {},
-					[3] = 0,
-				},
-			}
-		end
-	end
 end
 
 -- First crit/hit av value will be half if it is not the first hit actually. Didnt want to add an exception for it though. Maybe later :/
-function DPSMate.DB:BuildUserAbility(Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, Ddodge, Dresist, Damount, Dtype)
+function DPSMate.DB:DamageDone(Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, Ddodge, Dresist, Damount)
 	if (DPSMate:TableLength(Duser)==0 or not Dname or not Damount) then return end -- Parsing failure, I guess at AEO periodic abilities
 	if (not CombatState and cheatCombat+10<GetTime()) then
 		DPSMate.Options:NewSegment()
@@ -288,7 +278,7 @@ function DPSMate.DB:BuildUserAbility(Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, D
 	CombatState = true
 	
 	for cat, val in pairs({[1]="total", [2]="current"}) do 
-		if DPSMate.DB:DataExist(Duser.name, Dname, DPSMateDamageDone[cat]) then
+		if DPSMate.DB:DDExist(Duser.name, Dname, DPSMateDamageDone[cat]) then
 			DPSMateDamageDone[cat][DPSMateUser[Duser.name]["id"]][Dname].hit = DPSMateDamageDone[cat][DPSMateUser[Duser.name]["id"]][Dname].hit + Dhit
 			DPSMateDamageDone[cat][DPSMateUser[Duser.name]["id"]][Dname].crit = DPSMateDamageDone[cat][DPSMateUser[Duser.name]["id"]][Dname].crit + Dcrit
 			DPSMateDamageDone[cat][DPSMateUser[Duser.name]["id"]][Dname].miss = DPSMateDamageDone[cat][DPSMateUser[Duser.name]["id"]][Dname].miss + Dmiss
@@ -307,6 +297,17 @@ function DPSMate.DB:BuildUserAbility(Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, D
 			end
 		else
 			DPSMate.DB:BuildUser(Duser.name, Duser.class)
+			if (not DPSMateDamageDone[1][DPSMateUser[Duser.name]["id"]]) then
+				for i=1, 2 do 
+					DPSMateDamageDone[i][DPSMateUser[Duser.name]["id"]] = {
+						info = {
+							[1] = {},
+							[2] = {},
+							[3] = 0,
+						},
+					}
+				end
+			end
 			DPSMateDamageDone[cat][DPSMateUser[Duser.name]["id"]][Dname] = {
 				hit = Dhit,
 				hitlow = 0,
@@ -331,11 +332,81 @@ function DPSMate.DB:BuildUserAbility(Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, D
 	DPSMate:SetStatusBarValue()
 end
 
-function DPSMate.DB:DataExist(uname, aname, arr)
+function DPSMate.DB:DamageTaken(Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, Ddodge, Dresist, Damount, cause)
+	for cat, val in pairs({[1]="total", [2]="current"}) do 
+		if DPSMate.DB:DTExist(Duser.name, cause, Dname, DPSMateDamageTaken[cat]) then
+			DPSMateDamageTaken[cat][DPSMateUser[Duser.name]["id"]][cause][Dname].hit = DPSMateDamageTaken[cat][DPSMateUser[Duser.name]["id"]][cause][Dname].hit + Dhit
+			DPSMateDamageTaken[cat][DPSMateUser[Duser.name]["id"]][cause][Dname].crit = DPSMateDamageTaken[cat][DPSMateUser[Duser.name]["id"]][cause][Dname].crit + Dcrit
+			DPSMateDamageTaken[cat][DPSMateUser[Duser.name]["id"]][cause][Dname].miss = DPSMateDamageTaken[cat][DPSMateUser[Duser.name]["id"]][cause][Dname].miss + Dmiss
+			DPSMateDamageTaken[cat][DPSMateUser[Duser.name]["id"]][cause][Dname].parry = DPSMateDamageTaken[cat][DPSMateUser[Duser.name]["id"]][cause][Dname].parry + Dparry
+			DPSMateDamageTaken[cat][DPSMateUser[Duser.name]["id"]][cause][Dname].dodge = DPSMateDamageTaken[cat][DPSMateUser[Duser.name]["id"]][cause][Dname].dodge + Ddodge
+			DPSMateDamageTaken[cat][DPSMateUser[Duser.name]["id"]][cause][Dname].resist = DPSMateDamageTaken[cat][DPSMateUser[Duser.name]["id"]][cause][Dname].resist + Dresist
+			DPSMateDamageTaken[cat][DPSMateUser[Duser.name]["id"]][cause][Dname].amount = DPSMateDamageTaken[cat][DPSMateUser[Duser.name]["id"]][cause][Dname].amount + Damount
+			if Dhit == 1 then
+				if (Damount < DPSMateDamageTaken[cat][DPSMateUser[Duser.name]["id"]][cause][Dname].hitlow or DPSMateDamageTaken[cat][DPSMateUser[Duser.name]["id"]][cause][Dname].hitlow == 0) then DPSMateDamageTaken[cat][DPSMateUser[Duser.name]["id"]][cause][Dname].hitlow = Damount end
+				if Damount > DPSMateDamageTaken[cat][DPSMateUser[Duser.name]["id"]][cause][Dname].hithigh then DPSMateDamageTaken[cat][DPSMateUser[Duser.name]["id"]][cause][Dname].hithigh = Damount end
+				DPSMateDamageTaken[cat][DPSMateUser[Duser.name]["id"]][cause][Dname]["hitaverage"] = (DPSMateDamageTaken[cat][DPSMateUser[Duser.name]["id"]][cause][Dname]["hitaverage"]+Damount)/2
+			elseif Dcrit == 1 then
+				if (Damount < DPSMateDamageTaken[cat][DPSMateUser[Duser.name]["id"]][cause][Dname].critlow or DPSMateDamageTaken[cat][DPSMateUser[Duser.name]["id"]][cause][Dname].critlow == 0) then DPSMateDamageTaken[cat][DPSMateUser[Duser.name]["id"]][cause][Dname].critlow = Damount end
+				if Damount > DPSMateDamageTaken[cat][DPSMateUser[Duser.name]["id"]][cause][Dname].crithigh then DPSMateDamageTaken[cat][DPSMateUser[Duser.name]["id"]][cause][Dname].crithigh = Damount end
+				DPSMateDamageTaken[cat][DPSMateUser[Duser.name]["id"]][cause][Dname]["critaverage"] = (DPSMateDamageTaken[cat][DPSMateUser[Duser.name]["id"]][cause][Dname]["critaverage"]+Damount)/2
+			end
+		else
+			DPSMate.DB:BuildUser(Duser.name, Duser.class)
+			for i=1, 2 do 
+				if not DPSMateDamageTaken[i][DPSMateUser[Duser.name]["id"]] then
+					DPSMateDamageTaken[i][DPSMateUser[Duser.name]["id"]] = {}
+				end
+				if not DPSMateDamageTaken[i][DPSMateUser[Duser.name]["id"]][cause] then
+					DPSMateDamageTaken[i][DPSMateUser[Duser.name]["id"]][cause] = {
+						info = {
+							[1] = {},
+							[2] = {},
+							[3] = 0,
+						},
+					}
+				end
+			end
+			DPSMateDamageTaken[cat][DPSMateUser[Duser.name]["id"]][cause][Dname] = {
+				hit = Dhit,
+				hitlow = 0,
+				hithigh = 0,
+				hitaverage = 0,
+				crit = Dcrit,
+				critlow = 0,
+				crithigh = 0,
+				critaverage = 0,
+				miss = Dmiss,
+				parry = Dparry,
+				dodge = Ddodge,
+				resist = Dresist,
+				amount = Damount,
+			}
+			if (Dhit == 1) then DPSMateDamageTaken[cat][DPSMateUser[Duser.name]["id"]][cause][Dname]["hitlow"] = Damount; DPSMateDamageTaken[cat][DPSMateUser[Duser.name]["id"]][cause][Dname]["hithigh"] = Damount; DPSMateDamageTaken[cat][DPSMateUser[Duser.name]["id"]][cause][Dname]["hitaverage"] = Damount end
+			if (Dcrit == 1) then DPSMateDamageTaken[cat][DPSMateUser[Duser.name]["id"]][cause][Dname]["critlow"] = Damount; DPSMateDamageTaken[cat][DPSMateUser[Duser.name]["id"]][cause][Dname]["crithigh"] = Damount; DPSMateDamageTaken[cat][DPSMateUser[Duser.name]["id"]][cause][Dname]["critaverage"] = Damount end
+		end
+		DPSMateDamageTaken[cat][DPSMateUser[Duser.name]["id"]][cause]["info"][3] = DPSMateDamageTaken[cat][DPSMateUser[Duser.name]["id"]][cause]["info"][3] + Damount
+	end
+end
+
+function DPSMate.DB:DDExist(uname, aname, arr)
 	if DPSMateUser[uname]~=nil then
 		if arr[DPSMateUser[uname]["id"]] ~= nil then
 			if arr[DPSMateUser[uname]["id"]][aname] ~= nil then
 				return true
+			end
+		end
+	end
+	return false
+end
+
+function DPSMate.DB:DTExist(uname, cause, aname, arr)
+	if DPSMateUser[uname]~=nil then
+		if arr[DPSMateUser[uname]["id"]] ~= nil then
+			if arr[DPSMateUser[uname]["id"]][cause] ~= nil then
+				if arr[DPSMateUser[uname]["id"]][cause][aname] ~= nil then
+					return true
+				end
 			end
 		end
 	end

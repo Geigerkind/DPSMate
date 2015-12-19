@@ -12,17 +12,19 @@ DPSMate.Events = {
 	"CHAT_MSG_COMBAT_SELF_HITS",
 	"CHAT_MSG_COMBAT_SELF_MISSES",
 	"CHAT_MSG_SPELL_SELF_DAMAGE",
-	"CHAT_MSG_SPELL_PERIODIC_HOSTILEPLAYER_DAMAGE",
+	"CHAT_MSG_SPELL_PERIODIC_HOSTILEPLAYER_DAMAGE", --
 	"CHAT_MSG_SPELL_PERIODIC_CREATURE_DAMAGE",
 	"CHAT_MSG_COMBAT_PARTY_HITS",
 	"CHAT_MSG_SPELL_PARTY_DAMAGE",
 	"CHAT_MSG_COMBAT_PARTY_MISSES",
-	"CHAT_MSG_SPELL_PERIODIC_PARTY_DAMAGE", --
-	"CHAT_MSG_SPELL_PERIODIC_FRIENDLYPLAYER_DAMAGE", --
 	"CHAT_MSG_COMBAT_FRIENDLYPLAYER_HITS",
 	"CHAT_MSG_COMBAT_FRIENDLYPLAYER_MISSES",
 	"CHAT_MSG_SPELL_FRIENDLYPLAYER_DAMAGE",
 	"COMBAT_TEXT_UPDATE",
+	
+	"CHAT_MSG_COMBAT_CREATURE_VS_SELF_HITS",
+	"CHAT_MSG_SPELL_PERIODIC_PARTY_DAMAGE", --
+	"CHAT_MSG_SPELL_PERIODIC_FRIENDLYPLAYER_DAMAGE", --
 	
 	"PLAYER_AURAS_CHANGED",
 }
@@ -288,6 +290,36 @@ function DPSMate:GetSortedTable(arr)
 	return b, total, a
 end
 
+function DPSMate:GetSortedDTTable(arr)
+	local b, a = {}, {}
+	local total = 0
+	if arr then
+		for c, v in pairs(arr) do
+			local name = DPSMate:GetUserById(c)
+			local CV = 0
+			for cat, val in pairs(v) do
+				CV = CV+val["info"][3]
+			end
+			a[CV] = name
+			local i = 1
+			while true do
+				if (not b[i]) then
+					table.insert(b, i, CV)
+					break
+				else
+					if b[i] < CV then
+						table.insert(b, i, CV)
+						break
+					end
+				end
+				i=i+1
+			end
+			total = total + CV
+		end
+	end
+	return b, total, a
+end
+
 function DPSMate:PlayerExist(arr, name)
 	for cat, val in pairs(arr) do
 		if (cat == name) then
@@ -366,6 +398,18 @@ function DPSMate:GetSettingValues(arr, cbt, k)
 			table.insert(value, str[2]..str[1]..str[3])
 			table.insert(perc, 100*(dmg/sort))
 		end
+	elseif (DPSMateSettings["windows"][k]["CurMode"] == "damagetaken") then
+		sortedTable, total, a = DPSMate:GetSortedDTTable(arr)
+		for cat, val in pairs(sortedTable) do
+			local dmg, tot, sort = DPSMate:FormatNumbers(val, total, sortedTable[1], k)
+			if dmg==0 then break end
+			local str = {[1]="",[2]="",[3]=""}
+			str[1] = " "..dmg..p; strt[2] = tot..p
+			str[2] = " ("..string.format("%.1f", 100*dmg/tot).."%)"
+			table.insert(name, a[val])
+			table.insert(value, str[1]..str[2])
+			table.insert(perc, 100*(dmg/sort))
+		end
 	end
 	return name, value, perc, strt
 end
@@ -378,13 +422,22 @@ function DPSMate:GetClassColor(class)
 	end
 end
 
+function DPSMate:GetDisplay(k)
+	if DPSMateSettings["windows"][k]["CurMode"] == "dps" or DPSMateSettings["windows"][k]["CurMode"] == "damage" then
+		return DPSMateDamageDone, "DMGDone"
+	elseif DPSMateSettings["windows"][k]["CurMode"] == "damagetaken" then
+		return DPSMateDamageTaken, "DMGTaken"
+	end
+end
+
 function DPSMate:GetMode(k)
-	local result = {total={DPSMateDamageDone[1], DPSMateCombatTime["total"]}, currentfight={DPSMateDamageDone[2], DPSMateCombatTime["current"]}}
+	local arr, hist = DPSMate:GetDisplay(k)
+	local result = {total={arr[1], DPSMateCombatTime["total"]}, currentfight={arr[2], DPSMateCombatTime["current"]}}
 	for cat, val in pairs(DPSMateSettings["windows"][k]["options"][2]) do
 		if val then
 			if strfind(cat, "segment") then
 				local num = tonumber(strsub(cat, 8))
-				return DPSMateHistory["DMGDone"][num], DPSMateCombatTime["segments"][num]
+				return DPSMateHistory[hist][num], DPSMateCombatTime["segments"][num]
 			else
 				return result[cat][1], result[cat][2]
 			end

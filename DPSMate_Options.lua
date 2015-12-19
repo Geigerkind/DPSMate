@@ -522,8 +522,7 @@ function DPSMate.Options:ToggleDrewDrop(i, obj, pa)
 	if i == 1 then
 		getglobal(pa:GetName().."_Head_Font"):SetText(Options[i]["args"][obj].name)
 		DPSMateSettings["windows"][pa.Key]["CurMode"] = obj
-	elseif i == 2 then
-	elseif i == 3 then end
+	end
 	DPSMate.Options.Dewdrop:Close()
 	if DPSMate.DB.loaded then DPSMate:SetStatusBarValue() end
 	return true

@@ -44,6 +44,7 @@ function DPSMate.Parser:OnLoad()
 end
 
 function DPSMate.Parser:OnEvent(event)
+	-- Damage Done
 	if event == "CHAT_MSG_COMBAT_SELF_HITS" then
 		if arg1 then DPSMate.Parser:ParseSelfHits(arg1) end
 	elseif event == "CHAT_MSG_COMBAT_SELF_MISSES" then
@@ -62,38 +63,45 @@ function DPSMate.Parser:OnEvent(event)
 		if arg1 then DPSMate.Parser:ParsePartySpellDMG(arg1) end
 	elseif event == "COMBAT_TEXT_UPDATE" then
 		DPSMate.Parser:ParseTextUpdate(arg1,arg2,arg3)
-	elseif event == "CHAT_MSG_SPELL_PERIODIC_PARTY_DAMAGE" then -- Damage taken
-		--if arg1 then DPSMate:SendMessage(arg1.."Test2") end
 	elseif event == "CHAT_MSG_SPELL_FRIENDLYPLAYER_DAMAGE" then
 		if arg1 then DPSMate.Parser:ParseFriendlyPlayerDamage(arg1) end
-	elseif event == "CHAT_MSG_SPELL_PERIODIC_FRIENDLYPLAYER_DAMAGE" then  -- Damage taken
-		--if arg1 then DPSMate:SendMessage(arg1.." TEST 1") end
 	elseif event == "CHAT_MSG_COMBAT_FRIENDLYPLAYER_HITS" then
 		if arg1 then DPSMate.Parser:FriendlyPlayerHits(arg1) end
 	elseif event == "CHAT_MSG_COMBAT_FRIENDLYPLAYER_MISSES" then
 		if arg1 then DPSMate.Parser:FriendlyPlayerMisses(arg1) end
+	-- Damage Taken
+	elseif event == "CHAT_MSG_COMBAT_CREATURE_VS_SELF_HITS" then
+		if arg1 then DPSMate.Parser:CreatureVsSelfHits(arg1) end
+	elseif event == "CHAT_MSG_SPELL_PERIODIC_PARTY_DAMAGE" then
+		--if arg1 then DPSMate:SendMessage(arg1) end
+	elseif event == "CHAT_MSG_SPELL_PERIODIC_FRIENDLYPLAYER_DAMAGE" then
+		--if arg1 then DPSMate:SendMessage(arg1.." TEST 1") end
 	end
 end
+
+----------------------------------------------------------------------------------
+--------------                    Damage Done                       --------------                                  
+----------------------------------------------------------------------------------
 
 function DPSMate.Parser:ParseSelfHits(msg)
 	local hit, crit = 0 , 0
 	-- Fall damage
 	if strfind(msg, DPSMate.localization.parser.youfall) then
 		amount = tonumber(strsub(msg, strfind(msg, "%d+")))
-		DPSMate.DB:BuildUserAbility(player, "Falling", 1, 0, 0, 0, 0, 0, amount, 1)
+		DPSMate.DB:DamageDone(player, "Falling", 1, 0, 0, 0, 0, 0, amount, 1)
 	-- Drown damage
 	elseif strfind(msg, DPSMate.localization.parser.youdrown) then
 		amount = tonumber(strsub(msg, strfind(msg, "%d+")))
-		DPSMate.DB:BuildUserAbility(player, "Drowning", 1, 0, 0, 0, 0, 0, amount, 1)
+		DPSMate.DB:DamageDone(player, "Drowning", 1, 0, 0, 0, 0, 0, amount, 1)
 	-- Lava damage
 	elseif strfind(msg, DPSMate.localization.parser.swimminginlava) then
 		amount = tonumber(strsub(msg, strfind(msg, "%d+")))
-		DPSMate.DB:BuildUserAbility(player, "Lava", 1, 0, 0, 0, 0, 0, amount, 1)
+		DPSMate.DB:DamageDone(player, "Lava", 1, 0, 0, 0, 0, 0, amount, 1)
 	-- White hit Damage
 	elseif strfind(msg, DPSMate.localization.parser.youhit) or strfind(msg, DPSMate.localization.parser.youcrit) then
 		for k, t, a in string.gfind(msg, "You (.-) (.+) for (%d+).") do
 			if k == DPSMate.localization.parser.hit then hit=1; else crit=1; end
-			DPSMate.DB:BuildUserAbility(player, "AutoAttack", hit, crit, 0, 0, 0, 0, tonumber(a), 0)
+			DPSMate.DB:DamageDone(player, "AutoAttack", hit, crit, 0, 0, 0, 0, tonumber(a))
 		end
 	end
 end
@@ -101,7 +109,7 @@ end
 function DPSMate.Parser:ParseSelfMisses(msg)
 	local miss, parry, dodge = 0, 0, 0
 	if strfind(msg, DPSMate.localization.parser.youmiss) then miss = 1; elseif strfind(msg, DPSMate.localization.parser.parries) then parry = 1; elseif strfind(msg, DPSMate.localization.parser.dodges) then dodge = 1; end
-	DPSMate.DB:BuildUserAbility(player, "AutoAttack", 0, 0, miss, parry, dodge, 0, 0, 0)
+	DPSMate.DB:DamageDone(player, "AutoAttack", 0, 0, miss, parry, dodge, 0, 0, 0)
 end
 
 function DPSMate.Parser:ParseSelfSpellDMG(msg)
@@ -124,7 +132,7 @@ function DPSMate.Parser:ParseSelfSpellDMG(msg)
 		for ab, t, a in string.gfind(msg, "Your (.+) hits (.+) for (.+).") do ability = ab; target = t; amount = tonumber(strsub(a, strfind(a, "%d+"))); hit=1; end
 		for ab, t, a in string.gfind(msg, "Your (.+) crits (.+) for (.+).") do ability = ab; target = t; amount = tonumber(strsub(a, strfind(a, "%d+"))); crit=1; end
 	end
-	DPSMate.DB:BuildUserAbility(player, ability, hit, crit, miss, parry, dodge, resist, amount, 0)
+	DPSMate.DB:DamageDone(player, ability, hit, crit, miss, parry, dodge, resist, amount)
 end
 
 function DPSMate.Parser:ParsePeriodicDamage(msg)
@@ -135,7 +143,7 @@ function DPSMate.Parser:ParsePeriodicDamage(msg)
 		if not name then return end
 		cause.name = name
 		if cause.name == DPSMate.localization.parser.your2 then cause = player; else cause.name = strsub(cause.name, 1, strlen(cause.name)-2); end
-		DPSMate.DB:BuildUserAbility(cause, strsub(ab, 1, strfind(ab, "%.")-1).."(Periodic)", 1, 0, 0, 0, 0, 0, tonumber(strsub(dmg, strfind(dmg, "%d+"))), 0)
+		DPSMate.DB:DamageDone(cause, strsub(ab, 1, strfind(ab, "%.")-1).."(Periodic)", 1, 0, 0, 0, 0, 0, tonumber(strsub(dmg, strfind(dmg, "%d+"))))
 	end
 end
 
@@ -144,7 +152,7 @@ function DPSMate.Parser:ParsePartyHits(msg)
 	for c, k, t, a in string.gfind(msg, "(.-) (.-) (.+) for (%d+).") do
 		cause.name = c
 		if k == DPSMate.localization.parser.hits then hit=1; else crit=1; end
-		DPSMate.DB:BuildUserAbility(cause, "AutoAttack", hit, crit, 0, 0, 0, 0, tonumber(a), 0)
+		DPSMate.DB:DamageDone(cause, "AutoAttack", hit, crit, 0, 0, 0, 0, tonumber(a))
 	end
 end
 
@@ -152,7 +160,7 @@ function DPSMate.Parser:ParsePartyMisses(msg)
 	local miss, parry, dodge, cause = 0, 0, 0, {}
 	if strfind(msg, DPSMate.localization.parser.misses) then miss = 1; elseif strfind(msg, DPSMate.localization.parser.parries) then parry = 1; elseif strfind(msg, DPSMate.localization.parser.dodges) then dodge = 1; end
 	cause.name = strsub(msg, 1, strfind(msg, "%s")-1)
-	DPSMate.DB:BuildUserAbility(cause, "AutoAttack", 0, 0, miss, parry, dodge, 0, 0, 0)
+	DPSMate.DB:DamageDone(cause, "AutoAttack", 0, 0, miss, parry, dodge, 0, 0)
 end
 
 function DPSMate.Parser:ParsePartySpellDMG(msg)
@@ -175,7 +183,7 @@ function DPSMate.Parser:ParsePartySpellDMG(msg)
 		for c, ab, t, a in string.gfind(msg, "(.-)'s (.+) crits (.+) for (.+).") do crit=1; cause.name=c; ability=ab; target=t; amount=tonumber(strsub(a, strfind(a, "%d+"))); end
 	end
 	if (not cause.name) then return; end
-	DPSMate.DB:BuildUserAbility(cause, ability, hit, crit, miss, parry, dodge, resist, amount, 0)
+	DPSMate.DB:DamageDone(cause, ability, hit, crit, miss, parry, dodge, resist, amount)
 end
 
 function DPSMate.Parser:ParseTextUpdate(arg1,arg2,arg3) 
@@ -206,7 +214,7 @@ function DPSMate.Parser:ParseFriendlyPlayerDamage(msg)
 		for c, ab, t, a in string.gfind(msg, "(.-)'s (.+) hits (.+) for (.+).") do hit=1; cause.name=c; ability=ab; target=t; amount=tonumber(strsub(a, strfind(a, "%d+"))); end
 		for c, ab, t, a in string.gfind(msg, "(.-)'s (.+) crits (.+) for (.+).") do crit=1; cause.name=c; ability=ab; target=t; amount=tonumber(strsub(a, strfind(a, "%d+"))); end
 	end
-	DPSMate.DB:BuildUserAbility(cause, ability, hit, crit, 0, 0, 0, resist, amount, 0)
+	DPSMate.DB:DamageDone(cause, ability, hit, crit, 0, 0, 0, resist, amount)
 end
 
 function DPSMate.Parser:FriendlyPlayerHits(msg)
@@ -214,17 +222,17 @@ function DPSMate.Parser:FriendlyPlayerHits(msg)
 	local target, cause, hit, crit, amount = "", {}, 0, 0, 0
 	if strfind(msg, "lava") then
 		for c, a in string.gfind(msg, "(.-) loses (%d+) health for swimming in lava.") do cause.name=c; amount=tonumber(a); end
-		DPSMate.DB:BuildUserAbility(cause, "Lava", 1, 0, 0, 0, 0, 0, amount, 1)
+		DPSMate.DB:DamageDone(cause, "Lava", 1, 0, 0, 0, 0, 0, amount, 1)
 	elseif strfind(msg, "falls") then
 		for c, a in string.gfind(msg, "(.-) falls and loses (%d+) health.") do cause.name=c; amount=tonumber(a); end
-		DPSMate.DB:BuildUserAbility(cause, "Falling", 1, 0, 0, 0, 0, 0, amount, 1)
+		DPSMate.DB:DamageDone(cause, "Falling", 1, 0, 0, 0, 0, 0, amount, 1)
 	elseif strfind(msg, "drowning") then
 		for c, a in string.gfind(msg, "(.-) is drowning and loses (%d+) health.") do cause.name=c; amount=tonumber(a); end
-		DPSMate.DB:BuildUserAbility(cause, "Drowning", 1, 0, 0, 0, 0, 0, amount, 1)
+		DPSMate.DB:DamageDone(cause, "Drowning", 1, 0, 0, 0, 0, 0, amount, 1)
 	else
 		for c, t, a in string.gfind(msg, "(.-) hits (.+) for (.+).") do hit=1; cause.name=c; target=t; amount=tonumber(strsub(a, strfind(a, "%d+"))); end
 		for c, t, a in string.gfind(msg, "(.-) crits (.+) for (.+).") do crit=1; cause.name=c; target=t; amount=tonumber(strsub(a, strfind(a, "%d+"))); end
-		DPSMate.DB:BuildUserAbility(cause, "AutoAttack", hit, crit, 0, 0, 0, 0, amount, 0)
+		DPSMate.DB:DamageDone(cause, "AutoAttack", hit, crit, 0, 0, 0, 0, amount)
 	end
 end
 
@@ -232,5 +240,17 @@ function DPSMate.Parser:FriendlyPlayerMisses(msg)
 	local miss, parry, dodge, cause = 0, 0, 0, {}
 	if strfind(msg, "misses") then miss = 1 elseif strfind(msg, "parries") then parry = 1 elseif strfind(msg, "dodges") then dodge = 1 end
 	cause.name = strsub(msg, 1, strfind(msg, " ")-1)
-	DPSMate.DB:BuildUserAbility(cause, "AutoAttack", 0, 0, miss, parry, dodge, 0, 0, 0)
+	DPSMate.DB:DamageDone(cause, "AutoAttack", 0, 0, miss, parry, dodge, 0, 0)
+end
+
+----------------------------------------------------------------------------------
+--------------                    Damage taken                      --------------                                  
+----------------------------------------------------------------------------------
+
+-- War Reaver hits/crits you for 66.
+function DPSMate.Parser:CreatureVsSelfHits(msg)
+	local target cause, hit, crit, amount = "", "", 0, 0, 0
+	for c, a in string.gfind(msg, "(.+) hits you for (.+).") do hit=1; cause=c; amount=tonumber(strsub(a, strfind(a, "%d+"))); end
+	for c, a in string.gfind(msg, "(.+) crits you for (.+).") do crit=1; cause=c; amount=tonumber(strsub(a, strfind(a, "%d+"))); end
+	DPSMate.DB:DamageTaken(player, "AutoAttack", hit, crit, 0, 0, 0, 0, amount, cause)
 end
