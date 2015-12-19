@@ -1206,7 +1206,7 @@ function DPSMate.Options:Report()
 	end
 	SendChatMessage("DPSMate - "..DPSMate.localization.reportfor..DPSMate:GetModeName(DPSMate_Report.PaKey), chn, nil, index)
 	for i=1, DPSMate_Report_Lines:GetValue() do
-		if (not sortedTable[i]) then break end
+		if (not sortedTable[i] or sortedTable[i] == 0) then break end
 		SendChatMessage(i..". "..a[sortedTable[i]].." - "..sortedTable[i].." ("..string.format("%.1f", 100*sortedTable[i]/total).."%)", chn, nil, index)
 	end
 	DPSMate_Report:Hide()
