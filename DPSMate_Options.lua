@@ -624,7 +624,7 @@ function DPSMate.Options:EvalDamageTaken(t)
 					table.insert(d, i, CV)
 					break
 				else
-					if (d[i] < va["amount"]) then
+					if (d[i] < CV) then
 						table.insert(a, i, cat)
 						table.insert(d, i, CV)
 						break

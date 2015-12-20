@@ -148,6 +148,7 @@ function DPSMate.DB:OnEvent(event)
 	end
 end
 
+-- Need to fix an error here l. 156(?)
 function DPSMate.DB:GetPets()
 	local pets = {}
 	if DPSMate.DB:PlayerInParty() then
@@ -189,15 +190,11 @@ end
 
 function DPSMate.DB:AssignPet()
 	local pets = DPSMate.DB:GetPets()
-	for _, v in pairs({DPSMateUser, DPSMateUserCurrent}) do
-		if not v then break end
-		for cat, val in pairs(v) do
-			if not val then break end
-			if (pets[cat]) then
-				v[cat]["pet"] = pets[cat]
-				if (v[pets[cat]]) then
-					v[pets[cat]]["isPet"] = true
-				end
+	for cat, val in pairs(DPSMateUser) do
+		if (pets[cat]) then
+			val["pet"] = pets[cat]
+			if (DPSMateUser[pets[cat]]) then
+				DPSMateUser[pets[cat]]["isPet"] = true
 			end
 		end
 	end
@@ -209,14 +206,11 @@ function DPSMate.DB:AssignClass()
 	if DPSMate.DB:PlayerInParty() then
 		for i=1,4 do
 			if UnitExists("party"..i) then
-				for _, v in pairs({DPSMateUser, DPSMateUserCurrent}) do
-					if not v then break end
-					if v[UnitName("party"..i)] then
-						if (not v[UnitName("party"..i)].class) then
-							t,classEng = UnitClass("party"..i)
-							if (classEng) then
-								v[UnitName("party"..i)].class = strlower(classEng)
-							end
+				if DPSMateUser[UnitName("party"..i)] then
+					if (not DPSMateUser[UnitName("party"..i)]["class"]) then
+						t,classEng = UnitClass("party"..i)
+						if (classEng) then
+							DPSMateUser[UnitName("party"..i)]["class"] = strlower(classEng)
 						end
 					end
 				end
@@ -225,14 +219,11 @@ function DPSMate.DB:AssignClass()
 	elseif UnitInRaid("player") then
 		for i=1,40 do
 			if UnitExists("raid"..i) then
-				for _, v in pairs({DPSMateUser, DPSMateUserCurrent}) do
-					if not v then break end
-					if v[UnitName("raid"..i)] then
-						if (not v[UnitName("raid"..i)].class) then
-							t,classEng = UnitClass("raid"..i)
-							if (classEng) then
-								v[UnitName("raid"..i)].class = strlower(classEng)
-							end
+				if DPSMateUser[UnitName("raid"..i)] then
+					if (not DPSMateUser[UnitName("raid"..i)]["class"]) then
+						t,classEng = UnitClass("raid"..i)
+						if (classEng) then
+							DPSMateUser[UnitName("raid"..i)]["class"] = strlower(classEng)
 						end
 					end
 				end
@@ -463,6 +454,7 @@ function DPSMate.DB:hasVanishedFeignDeath()
 	end
 end
 
+-- Line 477(?) error // I guess it appears if it is getting reset before the ability is inserted
 function DPSMate.DB:BuildUserProcs(Duser, Dname, Dbool) -- has to be made dynamic again
 	for cat, val in pairs({[1]="total", [2]="current"}) do 
 		if DPSMate.DB:DataExistProcs(Duser.name, Dname, DPSMateDamageDone[cat]) then
