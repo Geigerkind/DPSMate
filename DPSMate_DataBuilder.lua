@@ -297,8 +297,8 @@ function DPSMate.DB:DamageDone(Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, Ddodge,
 			end
 		else
 			DPSMate.DB:BuildUser(Duser.name, Duser.class)
-			if (not DPSMateDamageDone[1][DPSMateUser[Duser.name]["id"]]) then
-				for i=1, 2 do 
+			for i=1, 2 do 
+				if (not DPSMateDamageDone[i][DPSMateUser[Duser.name]["id"]]) then
 					DPSMateDamageDone[i][DPSMateUser[Duser.name]["id"]] = {
 						info = {
 							[1] = {},
@@ -387,6 +387,7 @@ function DPSMate.DB:DamageTaken(Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, Ddodge
 		end
 		DPSMateDamageTaken[cat][DPSMateUser[Duser.name]["id"]][cause]["info"][3] = DPSMateDamageTaken[cat][DPSMateUser[Duser.name]["id"]][cause]["info"][3] + Damount
 	end
+	DPSMate:SetStatusBarValue()
 end
 
 function DPSMate.DB:DDExist(uname, aname, arr)
