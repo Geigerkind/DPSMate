@@ -20,6 +20,7 @@ DPSMate.Events = {
 	"CHAT_MSG_COMBAT_FRIENDLYPLAYER_HITS",
 	"CHAT_MSG_COMBAT_FRIENDLYPLAYER_MISSES",
 	"CHAT_MSG_SPELL_FRIENDLYPLAYER_DAMAGE",
+	
 	"COMBAT_TEXT_UPDATE",
 	
 	"CHAT_MSG_COMBAT_CREATURE_VS_SELF_HITS",
@@ -34,6 +35,15 @@ DPSMate.Events = {
 	"CHAT_MSG_COMBAT_CREATURE_VS_CREATURE_MISSES",
 	"CHAT_MSG_SPELL_CREATURE_VS_CREATURE_DAMAGE",
 	"CHAT_MSG_SPELL_PERIODIC_FRIENDLYPLAYER_DAMAGE", 
+	
+	"CHAT_MSG_SPELL_SELF_BUFF",
+	"CHAT_MSG_SPELL_PERIODIC_SELF_BUFFS",
+	"CHAT_MSG_SPELL_FRIENDLYPLAYER_BUFF",
+	"CHAT_MSG_SPELL_PERIODIC_FRIENDLYPLAYER_BUFFS",
+	"CHAT_MSG_SPELL_HOSTILEPLAYER_BUFF",
+	"CHAT_MSG_SPELL_PERIODIC_HOSTILEPLAYER_BUFFS",
+	"CHAT_MSG_SPELL_PARTY_BUFF",
+	"CHAT_MSG_SPELL_PERIODIC_PARTY_BUFFS",
 	
 	"PLAYER_AURAS_CHANGED",
 }
@@ -330,6 +340,30 @@ function DPSMate:GetSortedDTTable(arr)
 	return b, total, a
 end
 
+function DPSMate:GetSortedHealingTable(arr)
+	local b, a, total = {}, {}, 0
+	if arr then
+		for c, v in pairs(arr) do
+			a[v["info"][1]] = c
+			local i = 1
+			while true do
+				if (not b[i]) then
+					table.insert(b, i, v["info"][1])
+					break
+				else
+					if b[i] < v["info"][1] then
+						table.insert(b, i, v["info"][1])
+						break
+					end
+				end
+				i=i+1
+			end
+			total = total + v["info"][1]
+		end
+	end
+	return b, total, a
+end
+
 function DPSMate:PlayerExist(arr, name)
 	for cat, val in pairs(arr) do
 		if (cat == name) then
@@ -379,6 +413,7 @@ function DPSMate:FormatNumbers(dmg,total,sort,k)
 	return dmg, total, sort
 end
 
+-- Needs improvement
 function DPSMate:GetSettingValues(arr, cbt, k)
 	local name, value, perc, sortedTable, total, a, p, strt = {}, {}, {}, {}, 0, 0, "", {[1]="",[2]=""}
 	if DPSMateSettings["windows"][k]["numberformat"] == 2 then p = "K" end
@@ -444,6 +479,61 @@ function DPSMate:GetSettingValues(arr, cbt, k)
 			table.insert(value, str[1]..str[2])
 			table.insert(perc, 100*(dmg/sort))
 		end
+	elseif (DPSMateSettings["windows"][k]["CurMode"] == "healing") then
+		sortedTable, total, a = DPSMate:GetSortedHealingTable(arr)
+		for cat, val in pairs(sortedTable) do
+			local va, tot, sort = DPSMate:FormatNumbers(val, total, sortedTable[1], k)
+			local str = {[1]="",[2]="",[3]=""}
+			str[1] = " "..va..p; strt[2] = tot..p
+			str[2] = " ("..string.format("%.1f", 100*va/tot).."%)"
+			table.insert(name, DPSMate:GetUserById(a[val]))
+			table.insert(value, str[1]..str[2])
+			table.insert(perc, 100*(va/sort))
+		end
+	elseif (DPSMateSettings["windows"][k]["CurMode"] == "overhealing") then
+		sortedTable, total, a = DPSMate:GetSortedHealingTable(arr)
+		for cat, val in pairs(sortedTable) do
+			local va, tot, sort = DPSMate:FormatNumbers(val, total, sortedTable[1], k)
+			local str = {[1]="",[2]="",[3]=""}
+			str[1] = " "..va..p; strt[2] = tot..p
+			str[2] = " ("..string.format("%.1f", 100*va/tot).."%)"
+			table.insert(name, DPSMate:GetUserById(a[val]))
+			table.insert(value, str[1]..str[2])
+			table.insert(perc, 100*(va/sort))
+		end
+	elseif (DPSMateSettings["windows"][k]["CurMode"] == "effectivehealing") then
+		sortedTable, total, a = DPSMate:GetSortedHealingTable(arr)
+		for cat, val in pairs(sortedTable) do
+			local va, tot, sort = DPSMate:FormatNumbers(val, total, sortedTable[1], k)
+			local str = {[1]="",[2]="",[3]=""}
+			str[1] = " "..va..p; strt[2] = tot..p
+			str[2] = " ("..string.format("%.1f", 100*va/tot).."%)"
+			table.insert(name, DPSMate:GetUserById(a[val]))
+			table.insert(value, str[1]..str[2])
+			table.insert(perc, 100*(va/sort))
+		end
+	elseif (DPSMateSettings["windows"][k]["CurMode"] == "healingtaken") then
+		sortedTable, total, a = DPSMate:GetSortedHealingTable(arr)
+		for cat, val in pairs(sortedTable) do
+			local va, tot, sort = DPSMate:FormatNumbers(val, total, sortedTable[1], k)
+			local str = {[1]="",[2]="",[3]=""}
+			str[1] = " "..va..p; strt[2] = tot..p
+			str[2] = " ("..string.format("%.1f", 100*va/tot).."%)"
+			table.insert(name, DPSMate:GetUserById(a[val]))
+			table.insert(value, str[1]..str[2])
+			table.insert(perc, 100*(va/sort))
+		end
+	elseif (DPSMateSettings["windows"][k]["CurMode"] == "effectivehealingtaken") then
+		sortedTable, total, a = DPSMate:GetSortedHealingTable(arr)
+		for cat, val in pairs(sortedTable) do
+			local va, tot, sort = DPSMate:FormatNumbers(val, total, sortedTable[1], k)
+			local str = {[1]="",[2]="",[3]=""}
+			str[1] = " "..va..p; strt[2] = tot..p
+			str[2] = " ("..string.format("%.1f", 100*va/tot).."%)"
+			table.insert(name, DPSMate:GetUserById(a[val]))
+			table.insert(value, str[1]..str[2])
+			table.insert(perc, 100*(va/sort))
+		end
 	end
 	return name, value, perc, strt
 end
@@ -470,6 +560,16 @@ function DPSMate:GetDisplay(k)
 		return DPSMateEDD, "EDDone"
 	elseif DPSMateSettings["windows"][k]["CurMode"] == "enemydamagetaken" then
 		return DPSMateEDT, "EDTaken"
+	elseif DPSMateSettings["windows"][k]["CurMode"] == "healing" then
+		return DPSMateTHealing, "THealing"
+	elseif DPSMateSettings["windows"][k]["CurMode"] == "overhealing" then
+		return DPSMateOverhealing, "OHealing"
+	elseif DPSMateSettings["windows"][k]["CurMode"] == "effectivehealing" then
+		return DPSMateEHealing, "EHealing"
+	elseif DPSMateSettings["windows"][k]["CurMode"] == "healingtaken" then
+		return DPSMateHealingTaken, "HTaken"
+	elseif DPSMateSettings["windows"][k]["CurMode"] == "effectivehealingtaken" then
+		return DPSMateEHealingTaken, "EHTaken"
 	end
 end
 

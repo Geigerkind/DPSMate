@@ -94,6 +94,23 @@ function DPSMate.Parser:OnEvent(event)
 		if arg1 then DPSMate.Parser:CreatureVsCreatureSpellDamage(arg1) end
 	elseif event == "CHAT_MSG_SPELL_PERIODIC_FRIENDLYPLAYER_DAMAGE" then
 		if arg1 then DPSMate.Parser:SpellPeriodicDamageTaken(arg1) end
+	-- Healing
+	elseif event == "CHAT_MSG_SPELL_SELF_BUFF" then
+		if arg1 then DPSMate.Parser:SpellSelfBuff(arg1) end
+	elseif event == "CHAT_MSG_SPELL_PERIODIC_SELF_BUFFS" then
+		if arg1 then DPSMate.Parser:SpellPeriodicSelfBuff(arg1) end
+	elseif event == "CHAT_MSG_SPELL_FRIENDLYPLAYER_BUFF" then
+		if arg1 then DPSMate.Parser:SpellFriendlyPlayerBuff(arg1) end
+	elseif event == "CHAT_MSG_SPELL_PERIODIC_FRIENDLYPLAYER_BUFFS" then
+		if arg1 then DPSMate.Parser:SpellPeriodicFriendlyPlayerBuffs(arg1) end
+	elseif event == "CHAT_MSG_SPELL_HOSTILEPLAYER_BUFF" then
+		if arg1 then DPSMate.Parser:SpellHostilePlayerBuff(arg1) end
+	elseif event == "CHAT_MSG_SPELL_PERIODIC_HOSTILEPLAYER_BUFFS" then
+		if arg1 then DPSMate.Parser:SpellPeriodicHostilePlayerBuffs(arg1) end
+	elseif event == "CHAT_MSG_SPELL_PARTY_BUFF" then
+		if arg1 then DPSMate.Parser:SpellPartyBuff(arg1) end
+	elseif event == "CHAT_MSG_SPELL_PERIODIC_PARTY_BUFFS" then
+		if arg1 then DPSMate.Parser:SpellPeriodicPartyBuffs(arg1) end
 	end
 end
 
@@ -322,3 +339,139 @@ function DPSMate.Parser:CreatureVsCreatureSpellDamage(msg)
 	DPSMate.DB:EnemyDamage(DPSMateEDD, target, ability, hit, crit, 0, 0, 0, resist, amount, cause)
 	DPSMate.DB:DamageTaken(target, ability, hit, crit, 0, 0, 0, resist, amount, cause)
 end
+
+----------------------------------------------------------------------------------
+--------------                       Healing                        --------------                                  
+----------------------------------------------------------------------------------
+
+function DPSMate.Parser:GetOverhealByName(amount, target)
+	local result, unit = 0, nil
+	if DPSMate.DB:PlayerInParty() then
+		if target=="player" then
+			unit="player"
+		else
+			for i=1, 4 do
+				if UnitName("party"..i)==target then
+					unit="party"..i; break
+				end
+			end
+		end
+	elseif UnitInRaid("player") then
+		for i=1, 40 do
+			if UnitName("raid"..i)==target then
+				unit="raid"..i; break
+			end
+		end
+	end
+	if unit then result = amount-(UnitHealthMax(unit)-UnitHealth(unit)) end
+	if result<0 then return 0 else return result end 
+end
+
+-- Your Flash of Light heals you for 194.
+-- Your Flash of Light critically heals you for 130.
+-- You cast Purify on Minihunden.
+-- Your Healing Potion heals you for 507.
+function DPSMate.Parser:SpellSelfBuff(msg)
+	local ability, hit, crit, target, amount = "", 0, 0, "", 0
+	for ab, ta, a in string.gfind(msg, "Your (.+) heals (.+) for (.+)%.") do hit=1; crit=0; ability=ab; target=ta; amount=tonumber(strsub(a, strfind(a, "%d+"))) end
+	for ab, ta, a in string.gfind(msg, "Your (.+) critically heals (.+) for (.+)%.") do crit=1; hit=0; ability=ab; target=ta; amount=tonumber(strsub(a, strfind(a, "%d+"))) end
+	if target=="you" then target=player.name end
+	overheal = DPSMate.Parser:GetOverhealByName(amount, target)
+	DPSMate.DB:HealingTaken(DPSMateHealingTaken, target, ability, hit, crit, amount, player.name)
+	DPSMate.DB:HealingTaken(DPSMateEHealingTaken, target, ability, hit, crit, amount-overheal, player.name)
+	DPSMate.DB:Healing(DPSMateEHealing, player, ability, hit, crit, amount-overheal, target)
+	DPSMate.DB:Healing(DPSMateOverhealing, player, ability, hit, crit, overheal, target)
+	DPSMate.DB:Healing(DPSMateTHealing, player, ability, hit, crit, amount, target)
+end
+
+-- You gain First Aid.
+-- You gain Mark of the Wild.
+-- You gain Thorns.
+-- You gain 11 health from First Aid.
+-- You gain 61 health from Nenea's Rejuvenation.
+function DPSMate.Parser:SpellPeriodicSelfBuff(msg) -- Maybe some loss here?
+	local cause, ability, target, amount = {}, "", "", 0
+	for a, ab in string.gfind(msg, "You gain (.+) health from (.+)%.") do amount=tonumber(strsub(a, strfind(a, "%d+"))); ability=ab; target=player.name; cause=player end
+	for a, ta, ab in string.gfind(msg, "You gain (.+) health from (.+)'s (.+)%.") do amount=tonumber(strsub(a, strfind(a, "%d+"))); ability=ab; target=player.name; cause.name=ta end
+	if amount>0 then -- Workaround as long as I dont have buffs implemented
+		overheal = DPSMate.Parser:GetOverhealByName(amount, target)
+		DPSMate.DB:HealingTaken(DPSMateHealingTaken, target, ability, 1, 0, amount, cause.name)
+		DPSMate.DB:HealingTaken(DPSMateEHealingTaken, target, ability, 1, 0, amount-overheal, cause.name)
+		DPSMate.DB:Healing(DPSMateEHealing, cause, ability, 1, 0, amount-overheal, target)
+		DPSMate.DB:Healing(DPSMateOverhealing, cause, ability, 1, 0, overheal, target)
+		DPSMate.DB:Healing(DPSMateTHealing, cause, ability, 1, 0, amount, target)
+	end
+end
+
+-- Albea begins to cast Flash of Light.
+-- Albea gains 35 Mana from Albea's Illumination.
+-- Catrala performs Last Stand.
+-- Albea's Holy Light (critically) heals Impalax for 922.
+function DPSMate.Parser:SpellFriendlyPlayerBuff(msg)
+	local cause, ability, target, amount, hit, crit = {}, "", "", 0, 0, 0
+	for c, ab, ta, a in string.gfind(msg, "(.+)'s (.+) heals (.+) for (.+)%.") do hit=1; crit=0; amount=tonumber(strsub(a, strfind(a, "%d+"))); ability=ab; target=ta; cause.name=c end
+	for c, ab, ta, a in string.gfind(msg, "(.+)'s (.+) critically heals (.+) for (.+)%.") do crit=1; hit=0; amount=tonumber(strsub(a, strfind(a, "%d+"))); ability=ab; target=ta; cause.name=c end
+	overheal = DPSMate.Parser:GetOverhealByName(amount, target)
+	DPSMate.DB:HealingTaken(DPSMateHealingTaken, target, ability, hit, crit, amount, cause.name)
+	DPSMate.DB:HealingTaken(DPSMateEHealingTaken, target, ability, hit, crit, amount-overheal, cause.name)
+	DPSMate.DB:Healing(DPSMateEHealing, cause, ability, hit, crit, amount-overheal, target)
+	DPSMate.DB:Healing(DPSMateOverhealing, cause, ability, hit, crit, overheal, target)
+	DPSMate.DB:Healing(DPSMateTHealing, cause, ability, hit, crit, amount, target)
+end
+
+-- Catrala gains Last Stand.
+-- Raptor gains 35 Happiness from Giggity's Feed Pet Effect.
+-- Sivir gains 11 health from your First Aid.
+-- Sivir gains 11 health from Albea's First Aid.
+function DPSMate.Parser:SpellPeriodicFriendlyPlayerBuffs(msg)
+	local cause, ability, target, amount = {}, "", "", 0
+	for ta, a, ab in string.gfind(msg, "(.+) gains (.+) health from your (.+)%.") do target=ta; amount=tonumber(strsub(a, strfind(a, "%d+"))); ability=ab; cause=player end
+	for ta, a, c, ab in string.gfind(msg, "(.+) gains (.+) health from (.+)'s (.+)%.") do target=ta; amount=tonumber(strsub(a, strfind(a, "%d+"))); ability=ab; cause.name=c end
+	overheal = DPSMate.Parser:GetOverhealByName(amount, target)
+	DPSMate.DB:HealingTaken(DPSMateHealingTaken, target, ability, 1, 0, amount, cause.name)
+	DPSMate.DB:HealingTaken(DPSMateEHealingTaken, target, ability, 1, 0, amount-overheal, cause.name)
+	DPSMate.DB:Healing(DPSMateEHealing, cause, ability, 1, 0, amount-overheal, target)
+	DPSMate.DB:Healing(DPSMateOverhealing, cause, ability, 1, 0, overheal, target)
+	DPSMate.DB:Healing(DPSMateTHealing, cause, ability, 1, 0, amount, target)
+end
+
+function DPSMate.Parser:SpellPeriodicHostilePlayerBuffs(msg)
+	DPSMate:SendMessage(msg.."Test3")
+end
+
+-- A1bea's Flash of Light heals you/Baz for 90.
+-- Albea's Flash of Light critically heals you/Baz for 135.
+function DPSMate.Parser:SpellHostilePlayerBuff(msg)
+	local cause, ability, target, amount, hit, crit = {}, "", "", 0, 0, 0
+	for c, ab, ta, a in string.gfind(msg, "(.+)'s (.+) heals (.+) for (.+)%.") do hit=1; crit=0; amount=tonumber(strsub(a, strfind(a, "%d+"))); ability=ab; target=ta; cause.name=c end
+	for c, ab, ta, a in string.gfind(msg, "(.+)'s (.+) critically heals (.+) for (.+)%.") do crit=1; hit=0; amount=tonumber(strsub(a, strfind(a, "%d+"))); ability=ab; target=ta; cause.name=c end
+	if target=="you" then target=player.name end
+	overheal = DPSMate.Parser:GetOverhealByName(amount, target)
+	DPSMate.DB:HealingTaken(DPSMateHealingTaken, target, ability, hit, crit, amount, cause.name)
+	DPSMate.DB:HealingTaken(DPSMateEHealingTaken, target, ability, hit, crit, amount-overheal, cause.name)
+	DPSMate.DB:Healing(DPSMateEHealing, cause, ability, hit, crit, amount-overheal, target)
+	DPSMate.DB:Healing(DPSMateOverhealing, cause, ability, hit, crit, overheal, target)
+	DPSMate.DB:Healing(DPSMateTHealing, cause, ability, hit, crit, amount, target)
+end
+
+
+function DPSMate.Parser:SpellPartyBuff(msg)
+	DPSMate:SendMessage(msg.."Test1")
+end
+
+-- Soulstoke gains First Aid.
+-- Soulstoke gains 11 health from your/Albea's First Aid.
+function DPSMate.Parser:SpellPeriodicPartyBuffs(msg)
+	local cause, ability, target, amount = {}, "", "", 0
+	for ta, a, ab in string.gfind(msg, "(.+) gains (.+) health from your (.+)%.") do target=ta; amount=tonumber(strsub(a, strfind(a, "%d+"))); ability=ab; cause=player end
+	for ta, a, c, ab in string.gfind(msg, "(.+) gains (.+) health from (.+)'s (.+)%.") do target=ta; amount=tonumber(strsub(a, strfind(a, "%d+"))); ability=ab; cause.name=c end
+	overheal = DPSMate.Parser:GetOverhealByName(amount, target)
+	DPSMate.DB:HealingTaken(DPSMateHealingTaken, target, ability, 1, 0, amount, cause.name)
+	DPSMate.DB:HealingTaken(DPSMateEHealingTaken, target, ability, 1, 0, amount-overheal, cause.name)
+	DPSMate.DB:Healing(DPSMateEHealing, cause, ability, 1, 0, amount-overheal, target)
+	DPSMate.DB:Healing(DPSMateOverhealing, cause, ability, 1, 0, overheal, target)
+	DPSMate.DB:Healing(DPSMateTHealing, cause, ability, 1, 0, amount, target)
+end
+
+
+

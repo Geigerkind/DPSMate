@@ -24,8 +24,11 @@ function DPSMate.DB:OnEvent(event)
 								enemydamagetaken = false,
 								enemydamagedone = false,
 								healing = false,
+								effectivehealing = false,
 								healingandabsorbs = false,
 								overhealing = false,
+								healingtaken = false,
+								effectivehealingtaken = false,
 								interrupts = false,
 								deaths = false,
 								dispels = false
@@ -110,6 +113,11 @@ function DPSMate.DB:OnEvent(event)
 		if DPSMateDamageTaken == nil then DPSMateDamageTaken = {[1]={},[2]={}} end
 		if DPSMateEDD == nil then DPSMateEDD = {[1]={},[2]={}} end
 		if DPSMateEDT == nil then DPSMateEDT = {[1]={},[2]={}} end
+		if DPSMateTHealing == nil then DPSMateTHealing = {[1]={},[2]={}} end
+		if DPSMateEHealing == nil then DPSMateEHealing = {[1]={},[2]={}} end
+		if DPSMateOverhealing == nil then DPSMateOverhealing = {[1]={},[2]={}} end
+		if DPSMateHealingTaken == nil then DPSMateHealingTaken = {[1]={},[2]={}} end
+		if DPSMateEHealingTaken == nil then DPSMateEHealingTaken = {[1]={},[2]={}} end
 		if DPSMateCombatTime == nil then
 			DPSMateCombatTime = {
 				total = 1,
@@ -200,6 +208,7 @@ function DPSMate.DB:AssignPet()
 end
 
 -- Decrease load if the group has been scanned once
+-- Error if people are offline? l.229
 function DPSMate.DB:AssignClass()
 	local classEng
 	if DPSMate.DB:PlayerInParty() then
@@ -228,7 +237,7 @@ function DPSMate.DB:AssignClass()
 						DPSMateUser[UnitName("raid"..i)]["class"] = strlower(classEng)
 					end
 				end
-		end
+			end
 		end
 	end
 end
@@ -439,6 +448,101 @@ function DPSMate.DB:EnemyDamage(arr, Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, D
 			if (Dcrit == 1) then arr[cat][cause][DPSMateUser[Duser.name]["id"]][Dname]["critlow"] = Damount; arr[cat][cause][DPSMateUser[Duser.name]["id"]][Dname]["crithigh"] = Damount; arr[cat][cause][DPSMateUser[Duser.name]["id"]][Dname]["critaverage"] = Damount end
 		end
 		arr[cat][cause][DPSMateUser[Duser.name]["id"]]["info"][3] = arr[cat][cause][DPSMateUser[Duser.name]["id"]]["info"][3] + Damount
+	end
+	DPSMate:SetStatusBarValue()
+end
+
+function DPSMate.DB:Healing(arr, Duser, Dname, Dhit, Dcrit, Damount, target)
+	if (not Duser.name or DPSMate:TableLength(Duser)==0 or not Dname or Dname=="") then return end
+	for cat, val in pairs({[1]="total", [2]="current"}) do 
+		DPSMate.DB:BuildUser(Duser.name, Duser.class)
+		if not arr[cat][DPSMateUser[Duser.name]["id"]] then
+			arr[cat][DPSMateUser[Duser.name]["id"]] = {
+				info = {
+					[1] = 0, -- Healing done
+				},
+			}
+		end
+		if not arr[cat][DPSMateUser[Duser.name]["id"]][Dname] then
+			arr[cat][DPSMateUser[Duser.name]["id"]][Dname] = {}
+		end
+		if not arr[cat][DPSMateUser[Duser.name]["id"]][Dname][target] then 
+			arr[cat][DPSMateUser[Duser.name]["id"]][Dname][target] = {
+				[1] = 0, -- Healing done
+				[2] = 0, -- Hit
+				[3] = 0, -- Crit
+				[4] = 0, -- average
+				[5] = 0, -- hitav
+				[6] = 0, -- critav
+			}
+		end
+		if Dhit==1 then
+			if arr[cat][DPSMateUser[Duser.name]["id"]][Dname][target][5]>0 then
+				arr[cat][DPSMateUser[Duser.name]["id"]][Dname][target][5] = (arr[cat][DPSMateUser[Duser.name]["id"]][Dname][target][5]+Damount)/2
+			else
+				arr[cat][DPSMateUser[Duser.name]["id"]][Dname][target][5] = Damount
+			end
+		end
+		if Dcrit==1 then
+			if arr[cat][DPSMateUser[Duser.name]["id"]][Dname][target][6]>0 then
+				arr[cat][DPSMateUser[Duser.name]["id"]][Dname][target][6] = (arr[cat][DPSMateUser[Duser.name]["id"]][Dname][target][6]+Damount)/2
+			else
+				arr[cat][DPSMateUser[Duser.name]["id"]][Dname][target][6] = Damount
+			end
+		end
+		if arr[cat][DPSMateUser[Duser.name]["id"]][Dname][target][4]>0 then arr[cat][DPSMateUser[Duser.name]["id"]][Dname][target][4] = (arr[cat][DPSMateUser[Duser.name]["id"]][Dname][target][4]+Damount)/2 else arr[cat][DPSMateUser[Duser.name]["id"]][Dname][target][4]=Damount end
+		arr[cat][DPSMateUser[Duser.name]["id"]][Dname][target][1] = arr[cat][DPSMateUser[Duser.name]["id"]][Dname][target][1]+Damount
+		arr[cat][DPSMateUser[Duser.name]["id"]][Dname][target][2] = arr[cat][DPSMateUser[Duser.name]["id"]][Dname][target][2]+Dhit
+		arr[cat][DPSMateUser[Duser.name]["id"]][Dname][target][3] = arr[cat][DPSMateUser[Duser.name]["id"]][Dname][target][3]+Dcrit
+		arr[cat][DPSMateUser[Duser.name]["id"]]["info"][1] = arr[cat][DPSMateUser[Duser.name]["id"]]["info"][1]+Damount
+	end
+	DPSMate:SetStatusBarValue()
+end
+
+function DPSMate.DB:HealingTaken(arr, Duser, Dname, Dhit, Dcrit, Damount, target)
+	if (not Duser or not Dname or Dname=="") then return end
+	for cat, val in pairs({[1]="total", [2]="current"}) do 
+		DPSMate.DB:BuildUser(Duser, nil)
+		DPSMate.DB:BuildUser(target, nil)
+		if not arr[cat][DPSMateUser[Duser]["id"]] then
+			arr[cat][DPSMateUser[Duser]["id"]] = {
+				info = {
+					[1] = 0,
+				},
+			}
+		end
+		if not arr[cat][DPSMateUser[Duser]["id"]][DPSMateUser[target]["id"]] then
+			arr[cat][DPSMateUser[Duser]["id"]][DPSMateUser[target]["id"]] = {}
+		end
+		if not arr[cat][DPSMateUser[Duser]["id"]][DPSMateUser[target]["id"]][Dname] then
+			arr[cat][DPSMateUser[Duser]["id"]][DPSMateUser[target]["id"]][Dname] = {
+				[1] = 0, -- Healing done
+				[2] = 0, -- Hit
+				[3] = 0, -- Crit
+				[4] = 0, -- average
+				[5] = 0, -- hitav
+				[6] = 0, -- critav
+			}
+		end
+		if Dhit==1 then
+			if arr[cat][DPSMateUser[Duser]["id"]][DPSMateUser[target]["id"]][Dname][5]>0 then
+				arr[cat][DPSMateUser[Duser]["id"]][DPSMateUser[target]["id"]][Dname][5] = (arr[cat][DPSMateUser[Duser]["id"]][DPSMateUser[target]["id"]][Dname][5]+Damount)/2
+			else
+				arr[cat][DPSMateUser[Duser]["id"]][DPSMateUser[target]["id"]][Dname][5] = Damount
+			end
+		end
+		if Dcrit==1 then
+			if arr[cat][DPSMateUser[Duser]["id"]][DPSMateUser[target]["id"]][Dname][6]>0 then
+				arr[cat][DPSMateUser[Duser]["id"]][DPSMateUser[target]["id"]][Dname][6] = (arr[cat][DPSMateUser[Duser]["id"]][DPSMateUser[target]["id"]][Dname][6]+Damount)/2
+			else
+				arr[cat][DPSMateUser[Duser]["id"]][DPSMateUser[target]["id"]][Dname][6] = Damount
+			end
+		end
+		if arr[cat][DPSMateUser[Duser]["id"]][DPSMateUser[target]["id"]][Dname][4]>0 then arr[cat][DPSMateUser[Duser]["id"]][DPSMateUser[target]["id"]][Dname][4] = (arr[cat][DPSMateUser[Duser]["id"]][DPSMateUser[target]["id"]][Dname][4]+Damount)/2 else arr[cat][DPSMateUser[Duser]["id"]][DPSMateUser[target]["id"]][Dname][4]=Damount end
+		arr[cat][DPSMateUser[Duser]["id"]][DPSMateUser[target]["id"]][Dname][1] = arr[cat][DPSMateUser[Duser]["id"]][DPSMateUser[target]["id"]][Dname][1]+Damount
+		arr[cat][DPSMateUser[Duser]["id"]][DPSMateUser[target]["id"]][Dname][2] = arr[cat][DPSMateUser[Duser]["id"]][DPSMateUser[target]["id"]][Dname][2]+Dhit
+		arr[cat][DPSMateUser[Duser]["id"]][DPSMateUser[target]["id"]][Dname][3] = arr[cat][DPSMateUser[Duser]["id"]][DPSMateUser[target]["id"]][Dname][3]+Dcrit
+		arr[cat][DPSMateUser[Duser]["id"]]["info"][1] = arr[cat][DPSMateUser[Duser]["id"]]["info"][1]+Damount
 	end
 	DPSMate:SetStatusBarValue()
 end

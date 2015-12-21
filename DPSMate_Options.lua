@@ -111,8 +111,24 @@ local Options = {
 				get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["options"][1]["healing"] end,
 				set = function() DPSMate.Options:ToggleDrewDrop(1, "healing", DPSMate.Options.Dewdrop:GetOpenedParent()) end,
 			},
-			healingandabsorbs = {
+			effectivehealing = {
+				order = 65,
+				type = 'toggle',
+				name = 'Effective healing',
+				desc = 'TO BE ADDED!',
+				get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["options"][1]["effectivehealing"] end,
+				set = function() DPSMate.Options:ToggleDrewDrop(1, "effectivehealing", DPSMate.Options.Dewdrop:GetOpenedParent()) end,
+			},
+			overhealing = {
 				order = 70,
+				type = 'toggle',
+				name = DPSMate.localization.config.overhealing,
+				desc = DPSMate.localization.desc.overhealing,
+				get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["options"][1]["overhealing"] end,
+				set = function() DPSMate.Options:ToggleDrewDrop(1, "overhealing", DPSMate.Options.Dewdrop:GetOpenedParent()) end,
+			},
+			healingandabsorbs = {
+				order = 75,
 				type = 'toggle',
 				name = DPSMate.localization.config.healingandabsorbs,
 				desc = DPSMate.localization.desc.healingandabsorbs,
@@ -127,13 +143,13 @@ local Options = {
 				get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["options"][1]["healingtaken"] end,
 				set = function() DPSMate.Options:ToggleDrewDrop(1, "healingtaken", DPSMate.Options.Dewdrop:GetOpenedParent()) end,
 			},
-			overhealing = {
-				order = 90,
+			effectivehealingtaken = {
+				order = 85,
 				type = 'toggle',
-				name = DPSMate.localization.config.overhealing,
-				desc = DPSMate.localization.desc.overhealing,
-				get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["options"][1]["overhealing"] end,
-				set = function() DPSMate.Options:ToggleDrewDrop(1, "overhealing", DPSMate.Options.Dewdrop:GetOpenedParent()) end,
+				name = 'Effective healing taken',
+				desc = 'TO BE ADDED!',
+				get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["options"][1]["effectivehealingtaken"] end,
+				set = function() DPSMate.Options:ToggleDrewDrop(1, "effectivehealingtaken", DPSMate.Options.Dewdrop:GetOpenedParent()) end,
 			},
 			interrupts = {
 				order = 100,
@@ -495,6 +511,26 @@ function DPSMate.Options:PopUpAccept()
 		[2] = {},
 	}
 	DPSMateEDT = {
+		[1] = {},
+		[2] = {},
+	}
+	DPSMateTHealing = {
+		[1] = {},
+		[2] = {},
+	}
+	DPSMateEHealing = {
+		[1] = {},
+		[2] = {},
+	}
+	DPSMateOverhealing = {
+		[1] = {},
+		[2] = {},
+	}
+	DPSMateHealingTaken = {
+		[1] = {},
+		[2] = {},
+	}
+	DPSMateEHealingTaken = {
 		[1] = {},
 		[2] = {},
 	}
@@ -1364,8 +1400,11 @@ function DPSMate.Options:CreateWindow()
 					enemydamagetaken = false,
 					enemydamagedone = false,
 					healing = false,
+					effectivehealing = false,
 					healingandabsorbs = false,
 					overhealing = false,
+					healingtaken = false,
+					effectivehealingtaken = false,
 					interrupts = false,
 					deaths = false,
 					dispels = false

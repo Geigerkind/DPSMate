@@ -2943,6 +2943,15 @@
 				this:RegisterEvent("CHAT_MSG_SPELL_CREATURE_VS_CREATURE_DAMAGE")
 				this:RegisterEvent("CHAT_MSG_SPELL_PERIODIC_FRIENDLYPLAYER_DAMAGE") 
 				
+				this:RegisterEvent("CHAT_MSG_SPELL_SELF_BUFF")
+				this:RegisterEvent("CHAT_MSG_SPELL_PERIODIC_SELF_BUFFS")
+				this:RegisterEvent("CHAT_MSG_SPELL_FRIENDLYPLAYER_BUFF")
+				this:RegisterEvent("CHAT_MSG_SPELL_PERIODIC_FRIENDLYPLAYER_BUFFS")
+				this:RegisterEvent("CHAT_MSG_SPELL_HOSTILEPLAYER_BUFF")
+				this:RegisterEvent("CHAT_MSG_SPELL_PERIODIC_HOSTILEPLAYER_BUFFS")
+				this:RegisterEvent("CHAT_MSG_SPELL_PARTY_BUFF")
+				this:RegisterEvent("CHAT_MSG_SPELL_PERIODIC_PARTY_BUFFS")
+				
 				this:RegisterEvent("PLAYER_REGEN_DISABLED")
 				this:RegisterEvent("PLAYER_REGEN_ENABLED")
 				
