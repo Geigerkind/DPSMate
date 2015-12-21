@@ -2914,6 +2914,7 @@
 				this:RegisterEvent("PLAYER_ENTERING_WORLD")
 				
 				this:RegisterEvent("PARTY_MEMBERS_CHANGED")
+				this:RegisterEvent("RAID_ROSTER_UPDATE")
 				
 				this:RegisterEvent("CHAT_MSG_COMBAT_SELF_HITS")
 				this:RegisterEvent("CHAT_MSG_COMBAT_SELF_MISSES")

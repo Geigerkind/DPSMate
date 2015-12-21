@@ -267,6 +267,8 @@ function DPSMate:GetUserById(id)
 	end
 end
 
+-- Maybe inefficient?
+-- Sorting it so that player is shown even if just the pet has done dmg
 function DPSMate:GetSortedTable(arr)
 	local b, a = {}, {}
 	local total = 0
@@ -275,7 +277,7 @@ function DPSMate:GetSortedTable(arr)
 			local name = DPSMate:GetUserById(cat)
 			if (not DPSMateUser[name]["isPet"]) then
 				local CV = val["info"][3]
-				if DPSMate:PlayerExist(DPSMateUser, DPSMateUser[name]["pet"]) then
+				if DPSMate:PlayerExist(DPSMateUser, DPSMateUser[name]["pet"]) and arr[DPSMateUser[DPSMateUser[name]["pet"]]["id"]] then
 					CV=CV+arr[DPSMateUser[DPSMateUser[name]["pet"]]["id"]]["info"][3]
 				end
 				a[CV] = name

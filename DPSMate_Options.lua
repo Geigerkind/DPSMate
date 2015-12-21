@@ -369,7 +369,7 @@ function DPSMate.Options:InitializeConfigMenu()
 end
 
 function DPSMate.Options:OnEvent(event)
-	if event == "PARTY_MEMBERS_CHANGED" then
+	if event == "PARTY_MEMBERS_CHANGED" or event == "RAID_ROSTER_UPDATE" then
 		DPSMate.Options:HideWhenSolo()
 		if DPSMate.Options:IsInParty() then
 			if LastPartyNum == 0 then
@@ -381,6 +381,8 @@ function DPSMate.Options:OnEvent(event)
 				elseif DPSMateSettings["dataresetsjoinparty"] == 1 then
 					DPSMate.Options:PopUpAccept()
 				end
+				DPSMate.DB:AssignClass()
+				DPSMate.DB:AssignPet()
 			elseif LastPartyNum ~= PartyNum	then
 				if DPSMateSettings["dataresetspartyamount"] == 3 then
 					if (GetTime()-LastPopUp) > TimeToNextPopUp and (DPSMate:TableLength(DPSMateUser) ~= 0 or DPSMate:TableLength(DPSMateUserCurrent) ~= 0) then
@@ -390,9 +392,12 @@ function DPSMate.Options:OnEvent(event)
 				elseif DPSMateSettings["dataresetspartyamount"] == 1 then
 					DPSMate.Options:PopUpAccept()
 				end
-				DPSMate.DB:AssignPet()
 				DPSMate.DB:AssignClass()
+				DPSMate.DB:AssignPet()
 			end
+		end
+		-- Not fired if the player leaves the group
+		--[[
 		elseif LastPartyNum > PartyNum then
 			if DPSMateSettings["dataresetsleaveparty"] == 3 then
 				if (GetTime()-LastPopUp) > TimeToNextPopUp and (DPSMate:TableLength(DPSMateUser) ~= 0 or DPSMate:TableLength(DPSMateUserCurrent) ~= 0) then
@@ -403,6 +408,7 @@ function DPSMate.Options:OnEvent(event)
 				DPSMate.Options:PopUpAccept()
 			end
 		end
+		]]--
 	elseif event == "PLAYER_ENTERING_WORLD" then
 		if DPSMateSettings["dataresetsworld"] == 3 then
 			if (GetTime()-LastPopUp) > TimeToNextPopUp and (DPSMate:TableLength(DPSMateUser) ~= 0 or DPSMate:TableLength(DPSMateUserCurrent) ~= 0) then
@@ -463,8 +469,11 @@ end
 
 function DPSMate.Options:IsInParty()
 	LastPartyNum = PartyNum
-	PartyNum = GetNumPartyMembers()
-	if GetNumPartyMembers() > 0 or UnitInRaid("player") then
+	if UnitInRaid("player") then
+		PartyNum = GetNumRaidMembers()
+		return true
+	elseif GetNumPartyMembers() > 0 then
+		PartyNum = GetNumPartyMembers()
 		return true
 	else
 		return false

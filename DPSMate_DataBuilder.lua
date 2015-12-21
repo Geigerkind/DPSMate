@@ -190,13 +190,10 @@ end
 
 function DPSMate.DB:AssignPet()
 	local pets = DPSMate.DB:GetPets()
-	for cat, val in pairs(DPSMateUser) do
-		if (pets[cat]) then
-			val["pet"] = pets[cat]
-			if (DPSMateUser[pets[cat]]) then
-				DPSMateUser[pets[cat]]["isPet"] = true
-			end
-		end
+	for cat, val in pairs(pets) do
+		DPSMateUser[cat]["pet"] = val
+		if not DPSMateUser[val] then DPSMate.DB:BuildUser(val, nil) end
+		DPSMateUser[val]["isPet"] = true
 	end
 end
 
@@ -206,12 +203,13 @@ function DPSMate.DB:AssignClass()
 	if DPSMate.DB:PlayerInParty() then
 		for i=1,4 do
 			if UnitExists("party"..i) then
-				if DPSMateUser[UnitName("party"..i)] then
-					if (not DPSMateUser[UnitName("party"..i)]["class"]) then
-						t,classEng = UnitClass("party"..i)
-						if (classEng) then
-							DPSMateUser[UnitName("party"..i)]["class"] = strlower(classEng)
-						end
+				if not DPSMateUser[UnitName("party"..i)] then
+					DPSMate.DB:BuildUser(UnitName("party"..i), nil)
+				end
+				if (not DPSMateUser[UnitName("party"..i)]["class"]) then
+					t,classEng = UnitClass("party"..i)
+					if (classEng) then
+						DPSMateUser[UnitName("party"..i)]["class"] = strlower(classEng)
 					end
 				end
 			end
@@ -220,14 +218,15 @@ function DPSMate.DB:AssignClass()
 		for i=1,40 do
 			if UnitExists("raid"..i) then
 				if DPSMateUser[UnitName("raid"..i)] then
-					if (not DPSMateUser[UnitName("raid"..i)]["class"]) then
-						t,classEng = UnitClass("raid"..i)
-						if (classEng) then
-							DPSMateUser[UnitName("raid"..i)]["class"] = strlower(classEng)
-						end
+					DPSMate.DB:BuildUser(UnitName("raid"..i), nil)
+				end
+				if (not DPSMateUser[UnitName("raid"..i)]["class"]) then
+					t,classEng = UnitClass("raid"..i)
+					if (classEng) then
+						DPSMateUser[UnitName("raid"..i)]["class"] = strlower(classEng)
 					end
 				end
-			end
+		end
 		end
 	end
 end
@@ -262,7 +261,7 @@ end
 
 -- First crit/hit av value will be half if it is not the first hit actually. Didnt want to add an exception for it though. Maybe later :/
 function DPSMate.DB:DamageDone(Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, Ddodge, Dresist, Damount)
-	if (DPSMate:TableLength(Duser)==0 or not Dname or not Damount) then return end -- Parsing failure, I guess at AEO periodic abilities
+	if (not Duser.name or DPSMate:TableLength(Duser)==0 or not Dname or not Damount) then return end -- Parsing failure, I guess at AEO periodic abilities
 	if (not CombatState and cheatCombat+10<GetTime()) then
 		DPSMate.Options:NewSegment()
 	end
@@ -324,6 +323,8 @@ function DPSMate.DB:DamageDone(Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, Ddodge,
 end
 
 function DPSMate.DB:DamageTaken(Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, Ddodge, Dresist, Damount, cause)
+	if (not Duser.name or DPSMate:TableLength(Duser)==0 or not Dname or not Damount) then return end
+
 	for cat, val in pairs({[1]="total", [2]="current"}) do 
 		if DPSMate.DB:DTExist(Duser.name, cause, Dname, DPSMateDamageTaken[cat]) then
 			DPSMateDamageTaken[cat][DPSMateUser[Duser.name]["id"]][cause][Dname].hit = DPSMateDamageTaken[cat][DPSMateUser[Duser.name]["id"]][cause][Dname].hit + Dhit
@@ -454,7 +455,7 @@ function DPSMate.DB:hasVanishedFeignDeath()
 	end
 end
 
--- Line 477(?) error // I guess it appears if it is getting reset before the ability is inserted
+-- Improve Procs distplay in line graph -> if no damage is time inbetween a line, it is not colored.
 function DPSMate.DB:BuildUserProcs(Duser, Dname, Dbool) -- has to be made dynamic again
 	for cat, val in pairs({[1]="total", [2]="current"}) do 
 		if DPSMate.DB:DataExistProcs(Duser.name, Dname, DPSMateDamageDone[cat]) then
@@ -466,13 +467,15 @@ function DPSMate.DB:BuildUserProcs(Duser, Dname, Dbool) -- has to be made dynami
 			end
 		else
 			DPSMate.DB:BuildUser(Duser.name, Duser.class)
-			DPSMateDamageDone[cat][DPSMateUser[Duser.name]["id"]]["info"][1][Dname] = {
-				start = {
-					[1] = DPSMateCombatTime[val],
-				},
-				ending = {},
-				point = Dbool,
-			}
+			if DPSMateDamageDone[cat][DPSMateUser[Duser.name]["id"]] then
+				DPSMateDamageDone[cat][DPSMateUser[Duser.name]["id"]]["info"][1][Dname] = {
+					start = {
+						[1] = DPSMateCombatTime[val],
+					},
+					ending = {},
+					point = Dbool,
+				}
+			end
 		end
 	end
 end
