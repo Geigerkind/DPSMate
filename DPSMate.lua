@@ -306,12 +306,11 @@ function DPSMate:GetSortedDTTable(arr)
 	local total = 0
 	if arr then
 		for c, v in pairs(arr) do
-			local name = DPSMate:GetUserById(c)
 			local CV = 0
 			for cat, val in pairs(v) do
 				CV = CV+val["info"][3]
 			end
-			a[CV] = name
+			a[CV] = c
 			local i = 1
 			while true do
 				if (not b[i]) then
@@ -355,7 +354,7 @@ function DPSMate:SetStatusBarValue()
 				if (not user[i]) then break end -- To prevent visual issues
 				local statusbar, name, value, texture, p = getglobal("DPSMate_"..c["name"].."_ScrollFrame_Child_StatusBar"..i), getglobal("DPSMate_"..c["name"].."_ScrollFrame_Child_StatusBar"..i.."_Name"), getglobal("DPSMate_"..c["name"].."_ScrollFrame_Child_StatusBar"..i.."_Value"), getglobal("DPSMate_"..c["name"].."_ScrollFrame_Child_StatusBar"..i.."_Icon"), ""
 				
-				local r,g,b, img = DPSMate:GetClassColor(DPSMateUser[user[i]]["class"])
+				local r,g,b, img = DPSMate:GetClassColor(user[i])
 				statusbar:SetStatusBarColor(r,g,b, 1)
 				
 				if c["ranks"] then p=i..". " else p="" end
@@ -417,6 +416,18 @@ function DPSMate:GetSettingValues(arr, cbt, k)
 			local str = {[1]="",[2]="",[3]=""}
 			str[1] = " "..dmg..p; strt[2] = tot..p
 			str[2] = " ("..string.format("%.1f", 100*dmg/tot).."%)"
+			table.insert(name, DPSMate:GetUserById(a[val]))
+			table.insert(value, str[1]..str[2])
+			table.insert(perc, 100*(dmg/sort))
+		end
+	elseif (DPSMateSettings["windows"][k]["CurMode"] == "enemydamagedone") then
+		sortedTable, total, a = DPSMate:GetSortedDTTable(arr)
+		for cat, val in pairs(sortedTable) do
+			local dmg, tot, sort = DPSMate:FormatNumbers(val, total, sortedTable[1], k)
+			if dmg==0 then break end
+			local str = {[1]="",[2]="",[3]=""}
+			str[1] = " "..dmg..p; strt[2] = tot..p
+			str[2] = " ("..string.format("%.1f", 100*dmg/tot).."%)"
 			table.insert(name, a[val])
 			table.insert(value, str[1]..str[2])
 			table.insert(perc, 100*(dmg/sort))
@@ -427,7 +438,12 @@ end
 
 function DPSMate:GetClassColor(class)
 	if (class) then
-		return classcolor[class].r, classcolor[class].g, classcolor[class].b, class
+		if DPSMateUser[class] then class = DPSMateUser[class]["class"] end
+		if classcolor[class] then
+			return classcolor[class].r, classcolor[class].g, classcolor[class].b, class
+		else
+			return 0.78,0.61,0.43, "Warrior"
+		end
 	else
 		return 0.1,0,0.1, "None"
 	end
@@ -438,6 +454,8 @@ function DPSMate:GetDisplay(k)
 		return DPSMateDamageDone, "DMGDone"
 	elseif DPSMateSettings["windows"][k]["CurMode"] == "damagetaken" then
 		return DPSMateDamageTaken, "DMGTaken"
+	elseif DPSMateSettings["windows"][k]["CurMode"] == "enemydamagedone" then
+		return DPSMateEDD, "EDDone"
 	end
 end
 

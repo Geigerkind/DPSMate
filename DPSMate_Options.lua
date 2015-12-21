@@ -490,8 +490,14 @@ function DPSMate.Options:PopUpAccept()
 		[1] = {},
 		[2] = {},
 	}
+	DPSMateEDD = {
+		[1] = {},
+		[2] = {},
+	}
 	DPSMateHistory = {
 		DMGDone = {},
+		DMGTaken = {},
+		EDDone = {},
 	}
 	DPSMateCombatTime = {
 		total = 1,

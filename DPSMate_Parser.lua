@@ -230,6 +230,7 @@ function DPSMate.Parser:CreatureVsSelfHits(msg)
 	local cause, hit, crit, amount = "", 0, 0, 0
 	for c, a in string.gfind(msg, "(.+) hits you for (.+)%.") do hit=1; cause=c; amount=tonumber(strsub(a, strfind(a, "%d+"))); end
 	for c, a in string.gfind(msg, "(.+) crits you for (.+)%.") do crit=1; cause=c; amount=tonumber(strsub(a, strfind(a, "%d+"))); end
+	DPSMate.DB:EnemyDamageDone(player, "AutoAttack", hit, crit, 0, 0, 0, 0, amount, cause)
 	DPSMate.DB:DamageTaken(player, "AutoAttack", hit, crit, 0, 0, 0, 0, amount, cause)
 end
 
@@ -240,6 +241,7 @@ function DPSMate.Parser:CreatureVsSelfMisses(msg)
 	local cause, miss, parry, dodge = "", 0, 0, 0
 	for c, k in string.gfind(msg, "(.+) attacks. You (.+)%.") do cause=c; if k=="parry" then parry=1 else dodge=1 end end
 	for c in string.gfind(msg, "(.+) misses you%.") do cause=c; miss=1 end
+	DPSMate.DB:EnemyDamageDone(player, "AutoAttack", 0, 0, miss, parry, dodge, 0, 0, cause)
 	DPSMate.DB:DamageTaken(player, "AutoAttack", 0, 0, miss, parry, dodge, 0, 0, cause)
 end 
 
@@ -253,6 +255,7 @@ function DPSMate.Parser:CreatureVsSelfSpellDamage(msg)
 		for c, ab, a in string.gfind(msg, "(.+)'s (.-) hits you for (.+)%.") do hit=1; cause=c; ability=ab; amount=tonumber(strsub(a, strfind(a, "%d+"))) end
 		for c, ab, a in string.gfind(msg, "(.+)'s (.-) crits you for (.+)%.") do crit=1; cause=c; ability=ab; amount=tonumber(strsub(a, strfind(a, "%d+"))) end
 		for c, ab, a in string.gfind(msg, "(.+)'s (.-) was resisted.") do resist=1; cause=c; ability=ab end
+		DPSMate.DB:EnemyDamageDone(player, ability, hit, crit, 0, 0, 0, resist, amount, cause)
 		DPSMate.DB:DamageTaken(player, ability, hit, crit, 0, 0, 0, resist, amount, cause)
 	end
 end
@@ -264,6 +267,7 @@ function DPSMate.Parser:PeriodicSelfDamage(msg)
 	local cause, ability, amount = "", "", 0
 	if not strfind(msg, "afflicted") then
 		for a, c, ab in string.gfind(msg, "You suffer (.+) from (.+)'s (.+)%.") do cause=c; ability=ab; amount=tonumber(strsub(a, strfind(a, "%d+"))) end
+		DPSMate.DB:EnemyDamageDone(player, ability, 1, 0, 0, 0, 0, 0, amount, cause)
 		DPSMate.DB:DamageTaken(player, ability, 1, 0, 0, 0, 0, 0, amount, cause)
 	end
 end
@@ -273,6 +277,7 @@ function DPSMate.Parser:CreatureVsCreatureHits(msg)
 	local target, cause, hit, crit, amount = {}, "", 0, 0, 0
 	for c, ta, a in string.gfind(msg, "(.+) hits (.-) for (.+)%.") do hit=1; cause=c; target.name = ta; amount=tonumber(strsub(a, strfind(a, "%d+"))); end
 	for c, ta, a in string.gfind(msg, "(.+) crits (.-) for (.+)%.") do crit=1; cause=c; target.name = ta; amount=tonumber(strsub(a, strfind(a, "%d+"))); end
+	DPSMate.DB:EnemyDamageDone(target, "AutoAttack", hit, crit, 0, 0, 0, 0, amount, cause)
 	DPSMate.DB:DamageTaken(target, "AutoAttack", hit, crit, 0, 0, 0, 0, amount, cause)
 end
 
@@ -283,6 +288,7 @@ function DPSMate.Parser:CreatureVsCreatureMisses(msg)
 	local target, cause, miss, parry, dodge = {}, "", 0, 0, 0
 	for c, ta, k in string.gfind(msg, "(.+) attacks%. (.-) (.+)%.") do cause=c; target.name = ta; if k=="parries" then parry=1 else dodge=1 end end
 	for c, ta in string.gfind(msg, "(.+) misses (.+)%.") do cause=c; miss=1; target.name = ta end
+	DPSMate.DB:EnemyDamageDone(target, "AutoAttack", 0, 0, miss, parry, dodge, 0, 0, cause)
 	DPSMate.DB:DamageTaken(target, "AutoAttack", 0, 0, miss, parry, dodge, 0, 0, cause)
 end
 
@@ -292,6 +298,7 @@ function DPSMate.Parser:SpellPeriodicDamageTaken(msg)
 	local target, cause, ability, amount = {}, "", "", 0
 	if not strfind(msg, "afflicted") then
 		for ta, a, c, ab in string.gfind(msg, "(.-) suffers (.+) from (.+)'s (.+)%.") do target.name=ta; cause=c; ability=ab; amount=tonumber(strsub(a, strfind(a, "%d+"))) end
+		DPSMate.DB:EnemyDamageDone(target, ability, 1, 0, 0, 0, 0, 0, amount, cause)
 		DPSMate.DB:DamageTaken(target, ability, 1, 0, 0, 0, 0, 0, amount, cause)
 	end
 end
@@ -303,5 +310,6 @@ function DPSMate.Parser:CreatureVsCreatureSpellDamage(msg)
 	for c, ab, ta in string.gfind(msg, "(.+)'s (.+) was resisted by (.+)%.") do resist=1; cause=c; target.name = ta; ability=ab end
 	for c, ab, ta, a in string.gfind(msg, "(.+)'s (.+) hits (.+) for (.+)%.") do hit=1; cause=c; target.name = ta; ability=ab; amount=tonumber(strsub(a, strfind(a, "%d+"))) end
 	for c, ab, ta, a in string.gfind(msg, "(.+)'s (.+) crits (.+) for (.+)%.") do crit=1; cause=c; target.name = ta; ability=ab; amount=tonumber(strsub(a, strfind(a, "%d+"))) end
+	DPSMate.DB:EnemyDamageDone(target, ability, hit, crit, 0, 0, 0, resist, amount, cause)
 	DPSMate.DB:DamageTaken(target, ability, hit, crit, 0, 0, 0, resist, amount, cause)
 end
