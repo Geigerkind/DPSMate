@@ -432,6 +432,18 @@ function DPSMate:GetSettingValues(arr, cbt, k)
 			table.insert(value, str[1]..str[2])
 			table.insert(perc, 100*(dmg/sort))
 		end
+	elseif (DPSMateSettings["windows"][k]["CurMode"] == "enemydamagetaken") then
+		sortedTable, total, a = DPSMate:GetSortedDTTable(arr)
+		for cat, val in pairs(sortedTable) do
+			local dmg, tot, sort = DPSMate:FormatNumbers(val, total, sortedTable[1], k)
+			if dmg==0 then break end
+			local str = {[1]="",[2]="",[3]=""}
+			str[1] = " "..dmg..p; strt[2] = tot..p
+			str[2] = " ("..string.format("%.1f", 100*dmg/tot).."%)"
+			table.insert(name, a[val])
+			table.insert(value, str[1]..str[2])
+			table.insert(perc, 100*(dmg/sort))
+		end
 	end
 	return name, value, perc, strt
 end
@@ -456,6 +468,8 @@ function DPSMate:GetDisplay(k)
 		return DPSMateDamageTaken, "DMGTaken"
 	elseif DPSMateSettings["windows"][k]["CurMode"] == "enemydamagedone" then
 		return DPSMateEDD, "EDDone"
+	elseif DPSMateSettings["windows"][k]["CurMode"] == "enemydamagetaken" then
+		return DPSMateEDT, "EDTaken"
 	end
 end
 
