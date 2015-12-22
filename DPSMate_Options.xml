@@ -2959,6 +2959,8 @@
 				this:RegisterEvent("CHAT_MSG_SPELL_AURA_GONE_OTHER")
 				this:RegisterEvent("CHAT_MSG_SPELL_AURA_GONE_PARTY")
 				
+				this:RegisterEvent("CHAT_MSG_ADDON")
+				
 				this:RegisterEvent("PLAYER_REGEN_DISABLED")
 				this:RegisterEvent("PLAYER_REGEN_ENABLED")
 				

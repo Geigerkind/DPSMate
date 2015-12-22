@@ -52,6 +52,8 @@ DPSMate.Events = {
 	"CHAT_MSG_SPELL_AURA_GONE_OTHER", --
 	"CHAT_MSG_SPELL_AURA_GONE_PARTY",
 	
+	"CHAT_MSG_ADDON",
+	
 	"PLAYER_AURAS_CHANGED",
 }
 DPSMate.Registered = true
@@ -234,7 +236,7 @@ end
 function DPSMate:TContains(t, value)
 	if (t) then
 		for cat, val in pairs(t) do
-			if val == value then
+			if val == value or cat==value then
 				return true
 			end
 		end
