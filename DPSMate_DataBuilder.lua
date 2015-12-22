@@ -9,7 +9,6 @@ DPSMate.DB.ShieldFlags = {
 	["Shadow Protection Potion"] = 5, -- Shadow
 	["Arcane Protection Potion"] = 6, -- Arcane
 	["Holy Protection Potion"] = 7, -- Holy
-	["Blessing of Might"] = 0,
 }
 DPSMate.DB.AbilityFlags = {
 	["AutoAttack"] = 1,
@@ -45,6 +44,8 @@ function DPSMate.DB:OnEvent(event)
 								enemydamagedone = false,
 								healing = false,
 								effectivehealing = false,
+								absorbs = false,
+								absorbtaken = false,
 								healingandabsorbs = false,
 								overhealing = false,
 								healingtaken = false,
@@ -623,15 +624,40 @@ function DPSMate.DB:RegisterAbsorb(owner, ability, abilityTarget)
 	end
 end
 
-function DPSMate.DB:UnregisterAbsorb(ability, abilityTarget, broken, brokenAbsorb)
-	local AbsorbingAbility = DPSMate.DB:GetAbsorbingShield(ability, abilityTarget)
-		for cat, val in pairs({[1]="total", [2]="current"}) do 
-			if DPSMateAbsorbs[cat][DPSMateUser[abilityTarget]["id"]][AbsorbingAbility[1]][AbsorbingAbility[2][1]][AbsorbingAbility[2][2]]["info"][1] == 0 then
-				DPSMateAbsorbs[cat][DPSMateUser[abilityTarget]["id"]][AbsorbingAbility[1]][AbsorbingAbility[2][1]][AbsorbingAbility[2][2]]["info"][1] = broken
-				DPSMateAbsorbs[cat][DPSMateUser[abilityTarget]["id"]][AbsorbingAbility[1]][AbsorbingAbility[2][1]][AbsorbingAbility[2][2]]["info"][2] = brokenAbsorb
+local broken, brokenAbsorb = 2, 0
+function DPSMate.DB:SetUnregisterVariables(broAbsorb)
+	broken = 1
+	brokenAbsorb = broAbsorb
+end
+
+function DPSMate.DB:UnregisterAbsorb(ability, abilityTarget)
+	local AbsorbingAbility = DPSMate.DB:GetActiveAbsorbAbilityByPlayer(ability, abilityTarget)
+	for cat, val in pairs({[1]="total", [2]="current"}) do 
+		if DPSMateAbsorbs[cat][DPSMateUser[abilityTarget]["id"]][AbsorbingAbility[1]][AbsorbingAbility[2]][AbsorbingAbility[3]]["info"][1] == 0 then
+			DPSMateAbsorbs[cat][DPSMateUser[abilityTarget]["id"]][AbsorbingAbility[1]][AbsorbingAbility[2]][AbsorbingAbility[3]]["info"][1] = broken
+			DPSMateAbsorbs[cat][DPSMateUser[abilityTarget]["id"]][AbsorbingAbility[1]][AbsorbingAbility[2]][AbsorbingAbility[3]]["info"][2] = brokenAbsorb
+		end
+	end
+	broken = 2
+	brokenAbsorb = 0
+	DPSMate:SetStatusBarValue()
+end
+
+function DPSMate.DB:GetActiveAbsorbAbilityByPlayer(ability, abilityTarget)
+	local ActiveShield = {}
+	for cat, val in pairs(DPSMateAbsorbs[1][DPSMateUser[abilityTarget]["id"]]) do
+		for ca, va in pairs(val) do
+			for c, v in pairs(va) do
+				for ce, ve in pairs(v) do
+					if ve[1]==0 and ca==ability then
+						ActiveShield = {cat, ca, c}
+						break
+					end
+				end
 			end
 		end
-		DPSMate:SetStatusBarValue()
+	end
+	return ActiveShield
 end
 
 function DPSMate.DB:GetAbsorbingShield(ability, abilityTarget)
@@ -664,23 +690,26 @@ function DPSMate.DB:GetAbsorbingShield(ability, abilityTarget)
 	-- Checking buffs for order
 	local AbsorbingAbility = {}	
 	if AAS~={} or ASS~={} then
-		for i=0, 31 do
-			DPSMate_Tooltip:SetOwner(UIParent, "ANCHOR_NONE")
-			DPSMate_Tooltip:ClearLines()
-			DPSMate_Tooltip:SetPlayerBuff(GetPlayerBuff(i, "HELPFUL"))
-			local buff = DPSMate_TooltipTextLeft1:GetText()
-			DPSMate_Tooltip:Hide()
-			if (not buff) then break end
-			for cat, val in pairs(AAS) do
-				if val[1]==buff then
-					AbsorbingAbility = {cat, {val[1],val[2]}}
-					break
+		local unit = DPSMate.Parser:GetUnitByName(abilityTarget)
+		if unit then
+			for i=1, 32 do
+				DPSMate_Tooltip:SetOwner(UIParent, "ANCHOR_NONE")
+				DPSMate_Tooltip:ClearLines()
+				DPSMate_Tooltip:SetUnitBuff(unit, i, "HELPFUL")
+				local buff = DPSMate_TooltipTextLeft1:GetText()
+				DPSMate_Tooltip:Hide()
+				if (not buff) then break end
+				for cat, val in pairs(AAS) do
+					if val[1]==buff then
+						AbsorbingAbility = {cat, {val[1],val[2]}}
+						break
+					end
 				end
-			end
-			for cat, val in pairs(ASS) do
-				if val[1]==buff then
-					AbsorbingAbility = {cat, {val[1],val[2]}}
-					break
+				for cat, val in pairs(ASS) do
+					if val[1]==buff then
+						AbsorbingAbility = {cat, {val[1],val[2]}}
+						break
+					end
 				end
 			end
 		end
@@ -690,8 +719,16 @@ end
 
 function DPSMate.DB:Absorb(ability, abilityTarget, incTarget)
 	local AbsorbingAbility = DPSMate.DB:GetAbsorbingShield(ability, abilityTarget)
-	DPSMateAbsorbs[DPSMateUser[abilityTarget]["id"]][AbsorbingAbility[1]][AbsorbingAbility[2]][val[2]][incTarget][1] = ability 
-	DPSMateAbsorbs[DPSMateUser[abilityTarget]["id"]][AbsorbingAbility[1]][AbsorbingAbility[2]][val[2]][incTarget][2] = DPSMateAbsorbs[DPSMateUser[abilityTarget]["id"]][AbsorbingAbility[1]][AbsorbingAbility[2]][val[2]][incTarget][2]+1 
+	for cat, val in pairs({[1]="total", [2]="current"}) do 
+		if not DPSMateAbsorbs[cat][DPSMateUser[abilityTarget]["id"]][AbsorbingAbility[1]][AbsorbingAbility[2][1]][AbsorbingAbility[2][2]][incTarget] then
+			DPSMateAbsorbs[cat][DPSMateUser[abilityTarget]["id"]][AbsorbingAbility[1]][AbsorbingAbility[2][1]][AbsorbingAbility[2][2]][incTarget] = {
+				[1] = 0,
+				[2] = 0,
+			}
+		end
+		DPSMateAbsorbs[cat][DPSMateUser[abilityTarget]["id"]][AbsorbingAbility[1]][AbsorbingAbility[2][1]][AbsorbingAbility[2][2]][incTarget][1] = ability 
+		DPSMateAbsorbs[cat][DPSMateUser[abilityTarget]["id"]][AbsorbingAbility[1]][AbsorbingAbility[2][1]][AbsorbingAbility[2][2]][incTarget][2] = DPSMateAbsorbs[cat][DPSMateUser[abilityTarget]["id"]][AbsorbingAbility[1]][AbsorbingAbility[2][1]][AbsorbingAbility[2][2]][incTarget][2]+1 
+	end
 end
 
 -- Are those functions able to be combined?

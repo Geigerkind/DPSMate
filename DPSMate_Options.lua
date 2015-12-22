@@ -127,6 +127,22 @@ local Options = {
 				get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["options"][1]["overhealing"] end,
 				set = function() DPSMate.Options:ToggleDrewDrop(1, "overhealing", DPSMate.Options.Dewdrop:GetOpenedParent()) end,
 			},
+			absorbs = {
+				order = 73,
+				type = 'toggle',
+				name = 'Absorbs',
+				desc = 'TO BE ADDED!',
+				get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["options"][1]["absorbs"] end,
+				set = function() DPSMate.Options:ToggleDrewDrop(1, "absorbs", DPSMate.Options.Dewdrop:GetOpenedParent()) end,
+			},
+			absorbtaken = {
+				order = 74,
+				type = 'toggle',
+				name = 'Absorb taken',
+				desc = 'TO BE ADDED!',
+				get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["options"][1]["absorbtaken"] end,
+				set = function() DPSMate.Options:ToggleDrewDrop(1, "absorbtaken", DPSMate.Options.Dewdrop:GetOpenedParent()) end,
+			},
 			healingandabsorbs = {
 				order = 75,
 				type = 'toggle',

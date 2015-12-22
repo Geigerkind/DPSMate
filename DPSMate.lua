@@ -52,8 +52,6 @@ DPSMate.Events = {
 	"CHAT_MSG_SPELL_AURA_GONE_OTHER", --
 	"CHAT_MSG_SPELL_AURA_GONE_PARTY",
 	
-	"CHAT_MSG_ADDON",
-	
 	"PLAYER_AURAS_CHANGED",
 }
 DPSMate.Registered = true
@@ -373,6 +371,97 @@ function DPSMate:GetSortedHealingTable(arr)
 	return b, total, a
 end
 
+function DPSMate:GetSortedAbsorbsTable(arr)
+	local b, a, total = {}, {}, 0
+	local temp = {}
+	if arr then
+		for cat, val in pairs(arr) do -- 28 Target
+			local PerPlayerAbsorb = 0
+			for ca, va in pairs(val) do -- 28 Owner
+				local PerOwnerAbsorb = 0
+				for c, v in pairs(va) do -- Power Word: Shield
+					local PerAbilityAbsorb = 0
+					for ce, ve in pairs(v) do -- 1
+						local PerShieldAbsorb = 0
+						for cet, vel in pairs(ve) do
+							PerShieldAbsorb=PerShieldAbsorb+vel[2]*5
+						end
+						if ve["info"][1]==1 then
+							PerShieldAbsorb=PerShieldAbsorb+ve["info"][2]
+						end
+						PerAbilityAbsorb = PerAbilityAbsorb+PerShieldAbsorb
+					end
+					PerOwnerAbsorb = PerOwnerAbsorb+PerAbilityAbsorb
+				end
+				if not temp[ca] then temp[ca] = PerOwnerAbsorb else temp[ca]=temp[ca]+PerOwnerAbsorb end
+				PerPlayerAbsorb = PerPlayerAbsorb+PerOwnerAbsorb
+			end
+			total = total+PerPlayerAbsorb
+		end
+		for cat, val in pairs(temp) do
+			a[val] = cat
+			local i = 1
+			while true do
+				if (not b[i]) then
+					table.insert(b, i, val)
+					break
+				else
+					if b[i] < val then
+						table.insert(b, i, val)
+						break
+					end
+				end
+				i=i+1
+			end
+		end
+	end
+	return b, total, a
+end
+
+function DPSMate:GetSortedAbsorbedTable(arr)
+	local b, a, total = {}, {}, 0
+	local temp = {}
+	if arr then
+		for cat, val in pairs(arr) do -- 28 Target
+			local PerPlayerAbsorb = 0
+			for ca, va in pairs(val) do -- 28 Owner
+				local PerOwnerAbsorb = 0
+				for c, v in pairs(va) do -- Power Word: Shield
+					local PerAbilityAbsorb = 0
+					for ce, ve in pairs(v) do -- 1
+						local PerShieldAbsorb = 0
+						for cet, vel in pairs(ve) do
+							PerShieldAbsorb=PerShieldAbsorb+vel[2]*5
+						end
+						if ve["info"][1]==1 then
+							PerShieldAbsorb=PerShieldAbsorb+ve["info"][2]
+						end
+						PerAbilityAbsorb = PerAbilityAbsorb+PerShieldAbsorb
+					end
+					PerOwnerAbsorb = PerOwnerAbsorb+PerAbilityAbsorb
+				end
+				PerPlayerAbsorb = PerPlayerAbsorb+PerOwnerAbsorb
+			end
+			total = total+PerPlayerAbsorb
+			a[PerPlayerAbsorb] = cat
+			local i = 1
+			while true do
+				if (not b[i]) then
+					table.insert(b, i, PerPlayerAbsorb)
+					break
+				else
+					if b[i] < PerPlayerAbsorb then
+						table.insert(b, i, PerPlayerAbsorb)
+						break
+					end
+				end
+				i=i+1
+			end
+		end
+	end
+	return b, total, a
+end
+
 function DPSMate:PlayerExist(arr, name)
 	for cat, val in pairs(arr) do
 		if (cat == name) then
@@ -543,6 +632,28 @@ function DPSMate:GetSettingValues(arr, cbt, k)
 			table.insert(value, str[1]..str[2])
 			table.insert(perc, 100*(va/sort))
 		end
+	elseif (DPSMateSettings["windows"][k]["CurMode"] == "absorbs") then
+		sortedTable, total, a = DPSMate:GetSortedAbsorbsTable(arr)
+		for cat, val in pairs(sortedTable) do
+			local va, tot, sort = DPSMate:FormatNumbers(val, total, sortedTable[1], k)
+			local str = {[1]="",[2]="",[3]=""}
+			str[1] = " "..va..p; strt[2] = tot..p
+			str[2] = " ("..string.format("%.1f", 100*va/tot).."%)"
+			table.insert(name, DPSMate:GetUserById(a[val]))
+			table.insert(value, str[1]..str[2])
+			table.insert(perc, 100*(va/sort))
+		end
+	elseif (DPSMateSettings["windows"][k]["CurMode"] == "absorbtaken") then
+		sortedTable, total, a = DPSMate:GetSortedAbsorbedTable(arr)
+		for cat, val in pairs(sortedTable) do
+			local va, tot, sort = DPSMate:FormatNumbers(val, total, sortedTable[1], k)
+			local str = {[1]="",[2]="",[3]=""}
+			str[1] = " "..va..p; strt[2] = tot..p
+			str[2] = " ("..string.format("%.1f", 100*va/tot).."%)"
+			table.insert(name, DPSMate:GetUserById(a[val]))
+			table.insert(value, str[1]..str[2])
+			table.insert(perc, 100*(va/sort))
+		end
 	end
 	return name, value, perc, strt
 end
@@ -579,6 +690,10 @@ function DPSMate:GetDisplay(k)
 		return DPSMateHealingTaken, "HTaken"
 	elseif DPSMateSettings["windows"][k]["CurMode"] == "effectivehealingtaken" then
 		return DPSMateEHealingTaken, "EHTaken"
+	elseif DPSMateSettings["windows"][k]["CurMode"] == "absorbs" then
+		return DPSMateAbsorbs, "Absorbs"
+	elseif DPSMateSettings["windows"][k]["CurMode"] == "absorbtaken" then
+		return DPSMateAbsorbs, "Absorbs"
 	end
 end
 
