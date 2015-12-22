@@ -735,6 +735,29 @@ function DPSMate.DB:Absorb(ability, abilityTarget, incTarget)
 	end
 end
 
+function DPSMate.DB:Dispels(arr, Duser, Dname, target)
+	if (not Duser.name or DPSMate:TableLength(Duser)==0 or not Dname or Dname=="") then return end
+	for cat, val in pairs({[1]="total", [2]="current"}) do 
+		DPSMate.DB:BuildUser(Duser.name, Duser.class)
+		if not arr[cat][DPSMateUser[Duser.name]["id"]] then
+			arr[cat][DPSMateUser[Duser.name]["id"]] = {
+				info = {
+					[1] = 0, -- Dispels done
+				},
+			}
+		end
+		if not arr[cat][DPSMateUser[Duser.name]["id"]][Dname] then
+			arr[cat][DPSMateUser[Duser.name]["id"]][Dname] = {}
+		end
+		if not arr[cat][DPSMateUser[Duser.name]["id"]][Dname][target] then 
+			arr[cat][DPSMateUser[Duser.name]["id"]][Dname][target] = 0
+		end
+		arr[cat][DPSMateUser[Duser.name]["id"]][Dname][target] = arr[cat][DPSMateUser[Duser.name]["id"]][Dname][target]+1
+		arr[cat][DPSMateUser[Duser.name]["id"]]["info"][1] = arr[cat][DPSMateUser[Duser.name]["id"]]["info"][1]+1
+	end
+	DPSMate:SetStatusBarValue()
+end
+
 -- Are those functions able to be combined?
 function DPSMate.DB:DDExist(uname, aname, arr)
 	if DPSMateUser[uname]~=nil then
