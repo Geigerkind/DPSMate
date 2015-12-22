@@ -118,6 +118,7 @@ function DPSMate.DB:OnEvent(event)
 		if DPSMateOverhealing == nil then DPSMateOverhealing = {[1]={},[2]={}} end
 		if DPSMateHealingTaken == nil then DPSMateHealingTaken = {[1]={},[2]={}} end
 		if DPSMateEHealingTaken == nil then DPSMateEHealingTaken = {[1]={},[2]={}} end
+		if DPSMateAbsorbs == nil then DPSMateAbsorbs = {[1]={},[2]={}} end
 		if DPSMateCombatTime == nil then
 			DPSMateCombatTime = {
 				total = 1,
@@ -545,6 +546,119 @@ function DPSMate.DB:HealingTaken(arr, Duser, Dname, Dhit, Dcrit, Damount, target
 		arr[cat][DPSMateUser[Duser]["id"]]["info"][1] = arr[cat][DPSMateUser[Duser]["id"]]["info"][1]+Damount
 	end
 	DPSMate:SetStatusBarValue()
+end
+
+-- Fire etc. Prot Potion
+-- Mage: Ice Barrier, Manashield, Fire Protection, Frost Protection
+-- Warlock: Shadow Protection
+-- Priest: Power Word: Shield
+-- Always the first shield that is applied is absorbing the damage. Depending the school it iterates through the shields.
+-- Example: Manashield is applied first then Frost Protection Potion.
+-- Weasel casts Frostbolt. -> Game: Can Manashield absorb Frost damage? No -> Game: Can Frost Protection Potion Absorb Frost damage? Yes -> OK go for it!
+-- Example two: Frost Protection Potion and Power Word Shield
+-- Weasel casts Frostbolt. -> Game: Can FPP absorb the FD? Yes -> Go for it. (The Power Word Shield is ignored until FPP fades)
+function DPSMate.DB:RegisterAbsorb(owner, ability, abilityTarget)
+	for cat, val in pairs({[1]="total", [2]="current"}) do 
+		DPSMate.DB:BuildUser(owner, nil)
+		DPSMate.DB:BuildUser(abilityTarget, nil)
+		if not DPSMateAbsorbs[cat][DPSMateUser[abilityTarget]["id"]] then
+			DPSMateAbsorbs[cat][DPSMateUser[abilityTarget]["id"]] = {}
+		end
+		if not DPSMateAbsorbs[cat][DPSMateUser[abilityTarget]["id"]][DPSMateUser[owner]["id"]] then
+			DPSMateAbsorbs[cat][DPSMateUser[abilityTarget]["id"]][DPSMateUser[owner]["id"]] = {}
+		end
+		if not DPSMateAbsorbs[cat][DPSMateUser[abilityTarget]["id"]][DPSMateUser[owner]["id"]][ability] then
+			DPSMateAbsorbs[cat][DPSMateUser[abilityTarget]["id"]][DPSMateUser[owner]["id"]][ability] = {}
+		end
+		table.insert(DPSMateAbsorbs[cat][DPSMateUser[abilityTarget]["id"]][DPSMateUser[owner]["id"]][ability], {
+			info = {
+				[1] = 0,
+				[2] = 0,
+			},
+		})
+	end
+end
+
+function DPSMate.DB:UnregisterAbsorb(owner, ability, abilityTarget, broken, brokenAbsorb)
+	for cat, val in pairs({[1]="total", [2]="current"}) do 
+		DPSMateAbsorbs[cat][DPSMateUser[owner]["id"]][ability][DPSMateUser[abilityTarget]["id"]]["info"][1] = broken
+		DPSMateAbsorbs[cat][DPSMateUser[owner]["id"]][ability][DPSMateUser[abilityTarget]["id"]]["info"][2] = brokenAbsorb
+	end
+	DPSMate:SetStatusBarValue()
+end
+
+local ShieldFlags = {
+	["Power Word: Shield"] = 0, -- All
+	["Manashield"] = 1, -- Meele
+	["Frost Protection Potion"] = 2, -- Frost
+	["Fire Protection Potion"] = 3, -- Fire
+	["Nature Protection Potion"] = 4, -- Nature
+	["Shadow Protection Potion"] = 5, -- Shadow
+	["Arcane Protection Potion"] = 6, -- Arcane
+	["Holy Protection Potion"] = 7, -- Holy
+}
+
+local AbilityFlags = {
+	["AutoAttack"] = 1,
+	["Frostbolt"] = 2,
+	["Fireball"] = 3,
+	["Wrath"] = 4,
+	["Shadowbolt"] = 5,
+	["Arcane Explosion"] = 6,
+	["Smite"] = 7,
+}
+
+function DPSMate.DB:Absorb(ability, abilityTarget, incTarget)
+	-- Checking for active Shields
+	local activeShields = {}
+	for cat, val in pairs(DPSMateAbsorbs[DPSMateUser[abilityTarget]["id"]]) do
+		for ca, va in pairs(val) do
+			if va["info"][1]==0 then
+				activeShields[cat] = ca
+				break
+			end
+		end
+	end
+	
+	-- Checking for "All-Absorbing"-Shields
+	-- Checking for Shields that just absorb the ability's school
+	local AAS, ASS = {}, {}
+	for cat, val in pairs(activeShields) do
+		if ShieldFlags[val]==0 then
+			AAS[cat] = val
+		elseif ShieldFlags[val]==AbilityFlags[ability] then
+			ASS[cat] = val
+		end
+	end
+	
+	-- Checking buffs for order 
+	if AAS~={} or ASS~={} then
+		local AbsorbingAbility = {}
+		for i=0, 31 do
+			DPSMate_Tooltip:SetOwner(UIParent, "ANCHOR_NONE")
+			DPSMate_Tooltip:ClearLines()
+			DPSMate_Tooltip:SetPlayerBuff(GetPlayerBuff(i, "HELPFUL"))
+			local buff = DPSMate_TooltipTextLeft1:GetText()
+			DPSMate_Tooltip:Hide()
+			if (not buff) then break end
+			for cat, val in pairs(AAS) do
+				if val==buff then
+					AbsorbingAbility = {cat, val}
+					break
+				end
+			end
+			for cat, val in pairs(ASS) do
+				if val==buff then
+					AbsorbingAbility = {cat, val}
+					break
+				end
+			end
+		end
+		
+		local TL = DPSMate:TableLength(DPSMateAbsorbs[DPSMateUser[abilityTarget]["id"]][AbsorbingAbility[1]][AbsorbingAbility[2]])
+		DPSMateAbsorbs[DPSMateUser[abilityTarget]["id"]][AbsorbingAbility[1]][AbsorbingAbility[2]][TL][incTarget][1] = ability 
+		DPSMateAbsorbs[DPSMateUser[abilityTarget]["id"]][AbsorbingAbility[1]][AbsorbingAbility[2]][TL][incTarget][2] = DPSMateAbsorbs[DPSMateUser[abilityTarget]["id"]][AbsorbingAbility[1]][AbsorbingAbility[2]][TL][incTarget][2]+1 
+	end
 end
 
 -- Are those functions able to be combined?

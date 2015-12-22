@@ -111,6 +111,19 @@ function DPSMate.Parser:OnEvent(event)
 		if arg1 then DPSMate.Parser:SpellPartyBuff(arg1) end
 	elseif event == "CHAT_MSG_SPELL_PERIODIC_PARTY_BUFFS" then
 		if arg1 then DPSMate.Parser:SpellPeriodicPartyBuffs(arg1) end
+	-- Absorb
+	elseif event == "CHAT_MSG_SPELL_DAMAGESHIELDS_ON_SELF" then
+		if arg1 then DPSMate.Parser:SpellDamageShieldsOnSelf(arg1) end
+	elseif event == "CHAT_MSG_SPELL_DAMAGESHIELDS_ON_OTHERS" then
+		if arg1 then DPSMate.Parser:SpellDamageShieldsOnOthers(arg1) end
+	elseif event == "CHAT_MSG_SPELL_BREAK_AURA" then
+		if arg1 then DPSMate:SendMessage(arg1.."BREAK_AURA") end
+	elseif event == "CHAT_MSG_SPELL_AURA_GONE_SELF" then
+		if arg1 then DPSMate:SendMessage(arg1.."AURA_GONE_SELF") end
+	elseif event == "CHAT_MSG_SPELL_AURA_GONE_OTHER" then
+		if arg1 then DPSMate:SendMessage(arg1.."AURA_GONE_OTHER") end
+	elseif event == "CHAT_MSG_SPELL_AURA_GONE_PARTY" then
+		if arg1 then DPSMate:SendMessage(arg1.."AURA_GONE_PARTY") end
 	end
 end
 
@@ -301,6 +314,7 @@ end
 -- Ember Worg hits/crits Ikaa for 58.
 function DPSMate.Parser:CreatureVsCreatureHits(msg) 
 	local target, cause, hit, crit, amount = {}, "", 0, 0, 0
+	DPSMate:SendMessage(msg)
 	for c, ta, a in string.gfind(msg, "(.+) hits (.-) for (.+)%.") do hit=1; cause=c; target.name = ta; amount=tonumber(strsub(a, strfind(a, "%d+"))); end
 	for c, ta, a in string.gfind(msg, "(.+) crits (.-) for (.+)%.") do crit=1; cause=c; target.name = ta; amount=tonumber(strsub(a, strfind(a, "%d+"))); end
 	DPSMate.DB:EnemyDamage(DPSMateEDD, target, "AutoAttack", hit, crit, 0, 0, 0, 0, amount, cause)
@@ -460,9 +474,11 @@ function DPSMate.Parser:SpellPartyBuff(msg)
 end
 
 -- Soulstoke gains First Aid.
+-- Feith gains power word shield
 -- Soulstoke gains 11 health from your/Albea's First Aid.
 function DPSMate.Parser:SpellPeriodicPartyBuffs(msg)
 	local cause, ability, target, amount = {}, "", "", 0
+	DPSMate:SendMessage(msg.."Shield2")
 	for ta, a, ab in string.gfind(msg, "(.+) gains (.+) health from your (.+)%.") do target=ta; amount=tonumber(strsub(a, strfind(a, "%d+"))); ability=ab; cause=player end
 	for ta, a, c, ab in string.gfind(msg, "(.+) gains (.+) health from (.+)'s (.+)%.") do target=ta; amount=tonumber(strsub(a, strfind(a, "%d+"))); ability=ab; cause.name=c end
 	overheal = DPSMate.Parser:GetOverhealByName(amount, target)
@@ -473,5 +489,14 @@ function DPSMate.Parser:SpellPeriodicPartyBuffs(msg)
 	DPSMate.DB:Healing(DPSMateTHealing, cause, ability, 1, 0, amount, target)
 end
 
+----------------------------------------------------------------------------------
+--------------                       Absorbs                        --------------                                  
+----------------------------------------------------------------------------------
 
+function DPSMate.Parser:SpellDamageShieldsOnSelf(msg)
+	DPSMate:SendMessage(msg.."Test4")
+end
 
+function DPSMate.Parser:SpellDamageShieldsOnOthers(msg)
+	DPSMate:SendMessage(msg.."Test5")
+end

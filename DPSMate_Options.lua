@@ -534,6 +534,10 @@ function DPSMate.Options:PopUpAccept()
 		[1] = {},
 		[2] = {},
 	}
+	DPSMateAbsorbs = {
+		[1] = {},
+		[2] = {},
+	}
 	DPSMateHistory = {
 		DMGDone = {},
 		DMGTaken = {},
