@@ -654,6 +654,17 @@ function DPSMate:GetSettingValues(arr, cbt, k)
 			table.insert(value, str[1]..str[2])
 			table.insert(perc, 100*(va/sort))
 		end
+	elseif (DPSMateSettings["windows"][k]["CurMode"] == "healingandabsorbs") then
+		sortedTable, total, a = DPSMate:GetSortedAbsorbedTable(arr)
+		for cat, val in pairs(sortedTable) do
+			local va, tot, sort = DPSMate:FormatNumbers(val, total, sortedTable[1], k)
+			local str = {[1]="",[2]="",[3]=""}
+			str[1] = " "..va..p; strt[2] = tot..p
+			str[2] = " ("..string.format("%.1f", 100*va/tot).."%)"
+			table.insert(name, DPSMate:GetUserById(a[val]))
+			table.insert(value, str[1]..str[2])
+			table.insert(perc, 100*(va/sort))
+		end
 	end
 	return name, value, perc, strt
 end

@@ -235,29 +235,23 @@ function DPSMate.DB:AssignClass()
 	local classEng
 	if DPSMate.DB:PlayerInParty() then
 		for i=1,4 do
-			if UnitExists("party"..i) then
-				if not DPSMateUser[UnitName("party"..i)] then
-					DPSMate.DB:BuildUser(UnitName("party"..i), nil)
-				end
-				if (not DPSMateUser[UnitName("party"..i)]["class"]) then
-					t,classEng = UnitClass("party"..i)
-					if (classEng) then
-						DPSMateUser[UnitName("party"..i)]["class"] = strlower(classEng)
-					end
+			local name = UnitName("party"..i)
+			if name then
+				DPSMate.DB:BuildUser(name, nil)
+				t,classEng = UnitClass("party"..i)
+				if (classEng) then
+					DPSMateUser[name]["class"] = strlower(classEng)
 				end
 			end
 		end
 	elseif UnitInRaid("player") then
 		for i=1,40 do
-			if UnitExists("raid"..i) then
-				if DPSMateUser[UnitName("raid"..i)] then
-					DPSMate.DB:BuildUser(UnitName("raid"..i), nil)
-				end
-				if (not DPSMateUser[UnitName("raid"..i)]["class"]) then
-					t,classEng = UnitClass("raid"..i)
-					if (classEng) then
-						DPSMateUser[UnitName("raid"..i)]["class"] = strlower(classEng)
-					end
+			local name = UnitName("raid"..i)
+			if name then
+				DPSMate.DB:BuildUser(name, nil)
+				t,classEng = UnitClass("raid"..i)
+				if (classEng) then
+					DPSMateUser[name]["class"] = strlower(classEng)
 				end
 			end
 		end
@@ -582,18 +576,24 @@ end
 local Await = {}
 function DPSMate.DB:AwaitingAbsorbConfirmation(owner, ability, abilityTarget, time)
 	table.insert(Await, {owner, ability, abilityTarget, time})
-	DPSMate:SendMessage(time)
-	DPSMate:SendMessage("Awaiting confirmation!")
+	--DPSMate:SendMessage(time)
+	--DPSMate:SendMessage("Awaiting confirmation!")
 end
 
 function DPSMate.DB:ConfirmAbsorbApplication(ability, abilityTarget, time)
-	DPSMate:SendMessage(time)
+	--DPSMate:SendMessage(time)
 	for cat, val in pairs(Await) do
 		if val[4]<=time and val[2]==ability then
 			if val[3]==abilityTarget then
 				DPSMate.DB:RegisterAbsorb(val[1], val[2], val[3])
-				DPSMate:SendMessage("Confirmed!")
-				table.remove(Await, cat)
+			--	DPSMate:SendMessage("Confirmed!")
+				--table.remove(Await, cat)
+				for ca, va in pairs(Await) do
+					if va[4]<=time and va[2]==ability then
+						table.remove(Await, ca)
+					end
+				end
+				break
 			end
 			if val[3]=="" then
 			
@@ -632,15 +632,17 @@ end
 
 function DPSMate.DB:UnregisterAbsorb(ability, abilityTarget)
 	local AbsorbingAbility = DPSMate.DB:GetActiveAbsorbAbilityByPlayer(ability, abilityTarget)
-	for cat, val in pairs({[1]="total", [2]="current"}) do 
-		if DPSMateAbsorbs[cat][DPSMateUser[abilityTarget]["id"]][AbsorbingAbility[1]][AbsorbingAbility[2]][AbsorbingAbility[3]]["info"][1] == 0 then
-			DPSMateAbsorbs[cat][DPSMateUser[abilityTarget]["id"]][AbsorbingAbility[1]][AbsorbingAbility[2]][AbsorbingAbility[3]]["info"][1] = broken
-			DPSMateAbsorbs[cat][DPSMateUser[abilityTarget]["id"]][AbsorbingAbility[1]][AbsorbingAbility[2]][AbsorbingAbility[3]]["info"][2] = brokenAbsorb
+	if AbsorbingAbility[1] then
+		for cat, val in pairs({[1]="total", [2]="current"}) do 
+			if DPSMateAbsorbs[cat][DPSMateUser[abilityTarget]["id"]][AbsorbingAbility[1]][AbsorbingAbility[2]][AbsorbingAbility[3]]["info"][1] == 0 then
+				DPSMateAbsorbs[cat][DPSMateUser[abilityTarget]["id"]][AbsorbingAbility[1]][AbsorbingAbility[2]][AbsorbingAbility[3]]["info"][1] = broken
+				DPSMateAbsorbs[cat][DPSMateUser[abilityTarget]["id"]][AbsorbingAbility[1]][AbsorbingAbility[2]][AbsorbingAbility[3]]["info"][2] = brokenAbsorb
+			end
 		end
+		broken = 2
+		brokenAbsorb = 0
+		DPSMate:SetStatusBarValue()
 	end
-	broken = 2
-	brokenAbsorb = 0
-	DPSMate:SetStatusBarValue()
 end
 
 function DPSMate.DB:GetActiveAbsorbAbilityByPlayer(ability, abilityTarget)
@@ -719,15 +721,17 @@ end
 
 function DPSMate.DB:Absorb(ability, abilityTarget, incTarget)
 	local AbsorbingAbility = DPSMate.DB:GetAbsorbingShield(ability, abilityTarget)
-	for cat, val in pairs({[1]="total", [2]="current"}) do 
-		if not DPSMateAbsorbs[cat][DPSMateUser[abilityTarget]["id"]][AbsorbingAbility[1]][AbsorbingAbility[2][1]][AbsorbingAbility[2][2]][incTarget] then
-			DPSMateAbsorbs[cat][DPSMateUser[abilityTarget]["id"]][AbsorbingAbility[1]][AbsorbingAbility[2][1]][AbsorbingAbility[2][2]][incTarget] = {
-				[1] = 0,
-				[2] = 0,
-			}
+	if AbsorbingAbility[1] then
+		for cat, val in pairs({[1]="total", [2]="current"}) do 
+			if not DPSMateAbsorbs[cat][DPSMateUser[abilityTarget]["id"]][AbsorbingAbility[1]][AbsorbingAbility[2][1]][AbsorbingAbility[2][2]][incTarget] then
+				DPSMateAbsorbs[cat][DPSMateUser[abilityTarget]["id"]][AbsorbingAbility[1]][AbsorbingAbility[2][1]][AbsorbingAbility[2][2]][incTarget] = {
+					[1] = 0,
+					[2] = 0,
+				}
+			end
+			DPSMateAbsorbs[cat][DPSMateUser[abilityTarget]["id"]][AbsorbingAbility[1]][AbsorbingAbility[2][1]][AbsorbingAbility[2][2]][incTarget][1] = ability 
+			DPSMateAbsorbs[cat][DPSMateUser[abilityTarget]["id"]][AbsorbingAbility[1]][AbsorbingAbility[2][1]][AbsorbingAbility[2][2]][incTarget][2] = DPSMateAbsorbs[cat][DPSMateUser[abilityTarget]["id"]][AbsorbingAbility[1]][AbsorbingAbility[2][1]][AbsorbingAbility[2][2]][incTarget][2]+1 
 		end
-		DPSMateAbsorbs[cat][DPSMateUser[abilityTarget]["id"]][AbsorbingAbility[1]][AbsorbingAbility[2][1]][AbsorbingAbility[2][2]][incTarget][1] = ability 
-		DPSMateAbsorbs[cat][DPSMateUser[abilityTarget]["id"]][AbsorbingAbility[1]][AbsorbingAbility[2][1]][AbsorbingAbility[2][2]][incTarget][2] = DPSMateAbsorbs[cat][DPSMateUser[abilityTarget]["id"]][AbsorbingAbility[1]][AbsorbingAbility[2][1]][AbsorbingAbility[2][2]][incTarget][2]+1 
 	end
 end
 
