@@ -17,79 +17,104 @@ DPSMate:Register("absorbs", DPSMate.Modules.Absorbs)
 function DPSMate.Modules.Absorbs:GetSortedTable(arr)
 	local b, a, total = {}, {}, 0
 	local temp = {}
-	if arr then
-		for cat, val in pairs(arr) do -- 28 Target
-			local PerPlayerAbsorb = 0
-			for ca, va in pairs(val) do -- 28 Owner
-				local PerOwnerAbsorb = 0
-				for c, v in pairs(va) do -- Power Word: Shield
-					local PerAbilityAbsorb = 0
-					for ce, ve in pairs(v) do -- 1
-						local PerShieldAbsorb = 0
-						for cet, vel in pairs(ve) do
-							PerShieldAbsorb=PerShieldAbsorb+vel[2]*5
+	for cat, val in pairs(arr) do -- 28 Target
+		local PerPlayerAbsorb = 0
+		for ca, va in pairs(val) do -- 28 Owner
+			local PerOwnerAbsorb = 0
+			for c, v in pairs(va) do -- Power Word: Shield
+				local PerAbilityAbsorb = 0
+				for ce, ve in pairs(v) do -- 1
+					local PerShieldAbsorb = 0
+					for cet, vel in pairs(ve) do
+						if cet~="info" then
+							local p = 5
+							if DPSMateDamageTaken[1][cat][cet][vel[1]]["hitaverage"]~=0 then
+								p=ceil(DPSMateDamageTaken[1][cat][cet][vel[1]]["hitaverage"])
+							end
+							PerShieldAbsorb=PerShieldAbsorb+vel[2]*p
 						end
-						if ve["info"][1]==1 then
-							PerShieldAbsorb=PerShieldAbsorb+ve["info"][2]
-						end
-						PerAbilityAbsorb = PerAbilityAbsorb+PerShieldAbsorb
 					end
-					PerOwnerAbsorb = PerOwnerAbsorb+PerAbilityAbsorb
+					if ve["info"][1]==1 then
+						PerShieldAbsorb=PerShieldAbsorb+ve["info"][2]
+					end
+					PerAbilityAbsorb = PerAbilityAbsorb+PerShieldAbsorb
 				end
-				if not temp[ca] then temp[ca] = PerOwnerAbsorb else temp[ca]=temp[ca]+PerOwnerAbsorb end
-				PerPlayerAbsorb = PerPlayerAbsorb+PerOwnerAbsorb
+				PerOwnerAbsorb = PerOwnerAbsorb+PerAbilityAbsorb
 			end
-			total = total+PerPlayerAbsorb
+			if not temp[ca] then temp[ca] = PerOwnerAbsorb else temp[ca]=temp[ca]+PerOwnerAbsorb end
+			PerPlayerAbsorb = PerPlayerAbsorb+PerOwnerAbsorb
 		end
-		for cat, val in pairs(temp) do
-			a[val] = cat
-			local i = 1
-			while true do
-				if (not b[i]) then
+		total = total+PerPlayerAbsorb
+	end
+	for cat, val in pairs(temp) do
+		local i = 1
+		while true do
+			if (not b[i]) then
+				table.insert(b, i, val)
+				table.insert(a, i, cat)
+				break
+			else
+				if b[i] < val then
 					table.insert(b, i, val)
+					table.insert(a, i, cat)
 					break
-				else
-					if b[i] < val then
-						table.insert(b, i, val)
-						break
-					end
 				end
-				i=i+1
 			end
+			i=i+1
 		end
 	end
 	return b, total, a
 end
 
 function DPSMate.Modules.Absorbs:EvalTable(user, k)
-	local a, u, p, d, total = {}, {}, {}, {}, 0
 	local arr = DPSMate:GetMode(k)
-	if not arr[user["id"]] then return end
-	for cat, val in pairs(arr[user["id"]]) do
-		if cat~="info" then
-			local CV = 0
-			for ca, va in pairs(val) do
-				CV=CV+va[1]
-			end
-			local i = 1
-			while true do
-				if (not d[i]) then
-					table.insert(a, i, cat)
-					table.insert(d, i, CV)
-					break
-				else
-					if (d[i] < CV) then
-						table.insert(a, i, cat)
-						table.insert(d, i, CV)
-						break
+	local b, a, total = {}, {}, 0
+	local temp = {}
+	for cat, val in pairs(arr) do -- 28 Target
+		for ca, va in pairs(val) do -- 28 Owner
+			if ca==user["id"] then
+				for c, v in pairs(va) do -- Power Word: Shield
+					local PerAbilityAbsorb = 0
+					for ce, ve in pairs(v) do -- 1
+						local PerShieldAbsorb = 0
+						for cet, vel in pairs(ve) do
+							if cet~="info" then
+								local p = 5
+								if DPSMateDamageTaken[1][cat][cet][vel[1]]["hitaverage"]~=0 then
+									p=ceil(DPSMateDamageTaken[1][cat][cet][vel[1]]["hitaverage"])
+								end
+								PerShieldAbsorb=PerShieldAbsorb+vel[2]*p
+							end
+						end
+						if ve["info"][1]==1 then
+							PerShieldAbsorb=PerShieldAbsorb+ve["info"][2]
+						end
+						PerAbilityAbsorb = PerAbilityAbsorb+PerShieldAbsorb
 					end
+					if not temp[c] then temp[c] = PerAbilityAbsorb else temp[c]=temp[c]+PerAbilityAbsorb end
 				end
-				i = i + 1
+				break
 			end
 		end
-	total=total+arr[user["id"]]["info"][1]
 	end
-	return a, total, d
+	for cat, val in pairs(temp) do
+		local i = 1
+		while true do
+			if (not b[i]) then
+				table.insert(b, i, val)
+				table.insert(a, i, cat)
+				break
+			else
+				if b[i] < val then
+					table.insert(b, i, val)
+					table.insert(a, i, cat)
+					break
+				end
+			end
+			i=i+1
+		end
+	end
+	return a, total, b
 end
 
 function DPSMate.Modules.Absorbs:GetSettingValues(arr, cbt, k)

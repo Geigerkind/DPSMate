@@ -27,7 +27,13 @@ function DPSMate.Modules.AbsorbsTaken:GetSortedTable(arr)
 					for ce, ve in pairs(v) do -- 1
 						local PerShieldAbsorb = 0
 						for cet, vel in pairs(ve) do
-							PerShieldAbsorb=PerShieldAbsorb+vel[2]*5
+							if cet~="info" then
+								local p = 5
+								if DPSMateDamageTaken[1][cat][cet][vel[1]]["hitaverage"]~=0 then
+									p=ceil(DPSMateDamageTaken[1][cat][cet][vel[1]]["hitaverage"])
+								end
+								PerShieldAbsorb=PerShieldAbsorb+vel[2]*p
+							end
 						end
 						if ve["info"][1]==1 then
 							PerShieldAbsorb=PerShieldAbsorb+ve["info"][2]
@@ -39,15 +45,16 @@ function DPSMate.Modules.AbsorbsTaken:GetSortedTable(arr)
 				PerPlayerAbsorb = PerPlayerAbsorb+PerOwnerAbsorb
 			end
 			total = total+PerPlayerAbsorb
-			a[PerPlayerAbsorb] = cat
 			local i = 1
 			while true do
 				if (not b[i]) then
 					table.insert(b, i, PerPlayerAbsorb)
+					table.insert(a, i, cat)
 					break
 				else
 					if b[i] < PerPlayerAbsorb then
 						table.insert(b, i, PerPlayerAbsorb)
+						table.insert(a, i, cat)
 						break
 					end
 				end
@@ -59,34 +66,43 @@ function DPSMate.Modules.AbsorbsTaken:GetSortedTable(arr)
 end
 
 function DPSMate.Modules.AbsorbsTaken:EvalTable(user, k)
-	local a, u, p, d, total = {}, {}, {}, {}, 0
 	local arr = DPSMate:GetMode(k)
+	local b, a, total = {}, {}, 0
 	if not arr[user["id"]] then return end
-	for cat, val in pairs(arr[user["id"]]) do
-		if cat~="info" then
-			local CV = 0
-			for ca, va in pairs(val) do
-				CV=CV+va[1]
+	for cat, val in pairs(arr[user["id"]]) do -- 28 Target
+		for ca, va in pairs(val) do -- Power Word Shield
+			local PerAbilityAbsorb = 0
+			for c, v in pairs(va) do -- 1
+				local PerShieldAbsorb = 0
+				for ce, ve in pairs(v) do
+					if ce~="info" then
+						local p = 5
+						if DPSMateDamageTaken[1][user["id"]][ce][ve[1]]["hitaverage"]~=0 then
+							p=ceil(DPSMateDamageTaken[1][user["id"]][ce][ve[1]]["hitaverage"])
+						end
+						PerShieldAbsorb=PerShieldAbsorb+ve[2]*p
+					end
+				end
+				PerAbilityAbsorb=PerAbilityAbsorb+PerShieldAbsorb
 			end
 			local i = 1
 			while true do
-				if (not d[i]) then
+				if (not b[i]) then
+					table.insert(b, i, PerAbilityAbsorb)
 					table.insert(a, i, cat)
-					table.insert(d, i, CV)
 					break
 				else
-					if (d[i] < CV) then
+					if b[i] < PerAbilityAbsorb then
+						table.insert(b, i, PerAbilityAbsorb)
 						table.insert(a, i, cat)
-						table.insert(d, i, CV)
 						break
 					end
 				end
-				i = i + 1
+				i=i+1
 			end
 		end
-	total=total+arr[user["id"]]["info"][1]
 	end
-	return a, total, d
+	return b, total, a
 end
 
 function DPSMate.Modules.AbsorbsTaken:GetSettingValues(arr, cbt, k)
@@ -111,7 +127,7 @@ function DPSMate.Modules.AbsorbsTaken:ShowTooltip(user, k)
 	if DPSMateSettings["informativetooltips"] then
 		for i=1, DPSMateSettings["subviewrows"] do
 			if not a[i] then break end
-			GameTooltip:AddDoubleLine(i..". "..a[i],c[i],1,1,1,1,1,1)
+			GameTooltip:AddDoubleLine(i..". "..DPSMate:GetUserById(c[i]),a[i],1,1,1,1,1,1)
 		end
 	end
 end

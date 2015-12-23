@@ -1151,27 +1151,25 @@ function DPSMate.Options:Report()
 end
 
 function DPSMate.Options:NewSegment()
-	a,b,c = DPSMate:GetSortedTable(DPSMateDamageDone[2])
-	if b ~= 0 then
-		if not DPSMateHistory["DMGDone"] then DPSMateHistory["DMGDone"] = {} end
-		table.insert(DPSMateHistory["DMGDone"], 1, DPSMate:CopyTable(DPSMateDamageDone[2]))
-		table.insert(DPSMateCombatTime["segments"], 1, DPSMateCombatTime["current"])
-		if DPSMate:TableLength(DPSMateHistory["DMGDone"])>DPSMateSettings["datasegments"] then
-			for i=DPSMateSettings["datasegments"]+1, DPSMate:TableLength(DPSMateHistory["DMGDone"]) do
-				table.remove(DPSMateHistory["DMGDone"], i)
-			end
-			table.remove(DPSMateHistory["DMGDone"], DPSMateSettings["datasegments"]+1)
+	-- Need to add a new check
+	if not DPSMateHistory["DMGDone"] then DPSMateHistory["DMGDone"] = {} end
+	table.insert(DPSMateHistory["DMGDone"], 1, DPSMate:CopyTable(DPSMateDamageDone[2]))
+	table.insert(DPSMateCombatTime["segments"], 1, DPSMateCombatTime["current"])
+	if DPSMate:TableLength(DPSMateHistory["DMGDone"])>DPSMateSettings["datasegments"] then
+		for i=DPSMateSettings["datasegments"]+1, DPSMate:TableLength(DPSMateHistory["DMGDone"]) do
+			table.remove(DPSMateHistory["DMGDone"], i)
 		end
-		if DPSMate:TableLength(DPSMateCombatTime["segments"])>DPSMateSettings["datasegments"] then
-			for i=DPSMateSettings["datasegments"]+1, DPSMate:TableLength(DPSMateCombatTime["segments"]) do
-				table.remove(DPSMateCombatTime["segments"], i)
-			end
-		end
-		DPSMateDamageDone[2] = {}
-		DPSMateDamageTaken[2] = {}
-		DPSMateCombatTime["current"] = 1
-		DPSMate:SetStatusBarValue()
+		table.remove(DPSMateHistory["DMGDone"], DPSMateSettings["datasegments"]+1)
 	end
+	if DPSMate:TableLength(DPSMateCombatTime["segments"])>DPSMateSettings["datasegments"] then
+		for i=DPSMateSettings["datasegments"]+1, DPSMate:TableLength(DPSMateCombatTime["segments"]) do
+			table.remove(DPSMateCombatTime["segments"], i)
+		end
+	end
+	DPSMateDamageDone[2] = {}
+	DPSMateDamageTaken[2] = {}
+	DPSMateCombatTime["current"] = 1
+	DPSMate:SetStatusBarValue()
 	DPSMate.Options:InitializeSegments()
 	DPSMate.Options.Dewdrop:Close()
 end

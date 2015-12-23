@@ -71,11 +71,20 @@ function DPSMate.Parser:OnEvent(event)
 		if arg1 then DPSMate.Parser:FriendlyPlayerMisses(arg1) end
 	-- Damage Taken
 	elseif event == "CHAT_MSG_COMBAT_CREATURE_VS_SELF_HITS" then
-		if arg1 then DPSMate.Parser:CreatureVsSelfHits(arg1) end
+		if arg1 then 
+			DPSMate.Parser:CreatureVsSelfHits(arg1) 
+			DPSMate.Parser:CreatureVsSelfHitsAbsorb(arg1)
+		end
 	elseif event == "CHAT_MSG_COMBAT_CREATURE_VS_SELF_MISSES" then
-		if arg1 then DPSMate.Parser:CreatureVsSelfMisses(arg1) end
+		if arg1 then 
+			DPSMate.Parser:CreatureVsSelfMisses(arg1) 
+			DPSMate.Parser:CreatureVsSelfMissesAbsorb(arg1)
+		end
 	elseif event == "CHAT_MSG_SPELL_CREATURE_VS_SELF_DAMAGE" then
-		if arg1 then DPSMate.Parser:CreatureVsSelfSpellDamage(arg1) end
+		if arg1 then 
+			DPSMate.Parser:CreatureVsSelfSpellDamage(arg1)
+			DPSMate.Parser:CreatureVsSelfSpellDamageAbsorb(arg1)
+		end
 	elseif event == "CHAT_MSG_SPELL_PERIODIC_SELF_DAMAGE" then
 		if arg1 then DPSMate.Parser:PeriodicSelfDamage(arg1) end
 	elseif event == "CHAT_MSG_COMBAT_CREATURE_VS_PARTY_HITS" then
@@ -98,7 +107,10 @@ function DPSMate.Parser:OnEvent(event)
 	elseif event == "CHAT_MSG_SPELL_SELF_BUFF" then
 		if arg1 then DPSMate.Parser:SpellSelfBuff(arg1) end
 	elseif event == "CHAT_MSG_SPELL_PERIODIC_SELF_BUFFS" then
-		if arg1 then DPSMate.Parser:SpellPeriodicSelfBuff(arg1) end
+		if arg1 then 
+			DPSMate.Parser:SpellPeriodicSelfBuff(arg1)
+			DPSMate.Parser:SpellPeriodicSelfBuffAbsorb(arg1)
+		end
 	elseif event == "CHAT_MSG_SPELL_FRIENDLYPLAYER_BUFF" then
 		if arg1 then DPSMate.Parser:SpellFriendlyPlayerBuff(arg1) end
 	elseif event == "CHAT_MSG_SPELL_PERIODIC_FRIENDLYPLAYER_BUFFS" then
@@ -271,15 +283,12 @@ end
 ----------------------------------------------------------------------------------
 
 -- War Reaver hits/crits you for 66.
--- Heavy War Golem hits/crits you for 8. (59 absorbend)
--- Heavy War Golem attacks. You absorb all the damage.
 function DPSMate.Parser:CreatureVsSelfHits(msg)
 	local cause, hit, crit, amount, absorbed = "", 0, 0, 0, 0
 	for c, a in string.gfind(msg, "(.+) hits you for (.+)%.") do hit=1; cause=c; amount=tonumber(strsub(a, strfind(a, "%d+"))) end
 	for c, a in string.gfind(msg, "(.+) crits you for (.+)%.") do crit=1; cause=c; amount=tonumber(strsub(a, strfind(a, "%d+"))) end -- Absorbtion has to be parsed individually
 	DPSMate.DB:EnemyDamage(DPSMateEDD, player, "AutoAttack", hit, crit, 0, 0, 0, 0, amount, cause)
 	DPSMate.DB:DamageTaken(player, "AutoAttack", hit, crit, 0, 0, 0, 0, amount, cause)
-	--if strfind(te, "absorbed") then absorbed = tonumber(strsub(te, strfind(te, "%d+"))); DPSMate.DB:SetUnregisterVariables(absorbed); DPSMate:SendMessage("Shield has been broken. "..absorbed.." absorbed!") end
 end
 
 -- Firetail Scorpid attacks. You parry.
@@ -291,14 +300,12 @@ function DPSMate.Parser:CreatureVsSelfMisses(msg)
 	for c in string.gfind(msg, "(.+) misses you%.") do cause=c; miss=1 end
 	DPSMate.DB:EnemyDamage(DPSMateEDD, player, "AutoAttack", 0, 0, miss, parry, dodge, 0, 0, cause)
 	DPSMate.DB:DamageTaken(player, "AutoAttack", 0, 0, miss, parry, dodge, 0, 0, cause)
-	--for c in string.gfind(msg, "(.+) attacks%. You absorb all the damage%.") do DPSMate.DB:Absorb("AutoAttack", player.name, c); DPSMate:SendMessage(c.." absorbed!") end
 end 
 
 -- Thaurissan Spy performs Dazed on you. (Implementing it later)
 -- Thaurissan Spy's Poison was resisted.
 -- Thaurissan Spy's Backstab hits/crits you for 116.
 -- Flamekin Torcher's Fireball hits/crits you for 86 Fire damage. (School?)
--- Heavy War Golem's Trample hits/crits you for 51 (Fire damage). (48 absorbed)
 function DPSMate.Parser:CreatureVsSelfSpellDamage(msg)
 	local cause, ability, amount, resist, hit, crit, absorbed = "", "", 0, 0, 0, 0, 0
 	if not strfind(msg, "performs") then
@@ -307,7 +314,6 @@ function DPSMate.Parser:CreatureVsSelfSpellDamage(msg)
 		for c, ab in string.gfind(msg, "(.+)'s (.-) was resisted.") do resist=1; cause=c; ability=ab end
 		DPSMate.DB:EnemyDamage(DPSMateEDD, player, ability, hit, crit, 0, 0, 0, resist, amount, cause)
 		DPSMate.DB:DamageTaken(player, ability, hit, crit, 0, 0, 0, resist, amount, cause)
-		--if strfind(te, "absorbed") then absorbed = tonumber(strsub(te, strfind(te, "%d+"))); DPSMate.DB:SetUnregisterVariables(absorbed); DPSMate:SendMessage("Shield has been broken. "..absorbed.." absorbed!") end
 	end
 end
 
@@ -342,7 +348,6 @@ function DPSMate.Parser:CreatureVsCreatureMisses(msg)
 	for c, ta in string.gfind(msg, "(.+) misses (.+)%.") do cause=c; miss=1; target.name = ta end
 	DPSMate.DB:EnemyDamage(DPSMateEDD, target, "AutoAttack", 0, 0, miss, parry, dodge, 0, 0, cause)
 	DPSMate.DB:DamageTaken(target, "AutoAttack", 0, 0, miss, parry, dodge, 0, 0, cause)
-	for c, ta in string.gfind(msg, "(.+) attacks%. (.+) absorbs all the damage%.") do DPSMate.DB:Absorb("AutoAttack", ta, c); DPSMate:SendMessage(c.." absorbed!") end
 end
 
 -- Ikaa is afflicted by Infected Bite.
@@ -423,10 +428,8 @@ end
 -- You gain 61 health from Nenea's Rejuvenation.
 function DPSMate.Parser:SpellPeriodicSelfBuff(msg) -- Maybe some loss here?
 	local cause, ability, target, amount = {}, "", "", 0
-	--DPSMate:SendMessage(msg)
 	for a, ab in string.gfind(msg, "You gain (.+) health from (.+)%.") do amount=tonumber(strsub(a, strfind(a, "%d+"))); ability=ab; target=player.name; cause=player end
 	for a, ta, ab in string.gfind(msg, "You gain (.+) health from (.+)'s (.+)%.") do amount=tonumber(strsub(a, strfind(a, "%d+"))); ability=ab; target=player.name; cause.name=ta end
-	--for ab in string.gfind(msg, "You gain (.+)%.") do if DPSMate:TContains(DPSMate.DB.ShieldFlags, ab) then DPSMate.DB:ConfirmAbsorbApplication(ab, player.name, GetTime()) end end
 	if amount>0 then -- Workaround as long as I dont have buffs implemented
 		overheal = DPSMate.Parser:GetOverhealByName(amount, target)
 		DPSMate.DB:HealingTaken(DPSMateHealingTaken, target, ability, 1, 0, amount, cause.name)
@@ -445,7 +448,6 @@ function DPSMate.Parser:SpellFriendlyPlayerBuff(msg)
 	local cause, ability, target, amount, hit, crit = {}, "", "", 0, 0, 0
 	for c, ab, ta, a in string.gfind(msg, "(.+)'s (.+) heals (.+) for (.+)%.") do hit=1; crit=0; amount=tonumber(strsub(a, strfind(a, "%d+"))); ability=ab; target=ta; cause.name=c end
 	for c, ab, ta, a in string.gfind(msg, "(.+)'s (.+) critically heals (.+) for (.+)%.") do crit=1; hit=0; amount=tonumber(strsub(a, strfind(a, "%d+"))); ability=ab; target=ta; cause.name=c end
-	--DPSMate:SendMessage(msg)
 	overheal = DPSMate.Parser:GetOverhealByName(amount, target)
 	DPSMate.DB:HealingTaken(DPSMateHealingTaken, target, ability, hit, crit, amount, cause.name)
 	DPSMate.DB:HealingTaken(DPSMateEHealingTaken, target, ability, hit, crit, amount-overheal, cause.name)
@@ -462,7 +464,6 @@ function DPSMate.Parser:SpellPeriodicFriendlyPlayerBuffs(msg)
 	local cause, ability, target, amount = {}, "", "", 0
 	for ta, a, ab in string.gfind(msg, "(.+) gains (.+) health from your (.+)%.") do target=ta; amount=tonumber(strsub(a, strfind(a, "%d+"))); ability=ab; cause=player end
 	for ta, a, c, ab in string.gfind(msg, "(.+) gains (.+) health from (.+)'s (.+)%.") do target=ta; amount=tonumber(strsub(a, strfind(a, "%d+"))); ability=ab; cause.name=c end
---	for c, ab in string.gfind(msg, "(.+) gains (.+)%.") do if DPSMate:TContains(DPSMate.DB.ShieldFlags, ab) then DPSMate.DB:ConfirmAbsorbApplication(ab, c, GetTime()) end end
 	overheal = DPSMate.Parser:GetOverhealByName(amount, target)
 	DPSMate.DB:HealingTaken(DPSMateHealingTaken, target, ability, 1, 0, amount, cause.name)
 	DPSMate.DB:HealingTaken(DPSMateEHealingTaken, target, ability, 1, 0, amount-overheal, cause.name)
@@ -541,21 +542,48 @@ DPSMate.Parser.oldUseAction = UseAction
 	local aura = DPSMate_TooltipTextLeft1:GetText()
 	DPSMate_Tooltip:Hide()
 	if aura and UnitName("target") then
-		--SendAddonMessage("DPSMate", player.name..","..aura..","..UnitName("target")..","..GetTime(), "RAID")
-		--DPSMate.DB:AwaitingAbsorbConfirmation(player.name, aura, UnitName("target"), GetTime())
+		SendAddonMessage("DPSMate", player.name..","..aura..","..UnitName("target")..","..GetTime(), "RAID")
+		DPSMate.DB:AwaitingAbsorbConfirmation(player.name, aura, UnitName("target"), GetTime())
 	end
 	DPSMate.Parser.oldUseAction(slot, checkCursor, onSelf)
 end
 UseAction = DPSMate.Parser.UseAction
 
+-- Heavy War Golem hits/crits you for 8. (59 absorbed)
+function DPSMate.Parser:CreatureVsSelfHitsAbsorb(msg)
+	for c, a, absorbed in string.gfind(msg, "(.+) hits you for (.+)%. ((.+) absorbed)") do DPSMate.DB:SetUnregisterVariables(tonumber(strsub(te, strfind(te, "%d+")))) end
+	for c, a, absorbed in string.gfind(msg, "(.+) crits you for (.+)%. ((.+) absorbed)") do DPSMate.DB:SetUnregisterVariables(tonumber(strsub(te, strfind(te, "%d+")))) end
+	DPSMate:SetStatusBarValue()
+end
+
+-- Heavy War Golem attacks. You absorb all the damage.
+function DPSMate.Parser:CreatureVsSelfMissesAbsorb(msg)
+	for c in string.gfind(msg, "(.+) attacks%. You absorb all the damage%.") do DPSMate.DB:Absorb("AutoAttack", player.name, c); DPSMate:SendMessage(c.." absorbed!") end
+	DPSMate:SetStatusBarValue()
+end
+
+-- Heavy War Golem's Trample hits/crits you for 51 (Fire damage). (48 absorbed)
+function DPSMate.Parser:CreatureVsSelfSpellDamageAbsorb(msg)
+	for c, a, absorbed in string.gfind(msg, "(.+)'s (.+) hits you for (.+)%. ((.+) absorbed)") do DPSMate.DB:SetUnregisterVariables(tonumber(strsub(te, strfind(te, "%d+")))) end
+	for c, a, absorbed in string.gfind(msg, "(.+)'s (.+) crits you for (.+)%. ((.+) absorbed)") do DPSMate.DB:SetUnregisterVariables(tonumber(strsub(te, strfind(te, "%d+")))) end
+	DPSMate:SetStatusBarValue()
+end
+
+function DPSMate.Parser:SpellPeriodicSelfBuffAbsorb(msg)
+	for ab in string.gfind(msg, "You gain (.+)%.") do if DPSMate:TContains(DPSMate.DB.ShieldFlags, ab) then DPSMate.DB:ConfirmAbsorbApplication(ab, player.name, GetTime()) end end
+	DPSMate:SetStatusBarValue()
+end
+
 -- Power Word: Shield fades from you.
 function DPSMate:SpellAuraGoneSelf(msg)
-	for ab in string.gfind(msg, "(.+) fades from you%.") do if DPSMate:TContains(DPSMate.DB.ShieldFlags, ab) then DPSMate.DB:UnregisterAbsorb(ab, player.name); DPSMate:SendMessage(ab.." has been unregistered!") end end
+	for ab in string.gfind(msg, "(.+) fades from you%.") do if DPSMate:TContains(DPSMate.DB.ShieldFlags, ab) then DPSMate.DB:UnregisterAbsorb(ab, player.name) end end
+	DPSMate:SetStatusBarValue()
 end
 
 -- Power Word: Shield fades from Senpie.
 function DPSMate:SpellAuraGoneParty(msg)
-	for ab, ta in string.gfind(msg, "(.+) fades from (.+)%.") do if DPSMate:TContains(DPSMate.DB.ShieldFlags, ab) then DPSMate.DB:UnregisterAbsorb(ab, ta); DPSMate:SendMessage(ab.." has been unregistered!") end end
+	for ab, ta in string.gfind(msg, "(.+) fades from (.+)%.") do if DPSMate:TContains(DPSMate.DB.ShieldFlags, ab) then DPSMate.DB:UnregisterAbsorb(ab, ta) end end
+	DPSMate:SetStatusBarValue()
 end
 
 -- Thorns

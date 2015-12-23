@@ -733,14 +733,15 @@ function DPSMate.DB:Absorb(ability, abilityTarget, incTarget)
 	local AbsorbingAbility = DPSMate.DB:GetAbsorbingShield(ability, abilityTarget)
 	if AbsorbingAbility[1] then
 		for cat, val in pairs({[1]="total", [2]="current"}) do 
-			if not DPSMateAbsorbs[cat][DPSMateUser[abilityTarget]["id"]][AbsorbingAbility[1]][AbsorbingAbility[2][1]][AbsorbingAbility[2][2]][incTarget] then
-				DPSMateAbsorbs[cat][DPSMateUser[abilityTarget]["id"]][AbsorbingAbility[1]][AbsorbingAbility[2][1]][AbsorbingAbility[2][2]][incTarget] = {
+			DPSMate.DB:BuildUser(incTarget, nil)
+			if not DPSMateAbsorbs[cat][DPSMateUser[abilityTarget]["id"]][AbsorbingAbility[1]][AbsorbingAbility[2][1]][AbsorbingAbility[2][2]][DPSMateUser[incTarget]["id"]] then
+				DPSMateAbsorbs[cat][DPSMateUser[abilityTarget]["id"]][AbsorbingAbility[1]][AbsorbingAbility[2][1]][AbsorbingAbility[2][2]][DPSMateUser[incTarget]["id"]] = {
 					[1] = 0,
 					[2] = 0,
 				}
 			end
-			DPSMateAbsorbs[cat][DPSMateUser[abilityTarget]["id"]][AbsorbingAbility[1]][AbsorbingAbility[2][1]][AbsorbingAbility[2][2]][incTarget][1] = ability 
-			DPSMateAbsorbs[cat][DPSMateUser[abilityTarget]["id"]][AbsorbingAbility[1]][AbsorbingAbility[2][1]][AbsorbingAbility[2][2]][incTarget][2] = DPSMateAbsorbs[cat][DPSMateUser[abilityTarget]["id"]][AbsorbingAbility[1]][AbsorbingAbility[2][1]][AbsorbingAbility[2][2]][incTarget][2]+1 
+			DPSMateAbsorbs[cat][DPSMateUser[abilityTarget]["id"]][AbsorbingAbility[1]][AbsorbingAbility[2][1]][AbsorbingAbility[2][2]][DPSMateUser[incTarget]["id"]][1] = ability 
+			DPSMateAbsorbs[cat][DPSMateUser[abilityTarget]["id"]][AbsorbingAbility[1]][AbsorbingAbility[2][1]][AbsorbingAbility[2][2]][DPSMateUser[incTarget]["id"]][2] = DPSMateAbsorbs[cat][DPSMateUser[abilityTarget]["id"]][AbsorbingAbility[1]][AbsorbingAbility[2][1]][AbsorbingAbility[2][2]][DPSMateUser[incTarget]["id"]][2]+1 
 		end
 	end
 end
@@ -794,7 +795,7 @@ function DPSMate.DB:DTExist(uname, cause, aname, arr)
 end
 
 function DPSMate.DB:EDDExist(uname, cause, aname, arr)
-	if DPSMateUser[uname]~=nil then
+	if DPSMateUser[uname]~=nil and DPSMateUser[cause]~=nil then
 		if arr[DPSMateUser[cause]["id"]] ~= nil then
 			if arr[DPSMateUser[cause]["id"]][DPSMateUser[uname]["id"]] ~= nil then
 				if arr[DPSMateUser[cause]["id"]][DPSMateUser[uname]["id"]][aname] ~= nil then
