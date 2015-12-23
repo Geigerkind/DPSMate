@@ -17,49 +17,47 @@ DPSMate:Register("absorbstaken", DPSMate.Modules.AbsorbsTaken)
 function DPSMate.Modules.AbsorbsTaken:GetSortedTable(arr)
 	local b, a, total = {}, {}, 0
 	local temp = {}
-	if arr then
-		for cat, val in pairs(arr) do -- 28 Target
-			local PerPlayerAbsorb = 0
-			for ca, va in pairs(val) do -- 28 Owner
-				local PerOwnerAbsorb = 0
-				for c, v in pairs(va) do -- Power Word: Shield
-					local PerAbilityAbsorb = 0
-					for ce, ve in pairs(v) do -- 1
-						local PerShieldAbsorb = 0
-						for cet, vel in pairs(ve) do
-							if cet~="info" then
-								local p = 5
-								if DPSMateDamageTaken[1][cat][cet][vel[1]]["hitaverage"]~=0 then
-									p=ceil(DPSMateDamageTaken[1][cat][cet][vel[1]]["hitaverage"])
-								end
-								PerShieldAbsorb=PerShieldAbsorb+vel[2]*p
+	for cat, val in pairs(arr) do -- 28 Target
+		local PerPlayerAbsorb = 0
+		for ca, va in pairs(val) do -- 28 Owner
+			local PerOwnerAbsorb = 0
+			for c, v in pairs(va) do -- Power Word: Shield
+				local PerAbilityAbsorb = 0
+				for ce, ve in pairs(v) do -- 1
+					local PerShieldAbsorb = 0
+					for cet, vel in pairs(ve) do
+						if cet~="info" then
+							local p = 5
+							if DPSMateDamageTaken[1][cat][cet][vel[1]]["hitaverage"]~=0 then
+								p=ceil(DPSMateDamageTaken[1][cat][cet][vel[1]]["hitaverage"])
 							end
+							PerShieldAbsorb=PerShieldAbsorb+vel[2]*p
 						end
-						if ve["info"][1]==1 then
-							PerShieldAbsorb=PerShieldAbsorb+ve["info"][2]
-						end
-						PerAbilityAbsorb = PerAbilityAbsorb+PerShieldAbsorb
 					end
-					PerOwnerAbsorb = PerOwnerAbsorb+PerAbilityAbsorb
+					if ve["info"][1]==1 then
+						PerShieldAbsorb=PerShieldAbsorb+ve["info"][2]
+					end
+					PerAbilityAbsorb = PerAbilityAbsorb+PerShieldAbsorb
 				end
-				PerPlayerAbsorb = PerPlayerAbsorb+PerOwnerAbsorb
+				PerOwnerAbsorb = PerOwnerAbsorb+PerAbilityAbsorb
 			end
-			total = total+PerPlayerAbsorb
-			local i = 1
-			while true do
-				if (not b[i]) then
+			PerPlayerAbsorb = PerPlayerAbsorb+PerOwnerAbsorb
+		end
+		total = total+PerPlayerAbsorb
+		local i = 1
+		while true do
+			if (not b[i]) then
+				table.insert(b, i, PerPlayerAbsorb)
+				table.insert(a, i, cat)
+				break
+			else
+				if b[i] < PerPlayerAbsorb then
 					table.insert(b, i, PerPlayerAbsorb)
 					table.insert(a, i, cat)
 					break
-				else
-					if b[i] < PerPlayerAbsorb then
-						table.insert(b, i, PerPlayerAbsorb)
-						table.insert(a, i, cat)
-						break
-					end
 				end
-				i=i+1
 			end
+			i=i+1
 		end
 	end
 	return b, total, a
