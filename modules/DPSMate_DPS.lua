@@ -1,6 +1,14 @@
 -- Global Variables
 DPSMate.Modules.DPS = {}
-DPSMate.Modules.DB = DPSMateDamageDone
+DPSMate.Modules.DPS.Hist = "DMGDone"
+DPSMate.Options.Options[1]["args"]["dps"] = {
+	order = 10,
+	type = 'toggle',
+	name = DPSMate.localization.config.dps,
+	desc = DPSMate.localization.desc.dps,
+	get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["options"][1]["dps"] end,
+	set = function() DPSMate.Options:ToggleDrewDrop(1, "dps", DPSMate.Options.Dewdrop:GetOpenedParent()) end,
+}
 
 -- Register the moodule
 DPSMate:Register("dps", DPSMate.Modules.DPS)
@@ -35,6 +43,37 @@ function DPSMate.Modules.DPS:GetSortedTable(arr)
 	return b, total, a
 end
 
+function DPSMate.Modules.DPS:EvalTable(user, k)
+	local a, u, p, d, total, pet = {}, {}, {}, {}, 0, ""
+	local arr = DPSMate:GetMode(k)
+	if not arr[user["id"]] then return end
+	if (user["pet"] and user["pet"] ~= "Unknown" and arr[DPSMateUser[user["pet"]]["id"]]) then u={user["id"],DPSMateUser[user["pet"]]["id"]} else u={user["id"]} end
+	for _, v in pairs(u) do
+		for cat, val in pairs(arr[v]) do
+			if (type(val) == "table" and cat~="info") then
+				if (DPSMateUser[DPSMate:GetUserById(v)]["isPet"]) then pet="(Pet)"; else pet=""; end
+				local i = 1
+				while true do
+					if (not d[i]) then
+						table.insert(a, i, cat..pet)
+						table.insert(d, i, val["amount"])
+						break
+					else
+						if (d[i] < val["amount"]) then
+							table.insert(a, i, cat..pet)
+							table.insert(d, i, val["amount"])
+							break
+						end
+					end
+					i = i + 1
+				end
+			end
+		end
+		total=total+arr[v]["info"][3]
+	end
+	return a, total, d
+end
+
 function DPSMate.Modules.DPS:GetSettingValues(arr, cbt, k)
 	local name, value, perc, sortedTable, total, a, p, strt = {}, {}, {}, {}, 0, 0, "", {[1]="",[2]=""}
 	if DPSMateSettings["windows"][k]["numberformat"] == 2 then p = "K" end
@@ -53,8 +92,14 @@ function DPSMate.Modules.DPS:GetSettingValues(arr, cbt, k)
 	return name, value, perc, strt
 end
 
-function DPSMate.Modules.DPS:ShowTooltip()
-	
+function DPSMate.Modules.DPS:ShowTooltip(user, k)
+	local a,b,c = DPSMate.Modules.DPS:EvalTable(DPSMateUser[user], k)
+	if DPSMateSettings["informativetooltips"] then
+		for i=1, DPSMateSettings["subviewrows"] do
+			if not a[i] then break end
+			GameTooltip:AddDoubleLine(i..". "..a[i],c[i],1,1,1,1,1,1)
+		end
+	end
 end
 
 

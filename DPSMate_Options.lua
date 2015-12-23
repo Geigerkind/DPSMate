@@ -52,123 +52,20 @@ DPSMate.Options.bgtexture = {
 	["UI-Tooltip-Background"] = "Interface\\Tooltips\\UI-Tooltip-Background",
 }
 DPSMate.Options.Dewdrop = AceLibrary("Dewdrop-2.0")
-
-
--- Local Variables
-local LastPopUp = 0
-local TimeToNextPopUp = 1
-local PartyNum, LastPartyNum = 0, 0
-local graph = AceLibrary("Graph-1.0")
-local Options = {
+DPSMate.Options.Options = {
 	[1] = {
 		type = 'group',
 		args = {
-			dps = {
-				order = 10,
-				type = 'toggle',
-				name = DPSMate.localization.config.dps,
-				desc = DPSMate.localization.desc.dps,
-				get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["options"][1]["dps"] end,
-				set = function() DPSMate.Options:ToggleDrewDrop(1, "dps", DPSMate.Options.Dewdrop:GetOpenedParent()) end,
-			},
-			damage = {
-				order = 20,
-				type = 'toggle',
-				name = DPSMate.localization.config.damage,
-				desc = DPSMate.localization.desc.damage,
-				get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["options"][1]["damage"] end,
-				set = function() DPSMate.Options:ToggleDrewDrop(1, "damage", DPSMate.Options.Dewdrop:GetOpenedParent()) end,
-			},
-			damagetaken = {
-				order = 30,
-				type = 'toggle',
-				name = DPSMate.localization.config.damagetaken,
-				desc = DPSMate.localization.desc.damagetaken,
-				get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["options"][1]["damagetaken"] end,
-				set = function() DPSMate.Options:ToggleDrewDrop(1, "damagetaken", DPSMate.Options.Dewdrop:GetOpenedParent()) end,
-			},
-			enemydamagedone = {
-				order = 40,
-				type = 'toggle',
-				name = DPSMate.localization.config.enemydamagedone,
-				desc = DPSMate.localization.desc.enemydmgdone,
-				get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["options"][1]["enemydamagedone"] end,
-				set = function() DPSMate.Options:ToggleDrewDrop(1, "enemydamagedone", DPSMate.Options.Dewdrop:GetOpenedParent()) end,
-			},
-			enemydamagetaken = {
-				order = 50,
-				type = 'toggle',
-				name = DPSMate.localization.config.enemydamagetaken,
-				desc = DPSMate.localization.desc.enemydmgtaken,
-				get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["options"][1]["enemydamagetaken"] end,
-				set = function() DPSMate.Options:ToggleDrewDrop(1, "enemydamagetaken", DPSMate.Options.Dewdrop:GetOpenedParent()) end,
-			},
-			healing = {
-				order = 60,
-				type = 'toggle',
-				name = DPSMate.localization.config.healing,
-				desc = DPSMate.localization.desc.healing,
-				get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["options"][1]["healing"] end,
-				set = function() DPSMate.Options:ToggleDrewDrop(1, "healing", DPSMate.Options.Dewdrop:GetOpenedParent()) end,
-			},
-			effectivehealing = {
-				order = 65,
-				type = 'toggle',
-				name = 'Effective healing',
-				desc = 'TO BE ADDED!',
-				get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["options"][1]["effectivehealing"] end,
-				set = function() DPSMate.Options:ToggleDrewDrop(1, "effectivehealing", DPSMate.Options.Dewdrop:GetOpenedParent()) end,
-			},
-			overhealing = {
-				order = 70,
-				type = 'toggle',
-				name = DPSMate.localization.config.overhealing,
-				desc = DPSMate.localization.desc.overhealing,
-				get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["options"][1]["overhealing"] end,
-				set = function() DPSMate.Options:ToggleDrewDrop(1, "overhealing", DPSMate.Options.Dewdrop:GetOpenedParent()) end,
-			},
-			absorbs = {
-				order = 73,
-				type = 'toggle',
-				name = 'Absorbs',
-				desc = 'TO BE ADDED!',
-				get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["options"][1]["absorbs"] end,
-				set = function() DPSMate.Options:ToggleDrewDrop(1, "absorbs", DPSMate.Options.Dewdrop:GetOpenedParent()) end,
-			},
-			absorbtaken = {
-				order = 74,
-				type = 'toggle',
-				name = 'Absorb taken',
-				desc = 'TO BE ADDED!',
-				get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["options"][1]["absorbtaken"] end,
-				set = function() DPSMate.Options:ToggleDrewDrop(1, "absorbtaken", DPSMate.Options.Dewdrop:GetOpenedParent()) end,
-			},
 			healingandabsorbs = {
-				order = 75,
+				order = 150,
 				type = 'toggle',
 				name = DPSMate.localization.config.healingandabsorbs,
 				desc = DPSMate.localization.desc.healingandabsorbs,
 				get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["options"][1]["healingandabsorbs"] end,
 				set = function() DPSMate.Options:ToggleDrewDrop(1, "healingandabsorbs", DPSMate.Options.Dewdrop:GetOpenedParent()) end,
 			},
-			healingtaken = {
-				order = 80,
-				type = 'toggle',
-				name = DPSMate.localization.config.healingtaken,
-				desc = DPSMate.localization.desc.healingtaken,
-				get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["options"][1]["healingtaken"] end,
-				set = function() DPSMate.Options:ToggleDrewDrop(1, "healingtaken", DPSMate.Options.Dewdrop:GetOpenedParent()) end,
-			},
-			effectivehealingtaken = {
-				order = 85,
-				type = 'toggle',
-				name = 'Effective healing taken',
-				desc = 'TO BE ADDED!',
-				get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["options"][1]["effectivehealingtaken"] end,
-				set = function() DPSMate.Options:ToggleDrewDrop(1, "effectivehealingtaken", DPSMate.Options.Dewdrop:GetOpenedParent()) end,
-			},
 			interrupts = {
-				order = 100,
+				order = 160,
 				type = 'toggle',
 				name = DPSMate.localization.config.interrupts,
 				desc = DPSMate.localization.desc.interrupts,
@@ -176,7 +73,7 @@ local Options = {
 				set = function() DPSMate.Options:ToggleDrewDrop(1, "interrupts", DPSMate.Options.Dewdrop:GetOpenedParent()) end,
 			},
 			deaths = {
-				order = 110,
+				order = 170,
 				type = 'toggle',
 				name = DPSMate.localization.config.deaths,
 				desc = DPSMate.localization.desc.deaths,
@@ -184,7 +81,7 @@ local Options = {
 				set = function() DPSMate.Options:ToggleDrewDrop(1, "deaths", DPSMate.Options.Dewdrop:GetOpenedParent()) end,
 			},
 			dispels = {
-				order = 120,
+				order = 180,
 				type = 'toggle',
 				name = DPSMate.localization.config.dispels,
 				desc = DPSMate.localization.desc.dispels,
@@ -307,6 +204,12 @@ local Options = {
 		handler = DPSMate.Options,
 	},
 }
+
+-- Local Variables
+local LastPopUp = 0
+local TimeToNextPopUp = 1
+local PartyNum, LastPartyNum = 0, 0
+local graph = AceLibrary("Graph-1.0")
 local DetailsUser = ""
 local DetailsSelected = 1
 local DetailsArr, DetailsTotal
@@ -583,7 +486,7 @@ function DPSMate.Options:OpenMenu(b, obj)
 	end
 	DPSMate.Options.Dewdrop:Register(obj,
 		'children', function() 
-			DPSMate.Options.Dewdrop:FeedAceOptionsTable(Options[b]) 
+			DPSMate.Options.Dewdrop:FeedAceOptionsTable(DPSMate.Options.Options[b]) 
 		end,
 		'cursorX', true,
 		'cursorY', true,
@@ -599,7 +502,7 @@ function DPSMate.Options:ToggleDrewDrop(i, obj, pa)
 	end
 	DPSMateSettings["windows"][pa.Key]["options"][i][obj] = true
 	if i == 1 then
-		getglobal(pa:GetName().."_Head_Font"):SetText(Options[i]["args"][obj].name)
+		getglobal(pa:GetName().."_Head_Font"):SetText(DPSMate.Options.Options[i]["args"][obj].name)
 		DPSMateSettings["windows"][pa.Key]["CurMode"] = obj
 	end
 	DPSMate.Options.Dewdrop:Close()
@@ -612,7 +515,7 @@ function DPSMate.Options:ScrollFrame_Update()
 	local obj = getglobal("DPSMate_Details_Log_ScrollFrame")
 	local arr = DPSMate:GetMode(DPSMate_Details.PaKey)
 	local user, pet, len = "", 0, DPSMate:TableLength(arr[DPSMateUser[DetailsUser]["id"]])-5
-	DetailsArr, DetailsTotal, DmgArr = DPSMate.Options:EvalTable(DPSMateUser[DetailsUser]["id"], DPSMate_Details.PaKey)
+	DetailsArr, DetailsTotal, DmgArr = DPSMate.RegistredModules[DPSMateSettings["windows"][DPSMate_Details.PaKey]["CurMode"]]:EvalTable(DPSMateUser[DetailsUser], DPSMate_Details.PaKey)
 	FauxScrollFrame_Update(obj,DPSMate:TableLength(arr),10,24)
 	for line=1,10 do
 		lineplusoffset = line + FauxScrollFrame_GetOffset(obj)
@@ -639,85 +542,6 @@ function DPSMate.Options:ScrollFrame_Update()
 		if DetailsSelected == lineplusoffset then
 			getglobal("DPSMate_Details_Log_ScrollButton"..line.."_selected"):Show()
 		end
-	end
-end
-
-function DPSMate.Options:EvalDamageDone(t)
-	local a, u, p, d = {}, {}, {}, {}
-	local total, pet = 0, ""
-	local arr = DPSMate:GetMode(DPSMate_Details.PaKey)
-	local user = DPSMateUser[DPSMate:GetUserById(t)]
-	if not arr[t] then return end
-	if (user["pet"] and user["pet"] ~= "Unknown" and arr[DPSMateUser[user["pet"]]["id"]]) then u={t,DPSMateUser[user["pet"]]["id"]} else u={t} end
-	for _, v in pairs(u) do
-		for cat, val in pairs(arr[v]) do
-			if (type(val) == "table" and cat~="info") then
-				if (DPSMateUser[DPSMate:GetUserById(v)]["isPet"]) then pet="(Pet)"; else pet=""; end
-				local i = 1
-				while true do
-					if (not d[i]) then
-						table.insert(a, i, cat..pet)
-						table.insert(d, i, val["amount"])
-						break
-					else
-						if (d[i] < val["amount"]) then
-							table.insert(a, i, cat..pet)
-							table.insert(d, i, val["amount"])
-							break
-						end
-					end
-					i = i + 1
-				end
-			end
-		end
-		total=total+arr[v]["info"][3]
-	end
-	return a, total, d
-end
-
--- double abilities need to be added together
-function DPSMate.Options:EvalDamageTaken(t)
-	local a, u, e, d = {}, {}, {}, {}
-	local total, pet = 0, ""
-	local arr = DPSMate:GetMode(DPSMate_Details.PaKey)
-	local user = DPSMateUser[DPSMate:GetUserById(t)]
-	if not arr[t] then return end
-	if (user["pet"] and user["pet"] ~= "Unknown" and arr[DPSMateUser[user["pet"]]["id"]]) then u={t,DPSMateUser[user["pet"]]["id"]} else u={t} end
-	for _, v in pairs(u) do
-		for cat, val in pairs(arr[v]) do
-			local CV = 0
-			for ca, va in pairs(val) do
-				if (type(va) == "table" and ca~="info") then
-					if (DPSMateUser[DPSMate:GetUserById(v)]["isPet"]) then pet="(Pet)"; else pet=""; end
-					CV = CV+va["amount"]
-				end
-			end
-			local i = 1
-			while true do
-				if (not d[i]) then
-					table.insert(a, i, cat)
-					table.insert(d, i, CV)
-					break
-				else
-					if (d[i] < CV) then
-						table.insert(a, i, cat)
-						table.insert(d, i, CV)
-						break
-					end
-				end
-				i = i + 1
-			end
-			total=total+arr[v][cat]["info"][3]
-		end
-	end
-	return a, total, d
-end
-
-function DPSMate.Options:EvalTable(t, k)
-	if DPSMateSettings["windows"][k]["CurMode"] == "dps" or DPSMateSettings["windows"][k]["CurMode"] == "damage" then
-		return DPSMate.Options:EvalDamageDone(t)
-	elseif DPSMateSettings["windows"][k]["CurMode"] == "damagetaken" then
-		return DPSMate.Options:EvalDamageTaken(t)
 	end
 end
 
@@ -1354,7 +1178,7 @@ end
 
 function DPSMate.Options:InitializeSegments()
 	local i=1
-	Options[2]["args"] = {
+	DPSMate.Options.Options[2]["args"] = {
 		total = {
 			order = 10,
 			type = 'toggle',
@@ -1372,10 +1196,10 @@ function DPSMate.Options:InitializeSegments()
 			set = function() DPSMate.Options:ToggleDrewDrop(2, "currentfight", DPSMate.Options.Dewdrop:GetOpenedParent()) end,
 		},
 	}
-	Options[3]["args"]["deletesegment"]["args"] = {}
+	DPSMate.Options.Options[3]["args"]["deletesegment"]["args"] = {}
 	for cat, val in pairs(DPSMateHistory["DMGDone"]) do
 		if not val then break end
-		Options[2]["args"]["segment"..i] = {
+		DPSMate.Options.Options[2]["args"]["segment"..i] = {
 			order = 20+i*10,
 			type = 'toggle',
 			name = "Segment "..i,
@@ -1383,7 +1207,7 @@ function DPSMate.Options:InitializeSegments()
 			get = loadstring('return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["options"][2]["segment'..i..'"];'),
 			set = loadstring('DPSMate.Options:ToggleDrewDrop(2, "segment'..i..'", DPSMate.Options.Dewdrop:GetOpenedParent());'),
 		}
-		Options[3]["args"]["deletesegment"]["args"]["segment"..i] = {
+		DPSMate.Options.Options[3]["args"]["deletesegment"]["args"]["segment"..i] = {
 			order = i*10,
 			type = 'execute',
 			name = "Segment "..i,
@@ -1671,9 +1495,6 @@ function DPSMate.Options:ShowTooltip()
 	if not this.user then return end
 	if DPSMateSettings["showtooltips"] then
 		DPSMate_Details.PaKey = this:GetParent():GetParent():GetParent().Key
-		local arr = DPSMate:GetMode(DPSMate_Details.PaKey)
-		local user, pet = "", 0
-		DetailsArr, DetailsTotal, DmgArr = DPSMate.Options:EvalTable(DPSMateUser[this.user]["id"], DPSMate_Details.PaKey)
 		if DPSMateSettings["tooltipanchor"] == 1 then
 			GameTooltip:SetOwner(UIParent, "BOTTOMRIGHT")
 		elseif DPSMateSettings["tooltipanchor"] == 2 then
@@ -1686,12 +1507,7 @@ function DPSMate.Options:ShowTooltip()
 			GameTooltip:SetOwner(this:GetParent():GetParent():GetParent(), "TOPRIGHT")
 		end
 		GameTooltip:AddLine(this.user.."'s "..getglobal(this:GetParent():GetParent():GetParent():GetName().."_Head_Font"):GetText(), 1,1,1)
-		if DPSMateSettings["informativetooltips"] then
-			for i=1, DPSMateSettings["subviewrows"] do
-				if not DetailsArr[i] then break end
-				GameTooltip:AddDoubleLine(i..". "..DetailsArr[i],DmgArr[i],1,1,1,1,1,1)
-			end
-		end
+		DPSMate.RegistredModules[DPSMateSettings["windows"][DPSMate_Details.PaKey]["CurMode"]]:ShowTooltip(this.user, DPSMate_Details.PaKey)
 		GameTooltip:AddLine(" ")
 		GameTooltip:AddLine("LeftClick to open the details.")
 		GameTooltip:Show()
@@ -1700,17 +1516,17 @@ end
 
 function DPSMate.Options:InitializeHideShowWindow()
 	local i = 1
-	Options[3]["args"]["hidewindow"]["args"] = {}
-	Options[3]["args"]["showwindow"]["args"] = {}
+	DPSMate.Options.Options[3]["args"]["hidewindow"]["args"] = {}
+	DPSMate.Options.Options[3]["args"]["showwindow"]["args"] = {}
 	for _,val in pairs(DPSMateSettings["windows"]) do
-		Options[3]["args"]["hidewindow"]["args"][val["name"]] = {
+		DPSMate.Options.Options[3]["args"]["hidewindow"]["args"][val["name"]] = {
 			order = i*10,
 			type = 'execute',
 			name = val["name"],
 			desc = "Hide "..val["name"],
 			func = loadstring('getglobal("DPSMate_'..val["name"]..'"):Hide(); DPSMate.Options.Dewdrop:Close();'),
 		}
-		Options[3]["args"]["showwindow"]["args"][val["name"]] = {
+		DPSMate.Options.Options[3]["args"]["showwindow"]["args"][val["name"]] = {
 			order = i*10,
 			type = 'execute',
 			name = val["name"],

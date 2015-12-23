@@ -17,13 +17,9 @@ localization\enUS.lua
 
 DPSMate_Parser.lua
 DPSMate_Options.lua
-DPSMate_DataBuilder.lua
 DPSMate_Sync.lua
 DPSMate_Realmplayers.lua
-
-DPSMate_Frame.xml
-DPSMate_Details.xml
-DPSMate_Options.xml
+DPSMate_DataBuilder.lua
 
 modules\DPSMate_DPS.lua
 modules\DPSMate_Damage.lua
@@ -41,6 +37,7 @@ modules\DPSMate_Deaths.lua
 modules\DPSMate_Dispels.lua
 modules\DPSMate_DispelsReceived.lua
 modules\DPSMate_EffectiveHealing.lua
+modules\DPSMate_EffectiveHPS.lua
 modules\DPSMate_EffectiveHealingTaken.lua
 modules\DPSMate_EffectiveThreat.lua
 modules\DPSMate_Threat.lua
@@ -54,3 +51,7 @@ modules\DPSMate_ManaEfficiency.lua
 modules\DPSMate_ManaGained.lua
 modules\DPSMate_ManaLost.lua
 modules\DPSMate_Overhealing.lua
+
+DPSMate_Frame.xml
+DPSMate_Details.xml
+DPSMate_Options.xml

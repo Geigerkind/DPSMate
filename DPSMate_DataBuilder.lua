@@ -30,6 +30,7 @@ local LastUpdate = 0
 
 function DPSMate.DB:OnEvent(event)
 	if event == "ADDON_LOADED" and (not DPSMate.DB.loaded) then
+		local dbs = {DPSMateDamageDone, DPSMateDamageTaken, DPSMateEDD, DPSMateEDT, DPSMateTHealing, DPSMateEHealing, DPSMateOverhealing, DPSMateHealingTaken, DPSMateEHealingTaken, DPSMateAbsorbs, DPSMateDispels}
 		if DPSMateSettings == nil then
 			DPSMateSettings = {
 				windows = {
@@ -130,17 +131,25 @@ function DPSMate.DB:OnEvent(event)
 		end
 		if DPSMateHistory == nil then DPSMateHistory = {} end
 		if DPSMateUser == nil then DPSMateUser = {} end
-		if DPSMateDamageDone == nil then DPSMateDamageDone = {[1]={},[2]={}} end
-		if DPSMateDamageTaken == nil then DPSMateDamageTaken = {[1]={},[2]={}} end
-		if DPSMateEDD == nil then DPSMateEDD = {[1]={},[2]={}} end
-		if DPSMateEDT == nil then DPSMateEDT = {[1]={},[2]={}} end
-		if DPSMateTHealing == nil then DPSMateTHealing = {[1]={},[2]={}} end
-		if DPSMateEHealing == nil then DPSMateEHealing = {[1]={},[2]={}} end
-		if DPSMateOverhealing == nil then DPSMateOverhealing = {[1]={},[2]={}} end
-		if DPSMateHealingTaken == nil then DPSMateHealingTaken = {[1]={},[2]={}} end
-		if DPSMateEHealingTaken == nil then DPSMateEHealingTaken = {[1]={},[2]={}} end
-		if DPSMateAbsorbs == nil then DPSMateAbsorbs = {[1]={},[2]={}} end
-		if DPSMateDispels == nil then DPSMateDispels = {[1]={},[2]={}} end
+		for _, val in pairs(dbs) do
+			if val == nil then val = {[1]={},[2]={}} end
+		end
+		DPSMate.Modules.DPS.DB = DPSMateDamageDone
+		DPSMate.Modules.Damage.DB = DPSMateDamageDone
+		DPSMate.Modules.DamageTaken.DB = DPSMateDamageTaken
+		DPSMate.Modules.DTPS.DB = DPSMateDamageTaken
+		DPSMate.Modules.EDD.DB = DPSMateEDD
+		DPSMate.Modules.EDT.DB = DPSMateEDT
+		DPSMate.Modules.Healing.DB = DPSMateTHealing
+		DPSMate.Modules.HPS.DB = DPSMateTHealing
+		DPSMate.Modules.Overhealing.DB = DPSMateOverhealing
+		DPSMate.Modules.EffectiveHealing.DB = DPSMateEHealing
+		DPSMate.Modules.EffectiveHPS.DB = DPSMateEHealing
+		DPSMate.Modules.HealingTaken.DB = DPSMateHealingTaken
+		DPSMate.Modules.EffectiveHealingTaken.DB = DPSMateEHealingTaken
+		DPSMate.Modules.Absorbs.DB = DPSMateAbsorbs
+		DPSMate.Modules.AbsorbsTaken.DB = DPSMateAbsorbs
+		
 		if DPSMateCombatTime == nil then
 			DPSMateCombatTime = {
 				total = 1,
@@ -351,25 +360,25 @@ function DPSMate.DB:DamageDone(Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, Ddodge,
 end
 
 function DPSMate.DB:DamageTaken(Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, Ddodge, Dresist, Damount, cause)
-	if (not Duser.name or DPSMate:TableLength(Duser)==0 or not Dname or not Damount) then return end
+	if (not Duser.name or DPSMate:TableLength(Duser)==0 or not Dname or cause=="") then return end
 
 	for cat, val in pairs({[1]="total", [2]="current"}) do 
 		if DPSMate.DB:DTExist(Duser.name, cause, Dname, DPSMateDamageTaken[cat]) then
-			DPSMateDamageTaken[cat][DPSMateUser[Duser.name]["id"]][cause][Dname].hit = DPSMateDamageTaken[cat][DPSMateUser[Duser.name]["id"]][cause][Dname].hit + Dhit
-			DPSMateDamageTaken[cat][DPSMateUser[Duser.name]["id"]][cause][Dname].crit = DPSMateDamageTaken[cat][DPSMateUser[Duser.name]["id"]][cause][Dname].crit + Dcrit
-			DPSMateDamageTaken[cat][DPSMateUser[Duser.name]["id"]][cause][Dname].miss = DPSMateDamageTaken[cat][DPSMateUser[Duser.name]["id"]][cause][Dname].miss + Dmiss
-			DPSMateDamageTaken[cat][DPSMateUser[Duser.name]["id"]][cause][Dname].parry = DPSMateDamageTaken[cat][DPSMateUser[Duser.name]["id"]][cause][Dname].parry + Dparry
-			DPSMateDamageTaken[cat][DPSMateUser[Duser.name]["id"]][cause][Dname].dodge = DPSMateDamageTaken[cat][DPSMateUser[Duser.name]["id"]][cause][Dname].dodge + Ddodge
-			DPSMateDamageTaken[cat][DPSMateUser[Duser.name]["id"]][cause][Dname].resist = DPSMateDamageTaken[cat][DPSMateUser[Duser.name]["id"]][cause][Dname].resist + Dresist
-			DPSMateDamageTaken[cat][DPSMateUser[Duser.name]["id"]][cause][Dname].amount = DPSMateDamageTaken[cat][DPSMateUser[Duser.name]["id"]][cause][Dname].amount + Damount
+			DPSMateDamageTaken[cat][DPSMateUser[Duser.name]["id"]][DPSMateUser[cause]["id"]][Dname].hit = DPSMateDamageTaken[cat][DPSMateUser[Duser.name]["id"]][DPSMateUser[cause]["id"]][Dname].hit + Dhit
+			DPSMateDamageTaken[cat][DPSMateUser[Duser.name]["id"]][DPSMateUser[cause]["id"]][Dname].crit = DPSMateDamageTaken[cat][DPSMateUser[Duser.name]["id"]][DPSMateUser[cause]["id"]][Dname].crit + Dcrit
+			DPSMateDamageTaken[cat][DPSMateUser[Duser.name]["id"]][DPSMateUser[cause]["id"]][Dname].miss = DPSMateDamageTaken[cat][DPSMateUser[Duser.name]["id"]][DPSMateUser[cause]["id"]][Dname].miss + Dmiss
+			DPSMateDamageTaken[cat][DPSMateUser[Duser.name]["id"]][DPSMateUser[cause]["id"]][Dname].parry = DPSMateDamageTaken[cat][DPSMateUser[Duser.name]["id"]][DPSMateUser[cause]["id"]][Dname].parry + Dparry
+			DPSMateDamageTaken[cat][DPSMateUser[Duser.name]["id"]][DPSMateUser[cause]["id"]][Dname].dodge = DPSMateDamageTaken[cat][DPSMateUser[Duser.name]["id"]][DPSMateUser[cause]["id"]][Dname].dodge + Ddodge
+			DPSMateDamageTaken[cat][DPSMateUser[Duser.name]["id"]][DPSMateUser[cause]["id"]][Dname].resist = DPSMateDamageTaken[cat][DPSMateUser[Duser.name]["id"]][DPSMateUser[cause]["id"]][Dname].resist + Dresist
+			DPSMateDamageTaken[cat][DPSMateUser[Duser.name]["id"]][DPSMateUser[cause]["id"]][Dname].amount = DPSMateDamageTaken[cat][DPSMateUser[Duser.name]["id"]][DPSMateUser[cause]["id"]][Dname].amount + Damount
 			if Dhit == 1 then
-				if (Damount < DPSMateDamageTaken[cat][DPSMateUser[Duser.name]["id"]][cause][Dname].hitlow or DPSMateDamageTaken[cat][DPSMateUser[Duser.name]["id"]][cause][Dname].hitlow == 0) then DPSMateDamageTaken[cat][DPSMateUser[Duser.name]["id"]][cause][Dname].hitlow = Damount end
-				if Damount > DPSMateDamageTaken[cat][DPSMateUser[Duser.name]["id"]][cause][Dname].hithigh then DPSMateDamageTaken[cat][DPSMateUser[Duser.name]["id"]][cause][Dname].hithigh = Damount end
-				DPSMateDamageTaken[cat][DPSMateUser[Duser.name]["id"]][cause][Dname]["hitaverage"] = (DPSMateDamageTaken[cat][DPSMateUser[Duser.name]["id"]][cause][Dname]["hitaverage"]+Damount)/2
+				if (Damount < DPSMateDamageTaken[cat][DPSMateUser[Duser.name]["id"]][DPSMateUser[cause]["id"]][Dname].hitlow or DPSMateDamageTaken[cat][DPSMateUser[Duser.name]["id"]][DPSMateUser[cause]["id"]][Dname].hitlow == 0) then DPSMateDamageTaken[cat][DPSMateUser[Duser.name]["id"]][DPSMateUser[cause]["id"]][Dname].hitlow = Damount end
+				if Damount > DPSMateDamageTaken[cat][DPSMateUser[Duser.name]["id"]][DPSMateUser[cause]["id"]][Dname].hithigh then DPSMateDamageTaken[cat][DPSMateUser[Duser.name]["id"]][DPSMateUser[cause]["id"]][Dname].hithigh = Damount end
+				DPSMateDamageTaken[cat][DPSMateUser[Duser.name]["id"]][DPSMateUser[cause]["id"]][Dname]["hitaverage"] = (DPSMateDamageTaken[cat][DPSMateUser[Duser.name]["id"]][DPSMateUser[cause]["id"]][Dname]["hitaverage"]+Damount)/2
 			elseif Dcrit == 1 then
-				if (Damount < DPSMateDamageTaken[cat][DPSMateUser[Duser.name]["id"]][cause][Dname].critlow or DPSMateDamageTaken[cat][DPSMateUser[Duser.name]["id"]][cause][Dname].critlow == 0) then DPSMateDamageTaken[cat][DPSMateUser[Duser.name]["id"]][cause][Dname].critlow = Damount end
-				if Damount > DPSMateDamageTaken[cat][DPSMateUser[Duser.name]["id"]][cause][Dname].crithigh then DPSMateDamageTaken[cat][DPSMateUser[Duser.name]["id"]][cause][Dname].crithigh = Damount end
-				DPSMateDamageTaken[cat][DPSMateUser[Duser.name]["id"]][cause][Dname]["critaverage"] = (DPSMateDamageTaken[cat][DPSMateUser[Duser.name]["id"]][cause][Dname]["critaverage"]+Damount)/2
+				if (Damount < DPSMateDamageTaken[cat][DPSMateUser[Duser.name]["id"]][DPSMateUser[cause]["id"]][Dname].critlow or DPSMateDamageTaken[cat][DPSMateUser[Duser.name]["id"]][DPSMateUser[cause]["id"]][Dname].critlow == 0) then DPSMateDamageTaken[cat][DPSMateUser[Duser.name]["id"]][DPSMateUser[cause]["id"]][Dname].critlow = Damount end
+				if Damount > DPSMateDamageTaken[cat][DPSMateUser[Duser.name]["id"]][DPSMateUser[cause]["id"]][Dname].crithigh then DPSMateDamageTaken[cat][DPSMateUser[Duser.name]["id"]][DPSMateUser[cause]["id"]][Dname].crithigh = Damount end
+				DPSMateDamageTaken[cat][DPSMateUser[Duser.name]["id"]][DPSMateUser[cause]["id"]][Dname]["critaverage"] = (DPSMateDamageTaken[cat][DPSMateUser[Duser.name]["id"]][DPSMateUser[cause]["id"]][Dname]["critaverage"]+Damount)/2
 			end
 		else
 			DPSMate.DB:BuildUser(Duser.name, Duser.class)
@@ -377,8 +386,8 @@ function DPSMate.DB:DamageTaken(Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, Ddodge
 				if not DPSMateDamageTaken[i][DPSMateUser[Duser.name]["id"]] then
 					DPSMateDamageTaken[i][DPSMateUser[Duser.name]["id"]] = {}
 				end
-				if not DPSMateDamageTaken[i][DPSMateUser[Duser.name]["id"]][cause] then
-					DPSMateDamageTaken[i][DPSMateUser[Duser.name]["id"]][cause] = {
+				if not DPSMateDamageTaken[i][DPSMateUser[Duser.name]["id"]][DPSMateUser[cause]["id"]] then
+					DPSMateDamageTaken[i][DPSMateUser[Duser.name]["id"]][DPSMateUser[cause]["id"]] = {
 						info = {
 							[1] = {},
 							[2] = {},
@@ -387,7 +396,7 @@ function DPSMate.DB:DamageTaken(Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, Ddodge
 					}
 				end
 			end
-			DPSMateDamageTaken[cat][DPSMateUser[Duser.name]["id"]][cause][Dname] = {
+			DPSMateDamageTaken[cat][DPSMateUser[Duser.name]["id"]][DPSMateUser[cause]["id"]][Dname] = {
 				hit = Dhit,
 				hitlow = 0,
 				hithigh = 0,
@@ -402,10 +411,10 @@ function DPSMate.DB:DamageTaken(Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, Ddodge
 				resist = Dresist,
 				amount = Damount,
 			}
-			if (Dhit == 1) then DPSMateDamageTaken[cat][DPSMateUser[Duser.name]["id"]][cause][Dname]["hitlow"] = Damount; DPSMateDamageTaken[cat][DPSMateUser[Duser.name]["id"]][cause][Dname]["hithigh"] = Damount; DPSMateDamageTaken[cat][DPSMateUser[Duser.name]["id"]][cause][Dname]["hitaverage"] = Damount end
-			if (Dcrit == 1) then DPSMateDamageTaken[cat][DPSMateUser[Duser.name]["id"]][cause][Dname]["critlow"] = Damount; DPSMateDamageTaken[cat][DPSMateUser[Duser.name]["id"]][cause][Dname]["crithigh"] = Damount; DPSMateDamageTaken[cat][DPSMateUser[Duser.name]["id"]][cause][Dname]["critaverage"] = Damount end
+			if (Dhit == 1) then DPSMateDamageTaken[cat][DPSMateUser[Duser.name]["id"]][DPSMateUser[cause]["id"]][Dname]["hitlow"] = Damount; DPSMateDamageTaken[cat][DPSMateUser[Duser.name]["id"]][DPSMateUser[cause]["id"]][Dname]["hithigh"] = Damount; DPSMateDamageTaken[cat][DPSMateUser[Duser.name]["id"]][DPSMateUser[cause]["id"]][Dname]["hitaverage"] = Damount end
+			if (Dcrit == 1) then DPSMateDamageTaken[cat][DPSMateUser[Duser.name]["id"]][DPSMateUser[cause]["id"]][Dname]["critlow"] = Damount; DPSMateDamageTaken[cat][DPSMateUser[Duser.name]["id"]][DPSMateUser[cause]["id"]][Dname]["crithigh"] = Damount; DPSMateDamageTaken[cat][DPSMateUser[Duser.name]["id"]][DPSMateUser[cause]["id"]][Dname]["critaverage"] = Damount end
 		end
-		DPSMateDamageTaken[cat][DPSMateUser[Duser.name]["id"]][cause]["info"][3] = DPSMateDamageTaken[cat][DPSMateUser[Duser.name]["id"]][cause]["info"][3] + Damount
+		DPSMateDamageTaken[cat][DPSMateUser[Duser.name]["id"]][DPSMateUser[cause]["id"]]["info"][3] = DPSMateDamageTaken[cat][DPSMateUser[Duser.name]["id"]][DPSMateUser[cause]["id"]]["info"][3] + Damount
 	end
 	DPSMate:SetStatusBarValue()
 end
@@ -414,30 +423,31 @@ function DPSMate.DB:EnemyDamage(arr, Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, D
 	if (not Duser.name or DPSMate:TableLength(Duser)==0 or not Dname or not Damount) then return end
 	for cat, val in pairs({[1]="total", [2]="current"}) do 
 		if DPSMate.DB:EDDExist(Duser.name, cause, Dname, arr[cat]) then
-			arr[cat][cause][DPSMateUser[Duser.name]["id"]][Dname].hit = arr[cat][cause][DPSMateUser[Duser.name]["id"]][Dname].hit + Dhit
-			arr[cat][cause][DPSMateUser[Duser.name]["id"]][Dname].crit = arr[cat][cause][DPSMateUser[Duser.name]["id"]][Dname].crit + Dcrit
-			arr[cat][cause][DPSMateUser[Duser.name]["id"]][Dname].miss = arr[cat][cause][DPSMateUser[Duser.name]["id"]][Dname].miss + Dmiss
-			arr[cat][cause][DPSMateUser[Duser.name]["id"]][Dname].parry = arr[cat][cause][DPSMateUser[Duser.name]["id"]][Dname].parry + Dparry
-			arr[cat][cause][DPSMateUser[Duser.name]["id"]][Dname].dodge = arr[cat][cause][DPSMateUser[Duser.name]["id"]][Dname].dodge + Ddodge
-			arr[cat][cause][DPSMateUser[Duser.name]["id"]][Dname].resist = arr[cat][cause][DPSMateUser[Duser.name]["id"]][Dname].resist + Dresist
-			arr[cat][cause][DPSMateUser[Duser.name]["id"]][Dname].amount = arr[cat][cause][DPSMateUser[Duser.name]["id"]][Dname].amount + Damount
+			arr[cat][DPSMateUser[cause]["id"]][DPSMateUser[Duser.name]["id"]][Dname].hit = arr[cat][DPSMateUser[cause]["id"]][DPSMateUser[Duser.name]["id"]][Dname].hit + Dhit
+			arr[cat][DPSMateUser[cause]["id"]][DPSMateUser[Duser.name]["id"]][Dname].crit = arr[cat][DPSMateUser[cause]["id"]][DPSMateUser[Duser.name]["id"]][Dname].crit + Dcrit
+			arr[cat][DPSMateUser[cause]["id"]][DPSMateUser[Duser.name]["id"]][Dname].miss = arr[cat][DPSMateUser[cause]["id"]][DPSMateUser[Duser.name]["id"]][Dname].miss + Dmiss
+			arr[cat][DPSMateUser[cause]["id"]][DPSMateUser[Duser.name]["id"]][Dname].parry = arr[cat][DPSMateUser[cause]["id"]][DPSMateUser[Duser.name]["id"]][Dname].parry + Dparry
+			arr[cat][DPSMateUser[cause]["id"]][DPSMateUser[Duser.name]["id"]][Dname].dodge = arr[cat][DPSMateUser[cause]["id"]][DPSMateUser[Duser.name]["id"]][Dname].dodge + Ddodge
+			arr[cat][DPSMateUser[cause]["id"]][DPSMateUser[Duser.name]["id"]][Dname].resist = arr[cat][DPSMateUser[cause]["id"]][DPSMateUser[Duser.name]["id"]][Dname].resist + Dresist
+			arr[cat][DPSMateUser[cause]["id"]][DPSMateUser[Duser.name]["id"]][Dname].amount = arr[cat][DPSMateUser[cause]["id"]][DPSMateUser[Duser.name]["id"]][Dname].amount + Damount
 			if Dhit == 1 then
-				if (Damount < arr[cat][cause][DPSMateUser[Duser.name]["id"]][Dname].hitlow or arr[cat][cause][DPSMateUser[Duser.name]["id"]][Dname].hitlow == 0) then arr[cat][cause][DPSMateUser[Duser.name]["id"]][Dname].hitlow = Damount end
-				if Damount > arr[cat][cause][DPSMateUser[Duser.name]["id"]][Dname].hithigh then arr[cat][cause][DPSMateUser[Duser.name]["id"]][Dname].hithigh = Damount end
-				arr[cat][cause][DPSMateUser[Duser.name]["id"]][Dname]["hitaverage"] = (arr[cat][cause][DPSMateUser[Duser.name]["id"]][Dname]["hitaverage"]+Damount)/2
+				if (Damount < arr[cat][DPSMateUser[cause]["id"]][DPSMateUser[Duser.name]["id"]][Dname].hitlow or arr[cat][DPSMateUser[cause]["id"]][DPSMateUser[Duser.name]["id"]][Dname].hitlow == 0) then arr[cat][DPSMateUser[cause]["id"]][DPSMateUser[Duser.name]["id"]][Dname].hitlow = Damount end
+				if Damount > arr[cat][DPSMateUser[cause]["id"]][DPSMateUser[Duser.name]["id"]][Dname].hithigh then arr[cat][DPSMateUser[cause]["id"]][DPSMateUser[Duser.name]["id"]][Dname].hithigh = Damount end
+				arr[cat][DPSMateUser[cause]["id"]][DPSMateUser[Duser.name]["id"]][Dname]["hitaverage"] = (arr[cat][DPSMateUser[cause]["id"]][DPSMateUser[Duser.name]["id"]][Dname]["hitaverage"]+Damount)/2
 			elseif Dcrit == 1 then
-				if (Damount < arr[cat][cause][DPSMateUser[Duser.name]["id"]][Dname].critlow or arr[cat][cause][DPSMateUser[Duser.name]["id"]][Dname].critlow == 0) then arr[cat][cause][DPSMateUser[Duser.name]["id"]][Dname].critlow = Damount end
-				if Damount > arr[cat][cause][DPSMateUser[Duser.name]["id"]][Dname].crithigh then arr[cat][cause][DPSMateUser[Duser.name]["id"]][Dname].crithigh = Damount end
-				arr[cat][cause][DPSMateUser[Duser.name]["id"]][Dname]["critaverage"] = (arr[cat][cause][DPSMateUser[Duser.name]["id"]][Dname]["critaverage"]+Damount)/2
+				if (Damount < arr[cat][DPSMateUser[cause]["id"]][DPSMateUser[Duser.name]["id"]][Dname].critlow or arr[cat][DPSMateUser[cause]["id"]][DPSMateUser[Duser.name]["id"]][Dname].critlow == 0) then arr[cat][DPSMateUser[cause]["id"]][DPSMateUser[Duser.name]["id"]][Dname].critlow = Damount end
+				if Damount > arr[cat][DPSMateUser[cause]["id"]][DPSMateUser[Duser.name]["id"]][Dname].crithigh then arr[cat][DPSMateUser[cause]["id"]][DPSMateUser[Duser.name]["id"]][Dname].crithigh = Damount end
+				arr[cat][DPSMateUser[cause]["id"]][DPSMateUser[Duser.name]["id"]][Dname]["critaverage"] = (arr[cat][DPSMateUser[cause]["id"]][DPSMateUser[Duser.name]["id"]][Dname]["critaverage"]+Damount)/2
 			end
 		else
 			DPSMate.DB:BuildUser(Duser.name, Duser.class)
+			DPSMate.DB:BuildUser(cause, nil)
 			for i=1, 2 do 
-				if not arr[i][cause] then
-					arr[i][cause] = {}
+				if not arr[i][DPSMateUser[cause]["id"]] then
+					arr[i][DPSMateUser[cause]["id"]] = {}
 				end
-				if not arr[i][cause][DPSMateUser[Duser.name]["id"]] then
-					arr[i][cause][DPSMateUser[Duser.name]["id"]] = {
+				if not arr[i][DPSMateUser[cause]["id"]][DPSMateUser[Duser.name]["id"]] then
+					arr[i][DPSMateUser[cause]["id"]][DPSMateUser[Duser.name]["id"]] = {
 						info = {
 							[1] = {},
 							[2] = {},
@@ -446,7 +456,7 @@ function DPSMate.DB:EnemyDamage(arr, Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, D
 					}
 				end
 			end
-			arr[cat][cause][DPSMateUser[Duser.name]["id"]][Dname] = {
+			arr[cat][DPSMateUser[cause]["id"]][DPSMateUser[Duser.name]["id"]][Dname] = {
 				hit = Dhit,
 				hitlow = 0,
 				hithigh = 0,
@@ -461,10 +471,10 @@ function DPSMate.DB:EnemyDamage(arr, Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, D
 				resist = Dresist,
 				amount = Damount,
 			}
-			if (Dhit == 1) then arr[cat][cause][DPSMateUser[Duser.name]["id"]][Dname]["hitlow"] = Damount; arr[cat][cause][DPSMateUser[Duser.name]["id"]][Dname]["hithigh"] = Damount; arr[cat][cause][DPSMateUser[Duser.name]["id"]][Dname]["hitaverage"] = Damount end
-			if (Dcrit == 1) then arr[cat][cause][DPSMateUser[Duser.name]["id"]][Dname]["critlow"] = Damount; arr[cat][cause][DPSMateUser[Duser.name]["id"]][Dname]["crithigh"] = Damount; arr[cat][cause][DPSMateUser[Duser.name]["id"]][Dname]["critaverage"] = Damount end
+			if (Dhit == 1) then arr[cat][DPSMateUser[cause]["id"]][DPSMateUser[Duser.name]["id"]][Dname]["hitlow"] = Damount; arr[cat][DPSMateUser[cause]["id"]][DPSMateUser[Duser.name]["id"]][Dname]["hithigh"] = Damount; arr[cat][DPSMateUser[cause]["id"]][DPSMateUser[Duser.name]["id"]][Dname]["hitaverage"] = Damount end
+			if (Dcrit == 1) then arr[cat][DPSMateUser[cause]["id"]][DPSMateUser[Duser.name]["id"]][Dname]["critlow"] = Damount; arr[cat][DPSMateUser[cause]["id"]][DPSMateUser[Duser.name]["id"]][Dname]["crithigh"] = Damount; arr[cat][DPSMateUser[cause]["id"]][DPSMateUser[Duser.name]["id"]][Dname]["critaverage"] = Damount end
 		end
-		arr[cat][cause][DPSMateUser[Duser.name]["id"]]["info"][3] = arr[cat][cause][DPSMateUser[Duser.name]["id"]]["info"][3] + Damount
+		arr[cat][DPSMateUser[cause]["id"]][DPSMateUser[Duser.name]["id"]]["info"][3] = arr[cat][DPSMateUser[cause]["id"]][DPSMateUser[Duser.name]["id"]]["info"][3] + Damount
 	end
 	DPSMate:SetStatusBarValue()
 end
@@ -773,8 +783,8 @@ end
 function DPSMate.DB:DTExist(uname, cause, aname, arr)
 	if DPSMateUser[uname]~=nil then
 		if arr[DPSMateUser[uname]["id"]] ~= nil then
-			if arr[DPSMateUser[uname]["id"]][cause] ~= nil then
-				if arr[DPSMateUser[uname]["id"]][cause][aname] ~= nil then
+			if arr[DPSMateUser[uname]["id"]][DPSMateUser[cause]["id"]] ~= nil then
+				if arr[DPSMateUser[uname]["id"]][DPSMateUser[cause]["id"]][aname] ~= nil then
 					return true
 				end
 			end
@@ -785,9 +795,9 @@ end
 
 function DPSMate.DB:EDDExist(uname, cause, aname, arr)
 	if DPSMateUser[uname]~=nil then
-		if arr[cause] ~= nil then
-			if arr[cause][DPSMateUser[uname]["id"]] ~= nil then
-				if arr[cause][DPSMateUser[uname]["id"]][aname] ~= nil then
+		if arr[DPSMateUser[cause]["id"]] ~= nil then
+			if arr[DPSMateUser[cause]["id"]][DPSMateUser[uname]["id"]] ~= nil then
+				if arr[DPSMateUser[cause]["id"]][DPSMateUser[uname]["id"]][aname] ~= nil then
 					return true
 				end
 			end

@@ -274,13 +274,12 @@ end
 -- Heavy War Golem hits/crits you for 8. (59 absorbend)
 -- Heavy War Golem attacks. You absorb all the damage.
 function DPSMate.Parser:CreatureVsSelfHits(msg)
-	local cause, hit, crit, amount, te, absorbed = "", 0, 0, 0, "", 0
-	--DPSMate:SendMessage(msg)
-	for c, a, t in string.gfind(msg, "(.+) hits you for (.+)%. (.+)") do hit=1; cause=c; amount=tonumber(strsub(a, strfind(a, "%d+"))); te=t end
-	for c, a, t in string.gfind(msg, "(.+) crits you for (.+)%. (.+)") do crit=1; cause=c; amount=tonumber(strsub(a, strfind(a, "%d+"))); te=t end
+	local cause, hit, crit, amount, absorbed = "", 0, 0, 0, 0
+	for c, a in string.gfind(msg, "(.+) hits you for (.+)%.") do hit=1; cause=c; amount=tonumber(strsub(a, strfind(a, "%d+"))) end
+	for c, a in string.gfind(msg, "(.+) crits you for (.+)%.") do crit=1; cause=c; amount=tonumber(strsub(a, strfind(a, "%d+"))) end -- Absorbtion has to be parsed individually
 	DPSMate.DB:EnemyDamage(DPSMateEDD, player, "AutoAttack", hit, crit, 0, 0, 0, 0, amount, cause)
 	DPSMate.DB:DamageTaken(player, "AutoAttack", hit, crit, 0, 0, 0, 0, amount, cause)
-	if strfind(te, "absorbed") then absorbed = tonumber(strsub(te, strfind(te, "%d+"))); DPSMate.DB:SetUnregisterVariables(absorbed); DPSMate:SendMessage("Shield has been broken. "..absorbed.." absorbed!") end
+	--if strfind(te, "absorbed") then absorbed = tonumber(strsub(te, strfind(te, "%d+"))); DPSMate.DB:SetUnregisterVariables(absorbed); DPSMate:SendMessage("Shield has been broken. "..absorbed.." absorbed!") end
 end
 
 -- Firetail Scorpid attacks. You parry.
@@ -292,7 +291,7 @@ function DPSMate.Parser:CreatureVsSelfMisses(msg)
 	for c in string.gfind(msg, "(.+) misses you%.") do cause=c; miss=1 end
 	DPSMate.DB:EnemyDamage(DPSMateEDD, player, "AutoAttack", 0, 0, miss, parry, dodge, 0, 0, cause)
 	DPSMate.DB:DamageTaken(player, "AutoAttack", 0, 0, miss, parry, dodge, 0, 0, cause)
-	for c in string.gfind(msg, "(.+) attacks%. You absorb all the damage%.") do DPSMate.DB:Absorb("AutoAttack", player.name, c); DPSMate:SendMessage(c.." absorbed!") end
+	--for c in string.gfind(msg, "(.+) attacks%. You absorb all the damage%.") do DPSMate.DB:Absorb("AutoAttack", player.name, c); DPSMate:SendMessage(c.." absorbed!") end
 end 
 
 -- Thaurissan Spy performs Dazed on you. (Implementing it later)
@@ -301,14 +300,14 @@ end
 -- Flamekin Torcher's Fireball hits/crits you for 86 Fire damage. (School?)
 -- Heavy War Golem's Trample hits/crits you for 51 (Fire damage). (48 absorbed)
 function DPSMate.Parser:CreatureVsSelfSpellDamage(msg)
-	local cause, ability, amount, resist, hit, crit, te, absorbed = "", "", 0, 0, 0, 0, "", 0
+	local cause, ability, amount, resist, hit, crit, absorbed = "", "", 0, 0, 0, 0, 0
 	if not strfind(msg, "performs") then
-		for c, ab, a in string.gfind(msg, "(.+)'s (.-) hits you for (.+)%. ((.+))") do hit=1; cause=c; ability=ab; amount=tonumber(strsub(a, strfind(a, "%d+"))); te=t end
-		for c, ab, a in string.gfind(msg, "(.+)'s (.-) crits you for (.+)%. ((.+))") do crit=1; cause=c; ability=ab; amount=tonumber(strsub(a, strfind(a, "%d+"))); te=t end
-		for c, ab, a in string.gfind(msg, "(.+)'s (.-) was resisted.") do resist=1; cause=c; ability=ab end
+		for c, ab in string.gfind(msg, "(.+)'s (.-) hits you for (.+)%.") do hit=1; cause=c; ability=ab; amount=tonumber(strsub(a, strfind(a, "%d+"))) end
+		for c, ab in string.gfind(msg, "(.+)'s (.-) crits you for (.+)%.") do crit=1; cause=c; ability=ab; amount=tonumber(strsub(a, strfind(a, "%d+"))) end -- Absorbtion has to be parsed individually
+		for c, ab in string.gfind(msg, "(.+)'s (.-) was resisted.") do resist=1; cause=c; ability=ab end
 		DPSMate.DB:EnemyDamage(DPSMateEDD, player, ability, hit, crit, 0, 0, 0, resist, amount, cause)
 		DPSMate.DB:DamageTaken(player, ability, hit, crit, 0, 0, 0, resist, amount, cause)
-		if strfind(te, "absorbed") then absorbed = tonumber(strsub(te, strfind(te, "%d+"))); DPSMate.DB:SetUnregisterVariables(absorbed); DPSMate:SendMessage("Shield has been broken. "..absorbed.." absorbed!") end
+		--if strfind(te, "absorbed") then absorbed = tonumber(strsub(te, strfind(te, "%d+"))); DPSMate.DB:SetUnregisterVariables(absorbed); DPSMate:SendMessage("Shield has been broken. "..absorbed.." absorbed!") end
 	end
 end
 
@@ -327,7 +326,6 @@ end
 -- Ember Worg hits/crits Ikaa for 58.
 function DPSMate.Parser:CreatureVsCreatureHits(msg) 
 	local target, cause, hit, crit, amount = {}, "", 0, 0, 0
-	--DPSMate:SendMessage(msg)
 	for c, ta, a in string.gfind(msg, "(.+) hits (.-) for (.+)%.") do hit=1; cause=c; target.name = ta; amount=tonumber(strsub(a, strfind(a, "%d+"))); end
 	for c, ta, a in string.gfind(msg, "(.+) crits (.-) for (.+)%.") do crit=1; cause=c; target.name = ta; amount=tonumber(strsub(a, strfind(a, "%d+"))); end
 	DPSMate.DB:EnemyDamage(DPSMateEDD, target, "AutoAttack", hit, crit, 0, 0, 0, 0, amount, cause)
@@ -342,9 +340,9 @@ function DPSMate.Parser:CreatureVsCreatureMisses(msg)
 	local target, cause, miss, parry, dodge = {}, "", 0, 0, 0
 	for c, ta, k in string.gfind(msg, "(.+) attacks%. (.-) (.+)%.") do cause=c; target.name = ta; if k=="parries" then parry=1 else dodge=1 end end
 	for c, ta in string.gfind(msg, "(.+) misses (.+)%.") do cause=c; miss=1; target.name = ta end
-	for c, ta in string.gfind(msg, "(.+) attacks%. (.+) absorbs all the damage%.") do DPSMate.DB:Absorb("AutoAttack", ta, c); DPSMate:SendMessage(c.." absorbed!") end
 	DPSMate.DB:EnemyDamage(DPSMateEDD, target, "AutoAttack", 0, 0, miss, parry, dodge, 0, 0, cause)
 	DPSMate.DB:DamageTaken(target, "AutoAttack", 0, 0, miss, parry, dodge, 0, 0, cause)
+	for c, ta in string.gfind(msg, "(.+) attacks%. (.+) absorbs all the damage%.") do DPSMate.DB:Absorb("AutoAttack", ta, c); DPSMate:SendMessage(c.." absorbed!") end
 end
 
 -- Ikaa is afflicted by Infected Bite.
