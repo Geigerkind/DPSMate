@@ -484,6 +484,7 @@ function DPSMate.DB:Healing(arr, Duser, Dname, Dhit, Dcrit, Damount, target)
 	if (not Duser.name or DPSMate:TableLength(Duser)==0 or not Dname or Dname=="") then return end
 	for cat, val in pairs({[1]="total", [2]="current"}) do 
 		DPSMate.DB:BuildUser(Duser.name, Duser.class)
+		DPSMate.DB:BuildUser(target, nil)
 		if not arr[cat][DPSMateUser[Duser.name]["id"]] then
 			arr[cat][DPSMateUser[Duser.name]["id"]] = {
 				info = {
@@ -494,8 +495,8 @@ function DPSMate.DB:Healing(arr, Duser, Dname, Dhit, Dcrit, Damount, target)
 		if not arr[cat][DPSMateUser[Duser.name]["id"]][Dname] then
 			arr[cat][DPSMateUser[Duser.name]["id"]][Dname] = {}
 		end
-		if not arr[cat][DPSMateUser[Duser.name]["id"]][Dname][target] then 
-			arr[cat][DPSMateUser[Duser.name]["id"]][Dname][target] = {
+		if not arr[cat][DPSMateUser[Duser.name]["id"]][Dname][DPSMateUser[target]["id"]] then 
+			arr[cat][DPSMateUser[Duser.name]["id"]][Dname][DPSMateUser[target]["id"]] = {
 				[1] = 0, -- Healing done
 				[2] = 0, -- Hit
 				[3] = 0, -- Crit
@@ -505,23 +506,23 @@ function DPSMate.DB:Healing(arr, Duser, Dname, Dhit, Dcrit, Damount, target)
 			}
 		end
 		if Dhit==1 then
-			if arr[cat][DPSMateUser[Duser.name]["id"]][Dname][target][5]>0 then
-				arr[cat][DPSMateUser[Duser.name]["id"]][Dname][target][5] = (arr[cat][DPSMateUser[Duser.name]["id"]][Dname][target][5]+Damount)/2
+			if arr[cat][DPSMateUser[Duser.name]["id"]][Dname][DPSMateUser[target]["id"]][5]>0 then
+				arr[cat][DPSMateUser[Duser.name]["id"]][Dname][DPSMateUser[target]["id"]][5] = (arr[cat][DPSMateUser[Duser.name]["id"]][Dname][DPSMateUser[target]["id"]][5]+Damount)/2
 			else
-				arr[cat][DPSMateUser[Duser.name]["id"]][Dname][target][5] = Damount
+				arr[cat][DPSMateUser[Duser.name]["id"]][Dname][DPSMateUser[target]["id"]][5] = Damount
 			end
 		end
 		if Dcrit==1 then
-			if arr[cat][DPSMateUser[Duser.name]["id"]][Dname][target][6]>0 then
-				arr[cat][DPSMateUser[Duser.name]["id"]][Dname][target][6] = (arr[cat][DPSMateUser[Duser.name]["id"]][Dname][target][6]+Damount)/2
+			if arr[cat][DPSMateUser[Duser.name]["id"]][Dname][DPSMateUser[target]["id"]][6]>0 then
+				arr[cat][DPSMateUser[Duser.name]["id"]][Dname][DPSMateUser[target]["id"]][6] = (arr[cat][DPSMateUser[Duser.name]["id"]][Dname][DPSMateUser[target]["id"]][6]+Damount)/2
 			else
-				arr[cat][DPSMateUser[Duser.name]["id"]][Dname][target][6] = Damount
+				arr[cat][DPSMateUser[Duser.name]["id"]][Dname][DPSMateUser[target]["id"]][6] = Damount
 			end
 		end
-		if arr[cat][DPSMateUser[Duser.name]["id"]][Dname][target][4]>0 then arr[cat][DPSMateUser[Duser.name]["id"]][Dname][target][4] = (arr[cat][DPSMateUser[Duser.name]["id"]][Dname][target][4]+Damount)/2 else arr[cat][DPSMateUser[Duser.name]["id"]][Dname][target][4]=Damount end
-		arr[cat][DPSMateUser[Duser.name]["id"]][Dname][target][1] = arr[cat][DPSMateUser[Duser.name]["id"]][Dname][target][1]+Damount
-		arr[cat][DPSMateUser[Duser.name]["id"]][Dname][target][2] = arr[cat][DPSMateUser[Duser.name]["id"]][Dname][target][2]+Dhit
-		arr[cat][DPSMateUser[Duser.name]["id"]][Dname][target][3] = arr[cat][DPSMateUser[Duser.name]["id"]][Dname][target][3]+Dcrit
+		if arr[cat][DPSMateUser[Duser.name]["id"]][Dname][DPSMateUser[target]["id"]][4]>0 then arr[cat][DPSMateUser[Duser.name]["id"]][Dname][DPSMateUser[target]["id"]][4] = (arr[cat][DPSMateUser[Duser.name]["id"]][Dname][DPSMateUser[target]["id"]][4]+Damount)/2 else arr[cat][DPSMateUser[Duser.name]["id"]][Dname][DPSMateUser[target]["id"]][4]=Damount end
+		arr[cat][DPSMateUser[Duser.name]["id"]][Dname][DPSMateUser[target]["id"]][1] = arr[cat][DPSMateUser[Duser.name]["id"]][Dname][DPSMateUser[target]["id"]][1]+Damount
+		arr[cat][DPSMateUser[Duser.name]["id"]][Dname][DPSMateUser[target]["id"]][2] = arr[cat][DPSMateUser[Duser.name]["id"]][Dname][DPSMateUser[target]["id"]][2]+Dhit
+		arr[cat][DPSMateUser[Duser.name]["id"]][Dname][DPSMateUser[target]["id"]][3] = arr[cat][DPSMateUser[Duser.name]["id"]][Dname][DPSMateUser[target]["id"]][3]+Dcrit
 		arr[cat][DPSMateUser[Duser.name]["id"]]["info"][1] = arr[cat][DPSMateUser[Duser.name]["id"]]["info"][1]+Damount
 	end
 	DPSMate:SetStatusBarValue()

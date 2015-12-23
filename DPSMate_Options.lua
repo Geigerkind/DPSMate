@@ -417,46 +417,26 @@ end
 
 function DPSMate.Options:PopUpAccept()
 	DPSMate_PopUp:Hide()
-	DPSMateDamageDone = {
-		[1] = {},
-		[2] = {},
-	}
-	DPSMateDamageTaken = {
-		[1] = {},
-		[2] = {},
-	}
-	DPSMateEDD = {
-		[1] = {},
-		[2] = {},
-	}
-	DPSMateEDT = {
-		[1] = {},
-		[2] = {},
-	}
-	DPSMateTHealing = {
-		[1] = {},
-		[2] = {},
-	}
-	DPSMateEHealing = {
-		[1] = {},
-		[2] = {},
-	}
-	DPSMateOverhealing = {
-		[1] = {},
-		[2] = {},
-	}
-	DPSMateHealingTaken = {
-		[1] = {},
-		[2] = {},
-	}
-	DPSMateEHealingTaken = {
-		[1] = {},
-		[2] = {},
-	}
-	DPSMateAbsorbs = {
-		[1] = {},
-		[2] = {},
-	}
+	local dbs = {DPSMateDamageDone, DPSMateDamageTaken, DPSMateEDD, DPSMateEDT, DPSMateTHealing, DPSMateEHealing, DPSMateOverhealing, DPSMateHealingTaken, DPSMateEHealingTaken, DPSMateAbsorbs, DPSMateDispels}
+	for _, val in pairs(dbs) do
+		if val == nil then val = {[1]={},[2]={}} end
+	end
+	DPSMate.Modules.DPS.DB = DPSMateDamageDone
+	DPSMate.Modules.Damage.DB = DPSMateDamageDone
+	DPSMate.Modules.DamageTaken.DB = DPSMateDamageTaken
+	DPSMate.Modules.DTPS.DB = DPSMateDamageTaken
+	DPSMate.Modules.EDD.DB = DPSMateEDD
+	DPSMate.Modules.EDT.DB = DPSMateEDT
+	DPSMate.Modules.Healing.DB = DPSMateTHealing
+	DPSMate.Modules.HPS.DB = DPSMateTHealing
+	DPSMate.Modules.Overhealing.DB = DPSMateOverhealing
+	DPSMate.Modules.EffectiveHealing.DB = DPSMateEHealing
+	DPSMate.Modules.EffectiveHPS.DB = DPSMateEHealing
+	DPSMate.Modules.HealingTaken.DB = DPSMateHealingTaken
+	DPSMate.Modules.EffectiveHealingTaken.DB = DPSMateEHealingTaken
+	DPSMate.Modules.Absorbs.DB = DPSMateAbsorbs
+	DPSMate.Modules.AbsorbsTaken.DB = DPSMateAbsorbs
+	DPSMate.Modules.HealingAndAbsorbs.DB = DPSMateAbsorbs
 	DPSMateHistory = {
 		DMGDone = {},
 		DMGTaken = {},
