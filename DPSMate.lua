@@ -8,6 +8,7 @@ DPSMate.Parser = {}
 DPSMate.localization = {}
 DPSMate.DB = {}
 DPSMate.Options = {}
+DPSMate.Modules = {}
 DPSMate.Events = {
 	"CHAT_MSG_COMBAT_SELF_HITS",
 	"CHAT_MSG_COMBAT_SELF_MISSES",
@@ -57,6 +58,7 @@ DPSMate.Events = {
 DPSMate.Registered = true
 
 -- Local Variables
+local RegistredModules = {}
 local classcolor = {
 	rogue = {r=1.0, g=0.96, b=0.41},
 	priest = {r=1,g=1,b=1},
@@ -666,7 +668,8 @@ function DPSMate:GetSettingValues(arr, cbt, k)
 			table.insert(perc, 100*(va/sort))
 		end
 	end
-	return name, value, perc, strt
+	
+	return RegistredModules[DPSMateSettings["windows"][k]["CurMode"]]:GetSettingValues(arr, cbt, k)
 end
 
 function DPSMate:GetClassColor(class)
@@ -765,4 +768,8 @@ end
 
 function DPSMate:SendMessage(msg)
 	DEFAULT_CHAT_FRAME:AddMessage("|cFFFF8080"..DPSMate.localization.name.."|r: "..msg)
+end
+
+function DPSMate:Register(prefix, table)
+	RegistredModules[prefix] = table
 end

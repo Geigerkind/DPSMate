@@ -140,6 +140,7 @@ function DPSMate.DB:OnEvent(event)
 		if DPSMateHealingTaken == nil then DPSMateHealingTaken = {[1]={},[2]={}} end
 		if DPSMateEHealingTaken == nil then DPSMateEHealingTaken = {[1]={},[2]={}} end
 		if DPSMateAbsorbs == nil then DPSMateAbsorbs = {[1]={},[2]={}} end
+		if DPSMateDispels == nil then DPSMateDispels = {[1]={},[2]={}} end
 		if DPSMateCombatTime == nil then
 			DPSMateCombatTime = {
 				total = 1,
@@ -587,12 +588,7 @@ function DPSMate.DB:ConfirmAbsorbApplication(ability, abilityTarget, time)
 			if val[3]==abilityTarget then
 				DPSMate.DB:RegisterAbsorb(val[1], val[2], val[3])
 			--	DPSMate:SendMessage("Confirmed!")
-				--table.remove(Await, cat)
-				for ca, va in pairs(Await) do
-					if va[4]<=time and va[2]==ability then
-						table.remove(Await, ca)
-					end
-				end
+				table.remove(Await, cat)
 				break
 			end
 			if val[3]=="" then
@@ -647,13 +643,15 @@ end
 
 function DPSMate.DB:GetActiveAbsorbAbilityByPlayer(ability, abilityTarget)
 	local ActiveShield = {}
-	for cat, val in pairs(DPSMateAbsorbs[1][DPSMateUser[abilityTarget]["id"]]) do
-		for ca, va in pairs(val) do
-			for c, v in pairs(va) do
-				for ce, ve in pairs(v) do
-					if ve[1]==0 and ca==ability then
-						ActiveShield = {cat, ca, c}
-						break
+	if DPSMateAbsorbs[1][DPSMateUser[abilityTarget]["id"]] then
+		for cat, val in pairs(DPSMateAbsorbs[1][DPSMateUser[abilityTarget]["id"]]) do
+			for ca, va in pairs(val) do
+				for c, v in pairs(va) do
+					for ce, ve in pairs(v) do
+						if ve[1]==0 and ca==ability then
+							ActiveShield = {cat, ca, c}
+							break
+						end
 					end
 				end
 			end
@@ -664,53 +662,55 @@ end
 
 function DPSMate.DB:GetAbsorbingShield(ability, abilityTarget)
 	-- Checking for active Shields
-	local activeShields = {}
-	for cat, val in pairs(DPSMateAbsorbs[1][DPSMateUser[abilityTarget]["id"]]) do
-		for ca, va in pairs(val) do
-			for c, v in pairs(va) do
-				for ce, ve in pairs(v) do
-					if ve[1]==0 then
-						activeShields[cat] = {ca,c}
-						break
+	local AbsorbingAbility = {}	
+	if DPSMateAbsorbs[1][DPSMateUser[abilityTarget]["id"]] then
+		local activeShields = {}
+		for cat, val in pairs(DPSMateAbsorbs[1][DPSMateUser[abilityTarget]["id"]]) do
+			for ca, va in pairs(val) do
+				for c, v in pairs(va) do
+					for ce, ve in pairs(v) do
+						if ve[1]==0 then
+							activeShields[cat] = {ca,c}
+							break
+						end
 					end
 				end
 			end
 		end
-	end
 
-	-- Checking for "All-Absorbing"-Shields
-	-- Checking for Shields that just absorb the ability's school
-	local AAS, ASS = {}, {}
-	for cat, val in pairs(activeShields) do
-		if DPSMate.DB.ShieldFlags[val[1]]==0 then
-			AAS[cat] = {val[1],val[2]}
-		elseif DPSMate.DB.ShieldFlags[val[1]]==DPSMate.DB.AbilityFlags[ability] then
-			ASS[cat] = {val[1],val[2]}
+		-- Checking for "All-Absorbing"-Shields
+		-- Checking for Shields that just absorb the ability's school
+		local AAS, ASS = {}, {}
+		for cat, val in pairs(activeShields) do
+			if DPSMate.DB.ShieldFlags[val[1]]==0 then
+				AAS[cat] = {val[1],val[2]}
+			elseif DPSMate.DB.ShieldFlags[val[1]]==DPSMate.DB.AbilityFlags[ability] then
+				ASS[cat] = {val[1],val[2]}
+			end
 		end
-	end
-	
-	-- Checking buffs for order
-	local AbsorbingAbility = {}	
-	if AAS~={} or ASS~={} then
-		local unit = DPSMate.Parser:GetUnitByName(abilityTarget)
-		if unit then
-			for i=1, 32 do
-				DPSMate_Tooltip:SetOwner(UIParent, "ANCHOR_NONE")
-				DPSMate_Tooltip:ClearLines()
-				DPSMate_Tooltip:SetUnitBuff(unit, i, "HELPFUL")
-				local buff = DPSMate_TooltipTextLeft1:GetText()
-				DPSMate_Tooltip:Hide()
-				if (not buff) then break end
-				for cat, val in pairs(AAS) do
-					if val[1]==buff then
-						AbsorbingAbility = {cat, {val[1],val[2]}}
-						break
+		
+		-- Checking buffs for order
+		if AAS~={} or ASS~={} then
+			local unit = DPSMate.Parser:GetUnitByName(abilityTarget)
+			if unit then
+				for i=1, 32 do
+					DPSMate_Tooltip:SetOwner(UIParent, "ANCHOR_NONE")
+					DPSMate_Tooltip:ClearLines()
+					DPSMate_Tooltip:SetUnitBuff(unit, i, "HELPFUL")
+					local buff = DPSMate_TooltipTextLeft1:GetText()
+					DPSMate_Tooltip:Hide()
+					if (not buff) then break end
+					for cat, val in pairs(AAS) do
+						if val[1]==buff then
+							AbsorbingAbility = {cat, {val[1],val[2]}}
+							break
+						end
 					end
-				end
-				for cat, val in pairs(ASS) do
-					if val[1]==buff then
-						AbsorbingAbility = {cat, {val[1],val[2]}}
-						break
+					for cat, val in pairs(ASS) do
+						if val[1]==buff then
+							AbsorbingAbility = {cat, {val[1],val[2]}}
+							break
+						end
 					end
 				end
 			end
