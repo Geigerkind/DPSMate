@@ -28,7 +28,7 @@ function DPSMate.Modules.HealingAndAbsorbs:GetSortedTable(arr, k)
 					for ce, ve in pairs(v) do -- 1
 						local PerShieldAbsorb = 0
 						for cet, vel in pairs(ve) do
-							if cet~="info" then
+							if cet~="i" then
 								local p = 5
 								if DPSMateDamageTaken[1][cat][cet][vel[1]]["hitaverage"]~=0 then
 									p=ceil(DPSMateDamageTaken[1][cat][cet][vel[1]]["hitaverage"])
@@ -36,8 +36,8 @@ function DPSMate.Modules.HealingAndAbsorbs:GetSortedTable(arr, k)
 								PerShieldAbsorb=PerShieldAbsorb+vel[2]*p
 							end
 						end
-						if ve["info"][1]==1 then
-							PerShieldAbsorb=PerShieldAbsorb+ve["info"][2]
+						if ve["i"][1]==1 then
+							PerShieldAbsorb=PerShieldAbsorb+ve["i"][2]
 						end
 						PerAbilityAbsorb = PerAbilityAbsorb+PerShieldAbsorb
 					end
@@ -53,8 +53,8 @@ function DPSMate.Modules.HealingAndAbsorbs:GetSortedTable(arr, k)
 		local d, total2 = {}, 0
 		local arr = DPSMate:GetModeByArr(DPSMateEHealing, k)
 		for c, v in pairs(arr) do
-			d[c] = v["info"][1]
-			total2 = total2 + v["info"][1]
+			d[c] = v["i"][1]
+			total2 = total2 + v["i"][1]
 		end
 		
 		-- Merge tables
@@ -99,7 +99,7 @@ function DPSMate.Modules.HealingAndAbsorbs:EvalTable(user, k)
 					for ce, ve in pairs(v) do -- 1
 						local PerShieldAbsorb = 0
 						for cet, vel in pairs(ve) do
-							if cet~="info" then
+							if cet~="i" then
 								local p = 5
 								if DPSMateDamageTaken[1][cat][cet][vel[1]]["hitaverage"]~=0 then
 									p=ceil(DPSMateDamageTaken[1][cat][cet][vel[1]]["hitaverage"])
@@ -107,8 +107,8 @@ function DPSMate.Modules.HealingAndAbsorbs:EvalTable(user, k)
 								PerShieldAbsorb=PerShieldAbsorb+vel[2]*p
 							end
 						end
-						if ve["info"][1]==1 then
-							PerShieldAbsorb=PerShieldAbsorb+ve["info"][2]
+						if ve["i"][1]==1 then
+							PerShieldAbsorb=PerShieldAbsorb+ve["i"][2]
 						end
 						if b[c] then b[c]=b[c]+PerShieldAbsorb else b[c]=PerShieldAbsorb end
 					end
@@ -123,7 +123,7 @@ function DPSMate.Modules.HealingAndAbsorbs:EvalTable(user, k)
 	local arr = DPSMate:GetModeByArr(DPSMateEHealing, k)
 	if arr[user["id"]] then
 		for c, v in pairs(arr[user["id"]]) do
-			if c~="info" then
+			if c~="i" then
 				for ca, va in pairs(v) do
 					if d[c] then d[c]=d[c]+va[1] else d[c]=va[1] end
 				end

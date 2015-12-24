@@ -19,7 +19,7 @@ function DPSMate.Modules.DamageTaken:GetSortedTable(arr)
 	for c, v in pairs(arr) do
 		local CV = 0
 		for cat, val in pairs(v) do
-			CV = CV+val["info"][3]
+			CV = CV+val["i"][3]
 		end
 		local i = 1
 		while true do
@@ -47,7 +47,7 @@ function DPSMate.Modules.DamageTaken:EvalTable(user, k)
 	if not arr[user["id"]] then return end
 	for cat, val in pairs(arr[user["id"]]) do
 		for ca, va in pairs(val) do
-			if ca~="info" then
+			if ca~="i" then
 				local i = 1
 				while true do
 					if (not d[i]) then
@@ -65,7 +65,7 @@ function DPSMate.Modules.DamageTaken:EvalTable(user, k)
 				end
 			end
 		end
-	total=total+val["info"][3]
+	total=total+val["i"][3]
 	end
 	return a, total, d
 end

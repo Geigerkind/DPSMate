@@ -26,7 +26,7 @@ function DPSMate.Modules.Absorbs:GetSortedTable(arr)
 				for ce, ve in pairs(v) do -- 1
 					local PerShieldAbsorb = 0
 					for cet, vel in pairs(ve) do
-						if cet~="info" then
+						if cet~="i" then
 							local p = 5
 							if DPSMateDamageTaken[1][cat][cet][vel[1]]["hitaverage"]~=0 then
 								p=ceil(DPSMateDamageTaken[1][cat][cet][vel[1]]["hitaverage"])
@@ -34,8 +34,8 @@ function DPSMate.Modules.Absorbs:GetSortedTable(arr)
 							PerShieldAbsorb=PerShieldAbsorb+vel[2]*p
 						end
 					end
-					if ve["info"][1]==1 then
-						PerShieldAbsorb=PerShieldAbsorb+ve["info"][2]
+					if ve["i"][1]==1 then
+						PerShieldAbsorb=PerShieldAbsorb+ve["i"][2]
 					end
 					PerAbilityAbsorb = PerAbilityAbsorb+PerShieldAbsorb
 				end
@@ -78,7 +78,7 @@ function DPSMate.Modules.Absorbs:EvalTable(user, k)
 					for ce, ve in pairs(v) do -- 1
 						local PerShieldAbsorb = 0
 						for cet, vel in pairs(ve) do
-							if cet~="info" then
+							if cet~="i" then
 								local p = 5
 								if DPSMateDamageTaken[1][cat][cet][vel[1]]["hitaverage"]~=0 then
 									p=ceil(DPSMateDamageTaken[1][cat][cet][vel[1]]["hitaverage"])
@@ -86,8 +86,8 @@ function DPSMate.Modules.Absorbs:EvalTable(user, k)
 								PerShieldAbsorb=PerShieldAbsorb+vel[2]*p
 							end
 						end
-						if ve["info"][1]==1 then
-							PerShieldAbsorb=PerShieldAbsorb+ve["info"][2]
+						if ve["i"][1]==1 then
+							PerShieldAbsorb=PerShieldAbsorb+ve["i"][2]
 						end
 						PerAbilityAbsorb = PerAbilityAbsorb+PerShieldAbsorb
 					end

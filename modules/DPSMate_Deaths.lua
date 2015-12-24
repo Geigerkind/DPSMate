@@ -20,7 +20,7 @@ function DPSMate.Modules.Deaths:GetSortedTable(arr)
 		for cat, val in pairs(arr) do -- 28
 			local CV = 0
 			for ca, va in pairs(val) do -- 1 (Death)
-				if va["info"]==1 then
+				if va["i"]==1 then
 					CV=CV+1
 				end
 			end
@@ -51,7 +51,7 @@ function DPSMate.Modules.Deaths:EvalTable(user, k)
 	local arr = DPSMate:GetMode(k)
 	if not arr[user["id"]] then return end
 	for ca, va in pairs(arr[user["id"]][DPSMate:TableLength(arr[user["id"]])]) do -- 1 (Death)
-		if ca~="info" then
+		if ca~="i" then
 			table.insert(b, ca, va[3])
 			table.insert(a, ca, va[2])
 		end

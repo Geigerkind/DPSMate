@@ -20,19 +20,19 @@ function DPSMate.Modules.Overhealing:GetSortedTable(arr)
 		local i = 1
 		while true do
 			if (not b[i]) then
-				table.insert(b, i, v["info"][1])
+				table.insert(b, i, v["i"][1])
 				table.insert(a, i, c)
 				break
 			else
-				if b[i] < v["info"][1] then
-					table.insert(b, i, v["info"][1])
+				if b[i] < v["i"][1] then
+					table.insert(b, i, v["i"][1])
 					table.insert(a, i, c)
 					break
 				end
 			end
 			i=i+1
 		end
-		total = total + v["info"][1]
+		total = total + v["i"][1]
 	end
 	return b, total, a
 end
@@ -42,7 +42,7 @@ function DPSMate.Modules.Overhealing:EvalTable(user, k)
 	local arr = DPSMate:GetMode(k)
 	if not arr[user["id"]] then return end
 	for cat, val in pairs(arr[user["id"]]) do
-		if cat~="info" then
+		if cat~="i" then
 			local CV = 0
 			for ca, va in pairs(val) do
 				CV=CV+va[1]
@@ -63,7 +63,7 @@ function DPSMate.Modules.Overhealing:EvalTable(user, k)
 				i = i + 1
 			end
 		end
-	total=total+arr[user["id"]]["info"][1]
+	total=total+arr[user["id"]]["i"][1]
 	end
 	return a, total, d
 end

@@ -653,9 +653,9 @@ end
 
 function DPSMate.Options:CheckProcs(name, arr, val)
 	if DPSMate.DB:DataExistProcs(DetailsUser, name, arr) then
-		for i=1, DPSMate:TableLength(arr[DPSMateUser[DetailsUser]["id"]]["info"][1][name]["start"]) do
-			if not arr[DPSMateUser[DetailsUser]["id"]]["info"][1][name]["start"][i] or not arr[DPSMateUser[DetailsUser]["id"]]["info"][1][name]["ending"][i] then return false end
-			if val >  arr[DPSMateUser[DetailsUser]["id"]]["info"][1][name]["start"][i] and val < arr[DPSMateUser[DetailsUser]["id"]]["info"][1][name]["ending"][i] and not arr[DPSMateUser[DetailsUser]["id"]]["info"][1][name]["point"] then
+		for i=1, DPSMate:TableLength(arr[DPSMateUser[DetailsUser]["id"]]["i"][1][name]["start"]) do
+			if not arr[DPSMateUser[DetailsUser]["id"]]["i"][1][name]["start"][i] or not arr[DPSMateUser[DetailsUser]["id"]]["i"][1][name]["ending"][i] then return false end
+			if val >  arr[DPSMateUser[DetailsUser]["id"]]["i"][1][name]["start"][i] and val < arr[DPSMateUser[DetailsUser]["id"]]["i"][1][name]["ending"][i] and not arr[DPSMateUser[DetailsUser]["id"]]["i"][1][name]["point"] then
 				return true
 			end
 		end
@@ -665,10 +665,10 @@ end
 
 function DPSMate.Options:AddProcPoints(name, arr)
 	local bool, data = false, {}
-	if DPSMate.DB:DataExistProcs(DetailsUser, name, arr) and arr[DPSMateUser[DetailsUser]["id"]]["info"][1][name]["point"] then
-		for i=1, DPSMate:TableLength(arr[DPSMateUser[DetailsUser]["id"]]["info"][1][name]["start"]) do
+	if DPSMate.DB:DataExistProcs(DetailsUser, name, arr) and arr[DPSMateUser[DetailsUser]["id"]]["i"][1][name]["point"] then
+		for i=1, DPSMate:TableLength(arr[DPSMateUser[DetailsUser]["id"]]["i"][1][name]["start"]) do
 			bool = true
-			table.insert(data, arr[DPSMateUser[DetailsUser]["id"]]["info"][1][name]["start"][i])
+			table.insert(data, arr[DPSMateUser[DetailsUser]["id"]]["i"][1][name]["start"][i])
 		end
 	end
 	return {bool, data}
@@ -699,7 +699,7 @@ end
 
 function DPSMate.Options:SortLineTable(t)
 	local newArr = {}
-	for cat, val in pairs(t[DPSMateUser[DetailsUser]["id"]]["info"][2]) do
+	for cat, val in pairs(t[DPSMateUser[DetailsUser]["id"]]["i"][2]) do
 		local i=1
 		while true do
 			if (not newArr[i]) then 
@@ -800,7 +800,7 @@ function DPSMate.Options:ProcsDropDown()
 	}
 	
 	-- Adding dynamic channel
-	for cat,_ in pairs(arr[DPSMateUser[DetailsUser]["id"]]["info"][1]) do
+	for cat,_ in pairs(arr[DPSMateUser[DetailsUser]["id"]]["i"][1]) do
 		UIDropDownMenu_AddButton{
 			text = cat,
 			value = cat,
