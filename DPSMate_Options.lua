@@ -56,14 +56,6 @@ DPSMate.Options.Options = {
 	[1] = {
 		type = 'group',
 		args = {
-			healingandabsorbs = {
-				order = 150,
-				type = 'toggle',
-				name = DPSMate.localization.config.healingandabsorbs,
-				desc = DPSMate.localization.desc.healingandabsorbs,
-				get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["options"][1]["healingandabsorbs"] end,
-				set = function() DPSMate.Options:ToggleDrewDrop(1, "healingandabsorbs", DPSMate.Options.Dewdrop:GetOpenedParent()) end,
-			},
 			interrupts = {
 				order = 160,
 				type = 'toggle',
@@ -71,14 +63,6 @@ DPSMate.Options.Options = {
 				desc = DPSMate.localization.desc.interrupts,
 				get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["options"][1]["interrupts"] end,
 				set = function() DPSMate.Options:ToggleDrewDrop(1, "interrupts", DPSMate.Options.Dewdrop:GetOpenedParent()) end,
-			},
-			deaths = {
-				order = 170,
-				type = 'toggle',
-				name = DPSMate.localization.config.deaths,
-				desc = DPSMate.localization.desc.deaths,
-				get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["options"][1]["deaths"] end,
-				set = function() DPSMate.Options:ToggleDrewDrop(1, "deaths", DPSMate.Options.Dewdrop:GetOpenedParent()) end,
 			},
 			dispels = {
 				order = 180,
@@ -417,10 +401,18 @@ end
 
 function DPSMate.Options:PopUpAccept()
 	DPSMate_PopUp:Hide()
-	local dbs = {DPSMateDamageDone, DPSMateDamageTaken, DPSMateEDD, DPSMateEDT, DPSMateTHealing, DPSMateEHealing, DPSMateOverhealing, DPSMateHealingTaken, DPSMateEHealingTaken, DPSMateAbsorbs, DPSMateDispels}
-	for _, val in pairs(dbs) do
-		if val == nil then val = {[1]={},[2]={}} end
-	end
+	DPSMateDamageDone = {[1]={},[2]={}}
+	DPSMateDamageTaken = {[1]={},[2]={}}
+	DPSMateEDD = {[1]={},[2]={}}
+	DPSMateEDT = {[1]={},[2]={}}
+	DPSMateTHealing = {[1]={},[2]={}}
+	DPSMateEHealing = {[1]={},[2]={}}
+	DPSMateOverhealing = {[1]={},[2]={}}
+	DPSMateHealingTaken = {[1]={},[2]={}}
+	DPSMateEHealingTaken = {[1]={},[2]={}}
+	DPSMateAbsorbs = {[1]={},[2]={}}
+	DPSMateDispels = {[1]={},[2]={}}
+	DPSMateDeaths = {[1]={},[2]={}}
 	DPSMate.Modules.DPS.DB = DPSMateDamageDone
 	DPSMate.Modules.Damage.DB = DPSMateDamageDone
 	DPSMate.Modules.DamageTaken.DB = DPSMateDamageTaken
@@ -441,6 +433,13 @@ function DPSMate.Options:PopUpAccept()
 		DMGDone = {},
 		DMGTaken = {},
 		EDDone = {},
+		EDTaken = {},
+		THealing = {},
+		EHealing = {},
+		OHealing = {},
+		EHealingTaken = {},
+		THealingTaken = {},
+		Absorbs = {},
 	}
 	DPSMateCombatTime = {
 		total = 1,

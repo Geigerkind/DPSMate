@@ -53,6 +53,9 @@ DPSMate.Events = {
 	"CHAT_MSG_SPELL_AURA_GONE_OTHER", --
 	"CHAT_MSG_SPELL_AURA_GONE_PARTY",
 	
+	"CHAT_MSG_COMBAT_FRIENDLY_DEATH",
+	"CHAT_MSG_COMBAT_HOSTILE_DEATH",
+	
 	"PLAYER_AURAS_CHANGED",
 }
 DPSMate.Registered = true
@@ -360,6 +363,20 @@ function DPSMate:GetMode(k)
 			if strfind(cat, "segment") then
 				local num = tonumber(strsub(cat, 8))
 				return DPSMateHistory[Handler.Hist][num], DPSMateCombatTime["segments"][num]
+			else
+				return result[cat][1], result[cat][2]
+			end
+		end
+	end
+end
+
+function DPSMate:GetModeByArr(arr, k)
+	local result = {total={arr[1], DPSMateCombatTime["total"]}, currentfight={arr[2], DPSMateCombatTime["current"]}}
+	for cat, val in pairs(DPSMateSettings["windows"][k]["options"][2]) do
+		if val then
+			if strfind(cat, "segment") then
+				local num = tonumber(strsub(cat, 8))
+				return DPSMateHistory[arr.Hist][num], DPSMateCombatTime["segments"][num]
 			else
 				return result[cat][1], result[cat][2]
 			end

@@ -14,7 +14,7 @@ DPSMate.Options.Options[1]["args"]["healingandabsorbs"] = {
 DPSMate:Register("healingandabsorbs", DPSMate.Modules.HealingAndAbsorbs)
 
 
-function DPSMate.Modules.HealingAndAbsorbs:GetSortedTable(arr)
+function DPSMate.Modules.HealingAndAbsorbs:GetSortedTable(arr, k)
 	local b, a, total = {}, {}, 0
 	local f, g, h = {}, {}, {}
 	local temp = {}
@@ -51,7 +51,8 @@ function DPSMate.Modules.HealingAndAbsorbs:GetSortedTable(arr)
 		
 		-- Evaluate E Healing table
 		local d, total2 = {}, 0
-		for c, v in pairs(DPSMateEHealing[1]) do
+		local arr = DPSMate:GetModeByArr(DPSMateEHealing, k)
+		for c, v in pairs(arr) do
 			d[c] = v["info"][1]
 			total2 = total2 + v["info"][1]
 		end
@@ -90,7 +91,8 @@ end
 function DPSMate.Modules.HealingAndAbsorbs:EvalTable(user, k)
 	local b, total = {}, 0
 	local temp = {}
-	for cat, val in pairs(DPSMateAbsorbs[1]) do -- 28 Target
+	local arr = DPSMate:GetModeByArr(DPSMateAbsorbs, k)
+	for cat, val in pairs(arr) do -- 28 Target
 		for ca, va in pairs(val) do -- 28 Owner
 			if ca==user["id"] then
 				for c, v in pairs(va) do -- Power Word: Shield
@@ -118,8 +120,9 @@ function DPSMate.Modules.HealingAndAbsorbs:EvalTable(user, k)
 	
 	-- Evaluate E Healing table
 	local d = {}
-	if DPSMateEHealing[1][user["id"]] then
-		for c, v in pairs(DPSMateEHealing[1][user["id"]]) do
+	local arr = DPSMate:GetModeByArr(DPSMateEHealing, k)
+	if arr[user["id"]] then
+		for c, v in pairs(arr[user["id"]]) do
 			if c~="info" then
 				for ca, va in pairs(v) do
 					if d[c] then d[c]=d[c]+va[1] else d[c]=va[1] end
@@ -172,7 +175,7 @@ end
 function DPSMate.Modules.HealingAndAbsorbs:GetSettingValues(arr, cbt, k)
 	local name, value, perc, sortedTable, total, a, p, strt = {}, {}, {}, {}, 0, 0, "", {[1]="",[2]=""}
 	if DPSMateSettings["windows"][k]["numberformat"] == 2 then p = "K" end
-	sortedTable, total, a = DPSMate.Modules.HealingAndAbsorbs:GetSortedTable(arr)
+	sortedTable, total, a = DPSMate.Modules.HealingAndAbsorbs:GetSortedTable(arr, k)
 	for cat, val in pairs(sortedTable) do
 		local va, tot, sort = DPSMate:FormatNumbers(val, total, sortedTable[1], k)
 		if va==0 then break end

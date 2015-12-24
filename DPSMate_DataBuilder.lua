@@ -30,7 +30,6 @@ local LastUpdate = 0
 
 function DPSMate.DB:OnEvent(event)
 	if event == "ADDON_LOADED" and (not DPSMate.DB.loaded) then
-		local dbs = {DPSMateDamageDone, DPSMateDamageTaken, DPSMateEDD, DPSMateEDT, DPSMateTHealing, DPSMateEHealing, DPSMateOverhealing, DPSMateHealingTaken, DPSMateEHealingTaken, DPSMateAbsorbs, DPSMateDispels}
 		if DPSMateSettings == nil then
 			DPSMateSettings = {
 				windows = {
@@ -129,11 +128,33 @@ function DPSMate.DB:OnEvent(event)
 				tooltipanchor = 5
 			}
 		end
-		if DPSMateHistory == nil then DPSMateHistory = {} end
-		if DPSMateUser == nil then DPSMateUser = {} end
-		for _, val in pairs(dbs) do
-			if val == nil then val = {[1]={},[2]={}} end
+		if DPSMateHistory == nil then 
+			DPSMateHistory = {
+				DMGDone = {},
+				DMGTaken = {},
+				EDDone = {},
+				EDTaken = {},
+				THealing = {},
+				EHealing = {},
+				OHealing = {},
+				EHealingTaken = {},
+				THealingTaken = {},
+				Absorbs = {},
+			}
 		end
+		if DPSMateUser == nil then DPSMateUser = {} end
+		if DPSMateDamageDone == nil then DPSMateDamageDone = {[1]={},[2]={}} end
+		if DPSMateDamageTaken == nil then DPSMateDamageTaken = {[1]={},[2]={}} end
+		if DPSMateEDD == nil then DPSMateEDD = {[1]={},[2]={}} end
+		if DPSMateEDT == nil then DPSMateEDT = {[1]={},[2]={}} end
+		if DPSMateTHealing == nil then DPSMateTHealing = {[1]={},[2]={}} end
+		if DPSMateEHealing == nil then DPSMateEHealing = {[1]={},[2]={}} end
+		if DPSMateOverhealing == nil then DPSMateOverhealing = {[1]={},[2]={}} end
+		if DPSMateHealingTaken == nil then DPSMateHealingTaken = {[1]={},[2]={}} end
+		if DPSMateEHealingTaken == nil then DPSMateEHealingTaken = {[1]={},[2]={}} end
+		if DPSMateAbsorbs == nil then DPSMateAbsorbs = {[1]={},[2]={}} end
+		if DPSMateDispels == nil then DPSMateDispels = {[1]={},[2]={}} end
+		if DPSMateDeaths == nil then DPSMateDeaths = {[1]={},[2]={}} end
 		DPSMate.Modules.DPS.DB = DPSMateDamageDone
 		DPSMate.Modules.Damage.DB = DPSMateDamageDone
 		DPSMate.Modules.DamageTaken.DB = DPSMateDamageTaken
@@ -150,6 +171,7 @@ function DPSMate.DB:OnEvent(event)
 		DPSMate.Modules.Absorbs.DB = DPSMateAbsorbs
 		DPSMate.Modules.AbsorbsTaken.DB = DPSMateAbsorbs
 		DPSMate.Modules.HealingAndAbsorbs.DB = DPSMateAbsorbs
+		DPSMate.Modules.Deaths.DB = DPSMateDeaths
 		
 		if DPSMateCombatTime == nil then
 			DPSMateCombatTime = {
@@ -360,6 +382,7 @@ function DPSMate.DB:DamageDone(Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, Ddodge,
 	DPSMate:SetStatusBarValue()
 end
 
+-- Fall damage
 function DPSMate.DB:DamageTaken(Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, Ddodge, Dresist, Damount, cause)
 	if (not Duser.name or DPSMate:TableLength(Duser)==0 or not Dname or cause=="") then return end
 
@@ -383,19 +406,18 @@ function DPSMate.DB:DamageTaken(Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, Ddodge
 			end
 		else
 			DPSMate.DB:BuildUser(Duser.name, Duser.class)
-			for i=1, 2 do 
-				if not DPSMateDamageTaken[i][DPSMateUser[Duser.name]["id"]] then
-					DPSMateDamageTaken[i][DPSMateUser[Duser.name]["id"]] = {}
-				end
-				if not DPSMateDamageTaken[i][DPSMateUser[Duser.name]["id"]][DPSMateUser[cause]["id"]] then
-					DPSMateDamageTaken[i][DPSMateUser[Duser.name]["id"]][DPSMateUser[cause]["id"]] = {
-						info = {
-							[1] = {},
-							[2] = {},
-							[3] = 0,
-						},
-					}
-				end
+			DPSMate.DB:BuildUser(cause, nil)
+			if not DPSMateDamageTaken[cat][DPSMateUser[Duser.name]["id"]] then
+				DPSMateDamageTaken[cat][DPSMateUser[Duser.name]["id"]] = {}
+			end
+			if not DPSMateDamageTaken[cat][DPSMateUser[Duser.name]["id"]][DPSMateUser[cause]["id"]] then
+				DPSMateDamageTaken[cat][DPSMateUser[Duser.name]["id"]][DPSMateUser[cause]["id"]] = {
+					info = {
+						[1] = {},
+						[2] = {},
+						[3] = 0,
+					},
+				}
 			end
 			DPSMateDamageTaken[cat][DPSMateUser[Duser.name]["id"]][DPSMateUser[cause]["id"]][Dname] = {
 				hit = Dhit,
@@ -771,6 +793,48 @@ function DPSMate.DB:Dispels(arr, Duser, Dname, target)
 	DPSMate:SetStatusBarValue()
 end
 
+function DPSMate.DB:UnregisterDeath(target)
+	for cat, val in pairs({[1]="total", [2]="current"}) do 
+		DPSMateDeaths[cat][DPSMateUser[target]["id"]][DPSMate:TableLength(DPSMateDeaths[cat][DPSMateUser[target]["id"]])]["info"]=1
+	end
+end
+
+function DPSMate.DB:DeathHistory(target, cause, ability, amount, hit, crit, type)
+	if (not target or target=="" or amount==0) then return end
+	for cat, val in pairs({[1]="total", [2]="current"}) do 
+		DPSMate.DB:BuildUser(target, nil)
+		DPSMate.DB:BuildUser(cause, nil)
+		if not DPSMateDeaths[cat][DPSMateUser[target]["id"]] then
+			DPSMateDeaths[cat][DPSMateUser[target]["id"]] = {}
+		end
+		local TL = DPSMate:TableLength(DPSMateDeaths[cat][DPSMateUser[target]["id"]])
+		if TL==0 then
+			DPSMateDeaths[cat][DPSMateUser[target]["id"]][1] = {
+				info = 0,
+			}
+			TL=1
+		else
+			if DPSMateDeaths[cat][DPSMateUser[target]["id"]][TL]["info"]==1 then
+				TL=TL+1
+				DPSMateDeaths[cat][DPSMateUser[target]["id"]][TL] = {
+					info = 0,
+				}
+			end
+		end
+		local hitCrit = crit
+		table.insert(DPSMateDeaths[cat][DPSMateUser[target]["id"]][TL], 1, {
+			[1] = DPSMateUser[cause]["id"],
+			[2] = ability,
+			[3] = amount,
+			[4] = hitCrit,
+			[5] = type,
+		})
+		if DPSMateDeaths[cat][DPSMateUser[target]["id"]][TL][7] then
+			table.remove(DPSMateDeaths[cat][DPSMateUser[target]["id"]][TL], 7)
+		end
+	end
+end
+
 -- Are those functions able to be combined?
 function DPSMate.DB:DDExist(uname, aname, arr)
 	if DPSMateUser[uname]~=nil then
@@ -783,8 +847,9 @@ function DPSMate.DB:DDExist(uname, aname, arr)
 	return false
 end
 
+-- Line 802
 function DPSMate.DB:DTExist(uname, cause, aname, arr)
-	if DPSMateUser[uname]~=nil then
+	if DPSMateUser[uname]~=nil and DPSMateUser[cause]~=nil then
 		if arr[DPSMateUser[uname]["id"]] ~= nil then
 			if arr[DPSMateUser[uname]["id"]][DPSMateUser[cause]["id"]] ~= nil then
 				if arr[DPSMateUser[uname]["id"]][DPSMateUser[cause]["id"]][aname] ~= nil then
