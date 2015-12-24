@@ -289,6 +289,14 @@ function DPSMate:GetUserById(id)
 	end
 end
 
+function DPSMate:GetAbilityById(id)
+	for cat, val in pairs(DPSMateAbility) do
+		if val == tonumber(id) then
+			return cat
+		end
+	end
+end
+
 function DPSMate:PlayerExist(arr, name)
 	for cat, val in pairs(arr) do
 		if (cat == name) then

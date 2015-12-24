@@ -52,12 +52,12 @@ function DPSMate.Modules.EDD:EvalTable(user, k)
 				while true do
 					if (not d[i]) then
 						table.insert(a, i, ca)
-						table.insert(d, i, va["amount"])
+						table.insert(d, i, va[13])
 						break
 					else
-						if (d[i] < va["amount"]) then
+						if (d[i] < va[13]) then
 							table.insert(a, i, ca)
-							table.insert(d, i, va["amount"])
+							table.insert(d, i, va[13])
 							break
 						end
 					end
@@ -92,7 +92,7 @@ function DPSMate.Modules.EDD:ShowTooltip(user, k)
 	if DPSMateSettings["informativetooltips"] then
 		for i=1, DPSMateSettings["subviewrows"] do
 			if not a[i] then break end
-			GameTooltip:AddDoubleLine(i..". "..a[i],c[i],1,1,1,1,1,1)
+			GameTooltip:AddDoubleLine(i..". "..DPSMate:GetAbilityById(a[i]),c[i],1,1,1,1,1,1)
 		end
 	end
 end

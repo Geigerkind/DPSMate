@@ -23,15 +23,16 @@ function DPSMate.Modules.Damage:GetSortedTable(arr)
 			if DPSMate:PlayerExist(DPSMateUser, DPSMateUser[name]["pet"]) and arr[DPSMateUser[DPSMateUser[name]["pet"]]["id"]] then
 				CV=CV+arr[DPSMateUser[DPSMateUser[name]["pet"]]["id"]]["info"][3]
 			end
-			a[CV] = name
 			local i = 1
 			while true do
 				if (not b[i]) then
 					table.insert(b, i, CV)
+					table.insert(a, i, name)
 					break
 				else
 					if b[i] < CV then
 						table.insert(b, i, CV)
+						table.insert(a, i, name)
 						break
 					end
 				end
@@ -56,12 +57,12 @@ function DPSMate.Modules.Damage:EvalTable(user, k)
 				while true do
 					if (not d[i]) then
 						table.insert(a, i, cat..pet)
-						table.insert(d, i, val["amount"])
+						table.insert(d, i, val[13])
 						break
 					else
-						if (d[i] < val["amount"]) then
+						if (d[i] < val[13]) then
 							table.insert(a, i, cat..pet)
-							table.insert(d, i, val["amount"])
+							table.insert(d, i, val[13])
 							break
 						end
 					end
@@ -85,7 +86,7 @@ function DPSMate.Modules.Damage:GetSettingValues(arr, cbt, k)
 		if DPSMateSettings["columnsdmg"][1] then str[1] = " "..dmg..p; strt[2] = tot..p end
 		if DPSMateSettings["columnsdmg"][2] then str[2] = "("..string.format("%.1f", (dmg/cbt))..p..")"; strt[1] = "("..string.format("%.1f", (tot/cbt))..p..") " end
 		if DPSMateSettings["columnsdmg"][3] then str[3] = " ("..string.format("%.1f", 100*dmg/tot).."%)" end
-		table.insert(name, a[val])
+		table.insert(name, a[cat])
 		table.insert(value, str[2]..str[1]..str[3])
 		table.insert(perc, 100*(dmg/sort))
 	end
@@ -97,7 +98,7 @@ function DPSMate.Modules.Damage:ShowTooltip(user,k)
 	if DPSMateSettings["informativetooltips"] then
 		for i=1, DPSMateSettings["subviewrows"] do
 			if not a[i] then break end
-			GameTooltip:AddDoubleLine(i..". "..a[i],c[i],1,1,1,1,1,1)
+			GameTooltip:AddDoubleLine(i..". "..DPSMate:GetAbilityById(a[i]),c[i],1,1,1,1,1,1)
 		end
 	end
 end

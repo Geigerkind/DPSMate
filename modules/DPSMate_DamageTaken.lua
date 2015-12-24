@@ -52,12 +52,12 @@ function DPSMate.Modules.DamageTaken:EvalTable(user, k)
 				while true do
 					if (not d[i]) then
 						table.insert(a, i, cat)
-						table.insert(d, i, va["amount"])
+						table.insert(d, i, va[13])
 						break
 					else
-						if (d[i] < va["amount"]) then
+						if (d[i] < va[13]) then
 							table.insert(a, i, cat)
-							table.insert(d, i, va["amount"])
+							table.insert(d, i, va[13])
 							break
 						end
 					end

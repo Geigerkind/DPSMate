@@ -46,24 +46,26 @@ function DPSMate.Modules.EDT:EvalTable(user, k)
 	local arr = DPSMate:GetMode(k)
 	if not arr[user["id"]] then return end
 	for cat, val in pairs(arr[user["id"]]) do
+		local CV = 0
 		for ca, va in pairs(val) do
 			if ca~="info" then
-				local i = 1
-				while true do
-					if (not d[i]) then
-						table.insert(a, i, cat)
-						table.insert(d, i, va["amount"])
-						break
-					else
-						if (d[i] < va["amount"]) then
-							table.insert(a, i, cat)
-							table.insert(d, i, va["amount"])
-							break
-						end
-					end
-					i = i + 1
+				CV = CV + va[13]
+			end
+		end
+		local i = 1
+		while true do
+			if (not d[i]) then
+				table.insert(a, i, cat)
+				table.insert(d, i, CV)
+				break
+			else
+				if (d[i] < CV) then
+					table.insert(a, i, cat)
+					table.insert(d, i, CV)
+					break
 				end
 			end
+			i = i + 1
 		end
 	total=total+val["info"][3]
 	end
