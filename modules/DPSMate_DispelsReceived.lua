@@ -51,7 +51,6 @@ end
 function DPSMate.Modules.DispelsReceived:EvalTable(user, k)
 	local b, a, temp, total = {}, {}, {}, 0
 	local arr = DPSMate:GetMode(k)
-	if not arr[user[1]] then return end
 	for cat, val in pairs(arr) do -- 3 Owner
 		for ca, va in pairs(val) do -- 42 Ability
 			if ca~="i" then
