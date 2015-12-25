@@ -173,6 +173,7 @@ function DPSMate.DB:OnEvent(event)
 		DPSMate.Modules.AbsorbsTaken.DB = DPSMateAbsorbs
 		DPSMate.Modules.HealingAndAbsorbs.DB = DPSMateAbsorbs
 		DPSMate.Modules.Deaths.DB = DPSMateDeaths
+		DPSMate.Modules.Dispels.DB = DPSMateDispels
 		
 		if DPSMateCombatTime == nil then
 			DPSMateCombatTime = {
@@ -788,11 +789,15 @@ function DPSMate.DB:AwaitDispel(ability, target, cause, time)
 	--DPSMate:SendMessage("Awaiting Dispel! - "..cause.." - "..target.." - "..ability.." - "..time)
 end
 
+-- /script DPSMate.Parser.DebuffTypes["Frostbolt"] = "Magic"
+-- /script DPSMate.DB:AwaitDispel("Cleanse", "Shino", "Shino", 1)
+-- /script DPSMate.DB:ConfirmDispel("Frostbolt", "Shino", 1.2)
+
 function DPSMate.DB:ConfirmDispel(ability, target, time)
 	for cat, val in pairs(AwaitDispel) do
-		if val[2] == target and (time-val[4])<=0.5 then
+		if val[2] == target and (time-val[4])<=0.5 and DPSMate:TContains(DPSMate.Parser["De"..DPSMate.Parser.DebuffTypes[ability]], val[3]) then
 			DPSMate.DB:Dispels(val[1], val[3], val[2], ability)
-			--DPSMate:SendMessage("Confirmed!")
+			DPSMate:SendMessage("Confirmed!")
 			table.remove(AwaitDispel, cat)
 			break
 		end
@@ -836,7 +841,7 @@ function DPSMate.DB:UnregisterDeath(target)
 		end
 	end
 end
-
+-- l. 846
 function DPSMate.DB:DeathHistory(target, cause, ability, amount, hit, crit, type)
 	if (not target or target=="" or amount==0) then return end
 	for cat, val in pairs({[1]="total", [2]="current"}) do 
