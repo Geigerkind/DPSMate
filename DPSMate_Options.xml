@@ -2967,6 +2967,11 @@
 				this:RegisterEvent("PLAYER_REGEN_DISABLED")
 				this:RegisterEvent("PLAYER_REGEN_ENABLED")
 				
+				this:RegisterEvent("SPELLCAST_CHANNEL_START")
+				this:RegisterEvent("SPELLCAST_STOP")
+				this:RegisterEvent("SPELLCAST_FAILED")
+				this:RegisterEvent("SPELLCAST_INTERRUPTED")
+				
 				this:RegisterEvent("PLAYER_AURAS_CHANGED")
 				this:RegisterEvent("UNIT_AURA")
 				this:RegisterEvent("PLAYER_TARGET_CHANGED")

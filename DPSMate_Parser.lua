@@ -613,6 +613,7 @@ function DPSMate.Parser:SpellDamageShieldsOnSelf(msg)
 	DPSMate:SendMessage(msg.."Test4")
 end
 
+-- Helboar reflects 4 Fire damage to you.
 function DPSMate.Parser:SpellDamageShieldsOnOthers(msg)
 	DPSMate:SendMessage(msg.."Test5")
 end

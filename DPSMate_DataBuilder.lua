@@ -176,9 +176,13 @@ function DPSMate.DB:OnEvent(event)
 		DPSMate.Modules.Dispels.DB = DPSMateDispels
 		DPSMate.Modules.DispelsReceived.DB = DPSMateDispels
 		DPSMate.Modules.Decurses.DB = DPSMateDispels
+		DPSMate.Modules.DecursesReceived.DB = DPSMateDispels
 		DPSMate.Modules.CureDisease.DB = DPSMateDispels
+		DPSMate.Modules.CureDiseaseReceived.DB = DPSMateDispels
 		DPSMate.Modules.CurePoison.DB = DPSMateDispels
+		DPSMate.Modules.CurePoisonReceived.DB = DPSMateDispels
 		DPSMate.Modules.LiftMagic.DB = DPSMateDispels
+		DPSMate.Modules.LiftMagicReceived.DB = DPSMateDispels
 		
 		if DPSMateCombatTime == nil then
 			DPSMateCombatTime = {
@@ -925,7 +929,7 @@ end
 
 -- Are those functions able to be combined?
 function DPSMate.DB:DDExist(uname, aname, arr)
-	if DPSMateUser[uname]~=nil then
+	if DPSMateUser[uname]~=nil and DPSMateAbility[aname]~=nil then
 		if arr[DPSMateUser[uname][1]] ~= nil then
 			if arr[DPSMateUser[uname][1]][DPSMateAbility[aname][1]] ~= nil then
 				return true
@@ -937,7 +941,7 @@ end
 
 -- Line 802
 function DPSMate.DB:DTExist(uname, cause, aname, arr)
-	if DPSMateUser[uname]~=nil and DPSMateUser[cause]~=nil then
+	if DPSMateUser[uname]~=nil and DPSMateUser[cause]~=nil and DPSMateAbility[aname]~=nil then
 		if arr[DPSMateUser[uname][1]] ~= nil then
 			if arr[DPSMateUser[uname][1]][DPSMateUser[cause][1]] ~= nil then
 				if arr[DPSMateUser[uname][1]][DPSMateUser[cause][1]][DPSMateAbility[aname][1]] ~= nil then
@@ -963,7 +967,7 @@ function DPSMate.DB:EDDExist(uname, cause, aname, arr)
 end
 
 function DPSMate.DB:DataExistProcs(uname, aname, arr)
-	if DPSMateUser[uname]~=nil then
+	if DPSMateUser[uname]~=nil and DPSMateAbility[aname]~=nil then
 		if arr[DPSMateUser[uname][1]] ~= nil then
 			if arr[DPSMateUser[uname][1]]["i"][1][DPSMateAbility[aname][1]] ~= nil then
 				return true
