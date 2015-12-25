@@ -219,13 +219,13 @@ function DPSMate.DB:GetPets()
 	local pets = {}
 	if DPSMate.DB:PlayerInParty() then
 		for i=1, 4 do
-			if UnitName("partypet"..i) then
+			if UnitName("partypet"..i) and UnitName("party"..i) then
 				pets[UnitName("party"..i)] = UnitName("partypet"..i)
 			end
 		end
 	elseif UnitInRaid("player") then
 		for i=1, 40 do
-			if UnitName("raidpet"..i) then
+			if UnitName("raidpet"..i) and UnitName("raid"..i) then
 				pets[UnitName("raid"..i)] = UnitName("raidpet"..i)
 			end
 		end
@@ -312,7 +312,7 @@ function DPSMate.DB:PlayerInParty()
 end
 
 function DPSMate.DB:BuildUser(Dname, Dclass)
-	if (not DPSMateUser[Dname]) then
+	if (not DPSMateUser[Dname] and type(Dname)~="table") then -- Added to find the table bug
 		DPSMateUser[Dname] = {
 			id = DPSMate:TableLength(DPSMateUser)+1,
 			class = Dclass,
@@ -625,6 +625,7 @@ function DPSMate.DB:AwaitingAbsorbConfirmation(owner, ability, abilityTarget, ti
 	--DPSMate:SendMessage("Awaiting confirmation!")
 end
 
+-- Gotta improve the function to prevent an overflow.
 function DPSMate.DB:ConfirmAbsorbApplication(ability, abilityTarget, time)
 	--DPSMate:SendMessage(time)
 	for cat, val in pairs(Await) do
@@ -781,27 +782,49 @@ function DPSMate.DB:Absorb(ability, abilityTarget, incTarget)
 	end
 end
 
+local AwaitDispel = {}
+function DPSMate.DB:AwaitDispel(ability, target, cause, time)
+	table.insert(AwaitDispel, {cause, target, ability, time})
+	--DPSMate:SendMessage("Awaiting Dispel! - "..cause.." - "..target.." - "..ability.." - "..time)
+end
+
+function DPSMate.DB:ConfirmDispel(ability, target, time)
+	for cat, val in pairs(AwaitDispel) do
+		if val[2] == target and (time-val[4])<=0.5 then
+			DPSMate.DB:Dispels(val[1], val[3], val[2], ability)
+			--DPSMate:SendMessage("Confirmed!")
+			table.remove(AwaitDispel, cat)
+			break
+		end
+	end
+end
+
 -- l. 798
-function DPSMate.DB:Dispels(arr, Duser, Dname, target)
-	if (not Duser.name or DPSMate:TableLength(Duser)==0 or not Dname or Dname=="") then return end
+function DPSMate.DB:Dispels(cause, Dname, target, ability)
+	if (cause=="" or not Dname or Dname=="") then return end
 	for cat, val in pairs({[1]="total", [2]="current"}) do 
-		DPSMate.DB:BuildUser(Duser.name, Duser.class)
+		DPSMate.DB:BuildUser(cause, nil)
+		DPSMate.DB:BuildUser(target, nil)
 		DPSMate.DB:BuildAbility(Dname)
-		if not arr[cat][DPSMateUser[Duser.name]["id"]] then
-			arr[cat][DPSMateUser[Duser.name]["id"]] = {
+		DPSMate.DB:BuildAbility(ability)
+		if not DPSMateDispels[cat][DPSMateUser[cause]["id"]] then
+			DPSMateDispels[cat][DPSMateUser[cause]["id"]] = {
 				i = {
 					[1] = 0, -- Dispels done
 				},
 			}
 		end
-		if not arr[cat][DPSMateUser[Duser.name]["id"]][DPSMateAbility[Dname]] then
-			arr[cat][DPSMateUser[Duser.name]["id"]][DPSMateAbility[Dname]] = {}
+		if not DPSMateDispels[cat][DPSMateUser[cause]["id"]][DPSMateAbility[Dname]] then
+			DPSMateDispels[cat][DPSMateUser[cause]["id"]][DPSMateAbility[Dname]] = {}
 		end
-		if not arr[cat][DPSMateUser[Duser.name]["id"]][DPSMateAbility[Dname]][target] then 
-			arr[cat][DPSMateUser[Duser.name]["id"]][DPSMateAbility[Dname]][target] = 0
+		if not DPSMateDispels[cat][DPSMateUser[cause]["id"]][DPSMateAbility[Dname]][DPSMateUser[target]["id"]] then 
+			DPSMateDispels[cat][DPSMateUser[cause]["id"]][DPSMateAbility[Dname]][DPSMateUser[target]["id"]] = {}
 		end
-		arr[cat][DPSMateUser[Duser.name]["id"]][DPSMateAbility[Dname]][target] = arr[cat][DPSMateUser[Duser.name]["id"]][DPSMateAbility[Dname]][target]+1
-		arr[cat][DPSMateUser[Duser.name]["id"]]["i"][1] = arr[cat][DPSMateUser[Duser.name]["id"]]["i"][1]+1
+		if not DPSMateDispels[cat][DPSMateUser[cause]["id"]][DPSMateAbility[Dname]][DPSMateUser[target]["id"]][DPSMateAbility[ability]] then
+			DPSMateDispels[cat][DPSMateUser[cause]["id"]][DPSMateAbility[Dname]][DPSMateUser[target]["id"]][DPSMateAbility[ability]] = 0
+		end
+		DPSMateDispels[cat][DPSMateUser[cause]["id"]][DPSMateAbility[Dname]][DPSMateUser[target]["id"]][DPSMateAbility[ability]] = DPSMateDispels[cat][DPSMateUser[cause]["id"]][DPSMateAbility[Dname]][DPSMateUser[target]["id"]][DPSMateAbility[ability]]+1
+		DPSMateDispels[cat][DPSMateUser[cause]["id"]]["i"][1] = DPSMateDispels[cat][DPSMateUser[cause]["id"]]["i"][1]+1
 	end
 	DPSMate:SetStatusBarValue()
 end

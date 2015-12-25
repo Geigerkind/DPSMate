@@ -491,6 +491,7 @@ function DPSMate.Parser:SpellPeriodicFriendlyPlayerBuffs(msg)
 	DPSMate.DB:DeathHistory(target, cause.name, ability, amount, 1, 0, 1)
 end
 
+-- Soulleacher gains Summon Felsteed.
 function DPSMate.Parser:SpellPeriodicHostilePlayerBuffs(msg)
 	DPSMate:SendMessage(msg.."Test3")
 end
@@ -499,7 +500,6 @@ end
 -- Albea's Flash of Light critically heals you/Baz for 135.
 function DPSMate.Parser:SpellHostilePlayerBuff(msg)
 	local cause, ability, target, amount, hit, crit = {}, "", "", 0, 0, 0
-	DPSMate:SendMessage(msg.."Test7")
 	for c, ab, ta, a in string.gfind(msg, "(.+)'s (.+) heals (.+) for (.+)%.") do hit=1; crit=0; amount=tonumber(strsub(a, strfind(a, "%d+"))); ability=ab; target=ta; cause.name=c end
 	for c, ab, ta, a in string.gfind(msg, "(.+)'s (.+) critically heals (.+) for (.+)%.") do crit=1; hit=0; amount=tonumber(strsub(a, strfind(a, "%d+"))); ability=ab; target=ta; cause.name=c end
 	if target=="you" then target=player.name end
@@ -619,17 +619,23 @@ end
 --------------                       Dispels                        --------------                                  
 ----------------------------------------------------------------------------------
 
+local Dispels = {
+	[1] = "Remove Curse",
+	[2] = "Cleanse",
+	[3] = "Remove Lesser Curse",
+}
+
 -- Avrora casts Remove Curse on you.
 -- Avrora casts Remove Curse on Avrora.
 function DPSMate.Parser:SpellHostilePlayerBuffDispels(msg)
-	for c, ab, ta in string.gfind(msg, "(.+) casts (.+) on (.+)%.") do end
+	for c, ab, ta in string.gfind(msg, "(.+) casts (.+) on (.+)%.") do if DPSMate:TContains(Dispels, ab) then if ta=="you" then DPSMate.DB:AwaitDispel(ab, player.name, c, GetTime()) else  DPSMate.DB:AwaitDispel(ab, ta, c, GetTime()) end end end
 end
 
 -- Avrora's  Curse of Agony is removed.
 -- Your Curse of Agony is removed.
 function DPSMate.Parser:SpellBreakAura(msg) 
-	for ta, ab in string.gfind(msg, "(.+)'s (.+) is removed.") do end
-	for ab in string.gfind(msg, "Your (.+) is removed.") do end
+	for ta, ab in string.gfind(msg, "(.+)'s (.+) is removed.") do DPSMate.DB:ConfirmDispel(ab, ta, GetTime()) end
+	for ab in string.gfind(msg, "Your (.+) is removed.") do DPSMate.DB:ConfirmDispel(ab, player.name, GetTime()) end
 end
 
 ----------------------------------------------------------------------------------
