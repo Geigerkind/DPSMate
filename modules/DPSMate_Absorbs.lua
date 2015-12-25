@@ -28,8 +28,8 @@ function DPSMate.Modules.Absorbs:GetSortedTable(arr)
 					for cet, vel in pairs(ve) do
 						if cet~="i" then
 							local p = 5
-							if DPSMateDamageTaken[1][cat][cet][vel[1]]["hitaverage"]~=0 then
-								p=ceil(DPSMateDamageTaken[1][cat][cet][vel[1]]["hitaverage"])
+							if DPSMateDamageTaken[1][cat][cet][vel[1]][14]~=0 then
+								p=ceil(DPSMateDamageTaken[1][cat][cet][vel[1]][14])
 							end
 							PerShieldAbsorb=PerShieldAbsorb+vel[2]*p
 						end
@@ -72,7 +72,7 @@ function DPSMate.Modules.Absorbs:EvalTable(user, k)
 	local temp = {}
 	for cat, val in pairs(arr) do -- 28 Target
 		for ca, va in pairs(val) do -- 28 Owner
-			if ca==user["id"] then
+			if ca==user[1] then
 				for c, v in pairs(va) do -- Power Word: Shield
 					local PerAbilityAbsorb = 0
 					for ce, ve in pairs(v) do -- 1
@@ -80,8 +80,8 @@ function DPSMate.Modules.Absorbs:EvalTable(user, k)
 						for cet, vel in pairs(ve) do
 							if cet~="i" then
 								local p = 5
-								if DPSMateDamageTaken[1][cat][cet][vel[1]]["hitaverage"]~=0 then
-									p=ceil(DPSMateDamageTaken[1][cat][cet][vel[1]]["hitaverage"])
+								if DPSMateDamageTaken[1][cat][cet][vel[1]][14]~=0 then
+									p=ceil(DPSMateDamageTaken[1][cat][cet][vel[1]][14])
 								end
 								PerShieldAbsorb=PerShieldAbsorb+vel[2]*p
 							end

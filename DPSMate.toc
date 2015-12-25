@@ -36,6 +36,14 @@ modules\DPSMate_DebuffUptimers.lua
 modules\DPSMate_Deaths.lua
 modules\DPSMate_Dispels.lua
 modules\DPSMate_DispelsReceived.lua
+modules\DPSMate_Decurses.lua
+modules\DPSMate_DecursesReceived.lua
+modules\DPSMate_CureDisease.lua
+modules\DPSMate_CureDiseaseReceived.lua
+modules\DPSMate_CurePoison.lua
+modules\DPSMate_CurePoisonReceived.lua
+modules\DPSMate_LiftMagic.lua
+modules\DPSMate_LiftMagicReceived.lua
 modules\DPSMate_EffectiveHealing.lua
 modules\DPSMate_EffectiveHPS.lua
 modules\DPSMate_EffectiveHealingTaken.lua

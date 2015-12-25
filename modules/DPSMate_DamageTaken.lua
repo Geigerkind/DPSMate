@@ -44,8 +44,8 @@ end
 function DPSMate.Modules.DamageTaken:EvalTable(user, k)
 	local a, u, p, d, total = {}, {}, {}, {}, 0
 	local arr = DPSMate:GetMode(k)
-	if not arr[user["id"]] then return end
-	for cat, val in pairs(arr[user["id"]]) do
+	if not arr[user[1]] then return end
+	for cat, val in pairs(arr[user[1]]) do
 		for ca, va in pairs(val) do
 			if ca~="i" then
 				local i = 1

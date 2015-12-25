@@ -283,7 +283,7 @@ end
 
 function DPSMate:GetUserById(id)
 	for cat, val in pairs(DPSMateUser) do
-		if val["id"] == id then
+		if val[1] == id then
 			return cat
 		end
 	end
@@ -291,7 +291,7 @@ end
 
 function DPSMate:GetAbilityById(id)
 	for cat, val in pairs(DPSMateAbility) do
-		if val == tonumber(id) then
+		if val[1] == tonumber(id) then
 			return cat
 		end
 	end
@@ -352,7 +352,7 @@ end
 
 function DPSMate:GetClassColor(class)
 	if (class) then
-		if DPSMateUser[class] then class = DPSMateUser[class]["class"] end
+		if DPSMateUser[class] then class = DPSMateUser[class][2] end
 		if classcolor[class] then
 			return classcolor[class].r, classcolor[class].g, classcolor[class].b, class
 		else

@@ -40,8 +40,8 @@ end
 function DPSMate.Modules.Dispels:EvalTable(user, k)
 	local a, b, total = {}, {}, 0
 	local arr = DPSMate:GetMode(k)
-	if not arr[user["id"]] then return end
-	for cat, val in pairs(arr[user["id"]]) do -- 41 Ability
+	if not arr[user[1]] then return end
+	for cat, val in pairs(arr[user[1]]) do -- 41 Ability
 		if cat~="i" then
 			local CV = 0
 			for ca, va in pairs(val) do

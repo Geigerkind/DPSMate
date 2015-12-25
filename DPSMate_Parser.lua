@@ -655,9 +655,7 @@ function DPSMate.Parser:UnitAuraDispels(unit)
 		local type = DPSMate_TooltipTextRight1:GetText()
 		DPSMate_Tooltip:Hide()
 		if aura and type then
-			if not DPSMate:TContains(DPSMate.Parser.DebuffTypes, aura) then
-				DPSMate.Parser.DebuffTypes[aura] = aura
-			end
+			DPSMate.DB:BuildAbility(aura, type)
 		end
 	end
 end

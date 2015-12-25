@@ -51,12 +51,12 @@ end
 function DPSMate.Modules.DispelsReceived:EvalTable(user, k)
 	local b, a, temp, total = {}, {}, {}, 0
 	local arr = DPSMate:GetMode(k)
-	if not arr[user["id"]] then return end
+	if not arr[user[1]] then return end
 	for cat, val in pairs(arr) do -- 3 Owner
 		for ca, va in pairs(val) do -- 42 Ability
 			if ca~="i" then
 				for c, v in pairs(va) do -- 3 Target
-					if c==user["id"] then
+					if c==user[1] then
 						for ce, ve in pairs(v) do
 							if temp[cat] then temp[cat]=temp[cat]+ve else temp[cat]=ve end
 						end

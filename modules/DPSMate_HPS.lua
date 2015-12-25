@@ -40,8 +40,8 @@ end
 function DPSMate.Modules.HPS:EvalTable(user, k)
 	local a, u, p, d, total = {}, {}, {}, {}, 0
 	local arr = DPSMate:GetMode(k)
-	if not arr[user["id"]] then return end
-	for cat, val in pairs(arr[user["id"]]) do
+	if not arr[user[1]] then return end
+	for cat, val in pairs(arr[user[1]]) do
 		if cat~="i" then
 			local CV = 0
 			for ca, va in pairs(val) do
@@ -63,7 +63,7 @@ function DPSMate.Modules.HPS:EvalTable(user, k)
 				i = i + 1
 			end
 		end
-	total=total+arr[user["id"]]["i"][1]
+	total=total+arr[user[1]]["i"][1]
 	end
 	return a, total, d
 end

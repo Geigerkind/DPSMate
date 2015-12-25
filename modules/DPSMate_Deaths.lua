@@ -49,8 +49,8 @@ end
 function DPSMate.Modules.Deaths:EvalTable(user, k)
 	local a, b, total = {}, {}, 0
 	local arr = DPSMate:GetMode(k)
-	if not arr[user["id"]] then return end
-	for ca, va in pairs(arr[user["id"]][DPSMate:TableLength(arr[user["id"]])]) do -- 1 (Death)
+	if not arr[user[1]] then return end
+	for ca, va in pairs(arr[user[1]][DPSMate:TableLength(arr[user[1]])]) do -- 1 (Death)
 		if ca~="i" then
 			table.insert(b, ca, va[3])
 			table.insert(a, ca, va[2])
