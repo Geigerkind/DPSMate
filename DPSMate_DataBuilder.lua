@@ -174,6 +174,7 @@ function DPSMate.DB:OnEvent(event)
 		DPSMate.Modules.HealingAndAbsorbs.DB = DPSMateAbsorbs
 		DPSMate.Modules.Deaths.DB = DPSMateDeaths
 		DPSMate.Modules.Dispels.DB = DPSMateDispels
+		DPSMate.Modules.DispelsReceived.DB = DPSMateDispels
 		
 		if DPSMateCombatTime == nil then
 			DPSMateCombatTime = {
