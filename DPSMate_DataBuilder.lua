@@ -795,14 +795,50 @@ end
 
 function DPSMate.DB:ConfirmDispel(ability, target, time)
 	for cat, val in pairs(AwaitDispel) do
-		if val[2] == target and (time-val[4])<=0.5 and DPSMate:TContains(DPSMate.Parser["De"..DPSMate.Parser.DebuffTypes[ability]], val[3]) then
+		if val[2] == target and (time-val[4])<=1 and DPSMate:TContains(DPSMate.Parser["De"..DPSMate.Parser.DebuffTypes[ability]], val[3]) then
 			DPSMate.DB:Dispels(val[1], val[3], val[2], ability)
-			DPSMate:SendMessage("Confirmed!")
+			--DPSMate:SendMessage("Confirmed!")
 			table.remove(AwaitDispel, cat)
+			return
+		end
+	end
+	DPSMate.DB:Dispels("Unknown", "Unknown", target, ability)
+end
+
+local AwaitHotDispel = {}
+function DPSMate.DB:AwaitHotDispel(ability, target, cause, time)
+	table.insert(AwaitHotDispel, {cause, target, ability, time})
+end
+
+local ActiveHotDispel = {}
+function DPSMate.DB:RegisterHotDispel(target, ability, time)
+	for cat, val in pairs(AwaitHotDispel) do
+		if val[2]==target and val[3]==ability and val[4]<=time then
+			table.insert(ActiveHotDispel, {val[1], val[2], val[3]})
+			break
+		end
+ 	end
+end
+
+function DPSMate.DB:UnregisterHotDispel(target, ability)
+	for cat, val in pairs(ActiveHotDispel) do
+		if val[2]==target and val[3]==ability then
+			table.remove(ActiveHotDispel, cat)
 			break
 		end
 	end
 end
+
+function DPSMate.DB:ConfirmHotDispel(target, ability)
+	for cat, val in pairs(ActiveHotDispel) do
+		if val[2]==target and DPSMate:TContains(DPSMate.Parser["De"..DPSMate.Parser.DebuffTypes[ability]], val[3]) then
+			DPSMate.DB:Dispels(val[1], val[3], val[2], ability)
+			return
+		end
+	end
+	DPSMate.DB:Dispels("Unknown", "Unknown", target, ability)
+end
+
 
 -- l. 798
 function DPSMate.DB:Dispels(cause, Dname, target, ability)
