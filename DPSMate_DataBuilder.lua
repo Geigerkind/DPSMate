@@ -893,7 +893,7 @@ function DPSMate.DB:UnregisterDeath(target)
 end
 -- l. 846
 function DPSMate.DB:DeathHistory(target, cause, ability, amount, hit, crit, type)
-	if (not target or target=="" or amount==0) then return end
+	if (not target or target=="" or not cause or cause=="" or amount==0) then return end
 	for cat, val in pairs({[1]="total", [2]="current"}) do 
 		DPSMate.DB:BuildUser(target, nil)
 		DPSMate.DB:BuildUser(cause, nil)
@@ -930,9 +930,39 @@ function DPSMate.DB:DeathHistory(target, cause, ability, amount, hit, crit, type
 end
 
 local AwaitKick = {}
+local AfflictedStun = {}
+function DPSMate.DB:AwaitAfflictedStun(cause, ability, target, time)
+	for cat, val in pairs(AfflictedStun) do
+		if val[1]==cause and val[4]==time then
+			return
+		end
+	end
+	table.insert(AfflictedStun, {cause,ability,target,time})
+end
+
+function DPSMate.DB:ConfirmAfflictedStun(target, ability, time)
+	for cat, val in pairs(AfflictedStun) do
+		if val[2]==ability and val[3]==target and val[4]<=time then
+			DPSMate.DB:AssignPotentialKick(val[1], val[2], val[3], time)
+			table.remove(AfflictedStun, cat)
+			break
+		end
+	end
+end
+
 function DPSMate.DB:RegisterPotentialKick(cause, ability, time)
 	table.insert(AwaitKick, {cause, ability, time})
 	--DPSMate:SendMessage("Potential kick registered!")
+end
+
+function DPSMate.DB:UnregisterPotentialKick(cause, ability, time)
+	for cat, val in pairs(AwaitKick) do
+		if val[1]==cause and val[2]==ability and val[3]<=time then
+			table.remove(AwaitKick, cat)
+			--DPSMate:SendMessage("Potential Kick has been unregistered!")
+			break
+		end
+	end
 end
 
 function DPSMate.DB:AssignPotentialKick(cause, ability, target, time)

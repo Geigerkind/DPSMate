@@ -146,6 +146,7 @@ function DPSMate.Parser:OnEvent(event)
 		if arg1=="DPSMate" then
 			local owner, ability, abilityTarget, time = "", "", "", 0
 			for o,a,at,t in string.gfind(arg2, "(.+),(.+),(.+),(.+)") do owner=o;ability=a;abilityTarget=at;time=tonumber(t) end
+			if DPSMate:TContains(DPSMate.Parser.Kicks, ability) then DPSMate.DB:AwaitAfflictedStun(owner, ability, abilityTarget, time) end
 			DPSMate.DB:AwaitingAbsorbConfirmation(owner, ability, abilityTarget, time)
 		end
 	-- Dispels
@@ -237,7 +238,7 @@ end
 function DPSMate.Parser:PeriodicDamage(msg)
 	local cause = {}
 	-- (NAME) is afflicted by (ABILITY). => Filtered out for now.
-	for ta, ab in string.gfind(msg, "(.+) is afflicted by (.+)%.") do if DPSMate:TContains(DPSMate.Parser.Kicks, ab) then DPSMate.DB:AssignPotentialKick(player.name, ab, ta, GetTime()) end end -- That is wrong, it is not always the player!
+	for ta, ab in string.gfind(msg, "(.+) is afflicted by (.+)%.") do if DPSMate:TContains(DPSMate.Parser.Kicks, ab) then DPSMate.DB:ConfirmAfflictedStun(ta, ab, GetTime()) end end -- That is wrong, it is not always the player!
 	-- School has to be added and target
 	for tar, dmg, name, ab in string.gfind(msg, "(.+) suffers (.+) from (.-) (.+)") do -- Here might be some loss
 		if not name then return end
@@ -343,6 +344,7 @@ function DPSMate.Parser:CreatureVsSelfSpellDamage(msg)
 		for c, ab, a in string.gfind(msg, "(.+)'s (.-) hits you for (.+)%.") do hit=1; cause=c; ability=ab; amount=tonumber(strsub(a, strfind(a, "%d+"))) end
 		for c, ab, a in string.gfind(msg, "(.+)'s (.-) crits you for (.+)%.") do crit=1; cause=c; ability=ab; amount=tonumber(strsub(a, strfind(a, "%d+"))) end -- Absorbtion has to be parsed individually
 		for c, ab in string.gfind(msg, "(.+)'s (.-) was resisted.") do resist=1; cause=c; ability=ab end
+		DPSMate.DB:UnregisterPotentialKick(cause, ability, GetTime())
 		DPSMate.DB:EnemyDamage(DPSMateEDD, player, ability, hit, crit, 0, 0, 0, resist, amount, cause)
 		DPSMate.DB:DamageTaken(player, ability, hit, crit, 0, 0, 0, resist, amount, cause)
 		DPSMate.DB:DeathHistory(player.name, cause, ability, amount, hit, crit, 0)
@@ -403,6 +405,7 @@ function DPSMate.Parser:CreatureVsCreatureSpellDamage(msg)
 	for c, ab, ta in string.gfind(msg, "(.+)'s (.+) was resisted by (.+)%.") do resist=1; cause=c; target.name = ta; ability=ab end
 	for c, ab, ta, a in string.gfind(msg, "(.+)'s (.+) hits (.+) for (.+)%.") do hit=1; cause=c; target.name = ta; ability=ab; amount=tonumber(strsub(a, strfind(a, "%d+"))) end
 	for c, ab, ta, a in string.gfind(msg, "(.+)'s (.+) crits (.+) for (.+)%.") do crit=1; cause=c; target.name = ta; ability=ab; amount=tonumber(strsub(a, strfind(a, "%d+"))) end
+	DPSMate.DB:UnregisterPotentialKick(cause, ability, GetTime())
 	DPSMate.DB:EnemyDamage(DPSMateEDD, target, ability, hit, crit, 0, 0, 0, resist, amount, cause)
 	DPSMate.DB:DamageTaken(target, ability, hit, crit, 0, 0, 0, resist, amount, cause)
 	DPSMate.DB:DeathHistory(target, cause, ability, amount, hit, crit, 0)
@@ -584,6 +587,7 @@ DPSMate.Parser.oldUseAction = UseAction
 	DPSMate_Tooltip:Hide()
 	if aura and UnitName("target") then
 		SendAddonMessage("DPSMate", player.name..","..aura..","..UnitName("target")..","..GetTime(), "RAID")
+		if DPSMate:TContains(DPSMate.Parser.Kicks, ability) then DPSMate.DB:AwaitAfflictedStun(player.name, aura, UnitName("target"), GetTime()) end
 		DPSMate.DB:AwaitingAbsorbConfirmation(player.name, aura, UnitName("target"), GetTime())
 	end
 	DPSMate.Parser.oldUseAction(slot, checkCursor, onSelf)
