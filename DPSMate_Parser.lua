@@ -52,7 +52,9 @@ function DPSMate.Parser:OnEvent(event)
 	elseif event == "CHAT_MSG_SPELL_SELF_DAMAGE" then
 		if arg1 then DPSMate.Parser:SelfSpellDMG(arg1) end
 	elseif event == "CHAT_MSG_SPELL_PERIODIC_HOSTILEPLAYER_DAMAGE" then
-		--if arg1 then DPSMate.Parser:ParsePeriodicDamage(arg1) end
+		--if arg1 then DPSMate:SendMessage(arg1.."PERIODIC") end
+	elseif event == "CHAT_MSG_SPELL_HOSTILEPLAYER_DAMAGE" then
+		--if arg1 then DPSMate:SendMessage(arg1.."DIRECT") end
 	elseif event == "CHAT_MSG_SPELL_PERIODIC_CREATURE_DAMAGE" then
 		if arg1 then DPSMate.Parser:PeriodicDamage(arg1) end 
 	elseif event == "CHAT_MSG_COMBAT_PARTY_HITS" then
@@ -100,7 +102,10 @@ function DPSMate.Parser:OnEvent(event)
 	elseif event == "CHAT_MSG_COMBAT_CREATURE_VS_CREATURE_MISSES" then
 		if arg1 then DPSMate.Parser:CreatureVsCreatureMisses(arg1) end
 	elseif event == "CHAT_MSG_SPELL_CREATURE_VS_CREATURE_DAMAGE" then
-		if arg1 then DPSMate.Parser:CreatureVsCreatureSpellDamage(arg1) end
+		if arg1 then 
+			DPSMate.Parser:CreatureVsCreatureSpellDamage(arg1)
+			DPSMate.Parser:CreatureVsCreatureSpellDamageInterrupts(arg1)
+		end
 	elseif event == "CHAT_MSG_SPELL_PERIODIC_FRIENDLYPLAYER_DAMAGE" then
 		if arg1 then DPSMate.Parser:SpellPeriodicDamageTaken(arg1) end
 	-- Healing
@@ -153,6 +158,17 @@ function DPSMate.Parser:OnEvent(event)
 		if arg1 then DPSMate.Parser:CombatFriendlyDeath(arg1) end
 	elseif event == "CHAT_MSG_COMBAT_HOSTILE_DEATH" then
 		if arg1 then DPSMate.Parser:CombatHostileDeaths(arg1) end
+	-- Interrupts
+	elseif event == "CHAT_MSG_SPELL_CREATURE_VS_PARTY_BUFF" then
+		--if arg1 then DPSMate:SendMessage(arg1) end
+	elseif event == "CHAT_MSG_SPELL_CREATURE_VS_SELF_BUFF" then
+		--if arg1 then DPSMate:SendMessage(arg1.."SELF") end
+	elseif event == "CHAT_MSG_SPELL_CREATURE_VS_CREATURE_BUFF" then
+		--if arg1 then DPSMate:SendMessage(arg1.."CREATURE") end
+	elseif event == "CHAT_MSG_SPELL_CREATURE_VS_OTHERS_BUFF" then
+		--if arg1 then DPSMate:SendMessage(arg1.."OTHERS") end
+	elseif event == "CHAT_MSG_SPELL_PERIODIC_CREATURE_BUFFS" then
+		--if arg1 then DPSMate:SendMessage(arg1.."PERIODIC") end
 	end
 end
 
@@ -212,6 +228,7 @@ function DPSMate.Parser:SelfSpellDMG(msg)
 		-- School and target to be added
 		for ab, t, a in string.gfind(msg, "Your (.+) hits (.+) for (.+).") do ability = ab; target = t; amount = tonumber(strsub(a, strfind(a, "%d+"))); hit=1; end
 		for ab, t, a in string.gfind(msg, "Your (.+) crits (.+) for (.+).") do ability = ab; target = t; amount = tonumber(strsub(a, strfind(a, "%d+"))); crit=1; end
+		if DPSMate:TContains(DPSMate.Parser.Kicks, ability) then DPSMate.DB:AssignPotentialKick(player.name, ability, target, GetTime()) end
 	end
 	DPSMate.DB:EnemyDamage(DPSMateEDT, player, ability, hit, crit, miss, parry, dodge, resist, amount, target)
 	DPSMate.DB:DamageDone(player, ability, hit, crit, miss, parry, dodge, resist, amount)
@@ -220,6 +237,7 @@ end
 function DPSMate.Parser:PeriodicDamage(msg)
 	local cause = {}
 	-- (NAME) is afflicted by (ABILITY). => Filtered out for now.
+	for ta, ab in string.gfind(msg, "(.+) is afflicted by (.+)%.") do if DPSMate:TContains(DPSMate.Parser.Kicks, ab) then DPSMate.DB:AssignPotentialKick(player.name, ab, ta, GetTime()) end end -- That is wrong, it is not always the player!
 	-- School has to be added and target
 	for tar, dmg, name, ab in string.gfind(msg, "(.+) suffers (.+) from (.-) (.+)") do -- Here might be some loss
 		if not name then return end
@@ -257,6 +275,7 @@ function DPSMate.Parser:FriendlyPlayerDamage(msg)
 	else
 		for c, ab, t, a in string.gfind(msg, "(.-)'s (.+) hits (.+) for (.+).") do hit=1; cause.name=c; ability=ab; target=t; amount=tonumber(strsub(a, strfind(a, "%d+"))); end
 		for c, ab, t, a in string.gfind(msg, "(.-)'s (.+) crits (.+) for (.+).") do crit=1; cause.name=c; ability=ab; target=t; amount=tonumber(strsub(a, strfind(a, "%d+"))); end
+		if DPSMate:TContains(DPSMate.Parser.Kicks, ability) then DPSMate.DB:AssignPotentialKick(cause.name, ability, target, GetTime()) end
 	end
 	DPSMate.DB:EnemyDamage(DPSMateEDT, cause, ability, hit, crit, 0, 0, 0, resist, amount, target)
 	DPSMate.DB:DamageDone(cause, ability, hit, crit, 0, 0, 0, resist, amount)
@@ -691,3 +710,34 @@ end
 ----------------------------------------------------------------------------------
 --------------                     Interrupts                       --------------                                  
 ----------------------------------------------------------------------------------
+
+DPSMate.Parser.Kicks = {
+	-- Interrupts
+	-- Rogue
+	[1] = "Kick",
+	-- Warrior
+	[2] = "Pummel",
+	[3] = "Shield Bash",
+	
+	-- Mage
+	[8] = "Counterspell",
+	
+	-- Stuns
+	-- Rogue
+	[4] = "Gouge",
+	[5] = "Kidney Shot",
+	[6] = "Cheap Shot",
+	
+	-- Hunter
+	[7] = "Scatter Shot",
+	
+	-- Warrior
+	[9] = "Charge Stun",
+	[10] = "Intercept Stun",
+	[11] = "Concussion Blow",
+}
+
+-- Scalding Broodling begins to cast Fireball.
+function DPSMate.Parser:CreatureVsCreatureSpellDamageInterrupts(msg)
+	for c, ab in string.gfind(msg, "(.+) begins to cast (.+)%.") do DPSMate.DB:RegisterPotentialKick(c, ab, GetTime()) end
+end

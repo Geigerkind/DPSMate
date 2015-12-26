@@ -156,6 +156,7 @@ function DPSMate.DB:OnEvent(event)
 		if DPSMateAbsorbs == nil then DPSMateAbsorbs = {[1]={},[2]={}} end
 		if DPSMateDispels == nil then DPSMateDispels = {[1]={},[2]={}} end
 		if DPSMateDeaths == nil then DPSMateDeaths = {[1]={},[2]={}} end
+		if DPSMateInterrupts == nil then DPSMateInterrupts = {[1]={},[2]={}} end
 		DPSMate.Modules.DPS.DB = DPSMateDamageDone
 		DPSMate.Modules.Damage.DB = DPSMateDamageDone
 		DPSMate.Modules.DamageTaken.DB = DPSMateDamageTaken
@@ -183,6 +184,7 @@ function DPSMate.DB:OnEvent(event)
 		DPSMate.Modules.CurePoisonReceived.DB = DPSMateDispels
 		DPSMate.Modules.LiftMagic.DB = DPSMateDispels
 		DPSMate.Modules.LiftMagicReceived.DB = DPSMateDispels
+		DPSMate.Modules.Interrupts.DB = DPSMateInterrupts
 		
 		if DPSMateCombatTime == nil then
 			DPSMateCombatTime = {
@@ -927,6 +929,60 @@ function DPSMate.DB:DeathHistory(target, cause, ability, amount, hit, crit, type
 	end
 end
 
+local AwaitKick = {}
+function DPSMate.DB:RegisterPotentialKick(cause, ability, time)
+	table.insert(AwaitKick, {cause, ability, time})
+	--DPSMate:SendMessage("Potential kick registered!")
+end
+
+function DPSMate.DB:AssignPotentialKick(cause, ability, target, time)
+	for cat, val in pairs(AwaitKick) do
+		if val[3]<=time then
+			if not val[4] and val[1]==target then
+				val[4] = {cause, ability}
+				--DPSMate:SendMessage("Kick assigned!")
+			end
+		end
+	end
+end
+
+function DPSMate.DB:UpdateKicks()
+	for cat, val in pairs(AwaitKick) do
+		if (GetTime()-val[3])>=5 then
+			if val[4] then
+				DPSMate.DB:Kick(val[4][1], val[1], val[4][2], val[2])
+			end
+			table.remove(AwaitKick, cat)
+		end
+	end
+end
+
+function DPSMate.DB:Kick(cause, target, causeAbility, targetAbility)
+	if (not target or target=="" or not cause or cause=="") then return end
+	for cat, val in pairs({[1]="total", [2]="current"}) do 
+		DPSMate.DB:BuildUser(target, nil)
+		DPSMate.DB:BuildUser(cause, nil)
+		DPSMate.DB:BuildAbility(causeAbility, nil)
+		DPSMate.DB:BuildAbility(targetAbility, nil)
+		if not DPSMateInterrupts[cat][DPSMateUser[cause][1]] then
+			DPSMateInterrupts[cat][DPSMateUser[cause][1]] = {
+				i = 0,
+			}
+		end
+		if not DPSMateInterrupts[cat][DPSMateUser[cause][1]][DPSMateAbility[causeAbility][1]] then
+			DPSMateInterrupts[cat][DPSMateUser[cause][1]][DPSMateAbility[causeAbility][1]] = {}
+		end
+		if not DPSMateInterrupts[cat][DPSMateUser[cause][1]][DPSMateAbility[causeAbility][1]][DPSMateUser[target][1]] then
+			DPSMateInterrupts[cat][DPSMateUser[cause][1]][DPSMateAbility[causeAbility][1]][DPSMateUser[target][1]] = {}
+		end
+		if not DPSMateInterrupts[cat][DPSMateUser[cause][1]][DPSMateAbility[causeAbility][1]][DPSMateUser[target][1]][DPSMateAbility[targetAbility][1]] then
+			DPSMateInterrupts[cat][DPSMateUser[cause][1]][DPSMateAbility[causeAbility][1]][DPSMateUser[target][1]][DPSMateAbility[targetAbility][1]] = 0
+		end
+		DPSMateInterrupts[cat][DPSMateUser[cause][1]]["i"] = DPSMateInterrupts[cat][DPSMateUser[cause][1]]["i"] + 1
+		DPSMateInterrupts[cat][DPSMateUser[cause][1]][DPSMateAbility[causeAbility][1]][DPSMateUser[target][1]][DPSMateAbility[targetAbility][1]]=DPSMateInterrupts[cat][DPSMateUser[cause][1]][DPSMateAbility[causeAbility][1]][DPSMateUser[target][1]][DPSMateAbility[targetAbility][1]]+1
+	end
+end
+
 -- Are those functions able to be combined?
 function DPSMate.DB:DDExist(uname, aname, arr)
 	if DPSMateUser[uname]~=nil and DPSMateAbility[aname]~=nil then
@@ -997,6 +1053,7 @@ function DPSMate.DB:CombatTime()
 				LastUpdate = 0
 			end
 		end
+		DPSMate.DB:UpdateKicks()
 	end)
 end
 

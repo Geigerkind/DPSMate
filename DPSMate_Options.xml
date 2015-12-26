@@ -2920,6 +2920,7 @@
 				this:RegisterEvent("CHAT_MSG_COMBAT_SELF_MISSES")
 				this:RegisterEvent("CHAT_MSG_SPELL_SELF_DAMAGE")
 				this:RegisterEvent("CHAT_MSG_SPELL_PERIODIC_HOSTILEPLAYER_DAMAGE") --
+				this:RegisterEvent("CHAT_MSG_SPELL_HOSTILEPLAYER_DAMAGE") --
 				this:RegisterEvent("CHAT_MSG_SPELL_PERIODIC_CREATURE_DAMAGE")
 				this:RegisterEvent("CHAT_MSG_COMBAT_PARTY_HITS")
 				this:RegisterEvent("CHAT_MSG_SPELL_PARTY_DAMAGE")
@@ -2958,6 +2959,12 @@
 				this:RegisterEvent("CHAT_MSG_SPELL_AURA_GONE_SELF")
 				this:RegisterEvent("CHAT_MSG_SPELL_AURA_GONE_OTHER")
 				this:RegisterEvent("CHAT_MSG_SPELL_AURA_GONE_PARTY")
+				
+				this:RegisterEvent("CHAT_MSG_SPELL_CREATURE_VS_PARTY_BUFF")--
+				this:RegisterEvent("CHAT_MSG_SPELL_CREATURE_VS_SELF_BUFF")--
+				this:RegisterEvent("CHAT_MSG_SPELL_CREATURE_VS_CREATURE_BUFF")--
+				this:RegisterEvent("CHAT_MSG_SPELL_CREATURE_VS_OTHERS_BUFF")--
+				this:RegisterEvent("CHAT_MSG_SPELL_PERIODIC_CREATURE_BUFFS") --
 				
 				this:RegisterEvent("CHAT_MSG_COMBAT_FRIENDLY_DEATH")
 				this:RegisterEvent("CHAT_MSG_COMBAT_HOSTILE_DEATH")
