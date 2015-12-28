@@ -25,6 +25,10 @@ local CombatState = false
 local cheatCombat = 0
 local UpdateTime = 0.25
 local LastUpdate = 0
+local MainLastUpdate = 0
+local MainUpdateTime = 1.5
+local NeedUpdate = false
+local MainLastUpdateMinute = 0
 
 -- Begin Functions
 
@@ -157,6 +161,7 @@ function DPSMate.DB:OnEvent(event)
 		if DPSMateDispels == nil then DPSMateDispels = {[1]={},[2]={}} end
 		if DPSMateDeaths == nil then DPSMateDeaths = {[1]={},[2]={}} end
 		if DPSMateInterrupts == nil then DPSMateInterrupts = {[1]={},[2]={}} end
+		if DPSMateBuffsGained == nil then DPSMateBuffsGained = {[1]={},[2]={}} end
 		DPSMate.Modules.DPS.DB = DPSMateDamageDone
 		DPSMate.Modules.Damage.DB = DPSMateDamageDone
 		DPSMate.Modules.DamageTaken.DB = DPSMateDamageTaken
@@ -400,7 +405,7 @@ function DPSMate.DB:DamageDone(Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, Ddodge,
 		DPSMateDamageDone[cat][DPSMateUser[Duser.name][1]]["i"][3] = DPSMateDamageDone[cat][DPSMateUser[Duser.name][1]]["i"][3] + Damount
 		DPSMateDamageDone[cat][DPSMateUser[Duser.name][1]]["i"][2][DPSMateCombatTime[val]] = Damount
 	end
-	DPSMate:SetStatusBarValue()
+	NeedUpdate = true
 end
 
 -- Fall damage
@@ -463,7 +468,7 @@ function DPSMate.DB:DamageTaken(Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, Ddodge
 		end
 		DPSMateDamageTaken[cat][DPSMateUser[Duser.name][1]][DPSMateUser[cause][1]]["i"][3] = DPSMateDamageTaken[cat][DPSMateUser[Duser.name][1]][DPSMateUser[cause][1]]["i"][3] + Damount
 	end
-	DPSMate:SetStatusBarValue()
+	NeedUpdate = true
 end
 
 function DPSMate.DB:EnemyDamage(arr, Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, Ddodge, Dresist, Damount, cause)
@@ -522,7 +527,7 @@ function DPSMate.DB:EnemyDamage(arr, Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, D
 		end
 		arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser.name][1]]["i"][3] = arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser.name][1]]["i"][3] + Damount
 	end
-	DPSMate:SetStatusBarValue()
+	NeedUpdate = true
 end
 
 function DPSMate.DB:Healing(arr, Duser, Dname, Dhit, Dcrit, Damount, target)
@@ -571,7 +576,7 @@ function DPSMate.DB:Healing(arr, Duser, Dname, Dhit, Dcrit, Damount, target)
 		arr[cat][DPSMateUser[Duser.name][1]][DPSMateAbility[Dname][1]][DPSMateUser[target][1]][3] = arr[cat][DPSMateUser[Duser.name][1]][DPSMateAbility[Dname][1]][DPSMateUser[target][1]][3]+Dcrit
 		arr[cat][DPSMateUser[Duser.name][1]]["i"][1] = arr[cat][DPSMateUser[Duser.name][1]]["i"][1]+Damount
 	end
-	DPSMate:SetStatusBarValue()
+	NeedUpdate = true
 end
 
 function DPSMate.DB:HealingTaken(arr, Duser, Dname, Dhit, Dcrit, Damount, target)
@@ -620,7 +625,7 @@ function DPSMate.DB:HealingTaken(arr, Duser, Dname, Dhit, Dcrit, Damount, target
 		arr[cat][DPSMateUser[Duser][1]][DPSMateUser[target][1]][DPSMateAbility[Dname][1]][3] = arr[cat][DPSMateUser[Duser][1]][DPSMateUser[target][1]][DPSMateAbility[Dname][1]][3]+Dcrit
 		arr[cat][DPSMateUser[Duser][1]]["i"][1] = arr[cat][DPSMateUser[Duser][1]]["i"][1]+Damount
 	end
-	DPSMate:SetStatusBarValue()
+	NeedUpdate = true
 end
 
 -- Fire etc. Prot Potion
@@ -638,6 +643,14 @@ function DPSMate.DB:AwaitingAbsorbConfirmation(owner, ability, abilityTarget, ti
 	table.insert(Await, {owner, ability, abilityTarget, time})
 	--DPSMate:SendMessage(time)
 	--DPSMate:SendMessage("Awaiting confirmation!")
+end
+
+function DPSMate.DB:ClearAwaitAbsorb()
+	for cat, val in pairs(Await) do
+		if (GetTime()-val[4])>=10 then
+			table.remove(Await, cat)
+		end
+	end
 end
 
 -- Gotta improve the function to prevent an overflow.
@@ -698,7 +711,7 @@ function DPSMate.DB:UnregisterAbsorb(ability, abilityTarget)
 		end
 		broken = 2
 		brokenAbsorb = 0
-		DPSMate:SetStatusBarValue()
+		NeedUpdate = true
 	end
 end
 
@@ -824,6 +837,14 @@ function DPSMate.DB:AwaitHotDispel(ability, target, cause, time)
 	table.insert(AwaitHotDispel, {cause, target, ability, time})
 end
 
+function DPSMate.DB:ClearAwaitHotDispel()
+	for cat, val in pairs(AwaitHotDispel) do
+		if (GetTime()-val[4])>=10 then
+			table.remove(AwaitHotDispel, cat)
+		end
+	end
+end
+
 local ActiveHotDispel = {}
 function DPSMate.DB:RegisterHotDispel(target, ability, time)
 	for cat, val in pairs(AwaitHotDispel) do
@@ -881,10 +902,11 @@ function DPSMate.DB:Dispels(cause, Dname, target, ability)
 		DPSMateDispels[cat][DPSMateUser[cause][1]][DPSMateAbility[Dname][1]][DPSMateUser[target][1]][DPSMateAbility[ability][1]] = DPSMateDispels[cat][DPSMateUser[cause][1]][DPSMateAbility[Dname][1]][DPSMateUser[target][1]][DPSMateAbility[ability][1]]+1
 		DPSMateDispels[cat][DPSMateUser[cause][1]]["i"][1] = DPSMateDispels[cat][DPSMateUser[cause][1]]["i"][1]+1
 	end
-	DPSMate:SetStatusBarValue()
+	NeedUpdate = true
 end
 
 function DPSMate.DB:UnregisterDeath(target)
+	if not DPSMateUser[target] then return end
 	for cat, val in pairs({[1]="total", [2]="current"}) do 
 		if DPSMateDeaths[cat][DPSMateUser[target][1]] then
 			DPSMateDeaths[cat][DPSMateUser[target][1]][DPSMate:TableLength(DPSMateDeaths[cat][DPSMateUser[target][1]])]["i"]=1
@@ -893,7 +915,7 @@ function DPSMate.DB:UnregisterDeath(target)
 end
 -- l. 846
 function DPSMate.DB:DeathHistory(target, cause, ability, amount, hit, crit, type)
-	if (not target or target=="" or not cause or cause=="" or amount==0) then return end
+	if (not target or target=="" or not cause or cause=="" or amount==0 or not DPSMateUser[target]) then return end
 	for cat, val in pairs({[1]="total", [2]="current"}) do 
 		DPSMate.DB:BuildUser(target, nil)
 		DPSMate.DB:BuildUser(cause, nil)
@@ -1013,6 +1035,30 @@ function DPSMate.DB:Kick(cause, target, causeAbility, targetAbility)
 	end
 end
 
+function DPSMate.DB:BuildBuffs(cause, target, ability)
+	if (not target or target=="" or not cause or cause=="") then return end
+	for cat, val in pairs({[1]="total", [2]="current"}) do 
+		DPSMate.DB:BuildUser(target, nil)
+		DPSMate.DB:BuildUser(cause, nil)
+		DPSMate.DB:BuildAbility(ability, nil)
+		if not DPSMateBuffsGained[cat][DPSMateUser[target][1]] then
+			DPSMateBuffsGained[cat][DPSMateUser[target][1]] = {
+				i = 0,
+			}
+		end
+		if not DPSMateBuffsGained[cat][DPSMateUser[target][1]][DPSMateUser[cause][1]] then
+			DPSMateBuffsGained[cat][DPSMateUser[target][1]][DPSMateUser[cause][1]] = {}
+		end
+		if not DPSMateBuffsGained[cat][DPSMateUser[target][1]][DPSMateUser[cause][1]][DPSMateAbility[ability][1]] then
+			DPSMateBuffsGained[cat][DPSMateUser[target][1]][DPSMateUser[cause][1]][DPSMateAbility[ability][1]] = {
+				[1] = {},
+				[2] = {},
+			}
+		end
+		table.insert(DPSMateBuffsGained[cat][DPSMateUser[target][1]][DPSMateUser[cause][1]][DPSMateAbility[ability][1]][1], DPSMateCombatTime[val])
+	end
+end
+
 -- Are those functions able to be combined?
 function DPSMate.DB:DDExist(uname, aname, arr)
 	if DPSMateUser[uname]~=nil and DPSMateAbility[aname]~=nil then
@@ -1083,7 +1129,21 @@ function DPSMate.DB:CombatTime()
 				LastUpdate = 0
 			end
 		end
-		DPSMate.DB:UpdateKicks()
+		if NeedUpdate then
+			MainLastUpdate = MainLastUpdate + arg1
+			if MainLastUpdate>=MainUpdateTime then
+				DPSMate.DB:UpdateKicks()
+				DPSMate:SetStatusBarValue()
+				NeedUpdate = false
+				MainLastUpdate = 0
+			end
+		end
+		MainLastUpdateMinute = MainLastUpdateMinute + arg1
+		if MainLastUpdateMinute>=60 then
+			DPSMate.DB:ClearAwaitAbsorb()
+			DPSMate.DB:ClearAwaitHotDispel()
+			MainLastUpdateMinute = 0
+		end
 	end)
 end
 
