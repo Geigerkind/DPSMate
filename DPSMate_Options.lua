@@ -397,6 +397,8 @@ function DPSMate.Options:PopUpAccept()
 	DPSMateAbsorbs = {[1]={},[2]={}}
 	DPSMateDispels = {[1]={},[2]={}}
 	DPSMateDeaths = {[1]={},[2]={}}
+	DPSMateInterrupts = {[1]={},[2]={}}
+	DPSMateBuffsGained = {[1]={},[2]={}}
 	DPSMate.Modules.DPS.DB = DPSMateDamageDone
 	DPSMate.Modules.Damage.DB = DPSMateDamageDone
 	DPSMate.Modules.DamageTaken.DB = DPSMateDamageTaken
@@ -413,6 +415,18 @@ function DPSMate.Options:PopUpAccept()
 	DPSMate.Modules.Absorbs.DB = DPSMateAbsorbs
 	DPSMate.Modules.AbsorbsTaken.DB = DPSMateAbsorbs
 	DPSMate.Modules.HealingAndAbsorbs.DB = DPSMateAbsorbs
+	DPSMate.Modules.Deaths.DB = DPSMateDeaths
+	DPSMate.Modules.Dispels.DB = DPSMateDispels
+	DPSMate.Modules.DispelsReceived.DB = DPSMateDispels
+	DPSMate.Modules.Decurses.DB = DPSMateDispels
+	DPSMate.Modules.DecursesReceived.DB = DPSMateDispels
+	DPSMate.Modules.CureDisease.DB = DPSMateDispels
+	DPSMate.Modules.CureDiseaseReceived.DB = DPSMateDispels
+	DPSMate.Modules.CurePoison.DB = DPSMateDispels
+	DPSMate.Modules.CurePoisonReceived.DB = DPSMateDispels
+	DPSMate.Modules.LiftMagic.DB = DPSMateDispels
+	DPSMate.Modules.LiftMagicReceived.DB = DPSMateDispels
+	DPSMate.Modules.Interrupts.DB = DPSMateInterrupts
 	DPSMateHistory = {
 		DMGDone = {},
 		DMGTaken = {},

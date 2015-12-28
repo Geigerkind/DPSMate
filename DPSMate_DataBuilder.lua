@@ -1035,6 +1035,33 @@ function DPSMate.DB:Kick(cause, target, causeAbility, targetAbility)
 	end
 end
 
+local AwaitBuff = {}
+function DPSMate.DB:AwaitingBuff(cause, ability, target, time)
+	table.insert(AwaitBuff, {cause, ability, target, time})
+	DPSMate:SendMessage("Awaiting buff!"..ability)
+end
+
+function DPSMate.DB:ClearAwaitBuffs()
+	for cat, val in pairs(AwaitBuff) do
+		if (GetTime()-val[4])>=5 then
+			table.insert(AwaitBuff, cat)
+		end
+	end
+end
+
+function DPSMate.DB:ConfirmBuff(target, ability, time)
+	for cat, val in pairs(AwaitBuff) do
+		if val[4]<=time then
+			if val[2]==ability and val[3]==target then
+				DPSMate.DB:BuildBuffs(val[1], target, ability)
+				DPSMate:SendMessage("Confirmed Buff!")
+				return
+			end
+		end
+	end
+	DPSMate.DB:BuildBuffs("Unknown", target, ability)
+end
+
 function DPSMate.DB:BuildBuffs(cause, target, ability)
 	if (not target or target=="" or not cause or cause=="") then return end
 	for cat, val in pairs({[1]="total", [2]="current"}) do 
@@ -1042,9 +1069,7 @@ function DPSMate.DB:BuildBuffs(cause, target, ability)
 		DPSMate.DB:BuildUser(cause, nil)
 		DPSMate.DB:BuildAbility(ability, nil)
 		if not DPSMateBuffsGained[cat][DPSMateUser[target][1]] then
-			DPSMateBuffsGained[cat][DPSMateUser[target][1]] = {
-				i = 0,
-			}
+			DPSMateBuffsGained[cat][DPSMateUser[target][1]] = {}
 		end
 		if not DPSMateBuffsGained[cat][DPSMateUser[target][1]][DPSMateUser[cause][1]] then
 			DPSMateBuffsGained[cat][DPSMateUser[target][1]][DPSMateUser[cause][1]] = {}
@@ -1056,6 +1081,30 @@ function DPSMate.DB:BuildBuffs(cause, target, ability)
 			}
 		end
 		table.insert(DPSMateBuffsGained[cat][DPSMateUser[target][1]][DPSMateUser[cause][1]][DPSMateAbility[ability][1]][1], DPSMateCombatTime[val])
+	end
+end
+
+function DPSMate.DB:DestroyBuffs(target, ability)
+	if (not target or target=="" or ability=="") then return end
+	for cat, val in pairs({[1]="total", [2]="current"}) do 
+		local bool = true
+		for ca, va in pairs(DPSMateBuffsGained[cat]) do -- 2
+			for c, v in pairs(va) do -- 3
+				for ce, ve in pairs(v) do -- 1
+					if DPSMate:GetAbilityById(ce)==ability then
+						local TL = DPSMate:TableLength(ve[2])
+						if not ve[2][TL+1] then
+							ve[2][TL+1]=DPSMateCombatTime[val]
+							bool = false
+						end
+					end
+				end
+			end
+		end
+		if bool then
+			DPSMate.DB:BuildBuffs("Unknown", target, ability)
+			table.insert(DPSMateBuffsGained[cat][DPSMateUser[target][1]][DPSMateUser["Unknown"][1]][DPSMateAbility[ability][1]][2], DPSMateCombatTime[val])
+		end
 	end
 end
 
@@ -1140,6 +1189,7 @@ function DPSMate.DB:CombatTime()
 		end
 		MainLastUpdateMinute = MainLastUpdateMinute + arg1
 		if MainLastUpdateMinute>=60 then
+			DPSMate.DB:ClearAwaitBuffs()
 			DPSMate.DB:ClearAwaitAbsorb()
 			DPSMate.DB:ClearAwaitHotDispel()
 			MainLastUpdateMinute = 0
