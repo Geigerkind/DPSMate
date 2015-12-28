@@ -427,6 +427,7 @@ function DPSMate.Options:PopUpAccept()
 	DPSMate.Modules.LiftMagic.DB = DPSMateDispels
 	DPSMate.Modules.LiftMagicReceived.DB = DPSMateDispels
 	DPSMate.Modules.Interrupts.DB = DPSMateInterrupts
+	DPSMate.Modules.BuffsGained.DB = DPSMateBuffsGained
 	DPSMateHistory = {
 		DMGDone = {},
 		DMGTaken = {},
