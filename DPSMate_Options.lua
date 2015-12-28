@@ -398,7 +398,7 @@ function DPSMate.Options:PopUpAccept()
 	DPSMateDispels = {[1]={},[2]={}}
 	DPSMateDeaths = {[1]={},[2]={}}
 	DPSMateInterrupts = {[1]={},[2]={}}
-	DPSMateBuffsGained = {[1]={},[2]={}}
+	DPSMateAurasGained = {[1]={},[2]={}}
 	DPSMate.Modules.DPS.DB = DPSMateDamageDone
 	DPSMate.Modules.Damage.DB = DPSMateDamageDone
 	DPSMate.Modules.DamageTaken.DB = DPSMateDamageTaken
@@ -427,8 +427,8 @@ function DPSMate.Options:PopUpAccept()
 	DPSMate.Modules.LiftMagic.DB = DPSMateDispels
 	DPSMate.Modules.LiftMagicReceived.DB = DPSMateDispels
 	DPSMate.Modules.Interrupts.DB = DPSMateInterrupts
-	DPSMate.Modules.BuffsGained.DB = DPSMateBuffsGained
-	DPSMate.Modules.BuffsLost.DB = DPSMateBuffsGained
+	DPSMate.Modules.AurasGained.DB = DPSMateAurasGained
+	DPSMate.Modules.AurasLost.DB = DPSMateAurasGained
 	DPSMateHistory = {
 		DMGDone = {},
 		DMGTaken = {},

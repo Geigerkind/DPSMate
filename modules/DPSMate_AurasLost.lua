@@ -1,20 +1,20 @@
 -- Global Variables
-DPSMate.Modules.BuffsLost = {}
-DPSMate.Modules.BuffsLost.Hist = "Dispels"
-DPSMate.Options.Options[1]["args"]["buffslost"] = {
+DPSMate.Modules.AurasLost = {}
+DPSMate.Modules.AurasLost.Hist = "Dispels"
+DPSMate.Options.Options[1]["args"]["auraslost"] = {
 	order = 240,
 	type = 'toggle',
-	name = 'Buffs lost',
+	name = 'Auras lost',
 	desc = 'TO BE ADDED!',
-	get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["options"][1]["buffslost"] end,
-	set = function() DPSMate.Options:ToggleDrewDrop(1, "buffslost", DPSMate.Options.Dewdrop:GetOpenedParent()) end,
+	get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["options"][1]["auraslost"] end,
+	set = function() DPSMate.Options:ToggleDrewDrop(1, "auraslost", DPSMate.Options.Dewdrop:GetOpenedParent()) end,
 }
 
 -- Register the moodule
-DPSMate:Register("buffslost", DPSMate.Modules.BuffsLost)
+DPSMate:Register("auraslost", DPSMate.Modules.AurasLost)
 
 
-function DPSMate.Modules.BuffsLost:GetSortedTable(arr)
+function DPSMate.Modules.AurasLost:GetSortedTable(arr)
 	local b, a, total = {}, {}, 0
 	for cat, val in pairs(arr) do -- 2 Target
 		local CV = 0
@@ -49,7 +49,7 @@ function DPSMate.Modules.BuffsLost:GetSortedTable(arr)
 	return b, total, a
 end
 
-function DPSMate.Modules.BuffsLost:EvalTable(user, k)
+function DPSMate.Modules.AurasLost:EvalTable(user, k)
 	local a, b, temp, total = {}, {}, {}, 0
 	local arr = DPSMate:GetMode(k)
 	for cat, val in pairs(arr[user[1]]) do -- 3 Owner
@@ -87,10 +87,10 @@ function DPSMate.Modules.BuffsLost:EvalTable(user, k)
 	return a, total, b
 end
 
-function DPSMate.Modules.BuffsLost:GetSettingValues(arr, cbt, k)
+function DPSMate.Modules.AurasLost:GetSettingValues(arr, cbt, k)
 	local name, value, perc, sortedTable, total, a, p, strt = {}, {}, {}, {}, 0, 0, "", {[1]="",[2]=""}
 	if DPSMateSettings["windows"][k]["numberformat"] == 2 then p = "K" end
-	sortedTable, total, a = DPSMate.Modules.BuffsLost:GetSortedTable(arr)
+	sortedTable, total, a = DPSMate.Modules.AurasLost:GetSortedTable(arr)
 	for cat, val in pairs(sortedTable) do
 		local dmg, tot, sort = DPSMate:FormatNumbers(val, total, sortedTable[1], k)
 		if dmg==0 then break end
@@ -105,8 +105,8 @@ function DPSMate.Modules.BuffsLost:GetSettingValues(arr, cbt, k)
 	return name, value, perc, strt
 end
 
-function DPSMate.Modules.BuffsLost:ShowTooltip(user,k)
-	local a,b,c = DPSMate.Modules.BuffsLost:EvalTable(DPSMateUser[user], k)
+function DPSMate.Modules.AurasLost:ShowTooltip(user,k)
+	local a,b,c = DPSMate.Modules.AurasLost:EvalTable(DPSMateUser[user], k)
 	if DPSMateSettings["informativetooltips"] then
 		for i=1, DPSMateSettings["subviewrows"] do
 			if not a[i] then break end

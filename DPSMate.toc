@@ -4,7 +4,7 @@
 ## Notes: DPSMate tracks the fight and provides statistics [TO BE EDITED]
 ## Notes-deDE: [TO BE EDITED]
 ## Author: Shino <Synced> - Kronos
-## SavedVariablesPerCharacter: DPSMateSettings, DPSMateUser, DPSMateAbility, DPSMateDamageDone, DPSMateEDT, DPSMateEDD, DPSMateDamageTaken, DPSMateDispels, DPSMateInterrupts, DPSMateDeaths, DPSMateEHealing, DPSMateTHealing, DPSMateHealingTaken, DPSMateEHealingTaken, DPSMateOverhealing, DPSMateAbsorbs, DPSMateThreat, DPSMateBuffsGained, DPSMateCombatTime, DPSMateHistory
+## SavedVariablesPerCharacter: DPSMateSettings, DPSMateUser, DPSMateAbility, DPSMateDamageDone, DPSMateEDT, DPSMateEDD, DPSMateDamageTaken, DPSMateDispels, DPSMateInterrupts, DPSMateDeaths, DPSMateEHealing, DPSMateTHealing, DPSMateHealingTaken, DPSMateEHealingTaken, DPSMateOverhealing, DPSMateAbsorbs, DPSMateThreat, DPSMateAurasGained, DPSMateCombatTime, DPSMateHistory
 ## Version: 0.1
 
 libs\AceLibrary\AceLibrary.lua
@@ -29,9 +29,9 @@ modules\DPSMate_EDD.lua
 modules\DPSMate_EDT.lua
 modules\DPSMate_Absorbs.lua
 modules\DPSMate_AbsorbsTaken.lua
-modules\DPSMate_BuffsGained.lua
-modules\DPSMate_BuffsLost.lua
-modules\DPSMate_BuffUptimers.lua
+modules\DPSMate_AurasGained.lua
+modules\DPSMate_AurasLost.lua
+modules\DPSMate_AuraUptimers.lua
 modules\DPSMate_DebuffUptimers.lua
 modules\DPSMate_Deaths.lua
 modules\DPSMate_Dispels.lua
