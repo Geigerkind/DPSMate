@@ -191,6 +191,7 @@ function DPSMate.DB:OnEvent(event)
 		DPSMate.Modules.LiftMagicReceived.DB = DPSMateDispels
 		DPSMate.Modules.Interrupts.DB = DPSMateInterrupts
 		DPSMate.Modules.BuffsGained.DB = DPSMateBuffsGained
+		DPSMate.Modules.BuffsLost.DB = DPSMateBuffsGained
 		
 		if DPSMateCombatTime == nil then
 			DPSMateCombatTime = {
@@ -1039,7 +1040,7 @@ end
 local AwaitBuff = {}
 function DPSMate.DB:AwaitingBuff(cause, ability, target, time)
 	table.insert(AwaitBuff, {cause, ability, target, time})
-	DPSMate:SendMessage("Awaiting buff!"..ability)
+	--DPSMate:SendMessage("Awaiting buff!"..ability)
 end
 
 function DPSMate.DB:ClearAwaitBuffs()
@@ -1055,7 +1056,7 @@ function DPSMate.DB:ConfirmBuff(target, ability, time)
 		if val[4]<=time then
 			if val[2]==ability and val[3]==target then
 				DPSMate.DB:BuildBuffs(val[1], target, ability)
-				DPSMate:SendMessage("Confirmed Buff!")
+				--DPSMate:SendMessage("Confirmed Buff!")
 				return
 			end
 		end
@@ -1083,6 +1084,7 @@ function DPSMate.DB:BuildBuffs(cause, target, ability)
 		end
 		table.insert(DPSMateBuffsGained[cat][DPSMateUser[target][1]][DPSMateUser[cause][1]][DPSMateAbility[ability][1]][1], DPSMateCombatTime[val])
 	end
+	NeedUpdate = true
 end
 
 function DPSMate.DB:DestroyBuffs(target, ability)
@@ -1107,6 +1109,7 @@ function DPSMate.DB:DestroyBuffs(target, ability)
 			table.insert(DPSMateBuffsGained[cat][DPSMateUser[target][1]][DPSMateUser["Unknown"][1]][DPSMateAbility[ability][1]][2], DPSMateCombatTime[val])
 		end
 	end
+	NeedUpdate = true
 end
 
 -- Are those functions able to be combined?

@@ -469,7 +469,7 @@ end
 -- You gain 61 health from Nenea's Rejuvenation.
 function DPSMate.Parser:SpellPeriodicSelfBuff(msg) -- Maybe some loss here?
 	local cause, ability, target, amount = {}, "", "", 0
-	for ab in string.gfind(msg, "You gain (.+)%.") do DPSMate.DB:ConfirmBuff(player.name, ab, GetTime()); DPSMate:SendMessage("Gained!"..ab) end
+	for ab in string.gfind(msg, "You gain (.+)%.") do DPSMate.DB:ConfirmBuff(player.name, ab, GetTime()) end
 	for a, ab in string.gfind(msg, "You gain (.+) health from (.+)%.") do amount=tonumber(strsub(a, strfind(a, "%d+"))); ability=ab; target=player.name; cause.name=player.name end
 	for a, ta, ab in string.gfind(msg, "You gain (.+) health from (.+)'s (.+)%.") do amount=tonumber(strsub(a, strfind(a, "%d+"))); ability=ab; target=player.name; cause.name=ta end
 	if amount>0 then -- Workaround as long as I dont have buffs implemented
@@ -506,6 +506,7 @@ end
 -- Sivir gains 11 health from Albea's First Aid.
 function DPSMate.Parser:SpellPeriodicFriendlyPlayerBuffs(msg)
 	local cause, ability, target, amount = {}, "", "", 0
+	for ta, ab in string.gfind(msg, "(.+) gains (.+)%.") do DPSMate.DB:ConfirmBuff(ta, ab, GetTime()) end
 	for ta, a, ab in string.gfind(msg, "(.+) gains (.+) health from your (.+)%.") do target=ta; amount=tonumber(strsub(a, strfind(a, "%d+"))); ability=ab; cause.name=player.name end
 	for ta, a, c, ab in string.gfind(msg, "(.+) gains (.+) health from (.+)'s (.+)%.") do target=ta; amount=tonumber(strsub(a, strfind(a, "%d+"))); ability=ab; cause.name=c end
 	overheal = DPSMate.Parser:GetOverhealByName(amount, target)

@@ -21,7 +21,11 @@ function DPSMate.Modules.BuffsGained:GetSortedTable(arr)
 		for ca, va in pairs(val) do -- 3 Owner
 			for c, v in pairs(va) do -- 1 Ability
 				for ce, ve in pairs(v) do 
-					CV=CV+1
+					if ce==1 then
+						for c, v in pairs(ve) do
+							CV=CV+1
+						end
+					end
 				end
 			end
 		end
@@ -51,8 +55,12 @@ function DPSMate.Modules.BuffsGained:EvalTable(user, k)
 	for cat, val in pairs(arr[user[1]]) do -- 3 Owner
 		for ca, va in pairs(val) do -- 1 Ability
 			local CV = 0
-			for _, _ in pairs(va) do -- each one
-				CV=CV+1
+			for c, v in pairs(va) do -- each one
+				if c==1 then
+					for ce, ve in pairs(v) do
+						CV=CV+1
+					end
+				end
 			end
 			if temp[ca] then temp[ca]=temp[ca]+CV else temp[ca]=CV end
 		end
