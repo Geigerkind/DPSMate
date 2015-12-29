@@ -192,6 +192,8 @@ function DPSMate.DB:OnEvent(event)
 		DPSMate.Modules.Interrupts.DB = DPSMateInterrupts
 		DPSMate.Modules.AurasGained.DB = DPSMateAurasGained
 		DPSMate.Modules.AurasLost.DB = DPSMateAurasGained
+		DPSMate.Modules.AurasLost.DB = DPSMateAurasGained
+		DPSMate.Modules.AurasUptimers.DB = DPSMateAurasGained
 		
 		if DPSMateCombatTime == nil then
 			DPSMateCombatTime = {
