@@ -50,9 +50,9 @@ function DPSMate.Modules.Deaths:EvalTable(user, k)
 	local a, b, total = {}, {}, 0
 	local arr = DPSMate:GetMode(k)
 	if not arr[user[1]] then return end
-	for ca, va in pairs(arr[user[1]][DPSMate:TableLength(arr[user[1]])]) do -- 1 (Death)
-		if ca~="i" then
-			table.insert(b, ca, va[3])
+	for ca, va in pairs(arr[user[1]][2]) do -- 1 (Death)
+		if ca~="i" and arr[user[1]][2]["i"]==1 then
+			table.insert(b, ca, {va[3], va[5]})
 			table.insert(a, ca, va[2])
 		end
 	end
@@ -82,7 +82,11 @@ function DPSMate.Modules.Deaths:ShowTooltip(user,k)
 	if DPSMateSettings["informativetooltips"] then
 		for i=1, DPSMateSettings["subviewrows"] do
 			if not a[i] then break end
-			GameTooltip:AddDoubleLine(i..". "..DPSMate:GetAbilityById(a[i]),c[i],1,1,1,1,1,1)
+			if c[i][2]==1 then
+				GameTooltip:AddDoubleLine(i..". "..DPSMate:GetAbilityById(a[i]),"+"..c[i][1],0.67,0.83,0.45,0.67,0.83,0.45)
+			else
+				GameTooltip:AddDoubleLine(i..". "..DPSMate:GetAbilityById(a[i]),"-"..c[i][1],0.77,0.12,0.23,0.77,0.12,0.23)
+			end
 		end
 	end
 end

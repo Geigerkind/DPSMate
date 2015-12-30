@@ -937,30 +937,24 @@ function DPSMate.DB:DeathHistory(target, cause, ability, amount, hit, crit, type
 		if not DPSMateDeaths[cat][DPSMateUser[target][1]] then
 			DPSMateDeaths[cat][DPSMateUser[target][1]] = {}
 		end
-		local TL = DPSMate:TableLength(DPSMateDeaths[cat][DPSMateUser[target][1]])
-		if TL==0 then
+		if not DPSMateDeaths[cat][DPSMateUser[target][1]][1] then
 			DPSMateDeaths[cat][DPSMateUser[target][1]][1] = {
 				i = 0,
 			}
-			TL=1
-		else
-			if DPSMateDeaths[cat][DPSMateUser[target][1]][TL]["i"]==1 then
-				TL=TL+1
-				DPSMateDeaths[cat][DPSMateUser[target][1]][TL] = {
-					i = 0,
-				}
-			end
+		end
+		if DPSMateDeaths[cat][DPSMateUser[target][1]][1]["i"]==1 then
+			table.insert(DPSMateDeaths[cat][DPSMateUser[target][1]], 1, {i = 0})
 		end
 		local hitCrit = crit
-		table.insert(DPSMateDeaths[cat][DPSMateUser[target][1]][TL], 1, {
+		table.insert(DPSMateDeaths[cat][DPSMateUser[target][1]][1], 1, {
 			[1] = DPSMateUser[cause][1],
 			[2] = DPSMateAbility[ability][1],
 			[3] = amount,
 			[4] = hitCrit,
 			[5] = type,
 		})
-		if DPSMateDeaths[cat][DPSMateUser[target][1]][TL][7] then
-			table.remove(DPSMateDeaths[cat][DPSMateUser[target][1]][TL], 7)
+		if DPSMateDeaths[cat][DPSMateUser[target][1]][1][7] then
+			table.remove(DPSMateDeaths[cat][DPSMateUser[target][1]][1], 7)
 		end
 	end
 end
