@@ -50,31 +50,53 @@ function DPSMate.Modules.FriendlyFire:EvalTable(user, k)
 	local arr = DPSMate:GetMode(k)
 	if not arr[user[1]] then return end
 	for cat, val in pairs(arr[user[1]]) do
+		temp[cat] = {
+			[1] = 0,
+			[2] = {},
+			[3] = {},
+		}
 		if user[3]==1 and DPSMateUser[DPSMate:GetUserById(cat)][3]==1 then
 			for ca, va in pairs(val) do
 				if ca~="i" then
-					if temp[cat] then temp[cat]=temp[cat]+va[13] else temp[cat] = va[13] end
+					temp[cat][1]=temp[cat][1]+va[13]
+					local i = 1
+					while true do
+						if (not temp[cat][3][i]) then
+							table.insert(temp[cat][3], i, va[13])
+							table.insert(temp[cat][2], i, ca)
+							break
+						else
+							if temp[cat][3][i] < va[13] then
+								table.insert(temp[cat][3], i, va[13])
+								table.insert(temp[cat][2], i, ca)
+								break
+							end
+						end
+						i=i+1
+					end
 				end
 			end
 		end
 	end
 	for cat, val in pairs(temp) do
-		local i = 1
-		while true do
-			if (not d[i]) then
-				table.insert(a, i, cat)
-				table.insert(d, i, val)
-				break
-			else
-				if (d[i] < val) then
-					table.insert(a, i, cat)
+		if val[1]~=0 then
+			local i = 1
+			while true do
+				if (not d[i]) then
 					table.insert(d, i, val)
+					table.insert(a, i, cat)
 					break
+				else
+					if d[i][1] < val[1] then
+						table.insert(d, i, val)
+						table.insert(a, i, cat)
+						break
+					end
 				end
+				i=i+1
 			end
-			i = i + 1
+			total = total + val[1]
 		end
-		total=total+val
 	end
 	return a, total, d
 end
@@ -101,7 +123,11 @@ function DPSMate.Modules.FriendlyFire:ShowTooltip(user, k)
 	if DPSMateSettings["informativetooltips"] then
 		for i=1, DPSMateSettings["subviewrows"] do
 			if not a[i] then break end
-			GameTooltip:AddDoubleLine(i..". "..DPSMate:GetUserById(a[i]),c[i],1,1,1,1,1,1)
+			GameTooltip:AddDoubleLine(i..". "..DPSMate:GetUserById(a[i]),c[i][1],1,1,1,1,1,1)
+			for p=1, 3 do 
+				if not c[i][2][p] or c[i][3][p]==0 then break end
+				GameTooltip:AddDoubleLine("       "..p..". "..DPSMate:GetAbilityById(c[i][2][p]),c[i][3][p],0.5,0.5,0.5,0.5,0.5,0.5)
+			end
 		end
 	end
 end

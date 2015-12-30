@@ -50,7 +50,7 @@ function DPSMate.Modules.Decurses:GetSortedTable(arr)
 end
 
 function DPSMate.Modules.Decurses:EvalTable(user, k)
-	local a, b, total = {}, {}, 0
+	local a, b, total, temp = {}, {}, 0, {}
 	local arr = DPSMate:GetMode(k)
 	if not arr[user[1]] then return end
 	for cat, val in pairs(arr[user[1]]) do -- 41 Ability
@@ -58,24 +58,27 @@ function DPSMate.Modules.Decurses:EvalTable(user, k)
 			for ca, va in pairs(val) do -- 3 Target
 				for c, v in pairs(va) do -- 10 Cured Ability
 					if DPSMateAbility[DPSMate:GetAbilityById(c)][2]=="Curse" then
-						local i = 1
-						while true do
-							if (not b[i]) then
-								table.insert(b, i, v)
-								table.insert(a, i, c)
-								break
-							else
-								if b[i] < v then
-									table.insert(b, i, v)
-									table.insert(a, i, c)
-									break
-								end
-							end
-							i=i+1
-						end
+						if temp[c] then temp[c]=temp[c]+v else temp[c]=v end
 					end
 				end
 			end
+		end
+	end
+	for cat, val in pairs(temp) do
+		local i = 1
+		while true do
+			if (not b[i]) then
+				table.insert(b, i, val)
+				table.insert(a, i, cat)
+				break
+			else
+				if b[i] < val then
+					table.insert(b, i, val)
+					table.insert(a, i, cat)
+					break
+				end
+			end
+			i=i+1
 		end
 	end
 	return a, total, b

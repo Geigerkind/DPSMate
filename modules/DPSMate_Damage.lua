@@ -52,21 +52,23 @@ function DPSMate.Modules.Damage:EvalTable(user, k)
 	for _, v in pairs(u) do
 		for cat, val in pairs(arr[v]) do
 			if (type(val) == "table" and cat~="i") then
-				if (DPSMateUser[DPSMate:GetUserById(v)]["isPet"]) then pet="(Pet)"; else pet=""; end
-				local i = 1
-				while true do
-					if (not d[i]) then
-						table.insert(a, i, cat..pet)
-						table.insert(d, i, val[13])
-						break
-					else
-						if (d[i] < val[13]) then
+				if val[13]~=0 and cat~="" then
+					if (DPSMateUser[DPSMate:GetUserById(v)]["isPet"]) then pet="(Pet)"; else pet=""; end
+					local i = 1
+					while true do
+						if (not d[i]) then
 							table.insert(a, i, cat..pet)
 							table.insert(d, i, val[13])
 							break
+						else
+							if (d[i] < val[13]) then
+								table.insert(a, i, cat..pet)
+								table.insert(d, i, val[13])
+								break
+							end
 						end
+						i = i + 1
 					end
-					i = i + 1
 				end
 			end
 		end

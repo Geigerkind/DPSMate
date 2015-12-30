@@ -42,30 +42,33 @@ function DPSMate.Modules.EDD:GetSortedTable(arr)
 end
 
 function DPSMate.Modules.EDD:EvalTable(user, k)
-	local a, u, p, d, total = {}, {}, {}, {}, 0
+	local a, temp, d, total = {}, {}, {}, 0
 	local arr = DPSMate:GetMode(k)
 	if not arr[user[1]] then return end
 	for cat, val in pairs(arr[user[1]]) do
 		for ca, va in pairs(val) do
 			if ca~="i" then
-				local i = 1
-				while true do
-					if (not d[i]) then
-						table.insert(a, i, ca)
-						table.insert(d, i, va[13])
-						break
-					else
-						if (d[i] < va[13]) then
-							table.insert(a, i, ca)
-							table.insert(d, i, va[13])
-							break
-						end
-					end
-					i = i + 1
-				end
+				if temp[ca] then temp[ca]=temp[ca]+va[13] else temp[ca]=va[13] end
 			end
 		end
 	total=total+val["i"][3]
+	end
+	for cat, val in pairs(temp) do
+		local i = 1
+		while true do
+			if (not d[i]) then
+				table.insert(a, i, cat)
+				table.insert(d, i, val)
+				break
+			else
+				if (d[i] < val) then
+					table.insert(a, i, cat)
+					table.insert(d, i, val)
+					break
+				end
+			end
+			i = i + 1
+		end
 	end
 	return a, total, d
 end

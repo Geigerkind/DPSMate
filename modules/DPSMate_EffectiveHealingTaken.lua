@@ -38,32 +38,48 @@ function DPSMate.Modules.EffectiveHealingTaken:GetSortedTable(arr)
 end
 
 function DPSMate.Modules.EffectiveHealingTaken:EvalTable(user, k)
-	local a, u, p, d, total = {}, {}, {}, {}, 0
+	local a, d, total = {}, {}, 0
 	local arr = DPSMate:GetMode(k)
-	if not arr[user[1]] then return end
-	for cat, val in pairs(arr[user[1]]) do
-		if cat~="i" then
-			local CV = 0
-			for ca, va in pairs(val) do
-				CV=CV+va[1]
-			end
-			local i = 1
-			while true do
-				if (not d[i]) then
-					table.insert(a, i, cat)
-					table.insert(d, i, CV)
-					break
-				else
-					if (d[i] < CV) then
-						table.insert(a, i, cat)
-						table.insert(d, i, CV)
-						break
+	if arr[user[1]] then
+		for cat, val in pairs(arr[user[1]]) do
+			if cat~="i" then
+				local CV, ta, tb = 0, {}, {}
+				for ca, va in pairs(val) do
+					CV=CV+va[1]
+					local i = 1
+					while true do
+						if (not tb[i]) then
+							table.insert(ta, i, ca)
+							table.insert(tb, i, va[1])
+							break
+						else
+							if (tb[i] < va[1]) then
+								table.insert(ta, i, ca)
+								table.insert(tb, i, va[1])
+								break
+							end
+						end
+						i = i + 1
 					end
 				end
-				i = i + 1
+				local i = 1
+				while true do
+					if (not d[i]) then
+						table.insert(a, i, cat)
+						table.insert(d, i, {CV, ta, tb})
+						break
+					else
+						if (d[i][1] < CV) then
+							table.insert(a, i, cat)
+							table.insert(d, i, {CV, ta, tb})
+							break
+						end
+					end
+					i = i + 1
+				end
 			end
+			total=total+arr[user[1]]["i"][1]
 		end
-	total=total+arr[user[1]]["i"][1]
 	end
 	return a, total, d
 end
@@ -90,7 +106,11 @@ function DPSMate.Modules.EffectiveHealingTaken:ShowTooltip(user, k)
 	if DPSMateSettings["informativetooltips"] then
 		for i=1, DPSMateSettings["subviewrows"] do
 			if not a[i] then break end
-			GameTooltip:AddDoubleLine(i..". "..DPSMate:GetUserById(a[i]),c[i],1,1,1,1,1,1)
+			GameTooltip:AddDoubleLine(i..". "..DPSMate:GetUserById(a[i]),c[i][1],1,1,1,1,1,1)
+			for p=1, 3 do 
+				if not c[i][2][p] or c[i][3][p]==0 then break end
+				GameTooltip:AddDoubleLine("       "..p..". "..DPSMate:GetAbilityById(c[i][2][p]),c[i][3][p],0.5,0.5,0.5,0.5,0.5,0.5)
+			end
 		end
 	end
 end

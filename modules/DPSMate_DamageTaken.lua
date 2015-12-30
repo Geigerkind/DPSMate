@@ -46,18 +46,21 @@ function DPSMate.Modules.DamageTaken:EvalTable(user, k)
 	local arr = DPSMate:GetMode(k)
 	if not arr[user[1]] then return end
 	for cat, val in pairs(arr[user[1]]) do
+		local CV = 0
+		local ta, tb = {}, {}
 		for ca, va in pairs(val) do
 			if ca~="i" then
+				CV = CV + va[13]
 				local i = 1
 				while true do
-					if (not d[i]) then
-						table.insert(a, i, cat)
-						table.insert(d, i, va[13])
+					if (not tb[i]) then
+						table.insert(ta, i, ca)
+						table.insert(tb, i, va[13])
 						break
 					else
-						if (d[i] < va[13]) then
-							table.insert(a, i, cat)
-							table.insert(d, i, va[13])
+						if (tb[i] < va[13]) then
+							table.insert(ta, i, ca)
+							table.insert(tb, i, va[13])
 							break
 						end
 					end
@@ -65,7 +68,22 @@ function DPSMate.Modules.DamageTaken:EvalTable(user, k)
 				end
 			end
 		end
-	total=total+val["i"][3]
+		local i = 1
+		while true do
+			if (not d[i]) then
+				table.insert(a, i, cat)
+				table.insert(d, i, {CV, ta, tb})
+				break
+			else
+				if (d[i][1] < CV) then
+					table.insert(a, i, cat)
+					table.insert(d, i, {CV, ta, tb})
+					break
+				end
+			end
+			i = i + 1
+		end
+		total=total+val["i"][3]
 	end
 	return a, total, d
 end
@@ -92,7 +110,11 @@ function DPSMate.Modules.DamageTaken:ShowTooltip(user, k)
 	if DPSMateSettings["informativetooltips"] then
 		for i=1, DPSMateSettings["subviewrows"] do
 			if not a[i] then break end
-			GameTooltip:AddDoubleLine(i..". "..DPSMate:GetUserById(a[i]),c[i],1,1,1,1,1,1)
+			GameTooltip:AddDoubleLine(i..". "..DPSMate:GetUserById(a[i]),c[i][1],1,1,1,1,1,1)
+			for p=1, 3 do 
+				if not c[i][2][p] or c[i][3][p]==0 then break end
+				GameTooltip:AddDoubleLine("       "..p..". "..DPSMate:GetAbilityById(c[i][2][p]),c[i][3][p],0.5,0.5,0.5,0.5,0.5,0.5)
+			end
 		end
 	end
 end

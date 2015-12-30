@@ -54,13 +54,33 @@ function DPSMate.Modules.CureDiseaseReceived:EvalTable(user, k)
 	local a, b, temp, total = {}, {}, {}, 0
 	local arr = DPSMate:GetMode(k)
 	for cat, val in pairs(arr) do -- 3 Owner
+		temp[cat] = {
+			[1] = 0,
+			[2] = {},
+			[3] = {},
+		}
 		for ca, va in pairs(val) do -- 42 Ability
 			if ca~="i" then
 				for c, v in pairs(va) do -- 3 Target
 					if c==user[1] then
 						for ce, ve in pairs(v) do -- 10 Cured Ability
 							if DPSMateAbility[DPSMate:GetAbilityById(ce)][2]=="Disease" then
-								if temp[cat] then temp[cat]=temp[cat]+ve else temp[cat]=ve end
+								temp[cat][1]=temp[cat][1]+ve
+								local i = 1
+								while true do
+									if (not temp[cat][3][i]) then
+										table.insert(temp[cat][3], i, ve)
+										table.insert(temp[cat][2], i, ce)
+										break
+									else
+										if temp[cat][3][i] < ve then
+											table.insert(temp[cat][3], i, ve)
+											table.insert(temp[cat][2], i, ce)
+											break
+										end
+									end
+									i=i+1
+								end
 							end
 						end
 						break
@@ -77,7 +97,7 @@ function DPSMate.Modules.CureDiseaseReceived:EvalTable(user, k)
 				table.insert(a, i, cat)
 				break
 			else
-				if b[i] < val then
+				if b[i][1] < val[1] then
 					table.insert(b, i, val)
 					table.insert(a, i, cat)
 					break
@@ -85,7 +105,7 @@ function DPSMate.Modules.CureDiseaseReceived:EvalTable(user, k)
 			end
 			i=i+1
 		end
-		total = total + val
+		total = total + val[1]
 	end
 	return a, total, b
 end
@@ -113,7 +133,11 @@ function DPSMate.Modules.CureDiseaseReceived:ShowTooltip(user,k)
 	if DPSMateSettings["informativetooltips"] then
 		for i=1, DPSMateSettings["subviewrows"] do
 			if not a[i] then break end
-			GameTooltip:AddDoubleLine(i..". "..DPSMate:GetUserById(a[i]),c[i],1,1,1,1,1,1)
+			GameTooltip:AddDoubleLine(i..". "..DPSMate:GetUserById(a[i]),c[i][1],1,1,1,1,1,1)
+			for p=1, 3 do 
+				if not c[i][2][p] or c[i][3][p]==0 then break end
+				GameTooltip:AddDoubleLine("       "..p..". "..DPSMate:GetAbilityById(c[i][2][p]),c[i][3][p],0.5,0.5,0.5,0.5,0.5,0.5)
+			end
 		end
 	end
 end

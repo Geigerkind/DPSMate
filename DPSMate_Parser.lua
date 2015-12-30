@@ -52,9 +52,9 @@ function DPSMate.Parser:OnEvent(event)
 	elseif event == "CHAT_MSG_SPELL_SELF_DAMAGE" then
 		if arg1 then DPSMate.Parser:SelfSpellDMG(arg1) end
 	elseif event == "CHAT_MSG_SPELL_PERIODIC_HOSTILEPLAYER_DAMAGE" then
-		--if arg1 then DPSMate:SendMessage(arg1.."PERIODIC") end
+		if arg1 then DPSMate.Parser:PeriodicDamage(arg1) end
 	elseif event == "CHAT_MSG_SPELL_HOSTILEPLAYER_DAMAGE" then
-		--if arg1 then DPSMate:SendMessage(arg1.."DIRECT") end
+		if arg1 then DPSMate.Parser:FriendlyPlayerDamage(arg1) end
 	elseif event == "CHAT_MSG_SPELL_PERIODIC_CREATURE_DAMAGE" then
 		if arg1 then DPSMate.Parser:PeriodicDamage(arg1) end 
 	elseif event == "CHAT_MSG_COMBAT_PARTY_HITS" then
