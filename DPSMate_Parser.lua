@@ -71,6 +71,10 @@ function DPSMate.Parser:OnEvent(event)
 		if arg1 then DPSMate.Parser:FriendlyPlayerHits(arg1) end
 	elseif event == "CHAT_MSG_COMBAT_FRIENDLYPLAYER_MISSES" then
 		if arg1 then DPSMate.Parser:FriendlyPlayerMisses(arg1) end
+	elseif event == "CHAT_MSG_SPELL_DAMAGESHIELDS_ON_SELF" then
+		if arg1 then DPSMate.Parser:SpellDamageShieldsOnSelf(arg1) end
+	elseif event == "CHAT_MSG_SPELL_DAMAGESHIELDS_ON_OTHERS" then
+		if arg1 then DPSMate.Parser:SpellDamageShieldsOnOthers(arg1) end
 	-- Damage Taken
 	elseif event == "CHAT_MSG_COMBAT_CREATURE_VS_SELF_HITS" then
 		if arg1 then 
@@ -120,7 +124,7 @@ function DPSMate.Parser:OnEvent(event)
 			DPSMate.Parser:SpellPeriodicSelfBuffAbsorb(arg1)
 		end
 	elseif event == "CHAT_MSG_SPELL_FRIENDLYPLAYER_BUFF" then
-		if arg1 then DPSMate.Parser:SpellFriendlyPlayerBuff(arg1) end
+		if arg1 then DPSMate.Parser:SpellHostilePlayerBuff(arg1) end
 	elseif event == "CHAT_MSG_SPELL_PERIODIC_FRIENDLYPLAYER_BUFFS" then
 		if arg1 then DPSMate.Parser:SpellPeriodicFriendlyPlayerBuffs(arg1) end
 	elseif event == "CHAT_MSG_SPELL_HOSTILEPLAYER_BUFF" then
@@ -129,19 +133,15 @@ function DPSMate.Parser:OnEvent(event)
 			DPSMate.Parser:SpellHostilePlayerBuffDispels(arg1)
 		end
 	elseif event == "CHAT_MSG_SPELL_PERIODIC_HOSTILEPLAYER_BUFFS" then
-		if arg1 then DPSMate.Parser:SpellPeriodicHostilePlayerBuffs(arg1) end
+		if arg1 then DPSMate.Parser:SpellPeriodicFriendlyPlayerBuffs(arg1) end
 	elseif event == "CHAT_MSG_SPELL_PARTY_BUFF" then
 		if arg1 then 
-			DPSMate.Parser:SpellPartyBuff(arg1) 
-			DPSMate.Parser:SpellPartyBuffDispels(arg1)
+			DPSMate.Parser:SpellHostilePlayerBuff(arg1)
+			DPSMate.Parser:SpellHostilePlayerBuffDispels(arg1)
 		end
 	elseif event == "CHAT_MSG_SPELL_PERIODIC_PARTY_BUFFS" then
-		if arg1 then DPSMate.Parser:SpellPeriodicPartyBuffs(arg1) end
+		if arg1 then DPSMate.Parser:SpellPeriodicFriendlyPlayerBuffs(arg1) end
 	-- Absorb
-	elseif event == "CHAT_MSG_SPELL_DAMAGESHIELDS_ON_SELF" then
-		if arg1 then DPSMate.Parser:SpellDamageShieldsOnSelf(arg1) end
-	elseif event == "CHAT_MSG_SPELL_DAMAGESHIELDS_ON_OTHERS" then
-		if arg1 then DPSMate.Parser:SpellDamageShieldsOnOthers(arg1) end
 	elseif event == "CHAT_MSG_SPELL_AURA_GONE_SELF" then
 		if arg1 then DPSMate.Parser:SpellAuraGoneSelf(arg1) end
 	elseif event == "CHAT_MSG_SPELL_AURA_GONE_OTHER" then
@@ -166,17 +166,6 @@ function DPSMate.Parser:OnEvent(event)
 		if arg1 then DPSMate.Parser:CombatFriendlyDeath(arg1) end
 	elseif event == "CHAT_MSG_COMBAT_HOSTILE_DEATH" then
 		if arg1 then DPSMate.Parser:CombatHostileDeaths(arg1) end
-	-- Interrupts
-	elseif event == "CHAT_MSG_SPELL_CREATURE_VS_PARTY_BUFF" then
-		--if arg1 then DPSMate:SendMessage(arg1) end
-	elseif event == "CHAT_MSG_SPELL_CREATURE_VS_SELF_BUFF" then
-		--if arg1 then DPSMate:SendMessage(arg1.."SELF") end
-	elseif event == "CHAT_MSG_SPELL_CREATURE_VS_CREATURE_BUFF" then
-		--if arg1 then DPSMate:SendMessage(arg1.."CREATURE") end
-	elseif event == "CHAT_MSG_SPELL_CREATURE_VS_OTHERS_BUFF" then
-		--if arg1 then DPSMate:SendMessage(arg1.."OTHERS") end
-	elseif event == "CHAT_MSG_SPELL_PERIODIC_CREATURE_BUFFS" then
-		--if arg1 then DPSMate:SendMessage(arg1.."PERIODIC") end
 	end
 end
 
@@ -505,46 +494,12 @@ function DPSMate.Parser:SpellPeriodicSelfBuff(msg) -- Maybe some loss here?
 	end
 end
 
--- Albea begins to cast Flash of Light.
--- Albea gains 35 Mana from Albea's Illumination.
--- Catrala performs Last Stand.
--- Albea's Holy Light (critically) heals Impalax for 922.
-function DPSMate.Parser:SpellFriendlyPlayerBuff(msg)
-	local cause, ability, target, amount, hit, crit = {}, "", "", 0, 0, 0
-	for c, ab, ta, a in string.gfind(msg, "(.+)'s (.+) heals (.+) for (.+)%.") do hit=1; crit=0; amount=tonumber(strsub(a, strfind(a, "%d+"))); ability=ab; target=ta; cause.name=c end
-	for c, ab, ta, a in string.gfind(msg, "(.+)'s (.+) critically heals (.+) for (.+)%.") do crit=1; hit=0; amount=tonumber(strsub(a, strfind(a, "%d+"))); ability=ab; target=ta; cause.name=c end
-	overheal = DPSMate.Parser:GetOverhealByName(amount, target)
-	DPSMate.DB:HealingTaken(DPSMateHealingTaken, target, ability, hit, crit, amount, cause.name)
-	DPSMate.DB:HealingTaken(DPSMateEHealingTaken, target, ability, hit, crit, amount-overheal, cause.name)
-	DPSMate.DB:Healing(DPSMateEHealing, cause, ability, hit, crit, amount-overheal, target)
-	DPSMate.DB:Healing(DPSMateOverhealing, cause, ability, hit, crit, overheal, target)
-	DPSMate.DB:Healing(DPSMateTHealing, cause, ability, hit, crit, amount, target)
-	DPSMate.DB:DeathHistory(target, cause.name, ability, amount, hit, crit, 1)
-end
-
 -- Catrala gains Last Stand.
 -- Raptor gains 35 Happiness from Giggity's Feed Pet Effect.
 -- Sivir gains 11 health from your First Aid.
 -- Sivir gains 11 health from Albea's First Aid.
 function DPSMate.Parser:SpellPeriodicFriendlyPlayerBuffs(msg)
 	local cause, ability, target, amount = {}, "", "", 0
-	for ta, ab in string.gfind(msg, "(.+) gains (.+)%.") do if not strfind(msg, "from") then DPSMate.DB:ConfirmBuff(ta, ab, GetTime()); return end end
-	for ta, a, ab in string.gfind(msg, "(.+) gains (.+) health from your (.+)%.") do target=ta; amount=tonumber(strsub(a, strfind(a, "%d+"))); ability=ab; cause.name=player.name end
-	for ta, a, c, ab in string.gfind(msg, "(.+) gains (.+) health from (.+)'s (.+)%.") do target=ta; amount=tonumber(strsub(a, strfind(a, "%d+"))); ability=ab; cause.name=c end
-	overheal = DPSMate.Parser:GetOverhealByName(amount, target)
-	DPSMate.DB:HealingTaken(DPSMateHealingTaken, target, ability, 1, 0, amount, cause.name)
-	DPSMate.DB:HealingTaken(DPSMateEHealingTaken, target, ability, 1, 0, amount-overheal, cause.name)
-	DPSMate.DB:Healing(DPSMateEHealing, cause, ability, 1, 0, amount-overheal, target)
-	DPSMate.DB:Healing(DPSMateOverhealing, cause, ability, 1, 0, overheal, target)
-	DPSMate.DB:Healing(DPSMateTHealing, cause, ability, 1, 0, amount, target)
-	DPSMate.DB:DeathHistory(target, cause.name, ability, amount, 1, 0, 1)
-end
-
--- Soulleacher gains Summon Felsteed.
--- Raptor gains 35 Happiness from Giggity's Feed Pet Effect.
--- Sivir gains 11 health from your First Aid.
--- Sivir gains 11 health from Albea's First Aid.
-function DPSMate.Parser:SpellPeriodicHostilePlayerBuffs(msog)
 	for ta, ab in string.gfind(msg, "(.+) gains (.+)%.") do if not strfind(msg, "from") then DPSMate.DB:ConfirmBuff(ta, ab, GetTime()); return end end
 	for ta, a, ab in string.gfind(msg, "(.+) gains (.+) health from your (.+)%.") do target=ta; amount=tonumber(strsub(a, strfind(a, "%d+"))); ability=ab; cause.name=player.name end
 	for ta, a, c, ab in string.gfind(msg, "(.+) gains (.+) health from (.+)'s (.+)%.") do target=ta; amount=tonumber(strsub(a, strfind(a, "%d+"))); ability=ab; cause.name=c end
@@ -573,59 +528,11 @@ function DPSMate.Parser:SpellHostilePlayerBuff(msg)
 	DPSMate.DB:DeathHistory(target, cause.name, ability, amount, hit, crit, 1)
 end
 
--- Glory casts Redemption on Bla.
--- Glory's Flash of Light heals Olimio for 741.
--- Glory's Flash of Light critically heals Olimio for 741.
-function DPSMate.Parser:SpellPartyBuff(msg)
-	local cause, ability, target, amount, hit, crit = {}, "", "", 0, 0, 0
-	for c, ab, ta, a in string.gfind(msg, "(.+)'s (.+) heals (.+) for (.+)%.") do hit=1; crit=0; amount=tonumber(strsub(a, strfind(a, "%d+"))); ability=ab; target=ta; cause.name=c end
-	for c, ab, ta, a in string.gfind(msg, "(.+)'s (.+) critically heals (.+) for (.+)%.") do crit=1; hit=0; amount=tonumber(strsub(a, strfind(a, "%d+"))); ability=ab; target=ta; cause.name=c end
-	if target=="you" then target=player.name end
-	overheal = DPSMate.Parser:GetOverhealByName(amount, target)
-	DPSMate.DB:HealingTaken(DPSMateHealingTaken, target, ability, hit, crit, amount, cause.name)
-	DPSMate.DB:HealingTaken(DPSMateEHealingTaken, target, ability, hit, crit, amount-overheal, cause.name)
-	DPSMate.DB:Healing(DPSMateEHealing, cause, ability, hit, crit, amount-overheal, target)
-	DPSMate.DB:Healing(DPSMateOverhealing, cause, ability, hit, crit, overheal, target)
-	DPSMate.DB:Healing(DPSMateTHealing, cause, ability, hit, crit, amount, target)
-	DPSMate.DB:DeathHistory(target, cause.name, ability, amount, hit, crit, 1)
-end
-
--- Soulstoke gains First Aid.
--- Feith gains power word shield
--- Soulstoke gains 11 health from your/Albea's First Aid.
-function DPSMate.Parser:SpellPeriodicPartyBuffs(msg)
-	local cause, ability, target, amount = {}, "", "", 0
-	for ta, a, ab in string.gfind(msg, "(.+) gains (.+) health from your (.+)%.") do target=ta; amount=tonumber(strsub(a, strfind(a, "%d+"))); ability=ab; cause.name=player.name end
-	for ta, a, c, ab in string.gfind(msg, "(.+) gains (.+) health from (.+)'s (.+)%.") do target=ta; amount=tonumber(strsub(a, strfind(a, "%d+"))); ability=ab; cause.name=c end
-	overheal = DPSMate.Parser:GetOverhealByName(amount, target)
-	DPSMate.DB:HealingTaken(DPSMateHealingTaken, target, ability, 1, 0, amount, cause.name)
-	DPSMate.DB:HealingTaken(DPSMateEHealingTaken, target, ability, 1, 0, amount-overheal, cause.name)
-	DPSMate.DB:Healing(DPSMateEHealing, cause, ability, 1, 0, amount-overheal, target)
-	DPSMate.DB:Healing(DPSMateOverhealing, cause, ability, 1, 0, overheal, target)
-	DPSMate.DB:Healing(DPSMateTHealing, cause, ability, 1, 0, amount, target)
-	DPSMate.DB:DeathHistory(target, cause.name, ability, amount, 1, 0, 1)
-end
-
 ----------------------------------------------------------------------------------
 --------------                       Absorbs                        --------------                                  
 ----------------------------------------------------------------------------------
 
--- Hooking CastSpellByName to emulate an chat msg event
---[[
-DPSMate.Parser.oldCastSpellByName = CastSpellByName
- DPSMate.Parser.CastSpellByName = function(name, onself)
-	DPSMate:SendMessage(name)
-	DPSMate.Parser.oldCastSpellByName(name, onself)
-end
-CastSpellByName = DPSMate.Parser.CastSpellByName
-
-DPSMate.Parser.oldCastSpell = CastSpell
- DPSMate.Parser.CastSpellByName = function(spellID, spellbookType)
-	DPSMate:SendMessage(spellID)
-	DPSMate.Parser.oldCastSpell(spellID, spellbookType)
-end
-CastSpell = DPSMate.Parser.CastSpell
-]]--
+-- Hooking UseAction to emulate an chat msg event
 
 DPSMate.Parser.oldUseAction = UseAction
  DPSMate.Parser.UseAction = function(slot, checkCursor, onSelf)
@@ -725,10 +632,6 @@ end
 -- Is it really "yourself"?
 function DPSMate.Parser:SpellSelfBuffDispels(msg)
 	for ab, ta in string.gfind(msg, "You cast (.+) on (.+)%.") do if DPSMate:TContains(Dispels, ab) then if ta=="yourself" then DPSMate.DB:AwaitDispel(ab, player.name, player.name, GetTime()) else  DPSMate.DB:AwaitDispel(ab, ta, player.name, GetTime()) end end end
-end
-
-function DPSMate.Parser:SpellPartyBuffDispels(msg)
-	for c, ab, ta in string.gfind(msg, "(.+) casts (.+) on (.+)%.") do if DPSMate:TContains(Dispels, ab) then if ta=="you" then DPSMate.DB:AwaitDispel(ab, player.name, c, GetTime()) else  DPSMate.DB:AwaitDispel(ab, ta, c, GetTime()) end end end
 end
 
 -- Avrora casts Remove Curse on you.
