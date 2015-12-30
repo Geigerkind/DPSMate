@@ -47,8 +47,6 @@ modules\DPSMate_LiftMagicReceived.lua
 modules\DPSMate_EffectiveHealing.lua
 modules\DPSMate_EffectiveHPS.lua
 modules\DPSMate_EffectiveHealingTaken.lua
-modules\DPSMate_EffectiveThreat.lua
-modules\DPSMate_Threat.lua
 modules\DPSMate_FriendlyFire.lua
 modules\DPSMate_Healing.lua
 modules\DPSMate_HealingAndAbsorbs.lua
