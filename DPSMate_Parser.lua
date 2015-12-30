@@ -92,26 +92,48 @@ function DPSMate.Parser:OnEvent(event)
 			DPSMate.Parser:CreatureVsSelfSpellDamageAbsorb(arg1)
 		end
 	elseif event == "CHAT_MSG_SPELL_PERIODIC_SELF_DAMAGE" then
-		if arg1 then DPSMate.Parser:PeriodicSelfDamage(arg1) end
+		if arg1 then 
+			DPSMate.Parser:PeriodicSelfDamage(arg1) 
+		end
 	elseif event == "CHAT_MSG_COMBAT_CREATURE_VS_PARTY_HITS" then
-		if arg1 then DPSMate.Parser:CreatureVsCreatureHits(arg1) end
+		if arg1 then 
+			DPSMate.Parser:CreatureVsCreatureHits(arg1) 
+			DPSMate.Parser:CreatureVsCreatureHitsAbsorb(arg1)
+		end
 	elseif event == "CHAT_MSG_COMBAT_CREATURE_VS_PARTY_MISSES" then
-		if arg1 then DPSMate.Parser:CreatureVsCreatureMisses(arg1) end
+		if arg1 then 
+			DPSMate.Parser:CreatureVsCreatureMisses(arg1)
+			DPSMate.Parser:CreatureVsCreatureMissesAbsorb(arg1)			
+		end
 	elseif event == "CHAT_MSG_SPELL_PERIODIC_PARTY_DAMAGE" then
-		if arg1 then DPSMate.Parser:SpellPeriodicDamageTaken(arg1) end
+		if arg1 then 
+			DPSMate.Parser:SpellPeriodicDamageTaken(arg1) 
+		end
 	elseif event == "CHAT_MSG_SPELL_CREATURE_VS_PARTY_DAMAGE" then
-		if arg1 then DPSMate.Parser:CreatureVsCreatureSpellDamage(arg1) end
+		if arg1 then 
+			DPSMate.Parser:CreatureVsCreatureSpellDamage(arg1) 
+			DPSMate.Parser:CreatureVsCreatureSpellDamageAbsorb(arg1)
+		end
 	elseif event == "CHAT_MSG_COMBAT_CREATURE_VS_CREATURE_HITS" then
-		if arg1 then DPSMate.Parser:CreatureVsCreatureHits(arg1) end
+		if arg1 then 
+			DPSMate.Parser:CreatureVsCreatureHits(arg1) 
+			DPSMate.Parser:CreatureVsCreatureHitsAbsorb(arg1)
+		end
 	elseif event == "CHAT_MSG_COMBAT_CREATURE_VS_CREATURE_MISSES" then
-		if arg1 then DPSMate.Parser:CreatureVsCreatureMisses(arg1) end
+		if arg1 then 
+			DPSMate.Parser:CreatureVsCreatureMisses(arg1) 
+			DPSMate.Parser:CreatureVsCreatureMissesAbsorb(arg1)
+		end
 	elseif event == "CHAT_MSG_SPELL_CREATURE_VS_CREATURE_DAMAGE" then
 		if arg1 then 
 			DPSMate.Parser:CreatureVsCreatureSpellDamage(arg1)
+			DPSMate.Parser:CreatureVsCreatureSpellDamageAbsorb(arg1)
 			DPSMate.Parser:CreatureVsCreatureSpellDamageInterrupts(arg1)
 		end
 	elseif event == "CHAT_MSG_SPELL_PERIODIC_FRIENDLYPLAYER_DAMAGE" then
-		if arg1 then DPSMate.Parser:SpellPeriodicDamageTaken(arg1) end
+		if arg1 then 
+			DPSMate.Parser:SpellPeriodicDamageTaken(arg1) 
+		end
 	-- Healing
 	elseif event == "CHAT_MSG_SPELL_SELF_BUFF" then
 		if arg1 then 
@@ -557,15 +579,29 @@ function DPSMate.Parser:CreatureVsSelfHitsAbsorb(msg)
 	for c, a, absorbed in string.gfind(msg, "(.+) crits you for (.+)%. ((.+) absorbed)") do DPSMate.DB:SetUnregisterVariables(tonumber(absorbed)) end
 end
 
+function DPSMate.Parser:CreatureVsCreatureHitsAbsorb(msg)
+	for c, ta, a, absorbed in string.gfind(msg, "(.+) hits (.+) for (.+)%. ((.+) absorbed)") do DPSMate.DB:SetUnregisterVariables(tonumber(absorbed)) end
+	for c, ta, a, absorbed in string.gfind(msg, "(.+) crits (.+) for (.+)%. ((.+) absorbed)") do DPSMate.DB:SetUnregisterVariables(tonumber(absorbed)) end
+end
+
 -- Heavy War Golem attacks. You absorb all the damage.
 function DPSMate.Parser:CreatureVsSelfMissesAbsorb(msg)
-	for c in string.gfind(msg, "(.+) attacks%. You absorb all the damage%.") do DPSMate.DB:Absorb("AutoAttack", player.name, c); DPSMate:SendMessage(c.." absorbed!") end
+	for c in string.gfind(msg, "(.+) attacks%. You absorb all the damage%.") do DPSMate.DB:Absorb("AutoAttack", player.name, c) end
+end
+
+function DPSMate.Parser:CreatureVsCreatureMissesAbsorb(msg)
+	for c, ta in string.gfind(msg, "(.+) attacks%. (.+) absorbs all the damage%.") do DPSMate.DB:Absorb("AutoAttack", ta, c) end
 end
 
 -- Heavy War Golem's Trample hits/crits you for 51 (Fire damage). (48 absorbed)
 function DPSMate.Parser:CreatureVsSelfSpellDamageAbsorb(msg)
 	for c, a, absorbed in string.gfind(msg, "(.+)'s (.+) hits you for (.+)%. ((.+) absorbed)") do DPSMate.DB:SetUnregisterVariables(tonumber(absorbed)) end
 	for c, a, absorbed in string.gfind(msg, "(.+)'s (.+) crits you for (.+)%. ((.+) absorbed)") do DPSMate.DB:SetUnregisterVariables(tonumber(absorbed)) end
+end
+
+function DPSMate.Parser:CreatureVsCreatureSpellDamageAbsorb(msg)
+	for c, ta, a, absorbed in string.gfind(msg, "(.+)'s (.+) hits (.+) for (.+)%. ((.+) absorbed)") do DPSMate.DB:SetUnregisterVariables(tonumber(absorbed)) end
+	for c, ta, a, absorbed in string.gfind(msg, "(.+)'s (.+) crits (.+) for (.+)%. ((.+) absorbed)") do DPSMate.DB:SetUnregisterVariables(tonumber(absorbed)) end
 end
 
 function DPSMate.Parser:SpellPeriodicSelfBuffAbsorb(msg)
