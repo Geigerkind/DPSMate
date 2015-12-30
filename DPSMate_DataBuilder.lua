@@ -165,6 +165,7 @@ function DPSMate.DB:OnEvent(event)
 		DPSMate.Modules.DPS.DB = DPSMateDamageDone
 		DPSMate.Modules.Damage.DB = DPSMateDamageDone
 		DPSMate.Modules.DamageTaken.DB = DPSMateDamageTaken
+		DPSMate.Modules.FriendlyFire.DB = DPSMateDamageTaken
 		DPSMate.Modules.DTPS.DB = DPSMateDamageTaken
 		DPSMate.Modules.EDD.DB = DPSMateEDD
 		DPSMate.Modules.EDT.DB = DPSMateEDT
@@ -297,6 +298,9 @@ function DPSMate.DB:AssignClass()
 				if (classEng) then
 					DPSMateUser[name][2] = strlower(classEng)
 				end
+				if UnitIsFriend("party"..i,"player") then
+					DPSMateUser[name][3] = 1
+				end
 			end
 		end
 	elseif UnitInRaid("player") then
@@ -307,6 +311,9 @@ function DPSMate.DB:AssignClass()
 				t,classEng = UnitClass("raid"..i)
 				if (classEng) then
 					DPSMateUser[name][2] = strlower(classEng)
+				end
+				if UnitIsFriend("raid"..i,"player") then
+					DPSMateUser[name][3] = 1
 				end
 			end
 		end
@@ -321,6 +328,9 @@ function DPSMate.DB:PlayerTargetChanged()
 			DPSMateUser[name][2] = strlower(class)
 		else
 			DPSMate.DB:BuildUser(name, strlower(class))
+		end
+		if UnitIsFriend("target","player") then
+			DPSMateUser[name][3] = 1
 		end
 	end
 end

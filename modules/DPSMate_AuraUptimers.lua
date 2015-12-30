@@ -2,7 +2,7 @@
 DPSMate.Modules.AurasUptimers = {}
 DPSMate.Modules.AurasUptimers.Hist = "Dispels"
 DPSMate.Options.Options[1]["args"]["aurasuptime"] = {
-	order = 240,
+	order = 250,
 	type = 'toggle',
 	name = 'Aura uptime',
 	desc = 'TO BE ADDED!',
