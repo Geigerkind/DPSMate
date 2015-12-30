@@ -110,7 +110,10 @@ function DPSMate.Parser:OnEvent(event)
 		if arg1 then DPSMate.Parser:SpellPeriodicDamageTaken(arg1) end
 	-- Healing
 	elseif event == "CHAT_MSG_SPELL_SELF_BUFF" then
-		if arg1 then DPSMate.Parser:SpellSelfBuff(arg1) end
+		if arg1 then 
+			DPSMate.Parser:SpellSelfBuff(arg1) 
+			DPSMate.Parser:SpellSelfBuffDispels(arg1)
+		end
 	elseif event == "CHAT_MSG_SPELL_PERIODIC_SELF_BUFFS" then
 		if arg1 then 
 			DPSMate.Parser:SpellPeriodicSelfBuff(arg1)
@@ -128,7 +131,10 @@ function DPSMate.Parser:OnEvent(event)
 	elseif event == "CHAT_MSG_SPELL_PERIODIC_HOSTILEPLAYER_BUFFS" then
 		if arg1 then DPSMate.Parser:SpellPeriodicHostilePlayerBuffs(arg1) end
 	elseif event == "CHAT_MSG_SPELL_PARTY_BUFF" then
-		if arg1 then DPSMate.Parser:SpellPartyBuff(arg1) end
+		if arg1 then 
+			DPSMate.Parser:SpellPartyBuff(arg1) 
+			DPSMate.Parser:SpellPartyBuffDispels(arg1)
+		end
 	elseif event == "CHAT_MSG_SPELL_PERIODIC_PARTY_BUFFS" then
 		if arg1 then DPSMate.Parser:SpellPeriodicPartyBuffs(arg1) end
 	-- Absorb
@@ -522,7 +528,7 @@ end
 -- Sivir gains 11 health from Albea's First Aid.
 function DPSMate.Parser:SpellPeriodicFriendlyPlayerBuffs(msg)
 	local cause, ability, target, amount = {}, "", "", 0
-	for ta, ab in string.gfind(msg, "(.+) gains (.+)%.") do if not strfind(msg, "from") then DPSMate.DB:ConfirmBuff(ta, ab, GetTime()) end end
+	for ta, ab in string.gfind(msg, "(.+) gains (.+)%.") do if not strfind(msg, "from") then DPSMate.DB:ConfirmBuff(ta, ab, GetTime()); return end end
 	for ta, a, ab in string.gfind(msg, "(.+) gains (.+) health from your (.+)%.") do target=ta; amount=tonumber(strsub(a, strfind(a, "%d+"))); ability=ab; cause.name=player.name end
 	for ta, a, c, ab in string.gfind(msg, "(.+) gains (.+) health from (.+)'s (.+)%.") do target=ta; amount=tonumber(strsub(a, strfind(a, "%d+"))); ability=ab; cause.name=c end
 	overheal = DPSMate.Parser:GetOverhealByName(amount, target)
@@ -539,7 +545,16 @@ end
 -- Sivir gains 11 health from your First Aid.
 -- Sivir gains 11 health from Albea's First Aid.
 function DPSMate.Parser:SpellPeriodicHostilePlayerBuffs(msog)
-	for ta, ab in string.gfind(msg, "(.+) gains (.+)%.") do if not strfind(msg, "from") then DPSMate.DB:ConfirmBuff(ta, ab, GetTime()) end end
+	for ta, ab in string.gfind(msg, "(.+) gains (.+)%.") do if not strfind(msg, "from") then DPSMate.DB:ConfirmBuff(ta, ab, GetTime()); return end end
+	for ta, a, ab in string.gfind(msg, "(.+) gains (.+) health from your (.+)%.") do target=ta; amount=tonumber(strsub(a, strfind(a, "%d+"))); ability=ab; cause.name=player.name end
+	for ta, a, c, ab in string.gfind(msg, "(.+) gains (.+) health from (.+)'s (.+)%.") do target=ta; amount=tonumber(strsub(a, strfind(a, "%d+"))); ability=ab; cause.name=c end
+	overheal = DPSMate.Parser:GetOverhealByName(amount, target)
+	DPSMate.DB:HealingTaken(DPSMateHealingTaken, target, ability, 1, 0, amount, cause.name)
+	DPSMate.DB:HealingTaken(DPSMateEHealingTaken, target, ability, 1, 0, amount-overheal, cause.name)
+	DPSMate.DB:Healing(DPSMateEHealing, cause, ability, 1, 0, amount-overheal, target)
+	DPSMate.DB:Healing(DPSMateOverhealing, cause, ability, 1, 0, overheal, target)
+	DPSMate.DB:Healing(DPSMateTHealing, cause, ability, 1, 0, amount, target)
+	DPSMate.DB:DeathHistory(target, cause.name, ability, amount, 1, 0, 1)
 end
 
 -- A1bea's Flash of Light heals you/Baz for 90.
@@ -705,6 +720,15 @@ function DPSMate.Parser:UnitAuraDispels(unit)
 			DPSMate.DB:BuildAbility(aura, type)
 		end
 	end
+end
+
+-- Is it really "yourself"?
+function DPSMate.Parser:SpellSelfBuffDispels(msg)
+	for ab, ta in string.gfind(msg, "You cast (.+) on (.+)%.") do if DPSMate:TContains(Dispels, ab) then if ta=="yourself" then DPSMate.DB:AwaitDispel(ab, player.name, player.name, GetTime()) else  DPSMate.DB:AwaitDispel(ab, ta, player.name, GetTime()) end end end
+end
+
+function DPSMate.Parser:SpellPartyBuffDispels(msg)
+	for c, ab, ta in string.gfind(msg, "(.+) casts (.+) on (.+)%.") do if DPSMate:TContains(Dispels, ab) then if ta=="you" then DPSMate.DB:AwaitDispel(ab, player.name, c, GetTime()) else  DPSMate.DB:AwaitDispel(ab, ta, c, GetTime()) end end end
 end
 
 -- Avrora casts Remove Curse on you.
