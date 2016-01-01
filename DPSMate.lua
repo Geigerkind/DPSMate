@@ -364,8 +364,6 @@ function DPSMate:GetClassColor(class)
 		else
 			return 0.78,0.61,0.43, "Warrior"
 		end
-	else
-		return 0.1,0,0.1, "None"
 	end
 end
 

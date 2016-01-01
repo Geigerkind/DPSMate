@@ -1148,7 +1148,9 @@ end
 
 function DPSMate.Options:Report()
 	local channel = UIDropDownMenu_GetSelectedValue(DPSMate_Report_Channel)
-	local chn, index, sortedTable, total, a = nil, nil, DPSMate:GetSortedTable(DPSMate:GetMode(DPSMate_Report.PaKey))
+	local arr, cbt = DPSMate:GetMode(DPSMate_Report.PaKey)
+	local chn, index = nil, nil
+	local name, value, perc = DPSMate:GetSettingValues(arr, cbt, DPSMate_Report.PaKey)
 	if (channel == "Whisper") then
 		chn = "WHISPER"; index = DPSMate_Report_Editbox:GetText();
 	elseif DPSMate:TContains({"Raid","Party","Say","Officer","Guild"}, channel) then
@@ -1156,10 +1158,10 @@ function DPSMate.Options:Report()
 	else
 		chn = "CHANNEL"; index = GetChannelName(channel)
 	end
-	SendChatMessage("DPSMate - "..DPSMate.localization.reportfor..DPSMate:GetModeName(DPSMate_Report.PaKey), chn, nil, index)
+	SendChatMessage("DPSMate - "..DPSMate.localization.reportfor..DPSMate:GetModeName(DPSMate_Report.PaKey).." - "..getglobal("DPSMate_"..DPSMateSettings["windows"][DPSMate_Report.PaKey]["name"].."_Head_Font"):GetText(), chn, nil, index)
 	for i=1, DPSMate_Report_Lines:GetValue() do
-		if (not sortedTable[i] or sortedTable[i] == 0) then break end
-		SendChatMessage(i..". "..a[sortedTable[i]].." - "..sortedTable[i].." ("..string.format("%.1f", 100*sortedTable[i]/total).."%)", chn, nil, index)
+		if (not value[i] or value[i] == 0) then break end
+		SendChatMessage(i..". "..name[i].." -"..value[i], chn, nil, index)
 	end
 	DPSMate_Report:Hide()
 end
