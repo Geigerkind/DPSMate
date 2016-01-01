@@ -111,8 +111,8 @@ function DPSMate.Modules.AbsorbsTaken:GetSettingValues(arr, cbt, k)
 		local va, tot, sort = DPSMate:FormatNumbers(val, total, sortedTable[1], k)
 		if va==0 then break end
 		local str = {[1]="",[2]="",[3]=""}
-		str[1] = " "..va..p; strt[2] = tot..p
-		str[2] = " ("..string.format("%.1f", 100*va/tot).."%)"
+		if DPSMateSettings["columnsabsorbstaken"][1] then str[1] = " "..va..p; strt[2] = " "..tot..p end
+		if DPSMateSettings["columnsabsorbstaken"][1] then str[2] = " ("..string.format("%.1f", 100*va/tot).."%)" end
 		table.insert(name, DPSMate:GetUserById(a[cat]))
 		table.insert(value, str[1]..str[2])
 		table.insert(perc, 100*(va/sort))

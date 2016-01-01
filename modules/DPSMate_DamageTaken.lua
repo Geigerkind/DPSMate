@@ -96,10 +96,11 @@ function DPSMate.Modules.DamageTaken:GetSettingValues(arr, cbt, k)
 		local dmg, tot, sort = DPSMate:FormatNumbers(val, total, sortedTable[1], k)
 		if dmg==0 then break end
 		local str = {[1]="",[2]="",[3]=""}
-		str[1] = " "..dmg..p; strt[2] = tot..p
-		str[2] = " ("..string.format("%.1f", 100*dmg/tot).."%)"
+		if DPSMateSettings["columnsdmgtaken"][1] then str[1] = " "..dmg..p; strt[2] = " "..tot..p end
+		if DPSMateSettings["columnsdmgtaken"][2] then str[3] = "("..string.format("%.1f", dmg/cbt)..")"; strt[1] = "("..string.format("%.1f", tot/cbt)..")" end
+		if DPSMateSettings["columnsdmgtaken"][3] then str[2] = " ("..string.format("%.1f", 100*dmg/tot).."%)" end 
 		table.insert(name, DPSMate:GetUserById(a[cat]))
-		table.insert(value, str[1]..str[2])
+		table.insert(value, str[3]..str[1]..str[2])
 		table.insert(perc, 100*(dmg/sort))
 	end
 	return name, value, perc, strt

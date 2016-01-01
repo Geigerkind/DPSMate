@@ -258,12 +258,43 @@ function DPSMate.Options:InitializeConfigMenu()
 	DPSMate_ConfigMenu_Tab_GeneralOptions_Segments:SetValue(DPSMateSettings["datasegments"])
 	
 	-- Tab Columns
-	DPSMate_ConfigMenu_Tab_Columns_Container_DPS_Check1:SetChecked(DPSMateSettings["columnsdps"][1])
-	DPSMate_ConfigMenu_Tab_Columns_Container_DPS_Check2:SetChecked(DPSMateSettings["columnsdps"][2])
-	DPSMate_ConfigMenu_Tab_Columns_Container_DPS_Check3:SetChecked(DPSMateSettings["columnsdps"][3])
-	DPSMate_ConfigMenu_Tab_Columns_Container_Damage_Check1:SetChecked(DPSMateSettings["columnsdmg"][1])
-	DPSMate_ConfigMenu_Tab_Columns_Container_Damage_Check2:SetChecked(DPSMateSettings["columnsdmg"][2])
-	DPSMate_ConfigMenu_Tab_Columns_Container_Damage_Check3:SetChecked(DPSMateSettings["columnsdmg"][3])
+	for i=1, 3 do
+		getglobal("DPSMate_ConfigMenu_Tab_Columns_Container_DPS_Check"..i):SetChecked(DPSMateSettings["columnsdps"][i])
+		getglobal("DPSMate_ConfigMenu_Tab_Columns_Container_Damage_Check"..i):SetChecked(DPSMateSettings["columnsdmg"][i])
+		getglobal("DPSMate_ConfigMenu_Tab_Columns_Container_DamageTaken_Check"..i):SetChecked(DPSMateSettings["columnsdmgtaken"][i])
+		getglobal("DPSMate_ConfigMenu_Tab_Columns_Container_DTPS_Check"..i):SetChecked(DPSMateSettings["columnsdtps"][i])
+		getglobal("DPSMate_ConfigMenu_Tab_Columns_Container_EDD_Check"..i):SetChecked(DPSMateSettings["columnsedd"][i])
+		getglobal("DPSMate_ConfigMenu_Tab_Columns_Container_EDT_Check"..i):SetChecked(DPSMateSettings["columnsedt"][i])
+		getglobal("DPSMate_ConfigMenu_Tab_Columns_Container_Healing_Check"..i):SetChecked(DPSMateSettings["columnshealing"][i])
+		getglobal("DPSMate_ConfigMenu_Tab_Columns_Container_HealingTaken_Check"..i):SetChecked(DPSMateSettings["columnshealingtaken"][i])
+		getglobal("DPSMate_ConfigMenu_Tab_Columns_Container_HPS_Check"..i):SetChecked(DPSMateSettings["columnshps"][i])
+		getglobal("DPSMate_ConfigMenu_Tab_Columns_Container_Overhealing_Check"..i):SetChecked(DPSMateSettings["columnsoverhealing"][i])
+		getglobal("DPSMate_ConfigMenu_Tab_Columns_Container_EffectiveHealing_Check"..i):SetChecked(DPSMateSettings["columnsehealing"][i])
+		getglobal("DPSMate_ConfigMenu_Tab_Columns_Container_EffectiveHealingTaken_Check"..i):SetChecked(DPSMateSettings["columnsehealingtaken"][i])
+		getglobal("DPSMate_ConfigMenu_Tab_Columns_Container_EffectiveHPS_Check"..i):SetChecked(DPSMateSettings["columnsehps"][i])
+		getglobal("DPSMate_ConfigMenu_Tab_Columns_Container_EffectiveHPS_Check"..i):SetChecked(DPSMateSettings["columnsehps"][i])
+		getglobal("DPSMate_ConfigMenu_Tab_Columns_Container_HAB_Check"..i):SetChecked(DPSMateSettings["columnshab"][i])
+		getglobal("DPSMate_ConfigMenu_Tab_Columns_Container_FriendlyFire_Check"..i):SetChecked(DPSMateSettings["columnsfriendlyfire"][i])
+	end
+	for i=1, 2 do
+		getglobal("DPSMate_ConfigMenu_Tab_Columns_Container_Absorbs_Check"..i):SetChecked(DPSMateSettings["columnsabsorbs"][i])
+		getglobal("DPSMate_ConfigMenu_Tab_Columns_Container_AbsorbsTaken_Check"..i):SetChecked(DPSMateSettings["columnsabsorbstaken"][i])
+		getglobal("DPSMate_ConfigMenu_Tab_Columns_Container_Deaths_Check"..i):SetChecked(DPSMateSettings["columnsdeaths"][i])
+		getglobal("DPSMate_ConfigMenu_Tab_Columns_Container_Interrupts_Check"..i):SetChecked(DPSMateSettings["columnsinterrupts"][i])
+		getglobal("DPSMate_ConfigMenu_Tab_Columns_Container_Dispels_Check"..i):SetChecked(DPSMateSettings["columnsdispels"][i])
+		getglobal("DPSMate_ConfigMenu_Tab_Columns_Container_DispelsReceived_Check"..i):SetChecked(DPSMateSettings["columnsdispelsreceived"][i])
+		getglobal("DPSMate_ConfigMenu_Tab_Columns_Container_Decurses_Check"..i):SetChecked(DPSMateSettings["columnsdecurses"][i])
+		getglobal("DPSMate_ConfigMenu_Tab_Columns_Container_DecursesReceived_Check"..i):SetChecked(DPSMateSettings["columnsdecursesreceived"][i])
+		getglobal("DPSMate_ConfigMenu_Tab_Columns_Container_Disease_Check"..i):SetChecked(DPSMateSettings["columnsdisease"][i])
+		getglobal("DPSMate_ConfigMenu_Tab_Columns_Container_DiseaseReceived_Check"..i):SetChecked(DPSMateSettings["columnsdiseasereceived"][i])
+		getglobal("DPSMate_ConfigMenu_Tab_Columns_Container_Poison_Check"..i):SetChecked(DPSMateSettings["columnspoison"][i])
+		getglobal("DPSMate_ConfigMenu_Tab_Columns_Container_PoisonReceived_Check"..i):SetChecked(DPSMateSettings["columnspoisonreceived"][i])
+		getglobal("DPSMate_ConfigMenu_Tab_Columns_Container_Magic_Check"..i):SetChecked(DPSMateSettings["columnsmagic"][i])
+		getglobal("DPSMate_ConfigMenu_Tab_Columns_Container_MagicReceived_Check"..i):SetChecked(DPSMateSettings["columnsmagicreceived"][i])
+		getglobal("DPSMate_ConfigMenu_Tab_Columns_Container_AurasGained_Check"..i):SetChecked(DPSMateSettings["columnsaurasgained"][i])
+		getglobal("DPSMate_ConfigMenu_Tab_Columns_Container_AurasLost_Check"..i):SetChecked(DPSMateSettings["columnsauraslost"][i])
+		getglobal("DPSMate_ConfigMenu_Tab_Columns_Container_AuraUptime_Check"..i):SetChecked(DPSMateSettings["columnsaurauptime"][i])
+	end
 	
 	-- Tab Tooltips
 	DPSMate_ConfigMenu_Tab_Tooltips_Tooltips:SetChecked(DPSMateSettings["showtooltips"])
@@ -1514,5 +1545,12 @@ function DPSMate.Options:InitializeHideShowWindow()
 	end
 end
 
-
+function DPSMate.Options:CheckButton(name, id)
+	if DPSMateSettings[name][id] then
+		DPSMateSettings[name][id] = false
+	else
+		DPSMateSettings[name][id] = true
+	end
+	DPSMate:SetStatusBarValue()
+end
 

@@ -77,11 +77,10 @@ function DPSMate.Modules.Interrupts:GetSettingValues(arr, cbt, k)
 		local dmg, tot, sort = DPSMate:FormatNumbers(val, total, sortedTable[1], k)
 		if dmg==0 then break end
 		local str = {[1]="",[2]="",[3]=""}
-		if DPSMateSettings["columnsdmg"][1] then str[1] = " "..dmg..p; strt[2] = tot..p end
-		if DPSMateSettings["columnsdmg"][2] then str[2] = "("..string.format("%.1f", (dmg/cbt))..p..")"; strt[1] = "("..string.format("%.1f", (tot/cbt))..p..") " end
-		if DPSMateSettings["columnsdmg"][3] then str[3] = " ("..string.format("%.1f", 100*dmg/tot).."%)" end
+		if DPSMateSettings["columnsinterrupts"][1] then str[1] = " "..dmg..p; strt[2] = tot..p end
+		if DPSMateSettings["columnsinterrupts"][2] then str[3] = " ("..string.format("%.1f", 100*dmg/tot).."%)" end
 		table.insert(name, DPSMate:GetUserById(a[cat]))
-		table.insert(value, str[2]..str[1]..str[3])
+		table.insert(value, str[1]..str[3])
 		table.insert(perc, 100*(dmg/sort))
 	end
 	return name, value, perc, strt

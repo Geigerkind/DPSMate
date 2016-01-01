@@ -76,10 +76,11 @@ function DPSMate.Modules.HPS:GetSettingValues(arr, cbt, k)
 		local va, tot, sort = DPSMate:FormatNumbers(val, total, sortedTable[1], k)
 		if va==0 then break end
 		local str = {[1]="",[2]="",[3]=""}
-		str[1] = " "..ceil(va/cbt)..p; strt[2] = tot..p
-		str[2] = " ("..string.format("%.1f", 100*va/tot).."%)"
+		if DPSMateSettings["columnshps"][2] then str[1] = " "..string.format("%.1f", va/cbt)..p; strt[2] = " "..string.format("%.1f", tot/cbt)..p end
+		if DPSMateSettings["columnshps"][3] then str[2] = " ("..string.format("%.1f", 100*va/tot).."%)" end
+		if DPSMateSettings["columnshps"][1] then str[3] = "("..va..p..")"; strt[1] = "("..tot..p..")" end
 		table.insert(name, DPSMate:GetUserById(a[cat]))
-		table.insert(value, str[1]..str[2])
+		table.insert(value, str[3]..str[1]..str[2])
 		table.insert(perc, 100*(va/sort))
 	end
 	return name, value, perc, strt

@@ -76,10 +76,11 @@ function DPSMate.Modules.Overhealing:GetSettingValues(arr, cbt, k)
 		local va, tot, sort = DPSMate:FormatNumbers(val, total, sortedTable[1], k)
 		if va==0 then break end
 		local str = {[1]="",[2]="",[3]=""}
-		str[1] = " "..va..p; strt[2] = tot..p
-		str[2] = " ("..string.format("%.1f", 100*va/tot).."%)"
+		if DPSMateSettings["columnsoverhealing"][1] then str[1] = " "..va..p; strt[2] = " "..tot..p end
+		if DPSMateSettings["columnsoverhealing"][3] then str[2] = " ("..string.format("%.1f", 100*va/tot).."%)" end
+		if DPSMateSettings["columnsoverhealing"][2] then str[3] = "("..string.format("%.1f", va/cbt)..")"; strt[1] = "("..string.format("%.1f", tot/cbt)..")"  end
 		table.insert(name, DPSMate:GetUserById(a[cat]))
-		table.insert(value, str[1]..str[2])
+		table.insert(value, str[3]..str[1]..str[2])
 		table.insert(perc, 100*(va/sort))
 	end
 	return name, value, perc, strt

@@ -41,39 +41,10 @@ function DPSMate.DB:OnEvent(event)
 						name = "DPSMate",
 						options = {
 							[1] = {
-								dps = false,
-								damage = true,
-								damagetaken = false,
-								enemydamagetaken = false,
-								enemydamagedone = false,
-								healing = false,
-								effectivehealing = false,
-								absorbs = false,
-								absorbtaken = false,
-								healingandabsorbs = false,
-								overhealing = false,
-								healingtaken = false,
-								effectivehealingtaken = false,
-								interrupts = false,
-								deaths = false,
-								dispels = false
+								damage = true
 							},
 							[2] = {
-								total = true,
-								currentfight = false,
-								segment1 = false,
-								segment2 = false,
-								segment3 = false,
-								segment4 = false,
-								segment5 = false,
-								segment6 = false,
-								segment7 = false,
-								segment8 = false,
-								segment9 = false,
-								segment10 = false,
-								segment11 = false,
-								segment12 = false,
-								segment13 = false
+								total = true
 							}
 						},
 						CurMode = "damage",
@@ -122,6 +93,139 @@ function DPSMate.DB:OnEvent(event)
 					[3] = true,
 				},
 				columnsdmg = {
+					[1] = true,
+					[2] = false,
+					[3] = true,
+				},
+				columnsdmgtaken = {
+					[1] = true,
+					[2] = false,
+					[3] = true,
+				},
+				columnsdtps = {
+					[1] = false,
+					[2] = true,
+					[3] = true,
+				},
+				columnsedd = {
+					[1] = true,
+					[2] = false,
+					[3] = true,
+				},
+				columnsedt = {
+					[1] = true,
+					[2] = false,
+					[3] = true,
+				},
+				columnshealing = {
+					[1] = true,
+					[2] = false,
+					[3] = true,
+				},
+				columnshealingtaken = {
+					[1] = true,
+					[2] = false,
+					[3] = true,
+				},
+				columnshps = {
+					[1] = false,
+					[2] = true,
+					[3] = true,
+				},
+				columnsoverhealing = {
+					[1] = true,
+					[2] = false,
+					[3] = true,
+				},
+				columnsehealing = {
+					[1] = true,
+					[2] = false,
+					[3] = true,
+				},
+				columnsehealingtaken = {
+					[1] = true,
+					[2] = false,
+					[3] = true,
+				},
+				columnsehps = {
+					[1] = false,
+					[2] = true,
+					[3] = true,
+				},--
+				columnsabsorbs = {
+					[1] = true,
+					[2] = true,
+				},
+				columnsabsorbstaken = {
+					[1] = true,
+					[2] = true,
+				},
+				columnshab = {
+					[1] = true,
+					[2] = false,
+					[3] = true,
+				},
+				columnsdeaths = {
+					[1] = true,
+					[2] = true,
+				},
+				columnsinterrupts = {
+					[1] = true,
+					[2] = true,
+				},
+				columnsdispels = {
+					[1] = true,
+					[2] = true,
+				},
+				columnsdispelsreceived = {
+					[1] = true,
+					[2] = true,
+				},
+				columnsdecurses = {
+					[1] = true,
+					[2] = true,
+				},
+				columnsdecursesreceived = {
+					[1] = true,
+					[2] = true,
+				},
+				columnsdisease = {
+					[1] = true,
+					[2] = true,
+				},
+				columnsdiseasereceived = {
+					[1] = true,
+					[2] = true,
+				},
+				columnspoison = {
+					[1] = true,
+					[2] = true,
+				},
+				columnspoisonreceived = {
+					[1] = true,
+					[2] = true,
+				},
+				columnsmagic = {
+					[1] = true,
+					[2] = true,
+				},
+				columnsmagicreceived = {
+					[1] = true,
+					[2] = true,
+				},
+				columnsaurasgained = {
+					[1] = true,
+					[2] = true,
+				},
+				columnsauraslost = {
+					[1] = true,
+					[2] = true,
+				},
+				columnsaurauptime = {
+					[1] = true,
+					[2] = true,
+				},
+				columnsfriendlyfire = {
 					[1] = true,
 					[2] = false,
 					[3] = true,
