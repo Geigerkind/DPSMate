@@ -248,6 +248,10 @@ function DPSMate.DB:OnEvent(event)
 				EHealingTaken = {},
 				THealingTaken = {},
 				Absorbs = {},
+				Deaths = {},
+				Interrupts = {},
+				Dispels = {},
+				Auras = {}
 			}
 		end
 		if DPSMateUser == nil then DPSMateUser = {} end

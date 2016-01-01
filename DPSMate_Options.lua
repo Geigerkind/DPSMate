@@ -471,6 +471,10 @@ function DPSMate.Options:PopUpAccept()
 		EHealingTaken = {},
 		THealingTaken = {},
 		Absorbs = {},
+		Deaths = {},
+		Interrupts = {},
+		Dispels = {},
+		Auras = {}
 	}
 	DPSMateCombatTime = {
 		total = 1,
@@ -1162,22 +1166,37 @@ end
 
 function DPSMate.Options:NewSegment()
 	-- Need to add a new check
-	if not DPSMateHistory["DMGDone"] then DPSMateHistory["DMGDone"] = {} end
-	table.insert(DPSMateHistory["DMGDone"], 1, DPSMate:CopyTable(DPSMateDamageDone[2]))
-	table.insert(DPSMateCombatTime["segments"], 1, DPSMateCombatTime["current"])
-	if DPSMate:TableLength(DPSMateHistory["DMGDone"])>DPSMateSettings["datasegments"] then
-		for i=DPSMateSettings["datasegments"]+1, DPSMate:TableLength(DPSMateHistory["DMGDone"]) do
-			table.remove(DPSMateHistory["DMGDone"], i)
+	local modes = {["DMGDone"] = DPSMateDamageDone[2], ["DMGTaken"] = DPSMateDamageTaken[2], ["EDDone"] = DPSMateEDD[2], ["EDTaken"] = DPSMateEDT[2], ["THealing"] = DPSMateTHealing[2], ["EHealing"] = DPSMateEHealing[2], ["OHealing"] = DPSMateOverhealing[2], ["EHealingTaken"] = DPSMateEHealingTaken[2], ["THealingTaken"] = DPSMateHealingTaken[2], ["Absorbs"] = DPSMateAbsorbs[2], ["Deaths"] = DPSMateDeaths[2], ["Interrupts"] = DPSMateInterrupts[2], ["Dispels"] = DPSMateDispels[2], ["Auras"] = DPSMateAurasGained[2]}
+	
+	for cat, val in pairs(modes) do
+		table.insert(DPSMateHistory[cat], 1, DPSMate:CopyTable(val))
+		if DPSMate:TableLength(DPSMateHistory[cat])>DPSMateSettings["datasegments"] then
+			for i=DPSMateSettings["datasegments"]+1, DPSMate:TableLength(DPSMateHistory[cat]) do
+				table.remove(DPSMateHistory[cat], i)
+			end
+			table.remove(DPSMateHistory[cat], DPSMateSettings["datasegments"]+1)
 		end
-		table.remove(DPSMateHistory["DMGDone"], DPSMateSettings["datasegments"]+1)
-	end
-	if DPSMate:TableLength(DPSMateCombatTime["segments"])>DPSMateSettings["datasegments"] then
-		for i=DPSMateSettings["datasegments"]+1, DPSMate:TableLength(DPSMateCombatTime["segments"]) do
-			table.remove(DPSMateCombatTime["segments"], i)
+		if DPSMate:TableLength(DPSMateCombatTime["segments"])>DPSMateSettings["datasegments"] then
+			for i=DPSMateSettings["datasegments"]+1, DPSMate:TableLength(DPSMateCombatTime["segments"]) do
+				table.remove(DPSMateCombatTime["segments"], i)
+			end
 		end
 	end
 	DPSMateDamageDone[2] = {}
 	DPSMateDamageTaken[2] = {}
+	DPSMateEDD[2] = {}
+	DPSMateEDT[2] = {}
+	DPSMateTHealing[2] = {}
+	DPSMateEHealing[2] = {}
+	DPSMateOverhealing[2] = {}
+	DPSMateEHealingTaken[2] = {}
+	DPSMateHealingTaken[2] = {}
+	DPSMateAbsorbs[2] = {}
+	DPSMateDeaths[2] = {}
+	DPSMateInterrupts[2] = {}
+	DPSMateDispels[2] = {}
+	DPSMateAurasGained[2] = {}
+	table.insert(DPSMateCombatTime["segments"], 1, DPSMateCombatTime["current"])
 	DPSMateCombatTime["current"] = 1
 	DPSMate:SetStatusBarValue()
 	DPSMate.Options:InitializeSegments()

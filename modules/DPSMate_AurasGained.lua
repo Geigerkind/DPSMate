@@ -1,6 +1,6 @@
 -- Global Variables
 DPSMate.Modules.AurasGained = {}
-DPSMate.Modules.AurasGained.Hist = "Dispels"
+DPSMate.Modules.AurasGained.Hist = "Auras"
 DPSMate.Options.Options[1]["args"]["aurasgained"] = {
 	order = 230,
 	type = 'toggle',

@@ -1,6 +1,6 @@
 -- Global Variables
 DPSMate.Modules.AurasUptimers = {}
-DPSMate.Modules.AurasUptimers.Hist = "Dispels"
+DPSMate.Modules.AurasUptimers.Hist = "Auras"
 DPSMate.Options.Options[1]["args"]["aurasuptime"] = {
 	order = 250,
 	type = 'toggle',
