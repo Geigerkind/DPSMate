@@ -58,7 +58,8 @@ modules\DPSMate_ManaGained.lua
 modules\DPSMate_ManaLost.lua
 modules\DPSMate_Overhealing.lua
 
-modules\DPSMate_Damage.xml
+modules\DPSMate_Details_Damage.lua
+modules\DPSMate_Details_Damage.xml
 
 DPSMate_Frame.xml
 DPSMate_Options.xml

@@ -42,7 +42,7 @@
 		</Layers>
 		<Scripts>
 			<OnClick>
-				DPSMate.Options:SelectDetailsButton(this:GetID())
+				DPSMate.Modules.DetailsDamage:SelectDetailsButton(this:GetID())
 			</OnClick>
 		</Scripts>
 	</Button>
@@ -235,7 +235,7 @@
 				</Backdrop>
 				<Scripts>
 					<OnLoad>
-						DPSMate.Options:CreateGraphTable()
+						DPSMate.Modules.DetailsDamage:CreateGraphTable()
 					</OnLoad>
 				</Scripts>
 				<Frames>
@@ -254,7 +254,7 @@
 						</Anchors>
 						<Scripts>
 							<OnVerticalScroll>
-								FauxScrollFrame_OnVerticalScroll(24, DPSMate.Options.ScrollFrame_Update) 
+								FauxScrollFrame_OnVerticalScroll(24, DPSMate.Modules.DetailsDamage.ScrollFrame_Update) 
 							</OnVerticalScroll>
 					   </Scripts>
 					</ScrollFrame>

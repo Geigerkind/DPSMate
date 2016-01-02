@@ -2,14 +2,7 @@
 -- "Smbd reflects..." (Thorns etc.)
 
 -- Global Variables
-
--- Local Variables
-local player = {}
-player["name"] = UnitName("player")
-local a,b = UnitClass("player")
-player["class"] = strlower(b)
-
-local procs = {
+DPSMate.Parser.procs = {
 	-- General
 	"Earthstrike",
 	"Juju Flurry",
@@ -38,6 +31,12 @@ local procs = {
 	"Power Infusion",
 }
 
+-- Local Variables
+local player = {}
+player["name"] = UnitName("player")
+local a,b = UnitClass("player")
+player["class"] = strlower(b)
+
 -- Begin Functions
 
 function DPSMate.Parser:OnLoad()
@@ -64,7 +63,7 @@ function DPSMate.Parser:OnEvent(event)
 	elseif event == "CHAT_MSG_SPELL_PARTY_DAMAGE" then 
 		if arg1 then DPSMate.Parser:FriendlyPlayerDamage(arg1) end
 	elseif event == "COMBAT_TEXT_UPDATE" then
-		DPSMate.Parser:TextUpdate(arg1,arg2,arg3)
+		--DPSMate.Parser:TextUpdate(arg1,arg2,arg3)
 	elseif event == "CHAT_MSG_SPELL_FRIENDLYPLAYER_DAMAGE" then
 		if arg1 then DPSMate.Parser:FriendlyPlayerDamage(arg1) end
 	elseif event == "CHAT_MSG_COMBAT_FRIENDLYPLAYER_HITS" then
@@ -269,9 +268,9 @@ end
 
 function DPSMate.Parser:TextUpdate(arg1,arg2,arg3) 
 	if arg1 == "AURA_START" or arg1 == "AURA_END" then
-		if DPSMate:TContains(procs, arg2) then
-			DPSMate.DB:BuildUserProcs(player, arg2, false)
-		end
+		--if DPSMate:TContains(procs, arg2) then
+		--	DPSMate.DB:BuildUserProcs(player, arg2, false)
+		--end
 	elseif arg1 == "ENERGY" then
 		if arg2 == "25" then
 			DPSMate.DB:BuildUserProcs(player, "Relentless Strikes", true)

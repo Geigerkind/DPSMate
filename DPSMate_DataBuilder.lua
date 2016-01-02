@@ -1269,10 +1269,11 @@ function DPSMate.DB:EDDExist(uname, cause, aname, arr)
 	return false
 end
 
+-- System needs to be updated and linked to aura table anyway
 function DPSMate.DB:DataExistProcs(uname, aname, arr)
-	if DPSMateUser[uname]~=nil and DPSMateAbility[aname]~=nil then
+	if DPSMateUser[uname]~=nil then
 		if arr[DPSMateUser[uname][1]] ~= nil then
-			if arr[DPSMateUser[uname][1]]["i"][1][DPSMateAbility[aname][1]] ~= nil then
+			if arr[DPSMateUser[uname][1]]["i"][1][aname] ~= nil then
 				return true
 			end
 		end
