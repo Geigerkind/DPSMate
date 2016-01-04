@@ -19,8 +19,10 @@ local icons = {
 	["Garrote(Periodic)"] = "Interface\\ICONS\\ability_rogue_garrote",
 	["Rupture(Periodic)"] = "Interface\\ICONS\\ability_rogue_rupture",
 }
+local curKey = 1
 
-function DPSMate.Modules.DetailsDamage:UpdateDetails(obj)
+function DPSMate.Modules.DetailsDamage:UpdateDetails(obj, key)
+	curKey = key
 	if (PieChart) then
 		g=DPSMate.Options.graph:CreateGraphPieChart("PieChart", DPSMate_Details_Diagram, "CENTER", "CENTER", 0, 0, 200, 200)
 		g2=DPSMate.Options.graph:CreateGraphLine("LineGraph",DPSMate_Details_DiagramLine,"CENTER","CENTER",0,0,850,230)
@@ -39,9 +41,9 @@ end
 function DPSMate.Modules.DetailsDamage:ScrollFrame_Update()
 	local line, lineplusoffset
 	local obj = getglobal("DPSMate_Details_Log_ScrollFrame")
-	local arr = DPSMate:GetMode(DPSMate_Details.PaKey)
+	local arr = DPSMate:GetMode(curKey)
 	local user, pet, len = "", 0, DPSMate:TableLength(arr[DPSMateUser[DetailsUser][1]])-5
-	DetailsArr, DetailsTotal, DmgArr = DPSMate.RegistredModules[DPSMateSettings["windows"][DPSMate_Details.PaKey]["CurMode"]]:EvalTable(DPSMateUser[DetailsUser], DPSMate_Details.PaKey)
+	DetailsArr, DetailsTotal, DmgArr = DPSMate.RegistredModules[DPSMateSettings["windows"][curKey]["CurMode"]]:EvalTable(DPSMateUser[DetailsUser], curKey)
 	FauxScrollFrame_Update(obj,DPSMate:TableLength(arr),10,24)
 	for line=1,10 do
 		lineplusoffset = line + FauxScrollFrame_GetOffset(obj)
@@ -74,7 +76,7 @@ end
 function DPSMate.Modules.DetailsDamage:SelectDetailsButton(i)
 	local obj = getglobal("DPSMate_Details_Log_ScrollFrame")
 	local lineplusoffset = i + FauxScrollFrame_GetOffset(obj)
-	local arr = DPSMate:GetMode(DPSMate_Details.PaKey)
+	local arr = DPSMate:GetMode(curKey)
 	local user, pet = "", 0
 	
 	DetailsSelected = lineplusoffset
@@ -144,7 +146,7 @@ function DPSMate.Modules.DetailsDamage:SelectDetailsButton(i)
 end
 
 function DPSMate.Modules.DetailsDamage:UpdatePie()
-	local arr = DPSMate:GetMode(DPSMate_Details.PaKey)
+	local arr = DPSMate:GetMode(curKey)
 	local user,pet = "",0
 	g:ResetPie()
 	for cat, val in pairs(DetailsArr) do
@@ -156,7 +158,7 @@ function DPSMate.Modules.DetailsDamage:UpdatePie()
 end
 
 function DPSMate.Modules.DetailsDamage:UpdateLineGraph()
-	local arr, cbt = DPSMate:GetMode(DPSMate_Details.PaKey)
+	local arr, cbt = DPSMate:GetMode(curKey)
 	local sumTable = DPSMate.Modules.DetailsDamage:GetSummarizedTable(arr, cbt)
 	local max = DPSMate.Modules.DetailsDamage:GetMaxLineVal(sumTable)
 	
@@ -173,7 +175,7 @@ function DPSMate.Modules.DetailsDamage:UpdateLineGraph()
 
 	local Data1={{0,0}}
 	for cat, val in pairs(sumTable) do
-		table.insert(Data1, {val[1],val[2], DPSMate.Modules.DetailsDamage:CheckProcs(DPSMate_Details.proc, arr, val[1])})
+		table.insert(Data1, {val[1],val[2], DPSMate.Modules.DetailsDamage:CheckProcs(DPSMate_Details.proc, val[1])})
 	end
 
 	g2:AddDataSeries(Data1,{{1.0,0.0,0.0,0.8}, {1.0,1.0,0.0,0.8}}, DPSMate.Modules.DetailsDamage:AddProcPoints(DPSMate_Details.proc, arr))
@@ -201,7 +203,7 @@ function DPSMate.Modules.DetailsDamage:CreateGraphTable()
 end
 
 function DPSMate.Modules.DetailsDamage:ProcsDropDown()
-	local arr, cbt = DPSMate:GetMode(DPSMate_Details.PaKey)
+	local arr = DPSMate.Modules.DetailsDamage:GetAuraGainedArr(curKey)
 	DPSMate_Details.proc = "None"
 	
     local function on_click()
@@ -217,12 +219,17 @@ function DPSMate.Modules.DetailsDamage:ProcsDropDown()
 	}
 	
 	-- Adding dynamic channel
-	for cat,_ in pairs(arr[DPSMateUser[DetailsUser][1]]["i"][1]) do
-		UIDropDownMenu_AddButton{
-			text = cat,
-			value = cat,
-			func = on_click,
-		}
+	for cat, val in pairs(arr[DPSMateUser[DetailsUser][1]]) do
+		for ca, va in pairs(val) do
+			local ability = DPSMate:GetAbilityById(ca)
+			if DPSMate:TContains(DPSMate.Parser.procs, ability) then
+				UIDropDownMenu_AddButton{
+					text = ability,
+					value = ca,
+					func = on_click,
+				}
+			end
+		end
 	end
 	
 	if DPSMate_Details.LastUser~=DetailsUser then
@@ -302,23 +309,22 @@ function DPSMate.Modules.DetailsDamage:GetAuraGainedArr(k)
 end
 
 function DPSMate.Modules.DetailsDamage:GetProcPath(name, arr)
-	if not DPSMateAbility[name] then return end
 	for cat, val in pairs(arr[DPSMateUser[DetailsUser][1]]) do
 		for ca, va in pairs(val) do
-			if ca==DPSMateAbility[name][1] then
+			if ca==name then
 				return cat
 			end
 		end
 	end
 end
 
-function DPSMate.Modules.DetailsDamage:CheckProcs(name, a, val)
-	local arr = DPSMate.Modules.DetailsDamage:GetAuraGainedArr(DPSMate_Details.PaKey)
+function DPSMate.Modules.DetailsDamage:CheckProcs(name, val)
+	local arr = DPSMate.Modules.DetailsDamage:GetAuraGainedArr(curKey)
 	local proc = DPSMate.Modules.DetailsDamage:GetProcPath(name, arr)
 	if proc then
-		for i=1, DPSMate:TableLength(arr[DPSMateUser[DetailsUser][1]][proc][DPSMateAbility[name][1]][1]) do
-			if not arr[DPSMateUser[DetailsUser][1]][proc][DPSMateAbility[name][1]][1][i] or not arr[DPSMateUser[DetailsUser][1]][proc][DPSMateAbility[name][1]][2][i] then return false end
-			if val > arr[DPSMateUser[DetailsUser][1]][proc][DPSMateAbility[name][1]][1][i] and val < arr[DPSMateUser[DetailsUser][1]][proc][DPSMateAbility[name][1]][2][i] then
+		for i=1, DPSMate:TableLength(arr[DPSMateUser[DetailsUser][1]][proc][name][1]) do
+			if not arr[DPSMateUser[DetailsUser][1]][proc][name][1][i] or not arr[DPSMateUser[DetailsUser][1]][proc][name][2][i] then return false end
+			if val > arr[DPSMateUser[DetailsUser][1]][proc][name][1][i] and val < arr[DPSMateUser[DetailsUser][1]][proc][name][2][i] then
 				return true
 			end
 		end

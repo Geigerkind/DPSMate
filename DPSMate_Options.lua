@@ -506,8 +506,8 @@ function DPSMate.Options:ToggleDrewDrop(i, obj, pa)
 end
 
 function DPSMate.Options:UpdateDetails(obj)
-	DPSMate_Details.PaKey = obj:GetParent():GetParent():GetParent().Key
-	DPSMate.RegistredModules[DPSMateSettings["windows"][DPSMate_Details.PaKey]["CurMode"]]:OpenDetails(obj)
+	local key = obj:GetParent():GetParent():GetParent().Key
+	DPSMate.RegistredModules[DPSMateSettings["windows"][key]["CurMode"]]:OpenDetails(obj, key)
 end
 
 function DPSMate.Options:DropDownStyleReset()

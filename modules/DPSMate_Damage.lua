@@ -105,6 +105,6 @@ function DPSMate.Modules.Damage:ShowTooltip(user,k)
 	end
 end
 
-function DPSMate.Modules.Damage:OpenDetails(obj)
-	DPSMate.Modules.DetailsDamage:UpdateDetails(obj)
+function DPSMate.Modules.Damage:OpenDetails(obj, key)
+	DPSMate.Modules.DetailsDamage:UpdateDetails(obj, key)
 end
