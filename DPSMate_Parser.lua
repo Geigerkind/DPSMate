@@ -629,6 +629,7 @@ DPSMate.Parser.Dispels = {
 	[1] = "Remove Curse",
 	[2] = "Cleanse",
 	[3] = "Remove Lesser Curse",
+	[4] = "Purify",
 }
 DPSMate.Parser.DeCurse = {
 	[1] = "Remove Curse",
@@ -639,10 +640,12 @@ DPSMate.Parser.DeMagic = {
 }
 DPSMate.Parser.DeDisease = {
 	[1] = "Cleanse",
+	[2] = "Purify",
 }
 DPSMate.Parser.DePoison = {
 	[1] = "Cleanse",
 	[2] = "Abolish Poison",
+	[3] = "Purify",
 }
 DPSMate.Parser.DebuffTypes = {}
 
@@ -666,13 +669,13 @@ end
 
 -- Is it really "yourself"?
 function DPSMate.Parser:SpellSelfBuffDispels(msg)
-	for ab, ta in string.gfind(msg, "You cast (.+) on (.+)%.") do if DPSMate:TContains(Dispels, ab) then if ta=="yourself" then DPSMate.DB:AwaitDispel(ab, player.name, player.name, GetTime()) else  DPSMate.DB:AwaitDispel(ab, ta, player.name, GetTime()) end end end
+	for ab in string.gfind(msg, "You cast (.+)%.") do if DPSMate:TContains(DPSMate.Parser.Dispels, ab) then DPSMate.DB:AwaitDispel(ab, player.name, player.name, GetTime()) end end
 end
 
 -- Avrora casts Remove Curse on you.
 -- Avrora casts Remove Curse on Avrora.
 function DPSMate.Parser:SpellHostilePlayerBuffDispels(msg)
-	for c, ab, ta in string.gfind(msg, "(.+) casts (.+) on (.+)%.") do if DPSMate:TContains(Dispels, ab) then if ta=="you" then DPSMate.DB:AwaitDispel(ab, player.name, c, GetTime()) else  DPSMate.DB:AwaitDispel(ab, ta, c, GetTime()) end end end
+	for c, ab, ta in string.gfind(msg, "(.+) casts (.+) on (.+)%.") do if DPSMate:TContains(DPSMate.Parser.Dispels, ab) then if ta=="you" then DPSMate.DB:AwaitDispel(ab, player.name, c, GetTime()) else  DPSMate.DB:AwaitDispel(ab, ta, c, GetTime()) end end end
 end
 
 -- Avrora's  Curse of Agony is removed.

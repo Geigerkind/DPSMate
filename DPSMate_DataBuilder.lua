@@ -771,6 +771,7 @@ function DPSMate.DB:ClearAwaitAbsorb()
 	for cat, val in pairs(Await) do
 		if (GetTime()-val[4])>=10 then
 			table.remove(Await, cat)
+			break
 		end
 	end
 end
@@ -963,6 +964,7 @@ function DPSMate.DB:ClearAwaitHotDispel()
 	for cat, val in pairs(AwaitHotDispel) do
 		if (GetTime()-val[4])>=10 then
 			table.remove(AwaitHotDispel, cat)
+			break
 		end
 	end
 end
