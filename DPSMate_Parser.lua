@@ -284,9 +284,15 @@ end
 
 function DPSMate.Parser:FriendlyPlayerDamage(msg)
 	if strfind(msg, "begins") then return end
-	local target, ability, cause, amount, resist, hit, crit = "", "", {}, 0, 0, 0, 0
+	local target, ability, cause, amount, resist, hit, crit, dodge, parry, miss = "", "", {}, 0, 0, 0, 0, 0, 0, 0
 	if strfind(msg, "was resisted by") then
 		for c, ab, t in string.gfind(msg, "(.-)'s (.+) was resisted by (.+).") do resist=1; cause.name=c; ability=ab; target=t; end
+	elseif strfind(msg, "was dodged by") then
+		for c, ab, t in string.gfind(msg, "(.-)'s (.+) was dodged by (.+).") do dodge=1; cause.name=c; ability=ab; target=t; end
+	elseif strfind(msg, "is parried by") then
+		for c, ab, t in string.gfind(msg, "(.-)'s (.+) was parried by (.+).") do parry=1; cause.name=c; ability=ab; target=t; end
+	elseif strfind(msg, "missed") then
+		for c, ab, t in string.gfind(msg, "(.-)'s (.+) missed (.+).") do miss=1; cause.name=c; ability=ab; target=t; end
 	elseif strfind(msg, "immune") then
 		-- Wont be collected
 		return
@@ -295,8 +301,8 @@ function DPSMate.Parser:FriendlyPlayerDamage(msg)
 		for c, ab, t, a in string.gfind(msg, "(.-)'s (.+) crits (.+) for (.+).") do crit=1; cause.name=c; ability=ab; target=t; amount=tonumber(strsub(a, strfind(a, "%d+"))); end
 		if DPSMate:TContains(DPSMate.Parser.Kicks, ability) then DPSMate.DB:AssignPotentialKick(cause.name, ability, target, GetTime()) end
 	end
-	DPSMate.DB:EnemyDamage(DPSMateEDT, cause, ability, hit, crit, 0, 0, 0, resist, amount, target)
-	DPSMate.DB:DamageDone(cause, ability, hit, crit, 0, 0, 0, resist, amount)
+	DPSMate.DB:EnemyDamage(DPSMateEDT, cause, ability, hit, crit, miss, parry, dodge, resist, amount, target)
+	DPSMate.DB:DamageDone(cause, ability, hit, crit, miss, parry, dodge, resist, amount)
 end
 
 function DPSMate.Parser:FriendlyPlayerHits(msg)
@@ -630,6 +636,7 @@ DPSMate.Parser.Dispels = {
 	[2] = "Cleanse",
 	[3] = "Remove Lesser Curse",
 	[4] = "Purify",
+	[5] = "Dispel Magic",
 }
 DPSMate.Parser.DeCurse = {
 	[1] = "Remove Curse",

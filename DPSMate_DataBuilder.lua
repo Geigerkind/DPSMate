@@ -945,7 +945,7 @@ end
 
 function DPSMate.DB:ConfirmDispel(ability, target, time)
 	for cat, val in pairs(AwaitDispel) do
-		if val[2] == target and (time-val[4])<=1 and DPSMate:TContains(DPSMate.Parser["De"..DPSMateAbility[ability][2]], val[3]) then
+		if val[2] == target and (time-val[4])<=1 and DPSMate:TContains(DPSMate.Parser["De"..DPSMateAbility[ability][2]], val[3]) then -- index nil value error?
 			DPSMate.DB:Dispels(val[1], val[3], val[2], ability)
 			--DPSMate:SendMessage("Confirmed!")
 			table.remove(AwaitDispel, cat)
