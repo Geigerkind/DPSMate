@@ -11,6 +11,9 @@ local icons = {
 	["Lightning Strike"] = "Interface\\ICONS\\spell_holy_mindvision",
 	["Fatal Wound"] = "Interface\\ICONS\\ability_backstab",
 	["Falling"] = "Interface\\ICONS\\spell_magic_featherfall",
+	["Thorium Grenade"] = "Interface\\ICONS\\inv_misc_bomb_08",
+	["Crystal Charge"] = "Interface\\ICONS\\inv_misc_gem_opal_01",
+	["Shoot Bow"] = "Interface\\ICONS\\ability_marksmanship",
 	
 	-- Rogues
 	["Sinister Strike"] = "Interface\\ICONS\\spell_shadow_ritualofsacrifice",
@@ -18,11 +21,21 @@ local icons = {
 	["Eviscerate"] = "Interface\\ICONS\\ability_rogue_eviscerate",
 	["Garrote(Periodic)"] = "Interface\\ICONS\\ability_rogue_garrote",
 	["Rupture(Periodic)"] = "Interface\\ICONS\\ability_rogue_rupture",
+	["Instant Poison VI"] = "Interface\\ICONS\\ability_poisons", 
+	["Instant Poison V"] = "Interface\\ICONS\\ability_poisons", 
+	["Instant Poison IV"] = "Interface\\ICONS\\ability_poisons", 
+	["Instant Poison III"] = "Interface\\ICONS\\ability_poisons", 
+	["Instant Poison II"] = "Interface\\ICONS\\ability_poisons", 
+	["Instant Poison I"] = "Interface\\ICONS\\ability_poisons", 
+	["Kick"] = "Interface\\ICONS\\ability_kick", 
+	
 }
 local curKey = 1
+local db, cbt = {}, 0
 
 function DPSMate.Modules.DetailsDamage:UpdateDetails(obj, key)
 	curKey = key
+	db, cbt = DPSMate:GetMode(key)
 	if (PieChart) then
 		g=DPSMate.Options.graph:CreateGraphPieChart("PieChart", DPSMate_Details_Diagram, "CENTER", "CENTER", 0, 0, 200, 200)
 		g2=DPSMate.Options.graph:CreateGraphLine("LineGraph",DPSMate_Details_DiagramLine,"CENTER","CENTER",0,0,850,230)
@@ -41,17 +54,18 @@ end
 function DPSMate.Modules.DetailsDamage:ScrollFrame_Update()
 	local line, lineplusoffset
 	local obj = getglobal("DPSMate_Details_Log_ScrollFrame")
-	local arr = DPSMate:GetMode(curKey)
+	local arr = db
 	local user, pet, len = "", 0, DPSMate:TableLength(arr[DPSMateUser[DetailsUser][1]])-5
 	DetailsArr, DetailsTotal, DmgArr = DPSMate.RegistredModules[DPSMateSettings["windows"][curKey]["CurMode"]]:EvalTable(DPSMateUser[DetailsUser], curKey)
 	FauxScrollFrame_Update(obj,DPSMate:TableLength(arr),10,24)
 	for line=1,10 do
 		lineplusoffset = line + FauxScrollFrame_GetOffset(obj)
 		if DetailsArr[lineplusoffset] ~= nil then
-			getglobal("DPSMate_Details_Log_ScrollButton"..line.."_Name"):SetText(DPSMate:GetAbilityById(DetailsArr[lineplusoffset]))
+			local ability = DPSMate:GetAbilityById(DetailsArr[lineplusoffset])
+			getglobal("DPSMate_Details_Log_ScrollButton"..line.."_Name"):SetText(ability)
 			getglobal("DPSMate_Details_Log_ScrollButton"..line.."_Value"):SetText(DmgArr[lineplusoffset].." ("..string.format("%.2f", (DmgArr[lineplusoffset]*100/DetailsTotal)).."%)")
-			if icons[DetailsArr[lineplusoffset]] then
-				getglobal("DPSMate_Details_Log_ScrollButton"..line.."_Icon"):SetTexture(icons[DetailsArr[lineplusoffset]])
+			if icons[ability] then
+				getglobal("DPSMate_Details_Log_ScrollButton"..line.."_Icon"):SetTexture(icons[ability])
 			else
 				getglobal("DPSMate_Details_Log_ScrollButton"..line.."_Icon"):SetTexture("Interface\\AddOns\\DPSMate\\images\\dummy")
 			end
@@ -76,7 +90,7 @@ end
 function DPSMate.Modules.DetailsDamage:SelectDetailsButton(i)
 	local obj = getglobal("DPSMate_Details_Log_ScrollFrame")
 	local lineplusoffset = i + FauxScrollFrame_GetOffset(obj)
-	local arr = DPSMate:GetMode(curKey)
+	local arr = db
 	local user, pet = "", 0
 	
 	DetailsSelected = lineplusoffset
@@ -146,7 +160,7 @@ function DPSMate.Modules.DetailsDamage:SelectDetailsButton(i)
 end
 
 function DPSMate.Modules.DetailsDamage:UpdatePie()
-	local arr = DPSMate:GetMode(curKey)
+	local arr = db
 	local user,pet = "",0
 	g:ResetPie()
 	for cat, val in pairs(DetailsArr) do
@@ -158,7 +172,7 @@ function DPSMate.Modules.DetailsDamage:UpdatePie()
 end
 
 function DPSMate.Modules.DetailsDamage:UpdateLineGraph()
-	local arr, cbt = DPSMate:GetMode(curKey)
+	local arr = db
 	local sumTable = DPSMate.Modules.DetailsDamage:GetSummarizedTable(arr, cbt)
 	local max = DPSMate.Modules.DetailsDamage:GetMaxLineVal(sumTable)
 	
