@@ -53,7 +53,7 @@ function DPSMate.Modules.AurasUptimers:EvalTable(user, k)
 	for cat, val in pairs(arr[user[1]]) do -- 3 Ability
 		local CV = 0
 		for ca, va in pairs(val) do -- each one
-			if c==1 then
+			if ca==1 then
 				for ce, ve in pairs(va) do
 					if arr[user[1]][cat][2][ce] then
 						CV=CV+(arr[user[1]][cat][2][ce]-ve)
@@ -65,7 +65,7 @@ function DPSMate.Modules.AurasUptimers:EvalTable(user, k)
 	end
 	for cat, val in pairs(temp) do
 		local i = 1
-		val = ceil(100*(DPSMateCombatTime["total"]-val)/DPSMateCombatTime["total"])
+		val = ceil((100*val)/DPSMateCombatTime["total"])
 		while true do
 			if (not b[i]) then
 				table.insert(b, i, val)
