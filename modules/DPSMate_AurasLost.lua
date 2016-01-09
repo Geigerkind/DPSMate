@@ -18,13 +18,11 @@ function DPSMate.Modules.AurasLost:GetSortedTable(arr)
 	local b, a, total = {}, {}, 0
 	for cat, val in pairs(arr) do -- 2 Target
 		local CV = 0
-		for ca, va in pairs(val) do -- 3 Owner
+		for ca, va in pairs(val) do -- 3 ability
 			for c, v in pairs(va) do -- 1 Ability
-				for ce, ve in pairs(v) do 
-					if ce==2 then
-						for c, v in pairs(ve) do
-							CV=CV+1
-						end
+				if c==2 then
+					for ce, ve in pairs(v) do
+						CV=CV+1
 					end
 				end
 			end
@@ -52,36 +50,32 @@ end
 function DPSMate.Modules.AurasLost:EvalTable(user, k)
 	local a, b, temp, total = {}, {}, {}, 0
 	local arr = DPSMate:GetMode(k)
-	for cat, val in pairs(arr[user[1]]) do -- 3 Owner
-		for ca, va in pairs(val) do -- 1 Ability
-			local CV = 0
-			for c, v in pairs(va) do -- each one
-				if c==2 then
-					for ce, ve in pairs(v) do
-						CV=CV+1
-					end
+	for cat, val in pairs(arr[user[1]]) do -- 3 Ability
+		local CV = 0
+		for ca, va in pairs(val) do -- each one
+			if ca==2 then
+				for ce, ve in pairs(va) do
+					CV=CV+1
 				end
 			end
-			if temp[ca] then temp[ca]=temp[ca]+CV else temp[ca]=CV end
 		end
+		if temp[cat] then temp[cat]=temp[cat]+CV else temp[cat]=CV end
 	end
 	for cat, val in pairs(temp) do
 		local i = 1
-		if val>0 then
-			while true do
-				if (not b[i]) then
+		while true do
+			if (not b[i]) then
+				table.insert(b, i, val)
+				table.insert(a, i, cat)
+				break
+			else
+				if b[i] < val then
 					table.insert(b, i, val)
 					table.insert(a, i, cat)
 					break
-				else
-					if b[i] < val then
-						table.insert(b, i, val)
-						table.insert(a, i, cat)
-						break
-					end
 				end
-				i=i+1
 			end
+			i=i+1
 		end
 	end
 	return a, total, b

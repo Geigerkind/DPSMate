@@ -944,12 +944,14 @@ end
 -- /script DPSMate.DB:ConfirmDispel("Frostbolt", "Shino", 1.2)
 
 function DPSMate.DB:ConfirmDispel(ability, target, time)
-	for cat, val in pairs(AwaitDispel) do
-		if val[2] == target and (time-val[4])<=1 and DPSMate:TContains(DPSMate.Parser["De"..DPSMateAbility[ability][2]], val[3]) then -- index nil value error?
-			DPSMate.DB:Dispels(val[1], val[3], val[2], ability)
-			--DPSMate:SendMessage("Confirmed!")
-			table.remove(AwaitDispel, cat)
-			return
+	if ability and ability~="" then
+		for cat, val in pairs(AwaitDispel) do
+			if val[2] == target and (time-val[4])<=1 and DPSMate:TContains(DPSMate.Parser["De"..DPSMateAbility[ability][2]], val[3]) then -- index nil value error?
+				DPSMate.DB:Dispels(val[1], val[3], val[2], ability)
+				--DPSMate:SendMessage("Confirmed!")
+				table.remove(AwaitDispel, cat)
+				return
+			end
 		end
 	end
 	DPSMate.DB:Dispels("Unknown", "Unknown", target, ability)
@@ -1189,16 +1191,18 @@ function DPSMate.DB:BuildBuffs(cause, target, ability)
 		if not DPSMateAurasGained[cat][DPSMateUser[target][1]] then
 			DPSMateAurasGained[cat][DPSMateUser[target][1]] = {}
 		end
-		if not DPSMateAurasGained[cat][DPSMateUser[target][1]][DPSMateUser[cause][1]] then
-			DPSMateAurasGained[cat][DPSMateUser[target][1]][DPSMateUser[cause][1]] = {}
-		end
-		if not DPSMateAurasGained[cat][DPSMateUser[target][1]][DPSMateUser[cause][1]][DPSMateAbility[ability][1]] then
-			DPSMateAurasGained[cat][DPSMateUser[target][1]][DPSMateUser[cause][1]][DPSMateAbility[ability][1]] = {
+		if not DPSMateAurasGained[cat][DPSMateUser[target][1]][DPSMateAbility[ability][1]] then
+			DPSMateAurasGained[cat][DPSMateUser[target][1]][DPSMateAbility[ability][1]] = {
 				[1] = {},
 				[2] = {},
+				[3] = {},
 			}
 		end
-		table.insert(DPSMateAurasGained[cat][DPSMateUser[target][1]][DPSMateUser[cause][1]][DPSMateAbility[ability][1]][1], DPSMateCombatTime[val])
+		if not DPSMateAurasGained[cat][DPSMateUser[target][1]][DPSMateAbility[ability][1]][3][DPSMateUser[cause][1]] then
+			DPSMateAurasGained[cat][DPSMateUser[target][1]][DPSMateAbility[ability][1]][3][DPSMateUser[cause][1]] = 0
+		end
+		table.insert(DPSMateAurasGained[cat][DPSMateUser[target][1]][DPSMateAbility[ability][1]][1], DPSMateCombatTime[val])
+		DPSMateAurasGained[cat][DPSMateUser[target][1]][DPSMateAbility[ability][1]][3][DPSMateUser[cause][1]] = DPSMateAurasGained[cat][DPSMateUser[target][1]][DPSMateAbility[ability][1]][3][DPSMateUser[cause][1]] + 1
 	end
 	NeedUpdate = true
 end
@@ -1209,25 +1213,12 @@ function DPSMate.DB:DestroyBuffs(target, ability)
 	DPSMate.DB:BuildUser(target, nil)
 	DPSMate.DB:BuildAbility(ability, nil)
 	for cat, val in pairs({[1]="total", [2]="current"}) do 
-		local bool = true
-		if DPSMateAurasGained[cat][DPSMateUser[target][1]] then
-			for ca, va in pairs(DPSMateAurasGained[cat][DPSMateUser[target][1]]) do -- 2
-				for c, v in pairs(va) do -- 3
-					if DPSMate:GetAbilityById(c)==ability then
-						local TL = DPSMate:TableLength(v[2])
-						if not v[2][TL+1] then
-							v[2][TL+1]=DPSMateCombatTime[val]
-							bool = false
-							break
-						end
-					end
-				end
-			end
-		end
-		if bool then
+		if not DPSMateAurasGained[cat][DPSMateUser[target][1]] then
 			DPSMate.DB:BuildBuffs("Unknown", target, ability)
-			table.insert(DPSMateAurasGained[cat][DPSMateUser[target][1]][DPSMateUser["Unknown"][1]][DPSMateAbility[ability][1]][2], DPSMateCombatTime[val])
+		elseif not DPSMateAurasGained[cat][DPSMateUser[target][1]][DPSMateAbility[ability][1]] then
+			DPSMate.DB:BuildBuffs("Unknown", target, ability)
 		end
+		table.insert(DPSMateAurasGained[cat][DPSMateUser[target][1]][DPSMateAbility[ability][1]][2], DPSMateCombatTime[val])
 	end
 	NeedUpdate = true
 end

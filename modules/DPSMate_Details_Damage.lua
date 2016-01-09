@@ -36,6 +36,8 @@ local db, cbt = {}, 0
 function DPSMate.Modules.DetailsDamage:UpdateDetails(obj, key)
 	curKey = key
 	db, cbt = DPSMate:GetMode(key)
+	DPSMate_Details.proc = "None"
+	UIDropDownMenu_SetSelectedValue(DPSMate_Details_DiagramLegend_Procs, "None")
 	if (PieChart) then
 		g=DPSMate.Options.graph:CreateGraphPieChart("PieChart", DPSMate_Details_Diagram, "CENTER", "CENTER", 0, 0, 200, 200)
 		g2=DPSMate.Options.graph:CreateGraphLine("LineGraph",DPSMate_Details_DiagramLine,"CENTER","CENTER",0,0,850,230)
@@ -234,15 +236,13 @@ function DPSMate.Modules.DetailsDamage:ProcsDropDown()
 	
 	-- Adding dynamic channel
 	for cat, val in pairs(arr[DPSMateUser[DetailsUser][1]]) do
-		for ca, va in pairs(val) do
-			local ability = DPSMate:GetAbilityById(ca)
-			if DPSMate:TContains(DPSMate.Parser.procs, ability) then
-				UIDropDownMenu_AddButton{
-					text = ability,
-					value = ca,
-					func = on_click,
-				}
-			end
+		local ability = DPSMate:GetAbilityById(cat)
+		if DPSMate:TContains(DPSMate.Parser.procs, ability) then
+			UIDropDownMenu_AddButton{
+				text = ability,
+				value = cat,
+				func = on_click,
+			}
 		end
 	end
 	
@@ -322,23 +322,12 @@ function DPSMate.Modules.DetailsDamage:GetAuraGainedArr(k)
 	end
 end
 
-function DPSMate.Modules.DetailsDamage:GetProcPath(name, arr)
-	for cat, val in pairs(arr[DPSMateUser[DetailsUser][1]]) do
-		for ca, va in pairs(val) do
-			if ca==name then
-				return cat
-			end
-		end
-	end
-end
-
 function DPSMate.Modules.DetailsDamage:CheckProcs(name, val)
 	local arr = DPSMate.Modules.DetailsDamage:GetAuraGainedArr(curKey)
-	local proc = DPSMate.Modules.DetailsDamage:GetProcPath(name, arr)
-	if proc then
-		for i=1, DPSMate:TableLength(arr[DPSMateUser[DetailsUser][1]][proc][name][1]) do
-			if not arr[DPSMateUser[DetailsUser][1]][proc][name][1][i] or not arr[DPSMateUser[DetailsUser][1]][proc][name][2][i] then return false end
-			if val > arr[DPSMateUser[DetailsUser][1]][proc][name][1][i] and val < arr[DPSMateUser[DetailsUser][1]][proc][name][2][i] then
+	if arr[DPSMateUser[DetailsUser][1]][name] then
+		for i=1, DPSMate:TableLength(arr[DPSMateUser[DetailsUser][1]][name][1]) do
+			if not arr[DPSMateUser[DetailsUser][1]][name][1][i] or not arr[DPSMateUser[DetailsUser][1]][name][2][i] then return false end
+			if val > arr[DPSMateUser[DetailsUser][1]][name][1][i] and val < arr[DPSMateUser[DetailsUser][1]][name][2][i] then
 				return true
 			end
 		end

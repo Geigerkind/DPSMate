@@ -568,11 +568,13 @@ DPSMate.Parser.oldUseAction = UseAction
 	DPSMate_Tooltip:SetAction(slot)
 	local aura = DPSMate_TooltipTextLeft1:GetText()
 	DPSMate_Tooltip:Hide()
-	if aura and UnitName("target") then
-		SendAddonMessage("DPSMate", player.name..","..aura..","..UnitName("target")..","..GetTime(), "RAID")
-		if DPSMate:TContains(DPSMate.Parser.Kicks, ability) then DPSMate.DB:AwaitAfflictedStun(player.name, aura, UnitName("target"), GetTime()) end
-		DPSMate.DB:AwaitingBuff(player.name, aura, UnitName("target"), GetTime())
-		DPSMate.DB:AwaitingAbsorbConfirmation(player.name, aura, UnitName("target"), GetTime())
+	if aura then
+		local target = nil
+		if not UnitName("target") or not UnitIsPlayer("target") then target = player.name else target = UnitName("target") end
+		SendAddonMessage("DPSMate", player.name..","..aura..","..target..","..GetTime(), "RAID")
+		if DPSMate:TContains(DPSMate.Parser.Kicks, ability) then DPSMate.DB:AwaitAfflictedStun(player.name, aura, target, GetTime()) end
+		DPSMate.DB:AwaitingBuff(player.name, aura, target, GetTime())
+		DPSMate.DB:AwaitingAbsorbConfirmation(player.name, aura, target, GetTime())
 	end
 	DPSMate.Parser.oldUseAction(slot, checkCursor, onSelf)
 end
