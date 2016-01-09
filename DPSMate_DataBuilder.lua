@@ -1173,16 +1173,16 @@ function DPSMate.DB:ConfirmBuff(target, ability, time)
 	for cat, val in pairs(AwaitBuff) do
 		if val[4]<=time then
 			if val[2]==ability and val[3]==target then
-				DPSMate.DB:BuildBuffs(val[1], target, ability)
+				DPSMate.DB:BuildBuffs(val[1], target, ability, false)
 				--DPSMate:SendMessage("Confirmed Buff!")
 				return
 			end
 		end
 	end
-	DPSMate.DB:BuildBuffs("Unknown", target, ability)
+	DPSMate.DB:BuildBuffs("Unknown", target, ability, false)
 end
 
-function DPSMate.DB:BuildBuffs(cause, target, ability)
+function DPSMate.DB:BuildBuffs(cause, target, ability, bool)
 	if (not target or target=="" or not cause or cause=="") then return end
 	DPSMate.DB:BuildUser(target, nil)
 	DPSMate.DB:BuildUser(cause, nil)
@@ -1196,6 +1196,7 @@ function DPSMate.DB:BuildBuffs(cause, target, ability)
 				[1] = {},
 				[2] = {},
 				[3] = {},
+				[4] = bool,
 			}
 		end
 		if not DPSMateAurasGained[cat][DPSMateUser[target][1]][DPSMateAbility[ability][1]][3][DPSMateUser[cause][1]] then
@@ -1214,9 +1215,9 @@ function DPSMate.DB:DestroyBuffs(target, ability)
 	DPSMate.DB:BuildAbility(ability, nil)
 	for cat, val in pairs({[1]="total", [2]="current"}) do 
 		if not DPSMateAurasGained[cat][DPSMateUser[target][1]] then
-			DPSMate.DB:BuildBuffs("Unknown", target, ability)
+			DPSMate.DB:BuildBuffs("Unknown", target, ability, false)
 		elseif not DPSMateAurasGained[cat][DPSMateUser[target][1]][DPSMateAbility[ability][1]] then
-			DPSMate.DB:BuildBuffs("Unknown", target, ability)
+			DPSMate.DB:BuildBuffs("Unknown", target, ability, false)
 		end
 		table.insert(DPSMateAurasGained[cat][DPSMateUser[target][1]][DPSMateAbility[ability][1]][2], DPSMateCombatTime[val])
 	end
@@ -1256,18 +1257,6 @@ function DPSMate.DB:EDDExist(uname, cause, aname, arr)
 				if arr[DPSMateUser[cause][1]][DPSMateUser[uname][1]][DPSMateAbility[aname][1]] ~= nil then
 					return true
 				end
-			end
-		end
-	end
-	return false
-end
-
--- System needs to be updated and linked to aura table anyway
-function DPSMate.DB:DataExistProcs(uname, aname, arr)
-	if DPSMateUser[uname]~=nil then
-		if arr[DPSMateUser[uname][1]] ~= nil then
-			if arr[DPSMateUser[uname][1]]["i"][1][aname] ~= nil then
-				return true
 			end
 		end
 	end
@@ -1325,30 +1314,5 @@ function DPSMate.DB:hasVanishedFeignDeath()
 			return true
 		end
 		DPSMate_Tooltip:Hide()
-	end
-end
-
--- Improve Procs distplay in line graph -> if no damage is time inbetween a line, it is not colored.
-function DPSMate.DB:BuildUserProcs(Duser, Dname, Dbool) -- has to be made dynamic again
-	for cat, val in pairs({[1]="total", [2]="current"}) do 
-		if DPSMate.DB:DataExistProcs(Duser.name, Dname, DPSMateDamageDone[cat]) then
-			local len = DPSMate:TableLength(DPSMateDamageDone[cat][DPSMateUser[Duser.name][1]]["i"][1][Dname]["start"])
-			if DPSMateDamageDone[cat][DPSMateUser[Duser.name][1]]["i"][1][Dname]["start"][len] and not DPSMateDamageDone[cat][DPSMateUser[Duser.name][1]]["i"][1][Dname]["ending"][len] then
-				DPSMateDamageDone[cat][DPSMateUser[Duser.name][1]]["i"][1][Dname]["ending"][len] = DPSMateCombatTime[val]
-			else
-				DPSMateDamageDone[cat][DPSMateUser[Duser.name][1]]["i"][1][Dname]["start"][len+1] = DPSMateCombatTime[val]
-			end
-		else
-			DPSMate.DB:BuildUser(Duser.name, Duser.class)
-			if DPSMateDamageDone[cat][DPSMateUser[Duser.name][1]] then
-				DPSMateDamageDone[cat][DPSMateUser[Duser.name][1]]["i"][1][Dname] = {
-					start = {
-						[1] = DPSMateCombatTime[val],
-					},
-					ending = {},
-					point = Dbool,
-				}
-			end
-		end
 	end
 end

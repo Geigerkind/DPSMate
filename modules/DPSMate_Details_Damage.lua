@@ -194,7 +194,7 @@ function DPSMate.Modules.DetailsDamage:UpdateLineGraph()
 		table.insert(Data1, {val[1],val[2], DPSMate.Modules.DetailsDamage:CheckProcs(DPSMate_Details.proc, val[1])})
 	end
 
-	g2:AddDataSeries(Data1,{{1.0,0.0,0.0,0.8}, {1.0,1.0,0.0,0.8}}, DPSMate.Modules.DetailsDamage:AddProcPoints(DPSMate_Details.proc, arr))
+	g2:AddDataSeries(Data1,{{1.0,0.0,0.0,0.8}, {1.0,1.0,0.0,0.8}}, DPSMate.Modules.DetailsDamage:AddProcPoints(DPSMate_Details.proc, Data1))
 end
 
 function DPSMate.Modules.DetailsDamage:CreateGraphTable()
@@ -326,7 +326,7 @@ function DPSMate.Modules.DetailsDamage:CheckProcs(name, val)
 	local arr = DPSMate.Modules.DetailsDamage:GetAuraGainedArr(curKey)
 	if arr[DPSMateUser[DetailsUser][1]][name] then
 		for i=1, DPSMate:TableLength(arr[DPSMateUser[DetailsUser][1]][name][1]) do
-			if not arr[DPSMateUser[DetailsUser][1]][name][1][i] or not arr[DPSMateUser[DetailsUser][1]][name][2][i] then return false end
+			if not arr[DPSMateUser[DetailsUser][1]][name][1][i] or not arr[DPSMateUser[DetailsUser][1]][name][2][i] or arr[DPSMateUser[DetailsUser][1]][name][4] then return false end
 			if val > arr[DPSMateUser[DetailsUser][1]][name][1][i] and val < arr[DPSMateUser[DetailsUser][1]][name][2][i] then
 				return true
 			end
@@ -335,12 +335,29 @@ function DPSMate.Modules.DetailsDamage:CheckProcs(name, val)
 	return false
 end
 
-function DPSMate.Modules.DetailsDamage:AddProcPoints(name, arr)
-	local bool, data = false, {}
-	if DPSMate.DB:DataExistProcs(DetailsUser, name, arr) and arr[DPSMateUser[DetailsUser][1]]["i"][1][name]["point"] then
-		for i=1, DPSMate:TableLength(arr[DPSMateUser[DetailsUser][1]]["i"][1][name]["start"]) do
-			bool = true
-			table.insert(data, arr[DPSMateUser[DetailsUser][1]]["i"][1][name]["start"][i])
+function DPSMate.Modules.DetailsDamage:AddProcPoints(name, dat)
+	local bool, data, LastVal = false, {}, 0
+	local arr = DPSMate.Modules.DetailsDamage:GetAuraGainedArr(curKey)
+	if arr[DPSMateUser[DetailsUser][1]][name] then
+		if arr[DPSMateUser[DetailsUser][1]][name][4] then
+			for cat, val in pairs(dat) do
+				for i=1, DPSMate:TableLength(arr[DPSMateUser[DetailsUser][1]][name][1]) do
+					if arr[DPSMateUser[DetailsUser][1]][name][1][i]<=val[1] then
+						local tempbool = true
+						for _, va in pairs(data) do
+							if va[1] == arr[DPSMateUser[DetailsUser][1]][name][1][i] then
+								tempbool = false
+								break
+							end
+						end
+						if tempbool then	
+							bool = true
+							table.insert(data, {arr[DPSMateUser[DetailsUser][1]][name][1][i], LastVal, {val[1], val[2]}})
+						end
+					end
+				end
+				LastVal = {val[1], val[2]}
+			end
 		end
 	end
 	return {bool, data}

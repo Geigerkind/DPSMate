@@ -178,6 +178,7 @@ function lib:CreateGraphLine(name,parent,relative,relativeTo,offsetX,offsetY,Wid
 	graph.LockOnYMin=false
 	graph.LockOnYMax=false
 	graph.Data={}
+	graph.DataPoints={}
 
 	
 	
@@ -368,7 +369,8 @@ function GraphFunctions:AddDataSeries(points,color,Dp)
 		return
 	end
 	
-	table.insert(self.Data,{Points=points;Color=color;Dpoints=Dp})
+	table.insert(self.Data,{Points=points;Color=color})
+	self.DataPoints = Dp
 	
 	self.NeedsUpdate=true
 end
@@ -1168,18 +1170,24 @@ function GraphFunctions:RefreshLineGraph()
 				LastPoint.y=Height*(LastPoint.y-self.YMin)/(self.YMax-self.YMin)
 			end
 		end
-		
-		if series.Dpoints[1] then
-			self.ppoints = {}
-			for k3, p2 in pairs(series.Dpoints[2]) do
-				-- Needs fine tuning
-				local PPoint = self:CreateTexture()
-				PPoint:SetTexture("Interface\\AddOns\\!ShinoUI\\modules\\modmaps\\blips\\party") -- Adjust path later
-				PPoint:SetPoint("LEFT", self.yAxis, "LEFT", self:GetWidth()*(p2/self.XMax)+40, 0)
-				PPoint:SetHeight(20)
-				PPoint:SetWidth(20)
-				table.insert(self.ppoints, PPoint)
-			end
+	end
+	
+	self.ppoints = {}
+	if self.DataPoints[1] then
+		for k3, p2 in pairs(self.DataPoints[2]) do
+			-- Needs fine tuning
+			local PPoint = self:CreateTexture()
+			PPoint:SetTexture("Interface\\AddOns\\!ShinoUI\\modules\\modmaps\\blips\\party") -- Adjust path later
+			local PPLastPointX = Width*(p2[2][1]-self.XMin)/(self.XMax-self.XMin)
+			local PPLastPointY = Height*(p2[2][2]-self.YMin)/(self.YMax-self.YMin)
+			local PPNextPointX = Width*(p2[3][1]-self.XMin)/(self.XMax-self.XMin)
+			local PPNextPointY = Height*(p2[3][2]-self.YMin)/(self.YMax-self.YMin)
+			local pointx = Width*(p2[1]-self.XMin)/(self.XMax-self.XMin)
+			local pointy = PPLastPointY + (pointx-PPLastPointX)*((PPNextPointY-PPLastPointY)/(PPNextPointX-PPLastPointX))
+			PPoint:SetPoint("LEFT", self.yAxis, "LEFT", pointx-5, pointy-22)
+			PPoint:SetHeight(20)
+			PPoint:SetWidth(20)
+			table.insert(self.ppoints, PPoint)
 		end
 	end
 	

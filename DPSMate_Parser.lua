@@ -21,6 +21,8 @@ DPSMate.Parser.procs = {
 	"Sprint",
 	"Adrenaline Rush",
 	"Vanish",
+	"Relentless Strikes Effect",
+	"Rogue Armor Energize Effect",
 	
 	-- Mage
 	"Arcane Power",
@@ -267,17 +269,9 @@ function DPSMate.Parser:PeriodicDamage(msg)
 end
 
 function DPSMate.Parser:TextUpdate(arg1,arg2,arg3) 
-	if arg1 == "AURA_START" or arg1 == "AURA_END" then
-		--if DPSMate:TContains(procs, arg2) then
-		--	DPSMate.DB:BuildUserProcs(player, arg2, false)
-		--end
-	elseif arg1 == "ENERGY" then
+	if arg1 == "ENERGY" then
 		if arg2 == "25" then
-			DPSMate.DB:BuildUserProcs(player, "Relentless Strikes", true)
-			DPSMate.DB:BuildUserProcs(player, "Relentless Strikes", true)
 		elseif arg2 == "35" then
-			DPSMate.DB:BuildUserProcs(player, "Rogue Armor Energize", true)
-			DPSMate.DB:BuildUserProcs(player, "Rogue Armor Energize", true)
 		end
 	end
 end
@@ -486,8 +480,10 @@ end
 -- Your Flash of Light critically heals you for 130.
 -- You cast Purify on Minihunden.
 -- Your Healing Potion heals you for 507.
+-- You gain 25 Energy from Relentless Strikes Effect.
 function DPSMate.Parser:SpellSelfBuff(msg)
 	local ability, hit, crit, target, amount = "", 0, 0, "", 0
+	for a, ab in string.gfind(msg, "You gain (.+) Energy from (.+)%.") do DPSMate.DB:BuildBuffs(player.name, player.name, ab, true); DPSMate.DB:DestroyBuffs(player.name, ab); return end
 	for ab, ta, a in string.gfind(msg, "Your (.+) heals (.+) for (.+)%.") do hit=1; crit=0; ability=ab; target=ta; amount=tonumber(strsub(a, strfind(a, "%d+"))) end
 	for ab, ta, a in string.gfind(msg, "Your (.+) critically heals (.+) for (.+)%.") do crit=1; hit=0; ability=ab; target=ta; amount=tonumber(strsub(a, strfind(a, "%d+"))) end
 	if target=="you" then target=player.name end
