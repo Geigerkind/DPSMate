@@ -1272,3 +1272,17 @@ function DPSMate.Options:CheckButton(name, id)
 	DPSMate:SetStatusBarValue()
 end
 
+function DPSMate.Options:ToggleSync()
+	if DPSMateSettings["sync"] then
+		DPSMateSettings["sync"] = false
+		for _, val in pairs(DPSMateSettings["windows"]) do
+			getglobal("DPSMate_"..val["name"].."_Head_Sync"):GetNormalTexture():SetVertexColor(1,0,0,1)
+		end
+	else
+		DPSMateSettings["sync"] = true
+		for _, val in pairs(DPSMateSettings["windows"]) do
+			getglobal("DPSMate_"..val["name"].."_Head_Sync"):GetNormalTexture():SetVertexColor(0.67,0.83,0.45,1)
+		end
+	end
+end
+

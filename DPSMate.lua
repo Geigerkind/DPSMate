@@ -13,8 +13,8 @@ DPSMate.Events = {
 	"CHAT_MSG_COMBAT_SELF_HITS",
 	"CHAT_MSG_COMBAT_SELF_MISSES",
 	"CHAT_MSG_SPELL_SELF_DAMAGE",
-	"CHAT_MSG_SPELL_PERIODIC_HOSTILEPLAYER_DAMAGE", --
-	"CHAT_MSG_SPELL_HOSTILEPLAYER_DAMAGE", --
+	"CHAT_MSG_SPELL_PERIODIC_HOSTILEPLAYER_DAMAGE", 
+	"CHAT_MSG_SPELL_HOSTILEPLAYER_DAMAGE", 
 	"CHAT_MSG_SPELL_PERIODIC_CREATURE_DAMAGE",
 	"CHAT_MSG_COMBAT_PARTY_HITS",
 	"CHAT_MSG_SPELL_PARTY_DAMAGE",
@@ -23,7 +23,7 @@ DPSMate.Events = {
 	"CHAT_MSG_COMBAT_FRIENDLYPLAYER_MISSES",
 	"CHAT_MSG_SPELL_FRIENDLYPLAYER_DAMAGE",
 	
-	"COMBAT_TEXT_UPDATE",
+	--"COMBAT_TEXT_UPDATE",
 	
 	"CHAT_MSG_COMBAT_CREATURE_VS_SELF_HITS",
 	"CHAT_MSG_COMBAT_CREATURE_VS_SELF_MISSES",
@@ -147,6 +147,13 @@ function DPSMate:InitializeFrames()
 		local head = getglobal("DPSMate_"..val["name"].."_Head")
 		head.font = getglobal("DPSMate_"..val["name"].."_Head_Font")
 		head.bg = getglobal("DPSMate_"..val["name"].."_Head_Background")
+		head.sync = getglobal("DPSMate_"..val["name"].."_Head_Sync")
+		
+		if DPSMateSettings["sync"] then
+			head.sync:GetNormalTexture():SetVertexColor(0.67,0.83,0.45,1)
+		else
+			head.sync:GetNormalTexture():SetVertexColor(1,0,0,1)
+		end
 		
 		if DPSMateSettings["lock"] then
 			getglobal("DPSMate_"..val["name"].."_Resize"):Hide()

@@ -182,10 +182,8 @@
 					<Button name="$parent_Sync">
 						<Size x="14" y="14" />
 						<Scripts>
-							<OnLoad>
-								this:GetNormalTexture():SetVertexColor(1,0,0,1)
-							</OnLoad>
 							<OnClick>
+								DPSMate.Options:ToggleSync()
 							</OnClick>
 						</Scripts>
 						<HighlightTexture file="Interface\AddOns\DPSMate\images\sync" alphaMode="ADD"/>

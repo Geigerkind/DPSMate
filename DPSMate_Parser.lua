@@ -64,8 +64,6 @@ function DPSMate.Parser:OnEvent(event)
 		if arg1 then DPSMate.Parser:FriendlyPlayerMisses(arg1) end 
 	elseif event == "CHAT_MSG_SPELL_PARTY_DAMAGE" then 
 		if arg1 then DPSMate.Parser:FriendlyPlayerDamage(arg1) end
-	elseif event == "COMBAT_TEXT_UPDATE" then
-		--DPSMate.Parser:TextUpdate(arg1,arg2,arg3)
 	elseif event == "CHAT_MSG_SPELL_FRIENDLYPLAYER_DAMAGE" then
 		if arg1 then DPSMate.Parser:FriendlyPlayerDamage(arg1) end
 	elseif event == "CHAT_MSG_COMBAT_FRIENDLYPLAYER_HITS" then
@@ -265,14 +263,6 @@ function DPSMate.Parser:PeriodicDamage(msg)
 		if cause.name == DPSMate.localization.parser.your2 then cause.name = player.name; else cause.name = strsub(cause.name, 1, strlen(cause.name)-2); end
 		DPSMate.DB:EnemyDamage(DPSMateEDT, cause, strsub(ab, 1, strfind(ab, "%.")-1).."(Periodic)", 1, 0, 0, 0, 0, 0, tonumber(strsub(dmg, strfind(dmg, "%d+"))), tar)
 		DPSMate.DB:DamageDone(cause, strsub(ab, 1, strfind(ab, "%.")-1).."(Periodic)", 1, 0, 0, 0, 0, 0, tonumber(strsub(dmg, strfind(dmg, "%d+"))))
-	end
-end
-
-function DPSMate.Parser:TextUpdate(arg1,arg2,arg3) 
-	if arg1 == "ENERGY" then
-		if arg2 == "25" then
-		elseif arg2 == "35" then
-		end
 	end
 end
 

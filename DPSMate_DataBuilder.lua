@@ -76,6 +76,7 @@ function DPSMate.DB:OnEvent(event)
 					}
 				},
 				lock = true,
+				sync = true,
 				dataresetsworld = 3,
 				dataresetsjoinparty = 1,
 				dataresetsleaveparty = 2,

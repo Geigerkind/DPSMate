@@ -3854,7 +3854,7 @@
 				this:RegisterEvent("CHAT_MSG_COMBAT_FRIENDLYPLAYER_HITS")
 				this:RegisterEvent("CHAT_MSG_COMBAT_FRIENDLYPLAYER_MISSES")
 				
-				this:RegisterEvent("COMBAT_TEXT_UPDATE")
+				--this:RegisterEvent("COMBAT_TEXT_UPDATE")
 				
 				this:RegisterEvent("CHAT_MSG_COMBAT_CREATURE_VS_SELF_HITS")
 				this:RegisterEvent("CHAT_MSG_COMBAT_CREATURE_VS_SELF_MISSES")
