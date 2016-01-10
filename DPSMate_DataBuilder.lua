@@ -19,6 +19,7 @@ DPSMate.DB.AbilityFlags = {
 	["Arcane Explosion"] = 6,
 	["Smite"] = 7,
 }
+DPSMate.DB.NeedUpdate = false
 
 -- Local Variables
 local CombatState = false
@@ -27,7 +28,6 @@ local UpdateTime = 0.25
 local LastUpdate = 0
 local MainLastUpdate = 0
 local MainUpdateTime = 1.5
-local NeedUpdate = false
 local MainLastUpdateMinute = 0
 
 -- Begin Functions
@@ -314,6 +314,7 @@ function DPSMate.DB:OnEvent(event)
 		end
 		
 		DPSMate:OnLoad()
+		DPSMate.Parser:OnLoad()
 		DPSMate.Options:InitializeSegments()
 		DPSMate.Options:InitializeHideShowWindow()
 		
@@ -528,7 +529,7 @@ function DPSMate.DB:DamageDone(Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, Ddodge,
 		DPSMateDamageDone[cat][DPSMateUser[Duser.name][1]]["i"][3] = DPSMateDamageDone[cat][DPSMateUser[Duser.name][1]]["i"][3] + Damount
 		DPSMateDamageDone[cat][DPSMateUser[Duser.name][1]]["i"][2][DPSMateCombatTime[val]] = Damount
 	end
-	NeedUpdate = true
+	DPSMate.DB.NeedUpdate = true
 end
 
 -- Fall damage
@@ -591,7 +592,7 @@ function DPSMate.DB:DamageTaken(Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, Ddodge
 		end
 		DPSMateDamageTaken[cat][DPSMateUser[Duser.name][1]][DPSMateUser[cause][1]]["i"][3] = DPSMateDamageTaken[cat][DPSMateUser[Duser.name][1]][DPSMateUser[cause][1]]["i"][3] + Damount
 	end
-	NeedUpdate = true
+	DPSMate.DB.NeedUpdate = true
 end
 
 function DPSMate.DB:EnemyDamage(arr, Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, Ddodge, Dresist, Damount, cause)
@@ -650,7 +651,7 @@ function DPSMate.DB:EnemyDamage(arr, Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, D
 		end
 		arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser.name][1]]["i"][3] = arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser.name][1]]["i"][3] + Damount
 	end
-	NeedUpdate = true
+	DPSMate.DB.NeedUpdate = true
 end
 
 function DPSMate.DB:Healing(arr, Duser, Dname, Dhit, Dcrit, Damount, target)
@@ -699,7 +700,7 @@ function DPSMate.DB:Healing(arr, Duser, Dname, Dhit, Dcrit, Damount, target)
 		arr[cat][DPSMateUser[Duser.name][1]][DPSMateAbility[Dname][1]][DPSMateUser[target][1]][3] = arr[cat][DPSMateUser[Duser.name][1]][DPSMateAbility[Dname][1]][DPSMateUser[target][1]][3]+Dcrit
 		arr[cat][DPSMateUser[Duser.name][1]]["i"][1] = arr[cat][DPSMateUser[Duser.name][1]]["i"][1]+Damount
 	end
-	NeedUpdate = true
+	DPSMate.DB.NeedUpdate = true
 end
 
 function DPSMate.DB:HealingTaken(arr, Duser, Dname, Dhit, Dcrit, Damount, target)
@@ -748,7 +749,7 @@ function DPSMate.DB:HealingTaken(arr, Duser, Dname, Dhit, Dcrit, Damount, target
 		arr[cat][DPSMateUser[Duser][1]][DPSMateUser[target][1]][DPSMateAbility[Dname][1]][3] = arr[cat][DPSMateUser[Duser][1]][DPSMateUser[target][1]][DPSMateAbility[Dname][1]][3]+Dcrit
 		arr[cat][DPSMateUser[Duser][1]]["i"][1] = arr[cat][DPSMateUser[Duser][1]]["i"][1]+Damount
 	end
-	NeedUpdate = true
+	DPSMate.DB.NeedUpdate = true
 end
 
 -- Fire etc. Prot Potion
@@ -825,28 +826,29 @@ function DPSMate.DB:SetUnregisterVariables(broAbsorb)
 end
 
 function DPSMate.DB:UnregisterAbsorb(ability, abilityTarget)
-	local AbsorbingAbility = DPSMate.DB:GetActiveAbsorbAbilityByPlayer(ability, abilityTarget)
-	if AbsorbingAbility[1] then
-		for cat, val in pairs({[1]="total", [2]="current"}) do 
-			if DPSMateAbsorbs[cat][DPSMateUser[abilityTarget][1]][AbsorbingAbility[1]][AbsorbingAbility[2]][DPSMateAbility[AbsorbingAbility[3]]]["i"][1] == 0 then
-				DPSMateAbsorbs[cat][DPSMateUser[abilityTarget][1]][AbsorbingAbility[1]][AbsorbingAbility[2]][DPSMateAbility[AbsorbingAbility[3]]]["i"][1] = broken
-				DPSMateAbsorbs[cat][DPSMateUser[abilityTarget][1]][AbsorbingAbility[1]][AbsorbingAbility[2]][DPSMateAbility[AbsorbingAbility[3]]]["i"][2] = brokenAbsorb
+	for cat, val in pairs({[1]="total", [2]="current"}) do 
+		local AbsorbingAbility = DPSMate.DB:GetActiveAbsorbAbilityByPlayer(ability, abilityTarget, cat)
+		if AbsorbingAbility[1] then
+			if DPSMateAbsorbs[cat][DPSMateUser[abilityTarget][1]][AbsorbingAbility[1]][AbsorbingAbility[2]][AbsorbingAbility[3]]["i"][1] == 0 then
+				DPSMateAbsorbs[cat][DPSMateUser[abilityTarget][1]][AbsorbingAbility[1]][AbsorbingAbility[2]][AbsorbingAbility[3]]["i"][1] = broken
+				DPSMateAbsorbs[cat][DPSMateUser[abilityTarget][1]][AbsorbingAbility[1]][AbsorbingAbility[2]][AbsorbingAbility[3]]["i"][2] = brokenAbsorb
 			end
 		end
-		broken = 2
-		brokenAbsorb = 0
-		NeedUpdate = true
 	end
+	broken = 2
+	brokenAbsorb = 0
+	DPSMate.DB.NeedUpdate = true
 end
 
-function DPSMate.DB:GetActiveAbsorbAbilityByPlayer(ability, abilityTarget)
+function DPSMate.DB:GetActiveAbsorbAbilityByPlayer(ability, abilityTarget, cat)
 	local ActiveShield = {}
-	if DPSMateAbsorbs[1][DPSMateUser[abilityTarget][1]] then
-		for cat, val in pairs(DPSMateAbsorbs[1][DPSMateUser[abilityTarget][1]]) do
+	DPSMate.DB:BuildAbility(ability, nil)
+	if DPSMateAbsorbs[cat][DPSMateUser[abilityTarget][1]] then
+		for cat, val in pairs(DPSMateAbsorbs[cat][DPSMateUser[abilityTarget][1]]) do
 			for ca, va in pairs(val) do
 				for c, v in pairs(va) do
 					for ce, ve in pairs(v) do
-						if ve[1]==0 and DPSMateAbility[ca]==ability then
+						if ve[1]==0 and ca==DPSMateAbility[ability][1] then
 							ActiveShield = {cat, ca, c}
 							break
 						end
@@ -858,12 +860,12 @@ function DPSMate.DB:GetActiveAbsorbAbilityByPlayer(ability, abilityTarget)
 	return ActiveShield
 end
 
-function DPSMate.DB:GetAbsorbingShield(ability, abilityTarget)
+function DPSMate.DB:GetAbsorbingShield(ability, abilityTarget, cat)
 	-- Checking for active Shields
 	local AbsorbingAbility = {}	
-	if DPSMateAbsorbs[1][DPSMateUser[abilityTarget][1]] then
+	if DPSMateAbsorbs[cat][DPSMateUser[abilityTarget][1]] then
 		local activeShields = {}
-		for cat, val in pairs(DPSMateAbsorbs[1][DPSMateUser[abilityTarget][1]]) do
+		for cat, val in pairs(DPSMateAbsorbs[cat][DPSMateUser[abilityTarget][1]]) do
 			for ca, va in pairs(val) do
 				for c, v in pairs(va) do
 					for ce, ve in pairs(v) do
@@ -880,9 +882,9 @@ function DPSMate.DB:GetAbsorbingShield(ability, abilityTarget)
 		-- Checking for Shields that just absorb the ability's school
 		local AAS, ASS = {}, {}
 		for cat, val in pairs(activeShields) do
-			if DPSMate.DB.ShieldFlags[DPSMateAbility[val[1]]]==0 then
+			if DPSMate.DB.ShieldFlags[DPSMate:GetAbilityById(val[1])]==0 then
 				AAS[cat] = {val[1],val[2]}
-			elseif DPSMate.DB.ShieldFlags[DPSMateAbility[val[1]]]==DPSMate.DB.AbilityFlags[ability] then
+			elseif DPSMate.DB.ShieldFlags[DPSMate:GetAbilityById(val[1])]==DPSMate.DB.AbilityFlags[ability] then
 				ASS[cat] = {val[1],val[2]}
 			end
 		end
@@ -898,6 +900,8 @@ function DPSMate.DB:GetAbsorbingShield(ability, abilityTarget)
 					local buff = DPSMate_TooltipTextLeft1:GetText()
 					DPSMate_Tooltip:Hide()
 					if (not buff) then break end
+					DPSMate.DB:BuildAbility(buff, nil)
+					buff = DPSMateAbility[buff][1]
 					for cat, val in pairs(AAS) do
 						if val[1]==buff then
 							AbsorbingAbility = {cat, {val[1],val[2]}}
@@ -918,18 +922,20 @@ function DPSMate.DB:GetAbsorbingShield(ability, abilityTarget)
 end
 
 function DPSMate.DB:Absorb(ability, abilityTarget, incTarget)
-	local AbsorbingAbility = DPSMate.DB:GetAbsorbingShield(ability, abilityTarget)
-	if AbsorbingAbility[1] then
-		DPSMate.DB:BuildUser(incTarget, nil)
-		for cat, val in pairs({[1]="total", [2]="current"}) do 
-			if not DPSMateAbsorbs[cat][DPSMateUser[abilityTarget][1]][AbsorbingAbility[1]][AbsorbingAbility[2][1]][DPSMateAbility[AbsorbingAbility[2][2]][1]][DPSMateUser[incTarget][1]] then
-				DPSMateAbsorbs[cat][DPSMateUser[abilityTarget][1]][AbsorbingAbility[1]][AbsorbingAbility[2][1]][DPSMateAbility[AbsorbingAbility[2][2]][1]][DPSMateUser[incTarget][1]] = {
+	DPSMate.DB:BuildUser(incTarget, nil)
+	DPSMate.DB:BuildUser(abilityTarget, nil)
+	DPSMate.DB:BuildAbility(ability, nil)
+	for cat, val in pairs({[1]="total", [2]="current"}) do 
+		local AbsorbingAbility = DPSMate.DB:GetAbsorbingShield(ability, abilityTarget, cat)
+		if AbsorbingAbility[1] then
+			if not DPSMateAbsorbs[cat][DPSMateUser[abilityTarget][1]][AbsorbingAbility[1]][AbsorbingAbility[2][1]][AbsorbingAbility[2][2]][DPSMateUser[incTarget][1]] then
+				DPSMateAbsorbs[cat][DPSMateUser[abilityTarget][1]][AbsorbingAbility[1]][AbsorbingAbility[2][1]][AbsorbingAbility[2][2]][DPSMateUser[incTarget][1]] = {
 					[1] = 0,
 					[2] = 0,
 				}
 			end
-			DPSMateAbsorbs[cat][DPSMateUser[abilityTarget][1]][AbsorbingAbility[1]][AbsorbingAbility[2][1]][DPSMateAbility[AbsorbingAbility[2][2]][1]][DPSMateUser[incTarget][1]][1] = ability 
-			DPSMateAbsorbs[cat][DPSMateUser[abilityTarget][1]][AbsorbingAbility[1]][AbsorbingAbility[2][1]][DPSMateAbility[AbsorbingAbility[2][2]][1]][DPSMateUser[incTarget][1]][2] = DPSMateAbsorbs[cat][DPSMateUser[abilityTarget][1]][AbsorbingAbility[1]][AbsorbingAbility[2][1]][DPSMateAbility[AbsorbingAbility[2][2]][1]][DPSMateUser[incTarget][1]][2]+1 
+			DPSMateAbsorbs[cat][DPSMateUser[abilityTarget][1]][AbsorbingAbility[1]][AbsorbingAbility[2][1]][AbsorbingAbility[2][2]][DPSMateUser[incTarget][1]][1] = DPSMateAbility[ability][1] 
+			DPSMateAbsorbs[cat][DPSMateUser[abilityTarget][1]][AbsorbingAbility[1]][AbsorbingAbility[2][1]][AbsorbingAbility[2][2]][DPSMateUser[incTarget][1]][2] = DPSMateAbsorbs[cat][DPSMateUser[abilityTarget][1]][AbsorbingAbility[1]][AbsorbingAbility[2][1]][AbsorbingAbility[2][2]][DPSMateUser[incTarget][1]][2]+1 
 		end
 	end
 end
@@ -1029,7 +1035,7 @@ function DPSMate.DB:Dispels(cause, Dname, target, ability)
 		DPSMateDispels[cat][DPSMateUser[cause][1]][DPSMateAbility[Dname][1]][DPSMateUser[target][1]][DPSMateAbility[ability][1]] = DPSMateDispels[cat][DPSMateUser[cause][1]][DPSMateAbility[Dname][1]][DPSMateUser[target][1]][DPSMateAbility[ability][1]]+1
 		DPSMateDispels[cat][DPSMateUser[cause][1]]["i"][1] = DPSMateDispels[cat][DPSMateUser[cause][1]]["i"][1]+1
 	end
-	NeedUpdate = true
+	DPSMate.DB.NeedUpdate = true
 end
 
 function DPSMate.DB:UnregisterDeath(target)
@@ -1206,7 +1212,7 @@ function DPSMate.DB:BuildBuffs(cause, target, ability, bool)
 		table.insert(DPSMateAurasGained[cat][DPSMateUser[target][1]][DPSMateAbility[ability][1]][1], DPSMateCombatTime[val])
 		DPSMateAurasGained[cat][DPSMateUser[target][1]][DPSMateAbility[ability][1]][3][DPSMateUser[cause][1]] = DPSMateAurasGained[cat][DPSMateUser[target][1]][DPSMateAbility[ability][1]][3][DPSMateUser[cause][1]] + 1
 	end
-	NeedUpdate = true
+	DPSMate.DB.NeedUpdate = true
 end
 
 -- Lag machine!
@@ -1222,7 +1228,7 @@ function DPSMate.DB:DestroyBuffs(target, ability)
 		end
 		table.insert(DPSMateAurasGained[cat][DPSMateUser[target][1]][DPSMateAbility[ability][1]][2], DPSMateCombatTime[val])
 	end
-	NeedUpdate = true
+	DPSMate.DB.NeedUpdate = true
 end
 
 -- Are those functions able to be combined?
@@ -1284,12 +1290,12 @@ function DPSMate.DB:CombatTime()
 				LastUpdate = 0
 			end
 		end
-		if NeedUpdate then
+		if DPSMate.DB.NeedUpdate then
 			MainLastUpdate = MainLastUpdate + arg1
 			if MainLastUpdate>=MainUpdateTime then
 				DPSMate.DB:UpdateKicks()
 				DPSMate:SetStatusBarValue()
-				NeedUpdate = false
+				DPSMate.DB.NeedUpdate = false
 				MainLastUpdate = 0
 			end
 		end
@@ -1298,6 +1304,9 @@ function DPSMate.DB:CombatTime()
 			DPSMate.DB:ClearAwaitBuffs()
 			DPSMate.DB:ClearAwaitAbsorb()
 			DPSMate.DB:ClearAwaitHotDispel()
+			
+			DPSMate.Sync:OnUpdate() -- Temporary, gotta friend a function to send it async
+			
 			MainLastUpdateMinute = 0
 		end
 	end)

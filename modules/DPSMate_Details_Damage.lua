@@ -235,14 +235,16 @@ function DPSMate.Modules.DetailsDamage:ProcsDropDown()
 	}
 	
 	-- Adding dynamic channel
-	for cat, val in pairs(arr[DPSMateUser[DetailsUser][1]]) do
-		local ability = DPSMate:GetAbilityById(cat)
-		if DPSMate:TContains(DPSMate.Parser.procs, ability) then
-			UIDropDownMenu_AddButton{
-				text = ability,
-				value = cat,
-				func = on_click,
-			}
+	if arr[DPSMateUser[DetailsUser][1]] then
+		for cat, val in pairs(arr[DPSMateUser[DetailsUser][1]]) do
+			local ability = DPSMate:GetAbilityById(cat)
+			if DPSMate:TContains(DPSMate.Parser.procs, ability) then
+				UIDropDownMenu_AddButton{
+					text = ability,
+					value = cat,
+					func = on_click,
+				}
+			end
 		end
 	end
 	
@@ -324,11 +326,13 @@ end
 
 function DPSMate.Modules.DetailsDamage:CheckProcs(name, val)
 	local arr = DPSMate.Modules.DetailsDamage:GetAuraGainedArr(curKey)
-	if arr[DPSMateUser[DetailsUser][1]][name] then
-		for i=1, DPSMate:TableLength(arr[DPSMateUser[DetailsUser][1]][name][1]) do
-			if not arr[DPSMateUser[DetailsUser][1]][name][1][i] or not arr[DPSMateUser[DetailsUser][1]][name][2][i] or arr[DPSMateUser[DetailsUser][1]][name][4] then return false end
-			if val > arr[DPSMateUser[DetailsUser][1]][name][1][i] and val < arr[DPSMateUser[DetailsUser][1]][name][2][i] then
-				return true
+	if arr[DPSMateUser[DetailsUser][1]] then
+		if arr[DPSMateUser[DetailsUser][1]][name] then
+			for i=1, DPSMate:TableLength(arr[DPSMateUser[DetailsUser][1]][name][1]) do
+				if not arr[DPSMateUser[DetailsUser][1]][name][1][i] or not arr[DPSMateUser[DetailsUser][1]][name][2][i] or arr[DPSMateUser[DetailsUser][1]][name][4] then return false end
+				if val > arr[DPSMateUser[DetailsUser][1]][name][1][i] and val < arr[DPSMateUser[DetailsUser][1]][name][2][i] then
+					return true
+				end
 			end
 		end
 	end
@@ -338,25 +342,27 @@ end
 function DPSMate.Modules.DetailsDamage:AddProcPoints(name, dat)
 	local bool, data, LastVal = false, {}, 0
 	local arr = DPSMate.Modules.DetailsDamage:GetAuraGainedArr(curKey)
-	if arr[DPSMateUser[DetailsUser][1]][name] then
-		if arr[DPSMateUser[DetailsUser][1]][name][4] then
-			for cat, val in pairs(dat) do
-				for i=1, DPSMate:TableLength(arr[DPSMateUser[DetailsUser][1]][name][1]) do
-					if arr[DPSMateUser[DetailsUser][1]][name][1][i]<=val[1] then
-						local tempbool = true
-						for _, va in pairs(data) do
-							if va[1] == arr[DPSMateUser[DetailsUser][1]][name][1][i] then
-								tempbool = false
-								break
+	if arr[DPSMateUser[DetailsUser][1]] then
+		if arr[DPSMateUser[DetailsUser][1]][name] then
+			if arr[DPSMateUser[DetailsUser][1]][name][4] then
+				for cat, val in pairs(dat) do
+					for i=1, DPSMate:TableLength(arr[DPSMateUser[DetailsUser][1]][name][1]) do
+						if arr[DPSMateUser[DetailsUser][1]][name][1][i]<=val[1] then
+							local tempbool = true
+							for _, va in pairs(data) do
+								if va[1] == arr[DPSMateUser[DetailsUser][1]][name][1][i] then
+									tempbool = false
+									break
+								end
+							end
+							if tempbool then	
+								bool = true
+								table.insert(data, {arr[DPSMateUser[DetailsUser][1]][name][1][i], LastVal, {val[1], val[2]}})
 							end
 						end
-						if tempbool then	
-							bool = true
-							table.insert(data, {arr[DPSMateUser[DetailsUser][1]][name][1][i], LastVal, {val[1], val[2]}})
-						end
 					end
+					LastVal = {val[1], val[2]}
 				end
-				LastVal = {val[1], val[2]}
 			end
 		end
 	end

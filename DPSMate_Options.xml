@@ -3901,13 +3901,12 @@
 				this:RegisterEvent("PLAYER_AURAS_CHANGED")
 				this:RegisterEvent("UNIT_AURA")
 				this:RegisterEvent("PLAYER_TARGET_CHANGED")
-				
-				DPSMate.Parser:OnLoad()
 			</OnLoad>
 			<OnEvent>
 				DPSMate.DB:OnEvent(event)
 				DPSMate.Parser:OnEvent(event)
 				DPSMate.Options:OnEvent(event)
+				DPSMate.Sync:OnEvent(event)
 			</OnEvent>
 		</Scripts>
 	</Frame>

@@ -42,6 +42,7 @@ player["class"] = strlower(b)
 -- Begin Functions
 
 function DPSMate.Parser:OnLoad()
+	DPSMate.DB:BuildUser(player.name, player.class)
 end
 
 function DPSMate.Parser:OnEvent(event)
@@ -169,14 +170,6 @@ function DPSMate.Parser:OnEvent(event)
 		if arg1 then DPSMate.Parser:SpellAuraGoneOther(arg1) end
 	elseif event == "CHAT_MSG_SPELL_AURA_GONE_PARTY" then
 		if arg1 then DPSMate.Parser:SpellAuraGoneParty(arg1) end
-	elseif event == "CHAT_MSG_ADDON" then
-		if arg1=="DPSMate" then
-			local owner, ability, abilityTarget, time = "", "", "", 0
-			for o,a,at,t in string.gfind(arg2, "(.+),(.+),(.+),(.+)") do owner=o;ability=a;abilityTarget=at;time=tonumber(t) end
-			if DPSMate:TContains(DPSMate.Parser.Kicks, ability) then DPSMate.DB:AwaitAfflictedStun(owner, ability, abilityTarget, time) end
-			DPSMate.DB:AwaitingBuff(owner, ability, abilityTarget, time)
-			DPSMate.DB:AwaitingAbsorbConfirmation(owner, ability, abilityTarget, time)
-		end
 	-- Dispels
 	elseif event == "CHAT_MSG_SPELL_BREAK_AURA" then
 		if arg1 then DPSMate.Parser:SpellBreakAura(arg1) end
@@ -544,27 +537,6 @@ end
 ----------------------------------------------------------------------------------
 --------------                       Absorbs                        --------------                                  
 ----------------------------------------------------------------------------------
-
--- Hooking UseAction to emulate an chat msg event
-
-DPSMate.Parser.oldUseAction = UseAction
- DPSMate.Parser.UseAction = function(slot, checkCursor, onSelf)
-	DPSMate_Tooltip:SetOwner(UIParent, "ANCHOR_NONE")
-	DPSMate_Tooltip:ClearLines()
-	DPSMate_Tooltip:SetAction(slot)
-	local aura = DPSMate_TooltipTextLeft1:GetText()
-	DPSMate_Tooltip:Hide()
-	if aura then
-		local target = nil
-		if not UnitName("target") or not UnitIsPlayer("target") then target = player.name else target = UnitName("target") end
-		SendAddonMessage("DPSMate", player.name..","..aura..","..target..","..GetTime(), "RAID")
-		if DPSMate:TContains(DPSMate.Parser.Kicks, ability) then DPSMate.DB:AwaitAfflictedStun(player.name, aura, target, GetTime()) end
-		DPSMate.DB:AwaitingBuff(player.name, aura, target, GetTime())
-		DPSMate.DB:AwaitingAbsorbConfirmation(player.name, aura, target, GetTime())
-	end
-	DPSMate.Parser.oldUseAction(slot, checkCursor, onSelf)
-end
-UseAction = DPSMate.Parser.UseAction
 
 -- Heavy War Golem hits/crits you for 8. (59 absorbed)
 function DPSMate.Parser:CreatureVsSelfHitsAbsorb(msg)

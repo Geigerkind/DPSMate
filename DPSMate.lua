@@ -8,6 +8,7 @@ DPSMate.Parser = {}
 DPSMate.localization = {}
 DPSMate.DB = {}
 DPSMate.Options = {}
+DPSMate.Sync = {}
 DPSMate.Modules = {}
 DPSMate.Events = {
 	"CHAT_MSG_COMBAT_SELF_HITS",
