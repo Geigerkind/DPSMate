@@ -20,6 +20,8 @@ function DPSMate.Sync:OnUpdate()
 		DPSMate.Sync:HealingAbilityOut(DPSMateTHealing, "T")
 		DPSMate.Sync:HealingAllOut(DPSMateOverhealing, "O")
 		DPSMate.Sync:HealingAbilityOut(DPSMateOverhealing, "O")
+		
+		DPSMate.Sync:AbsorbsOut() 
 	end
 end
 
@@ -55,6 +57,14 @@ function DPSMate.Sync:OnEvent(event)
 				DPSMate.Sync:HealingAllIn(arg2, arg4, DPSMateOverhealing)
 			elseif arg1 == "DPSMate_OHealingAbility" then
 				DPSMate.Sync:HealingAbilityIn(arg2, arg4, DPSMateOverhealing)
+			elseif arg1 == "DPSMate_Absorbs" then
+				DPSMate.Sync:AbsorbsIn(arg2, arg4) 
+			elseif arg1 == "DPSMate_iAbsorbs" then
+				DPSMate.Sync:iAbsorbsIn(arg2, arg4) 
+			elseif arg1 == "DPSMate_Dispels" then
+				DPSMate.Sync:DispelsIn(arg2, arg4) 
+			elseif arg1 == "DPSMate_iDispels" then
+				DPSMate.Sync:iDispelsIn(arg2, arg4) 
 			end
 		end
 	end
@@ -134,7 +144,7 @@ function DPSMate.Sync:DMGDoneAbilityIn(arg2, arg4)
 end
 
 ----------------------------------------------------------------------------------
---------------                  Effective Healing                   --------------                                  
+--------------                        Healing                       --------------                                  
 ----------------------------------------------------------------------------------
 
 -- Have to fix formatting for healing "i"[1]
@@ -182,6 +192,134 @@ function DPSMate.Sync:HealingAbilityIn(arg2, arg4, arr)
 			[5] = tonumber(a5),
 			[6] = tonumber(a6),
 		}
+		DPSMate.DB.NeedUpdate = true
+	end
+end
+
+----------------------------------------------------------------------------------
+--------------                        Absorbs                       --------------                                  
+----------------------------------------------------------------------------------
+
+function DPSMate.Sync:iAbsorbsIn(arg2, arg4) 
+	-- owner, ability, each one, enemy, va1, va2
+	for o,a,e,v1,v2 in string.gfind(arg2, "(.+),(.+),(.+),(.+),(.+)") do 
+		DPSMate.DB:BuildUser(arg4, nil)
+		local pid = DPSMateUser[arg4][1]
+		DPSMate.DB:BuildUser(o, nil)
+		local ownerid = DPSMateUser[o][1]
+		DPSMate.DB:BuildAbility(a, nil)
+		local abilityid = DPSMateAbility[a][1]
+		if not DPSMateAbsorbs[1][pid] then
+			DPSMateAbsorbs[1][pid] = {}
+		end
+		if not DPSMateAbsorbs[1][pid][ownerid] then
+			DPSMateAbsorbs[1][pid][ownerid] = {}
+		end
+		if not DPSMateAbsorbs[1][pid][ownerid][abilityid] then
+			DPSMateAbsorbs[1][pid][ownerid][abilityid] = {}
+		end
+		if not DPSMateAbsorbs[1][pid][ownerid][abilityid][tonumber(e)] then
+			DPSMateAbsorbs[1][pid][ownerid][abilityid][tonumber(e)] = {
+				i = {
+					[1] = 0,
+					[2] = 0,
+				},
+			}
+		end
+		DPSMateAbsorbs[1][pid][ownerid][abilityid][tonumber(e)]["i"][1] = tonumber(v1)
+		DPSMateAbsorbs[1][pid][ownerid][abilityid][tonumber(e)]["i"][2] = tonumber(v2)
+		DPSMate.DB.NeedUpdate = true
+	end
+end
+
+function DPSMate.Sync:AbsorbsIn(arg2, arg4) 
+	-- owner, ability, each one, enemy, va1, va2
+	for o,a,e,en,v1,v2 in string.gfind(arg2, "(.+),(.+),(.+),(.+),(.+),(.+)") do 
+		DPSMate.DB:BuildUser(arg4, nil)
+		local pid = DPSMateUser[arg4][1]
+		DPSMate.DB:BuildUser(o, nil)
+		local ownerid = DPSMateUser[o][1]
+		DPSMate.DB:BuildAbility(a, nil)
+		local abilityid = DPSMateAbility[a][1]
+		DPSMate.DB:BuildUser(en, nil)
+		local enemyid = DPSMateUser[en][1]
+		if not DPSMateAbsorbs[1][pid] then
+			DPSMateAbsorbs[1][pid] = {}
+		end
+		if not DPSMateAbsorbs[1][pid][ownerid] then
+			DPSMateAbsorbs[1][pid][ownerid] = {}
+		end
+		if not DPSMateAbsorbs[1][pid][ownerid][abilityid] then
+			DPSMateAbsorbs[1][pid][ownerid][abilityid] = {}
+		end
+		if not DPSMateAbsorbs[1][pid][ownerid][abilityid][tonumber(e)] then
+			DPSMateAbsorbs[1][pid][ownerid][abilityid][tonumber(e)] = {
+				i = {
+					[1] = 0,
+					[2] = 0,
+				},
+			}
+			DPSMate:SendMessage("OVERWRITTEN!")
+		end
+		DPSMateAbsorbs[1][pid][ownerid][abilityid][tonumber(e)][enemyid] = {
+			[1] = tonumber(v1),
+			[2] = tonumber(v2),
+		}
+		DPSMate.DB.NeedUpdate = true
+	end
+end
+
+----------------------------------------------------------------------------------
+--------------                        Dispels                       --------------                                  
+----------------------------------------------------------------------------------
+
+function DPSMate.Sync:DispelsIn(arg2, arg4)
+	-- Ability, Target, Ability, val
+	for a, ta, a2, v1 in string.gfind(arg2, "(.+),(.+),(.+),(.+)") do
+		DPSMate.DB:BuildAbility(a, nil)
+		local abilityid = DPSMateAbility[a][1]
+		DPSMate.DB:BuildAbility(a2, nil)
+		local abilityid2 = DPSMateAbility[a2][1]
+		DPSMate.DB:BuildUser(arg4, nil)
+		local pid = DPSMateUser[arg4][1]
+		DPSMate.DB:BuildUser(ta, nil)
+		local tarid = DPSMateUser[ta][1]
+		if not DPSMateDispels[1][pid] then
+			DPSMateDispels[1][pid] = {
+				i = {
+					[1] = 0,
+				},
+			}
+		end
+		if not DPSMateDispels[1][pid][abilityid] then
+			DPSMateDispels[1][pid][abilityid] = {}
+		end
+		if not DPSMateDispels[1][pid][abilityid][tarid] then
+			DPSMateDispels[1][pid][abilityid][tarid] = {}
+		end
+		if not DPSMateDispels[1][pid][abilityid][tarid][abilityid2] then
+			DPSMateDispels[1][pid][abilityid][tarid][abilityid2] = 0
+		end
+		DPSMateDispels[1][pid][abilityid][tarid][abilityid2] = tonumber(v1)
+		DPSMate.DB.NeedUpdate = true
+	end
+end
+
+function DPSMate.Sync:iDispelsIn(arg2, arg4)
+	-- Ability, val
+	for a, v1 in string.gfind(arg2, "(.+),(.+)") do
+		DPSMate.DB:BuildAbility(a, nil)
+		local abilityid = DPSMateAbility[a][1]
+		DPSMate.DB:BuildUser(arg4, nil)
+		local pid = DPSMateUser[arg4][1]
+		if not DPSMateDispels[1][pid] then
+			DPSMateDispels[1][pid] = {
+				i = {
+					[1] = 0,
+				},
+			}
+		end
+		DPSMateDispels[1][pid]["i"][1] = tonumber(v1)
 		DPSMate.DB.NeedUpdate = true
 	end
 end
@@ -256,6 +394,46 @@ function DPSMate.Sync:HealingAbilityOut(arr, prefix)
 			for ca, va in pairs(val) do
 				SendAddonMessage("DPSMate_"..prefix.."HealingAbility", DPSMate:GetAbilityById(cat)..","..DPSMate:GetUserById(ca)..","..va[1]..","..va[2]..","..va[3]..","..ceil(va[4])..","..va[5]..","..va[6], "RAID")
 			end
+		end
+	end
+end
+
+----------------------------------------------------------------------------------
+--------------                        Absorbs                       --------------                                  
+----------------------------------------------------------------------------------
+
+function DPSMate.Sync:AbsorbsOut() 
+	if not DPSMateAbsorbs[1][DPSMateUser[player.name][1]] then return end
+	for cat, val in pairs(DPSMateAbsorbs[1][DPSMateUser[player.name][1]]) do -- owner
+		for ca, va in pairs(val) do -- ability
+			for c, v in pairs(va) do -- each one
+				for ce, ve in pairs(v) do -- enemy
+					if ce~="i" then
+						SendAddonMessage("DPSMate_Absorbs", DPSMate:GetUserById(cat)..","..DPSMate:GetAbilityById(ca)..","..c..","..DPSMate:GetUserById(ce)..","..ve[1]..","..ve[2], "RAID")
+					else
+						SendAddonMessage("DPSMate_iAbsorbs", DPSMate:GetUserById(cat)..","..DPSMate:GetAbilityById(ca)..","..c..","..ve[1]..","..ve[2], "RAID")
+					end
+				end
+			end
+		end
+	end
+end
+
+----------------------------------------------------------------------------------
+--------------                        Dispels                       --------------                                  
+----------------------------------------------------------------------------------
+
+function DPSMate.Sync:DispelsOut()
+	if not DPSMateDispels[1][DPSMateUser[player.name][1]] then return end
+	for cat, val in pairs(DPSMateDispels[1][DPSMateUser[player.name][1]]) do -- Ability
+		if cat~="i" then
+			for ca, va in pairs(val) do -- Target
+				for c, v in pairs(v) do -- Ability
+					SendAddonMessage("DPSMate_Dispels", DPSMate:GetAbilityById(cat)..","..DPSMate:GetUserById(ca)..","..DPSMate:GetAbilityById(c)..","..v, "RAID")
+				end
+			end
+		else
+			SendAddonMessage("DPSMate_iDispels", DPSMate:GetAbilityById(cat)..","..val["i"][1], "RAID")
 		end
 	end
 end

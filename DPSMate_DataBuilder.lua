@@ -1299,7 +1299,6 @@ function DPSMate.DB:CombatTime()
 				MainLastUpdate = 0
 			end
 		end
-		DPSMate.Sync:OnUpdate()
 		MainLastUpdateMinute = MainLastUpdateMinute + arg1
 		if MainLastUpdateMinute>=60 then
 			DPSMate.DB:ClearAwaitBuffs()
