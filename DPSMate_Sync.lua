@@ -13,6 +13,13 @@ function DPSMate.Sync:OnUpdate()
 		DPSMate.Sync:DMGDoneAllOut()
 		DPSMate.Sync:DMGDoneStatOut()
 		DPSMate.Sync:DMGDoneAbilityOut()
+		
+		DPSMate.Sync:HealingAllOut(DPSMateEHealing, "E")
+		DPSMate.Sync:HealingAbilityOut(DPSMateEHealing, "E")
+		DPSMate.Sync:HealingAllOut(DPSMateTHealing, "T")
+		DPSMate.Sync:HealingAbilityOut(DPSMateTHealing, "T")
+		DPSMate.Sync:HealingAllOut(DPSMateOverhealing, "O")
+		DPSMate.Sync:HealingAbilityOut(DPSMateOverhealing, "O")
 	end
 end
 
@@ -36,6 +43,18 @@ function DPSMate.Sync:OnEvent(event)
 				DPSMate.Sync:DMGDoneStatIn(arg2, arg4)
 			elseif arg1 == "DPSMate_DMGDoneAbility" then
 				DPSMate.Sync:DMGDoneAbilityIn(arg2, arg4)
+			elseif arg1 == "DPSMate_EHealingAll" then
+				DPSMate.Sync:HealingAllIn(arg2, arg4, DPSMateEHealing)
+			elseif arg1 == "DPSMate_EHealingAbility" then
+				DPSMate.Sync:HealingAbilityIn(arg2, arg4, DPSMateEHealing)
+			elseif arg1 == "DPSMate_THealingAll" then
+				DPSMate.Sync:HealingAllIn(arg2, arg4, DPSMateTHealing)
+			elseif arg1 == "DPSMate_THealingAbility" then
+				DPSMate.Sync:HealingAbilityIn(arg2, arg4, DPSMateTHealing)
+			elseif arg1 == "DPSMate_OHealingAll" then
+				DPSMate.Sync:HealingAllIn(arg2, arg4, DPSMateOverhealing)
+			elseif arg1 == "DPSMate_OHealingAbility" then
+				DPSMate.Sync:HealingAbilityIn(arg2, arg4, DPSMateOverhealing)
 			end
 		end
 	end
@@ -114,10 +133,84 @@ function DPSMate.Sync:DMGDoneAbilityIn(arg2, arg4)
 	end
 end
 
+----------------------------------------------------------------------------------
+--------------                  Effective Healing                   --------------                                  
+----------------------------------------------------------------------------------
+
+-- Have to fix formatting for healing "i"[1]
+function DPSMate.Sync:HealingAllIn(arg2, arg4, arr)
+	for oc, am in string.gfind(arg2, "(.+),(.+)") do
+		DPSMate.DB:BuildUser(arg4, oc)
+		local ownerid = DPSMateUser[arg4][1]
+		if not arr[1][ownerid] then
+			arr[1][ownerid] = {
+				i = {
+					[1] = 0,
+				},
+			}
+		end
+		arr[1][ownerid]["i"][1] = tonumber(am)
+		DPSMate.DB.NeedUpdate = true
+	end
+end
+
+function DPSMate.Sync:HealingAbilityIn(arg2, arg4, arr)
+	-- ability,target, a1, b1, a2, b2 etc
+	for a,ta,a1,a2,a3,a4,a5,a6 in string.gfind(arg2, "(.+),(.+),(.+),(.+),(.+),(.+),(.+),(.+)") do 
+		-- Check if user exist if not, create him
+		DPSMate.DB:BuildUser(arg4, nil)
+		local ownerid = DPSMateUser[arg4][1]
+		DPSMate.DB:BuildAbility(a, nil)
+		local abilityid = DPSMateAbility[a][1]
+		DPSMate.DB:BuildUser(ta, nil)
+		local tarid = DPSMateUser[ta][1]
+		if not arr[1][ownerid] then
+			arr[1][ownerid] = {
+				i = {
+					[1] = 0,
+				},
+			}
+		end
+		if not arr[1][ownerid][abilityid] then
+			arr[1][ownerid][abilityid] = {}
+		end
+		arr[1][ownerid][abilityid][tarid] = {
+			[1] = tonumber(a1),
+			[2] = tonumber(a2),
+			[3] = tonumber(a3),
+			[4] = tonumber(a4),
+			[5] = tonumber(a5),
+			[6] = tonumber(a6),
+		}
+		DPSMate.DB.NeedUpdate = true
+	end
+end
 
 ----------------------------------------------------------------------------------
 --------------                       SYNC OUT                       --------------                                  
 ----------------------------------------------------------------------------------
+
+-- Hooking useaction function in order to get the owner of the spell.
+DPSMate.Parser.oldUseAction = UseAction
+DPSMate.Parser.UseAction = function(slot, checkCursor, onSelf)
+	DPSMate_Tooltip:SetOwner(UIParent, "ANCHOR_NONE")
+	DPSMate_Tooltip:ClearLines()
+	DPSMate_Tooltip:SetAction(slot)
+	local aura = DPSMate_TooltipTextLeft1:GetText()
+	DPSMate_Tooltip:Hide()
+	if aura then
+		local target, time = nil, GetTime()
+		if not UnitName("target") or not UnitIsPlayer("target") then target = player.name else target = UnitName("target") end
+		
+		if DPSMateSettings["sync"] then SendAddonMessage("DPSMate", player.name..","..aura..","..target..","..time, "RAID") end
+		
+		if DPSMate:TContains(DPSMate.Parser.Kicks, ability) then DPSMate.DB:AwaitAfflictedStun(player.name, aura, target, time) end
+		DPSMate.DB:AwaitingBuff(player.name, aura, target, time)
+		DPSMate.DB:AwaitingAbsorbConfirmation(player.name, aura, target, time)
+	end
+	DPSMate.Parser.oldUseAction(slot, checkCursor, onSelf)
+end
+UseAction = DPSMate.Parser.UseAction
 
 ----------------------------------------------------------------------------------
 --------------                     DAMAGE DONE                      --------------                                  
@@ -146,24 +239,23 @@ function DPSMate.Sync:DMGDoneAbilityOut()
 	end
 end
 
--- Hooking useaction function in order to get the owner of the spell.
-DPSMate.Parser.oldUseAction = UseAction
-DPSMate.Parser.UseAction = function(slot, checkCursor, onSelf)
-	DPSMate_Tooltip:SetOwner(UIParent, "ANCHOR_NONE")
-	DPSMate_Tooltip:ClearLines()
-	DPSMate_Tooltip:SetAction(slot)
-	local aura = DPSMate_TooltipTextLeft1:GetText()
-	DPSMate_Tooltip:Hide()
-	if aura then
-		local target, time = nil, GetTime()
-		if not UnitName("target") or not UnitIsPlayer("target") then target = player.name else target = UnitName("target") end
-		
-		if DPSMateSettings["sync"] then SendAddonMessage("DPSMate", player.name..","..aura..","..target..","..time, "RAID") end
-		
-		if DPSMate:TContains(DPSMate.Parser.Kicks, ability) then DPSMate.DB:AwaitAfflictedStun(player.name, aura, target, time) end
-		DPSMate.DB:AwaitingBuff(player.name, aura, target, time)
-		DPSMate.DB:AwaitingAbsorbConfirmation(player.name, aura, target, time)
+----------------------------------------------------------------------------------
+--------------                       Healing                        --------------                                  
+----------------------------------------------------------------------------------
+
+function DPSMate.Sync:HealingAllOut(arr, prefix)
+	if arr[1][DPSMateUser[player.name][1]] then
+		SendAddonMessage("DPSMate_"..prefix.."HealingAll", player.class..","..arr[1][DPSMateUser[player.name][1]]["i"][1], "RAID")
 	end
-	DPSMate.Parser.oldUseAction(slot, checkCursor, onSelf)
 end
-UseAction = DPSMate.Parser.UseAction
+
+function DPSMate.Sync:HealingAbilityOut(arr, prefix)
+	if not arr[1][DPSMateUser[player.name][1]] then return end
+	for cat, val in (arr[1][DPSMateUser[player.name][1]]) do
+		if cat~="i" then
+			for ca, va in pairs(val) do
+				SendAddonMessage("DPSMate_"..prefix.."HealingAbility", DPSMate:GetAbilityById(cat)..","..DPSMate:GetUserById(ca)..","..va[1]..","..va[2]..","..va[3]..","..ceil(va[4])..","..va[5]..","..va[6], "RAID")
+			end
+		end
+	end
+end
