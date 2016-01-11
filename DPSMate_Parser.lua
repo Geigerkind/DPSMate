@@ -146,7 +146,10 @@ function DPSMate.Parser:OnEvent(event)
 			DPSMate.Parser:SpellPeriodicSelfBuffAbsorb(arg1)
 		end
 	elseif event == "CHAT_MSG_SPELL_FRIENDLYPLAYER_BUFF" then
-		if arg1 then DPSMate.Parser:SpellHostilePlayerBuff(arg1) end
+		if arg1 then 
+			DPSMate.Parser:SpellHostilePlayerBuff(arg1) 
+			DPSMate.Parser:SpellHostilePlayerBuffDispels(arg1)
+		end
 	elseif event == "CHAT_MSG_SPELL_PERIODIC_FRIENDLYPLAYER_BUFFS" then
 		if arg1 then DPSMate.Parser:SpellPeriodicFriendlyPlayerBuffs(arg1) end
 	elseif event == "CHAT_MSG_SPELL_HOSTILEPLAYER_BUFF" then
