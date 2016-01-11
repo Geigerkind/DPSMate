@@ -14,6 +14,8 @@ DPSMate.Parser.procs = {
 	"Zandalarian Hero Medallion",
 	"Ascendance",
 	"Essence of Sapphiron",
+	"Hand of Justice",
+	"Sword Specialization",
 	
 	-- Rogue
 	"Slice and Dice",
@@ -470,6 +472,7 @@ end
 function DPSMate.Parser:SpellSelfBuff(msg)
 	local ability, hit, crit, target, amount = "", 0, 0, "", 0
 	for a, ab in string.gfind(msg, "You gain (.+) Energy from (.+)%.") do DPSMate.DB:BuildBuffs(player.name, player.name, ab, true); DPSMate.DB:DestroyBuffs(player.name, ab); return end
+	for a, ab in string.gfind(msg, "You gain (.+) extra attack through (.+)%.") do DPSMate.DB:BuildBuffs(player.name, player.name, ab, true); DPSMate.DB:DestroyBuffs(player.name, ab); return end
 	for ab, ta, a in string.gfind(msg, "Your (.+) heals (.+) for (.+)%.") do hit=1; crit=0; ability=ab; target=ta; amount=tonumber(strsub(a, strfind(a, "%d+"))) end
 	for ab, ta, a in string.gfind(msg, "Your (.+) critically heals (.+) for (.+)%.") do crit=1; hit=0; ability=ab; target=ta; amount=tonumber(strsub(a, strfind(a, "%d+"))) end
 	if target=="you" then target=player.name end
@@ -507,6 +510,7 @@ end
 -- Raptor gains 35 Happiness from Giggity's Feed Pet Effect.
 -- Sivir gains 11 health from your First Aid.
 -- Sivir gains 11 health from Albea's First Aid.
+-- Soulstoke gains 25 Energy from Soulstoke's Relentless Strikes Effect.
 function DPSMate.Parser:SpellPeriodicFriendlyPlayerBuffs(msg)
 	local cause, ability, target, amount = {}, "", "", 0
 	for ta, ab in string.gfind(msg, "(.+) gains (.+)%.") do if not strfind(msg, "from") then DPSMate.DB:ConfirmBuff(ta, ab, GetTime()); return end end
@@ -525,6 +529,8 @@ end
 -- Albea's Flash of Light critically heals you/Baz for 135.
 function DPSMate.Parser:SpellHostilePlayerBuff(msg)
 	local cause, ability, target, amount, hit, crit = {}, "", "", 0, 0, 0
+	for c, a, ta, ab in string.gfind(msg, "(.+) gains (.+) Energy from (.+)'s (.+)%.") do DPSMate.DB:BuildBuffs(c, ta, ab, true); DPSMate.DB:DestroyBuffs(c, ab); return end
+	for c, a, ab in string.gfind(msg, "(.+) gains (.+) extra attack through (.+)%.") do DPSMate.DB:BuildBuffs(c, c, ab, true); DPSMate.DB:DestroyBuffs(c, ab); return end
 	for c, ab, ta, a in string.gfind(msg, "(.+)'s (.+) heals (.+) for (.+)%.") do hit=1; crit=0; amount=tonumber(strsub(a, strfind(a, "%d+"))); ability=ab; target=ta; cause.name=c end
 	for c, ab, ta, a in string.gfind(msg, "(.+)'s (.+) critically heals (.+) for (.+)%.") do crit=1; hit=0; amount=tonumber(strsub(a, strfind(a, "%d+"))); ability=ab; target=ta; cause.name=c end
 	if target=="you" then target=player.name end
