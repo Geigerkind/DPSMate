@@ -346,7 +346,24 @@ function DPSMate.DB:OnEvent(event)
 	end
 end
 
--- Need to fix an error here l. 156(?)
+function DPSMate.DB:IsReallyPet()
+	if DPSMate.DB:PlayerInParty() then
+		for i=1, 4 do
+			local name = UnitName("party"..i)
+			if name then
+				DPSMateUser[name]["isPet"] = false
+			end
+		end
+	elseif UnitInRaid("player") then
+		for i=1, 40 do
+			local name = UnitName("raid"..i)
+			if name then
+				DPSMateUser[name]["isPet"] = false
+			end
+		end
+	end
+end
+
 function DPSMate.DB:GetPets()
 	local pets = {}
 	if DPSMate.DB:PlayerInParty() then
@@ -950,10 +967,11 @@ end
 -- /script DPSMate.DB:AwaitDispel("Cleanse", "Shino", "Shino", 1)
 -- /script DPSMate.DB:ConfirmDispel("Frostbolt", "Shino", 1.2)
 
+-- l. 957 
 function DPSMate.DB:ConfirmDispel(ability, target, time)
 	if ability and ability~="" then
 		for cat, val in pairs(AwaitDispel) do
-			if val[2] == target and (time-val[4])<=1 and DPSMate:TContains(DPSMate.Parser["De"..DPSMateAbility[ability][2]], val[3]) then -- index nil value error?
+			if val[2] == target and (time-val[4])<=1 and DPSMate:TContains(DPSMate.Parser["Dispels"], val[3]) then -- Maybe a bug is caused now? Cause I changed the table
 				DPSMate.DB:Dispels(val[1], val[3], val[2], ability)
 				--DPSMate:SendMessage("Confirmed!")
 				table.remove(AwaitDispel, cat)
@@ -1304,10 +1322,11 @@ function DPSMate.DB:CombatTime()
 			DPSMate.DB:ClearAwaitBuffs()
 			DPSMate.DB:ClearAwaitAbsorb()
 			DPSMate.DB:ClearAwaitHotDispel()
-			
-			DPSMate.Sync:OnUpdate() -- Temporary, gotta friend a function to send it async
-			
 			MainLastUpdateMinute = 0
+			DPSMate.Sync.Async = true
+		end
+		if DPSMate.Sync.Async then
+			DPSMate.Sync:OnUpdate(arg1)
 		end
 	end)
 end

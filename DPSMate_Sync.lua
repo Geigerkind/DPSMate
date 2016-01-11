@@ -1,27 +1,43 @@
 -- Global Variables
+DPSMate.Sync.Async = false
 
 -- Local Variables
 local player = {}
 player["name"] = UnitName("player")
 local a,b = UnitClass("player")
 player["class"] = strlower(b)
+local time = 0
+local iterator = 1
 
 -- Beginn Functions
 
-function DPSMate.Sync:OnUpdate()
+function DPSMate.Sync:OnUpdate(elapsed)
 	if DPSMate.DB.loaded then
-		DPSMate.Sync:DMGDoneAllOut()
-		DPSMate.Sync:DMGDoneStatOut()
-		DPSMate.Sync:DMGDoneAbilityOut()
-		
-		DPSMate.Sync:HealingAllOut(DPSMateEHealing, "E")
-		DPSMate.Sync:HealingAbilityOut(DPSMateEHealing, "E")
-		DPSMate.Sync:HealingAllOut(DPSMateTHealing, "T")
-		DPSMate.Sync:HealingAbilityOut(DPSMateTHealing, "T")
-		DPSMate.Sync:HealingAllOut(DPSMateOverhealing, "O")
-		DPSMate.Sync:HealingAbilityOut(DPSMateOverhealing, "O")
-		
-		DPSMate.Sync:AbsorbsOut() 
+		time=time+elapsed
+		if iterator==1 then
+			DPSMate.Sync:DMGDoneAllOut()
+			DPSMate.Sync:DMGDoneStatOut()
+			DPSMate.Sync:DMGDoneAbilityOut()
+			iterator = 2
+		elseif time>=3 and iterator==2 then
+			DPSMate.Sync:HealingAllOut(DPSMateEHealing, "E")
+			DPSMate.Sync:HealingAbilityOut(DPSMateEHealing, "E")
+			iterator = 3
+		elseif time>=6 and iterator==3 then
+			DPSMate.Sync:HealingAllOut(DPSMateTHealing, "T")
+			DPSMate.Sync:HealingAbilityOut(DPSMateTHealing, "T")
+			iterator = 4
+		elseif time>=9 and iterator==4 then
+			DPSMate.Sync:HealingAllOut(DPSMateOverhealing, "O")
+			DPSMate.Sync:HealingAbilityOut(DPSMateOverhealing, "O")
+			iterator = 5
+		elseif time>=12 and iterator==5 then
+			DPSMate.Sync:AbsorbsOut() 
+			DPSMate.Sync:DispelsOut()
+			DPSMate.Sync.Async = false
+			iterator = 1
+			time = 0
+		end
 	end
 end
 
@@ -139,7 +155,6 @@ function DPSMate.Sync:DMGDoneAbilityIn(arg2, arg4)
 			[12] = tonumber(a12),
 			[13] = tonumber(a13),
 		}
-		DPSMate.DB.NeedUpdate = true
 	end
 end
 
@@ -192,7 +207,6 @@ function DPSMate.Sync:HealingAbilityIn(arg2, arg4, arr)
 			[5] = tonumber(a5),
 			[6] = tonumber(a6),
 		}
-		DPSMate.DB.NeedUpdate = true
 	end
 end
 
@@ -301,7 +315,6 @@ function DPSMate.Sync:DispelsIn(arg2, arg4)
 			DPSMateDispels[1][pid][abilityid][tarid][abilityid2] = 0
 		end
 		DPSMateDispels[1][pid][abilityid][tarid][abilityid2] = tonumber(v1)
-		DPSMate.DB.NeedUpdate = true
 	end
 end
 

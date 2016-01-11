@@ -307,6 +307,7 @@ function DPSMate.Options:OnEvent(event)
 				elseif DPSMateSettings["dataresetspartyamount"] == 1 then
 					DPSMate.Options:PopUpAccept()
 				end
+				DPSMate.DB:IsReallyPet()
 				DPSMate.DB:AssignClass()
 				DPSMate.DB:AssignPet()
 			end
