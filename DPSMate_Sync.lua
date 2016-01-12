@@ -91,9 +91,10 @@ end
 ----------------------------------------------------------------------------------
 
 function DPSMate.Sync:DMGDoneAllIn(arg2, arg4)
+	DPSMate.DB:BuildUser(arg4, oc)
+	local ownerid = DPSMateUser[arg4][1]
+	DPSMateDamageDone[1][ownerid] = {}
 	for oc, am in string.gfind(arg2, "(.+),(.+)") do
-		DPSMate.DB:BuildUser(arg4, oc)
-		local ownerid = DPSMateUser[arg4][1]
 		if not DPSMateDamageDone[1][ownerid] then
 			DPSMateDamageDone[1][ownerid] = {
 				i = {
@@ -109,9 +110,9 @@ end
 
 -- Here are many redundant points added most likely
 function DPSMate.Sync:DMGDoneStatIn(arg2, arg4)
+	DPSMate.DB:BuildUser(arg4, nil)
+	local ownerid = DPSMateUser[arg4][1]
 	for key, val in string.gfind(arg2, "(.+),(.+)") do
-		DPSMate.DB:BuildUser(arg4, nil)
-		local ownerid = DPSMateUser[arg4][1]
 		if not DPSMateDamageDone[1][ownerid] then
 			DPSMateDamageDone[1][ownerid] = {
 				i = {
@@ -127,7 +128,6 @@ end
 function DPSMate.Sync:DMGDoneAbilityIn(arg2, arg4)
 	-- ability, a1, b1, a2, b2 etc
 	for a,a1,a2,a3,a4,a5,a6,a7,a8,a9,a10,a11,a12,a13 in string.gfind(arg2, "(.+),(.+),(.+),(.+),(.+),(.+),(.+),(.+),(.+),(.+),(.+),(.+),(.+),(.+)") do 
-		-- Check if user exist if not, create him
 		DPSMate.DB:BuildUser(arg4, nil)
 		local ownerid = DPSMateUser[arg4][1]
 		DPSMate.DB:BuildAbility(a, nil)
@@ -164,9 +164,10 @@ end
 
 -- Have to fix formatting for healing "i"[1]
 function DPSMate.Sync:HealingAllIn(arg2, arg4, arr)
+	DPSMate.DB:BuildUser(arg4, oc)
+	local ownerid = DPSMateUser[arg4][1]
+	arr[1][ownerid] = {}
 	for oc, am in string.gfind(arg2, "(.+),(.+)") do
-		DPSMate.DB:BuildUser(arg4, oc)
-		local ownerid = DPSMateUser[arg4][1]
 		if not arr[1][ownerid] then
 			arr[1][ownerid] = {
 				i = {
@@ -181,7 +182,7 @@ end
 
 function DPSMate.Sync:HealingAbilityIn(arg2, arg4, arr)
 	-- ability,target, a1, b1, a2, b2 etc
-	for a,ta,a1,a2,a3,a4,a5,a6 in string.gfind(arg2, "(.+),(.+),(.+),(.+),(.+),(.+),(.+),(.+)") do 
+	for a,ta,a1,a2,a3,a4,a5,a6 in string.gfind(arg2, "(.+),(.+),(.+),(.+),(.+),(.+),(.+),(.+)") do
 		-- Check if user exist if not, create him
 		DPSMate.DB:BuildUser(arg4, nil)
 		local ownerid = DPSMateUser[arg4][1]
@@ -319,12 +320,13 @@ function DPSMate.Sync:DispelsIn(arg2, arg4)
 end
 
 function DPSMate.Sync:iDispelsIn(arg2, arg4)
+	DPSMate.DB:BuildUser(arg4, nil)
+	local pid = DPSMateUser[arg4][1]
+	DPSMateDispels[1][pid] = {}
 	-- Ability, val
 	for a, v1 in string.gfind(arg2, "(.+),(.+)") do
 		DPSMate.DB:BuildAbility(a, nil)
 		local abilityid = DPSMateAbility[a][1]
-		DPSMate.DB:BuildUser(arg4, nil)
-		local pid = DPSMateUser[arg4][1]
 		if not DPSMateDispels[1][pid] then
 			DPSMateDispels[1][pid] = {
 				i = {
@@ -421,10 +423,10 @@ function DPSMate.Sync:AbsorbsOut()
 		for ca, va in pairs(val) do -- ability
 			for c, v in pairs(va) do -- each one
 				for ce, ve in pairs(v) do -- enemy
-					if ce~="i" then
-						SendAddonMessage("DPSMate_Absorbs", DPSMate:GetUserById(cat)..","..DPSMate:GetAbilityById(ca)..","..c..","..DPSMate:GetUserById(ce)..","..ve[1]..","..ve[2], "RAID")
-					else
+					if ce=="i" then
 						SendAddonMessage("DPSMate_iAbsorbs", DPSMate:GetUserById(cat)..","..DPSMate:GetAbilityById(ca)..","..c..","..ve[1]..","..ve[2], "RAID")
+					else
+						SendAddonMessage("DPSMate_Absorbs", DPSMate:GetUserById(cat)..","..DPSMate:GetAbilityById(ca)..","..c..","..DPSMate:GetUserById(ce)..","..ve[1]..","..ve[2], "RAID")
 					end
 				end
 			end
@@ -439,14 +441,14 @@ end
 function DPSMate.Sync:DispelsOut()
 	if not DPSMateDispels[1][DPSMateUser[player.name][1]] then return end
 	for cat, val in pairs(DPSMateDispels[1][DPSMateUser[player.name][1]]) do -- Ability
-		if cat~="i" then
+		if cat=="i" then
+			SendAddonMessage("DPSMate_iDispels", DPSMate:GetAbilityById(cat)..","..val["i"][1], "RAID")
+		else
 			for ca, va in pairs(val) do -- Target
 				for c, v in pairs(v) do -- Ability
 					SendAddonMessage("DPSMate_Dispels", DPSMate:GetAbilityById(cat)..","..DPSMate:GetUserById(ca)..","..DPSMate:GetAbilityById(c)..","..v, "RAID")
 				end
 			end
-		else
-			SendAddonMessage("DPSMate_iDispels", DPSMate:GetAbilityById(cat)..","..val["i"][1], "RAID")
 		end
 	end
 end
