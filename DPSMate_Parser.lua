@@ -392,7 +392,7 @@ function DPSMate.Parser:CreatureVsCreatureHits(msg)
 	for c, ta, a in string.gfind(msg, "(.+) crits (.-) for (.+)%.") do crit=1; cause=c; target.name = ta; amount=tonumber(strsub(a, strfind(a, "%d+"))); end
 	DPSMate.DB:EnemyDamage(DPSMateEDD, target, "AutoAttack", hit, crit, 0, 0, 0, 0, amount, cause)
 	DPSMate.DB:DamageTaken(target, "AutoAttack", hit, crit, 0, 0, 0, 0, amount, cause)
-	DPSMate.DB:DeathHistory(target, cause, "AutoAttack", amount, hit, crit, 0)
+	DPSMate.DB:DeathHistory(target.name, cause, "AutoAttack", amount, hit, crit, 0)
 end
 
 -- Ember Worg attacks. Ikaa parries.
@@ -415,7 +415,7 @@ function DPSMate.Parser:SpellPeriodicDamageTaken(msg)
 		for ta, a, c, ab in string.gfind(msg, "(.-) suffers (.+) from (.+)'s (.+)%.") do target.name=ta; cause=c; ability=ab; amount=tonumber(strsub(a, strfind(a, "%d+"))) end
 		DPSMate.DB:EnemyDamage(DPSMateEDD, target, ability, 1, 0, 0, 0, 0, 0, amount, cause)
 		DPSMate.DB:DamageTaken(target, ability, 1, 0, 0, 0, 0, 0, amount, cause)
-		DPSMate.DB:DeathHistory(target, cause, ability, amount, 1, 0, 0)
+		DPSMate.DB:DeathHistory(target.name, cause, ability, amount, 1, 0, 0)
 	end
 end
 
@@ -429,7 +429,7 @@ function DPSMate.Parser:CreatureVsCreatureSpellDamage(msg)
 	DPSMate.DB:UnregisterPotentialKick(cause, ability, GetTime())
 	DPSMate.DB:EnemyDamage(DPSMateEDD, target, ability, hit, crit, 0, 0, 0, resist, amount, cause)
 	DPSMate.DB:DamageTaken(target, ability, hit, crit, 0, 0, 0, resist, amount, cause)
-	DPSMate.DB:DeathHistory(target, cause, ability, amount, hit, crit, 0)
+	DPSMate.DB:DeathHistory(target.name, cause, ability, amount, hit, crit, 0)
 end
 
 ----------------------------------------------------------------------------------

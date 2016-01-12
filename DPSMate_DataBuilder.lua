@@ -1066,7 +1066,7 @@ function DPSMate.DB:UnregisterDeath(target)
 end
 -- l. 846
 function DPSMate.DB:DeathHistory(target, cause, ability, amount, hit, crit, type)
-	if (not target or target=="" or not cause or cause=="" or amount==0 or not DPSMateUser[target]) then return end
+	if (not target or target=="" or not cause or cause=="" or amount==0) then return end
 	DPSMate.DB:BuildUser(target, nil)
 	DPSMate.DB:BuildUser(cause, nil)
 	DPSMate.DB:BuildAbility(ability, nil)
