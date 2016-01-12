@@ -20,19 +20,19 @@ function DPSMate.Modules.Dispels:GetSortedTable(arr)
 		local i = 1
 		while true do
 			if (not b[i]) then
-				table.insert(b, i, val["i"][1])
+				table.insert(b, i, val["i"])
 				table.insert(a, i, cat)
 				break
 			else
-				if b[i] < val["i"][1] then
-					table.insert(b, i, val["i"][1])
+				if b[i] < val["i"] then
+					table.insert(b, i, val["i"])
 					table.insert(a, i, cat)
 					break
 				end
 			end
 			i=i+1
 		end
-		total = total + val["i"][1]
+		total = total + val["i"]
 	end
 	return b, total, a
 end

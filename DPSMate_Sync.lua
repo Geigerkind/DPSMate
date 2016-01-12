@@ -98,12 +98,12 @@ function DPSMate.Sync:DMGDoneAllIn(arg2, arg4)
 		if not DPSMateDamageDone[1][ownerid] then
 			DPSMateDamageDone[1][ownerid] = {
 				i = {
-					[2] = {},
-					[3] = 0,
+					[1] = {},
+					[2] = 0,
 				},
 			}
 		end
-		DPSMateDamageDone[1][ownerid]["i"][3] = tonumber(am)
+		DPSMateDamageDone[1][ownerid]["i"][2] = tonumber(am)
 		DPSMate.DB.NeedUpdate = true
 	end
 end
@@ -116,12 +116,12 @@ function DPSMate.Sync:DMGDoneStatIn(arg2, arg4)
 		if not DPSMateDamageDone[1][ownerid] then
 			DPSMateDamageDone[1][ownerid] = {
 				i = {
-					[2] = {},
-					[3] = 0,
+					[1] = {},
+					[2] = 0,
 				},
 			}
 		end
-		DPSMateDamageDone[1][ownerid]["i"][2][tonumber(key)] = tonumber(val)
+		DPSMateDamageDone[1][ownerid]["i"][1][tonumber(key)] = tonumber(val)
 	end
 end
 
@@ -135,8 +135,8 @@ function DPSMate.Sync:DMGDoneAbilityIn(arg2, arg4)
 		if not DPSMateDamageDone[1][ownerid] then
 			DPSMateDamageDone[1][ownerid] = {
 				i = {
-					[2] = {},
-					[3] = 0,
+					[1] = {},
+					[2] = 0,
 				},
 			}
 		end
@@ -301,9 +301,7 @@ function DPSMate.Sync:DispelsIn(arg2, arg4)
 		local tarid = DPSMateUser[ta][1]
 		if not DPSMateDispels[1][pid] then
 			DPSMateDispels[1][pid] = {
-				i = {
-					[1] = 0,
-				},
+				i = 0,
 			}
 		end
 		if not DPSMateDispels[1][pid][abilityid] then
@@ -329,12 +327,10 @@ function DPSMate.Sync:iDispelsIn(arg2, arg4)
 		local abilityid = DPSMateAbility[a][1]
 		if not DPSMateDispels[1][pid] then
 			DPSMateDispels[1][pid] = {
-				i = {
-					[1] = 0,
-				},
+				i = 0,
 			}
 		end
-		DPSMateDispels[1][pid]["i"][1] = tonumber(v1)
+		DPSMateDispels[1][pid]["i"] = tonumber(v1)
 		DPSMate.DB.NeedUpdate = true
 	end
 end
@@ -371,14 +367,14 @@ UseAction = DPSMate.Parser.UseAction
 
 function DPSMate.Sync:DMGDoneAllOut()
 	if DPSMateDamageDone[1][DPSMateUser[player.name][1]] then
-		SendAddonMessage("DPSMate_DMGDoneAll", player.class..","..DPSMateDamageDone[1][DPSMateUser[player.name][1]]["i"][3], "RAID")
+		SendAddonMessage("DPSMate_DMGDoneAll", player.class..","..DPSMateDamageDone[1][DPSMateUser[player.name][1]]["i"][2], "RAID")
 	end
 end
 
 -- I will change the index from 2 to 1 later at the clean up
 function DPSMate.Sync:DMGDoneStatOut()
 	if not DPSMateDamageDone[1][DPSMateUser[player.name][1]] then return end
-	for cat, val in (DPSMateDamageDone[1][DPSMateUser[player.name][1]]["i"][2]) do
+	for cat, val in (DPSMateDamageDone[1][DPSMateUser[player.name][1]]["i"][1]) do
 		SendAddonMessage("DPSMate_DMGDoneStat", cat..","..val, "RAID")
 	end
 end
@@ -442,7 +438,7 @@ function DPSMate.Sync:DispelsOut()
 	if not DPSMateDispels[1][DPSMateUser[player.name][1]] then return end
 	for cat, val in pairs(DPSMateDispels[1][DPSMateUser[player.name][1]]) do -- Ability
 		if cat=="i" then
-			SendAddonMessage("DPSMate_iDispels", DPSMate:GetAbilityById(cat)..","..val["i"][1], "RAID")
+			SendAddonMessage("DPSMate_iDispels", DPSMate:GetAbilityById(cat)..","..val["i"], "RAID")
 		else
 			for ca, va in pairs(val) do -- Target
 				for c, v in pairs(v) do -- Ability

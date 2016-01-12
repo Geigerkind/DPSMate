@@ -19,9 +19,9 @@ function DPSMate.Modules.DPS:GetSortedTable(arr)
 	for cat, val in pairs(arr) do
 		local name = DPSMate:GetUserById(cat)
 		if (not DPSMateUser[name]["isPet"]) then
-			local CV = val["i"][3]
+			local CV = val["i"][2]
 			if DPSMate:PlayerExist(DPSMateUser, DPSMateUser[name]["pet"]) and arr[DPSMateUser[DPSMateUser[name]["pet"]][1]] then
-				CV=CV+arr[DPSMateUser[DPSMateUser[name]["pet"]][1]]["i"][3]
+				CV=CV+arr[DPSMateUser[DPSMateUser[name]["pet"]][1]]["i"][2]
 			end
 			a[CV] = name
 			local i = 1
@@ -73,7 +73,7 @@ function DPSMate.Modules.DPS:EvalTable(user, k)
 				end
 			end
 		end
-		total=total+arr[v]["i"][3]
+		total=total+arr[v]["i"][2]
 	end
 	return a, total, d
 end

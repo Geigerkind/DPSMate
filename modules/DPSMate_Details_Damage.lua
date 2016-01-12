@@ -257,7 +257,7 @@ end
 
 function DPSMate.Modules.DetailsDamage:SortLineTable(t)
 	local newArr = {}
-	for cat, val in pairs(t[DPSMateUser[DetailsUser][1]]["i"][2]) do
+	for cat, val in pairs(t[DPSMateUser[DetailsUser][1]]["i"][1]) do
 		local i=1
 		while true do
 			if (not newArr[i]) then 

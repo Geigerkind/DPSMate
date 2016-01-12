@@ -19,7 +19,7 @@ function DPSMate.Modules.DTPS:GetSortedTable(arr)
 	for c, v in pairs(arr) do
 		local CV = 0
 		for cat, val in pairs(v) do
-			CV = CV+val["i"][3]
+			CV = CV+val["i"][2]
 		end
 		local i = 1
 		while true do
@@ -83,7 +83,7 @@ function DPSMate.Modules.DTPS:EvalTable(user, k)
 			end
 			i = i + 1
 		end
-		total=total+val["i"][3]
+		total=total+val["i"][2]
 	end
 	return a, total, d
 end

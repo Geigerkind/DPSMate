@@ -44,7 +44,7 @@ function DPSMate.Modules.Decurses:GetSortedTable(arr)
 			end
 			i=i+1
 		end
-		total = total + val["i"][1]
+		total = total + val["i"]
 	end
 	return b, total, a
 end

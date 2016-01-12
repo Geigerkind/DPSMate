@@ -19,7 +19,7 @@ function DPSMate.Modules.EDD:GetSortedTable(arr)
 	for c, v in pairs(arr) do
 		local CV = 0
 		for cat, val in pairs(v) do
-			CV = CV+val["i"][3]
+			CV = CV+val["i"][2]
 		end
 		local i = 1
 		while true do
@@ -51,7 +51,7 @@ function DPSMate.Modules.EDD:EvalTable(user, k)
 				if temp[ca] then temp[ca]=temp[ca]+va[13] else temp[ca]=va[13] end
 			end
 		end
-	total=total+val["i"][3]
+	total=total+val["i"][2]
 	end
 	for cat, val in pairs(temp) do
 		local i = 1

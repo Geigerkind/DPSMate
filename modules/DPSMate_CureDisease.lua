@@ -44,7 +44,7 @@ function DPSMate.Modules.CureDisease:GetSortedTable(arr)
 			end
 			i=i+1
 		end
-		total = total + val["i"][1]
+		total = total + val["i"]
 	end
 	return b, total, a
 end
