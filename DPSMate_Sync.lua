@@ -797,8 +797,8 @@ end
 function DPSMate.Sync:DeathsOut()
 	if not DPSMateDeaths[1][DPSMateUser[player.name][1]] then return end
 	for cat, val in pairs(DPSMateDeaths[1][DPSMateUser[player.name][1]]) do -- death count
-		if cat~="i" then
-			for ca, va in pairs(val) do -- each part
+		for ca, va in pairs(val) do -- each part
+			if ca~="i" then
 				SendAddonMessage("DPSMate_Deaths", cat..","..ca..","..DPSMate:GetUserById(va[1])..","..DPSMate:GetAbilityById(va[2])..","..va[3]..","..va[4]..","..va[5], "RAID")
 			end
 		end
