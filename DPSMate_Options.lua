@@ -987,40 +987,14 @@ function DPSMate.Options:CreateWindow()
 			name = na,
 			options = {
 				[1] = {
-					dps = false,
-					damage = true,
-					damagetaken = false,
-					enemydamagetaken = false,
-					enemydamagedone = false,
-					healing = false,
-					effectivehealing = false,
-					healingandabsorbs = false,
-					overhealing = false,
-					healingtaken = false,
-					effectivehealingtaken = false,
-					interrupts = false,
-					deaths = false,
-					dispels = false
+					damage = true
 				},
 				[2] = {
-					total = true,
-					currentfight = false,
-					segment1 = false,
-					segment2 = false,
-					segment3 = false,
-					segment4 = false,
-					segment5 = false,
-					segment6 = false,
-					segment7 = false,
-					segment8 = false,
-					segment9 = false,
-					segment10 = false,
-					segment11 = false,
-					segment12 = false,
-					segment13 = false
+					total = true
 				}
 			},
 			CurMode = "damage",
+			hidden = false,
 			scale = 1,
 			barfont = "ARIALN",
 			barfontsize = 14,
@@ -1041,9 +1015,9 @@ function DPSMate.Options:CreateWindow()
 			titlebarconfig = true,
 			titlebarsync = true,
 			titlebartexture = "Healbot",
-			titlebarbgcolor = {1,1,1},
+			titlebarbgcolor = {0.01568627450980392,0,1},
 			contentbgtexture = "UI-Tooltip-Background",
-			contentbgcolor = {1,1,1},
+			contentbgcolor = {0.01568627450980392,0,1},
 			numberformat = 1
 		})
 		local TL = DPSMate:TableLength(DPSMateSettings["windows"])

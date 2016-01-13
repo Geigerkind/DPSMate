@@ -69,20 +69,20 @@ function DPSMate.DB:OnEvent(event)
 						titlebarconfig = true,
 						titlebarsync = true,
 						titlebartexture = "Healbot",
-						titlebarbgcolor = {1,1,1},
+						titlebarbgcolor = {0.01568627450980392,0,1},
 						contentbgtexture = "UI-Tooltip-Background",
-						contentbgcolor = {1,1,1},
+						contentbgcolor = {0.01568627450980392,0,1},
 						numberformat = 1
 					}
 				},
-				lock = true,
+				lock = false,
 				sync = true,
 				dataresetsworld = 3,
 				dataresetsjoinparty = 1,
 				dataresetsleaveparty = 2,
 				dataresetspartyamount = 3,
 				showminimapbutton = true,
-				showtotals = false,
+				showtotals = true,
 				hidewhensolo = false,
 				hideincombat = false,
 				hideinpvp = false,
@@ -233,7 +233,7 @@ function DPSMate.DB:OnEvent(event)
 				},
 				showtooltips = true,
 				informativetooltips = true,
-				subviewrows = 3,
+				subviewrows = 4,
 				tooltipanchor = 5
 			}
 		end
@@ -350,14 +350,14 @@ function DPSMate.DB:IsReallyPet()
 	if DPSMate.DB:PlayerInParty() then
 		for i=1, 4 do
 			local name = UnitName("party"..i)
-			if name then
+			if DPSMateUser[name] then
 				DPSMateUser[name]["isPet"] = false
 			end
 		end
 	elseif UnitInRaid("player") then
 		for i=1, 40 do
 			local name = UnitName("raid"..i)
-			if name then
+			if DPSMateUser[name] then
 				DPSMateUser[name]["isPet"] = false
 			end
 		end
@@ -759,7 +759,7 @@ function DPSMate.DB:HealingTaken(arr, Duser, Dname, Dhit, Dcrit, Damount, target
 		arr[cat][DPSMateUser[Duser][1]][DPSMateUser[target][1]][DPSMateAbility[Dname][1]][1] = arr[cat][DPSMateUser[Duser][1]][DPSMateUser[target][1]][DPSMateAbility[Dname][1]][1]+Damount
 		arr[cat][DPSMateUser[Duser][1]][DPSMateUser[target][1]][DPSMateAbility[Dname][1]][2] = arr[cat][DPSMateUser[Duser][1]][DPSMateUser[target][1]][DPSMateAbility[Dname][1]][2]+Dhit
 		arr[cat][DPSMateUser[Duser][1]][DPSMateUser[target][1]][DPSMateAbility[Dname][1]][3] = arr[cat][DPSMateUser[Duser][1]][DPSMateUser[target][1]][DPSMateAbility[Dname][1]][3]+Dcrit
-		arr[cat][DPSMateUser[Duser][1]]["i"][1] = arr[cat][DPSMateUser[Duser][1]]["i"][1]+Damount
+		arr[cat][DPSMateUser[Duser][1]]["i"] = arr[cat][DPSMateUser[Duser][1]]["i"]+Damount
 	end
 	DPSMate.DB.NeedUpdate = true
 end
