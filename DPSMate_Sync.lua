@@ -58,6 +58,10 @@ function DPSMate.Sync:OnUpdate(elapsed)
 		elseif time>=27 and iterator==10 then
 			DPSMate.Sync:HealingTakenAllOut(DPSMateEHealingTaken, "E")
 			DPSMate.Sync:HealingTakenAbilityOut(DPSMateEHealingTaken, "E")
+			iterator = 11
+		elseif time>=30 and iterator==11 then
+			DPSMate.Sync:DeathsAllOut()
+			DPSMate.Sync:DeathsOut()
 			DPSMate.Sync.Async = false
 			iterator = 1
 			time = 0
@@ -125,6 +129,10 @@ function DPSMate.Sync:OnEvent(event)
 				DPSMate.Sync:EDAllIn(DPSMateEDD, arg2, arg4)
 			elseif arg1 == "DPSMate_EDDAbility" then
 				DPSMate.Sync:EDAbilityIn(DPSMateEDD, arg2, arg4)
+			elseif arg1 == "DPSMate_DeathsAll" then
+				DPSMate.Sync:DeathsAllIn(arg2, arg4) 
+			elseif arg1 == "DPSMate_Deaths" then
+				DPSMate.Sync:DeathsIn(arg2, arg4)
 			end
 		end
 	end
@@ -512,6 +520,59 @@ function DPSMate.Sync:AbsorbsIn(arg2, arg4)
 end
 
 ----------------------------------------------------------------------------------
+--------------                        Deaths                        --------------                                  
+----------------------------------------------------------------------------------
+
+function DPSMate.Sync:DeathsAllIn(arg2, arg4) 
+	for cat,oc,v1 in string.gfind(arg2, "(.+),(.+),(.+)") do 
+		cat = tonumber(cat)
+		DPSMate.DB:BuildUser(arg4, nil)
+		local ownerid = DPSMateUser[arg4][1]
+		if not DPSMateDeaths[1][ownerid] then
+			DPSMateDeaths[1][ownerid] = {}
+		end
+		if not DPSMateDeaths[1][ownerid][cat] then
+			DPSMateDeaths[1][ownerid][cat] = {
+				i = 0,
+			}
+		end
+		DPSMateDeaths[1][ownerid][cat]["i"] = tonumber(v1)
+	end
+end
+
+function DPSMate.Sync:DeathsIn(arg2, arg4)
+	for cat,ca,ta,ab,v1,v2,v3 in string.gfind(arg2, "(.+),(.+),(.+),(.+),(.+),(.+),(.+)") do 
+		cat = tonumber(cat)
+		ca = tonumber(ca)
+		DPSMate.DB:BuildUser(arg4, nil)
+		local ownerid = DPSMateUser[arg4][1]
+		DPSMate.DB:BuildUser(ta, nil)
+		local tarid = DPSMateUser[ta][1]
+		DPSMate.DB:BuildAbility(ab, nil)
+		local abilityid = DPSMateAbility[ab][1]
+		if not DPSMateDeaths[1][ownerid] then
+			DPSMateDeaths[1][ownerid] = {}
+		end
+		if not DPSMateDeaths[1][ownerid][cat] then
+			DPSMateDeaths[1][ownerid][cat] = {
+				i = 0,
+			}
+		end
+		if not DPSMateDeaths[1][ownerid][cat][ca] then
+			DPSMateDeaths[1][ownerid][cat][ca] = {}
+		end
+		DPSMateDeaths[1][ownerid][cat][ca] = {
+			[1] = tarid,
+			[2] = abilityid,
+			[3] = tonumber(v1),
+			[4] = tonumber(v2),
+			[5] = tonumber(v3),
+		}
+		DPSMate.DB.NeedUpdate = true
+	end
+end
+
+----------------------------------------------------------------------------------
 --------------                        Dispels                       --------------                                  
 ----------------------------------------------------------------------------------
 
@@ -717,6 +778,28 @@ function DPSMate.Sync:AbsorbsOut()
 						SendAddonMessage("DPSMate_Absorbs", DPSMate:GetUserById(cat)..","..DPSMate:GetAbilityById(ca)..","..c..","..DPSMate:GetUserById(ce)..","..ve[1]..","..ve[2], "RAID")
 					end
 				end
+			end
+		end
+	end
+end
+
+----------------------------------------------------------------------------------
+--------------                        Deaths                        --------------                                  
+----------------------------------------------------------------------------------
+
+function DPSMate.Sync:DeathsAllOut()
+	if not DPSMateDeaths[1][DPSMateUser[player.name][1]] then return end
+	for cat, val in pairs(DPSMateDeaths[1][DPSMateUser[player.name][1]]) do -- death count
+		SendAddonMessage("DPSMate_DeathsAll", player.class..","..cat..","..val["i"], "RAID")
+	end
+end
+
+function DPSMate.Sync:DeathsOut()
+	if not DPSMateDeaths[1][DPSMateUser[player.name][1]] then return end
+	for cat, val in pairs(DPSMateDeaths[1][DPSMateUser[player.name][1]]) do -- death count
+		if cat~="i" then
+			for ca, va in pairs(val) do -- each part
+				SendAddonMessage("DPSMate_Deaths", cat..","..ca..","..DPSMate:GetUserById(va[1])..","..DPSMate:GetAbilityById(va[2])..","..va[3]..","..va[4]..","..va[5], "RAID")
 			end
 		end
 	end
