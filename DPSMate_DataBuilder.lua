@@ -1311,7 +1311,7 @@ function DPSMate.DB:CombatTime()
 			end
 		end
 		MainLastUpdateMinute = MainLastUpdateMinute + arg1
-		if MainLastUpdateMinute>=60 then
+		if MainLastUpdateMinute>=10 then
 			DPSMate.DB:ClearAwaitBuffs()
 			DPSMate.DB:ClearAwaitAbsorb()
 			DPSMate.DB:ClearAwaitHotDispel()

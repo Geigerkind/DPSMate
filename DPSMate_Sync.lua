@@ -161,15 +161,12 @@ function DPSMate.Sync:DMGDoneAllIn(arg2, arg4)
 	for oc, am in string.gfind(arg2, "(.+),(.+)") do
 		DPSMate.DB:BuildUser(arg4, oc)
 		local ownerid = DPSMateUser[arg4][1]
-		DPSMateDamageDone[1][ownerid] = {}
-		if not DPSMateDamageDone[1][ownerid] then
-			DPSMateDamageDone[1][ownerid] = {
-				i = {
-					[1] = {},
-					[2] = 0,
-				},
-			}
-		end
+		DPSMateDamageDone[1][ownerid] = {
+			i = {
+				[1] = {},
+				[2] = 0,
+			},
+		}
 		DPSMateDamageDone[1][ownerid]["i"][2] = tonumber(am)
 		DPSMate.DB.NeedUpdate = true
 	end
@@ -301,18 +298,15 @@ function DPSMate.Sync:EDAllIn(arr, arg2, arg4)
 		local ownerid = DPSMateUser[arg4][1]
 		DPSMate.DB:BuildUser(ta, oc)
 		local tarid = DPSMateUser[ta][1]
-		arr[1][tarid][ownerid] = {}
 		if not arr[1][tarid] then
 			arr[1][tarid] = {}
 		end
-		if not arr[1][tarid][ownerid] then
-			arr[1][tarid][ownerid] = {
-				i = {
-					[1] = {},
-					[2] = 0,
-				},
-			}
-		end
+		arr[1][tarid][ownerid] = {
+			i = {
+				[1] = {},
+				[2] = 0,
+			},
+		}
 		arr[1][tarid][ownerid]["i"][2] = tonumber(am)
 		DPSMate.DB.NeedUpdate = true
 	end
@@ -365,14 +359,11 @@ function DPSMate.Sync:HealingAllIn(arg2, arg4, arr)
 	for oc, am in string.gfind(arg2, "(.+),(.+)") do
 		DPSMate.DB:BuildUser(arg4, oc)
 		local ownerid = DPSMateUser[arg4][1]
-		arr[1][ownerid] = {}
-		if not arr[1][ownerid] then
-			arr[1][ownerid] = {
-				i = {
-					[1] = 0,
-				},
-			}
-		end
+		arr[1][ownerid] = {
+			i = {
+				[1] = 0,
+			},
+		}
 		arr[1][ownerid]["i"][1] = tonumber(am)
 		DPSMate.DB.NeedUpdate = true
 	end
@@ -417,15 +408,10 @@ function DPSMate.Sync:HealingTakenAllIn(arg2, arg4, arr)
 	for oc, am in string.gfind(arg2, "(.+),(.+)") do
 		DPSMate.DB:BuildUser(arg4, oc)
 		local ownerid = DPSMateUser[arg4][1]
-		arr[1][ownerid] = {}
-		if not arr[1][ownerid] then
-			arr[1][ownerid] = {
-				i = {
-					[1] = 0,
-				},
-			}
-		end
-		arr[1][ownerid]["i"][1] = tonumber(am)
+		arr[1][ownerid] = {
+			i = 0,
+		}
+		arr[1][ownerid]["i"] = tonumber(am)
 		DPSMate.DB.NeedUpdate = true
 	end
 end
@@ -442,9 +428,7 @@ function DPSMate.Sync:HealingTakenAbilityIn(arg2, arg4, arr)
 		local tarid = DPSMateUser[ta][1]
 		if not arr[1][ownerid] then
 			arr[1][ownerid] = {
-				i = {
-					[1] = 0,
-				},
+				i = 0,
 			}
 		end
 		if not arr[1][ownerid][tarid] then
@@ -524,7 +508,6 @@ function DPSMate.Sync:AbsorbsIn(arg2, arg4)
 					[2] = 0,
 				},
 			}
-			DPSMate:SendMessage("OVERWRITTEN!")
 		end
 		DPSMateAbsorbs[1][pid][ownerid][abilityid][tonumber(e)][enemyid] = {
 			[1] = tonumber(v1),
@@ -539,7 +522,7 @@ end
 ----------------------------------------------------------------------------------
 
 function DPSMate.Sync:DeathsAllIn(arg2, arg4) 
-	for cat,oc,v1 in string.gfind(arg2, "(.+),(.+),(.+)") do 
+	for oc,cat,v1 in string.gfind(arg2, "(.+),(.+),(.+)") do 
 		cat = tonumber(cat)
 		DPSMate.DB:BuildUser(arg4, oc)
 		local ownerid = DPSMateUser[arg4][1]
@@ -716,7 +699,7 @@ function DPSMate.Sync:AurasCauseIn(arg2, arg4)
 		local pid = DPSMateUser[arg4][1]
 		local abilityid = DPSMateAbility[a][1]
 		DPSMate.DB:BuildUser(b, nil)
-		local causeid = DPSMateAbility[b][1]
+		local causeid = DPSMateUser[b][1]
 		DPSMateAurasGained[1][pid][abilityid][3][causeid] = tonumber(c)
 	end
 end
@@ -803,16 +786,20 @@ end
 function DPSMate.Sync:EDAllOut(arr, prefix)
 	local pid = DPSMateUser[player.name][1]
 	for cat, val in pairs(arr[1]) do
-		SendAddonMessage("DPSMate_ED"..prefix.."All", player.class..","..DPSMate:GetUserById(cat)..","..val[pid]["i"][2], "RAID")
+		if val[pid] then
+			SendAddonMessage("DPSMate_ED"..prefix.."All", player.class..","..DPSMate:GetUserById(cat)..","..val[pid]["i"][2], "RAID")
+		end
 	end
 end
 
 function DPSMate.Sync:EDAbilityOut(arr, prefix)
 	local pid = DPSMateUser[player.name][1]
 	for cat, val in (arr[1]) do
-		for ca, va in pairs(val[pid]) do
-			if ca~="i" then
-				SendAddonMessage("DPSMate_ED"..prefix.."Ability", DPSMate:GetUserById(cat)..","..DPSMate:GetAbilityById(ca)..","..va[1]..","..va[2]..","..va[3]..","..ceil(va[4])..","..va[5]..","..va[6]..","..va[7]..","..ceil(va[8])..","..va[9]..","..va[10]..","..va[11]..","..va[12]..","..va[13], "RAID")
+		if val[pid] then
+			for ca, va in pairs(val[pid]) do
+				if ca~="i" then
+					SendAddonMessage("DPSMate_ED"..prefix.."Ability", DPSMate:GetUserById(cat)..","..DPSMate:GetAbilityById(ca)..","..va[1]..","..va[2]..","..va[3]..","..ceil(va[4])..","..va[5]..","..va[6]..","..va[7]..","..ceil(va[8])..","..va[9]..","..va[10]..","..va[11]..","..va[12]..","..va[13], "RAID")
+				end
 			end
 		end
 	end
@@ -845,7 +832,7 @@ end
 
 function DPSMate.Sync:HealingTakenAllOut(arr, prefix)
 	if arr[1][DPSMateUser[player.name][1]] then
-		SendAddonMessage("DPSMate_"..prefix.."HealingTakenAll", player.class..","..arr[1][DPSMateUser[player.name][1]]["i"][1], "RAID")
+		SendAddonMessage("DPSMate_"..prefix.."HealingTakenAll", player.class..","..arr[1][DPSMateUser[player.name][1]]["i"], "RAID")
 	end
 end
 
