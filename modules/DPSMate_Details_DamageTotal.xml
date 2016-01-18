@@ -29,7 +29,110 @@
 		</Layers>
 	</Frame>
 	
-	<Frame name="DPSMate_Details_DamageTotal" parent="UIParent" movable="true" hidden="true">
+	<Frame name="DPSMate_Details_DamageTotal_Template_Row" virtual="true" hidden="true">
+		<Size x="870" y="30" />
+		<Layers>
+			<Layer level="BACKGROUND">
+				<FontString name="$parent_Name" inherits="GameFontNormal" justifyH="LEFT" justifyV="CENTER" text="VeryLongNameOf">
+					<Size x="130" y="40" />
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset x="45" y="0" />
+						</Anchor>
+					</Anchors>
+				</FontString>
+				<FontString name="$parent_Amount" inherits="GameFontNormal" justifyH="LEFT" justifyV="CENTER" text="10000000">
+					<Size x="100" y="40" />
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset x="175" y="0" />
+						</Anchor>
+					</Anchors>
+					<Color r="1" g="1" b="1" />
+				</FontString>
+				<FontString name="$parent_AmountPerc" inherits="GameFontNormal" justifyH="LEFT" justifyV="CENTER" text="100%">
+					<Size x="100" y="40" />
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset x="495" y="0" />
+						</Anchor>
+					</Anchors>
+					<Color r="1" g="1" b="1" />
+				</FontString>
+				<FontString name="$parent_Crit" inherits="GameFontNormal" justifyH="LEFT" justifyV="CENTER" text="100%">
+					<Size x="100" y="40" />
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset x="545" y="0" />
+						</Anchor>
+					</Anchors>
+					<Color r="1" g="1" b="1" />
+				</FontString>
+				<FontString name="$parent_Miss" inherits="GameFontNormal" justifyH="LEFT" justifyV="CENTER" text="100%">
+					<Size x="100" y="40" />
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset x="605" y="0" />
+						</Anchor>
+					</Anchors>
+					<Color r="1" g="1" b="1" />
+				</FontString>
+				<FontString name="$parent_DPS" inherits="GameFontNormal" justifyH="LEFT" justifyV="CENTER" text="300000">
+					<Size x="100" y="40" />
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset x="665" y="0" />
+						</Anchor>
+					</Anchors>
+					<Color r="1" g="1" b="1" />
+				</FontString>
+				<FontString name="$parent_ActiveTime" inherits="GameFontNormal" justifyH="LEFT" justifyV="CENTER" text="3400s | 100%">
+					<Size x="100" y="40" />
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset x="745" y="0" />
+						</Anchor>
+					</Anchors>
+					<Color r="1" g="1" b="1" />
+				</FontString>
+			</Layer>
+		</Layers>
+		<Frames>
+			<CheckButton name="$parent_CB" inherits="OptionsCheckButtonTemplate">
+				<Size x="26" y="26" />
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset x="10" y="-9" />
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						local uid = this:GetParent().user
+						if uid then
+							DPSMate.Modules.DetailsDamageTotal:AddLinesButton(uid)
+						end
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+			<StatusBar name="$parent_StatusBar">
+				<Size x="230" y="16" />
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset x="255" y="-13" />
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						this:SetMinMaxValues(1,100)
+						this:SetStatusBarTexture("Interface\\AddOns\\DPSMate\\images\\statusbar\\Healbot")
+						this:SetValue(100)
+					</OnLoad>
+				</Scripts>
+			</StatusBar>
+		</Frames>
+	</Frame>
+	
+	<Frame name="DPSMate_Details_DamageTotal" parent="UIParent" movable="true" hidden="false">
 		<Size x="900" y="600" />
 		<Anchors>
 			<Anchor point="CENTER" />
@@ -127,7 +230,7 @@
 				</Scripts>
 				<HitRectInsets left="0" right="0" top="5" bottom="5"/> 
 				<ScrollChild>
-					<Frame name="$parent_Container">
+					<Frame name="$parent_Child">
 						<Size x="100" y="620" />
 						<Frames>
 							<Frame name="$parent_C1" inherits="DPSMate_Details_DamageTotal_Template_LegendColumn" hidden="false">
@@ -369,7 +472,7 @@
 							<Size x="100" y="40" />
 							<Anchors>
 								<Anchor point="TOPLEFT">
-									<Offset x="175" y="0" />
+									<Offset x="329" y="0" />
 								</Anchor>
 							</Anchors>
 						</FontString>
@@ -398,7 +501,7 @@
 							</Anchors>
 						</FontString>
 						<FontString name="$parent_ActiveTime" inherits="GameFontNormal" justifyH="LEFT" justifyV="CENTER" text="Active Time">
-							<Size x="100" y="40" />
+							<Size x="130" y="40" />
 							<Anchors>
 								<Anchor point="TOPLEFT">
 									<Offset x="745" y="0" />
@@ -412,18 +515,179 @@
 						this:SetVerticalScroll(0)
 					</OnLoad>
 					<OnMouseWheel>
-						DPSMate.Options:OnVerticalScroll(this, arg1)
+						DPSMate.Options:OnVerticalScroll(this, arg1, 30)
 					</OnMouseWheel>
 				</Scripts>
-				<HitRectInsets left="0" right="0" top="5" bottom="5"/> 
+				<HitRectInsets left="0" right="0" top="35" bottom="5"/> 
 				<ScrollChild>
-					<Frame name="$parent_Container">
+					<Frame name="$parent_Child">
 						<Size x="870" y="270" />
 						<Frames>
-							
+							<Frame name="$parent_R1" inherits="DPSMate_Details_DamageTotal_Template_Row">
+								<Anchors>
+									<Anchor point="TOP">
+										<Offset x="0" y="-25" />
+									</Anchor>
+								</Anchors>
+							</Frame>
+							<Frame name="$parent_R2" inherits="DPSMate_Details_DamageTotal_Template_Row">
+								<Anchors>
+									<Anchor point="TOPLEFT" relativeTo="$parent_R1" relativePoint="BOTTOMLEFT" />
+								</Anchors>
+							</Frame>
+							<Frame name="$parent_R3" inherits="DPSMate_Details_DamageTotal_Template_Row">
+								<Anchors>
+									<Anchor point="TOPLEFT" relativeTo="$parent_R2" relativePoint="BOTTOMLEFT" />
+								</Anchors>
+							</Frame>
+							<Frame name="$parent_R4" inherits="DPSMate_Details_DamageTotal_Template_Row">
+								<Anchors>
+									<Anchor point="TOPLEFT" relativeTo="$parent_R3" relativePoint="BOTTOMLEFT" />
+								</Anchors>
+							</Frame>
+							<Frame name="$parent_R5" inherits="DPSMate_Details_DamageTotal_Template_Row">
+								<Anchors>
+									<Anchor point="TOPLEFT" relativeTo="$parent_R4" relativePoint="BOTTOMLEFT" />
+								</Anchors>
+							</Frame>
+							<Frame name="$parent_R6" inherits="DPSMate_Details_DamageTotal_Template_Row">
+								<Anchors>
+									<Anchor point="TOPLEFT" relativeTo="$parent_R5" relativePoint="BOTTOMLEFT" />
+								</Anchors>
+							</Frame>
+							<Frame name="$parent_R7" inherits="DPSMate_Details_DamageTotal_Template_Row">
+								<Anchors>
+									<Anchor point="TOPLEFT" relativeTo="$parent_R6" relativePoint="BOTTOMLEFT" />
+								</Anchors>
+							</Frame>
+							<Frame name="$parent_R8" inherits="DPSMate_Details_DamageTotal_Template_Row">
+								<Anchors>
+									<Anchor point="TOPLEFT" relativeTo="$parent_R7" relativePoint="BOTTOMLEFT" />
+								</Anchors>
+							</Frame>
+							<Frame name="$parent_R9" inherits="DPSMate_Details_DamageTotal_Template_Row">
+								<Anchors>
+									<Anchor point="TOPLEFT" relativeTo="$parent_R8" relativePoint="BOTTOMLEFT" />
+								</Anchors>
+							</Frame>
+							<Frame name="$parent_R10" inherits="DPSMate_Details_DamageTotal_Template_Row">
+								<Anchors>
+									<Anchor point="TOPLEFT" relativeTo="$parent_R9" relativePoint="BOTTOMLEFT" />
+								</Anchors>
+							</Frame>
+							<Frame name="$parent_R11" inherits="DPSMate_Details_DamageTotal_Template_Row">
+								<Anchors>
+									<Anchor point="TOPLEFT" relativeTo="$parent_R10" relativePoint="BOTTOMLEFT" />
+								</Anchors>
+							</Frame>
+							<Frame name="$parent_R12" inherits="DPSMate_Details_DamageTotal_Template_Row">
+								<Anchors>
+									<Anchor point="TOPLEFT" relativeTo="$parent_R11" relativePoint="BOTTOMLEFT" />
+								</Anchors>
+							</Frame>
+							<Frame name="$parent_R13" inherits="DPSMate_Details_DamageTotal_Template_Row">
+								<Anchors>
+									<Anchor point="TOPLEFT" relativeTo="$parent_R12" relativePoint="BOTTOMLEFT" />
+								</Anchors>
+							</Frame>
+							<Frame name="$parent_R14" inherits="DPSMate_Details_DamageTotal_Template_Row">
+								<Anchors>
+									<Anchor point="TOPLEFT" relativeTo="$parent_R13" relativePoint="BOTTOMLEFT" />
+								</Anchors>
+							</Frame>
+							<Frame name="$parent_R15" inherits="DPSMate_Details_DamageTotal_Template_Row">
+								<Anchors>
+									<Anchor point="TOPLEFT" relativeTo="$parent_R14" relativePoint="BOTTOMLEFT" />
+								</Anchors>
+							</Frame>
+							<Frame name="$parent_R16" inherits="DPSMate_Details_DamageTotal_Template_Row">
+								<Anchors>
+									<Anchor point="TOPLEFT" relativeTo="$parent_R15" relativePoint="BOTTOMLEFT" />
+								</Anchors>
+							</Frame>
+							<Frame name="$parent_R17" inherits="DPSMate_Details_DamageTotal_Template_Row">
+								<Anchors>
+									<Anchor point="TOPLEFT" relativeTo="$parent_R16" relativePoint="BOTTOMLEFT" />
+								</Anchors>
+							</Frame>
+							<Frame name="$parent_R18" inherits="DPSMate_Details_DamageTotal_Template_Row">
+								<Anchors>
+									<Anchor point="TOPLEFT" relativeTo="$parent_R17" relativePoint="BOTTOMLEFT" />
+								</Anchors>
+							</Frame>
+							<Frame name="$parent_R19" inherits="DPSMate_Details_DamageTotal_Template_Row">
+								<Anchors>
+									<Anchor point="TOPLEFT" relativeTo="$parent_R18" relativePoint="BOTTOMLEFT" />
+								</Anchors>
+							</Frame>
+							<Frame name="$parent_R20" inherits="DPSMate_Details_DamageTotal_Template_Row">
+								<Anchors>
+									<Anchor point="TOPLEFT" relativeTo="$parent_R19" relativePoint="BOTTOMLEFT" />
+								</Anchors>
+							</Frame>
+							<Frame name="$parent_R21" inherits="DPSMate_Details_DamageTotal_Template_Row">
+								<Anchors>
+									<Anchor point="TOPLEFT" relativeTo="$parent_R20" relativePoint="BOTTOMLEFT" />
+								</Anchors>
+							</Frame>
+							<Frame name="$parent_R22" inherits="DPSMate_Details_DamageTotal_Template_Row">
+								<Anchors>
+									<Anchor point="TOPLEFT" relativeTo="$parent_R21" relativePoint="BOTTOMLEFT" />
+								</Anchors>
+							</Frame>
+							<Frame name="$parent_R23" inherits="DPSMate_Details_DamageTotal_Template_Row">
+								<Anchors>
+									<Anchor point="TOPLEFT" relativeTo="$parent_R22" relativePoint="BOTTOMLEFT" />
+								</Anchors>
+							</Frame>
+							<Frame name="$parent_R24" inherits="DPSMate_Details_DamageTotal_Template_Row">
+								<Anchors>
+									<Anchor point="TOPLEFT" relativeTo="$parent_R23" relativePoint="BOTTOMLEFT" />
+								</Anchors>
+							</Frame>
+							<Frame name="$parent_R25" inherits="DPSMate_Details_DamageTotal_Template_Row">
+								<Anchors>
+									<Anchor point="TOPLEFT" relativeTo="$parent_R24" relativePoint="BOTTOMLEFT" />
+								</Anchors>
+							</Frame>
+							<Frame name="$parent_R26" inherits="DPSMate_Details_DamageTotal_Template_Row">
+								<Anchors>
+									<Anchor point="TOPLEFT" relativeTo="$parent_R25" relativePoint="BOTTOMLEFT" />
+								</Anchors>
+							</Frame>
+							<Frame name="$parent_R27" inherits="DPSMate_Details_DamageTotal_Template_Row">
+								<Anchors>
+									<Anchor point="TOPLEFT" relativeTo="$parent_R26" relativePoint="BOTTOMLEFT" />
+								</Anchors>
+							</Frame>
+							<Frame name="$parent_R28" inherits="DPSMate_Details_DamageTotal_Template_Row">
+								<Anchors>
+									<Anchor point="TOPLEFT" relativeTo="$parent_R27" relativePoint="BOTTOMLEFT" />
+								</Anchors>
+							</Frame>
+							<Frame name="$parent_R29" inherits="DPSMate_Details_DamageTotal_Template_Row">
+								<Anchors>
+									<Anchor point="TOPLEFT" relativeTo="$parent_R28" relativePoint="BOTTOMLEFT" />
+								</Anchors>
+							</Frame>
+							<Frame name="$parent_R30" inherits="DPSMate_Details_DamageTotal_Template_Row">
+								<Anchors>
+									<Anchor point="TOPLEFT" relativeTo="$parent_R29" relativePoint="BOTTOMLEFT" />
+								</Anchors>
+							</Frame>
 						</Frames>
 					</Frame>
 				</ScrollChild>
+				<Frames>
+					<CheckButton name="$parent_CB" inherits="OptionsCheckButtonTemplate">
+						<Size x="26" y="26" />
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset x="10" y="-4.5" />
+							</Anchor>
+						</Anchors>
+					</CheckButton>
+				</Frames>
 			</ScrollFrame>
 		</Frames>
 	</Frame>
