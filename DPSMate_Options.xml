@@ -1336,7 +1336,7 @@
 								this.aide = DPSMate.localization.config.barheightTooltip
 								this.func = function()
 									DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["barheight"] = this:GetValue() 
-									if DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["showtotals"] then getglobal("DPSMate_"..DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["name"].."_ScrollFrame_Child_Total"):SetHeight(DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["barheight"]) end
+									if DPSMateSettings["showtotals"] then getglobal("DPSMate_"..DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["name"].."_ScrollFrame_Child_Total"):SetHeight(DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["barheight"]) end
 									for i=1, 30 do
 										local bar = getglobal("DPSMate_"..DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["name"].."_ScrollFrame_Child_StatusBar"..i)
 										bar:SetHeight(DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["barheight"])
@@ -1349,6 +1349,7 @@
 											name:SetPoint("LEFT", bar, "LEFT", DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["barheight"], 0)
 										end
 									end
+									DPSMate:SetStatusBarValue()
 								end
 								this:SetMinMaxValues(10,25)
 								this:SetValueStep(1)
@@ -2050,7 +2051,6 @@
 					</OnLoad>
 					<OnMouseWheel>
 						DPSMate.Options:OnVerticalScroll(this, arg1)
-						--this:UpdateScrollChildRect()
 					</OnMouseWheel>
 				</Scripts>
 				<HitRectInsets left="0" right="0" top="10" bottom="10"/> 

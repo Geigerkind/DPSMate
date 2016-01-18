@@ -512,6 +512,11 @@ function DPSMate.Options:UpdateDetails(obj)
 	DPSMate.RegistredModules[DPSMateSettings["windows"][key]["CurMode"]]:OpenDetails(obj, key)
 end
 
+function DPSMate.Options:UpdateTotalDetails(obj)
+	local key = obj:GetParent():GetParent():GetParent().Key
+	DPSMate.RegistredModules[DPSMateSettings["windows"][key]["CurMode"]]:OpenTotalDetails(obj, key)
+end
+
 function DPSMate.Options:DropDownStyleReset()
 	for i=1, 20 do
 		local button = getglobal("DropDownList1Button"..i)
@@ -968,7 +973,7 @@ function DPSMate.Options:InitializeSegments()
 end
 
 function DPSMate.Options:OnVerticalScroll(obj, arg1)
-	local maxScroll = obj:GetVerticalScrollRange()
+	local maxScroll = getglobal(obj:GetName().."_Child"):GetHeight()
 	local Scroll = obj:GetVerticalScroll()
 	local toScroll = (Scroll - (20*arg1))
 	if toScroll < 0 then

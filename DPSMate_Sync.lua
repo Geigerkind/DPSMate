@@ -56,8 +56,8 @@ function DPSMate.Sync:OnUpdate(elapsed)
 			DPSMate.Sync:HealingTakenAbilityOut(DPSMateEHealingTaken, "E")
 			iterator = 11
 		elseif time>=30 and iterator==11 then
-			DPSMate.Sync:DeathsAllOut()
-			DPSMate.Sync:DeathsOut()
+			--DPSMate.Sync:DeathsAllOut()
+			--DPSMate.Sync:DeathsOut()
 			iterator = 12
 		elseif time>=33 and iterator==12 then
 			DPSMate.Sync:InterruptsAllOut()
@@ -84,6 +84,7 @@ function DPSMate.Sync:OnEvent(event)
 				local owner, ability, abilityTarget, time = "", "", "", 0
 				for o,a,at,t in string.gfind(arg2, "(.+),(.+),(.+),(.+)") do owner=o;ability=a;abilityTarget=at;time=tonumber(t) end
 				if DPSMate:TContains(DPSMate.Parser.Kicks, ability) then DPSMate.DB:AwaitAfflictedStun(owner, ability, abilityTarget, time) end
+				DPSMate.DB:AwaitHotDispel(ability, abilityTarget, owner, time)
 				DPSMate.DB:AwaitingBuff(owner, ability, abilityTarget, time)
 				DPSMate.DB:AwaitingAbsorbConfirmation(owner, ability, abilityTarget, time)
 			elseif arg1 == "DPSMate_DMGDoneAll" then

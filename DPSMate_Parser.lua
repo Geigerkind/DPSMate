@@ -492,7 +492,7 @@ end
 -- You gain 61 health from Nenea's Rejuvenation.
 function DPSMate.Parser:SpellPeriodicSelfBuff(msg) -- Maybe some loss here?
 	local cause, ability, target, amount = {}, "", "", 0
-	for ab in string.gfind(msg, "You gain (.+)%.") do if not strfind(msg, "from") then DPSMate.DB:ConfirmBuff(player.name, ab, GetTime()) end end
+	for ab in string.gfind(msg, "You gain (.+)%.") do if not strfind(msg, "from") then DPSMate.DB:ConfirmBuff(player.name, ab, GetTime()); DPSMate.DB:RegisterHotDispel(player.name, ab) end end
 	for a, ab in string.gfind(msg, "You gain (.+) health from (.+)%.") do amount=tonumber(strsub(a, strfind(a, "%d+"))); ability=ab; target=player.name; cause.name=player.name end
 	for a, ta, ab in string.gfind(msg, "You gain (.+) health from (.+)'s (.+)%.") do amount=tonumber(strsub(a, strfind(a, "%d+"))); ability=ab; target=player.name; cause.name=ta end
 	if amount>0 then -- Workaround as long as I dont have buffs implemented
@@ -513,7 +513,7 @@ end
 -- Soulstoke gains 25 Energy from Soulstoke's Relentless Strikes Effect.
 function DPSMate.Parser:SpellPeriodicFriendlyPlayerBuffs(msg)
 	local cause, ability, target, amount = {}, "", "", 0
-	for ta, ab in string.gfind(msg, "(.+) gains (.+)%.") do if not strfind(msg, "from") then DPSMate.DB:ConfirmBuff(ta, ab, GetTime()); return end end
+	for ta, ab in string.gfind(msg, "(.+) gains (.+)%.") do if not strfind(msg, "from") then DPSMate.DB:ConfirmBuff(ta, ab, GetTime()); DPSMate.DB:RegisterHotDispel(ta, ab) return end end
 	for ta, a, ab in string.gfind(msg, "(.+) gains (.+) health from your (.+)%.") do target=ta; amount=tonumber(strsub(a, strfind(a, "%d+"))); ability=ab; cause.name=player.name end
 	for ta, a, c, ab in string.gfind(msg, "(.+) gains (.+) health from (.+)'s (.+)%.") do target=ta; amount=tonumber(strsub(a, strfind(a, "%d+"))); ability=ab; cause.name=c end
 	overheal = DPSMate.Parser:GetOverhealByName(amount, target)
@@ -584,16 +584,16 @@ end
 
 -- Power Word: Shield fades from you.
 function DPSMate.Parser:SpellAuraGoneSelf(msg)
-	for ab in string.gfind(msg, "(.+) fades from you%.") do if DPSMate:TContains(DPSMate.DB.ShieldFlags, ab) then DPSMate.DB:UnregisterAbsorb(ab, player.name) end; DPSMate.DB:DestroyBuffs(player.name, ab) end
+	for ab in string.gfind(msg, "(.+) fades from you%.") do if DPSMate:TContains(DPSMate.DB.ShieldFlags, ab) then DPSMate.DB:UnregisterAbsorb(ab, player.name) end; DPSMate.DB:DestroyBuffs(player.name, ab); DPSMate.DB:UnregisterHotDispel(player.name, ab) end
 end
 
 -- Power Word: Shield fades from Senpie.
 function DPSMate.Parser:SpellAuraGoneParty(msg)
-	for ab, ta in string.gfind(msg, "(.+) fades from (.+)%.") do if DPSMate:TContains(DPSMate.DB.ShieldFlags, ab) then DPSMate.DB:UnregisterAbsorb(ab, ta) end; DPSMate.DB:DestroyBuffs(ta, ab) end
+	for ab, ta in string.gfind(msg, "(.+) fades from (.+)%.") do if DPSMate:TContains(DPSMate.DB.ShieldFlags, ab) then DPSMate.DB:UnregisterAbsorb(ab, ta) end; DPSMate.DB:DestroyBuffs(ta, ab); DPSMate.DB:UnregisterHotDispel(ta, ab) end
 end
 
 function DPSMate.Parser:SpellAuraGoneOther(msg)
-	for ab, ta in string.gfind(msg, "(.+) fades from (.+)%.") do if DPSMate:TContains(DPSMate.DB.ShieldFlags, ab) then DPSMate.DB:UnregisterAbsorb(ab, ta) end; DPSMate.DB:DestroyBuffs(ta, ab) end
+	for ab, ta in string.gfind(msg, "(.+) fades from (.+)%.") do if DPSMate:TContains(DPSMate.DB.ShieldFlags, ab) then DPSMate.DB:UnregisterAbsorb(ab, ta) end; DPSMate.DB:DestroyBuffs(ta, ab); DPSMate.DB:UnregisterHotDispel(ta, ab) end
 end
 
 ----------------------------------------------------------------------------------
@@ -606,6 +606,7 @@ DPSMate.Parser.Dispels = {
 	[3] = "Remove Lesser Curse",
 	[4] = "Purify",
 	[5] = "Dispel Magic",
+	[6] = "Abolish Poison",
 }
 DPSMate.Parser.DeCurse = {
 	[1] = "Remove Curse",
@@ -639,6 +640,7 @@ function DPSMate.Parser:UnitAuraDispels(unit)
 		DPSMate_Tooltip:Hide()
 		if aura and type then
 			DPSMate.DB:BuildAbility(aura, type)
+			DPSMateAbility[aura][2] = type
 		end
 	end
 end
@@ -657,8 +659,8 @@ end
 -- Avrora's  Curse of Agony is removed.
 -- Your Curse of Agony is removed.
 function DPSMate.Parser:SpellBreakAura(msg) 
-	for ta, ab in string.gfind(msg, "(.+)'s (.+) is removed.") do DPSMate.DB:ConfirmDispel(ab, ta, GetTime()) end
-	for ab in string.gfind(msg, "Your (.+) is removed.") do DPSMate.DB:ConfirmDispel(ab, player.name, GetTime()) end
+	for ta, ab in string.gfind(msg, "(.+)'s (.+) is removed.") do DPSMate.DB:ConfirmRealDispel(ab, player.name, GetTime()) end
+	for ab in string.gfind(msg, "Your (.+) is removed.") do DPSMate.DB:ConfirmRealDispel(ab, player.name, GetTime()) end
 end
 
 ----------------------------------------------------------------------------------

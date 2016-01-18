@@ -334,7 +334,7 @@ function DPSMate:SetStatusBarValue()
 			for i=1, 30 do
 				if (not user[i]) then break end -- To prevent visual issues
 				local statusbar, name, value, texture, p = getglobal("DPSMate_"..c["name"].."_ScrollFrame_Child_StatusBar"..i), getglobal("DPSMate_"..c["name"].."_ScrollFrame_Child_StatusBar"..i.."_Name"), getglobal("DPSMate_"..c["name"].."_ScrollFrame_Child_StatusBar"..i.."_Value"), getglobal("DPSMate_"..c["name"].."_ScrollFrame_Child_StatusBar"..i.."_Icon"), ""
-				getglobal("DPSMate_"..c["name"].."_ScrollFrame_Child"):SetHeight((19+c["barspacing"])+i*(19+c["barspacing"]))
+				getglobal("DPSMate_"..c["name"].."_ScrollFrame_Child"):SetHeight((i+1)*(c["barheight"]+c["barspacing"])-100)
 				
 				local r,g,b, img = DPSMate:GetClassColor(user[i])
 				statusbar:SetStatusBarColor(r,g,b, 1)
