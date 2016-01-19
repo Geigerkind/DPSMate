@@ -23,7 +23,7 @@
 					<Anchors>
 						<Anchor point="CENTER" />
 					</Anchors>
-					<Color r="1.0" g="0" b="0"/>
+					<Color r="1.0" g="0" b="0" a="1"/>
 				</Texture>
 			</Layer>
 		</Layers>
@@ -33,6 +33,15 @@
 		<Size x="870" y="30" />
 		<Layers>
 			<Layer level="BACKGROUND">
+				<Texture name="$parent_Hover" hidden="true">
+					<Size x="850" y="25"/>
+					<Anchors>
+						<Anchor point="CENTER">
+							<Offset x="0" y="-5" />
+						</Anchor>
+					</Anchors>
+					<Color r="0.95" g="0.9" b="0.5" a="0.5"/>
+				</Texture>
 				<FontString name="$parent_Name" inherits="GameFontNormal" justifyH="LEFT" justifyV="CENTER" text="VeryLongNameOf">
 					<Size x="130" y="40" />
 					<Anchors>
@@ -97,6 +106,16 @@
 				</FontString>
 			</Layer>
 		</Layers>
+		<Scripts>
+			<OnEnter>
+				getglobal(this:GetName().."_Hover"):Show()
+				DPSMate.Modules.DetailsDamageTotal:ShowTooltip(this.user, this)
+			</OnEnter>
+			<OnLeave>
+				getglobal(this:GetName().."_Hover"):Hide()
+				GameTooltip:Hide()
+			</OnLeave>
+		</Scripts>
 		<Frames>
 			<CheckButton name="$parent_CB" inherits="OptionsCheckButtonTemplate">
 				<Size x="26" y="26" />
@@ -106,10 +125,18 @@
 					</Anchor>
 				</Anchors>
 				<Scripts>
+					<OnLoad>
+						this:GetParent().act = false
+					</OnLoad>
 					<OnClick>
 						local uid = this:GetParent().user
+						local act = this:GetParent().act
 						if uid then
-							DPSMate.Modules.DetailsDamageTotal:AddLinesButton(uid)
+							if act then
+								DPSMate.Modules.DetailsDamageTotal:RemoveLinesButton(uid, this:GetParent())
+							else
+								DPSMate.Modules.DetailsDamageTotal:AddLinesButton(uid, this:GetParent())
+							end
 						end
 					</OnClick>
 				</Scripts>
@@ -132,7 +159,7 @@
 		</Frames>
 	</Frame>
 	
-	<Frame name="DPSMate_Details_DamageTotal" parent="UIParent" movable="true" hidden="false">
+	<Frame name="DPSMate_Details_DamageTotal" parent="UIParent" movable="true" hidden="true">
 		<Size x="900" y="600" />
 		<Anchors>
 			<Anchor point="CENTER" />
@@ -233,10 +260,17 @@
 					<Frame name="$parent_Child">
 						<Size x="100" y="620" />
 						<Frames>
-							<Frame name="$parent_C1" inherits="DPSMate_Details_DamageTotal_Template_LegendColumn" hidden="false">
+							<Frame name="$parent_Total" inherits="DPSMate_Details_DamageTotal_Template_LegendColumn" hidden="false">
 								<Anchors>
 									<Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT">
 										<Offset x="10" y="-8" />
+									</Anchor>
+								</Anchors>
+							</Frame>
+							<Frame name="$parent_C1" inherits="DPSMate_Details_DamageTotal_Template_LegendColumn">
+								<Anchors>
+									<Anchor point="TOP" relativeTo="$parent_Total" relativePoint="BOTTOM">
+										<Offset x="0" y="-2" />
 									</Anchor>
 								</Anchors>
 							</Frame>

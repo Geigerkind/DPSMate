@@ -3,10 +3,41 @@ DPSMate.Modules.DetailsDamageTotal = {}
 local g = nil
 local curKey = 1
 local db, cbt = {}, 0
+local buttons = {}
+local ColorTable={}
 
 function DPSMate.Modules.DetailsDamageTotal:UpdateDetails(obj, key)
 	curKey = key
 	db, cbt = DPSMate:GetMode(key)
+	buttons = {}
+	ColorTable={
+		{0.95,0.90,0.5},
+		{0.0,0.9,0.0},
+		{0.0,0.0,1.0},
+		{1.0,1.0,0.0},
+		{1.0,0.0,1.0},
+		{0.0,1.0,1.0},
+		{1.0,1.0,1.0},
+		{0.5,0.0,0.0},
+		{0.0,0.5,0.0},
+		{0.0,0.0,0.5},
+		{0.5,0.5,0.0},
+		{0.5,0.0,0.5},
+		{0.0,0.5,0.5},
+		{0.5,0.5,0.5},
+		{0.75,0.25,0.25},
+		{0.25,0.75,0.25},
+		{0.25,0.25,0.75},
+		{0.75,0.75,0.25},
+		{0.75,0.25,0.75},
+		{0.25,0.75,0.75},
+		{1.0,0.5,0.0},	
+		{0.0,0.5,1.0},
+		{1.0,0.0,0.5},
+		{0.5,1.0,0.0},
+		{0.5,0.0,1.0},
+		{0.0,1.0,0.5},
+	}
 	if not g then
 		g=DPSMate.Options.graph:CreateGraphLine("LineGraph",DPSMate_Details_DamageTotal_DiagramLine,"CENTER","CENTER",0,0,750,230)
 		DPSMate.Modules.DetailsDamageTotal:CreateGraphTable()
@@ -125,6 +156,7 @@ function DPSMate.Modules.DetailsDamageTotal:CreateGraphTable()
 	lines[13]:Show()
 end
 
+local totSumTable = {}
 function DPSMate.Modules.DetailsDamageTotal:AddTotalDataSeries()
 	local sumTable = {[0]=0}
 	
@@ -139,16 +171,16 @@ function DPSMate.Modules.DetailsDamageTotal:AddTotalDataSeries()
 	end
 	
 	sumTable = DPSMate.Modules.DetailsDamageTotal:SortLineTable(sumTable)
-	sumTable = DPSMate.Modules.DetailsDamageTotal:GetSummarizedTable(sumTable, cbt)
+	totSumTable = DPSMate.Modules.DetailsDamageTotal:GetSummarizedTable(sumTable, cbt)
 	
-	for cat, val in pairs(sumTable) do
+	for cat, val in pairs(totSumTable) do
 		val[2] = val[2]/4
 	end
-	local totMax = DPSMate.Modules.DetailsDamageTotal:GetMaxLineVal(sumTable)
+	local totMax = DPSMate.Modules.DetailsDamageTotal:GetMaxLineVal(totSumTable)
 	g:SetYAxis(0,totMax+200)
 	g:SetGridSpacing(cbt/10,totMax/7)
 	
-	g:AddDataSeries(sumTable,{{1.0,0.0,0.0,0.8}, {1.0,1.0,0.0,0.8}}, {})
+	g:AddDataSeries(totSumTable,{{1.0,0.0,0.0,0.8}, {1.0,1.0,0.0,0.8}}, {})
 end
 
 function DPSMate.Modules.DetailsDamageTotal:GetTableValues()
@@ -205,45 +237,58 @@ function DPSMate.Modules.DetailsDamageTotal:GetTableValues()
 	return newArr, total
 end
 
-local ColorTable={
-	{0.95,0.90,0.5},
-	{0.0,0.9,0.0},
-	{0.0,0.0,1.0},
-	{1.0,1.0,0.0},
-	{1.0,0.0,1.0},
-	{0.0,1.0,1.0},
-	{1.0,1.0,1.0},
-	{0.5,0.0,0.0},
-	{0.0,0.5,0.0},
-	{0.0,0.0,0.5},
-	{0.5,0.5,0.0},
-	{0.5,0.0,0.5},
-	{0.0,0.5,0.5},
-	{0.5,0.5,0.5},
-	{0.75,0.25,0.25},
-	{0.25,0.75,0.25},
-	{0.25,0.25,0.75},
-	{0.75,0.75,0.25},
-	{0.75,0.25,0.75},
-	{0.25,0.75,0.75},
-	{1.0,0.5,0.0},	
-	{0.0,0.5,1.0},
-	{1.0,0.0,0.5},
-	{0.5,1.0,0.0},
-	{0.5,0.0,1.0},
-	{0.0,1.0,0.5},
-}
-
-local colorIndex = 1
-
-function DPSMate.Modules.DetailsDamageTotal:AddLinesButton(uid)
+function DPSMate.Modules.DetailsDamageTotal:AddLinesButton(uid, obj)
 	local sumTable = {[0]=0}
 	
 	sumTable = DPSMate.Modules.DetailsDamageTotal:SortLineTable(db[uid]["i"][1])
 	sumTable = DPSMate.Modules.DetailsDamageTotal:GetSummarizedTable(sumTable, cbt)
 	
-	g:AddDataSeries(sumTable, {ColorTable[colorIndex], {}}, {})
-	colorIndex = colorIndex+1
+	g:AddDataSeries(sumTable, {ColorTable[1], {}}, {})
+	table.insert(buttons, {ColorTable[1], uid, sumTable})
+	table.remove(ColorTable, 1)
+	obj.act = true
+	DPSMate.Modules.DetailsDamageTotal:LoadLegendButtons()
+end
+
+function DPSMate.Modules.DetailsDamageTotal:RemoveLinesButton(uid, obj)
+	obj.act = false
+	g:ResetData()
+	g:SetGridColor({0.5,0.5,0.5,0.5})
+	g:SetAxisDrawing(true,true)
+	g:SetAxisColor({1.0,1.0,1.0,1.0})
+	g:SetAutoScale(true)
+	g:SetYLabels(true, false)
+	g:SetXLabels(true)
+	for cat, val in pairs(buttons) do
+		if val[2]==uid then
+			table.insert(ColorTable, 1, val[1])
+			table.remove(buttons, cat)
+			break
+		end
+	end
+	local totMax = DPSMate.Modules.DetailsDamageTotal:GetMaxLineVal(totSumTable)
+	g:SetYAxis(0,totMax+200)
+	g:SetGridSpacing(cbt/10,totMax/7)
+	
+	g:AddDataSeries(totSumTable,{{1.0,0.0,0.0,0.8}, {1.0,1.0,0.0,0.8}}, {})
+	for cat, val in pairs(buttons) do		
+		g:AddDataSeries(val[3], {val[1], {}}, {})
+	end
+	DPSMate.Modules.DetailsDamageTotal:LoadLegendButtons()
+end
+
+function DPSMate.Modules.DetailsDamageTotal:LoadLegendButtons()
+	for i=1, 30 do
+		getglobal("DPSMate_Details_DamageTotal_DiagramLegend_Child_C"..i):Hide()
+	end
+	for cat, val in pairs(buttons) do
+		local name = DPSMate:GetUserById(val[2])
+		local font = getglobal("DPSMate_Details_DamageTotal_DiagramLegend_Child_C"..cat.."_Font")
+		font:SetText(name)
+		font:SetTextColor(DPSMate:GetClassColor(DPSMateUser[name][2]))
+		getglobal("DPSMate_Details_DamageTotal_DiagramLegend_Child_C"..cat.."_SwatchBg"):SetTexture(val[1][1],val[1][2],val[1][3],1)
+		getglobal("DPSMate_Details_DamageTotal_DiagramLegend_Child_C"..cat):Show()
+	end
 end
 
 function DPSMate.Modules.DetailsDamageTotal:LoadTable()
@@ -267,4 +312,16 @@ function DPSMate.Modules.DetailsDamageTotal:LoadTable()
 		getglobal("DPSMate_Details_DamageTotal_PlayerList_Child_R"..cat).user = val[8]
 		getglobal("DPSMate_Details_DamageTotal_PlayerList_Child_R"..cat):Show()
 	end
+end
+
+function DPSMate.Modules.DetailsDamageTotal:ShowTooltip(user, obj)
+	local name = DPSMate:GetUserById(user)
+	local a,b,c = DPSMate.Modules.Damage:EvalTable(DPSMateUser[name], curKey)
+	GameTooltip:SetOwner(obj, "TOPLEFT")
+	GameTooltip:AddLine(name.."'s damage done", 1,1,1)
+	for i=1, 5 do
+		if not a[i] then break end
+		GameTooltip:AddDoubleLine(i..". "..DPSMate:GetAbilityById(a[i]),c[i],1,1,1,1,1,1)
+	end
+	GameTooltip:Show()
 end
