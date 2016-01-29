@@ -1086,8 +1086,8 @@ function DPSMate.DB:DeathHistory(target, cause, ability, amount, hit, crit, type
 			[4] = hitCrit,
 			[5] = type,
 		})
-		if DPSMateDeaths[cat][DPSMateUser[target][1]][1][7] then
-			table.remove(DPSMateDeaths[cat][DPSMateUser[target][1]][1], 7)
+		if DPSMateDeaths[cat][DPSMateUser[target][1]][1][DPSMateSettings["subviewrows"]+1] then
+			table.remove(DPSMateDeaths[cat][DPSMateUser[target][1]][1], DPSMateSettings["subviewrows"]+1)
 		end
 	end
 end
