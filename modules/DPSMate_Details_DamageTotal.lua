@@ -297,6 +297,7 @@ function DPSMate.Modules.DetailsDamageTotal:LoadTable()
 		getglobal("DPSMate_Details_DamageTotal_PlayerList_Child_R"..i):Hide()
 	end
 	for cat, val in pairs(arr) do
+		if cat>30 then break end
 		local r,g,b = DPSMate:GetClassColor(DPSMateUser[val[1]][2])
 		getglobal("DPSMate_Details_DamageTotal_PlayerList_Child"):SetHeight((cat)*30-210)
 		getglobal("DPSMate_Details_DamageTotal_PlayerList_Child_R"..cat.."_Name"):SetText(val[1])

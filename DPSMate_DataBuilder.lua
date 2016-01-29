@@ -855,6 +855,7 @@ end
 function DPSMate.DB:GetActiveAbsorbAbilityByPlayer(ability, abilityTarget, cat)
 	local ActiveShield = {}
 	DPSMate.DB:BuildAbility(ability, nil)
+	DPSMate.DB:BuildUser(abilityTarget, nil)
 	if DPSMateAbsorbs[cat][DPSMateUser[abilityTarget][1]] then
 		for cat, val in pairs(DPSMateAbsorbs[cat][DPSMateUser[abilityTarget][1]]) do
 			for ca, va in pairs(val) do

@@ -57,14 +57,15 @@ function DPSMate.Modules.DetailsDamage:ScrollFrame_Update()
 	local line, lineplusoffset
 	local obj = getglobal("DPSMate_Details_Log_ScrollFrame")
 	local arr = db
-	local user, pet, len = "", 0, DPSMate:TableLength(arr[DPSMateUser[DetailsUser][1]])-5
+	local pet, len = "", DPSMate:TableLength(arr[DPSMateUser[DetailsUser][1]])-5
 	DetailsArr, DetailsTotal, DmgArr = DPSMate.RegistredModules[DPSMateSettings["windows"][curKey]["CurMode"]]:EvalTable(DPSMateUser[DetailsUser], curKey)
 	FauxScrollFrame_Update(obj,DPSMate:TableLength(arr),10,24)
 	for line=1,10 do
 		lineplusoffset = line + FauxScrollFrame_GetOffset(obj)
 		if DetailsArr[lineplusoffset] ~= nil then
-			local ability = DPSMate:GetAbilityById(DetailsArr[lineplusoffset])
-			getglobal("DPSMate_Details_Log_ScrollButton"..line.."_Name"):SetText(ability)
+			if DetailsArr[lineplusoffset][2] then pet="(Pet)" else pet="" end
+			local ability = DPSMate:GetAbilityById(DetailsArr[lineplusoffset][1])
+			getglobal("DPSMate_Details_Log_ScrollButton"..line.."_Name"):SetText(ability..pet)
 			getglobal("DPSMate_Details_Log_ScrollButton"..line.."_Value"):SetText(DmgArr[lineplusoffset].." ("..string.format("%.2f", (DmgArr[lineplusoffset]*100/DetailsTotal)).."%)")
 			if icons[ability] then
 				getglobal("DPSMate_Details_Log_ScrollButton"..line.."_Icon"):SetTexture(icons[ability])
@@ -100,7 +101,7 @@ function DPSMate.Modules.DetailsDamage:SelectDetailsButton(i)
 		getglobal("DPSMate_Details_Log_ScrollButton"..p.."_selected"):Hide()
 	end
 	-- Performance?
-	local ability = tonumber(DetailsArr[lineplusoffset])
+	local ability = tonumber(DetailsArr[lineplusoffset][1])
 	if (arr[DPSMateUser[DetailsUser][1]][ability]) then user=DPSMateUser[DetailsUser][1]; pet=0; else if DPSMateUser[DetailsUser]["pet"] then user=DPSMateUser[DPSMateUser[DetailsUser]["pet"]][1]; pet=5; else user=DPSMateUser[DetailsUser][1]; pet=0; end end
 	getglobal("DPSMate_Details_Log_ScrollButton"..i.."_selected"):Show()
 	
@@ -164,11 +165,10 @@ end
 
 function DPSMate.Modules.DetailsDamage:UpdatePie()
 	local arr = db
-	local user,pet = "",0
 	g:ResetPie()
 	for cat, val in pairs(DetailsArr) do
-		local ability = tonumber(DetailsArr[cat])
-		if (arr[DPSMateUser[DetailsUser][1]][ability]) then user=DPSMateUser[DetailsUser][1];pet=0; else user=DPSMateUser[DPSMateUser[DetailsUser]["pet"]][1];pet=5; end
+		local ability = tonumber(DetailsArr[cat][1])
+		if (DetailsArr[cat][2]) then user=DPSMateUser[DPSMateUser[DetailsUser]["pet"]][1] else user=DPSMateUser[DetailsUser][1] end
 		local percent = (arr[user][ability][13]*100/DetailsTotal)
 		g:AddPie(percent, 0)
 	end
@@ -269,6 +269,24 @@ function DPSMate.Modules.DetailsDamage:SortLineTable(t)
 				break
 			end
 			i=i+1
+		end
+	end
+	if DPSMateUser[DetailsUser]["pet"] then
+		if t[DPSMateUser[DPSMateUser[DetailsUser]["pet"]][1]] then
+			for cat, val in pairs(t[DPSMateUser[DPSMateUser[DetailsUser]["pet"]][1]]["i"][1]) do
+				local i=1
+				while true do
+					if (not newArr[i]) then 
+						table.insert(newArr, i, {cat, val})
+						break
+					end
+					if cat<newArr[i][1] then
+						table.insert(newArr, i, {cat, val})
+						break
+					end
+					i=i+1
+				end
+			end
 		end
 	end
 	return newArr
