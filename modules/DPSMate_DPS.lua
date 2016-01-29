@@ -113,3 +113,7 @@ end
 function DPSMate.Modules.DPS:OpenDetails(obj, key)
 	DPSMate.Modules.DetailsDamage:UpdateDetails(obj, key)
 end
+
+function DPSMate.Modules.DPS:OpenTotalDetails(obj, key)
+	DPSMate.Modules.DetailsDamageTotal:UpdateDetails(obj, key)
+end

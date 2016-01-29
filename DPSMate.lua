@@ -365,6 +365,10 @@ function DPSMate:GetSettingValues(arr, cbt, k)
 	return DPSMate.RegistredModules[DPSMateSettings["windows"][k]["CurMode"]]:GetSettingValues(arr, cbt, k)
 end
 
+function DPSMate:EvalTable(k)
+	return DPSMate.RegistredModules[DPSMateSettings["windows"][k]["CurMode"]]:EvalTable(DPSMateUser[UnitName("player")], k)
+end
+
 function DPSMate:GetClassColor(class)
 	if (class) then
 		if DPSMateUser[class] then class = DPSMateUser[class][2] end

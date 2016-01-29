@@ -901,8 +901,13 @@ end
 function DPSMate.Options:Report()
 	local channel = UIDropDownMenu_GetSelectedValue(DPSMate_Report_Channel)
 	local arr, cbt = DPSMate:GetMode(DPSMate_Report.PaKey)
-	local chn, index = nil, nil
-	local name, value, perc = DPSMate:GetSettingValues(arr, cbt, DPSMate_Report.PaKey)
+	local chn, index, name, value, perc = nil, nil, nil, nil, nil
+	local con = getglobal("DPSMate_Report_You"):GetChecked()
+	if con then
+		name, perc, value = DPSMate:EvalTable(DPSMate_Report.PaKey)
+	else
+		name, value, perc = DPSMate:GetSettingValues(arr, cbt, DPSMate_Report.PaKey)
+	end
 	if (channel == "Whisper") then
 		chn = "WHISPER"; index = DPSMate_Report_Editbox:GetText();
 	elseif DPSMate:TContains({"Raid","Party","Say","Officer","Guild"}, channel) then
@@ -913,7 +918,11 @@ function DPSMate.Options:Report()
 	SendChatMessage("DPSMate - "..DPSMate.localization.reportfor..DPSMate:GetModeName(DPSMate_Report.PaKey).." - "..getglobal("DPSMate_"..DPSMateSettings["windows"][DPSMate_Report.PaKey]["name"].."_Head_Font"):GetText(), chn, nil, index)
 	for i=1, DPSMate_Report_Lines:GetValue() do
 		if (not value[i] or value[i] == 0) then break end
-		SendChatMessage(i..". "..name[i].." -"..value[i], chn, nil, index)
+		if con then
+			SendChatMessage(i..". "..DPSMate:GetAbilityById(name[i][1]).." - "..value[i], chn, nil, index)
+		else
+			SendChatMessage(i..". "..name[i].." -"..value[i], chn, nil, index)
+		end
 	end
 	DPSMate_Report:Hide()
 end
