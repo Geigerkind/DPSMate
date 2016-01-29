@@ -195,7 +195,7 @@ end
 -- You hit Blazing Elemental for 187.
 -- You crit Blazing Elemental for 400.
 function DPSMate.Parser:SelfHits(msg)
-	local hit, crit = 0 , 0
+	local hit, crit, glance = 0 , 0, 0
 	-- Fall damage
 	if strfind(msg, DPSMate.localization.parser.youfall) then
 		amount = tonumber(strsub(msg, strfind(msg, "%d+")))
@@ -212,8 +212,9 @@ function DPSMate.Parser:SelfHits(msg)
 	elseif strfind(msg, DPSMate.localization.parser.youhit) or strfind(msg, DPSMate.localization.parser.youcrit) then
 		for k, t, a in string.gfind(msg, "You (.-) (.+) for (%d+).") do
 			if k == DPSMate.localization.parser.hit then hit=1; else crit=1; end
+			if strfind(msg, "glancing") then glance = 1; hit=0 end
 			DPSMate.DB:EnemyDamage(DPSMateEDT, player, "AutoAttack", hit, crit, 0, 0, 0, 0, tonumber(a), t)
-			DPSMate.DB:DamageDone(player, "AutoAttack", hit, crit, 0, 0, 0, 0, tonumber(a))
+			DPSMate.DB:DamageDone(player, "AutoAttack", hit, crit, 0, 0, 0, 0, tonumber(a), glance)
 		end
 	end
 end
@@ -222,7 +223,7 @@ function DPSMate.Parser:SelfMisses(msg)
 	local miss, parry, dodge = 0, 0, 0
 	if strfind(msg, DPSMate.localization.parser.youmiss) then miss = 1; elseif strfind(msg, DPSMate.localization.parser.parries) then parry = 1; elseif strfind(msg, DPSMate.localization.parser.dodges) then dodge = 1; end
 	DPSMate.DB:EnemyDamage(DPSMateEDT, player, "AutoAttack", 0, 0, miss, parry, dodge, 0, 0, 0, "None")
-	DPSMate.DB:DamageDone(player, "AutoAttack", 0, 0, miss, parry, dodge, 0, 0, 0)
+	DPSMate.DB:DamageDone(player, "AutoAttack", 0, 0, miss, parry, dodge, 0, 0, 0, 0)
 end
 
 function DPSMate.Parser:SelfSpellDMG(msg)
@@ -247,7 +248,7 @@ function DPSMate.Parser:SelfSpellDMG(msg)
 		if DPSMate:TContains(DPSMate.Parser.Kicks, ability) then DPSMate.DB:AssignPotentialKick(player.name, ability, target, GetTime()) end
 	end
 	DPSMate.DB:EnemyDamage(DPSMateEDT, player, ability, hit, crit, miss, parry, dodge, resist, amount, target)
-	DPSMate.DB:DamageDone(player, ability, hit, crit, miss, parry, dodge, resist, amount)
+	DPSMate.DB:DamageDone(player, ability, hit, crit, miss, parry, dodge, resist, amount, 0)
 end
 
 function DPSMate.Parser:PeriodicDamage(msg)
@@ -260,7 +261,7 @@ function DPSMate.Parser:PeriodicDamage(msg)
 		cause.name = name
 		if cause.name == DPSMate.localization.parser.your2 then cause.name = player.name; else cause.name = strsub(cause.name, 1, strlen(cause.name)-2); end
 		DPSMate.DB:EnemyDamage(DPSMateEDT, cause, strsub(ab, 1, strfind(ab, "%.")-1).."(Periodic)", 1, 0, 0, 0, 0, 0, tonumber(strsub(dmg, strfind(dmg, "%d+"))), tar)
-		DPSMate.DB:DamageDone(cause, strsub(ab, 1, strfind(ab, "%.")-1).."(Periodic)", 1, 0, 0, 0, 0, 0, tonumber(strsub(dmg, strfind(dmg, "%d+"))))
+		DPSMate.DB:DamageDone(cause, strsub(ab, 1, strfind(ab, "%.")-1).."(Periodic)", 1, 0, 0, 0, 0, 0, tonumber(strsub(dmg, strfind(dmg, "%d+"))), 0)
 	end
 end
 
@@ -284,12 +285,12 @@ function DPSMate.Parser:FriendlyPlayerDamage(msg)
 		if DPSMate:TContains(DPSMate.Parser.Kicks, ability) then DPSMate.DB:AssignPotentialKick(cause.name, ability, target, GetTime()) end
 	end
 	DPSMate.DB:EnemyDamage(DPSMateEDT, cause, ability, hit, crit, miss, parry, dodge, resist, amount, target)
-	DPSMate.DB:DamageDone(cause, ability, hit, crit, miss, parry, dodge, resist, amount)
+	DPSMate.DB:DamageDone(cause, ability, hit, crit, miss, parry, dodge, resist, amount, 0)
 end
 
 function DPSMate.Parser:FriendlyPlayerHits(msg)
 	-- (...). (608 absorbed/resisted)
-	local target, cause, hit, crit, amount = "", {}, 0, 0, 0
+	local target, cause, hit, crit, amount, glance = "", {}, 0, 0, 0, 0
 	if strfind(msg, "lava") then
 		for c, a in string.gfind(msg, "(.-) loses (%d+) health for swimming in lava%.") do cause.name=c; amount=tonumber(a); end
 		DPSMate.DB:DamageTaken(cause, "Lava", 1, 0, 0, 0, 0, 0, amount, "Environment")
@@ -301,8 +302,9 @@ function DPSMate.Parser:FriendlyPlayerHits(msg)
 		DPSMate.DB:DamageTaken(cause, "Drowning", 1, 0, 0, 0, 0, 0, amount, "Environment")
 	else
 		for c, k, t, a in string.gfind(msg, "(.-) (.-) (.+) for (.+)%.") do cause.name=c; target=t; amount=tonumber(strsub(a, strfind(a, "%d+"))); if k=="hits" then hit=1 else crit=1 end end
+		if strfind(msg, "glancing") then glance = 1; hit=0 end
 		DPSMate.DB:EnemyDamage(DPSMateEDT, cause, "AutoAttack", hit, crit, 0, 0, 0, 0, amount, target)
-		DPSMate.DB:DamageDone(cause, "AutoAttack", hit, crit, 0, 0, 0, 0, amount)
+		DPSMate.DB:DamageDone(cause, "AutoAttack", hit, crit, 0, 0, 0, 0, amount, glance)
 	end
 end
 
@@ -311,7 +313,7 @@ function DPSMate.Parser:FriendlyPlayerMisses(msg)
 	if strfind(msg, "misses") then miss = 1 elseif strfind(msg, "parries") then parry = 1 elseif strfind(msg, "dodges") then dodge = 1 end
 	cause.name = strsub(msg, 1, strfind(msg, " ")-1)
 	DPSMate.DB:EnemyDamage(DPSMateEDT, cause, "AutoAttack", 0, 0, miss, parry, dodge, 0, 0, "None")
-	DPSMate.DB:DamageDone(cause, "AutoAttack", 0, 0, miss, parry, dodge, 0, 0)
+	DPSMate.DB:DamageDone(cause, "AutoAttack", 0, 0, miss, parry, dodge, 0, 0, 0)
 end
 
 -- You reflect 20 Holy damage to Razzashi Serpent.
@@ -319,7 +321,7 @@ function DPSMate.Parser:SpellDamageShieldsOnSelf(msg)
 	local target, amount = "", 0
 	for a, ta in string.gfind(msg, "You reflect (.+) to (.+)%.") do target=ta; amount=tonumber(strsub(a, strfind(a, "%d+"))) end
 	DPSMate.DB:EnemyDamage(DPSMateEDT, player, "Reflection (Thorns etc.)", 1, 0, 0, 0, 0, 0, amount, target)
-	DPSMate.DB:DamageDone(player, "Reflection (Thorns etc.)", 1, 0, 0, 0, 0, 0, amount)
+	DPSMate.DB:DamageDone(player, "Reflection (Thorns etc.)", 1, 0, 0, 0, 0, 0, amount, 0)
 end
 
 -- Helboar reflects 4 Fire damage to you.
@@ -327,7 +329,7 @@ function DPSMate.Parser:SpellDamageShieldsOnOthers(msg)
 	local target, cause, amount = "", {}, 0
 	for c, a, ta in string.gfind(msg, "(.+) reflects (.+) to (.+)%.") do cause.name=c; target=ta; amount=tonumber(strsub(a, strfind(a, "%d+"))) end
 	if target~="you" then DPSMate.DB:EnemyDamage(DPSMateEDT, cause, "Reflection (Thorns etc.)", 1, 0, 0, 0, 0, 0, amount, target) end
-	DPSMate.DB:DamageDone(cause, "Reflection (Thorns etc.)", 1, 0, 0, 0, 0, 0, amount)
+	DPSMate.DB:DamageDone(cause, "Reflection (Thorns etc.)", 1, 0, 0, 0, 0, 0, amount, 0)
 end
 
 ----------------------------------------------------------------------------------
