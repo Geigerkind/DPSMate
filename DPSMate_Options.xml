@@ -104,22 +104,23 @@
 			</OnMouseUp>
 			<OnLoad>
 				DPSMate_PopUp_Text:SetText(DPSMate.localization.popup)
-				DPSMate_PopUp_AcceptText:SetText(DPSMate.localization.accept)
+				DPSMate_PopUp_TotalText:SetText(DPSMate.localization.total)
+				DPSMate_PopUp_CurrentText:SetText(DPSMate.localization.current)
 				DPSMate_PopUp_CancelText:SetText(DPSMate.localization.cancel)
 				this:SetClampedToScreen()
 			</OnLoad>
 		</Scripts>
 		<Frames>
-			<Button name="$parent_Accept">
-				<Size x="80" y="24" />
+			<Button name="$parent_Total">
+				<Size x="65" y="24" />
 				<Anchors>
 					<Anchor point="TOP" relativeTo="$parent_Text" relativePoint="BOTTOM">
-						<Offset x="-50" y="7" />
+						<Offset x="-75" y="7" />
 					</Anchor>
 				</Anchors>
 				<Layers>
 					<Layer level="ARTWORK">
-						<FontString name="$parentText" inherits="GameFontNormalSmall">
+						<FontString name="$parentText" inherits="GameFontNormalSmall" text="Total">
 							<Size x="80" y="24" />
 							<Anchors>
 								<Anchor point="TOP">
@@ -131,7 +132,35 @@
 				</Layers>
 				<Scripts>
 					<OnClick>
-						DPSMate.Options:PopUpAccept()
+						DPSMate.Options:PopUpAccept(true)
+					</OnClick>
+				</Scripts>
+				<NormalTexture file="Interface\Buttons\UI-DialogBox-Button-Up"/>
+				<PushedTexture file="Interface\Buttons\UI-DialogBox-Button-Down"/>
+				<HighlightTexture file="Interface\Buttons\UI-DialogBox-Button-Highlight" alphaMode="ADD"/>
+			</Button>
+			<Button name="$parent_Current">
+				<Size x="65" y="24" />
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="$parent_Total" relativePoint="RIGHT">
+						<Offset x="10" y="0" />
+					</Anchor>
+				</Anchors>
+				<Layers>
+					<Layer level="ARTWORK">
+						<FontString name="$parentText" inherits="GameFontNormalSmall" text="Current">
+							<Size x="80" y="24" />
+							<Anchors>
+								<Anchor point="TOP">
+									<Offset x="0" y="4" />
+								</Anchor>
+							</Anchors>
+						</FontString>
+					</Layer>
+				</Layers>
+				<Scripts>
+					<OnClick>
+						DPSMate.Options:PopUpAccept(false)
 					</OnClick>
 				</Scripts>
 				<NormalTexture file="Interface\Buttons\UI-DialogBox-Button-Up"/>
@@ -139,10 +168,10 @@
 				<HighlightTexture file="Interface\Buttons\UI-DialogBox-Button-Highlight" alphaMode="ADD"/>
 			</Button>
 			<Button name="$parent_Cancel">
-				<Size x="80" y="24" />
+				<Size x="65" y="24" />
 				<Anchors>
-					<Anchor point="LEFT" relativeTo="$parent_Accept" relativePoint="RIGHT">
-						<Offset x="20" y="0" />
+					<Anchor point="LEFT" relativeTo="$parent_Current" relativePoint="RIGHT">
+						<Offset x="10" y="0" />
 					</Anchor>
 				</Anchors>
 				<Layers>

@@ -56,8 +56,8 @@ function DPSMate.Sync:OnUpdate(elapsed)
 			DPSMate.Sync:HealingTakenAbilityOut(DPSMateEHealingTaken, "E")
 			iterator = 11
 		elseif time>=30 and iterator==11 then
-			--DPSMate.Sync:DeathsAllOut()
-			--DPSMate.Sync:DeathsOut()
+			DPSMate.Sync:DeathsAllOut()
+			DPSMate.Sync:DeathsOut()
 			iterator = 12
 		elseif time>=33 and iterator==12 then
 			DPSMate.Sync:InterruptsAllOut()
@@ -71,6 +71,12 @@ function DPSMate.Sync:OnUpdate(elapsed)
 		end
 	end
 end
+
+----------------------------------------------------------------------------------
+--------------                       GENERAL                        --------------                                  
+----------------------------------------------------------------------------------
+
+
 
 ----------------------------------------------------------------------------------
 --------------                       SYNC IN                        --------------                                  

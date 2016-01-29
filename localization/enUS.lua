@@ -1,6 +1,8 @@
 DPSMate.localization.name = "DPSMate"
 DPSMate.localization.popup = "Do you want to reset DPSMate?"
 DPSMate.localization.accept = "Accept"
+DPSMate.localization.total = "Total"
+DPSMate.localization.current = "Current"
 DPSMate.localization.cancel = "Cancel"
 DPSMate.localization.report = "Report"
 DPSMate.localization.reportfor = "Report for "
