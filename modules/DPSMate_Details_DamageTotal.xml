@@ -8,7 +8,7 @@
 		<Layers>
 			<Layer level="ARTWORK">
 				<FontString name="$parent_Font" inherits="GameFontNormalSmall" text="Total" justifyH="LEFT">
-					<Size x="200" y="18" />
+					<Size x="60" y="18" />
 					<Anchors>
 						<Anchor point="LEFT" relativeTo="$parent" relativePoint="RIGHT">
 							<Offset x="5" y="0" />

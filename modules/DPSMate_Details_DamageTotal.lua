@@ -238,9 +238,21 @@ function DPSMate.Modules.DetailsDamageTotal:GetTableValues()
 end
 
 function DPSMate.Modules.DetailsDamageTotal:AddLinesButton(uid, obj)
-	local sumTable = {[0]=0}
+	local sumTable = db[uid]["i"][1]
+	local user = DPSMate:GetUserById(uid)
+	if DPSMateUser[user]["pet"] then
+		if db[DPSMateUser[DPSMateUser[user]["pet"]][1]] then
+			for cat, val in pairs(db[DPSMateUser[DPSMateUser[user]["pet"]][1]]["i"][1]) do
+				if sumTable[cat] then
+					sumTable[cat] = sumTable[cat]+val
+				else
+					sumTable[cat] = val
+				end
+			end
+		end
+	end
 	
-	sumTable = DPSMate.Modules.DetailsDamageTotal:SortLineTable(db[uid]["i"][1])
+	sumTable = DPSMate.Modules.DetailsDamageTotal:SortLineTable(sumTable)
 	sumTable = DPSMate.Modules.DetailsDamageTotal:GetSummarizedTable(sumTable, cbt)
 	
 	g:AddDataSeries(sumTable, {ColorTable[1], {}}, {})
@@ -293,36 +305,43 @@ end
 
 function DPSMate.Modules.DetailsDamageTotal:LoadTable()
 	local arr, total = DPSMate.Modules.DetailsDamageTotal:GetTableValues()
+	local i = 0
 	for i=1, 30 do
 		getglobal("DPSMate_Details_DamageTotal_PlayerList_Child_R"..i):Hide()
 	end
 	for cat, val in pairs(arr) do
-		if cat>30 then break end
-		local r,g,b = DPSMate:GetClassColor(DPSMateUser[val[1]][2])
-		getglobal("DPSMate_Details_DamageTotal_PlayerList_Child"):SetHeight((cat)*30-210)
-		getglobal("DPSMate_Details_DamageTotal_PlayerList_Child_R"..cat.."_Name"):SetText(val[1])
-		getglobal("DPSMate_Details_DamageTotal_PlayerList_Child_R"..cat.."_Name"):SetTextColor(r,g,b)
-		getglobal("DPSMate_Details_DamageTotal_PlayerList_Child_R"..cat.."_Amount"):SetText(val[2])
-		getglobal("DPSMate_Details_DamageTotal_PlayerList_Child_R"..cat.."_StatusBar"):SetValue(100*val[2]/arr[1][2])
-		getglobal("DPSMate_Details_DamageTotal_PlayerList_Child_R"..cat.."_StatusBar"):SetStatusBarColor(r,g,b, 1)
-		getglobal("DPSMate_Details_DamageTotal_PlayerList_Child_R"..cat.."_AmountPerc"):SetText(string.format("%.1f", 100*val[2]/total).."%")
-		getglobal("DPSMate_Details_DamageTotal_PlayerList_Child_R"..cat.."_Crit"):SetText(string.format("%.1f", 100*val[3]/val[6]).."%")
-		getglobal("DPSMate_Details_DamageTotal_PlayerList_Child_R"..cat.."_Miss"):SetText(string.format("%.1f", 100*val[4]/val[7]).."%")
-		getglobal("DPSMate_Details_DamageTotal_PlayerList_Child_R"..cat.."_DPS"):SetText(string.format("%.1f", val[2]/cbt))
-		getglobal("DPSMate_Details_DamageTotal_PlayerList_Child_R"..cat.."_ActiveTime"):SetText(ceil(val[5]).."s | "..string.format("%.1f", 100*val[5]/cbt).."%")
-		getglobal("DPSMate_Details_DamageTotal_PlayerList_Child_R"..cat).user = val[8]
-		getglobal("DPSMate_Details_DamageTotal_PlayerList_Child_R"..cat):Show()
+		if DPSMateUser[val[1]]["isPet"] then
+			i=i+1
+		else
+			if (cat-i)>30 then break end
+			local r,g,b = DPSMate:GetClassColor(DPSMateUser[val[1]][2])
+			getglobal("DPSMate_Details_DamageTotal_PlayerList_Child"):SetHeight((cat)*30-210)
+			getglobal("DPSMate_Details_DamageTotal_PlayerList_Child_R"..cat.."_Name"):SetText(val[1])
+			getglobal("DPSMate_Details_DamageTotal_PlayerList_Child_R"..cat.."_Name"):SetTextColor(r,g,b)
+			getglobal("DPSMate_Details_DamageTotal_PlayerList_Child_R"..cat.."_Amount"):SetText(val[2])
+			getglobal("DPSMate_Details_DamageTotal_PlayerList_Child_R"..cat.."_StatusBar"):SetValue(100*val[2]/arr[1][2])
+			getglobal("DPSMate_Details_DamageTotal_PlayerList_Child_R"..cat.."_StatusBar"):SetStatusBarColor(r,g,b, 1)
+			getglobal("DPSMate_Details_DamageTotal_PlayerList_Child_R"..cat.."_AmountPerc"):SetText(string.format("%.1f", 100*val[2]/total).."%")
+			getglobal("DPSMate_Details_DamageTotal_PlayerList_Child_R"..cat.."_Crit"):SetText(string.format("%.1f", 100*val[3]/val[6]).."%")
+			getglobal("DPSMate_Details_DamageTotal_PlayerList_Child_R"..cat.."_Miss"):SetText(string.format("%.1f", 100*val[4]/val[7]).."%")
+			getglobal("DPSMate_Details_DamageTotal_PlayerList_Child_R"..cat.."_DPS"):SetText(string.format("%.1f", val[2]/cbt))
+			getglobal("DPSMate_Details_DamageTotal_PlayerList_Child_R"..cat.."_ActiveTime"):SetText(ceil(val[5]).."s | "..string.format("%.1f", 100*val[5]/cbt).."%")
+			getglobal("DPSMate_Details_DamageTotal_PlayerList_Child_R"..cat).user = val[8]
+			getglobal("DPSMate_Details_DamageTotal_PlayerList_Child_R"..cat):Show()
+		end
 	end
 end
 
 function DPSMate.Modules.DetailsDamageTotal:ShowTooltip(user, obj)
 	local name = DPSMate:GetUserById(user)
 	local a,b,c = DPSMate.Modules.Damage:EvalTable(DPSMateUser[name], curKey)
+	local pet = ""
 	GameTooltip:SetOwner(obj, "TOPLEFT")
 	GameTooltip:AddLine(name.."'s damage done", 1,1,1)
-	for i=1, 5 do
+	for i=1, DPSMateSettings["subviewrows"] do
 		if not a[i] then break end
-		GameTooltip:AddDoubleLine(i..". "..DPSMate:GetAbilityById(a[i]),c[i],1,1,1,1,1,1)
+		if a[i][2] then pet="(Pet)" else pet="" end
+		GameTooltip:AddDoubleLine(i..". "..DPSMate:GetAbilityById(a[i][1])..pet,c[i],1,1,1,1,1,1)
 	end
 	GameTooltip:Show()
 end
