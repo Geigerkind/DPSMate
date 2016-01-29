@@ -462,11 +462,39 @@ function DPSMate.DB:PlayerTargetChanged()
 	end
 end
 
+function DPSMate.DB:IsRaidAssistant()
+	local playerName = UnitName("player")
+	for i=1, 40 do
+		local name, rank = GetRaidRosterInfo(i)
+		if name and rank then
+			if rank==1 and name == playerName then
+				return true
+			end
+		end
+	end
+	return false
+end
+
 function DPSMate.DB:PlayerInParty()
 	if GetNumPartyMembers() > 0 and (not UnitInRaid("player")) then
 		return true
 	end
 	return false
+end
+
+function DPSMate.DB:InPartyOrRaid()
+	if DPSMate.DB:PlayerInParty() or UnitInRaid("player") then
+		return true
+	end
+	return false
+end
+
+function DPSMate.DB:GetNumPartyMembers()
+	if DPSMate.DB:PlayerInParty() then
+		return GetNumPartyMembers()
+	elseif UnitInRaid("player") then
+		return GetNumRaidMembers()
+	end
 end
 
 function DPSMate.DB:BuildUser(Dname, Dclass)
@@ -1324,6 +1352,7 @@ function DPSMate.DB:CombatTime()
 		if DPSMate.Sync.Async then
 			DPSMate.Sync:OnUpdate(arg1)
 		end
+		DPSMate.Sync:DismissVote(arg1)
 	end)
 end
 

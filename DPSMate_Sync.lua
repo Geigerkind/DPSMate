@@ -8,6 +8,7 @@ local a,b = UnitClass("player")
 player["class"] = strlower(b)
 local time = 0
 local iterator = 1
+local voteStarter = false
 
 -- Beginn Functions
 
@@ -76,7 +77,74 @@ end
 --------------                       GENERAL                        --------------                                  
 ----------------------------------------------------------------------------------
 
+function DPSMate.Sync:Vote()
+	DPSMate_Vote:Hide()
+	SendAddonMessage("DPSMate_Vote", nil, "RAID")
+end
 
+function DPSMate.Sync:StartVote()
+	if not voteStarter then
+		SendAddonMessage("DPSMate_StartVote", nil, "RAID")
+		voteStarter = true
+	else
+		DPSMate:SendMessage("Vote has already been started!")
+	end
+end
+
+local voteCount = 1
+function DPSMate.Sync:CountVote()
+	if voteStarter then
+		voteCount=voteCount+1
+		if voteCount >= (participants/2) then
+			SendAddonMessage("DPSMate_VoteSuccess", nil, "RAID")
+			voteStarter = false
+			voteCount = 1
+			participants = 1
+			DPSMate.Sync:VoteSuccess()
+		end
+	end
+end
+
+local voteTime = 0
+local participants = 1
+function DPSMate.Sync:DismissVote(elapsed)
+	if voteStarter then
+		voteTime=voteTime+elapsed
+		if voteTime>=30 then
+			SendAddonMessage("DPSMate_VoteFail", nil, "RAID")
+			voteStarter = false
+			voteCount = 1
+			voteTime = 0
+			participants = 1
+			DPSMate:SendMessage("Reset vote failed!")
+		elseif voteTime>=3 and participants==1 then
+			voteStarter = false
+			voteCount = 1
+			voteTime = 0
+			DPSMate.Sync:VoteSuccess()
+		end
+	end
+end
+
+function DPSMate.Sync:VoteSuccess()
+	DPSMate:SendMessage("Reset vote was successful! DPSMate has been resetted!")
+	DPSMate.Options:PopUpAccept(true, true)
+end
+
+function DPSMate.Sync:CountParticipants()
+	if voteStarter then
+		participants=participants+1
+	end
+end
+
+function DPSMate.Sync:Participate()
+	SendAddonMessage("DPSMate_Participate", nil, "RAID")
+end
+
+function DPSMate.Sync:ReceiveStartVote() 
+	DPSMate_Vote:Show()
+	DPSMate.Sync:Participate()
+end
 
 ----------------------------------------------------------------------------------
 --------------                       SYNC IN                        --------------                                  
@@ -155,6 +223,16 @@ function DPSMate.Sync:OnEvent(event)
 				DPSMate.Sync:AurasStartEndIn(arg2, arg4, 2)
 			elseif arg1 == "DPSMate_AurasCause" then
 				DPSMate.Sync:AurasCauseIn(arg2, arg4)
+			elseif arg1 == "DPSMate_Vote" then
+				DPSMate.Sync:CountVote()
+			elseif arg1 == "DPSMate_StartVote" then
+				DPSMate.Sync:ReceiveStartVote() 
+			elseif arg1 == "DPSMate_VoteSuccess" then
+				DPSMate.Sync:VoteSuccess()
+			elseif arg1 == "DPSMate_VoteFail" then
+				DPSMate:SendMessage("Reset voting has failed!")
+			elseif arg1 == "DPSMate_Participate" then
+				DPSMate.Sync:CountParticipants()
 			end
 		end
 	end

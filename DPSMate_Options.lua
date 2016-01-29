@@ -397,98 +397,107 @@ function DPSMate.Options:IsInParty()
 	end
 end
 
-function DPSMate.Options:PopUpAccept(bool)
+function DPSMate.Options:PopUpAccept(bool, bypass)
 	DPSMate_PopUp:Hide()
-	if bool then
-		DPSMateDamageDone = {[1]={},[2]={}}
-		DPSMateDamageTaken = {[1]={},[2]={}}
-		DPSMateEDD = {[1]={},[2]={}}
-		DPSMateEDT = {[1]={},[2]={}}
-		DPSMateTHealing = {[1]={},[2]={}}
-		DPSMateEHealing = {[1]={},[2]={}}
-		DPSMateOverhealing = {[1]={},[2]={}}
-		DPSMateHealingTaken = {[1]={},[2]={}}
-		DPSMateEHealingTaken = {[1]={},[2]={}}
-		DPSMateAbsorbs = {[1]={},[2]={}}
-		DPSMateDispels = {[1]={},[2]={}}
-		DPSMateDeaths = {[1]={},[2]={}}
-		DPSMateInterrupts = {[1]={},[2]={}}
-		DPSMateAurasGained = {[1]={},[2]={}}
-		DPSMateHistory = {
-			DMGDone = {},
-			DMGTaken = {},
-			EDDone = {},
-			EDTaken = {},
-			THealing = {},
-			EHealing = {},
-			OHealing = {},
-			EHealingTaken = {},
-			THealingTaken = {},
-			Absorbs = {},
-			Deaths = {},
-			Interrupts = {},
-			Dispels = {},
-			Auras = {}
-		}
-		DPSMateCombatTime = {
-			total = 1,
-			current = 1,
-			segments = {},
-		}
-	else
-		DPSMateDamageDone[2] = {}
-		DPSMateDamageTaken[2] = {}
-		DPSMateEDD[2] = {}
-		DPSMateEDT[2] = {}
-		DPSMateTHealing[2] = {}
-		DPSMateEHealing[2] = {}
-		DPSMateOverhealing[2] = {}
-		DPSMateHealingTaken[2] = {}
-		DPSMateEHealingTaken[2] = {}
-		DPSMateAbsorbs[2] = {}
-		DPSMateDispels[2] = {}
-		DPSMateDeaths[2] = {}
-		DPSMateInterrupts[2] = {}
-		DPSMateAurasGained[2] = {}
-		DPSMateCombatTime["current"] = 1
-	end
-	DPSMate.Modules.DPS.DB = DPSMateDamageDone
-	DPSMate.Modules.Damage.DB = DPSMateDamageDone
-	DPSMate.Modules.DamageTaken.DB = DPSMateDamageTaken
-	DPSMate.Modules.DTPS.DB = DPSMateDamageTaken
-	DPSMate.Modules.EDD.DB = DPSMateEDD
-	DPSMate.Modules.EDT.DB = DPSMateEDT
-	DPSMate.Modules.Healing.DB = DPSMateTHealing
-	DPSMate.Modules.HPS.DB = DPSMateTHealing
-	DPSMate.Modules.Overhealing.DB = DPSMateOverhealing
-	DPSMate.Modules.EffectiveHealing.DB = DPSMateEHealing
-	DPSMate.Modules.EffectiveHPS.DB = DPSMateEHealing
-	DPSMate.Modules.HealingTaken.DB = DPSMateHealingTaken
-	DPSMate.Modules.EffectiveHealingTaken.DB = DPSMateEHealingTaken
-	DPSMate.Modules.Absorbs.DB = DPSMateAbsorbs
-	DPSMate.Modules.AbsorbsTaken.DB = DPSMateAbsorbs
-	DPSMate.Modules.HealingAndAbsorbs.DB = DPSMateAbsorbs
-	DPSMate.Modules.Deaths.DB = DPSMateDeaths
-	DPSMate.Modules.Dispels.DB = DPSMateDispels
-	DPSMate.Modules.DispelsReceived.DB = DPSMateDispels
-	DPSMate.Modules.Decurses.DB = DPSMateDispels
-	DPSMate.Modules.DecursesReceived.DB = DPSMateDispels
-	DPSMate.Modules.CureDisease.DB = DPSMateDispels
-	DPSMate.Modules.CureDiseaseReceived.DB = DPSMateDispels
-	DPSMate.Modules.CurePoison.DB = DPSMateDispels
-	DPSMate.Modules.CurePoisonReceived.DB = DPSMateDispels
-	DPSMate.Modules.LiftMagic.DB = DPSMateDispels
-	DPSMate.Modules.LiftMagicReceived.DB = DPSMateDispels
-	DPSMate.Modules.Interrupts.DB = DPSMateInterrupts
-	DPSMate.Modules.AurasGained.DB = DPSMateAurasGained
-	DPSMate.Modules.AurasLost.DB = DPSMateAurasGained
-	for _, val in pairs(DPSMateSettings["windows"]) do
-		if not val["options"][2]["total"] and not val["options"][2]["currentfight"] then
-			val["options"][2]["total"] = true
+	if DPSMate.DB:InPartyOrRaid() and not bypass and DPSMateSettings["sync"] and bool then
+		if IsPartyLeader() or DPSMate.DB:IsRaidAssistant() or IsRaidLeader() then
+			DPSMate.Sync:StartVote()
+		else
+			DPSMate:SendMessage("You are not the leader of the group or an assist!")
+			return
 		end
+	else
+		if bool then
+			DPSMateDamageDone = {[1]={},[2]={}}
+			DPSMateDamageTaken = {[1]={},[2]={}}
+			DPSMateEDD = {[1]={},[2]={}}
+			DPSMateEDT = {[1]={},[2]={}}
+			DPSMateTHealing = {[1]={},[2]={}}
+			DPSMateEHealing = {[1]={},[2]={}}
+			DPSMateOverhealing = {[1]={},[2]={}}
+			DPSMateHealingTaken = {[1]={},[2]={}}
+			DPSMateEHealingTaken = {[1]={},[2]={}}
+			DPSMateAbsorbs = {[1]={},[2]={}}
+			DPSMateDispels = {[1]={},[2]={}}
+			DPSMateDeaths = {[1]={},[2]={}}
+			DPSMateInterrupts = {[1]={},[2]={}}
+			DPSMateAurasGained = {[1]={},[2]={}}
+			DPSMateHistory = {
+				DMGDone = {},
+				DMGTaken = {},
+				EDDone = {},
+				EDTaken = {},
+				THealing = {},
+				EHealing = {},
+				OHealing = {},
+				EHealingTaken = {},
+				THealingTaken = {},
+				Absorbs = {},
+				Deaths = {},
+				Interrupts = {},
+				Dispels = {},
+				Auras = {}
+			}
+			DPSMateCombatTime = {
+				total = 1,
+				current = 1,
+				segments = {},
+			}
+		else
+			DPSMateDamageDone[2] = {}
+			DPSMateDamageTaken[2] = {}
+			DPSMateEDD[2] = {}
+			DPSMateEDT[2] = {}
+			DPSMateTHealing[2] = {}
+			DPSMateEHealing[2] = {}
+			DPSMateOverhealing[2] = {}
+			DPSMateHealingTaken[2] = {}
+			DPSMateEHealingTaken[2] = {}
+			DPSMateAbsorbs[2] = {}
+			DPSMateDispels[2] = {}
+			DPSMateDeaths[2] = {}
+			DPSMateInterrupts[2] = {}
+			DPSMateAurasGained[2] = {}
+			DPSMateCombatTime["current"] = 1
+		end
+		DPSMate.Modules.DPS.DB = DPSMateDamageDone
+		DPSMate.Modules.Damage.DB = DPSMateDamageDone
+		DPSMate.Modules.DamageTaken.DB = DPSMateDamageTaken
+		DPSMate.Modules.DTPS.DB = DPSMateDamageTaken
+		DPSMate.Modules.EDD.DB = DPSMateEDD
+		DPSMate.Modules.EDT.DB = DPSMateEDT
+		DPSMate.Modules.Healing.DB = DPSMateTHealing
+		DPSMate.Modules.HPS.DB = DPSMateTHealing
+		DPSMate.Modules.Overhealing.DB = DPSMateOverhealing
+		DPSMate.Modules.EffectiveHealing.DB = DPSMateEHealing
+		DPSMate.Modules.EffectiveHPS.DB = DPSMateEHealing
+		DPSMate.Modules.HealingTaken.DB = DPSMateHealingTaken
+		DPSMate.Modules.EffectiveHealingTaken.DB = DPSMateEHealingTaken
+		DPSMate.Modules.Absorbs.DB = DPSMateAbsorbs
+		DPSMate.Modules.AbsorbsTaken.DB = DPSMateAbsorbs
+		DPSMate.Modules.HealingAndAbsorbs.DB = DPSMateAbsorbs
+		DPSMate.Modules.Deaths.DB = DPSMateDeaths
+		DPSMate.Modules.Dispels.DB = DPSMateDispels
+		DPSMate.Modules.DispelsReceived.DB = DPSMateDispels
+		DPSMate.Modules.Decurses.DB = DPSMateDispels
+		DPSMate.Modules.DecursesReceived.DB = DPSMateDispels
+		DPSMate.Modules.CureDisease.DB = DPSMateDispels
+		DPSMate.Modules.CureDiseaseReceived.DB = DPSMateDispels
+		DPSMate.Modules.CurePoison.DB = DPSMateDispels
+		DPSMate.Modules.CurePoisonReceived.DB = DPSMateDispels
+		DPSMate.Modules.LiftMagic.DB = DPSMateDispels
+		DPSMate.Modules.LiftMagicReceived.DB = DPSMateDispels
+		DPSMate.Modules.Interrupts.DB = DPSMateInterrupts
+		DPSMate.Modules.AurasGained.DB = DPSMateAurasGained
+		DPSMate.Modules.AurasLost.DB = DPSMateAurasGained
+		for _, val in pairs(DPSMateSettings["windows"]) do
+			if not val["options"][2]["total"] and not val["options"][2]["currentfight"] then
+				val["options"][2]["total"] = true
+			end
+		end
+		DPSMate.Options:InitializeSegments()
+		DPSMate:SetStatusBarValue()
 	end
-	DPSMate.Options:InitializeSegments()
-	DPSMate:SetStatusBarValue()
 end
 
 function DPSMate.Options:OpenMenu(b, obj)

@@ -132,7 +132,7 @@
 				</Layers>
 				<Scripts>
 					<OnClick>
-						DPSMate.Options:PopUpAccept(true)
+						DPSMate.Options:PopUpAccept(true, false)
 					</OnClick>
 				</Scripts>
 				<NormalTexture file="Interface\Buttons\UI-DialogBox-Button-Up"/>
@@ -160,7 +160,7 @@
 				</Layers>
 				<Scripts>
 					<OnClick>
-						DPSMate.Options:PopUpAccept(false)
+						DPSMate.Options:PopUpAccept(false, false)
 					</OnClick>
 				</Scripts>
 				<NormalTexture file="Interface\Buttons\UI-DialogBox-Button-Up"/>
@@ -189,6 +189,107 @@
 				<Scripts>
 					<OnClick>
 						DPSMate_PopUp:Hide()
+					</OnClick>
+				</Scripts>
+				<NormalTexture file="Interface\Buttons\UI-DialogBox-Button-Up"/>
+				<PushedTexture file="Interface\Buttons\UI-DialogBox-Button-Down"/>
+				<HighlightTexture file="Interface\Buttons\UI-DialogBox-Button-Highlight" alphaMode="ADD"/>
+			</Button>
+		</Frames>
+	</Frame>
+	
+	<Frame name="DPSMate_Vote" movable="true" hidden="true">
+		<Size x="250" y="60" />
+		<Anchors>
+			<Anchor point="CENTER" />
+		</Anchors>
+		<Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background" edgeFile="Interface\DialogFrame\UI-DialogBox-Border" tile="true">
+			<BackgroundInsets>
+				<AbsInset left="6" right="6" top="6" bottom="6" />
+			</BackgroundInsets>
+			<TileSize>
+				<AbsValue val="24" />
+			</TileSize>
+			<EdgeSize>
+				<AbsValue val="24" />
+			</EdgeSize>
+        </Backdrop>
+		<Layers>
+			<Layer level="ARTWORK">
+				<FontString name="$parent_Text" inherits="GameFontNormalSmall" justifyH="CENTER" alphaMode="ADD">
+					<Size x="250" y="38" />
+					<Anchors>
+						<Anchor point="TOP" />
+					</Anchors>
+					<Color r="1" g="1" b="1" a="1" />
+				</FontString>
+			</Layer>
+		</Layers>
+		<Scripts>
+			<OnMouseDown>
+				this:StartMoving()
+			</OnMouseDown>
+			<OnMouseUp>
+				this:StopMovingOrSizing()
+			</OnMouseUp>
+			<OnLoad>
+				DPSMate_Vote_Text:SetText(DPSMate.localization.popup)
+				DPSMate_Vote_AcceptText:SetText(DPSMate.localization.accept)
+				DPSMate_Vote_CancelText:SetText(DPSMate.localization.decline)
+				this:SetClampedToScreen()
+			</OnLoad>
+		</Scripts>
+		<Frames>
+			<Button name="$parent_Accept">
+				<Size x="80" y="24" />
+				<Anchors>
+					<Anchor point="TOP" relativeTo="$parent_Text" relativePoint="BOTTOM">
+						<Offset x="-50" y="7" />
+					</Anchor>
+				</Anchors>
+				<Layers>
+					<Layer level="ARTWORK">
+						<FontString name="$parentText" inherits="GameFontNormalSmall" text="Total">
+							<Size x="80" y="24" />
+							<Anchors>
+								<Anchor point="TOP">
+									<Offset x="0" y="4" />
+								</Anchor>
+							</Anchors>
+						</FontString>
+					</Layer>
+				</Layers>
+				<Scripts>
+					<OnClick>
+						DPSMate.Sync:Vote()
+					</OnClick>
+				</Scripts>
+				<NormalTexture file="Interface\Buttons\UI-DialogBox-Button-Up"/>
+				<PushedTexture file="Interface\Buttons\UI-DialogBox-Button-Down"/>
+				<HighlightTexture file="Interface\Buttons\UI-DialogBox-Button-Highlight" alphaMode="ADD"/>
+			</Button>
+			<Button name="$parent_Cancel">
+				<Size x="80" y="24" />
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="$parent_Accept" relativePoint="RIGHT">
+						<Offset x="20" y="0" />
+					</Anchor>
+				</Anchors>
+				<Layers>
+					<Layer level="ARTWORK">
+						<FontString name="$parentText" inherits="GameFontNormalSmall">
+							<Size x="80" y="24" />
+							<Anchors>
+								<Anchor point="TOP">
+									<Offset x="0" y="4" />
+								</Anchor>
+							</Anchors>
+						</FontString>
+					</Layer>
+				</Layers>
+				<Scripts>
+					<OnClick>
+						DPSMate_Vote:Hide()
 					</OnClick>
 				</Scripts>
 				<NormalTexture file="Interface\Buttons\UI-DialogBox-Button-Up"/>
