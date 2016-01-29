@@ -1056,7 +1056,7 @@ function DPSMate.DB:UnregisterDeath(target)
 	if not DPSMateUser[target] then return end
 	for cat, val in pairs({[1]="total", [2]="current"}) do 
 		if DPSMateDeaths[cat][DPSMateUser[target][1]] then
-			DPSMateDeaths[cat][DPSMateUser[target][1]][DPSMate:TableLength(DPSMateDeaths[cat][DPSMateUser[target][1]])]["i"]=1
+			DPSMateDeaths[cat][DPSMateUser[target][1]][1]["i"]=1
 		end
 	end
 end
