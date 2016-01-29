@@ -63,7 +63,7 @@
 					<Size x="100" y="40" />
 					<Anchors>
 						<Anchor point="TOPLEFT">
-							<Offset x="495" y="0" />
+							<Offset x="485" y="0" />
 						</Anchor>
 					</Anchors>
 					<Color r="1" g="1" b="1" />
@@ -142,7 +142,7 @@
 				</Scripts>
 			</CheckButton>
 			<StatusBar name="$parent_StatusBar">
-				<Size x="230" y="16" />
+				<Size x="225" y="16" />
 				<Anchors>
 					<Anchor point="TOPLEFT">
 						<Offset x="255" y="-13" />
@@ -720,6 +720,11 @@
 								<Offset x="10" y="-4.5" />
 							</Anchor>
 						</Anchors>
+						<Scripts>
+							<OnClick>
+								DPSMate.Modules.DetailsDamageTotal:CheckButtonCheckAll(this)
+							</OnClick>
+						</Scripts>
 					</CheckButton>
 				</Frames>
 			</ScrollFrame>

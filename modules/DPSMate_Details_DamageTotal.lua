@@ -42,35 +42,24 @@ function DPSMate.Modules.DetailsDamageTotal:UpdateDetails(obj, key)
 		g=DPSMate.Options.graph:CreateGraphLine("LineGraph",DPSMate_Details_DamageTotal_DiagramLine,"CENTER","CENTER",0,0,750,230)
 		DPSMate.Modules.DetailsDamageTotal:CreateGraphTable()
 	end
+	getglobal("DPSMate_Details_DamageTotal_PlayerList_CB"):SetChecked(false)
+	getglobal("DPSMate_Details_DamageTotal_PlayerList_CB").act = false
 	DPSMate_Details_DamageTotal_Title:SetText("Damage done summary")
 	DPSMate.Modules.DetailsDamageTotal:UpdateLineGraph()
 	DPSMate.Modules.DetailsDamageTotal:LoadTable()
+	DPSMate.Modules.DetailsDamageTotal:LoadLegendButtons()
 	DPSMate_Details_DamageTotal:Show()
 end
 
-function DPSMate.Modules.DetailsDamageTotal:UpdateLineGraph()
-	--local arr = db
-	--local sumTable = DPSMate.Modules.DetailsDamage:GetSummarizedTable(arr, cbt)
-	--local max = DPSMate.Modules.DetailsDamage:GetMaxLineVal(sumTable)
-	local max = 2000
-	
+function DPSMate.Modules.DetailsDamageTotal:UpdateLineGraph()	
 	g:ResetData()
 	g:SetXAxis(0,cbt)
-	g:SetYAxis(0,max+200)
-	g:SetGridSpacing(cbt/10,max/7)
 	g:SetGridColor({0.5,0.5,0.5,0.5})
 	g:SetAxisDrawing(true,true)
 	g:SetAxisColor({1.0,1.0,1.0,1.0})
-	g:SetAutoScale(true)
+	g:SetAutoScale(false)
 	g:SetYLabels(true, false)
 	g:SetXLabels(true)
-
-	local Data1={{0,0}}
-	--for cat, val in pairs(sumTable) do
-	--	table.insert(Data1, {val[1],val[2], DPSMate.Modules.DetailsDamage:CheckProcs(DPSMate_Details.proc, val[1])})
-	--end
-
-	--g:AddDataSeries(Data1,{{1.0,0.0,0.0,0.8}, {1.0,1.0,0.0,0.8}}, {})+
 	DPSMate.Modules.DetailsDamageTotal:AddTotalDataSeries()
 end
 
@@ -178,7 +167,7 @@ function DPSMate.Modules.DetailsDamageTotal:AddTotalDataSeries()
 	end
 	local totMax = DPSMate.Modules.DetailsDamageTotal:GetMaxLineVal(totSumTable)
 	g:SetYAxis(0,totMax+200)
-	g:SetGridSpacing(cbt/10,totMax/7)
+	g:SetGridSpacing(cbt/10,totMax/4)
 	
 	g:AddDataSeries(totSumTable,{{1.0,0.0,0.0,0.8}, {1.0,1.0,0.0,0.8}}, {})
 end
@@ -237,6 +226,28 @@ function DPSMate.Modules.DetailsDamageTotal:GetTableValues()
 	return newArr, total
 end
 
+function DPSMate.Modules.DetailsDamageTotal:CheckButtonCheckAll(obj)
+	if obj.act then
+		obj.act = false
+		for i=1, 30 do 
+			local ob = getglobal("DPSMate_Details_DamageTotal_PlayerList_Child_R"..i)
+			if ob.user then
+				DPSMate.Modules.DetailsDamageTotal:RemoveLinesButton(ob.user, ob)
+				getglobal("DPSMate_Details_DamageTotal_PlayerList_Child_R"..i.."_CB"):SetChecked(obj.act)
+			end
+		end
+	else
+		obj.act = true
+		for i=1, 30 do 
+			local ob = getglobal("DPSMate_Details_DamageTotal_PlayerList_Child_R"..i)
+			if ob.user then
+				DPSMate.Modules.DetailsDamageTotal:AddLinesButton(ob.user, ob)
+				getglobal("DPSMate_Details_DamageTotal_PlayerList_Child_R"..i.."_CB"):SetChecked(obj.act)
+			end
+		end
+	end
+end
+
 function DPSMate.Modules.DetailsDamageTotal:AddLinesButton(uid, obj)
 	local sumTable = db[uid]["i"][1]
 	local user = DPSMate:GetUserById(uid)
@@ -265,12 +276,6 @@ end
 function DPSMate.Modules.DetailsDamageTotal:RemoveLinesButton(uid, obj)
 	obj.act = false
 	g:ResetData()
-	g:SetGridColor({0.5,0.5,0.5,0.5})
-	g:SetAxisDrawing(true,true)
-	g:SetAxisColor({1.0,1.0,1.0,1.0})
-	g:SetAutoScale(true)
-	g:SetYLabels(true, false)
-	g:SetXLabels(true)
 	for cat, val in pairs(buttons) do
 		if val[2]==uid then
 			table.insert(ColorTable, 1, val[1])
@@ -278,9 +283,6 @@ function DPSMate.Modules.DetailsDamageTotal:RemoveLinesButton(uid, obj)
 			break
 		end
 	end
-	local totMax = DPSMate.Modules.DetailsDamageTotal:GetMaxLineVal(totSumTable)
-	g:SetYAxis(0,totMax+200)
-	g:SetGridSpacing(cbt/10,totMax/7)
 	
 	g:AddDataSeries(totSumTable,{{1.0,0.0,0.0,0.8}, {1.0,1.0,0.0,0.8}}, {})
 	for cat, val in pairs(buttons) do		
@@ -308,6 +310,8 @@ function DPSMate.Modules.DetailsDamageTotal:LoadTable()
 	local i = 0
 	for i=1, 30 do
 		getglobal("DPSMate_Details_DamageTotal_PlayerList_Child_R"..i):Hide()
+		getglobal("DPSMate_Details_DamageTotal_PlayerList_Child_R"..i.."_CB"):SetChecked(false)
+		getglobal("DPSMate_Details_DamageTotal_PlayerList_Child_R"..i.."_CB").act = false
 	end
 	for cat, val in pairs(arr) do
 		if DPSMateUser[val[1]]["isPet"] then
