@@ -124,10 +124,10 @@ function DPSMate.Modules.DTPS:ShowTooltip(user, k)
 	end
 end
 
-function DPSMate.Modules.DamageTaken:OpenDetails(obj, key)
+function DPSMate.Modules.DTPS:OpenDetails(obj, key)
 	DPSMate.Modules.DetailsDamageTaken:UpdateDetails(obj, key)
 end
 
-function DPSMate.Modules.DamageTaken:OpenTotalDetails(obj, key)
+function DPSMate.Modules.DTPS:OpenTotalDetails(obj, key)
 	DPSMate.Modules.DetailsDamageTakenTotal:UpdateDetails(obj, key)
 end
