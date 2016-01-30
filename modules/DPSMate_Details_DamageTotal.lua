@@ -180,11 +180,11 @@ function DPSMate.Modules.DetailsDamageTotal:GetTableValues()
 		for ca, va in pairs(val) do
 			if ca~="i" then
 				if va[5]>0 then
-					totCrit=totCrit+va[1]+va[5]+va[9]+va[10]+va[11]+va[12]
+					totCrit=totCrit+va[1]+va[5]+va[9]+va[10]+va[11]+va[12]+va[14]
 					crit=crit+va[5]
 				end
 				if va[9]>0 or va[10]>0 or va[11]>0 or va[12]>0 then
-					totMiss=totMiss+va[1]+va[5]+va[9]+va[10]+va[11]+va[12]
+					totMiss=totMiss+va[1]+va[5]+va[9]+va[10]+va[11]+va[12]+va[14]
 					miss=miss+va[9]+va[10]+va[11]+va[12]
 				end
 			else
@@ -319,19 +319,19 @@ function DPSMate.Modules.DetailsDamageTotal:LoadTable()
 		else
 			if (cat-i)>30 then break end
 			local r,g,b = DPSMate:GetClassColor(DPSMateUser[val[1]][2])
-			getglobal("DPSMate_Details_DamageTotal_PlayerList_Child"):SetHeight((cat)*30-210)
-			getglobal("DPSMate_Details_DamageTotal_PlayerList_Child_R"..cat.."_Name"):SetText(val[1])
-			getglobal("DPSMate_Details_DamageTotal_PlayerList_Child_R"..cat.."_Name"):SetTextColor(r,g,b)
-			getglobal("DPSMate_Details_DamageTotal_PlayerList_Child_R"..cat.."_Amount"):SetText(val[2])
-			getglobal("DPSMate_Details_DamageTotal_PlayerList_Child_R"..cat.."_StatusBar"):SetValue(100*val[2]/arr[1][2])
-			getglobal("DPSMate_Details_DamageTotal_PlayerList_Child_R"..cat.."_StatusBar"):SetStatusBarColor(r,g,b, 1)
-			getglobal("DPSMate_Details_DamageTotal_PlayerList_Child_R"..cat.."_AmountPerc"):SetText(string.format("%.1f", 100*val[2]/total).."%")
-			getglobal("DPSMate_Details_DamageTotal_PlayerList_Child_R"..cat.."_Crit"):SetText(string.format("%.1f", 100*val[3]/val[6]).."%")
-			getglobal("DPSMate_Details_DamageTotal_PlayerList_Child_R"..cat.."_Miss"):SetText(string.format("%.1f", 100*val[4]/val[7]).."%")
-			getglobal("DPSMate_Details_DamageTotal_PlayerList_Child_R"..cat.."_DPS"):SetText(string.format("%.1f", val[2]/cbt))
-			getglobal("DPSMate_Details_DamageTotal_PlayerList_Child_R"..cat.."_ActiveTime"):SetText(ceil(val[5]).."s | "..string.format("%.1f", 100*val[5]/cbt).."%")
-			getglobal("DPSMate_Details_DamageTotal_PlayerList_Child_R"..cat).user = val[8]
-			getglobal("DPSMate_Details_DamageTotal_PlayerList_Child_R"..cat):Show()
+			getglobal("DPSMate_Details_DamageTotal_PlayerList_Child"):SetHeight((cat-i)*30-210)
+			getglobal("DPSMate_Details_DamageTotal_PlayerList_Child_R"..(cat-i).."_Name"):SetText(val[1])
+			getglobal("DPSMate_Details_DamageTotal_PlayerList_Child_R"..(cat-i).."_Name"):SetTextColor(r,g,b)
+			getglobal("DPSMate_Details_DamageTotal_PlayerList_Child_R"..(cat-i).."_Amount"):SetText(val[2])
+			getglobal("DPSMate_Details_DamageTotal_PlayerList_Child_R"..(cat-i).."_StatusBar"):SetValue(100*val[2]/arr[1][2])
+			getglobal("DPSMate_Details_DamageTotal_PlayerList_Child_R"..(cat-i).."_StatusBar"):SetStatusBarColor(r,g,b, 1)
+			getglobal("DPSMate_Details_DamageTotal_PlayerList_Child_R"..(cat-i).."_AmountPerc"):SetText(string.format("%.1f", 100*val[2]/total).."%")
+			getglobal("DPSMate_Details_DamageTotal_PlayerList_Child_R"..(cat-i).."_Crit"):SetText(string.format("%.1f", 100*val[3]/val[6]).."%")
+			getglobal("DPSMate_Details_DamageTotal_PlayerList_Child_R"..(cat-i).."_Miss"):SetText(string.format("%.1f", 100*val[4]/val[7]).."%")
+			getglobal("DPSMate_Details_DamageTotal_PlayerList_Child_R"..(cat-i).."_DPS"):SetText(string.format("%.1f", val[2]/cbt))
+			getglobal("DPSMate_Details_DamageTotal_PlayerList_Child_R"..(cat-i).."_ActiveTime"):SetText(ceil(val[5]).."s | "..string.format("%.1f", 100*val[5]/cbt).."%")
+			getglobal("DPSMate_Details_DamageTotal_PlayerList_Child_R"..(cat-i)).user = val[8]
+			getglobal("DPSMate_Details_DamageTotal_PlayerList_Child_R"..(cat-i)):Show()
 		end
 	end
 end

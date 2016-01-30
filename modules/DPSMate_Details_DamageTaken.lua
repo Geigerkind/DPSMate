@@ -41,7 +41,7 @@ function DPSMate.Modules.DetailsDamageTaken:UpdateDetails(obj, key)
 		PieChart = false
 	end
 	DetailsUser = obj.user
-	DPSMate_Details_Title:SetText("Damage taken by "..obj.user)
+	DPSMate_Details_DamageTaken_Title:SetText("Damage taken by "..obj.user)
 	DPSMate_Details_DamageTaken:Show()
 	DPSMate.Modules.DetailsDamageTaken:ScrollFrame_Update()
 	DPSMate.Modules.DetailsDamageTaken:SelectCreatureButton(1)
@@ -137,62 +137,71 @@ function DPSMate.Modules.DetailsDamageTaken:SelectDetailsButton(p,i)
 	getglobal("DPSMate_Details_DamageTaken_Log_ScrollButton"..i.."_selected"):Show()
 	
 	local path = arr[DPSMateUser[DetailsUser][1]][creature][ability]
-	local hit, crit, miss, parry, dodge, resist, hitMin, hitMax, critMin, critMax, hitav, critav = path[1], path[5], path[9], path[10], path[11], path[12], path[2], path[3], path[6], path[7], path[4], path[8]
-	local total, max = hit+crit+miss+parry+dodge+resist, DPSMate:TMax({hit, crit, miss, parry, dodge, resist})
+	local hit, crit, miss, parry, dodge, resist, hitMin, hitMax, critMin, critMax, hitav, critav, crush, crushMin, crushMax, crushav = path[1], path[5], path[9], path[10], path[11], path[12], path[2], path[3], path[6], path[7], path[4], path[8], path[15], path[16], path[17], path[18]
+	local total, max = hit+crit+miss+parry+dodge+resist+crush, DPSMate:TMax({hit, crit, miss, parry, dodge, resist, crush})
+	
+	-- Crush
+	getglobal("DPSMate_Details_DamageTaken_LogDetails_Amount1_Amount"):SetText(crush)
+	getglobal("DPSMate_Details_DamageTaken_LogDetails_Amount1_Percent"):SetText(ceil(100*crush/total).."%")
+	getglobal("DPSMate_Details_DamageTaken_LogDetails_Amount1_StatusBar"):SetValue(ceil(100*crush/max))
+	getglobal("DPSMate_Details_DamageTaken_LogDetails_Amount1_StatusBar"):SetStatusBarColor(0.0,0.0,1.0,1)
+	getglobal("DPSMate_Details_DamageTaken_LogDetails_Average1"):SetText(ceil(crushav))
+	getglobal("DPSMate_Details_DamageTaken_LogDetails_Min1"):SetText(crushMin)
+	getglobal("DPSMate_Details_DamageTaken_LogDetails_Max1"):SetText(crushMax)
 	
 	-- Hit
-	getglobal("DPSMate_Details_DamageTaken_LogDetails_Amount1_Amount"):SetText(hit)
-	getglobal("DPSMate_Details_DamageTaken_LogDetails_Amount1_Percent"):SetText(ceil(100*hit/total).."%")
-	getglobal("DPSMate_Details_DamageTaken_LogDetails_Amount1_StatusBar"):SetValue(ceil(100*hit/max))
-	getglobal("DPSMate_Details_DamageTaken_LogDetails_Amount1_StatusBar"):SetStatusBarColor(0.9,0.0,0.0,1)
-	getglobal("DPSMate_Details_DamageTaken_LogDetails_Average1"):SetText(ceil(hitav))
-	getglobal("DPSMate_Details_DamageTaken_LogDetails_Min1"):SetText(hitMin)
-	getglobal("DPSMate_Details_DamageTaken_LogDetails_Max1"):SetText(hitMax)
+	getglobal("DPSMate_Details_DamageTaken_LogDetails_Amount2_Amount"):SetText(hit)
+	getglobal("DPSMate_Details_DamageTaken_LogDetails_Amount2_Percent"):SetText(ceil(100*hit/total).."%")
+	getglobal("DPSMate_Details_DamageTaken_LogDetails_Amount2_StatusBar"):SetValue(ceil(100*hit/max))
+	getglobal("DPSMate_Details_DamageTaken_LogDetails_Amount2_StatusBar"):SetStatusBarColor(0.9,0.0,0.0,1)
+	getglobal("DPSMate_Details_DamageTaken_LogDetails_Average2"):SetText(ceil(hitav))
+	getglobal("DPSMate_Details_DamageTaken_LogDetails_Min2"):SetText(hitMin)
+	getglobal("DPSMate_Details_DamageTaken_LogDetails_Max2"):SetText(hitMax)
 	
 	-- Crit
-	getglobal("DPSMate_Details_DamageTaken_LogDetails_Amount2_Amount"):SetText(crit)
-	getglobal("DPSMate_Details_DamageTaken_LogDetails_Amount2_Percent"):SetText(ceil(100*crit/total).."%")
-	getglobal("DPSMate_Details_DamageTaken_LogDetails_Amount2_StatusBar"):SetValue(ceil(100*crit/max))
-	getglobal("DPSMate_Details_DamageTaken_LogDetails_Amount2_StatusBar"):SetStatusBarColor(0.0,0.9,0.0,1)
-	getglobal("DPSMate_Details_DamageTaken_LogDetails_Average2"):SetText(ceil(critav))
-	getglobal("DPSMate_Details_DamageTaken_LogDetails_Min2"):SetText(critMin)
-	getglobal("DPSMate_Details_DamageTaken_LogDetails_Max2"):SetText(critMax)
+	getglobal("DPSMate_Details_DamageTaken_LogDetails_Amount3_Amount"):SetText(crit)
+	getglobal("DPSMate_Details_DamageTaken_LogDetails_Amount3_Percent"):SetText(ceil(100*crit/total).."%")
+	getglobal("DPSMate_Details_DamageTaken_LogDetails_Amount3_StatusBar"):SetValue(ceil(100*crit/max))
+	getglobal("DPSMate_Details_DamageTaken_LogDetails_Amount3_StatusBar"):SetStatusBarColor(0.0,0.9,0.0,1)
+	getglobal("DPSMate_Details_DamageTaken_LogDetails_Average3"):SetText(ceil(critav))
+	getglobal("DPSMate_Details_DamageTaken_LogDetails_Min3"):SetText(critMin)
+	getglobal("DPSMate_Details_DamageTaken_LogDetails_Max3"):SetText(critMax)
 	
 	-- Miss
-	getglobal("DPSMate_Details_DamageTaken_LogDetails_Amount3_Amount"):SetText(miss)
-	getglobal("DPSMate_Details_DamageTaken_LogDetails_Amount3_Percent"):SetText(ceil(100*miss/total).."%")
-	getglobal("DPSMate_Details_DamageTaken_LogDetails_Amount3_StatusBar"):SetValue(ceil(100*miss/max))
-	getglobal("DPSMate_Details_DamageTaken_LogDetails_Amount3_StatusBar"):SetStatusBarColor(0.0,0.0,1.0,1)
-	getglobal("DPSMate_Details_DamageTaken_LogDetails_Average3"):SetText("-")
-	getglobal("DPSMate_Details_DamageTaken_LogDetails_Min3"):SetText("-")
-	getglobal("DPSMate_Details_DamageTaken_LogDetails_Max3"):SetText("-")
-	
-	-- Parry
-	getglobal("DPSMate_Details_DamageTaken_LogDetails_Amount4_Amount"):SetText(parry)
-	getglobal("DPSMate_Details_DamageTaken_LogDetails_Amount4_Percent"):SetText(ceil(100*parry/total).."%")
-	getglobal("DPSMate_Details_DamageTaken_LogDetails_Amount4_StatusBar"):SetValue(ceil(100*parry/max))
-	getglobal("DPSMate_Details_DamageTaken_LogDetails_Amount4_StatusBar"):SetStatusBarColor(1.0,1.0,0.0,1)
+	getglobal("DPSMate_Details_DamageTaken_LogDetails_Amount4_Amount"):SetText(miss)
+	getglobal("DPSMate_Details_DamageTaken_LogDetails_Amount4_Percent"):SetText(ceil(100*miss/total).."%")
+	getglobal("DPSMate_Details_DamageTaken_LogDetails_Amount4_StatusBar"):SetValue(ceil(100*miss/max))
+	getglobal("DPSMate_Details_DamageTaken_LogDetails_Amount4_StatusBar"):SetStatusBarColor(0.0,0.0,1.0,1)
 	getglobal("DPSMate_Details_DamageTaken_LogDetails_Average4"):SetText("-")
 	getglobal("DPSMate_Details_DamageTaken_LogDetails_Min4"):SetText("-")
 	getglobal("DPSMate_Details_DamageTaken_LogDetails_Max4"):SetText("-")
 	
-	-- Dodge
-	getglobal("DPSMate_Details_DamageTaken_LogDetails_Amount5_Amount"):SetText(dodge)
-	getglobal("DPSMate_Details_DamageTaken_LogDetails_Amount5_Percent"):SetText(ceil(100*dodge/total).."%")
-	getglobal("DPSMate_Details_DamageTaken_LogDetails_Amount5_StatusBar"):SetValue(ceil(100*dodge/max))
-	getglobal("DPSMate_Details_DamageTaken_LogDetails_Amount5_StatusBar"):SetStatusBarColor(1.0,0.0,1.0,1)
+	-- Parry
+	getglobal("DPSMate_Details_DamageTaken_LogDetails_Amount5_Amount"):SetText(parry)
+	getglobal("DPSMate_Details_DamageTaken_LogDetails_Amount5_Percent"):SetText(ceil(100*parry/total).."%")
+	getglobal("DPSMate_Details_DamageTaken_LogDetails_Amount5_StatusBar"):SetValue(ceil(100*parry/max))
+	getglobal("DPSMate_Details_DamageTaken_LogDetails_Amount5_StatusBar"):SetStatusBarColor(1.0,1.0,0.0,1)
 	getglobal("DPSMate_Details_DamageTaken_LogDetails_Average5"):SetText("-")
 	getglobal("DPSMate_Details_DamageTaken_LogDetails_Min5"):SetText("-")
 	getglobal("DPSMate_Details_DamageTaken_LogDetails_Max5"):SetText("-")
 	
-	-- Resist
-	getglobal("DPSMate_Details_DamageTaken_LogDetails_Amount6_Amount"):SetText(resist)
-	getglobal("DPSMate_Details_DamageTaken_LogDetails_Amount6_Percent"):SetText(ceil(100*resist/total).."%")
-	getglobal("DPSMate_Details_DamageTaken_LogDetails_Amount6_StatusBar"):SetValue(ceil(100*resist/max))
-	getglobal("DPSMate_Details_DamageTaken_LogDetails_Amount6_StatusBar"):SetStatusBarColor(0.0,1.0,1.0,1)
+	-- Dodge
+	getglobal("DPSMate_Details_DamageTaken_LogDetails_Amount6_Amount"):SetText(dodge)
+	getglobal("DPSMate_Details_DamageTaken_LogDetails_Amount6_Percent"):SetText(ceil(100*dodge/total).."%")
+	getglobal("DPSMate_Details_DamageTaken_LogDetails_Amount6_StatusBar"):SetValue(ceil(100*dodge/max))
+	getglobal("DPSMate_Details_DamageTaken_LogDetails_Amount6_StatusBar"):SetStatusBarColor(1.0,0.0,1.0,1)
 	getglobal("DPSMate_Details_DamageTaken_LogDetails_Average6"):SetText("-")
 	getglobal("DPSMate_Details_DamageTaken_LogDetails_Min6"):SetText("-")
 	getglobal("DPSMate_Details_DamageTaken_LogDetails_Max6"):SetText("-")
+	
+	-- Resist
+	getglobal("DPSMate_Details_DamageTaken_LogDetails_Amount7_Amount"):SetText(resist)
+	getglobal("DPSMate_Details_DamageTaken_LogDetails_Amount7_Percent"):SetText(ceil(100*resist/total).."%")
+	getglobal("DPSMate_Details_DamageTaken_LogDetails_Amount7_StatusBar"):SetValue(ceil(100*resist/max))
+	getglobal("DPSMate_Details_DamageTaken_LogDetails_Amount7_StatusBar"):SetStatusBarColor(0.0,1.0,1.0,1)
+	getglobal("DPSMate_Details_DamageTaken_LogDetails_Average7"):SetText("-")
+	getglobal("DPSMate_Details_DamageTaken_LogDetails_Min7"):SetText("-")
+	getglobal("DPSMate_Details_DamageTaken_LogDetails_Max7"):SetText("-")
 end
 
 function DPSMate.Modules.DetailsDamageTaken:UpdateLineGraph()

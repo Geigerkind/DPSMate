@@ -587,7 +587,7 @@ function DPSMate.DB:DamageDone(Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, Ddodge,
 end
 
 -- Fall damage
-function DPSMate.DB:DamageTaken(Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, Ddodge, Dresist, Damount, cause)
+function DPSMate.DB:DamageTaken(Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, Ddodge, Dresist, Damount, cause, Dcrush)
 	if (not Duser.name or DPSMate:TableLength(Duser)==0 or not Dname or cause=="") then return end
 	if (not CombatState and cheatCombat+10<GetTime()) then
 		DPSMate.Options:NewSegment()
@@ -599,6 +599,7 @@ function DPSMate.DB:DamageTaken(Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, Ddodge
 			DPSMateDamageTaken[cat][DPSMateUser[Duser.name][1]][DPSMateUser[cause][1]][DPSMateAbility[Dname][1]][1] = DPSMateDamageTaken[cat][DPSMateUser[Duser.name][1]][DPSMateUser[cause][1]][DPSMateAbility[Dname][1]][1] + Dhit
 			DPSMateDamageTaken[cat][DPSMateUser[Duser.name][1]][DPSMateUser[cause][1]][DPSMateAbility[Dname][1]][5] = DPSMateDamageTaken[cat][DPSMateUser[Duser.name][1]][DPSMateUser[cause][1]][DPSMateAbility[Dname][1]][5] + Dcrit
 			DPSMateDamageTaken[cat][DPSMateUser[Duser.name][1]][DPSMateUser[cause][1]][DPSMateAbility[Dname][1]][9] = DPSMateDamageTaken[cat][DPSMateUser[Duser.name][1]][DPSMateUser[cause][1]][DPSMateAbility[Dname][1]][9] + Dmiss
+			DPSMateDamageTaken[cat][DPSMateUser[Duser.name][1]][DPSMateUser[cause][1]][DPSMateAbility[Dname][1]][15] = DPSMateDamageTaken[cat][DPSMateUser[Duser.name][1]][DPSMateUser[cause][1]][DPSMateAbility[Dname][1]][15] + Dcrush
 			DPSMateDamageTaken[cat][DPSMateUser[Duser.name][1]][DPSMateUser[cause][1]][DPSMateAbility[Dname][1]][10] = DPSMateDamageTaken[cat][DPSMateUser[Duser.name][1]][DPSMateUser[cause][1]][DPSMateAbility[Dname][1]][10] + Dparry
 			DPSMateDamageTaken[cat][DPSMateUser[Duser.name][1]][DPSMateUser[cause][1]][DPSMateAbility[Dname][1]][11] = DPSMateDamageTaken[cat][DPSMateUser[Duser.name][1]][DPSMateUser[cause][1]][DPSMateAbility[Dname][1]][11] + Ddodge
 			DPSMateDamageTaken[cat][DPSMateUser[Duser.name][1]][DPSMateUser[cause][1]][DPSMateAbility[Dname][1]][12] = DPSMateDamageTaken[cat][DPSMateUser[Duser.name][1]][DPSMateUser[cause][1]][DPSMateAbility[Dname][1]][12] + Dresist
@@ -612,6 +613,10 @@ function DPSMate.DB:DamageTaken(Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, Ddodge
 				if (Damount < DPSMateDamageTaken[cat][DPSMateUser[Duser.name][1]][DPSMateUser[cause][1]][DPSMateAbility[Dname][1]][6] or DPSMateDamageTaken[cat][DPSMateUser[Duser.name][1]][DPSMateUser[cause][1]][DPSMateAbility[Dname][1]][6] == 0) then DPSMateDamageTaken[cat][DPSMateUser[Duser.name][1]][DPSMateUser[cause][1]][DPSMateAbility[Dname][1]][6] = Damount end
 				if Damount > DPSMateDamageTaken[cat][DPSMateUser[Duser.name][1]][DPSMateUser[cause][1]][DPSMateAbility[Dname][1]][7] then DPSMateDamageTaken[cat][DPSMateUser[Duser.name][1]][DPSMateUser[cause][1]][DPSMateAbility[Dname][1]][7] = Damount end
 				DPSMateDamageTaken[cat][DPSMateUser[Duser.name][1]][DPSMateUser[cause][1]][DPSMateAbility[Dname][1]][8] = (DPSMateDamageTaken[cat][DPSMateUser[Duser.name][1]][DPSMateUser[cause][1]][DPSMateAbility[Dname][1]][8]+Damount)/2
+			elseif Dcrush == 1 then
+				if (Damount < DPSMateDamageTaken[cat][DPSMateUser[Duser.name][1]][DPSMateUser[cause][1]][DPSMateAbility[Dname][1]][16] or DPSMateDamageTaken[cat][DPSMateUser[Duser.name][1]][DPSMateUser[cause][1]][DPSMateAbility[Dname][1]][16] == 0) then DPSMateDamageTaken[cat][DPSMateUser[Duser.name][1]][DPSMateUser[cause][1]][DPSMateAbility[Dname][1]][16] = Damount end
+				if Damount > DPSMateDamageTaken[cat][DPSMateUser[Duser.name][1]][DPSMateUser[cause][1]][DPSMateAbility[Dname][1]][17] then DPSMateDamageTaken[cat][DPSMateUser[Duser.name][1]][DPSMateUser[cause][1]][DPSMateAbility[Dname][1]][17] = Damount end
+				DPSMateDamageTaken[cat][DPSMateUser[Duser.name][1]][DPSMateUser[cause][1]][DPSMateAbility[Dname][1]][18] = (DPSMateDamageTaken[cat][DPSMateUser[Duser.name][1]][DPSMateUser[cause][1]][DPSMateAbility[Dname][1]][18]+Damount)/2
 			end
 		else
 			DPSMate.DB:BuildUser(Duser.name, Duser.class)
@@ -642,9 +647,14 @@ function DPSMate.DB:DamageTaken(Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, Ddodge
 				[12] = Dresist, -- resist
 				[13] = Damount, -- amount
 				[14] = Damount, -- average
+				[15] = Dcrush,
+				[16] = 0,
+				[17] = 0,
+				[18] = 0,
 			}
 			if (Dhit == 1) then DPSMateDamageTaken[cat][DPSMateUser[Duser.name][1]][DPSMateUser[cause][1]][DPSMateAbility[Dname][1]][2] = Damount; DPSMateDamageTaken[cat][DPSMateUser[Duser.name][1]][DPSMateUser[cause][1]][DPSMateAbility[Dname][1]][3] = Damount; DPSMateDamageTaken[cat][DPSMateUser[Duser.name][1]][DPSMateUser[cause][1]][DPSMateAbility[Dname][1]][4] = Damount end
 			if (Dcrit == 1) then DPSMateDamageTaken[cat][DPSMateUser[Duser.name][1]][DPSMateUser[cause][1]][DPSMateAbility[Dname][1]][6] = Damount; DPSMateDamageTaken[cat][DPSMateUser[Duser.name][1]][DPSMateUser[cause][1]][DPSMateAbility[Dname][1]][7] = Damount; DPSMateDamageTaken[cat][DPSMateUser[Duser.name][1]][DPSMateUser[cause][1]][DPSMateAbility[Dname][1]][8] = Damount end
+			if (Dcrush == 1) then DPSMateDamageTaken[cat][DPSMateUser[Duser.name][1]][DPSMateUser[cause][1]][DPSMateAbility[Dname][1]][16] = Damount; DPSMateDamageTaken[cat][DPSMateUser[Duser.name][1]][DPSMateUser[cause][1]][DPSMateAbility[Dname][1]][17] = Damount; DPSMateDamageTaken[cat][DPSMateUser[Duser.name][1]][DPSMateUser[cause][1]][DPSMateAbility[Dname][1]][18] = Damount end
 		end
 		DPSMateDamageTaken[cat][DPSMateUser[Duser.name][1]][DPSMateUser[cause][1]]["i"] = DPSMateDamageTaken[cat][DPSMateUser[Duser.name][1]][DPSMateUser[cause][1]]["i"] + Damount
 		DPSMateDamageTaken[cat][DPSMateUser[Duser.name][1]]["i"][DPSMateCombatTime[val]] = Damount
