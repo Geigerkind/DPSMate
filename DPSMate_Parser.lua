@@ -384,7 +384,7 @@ function DPSMate.Parser:PeriodicSelfDamage(msg)
 		for a, c, ab in string.gfind(msg, "You suffer (.+) from (.+)'s (.+)%.") do cause=c; ability=ab; amount=tonumber(strsub(a, strfind(a, "%d+"))) end
 		DPSMate.DB:EnemyDamage(DPSMateEDD, player, ability, 1, 0, 0, 0, 0, 0, amount, cause)
 		DPSMate.DB:DamageTaken(player, ability, 1, 0, 0, 0, 0, 0, amount, cause, 0)
-		DPSMate.DB:DeathHistory(player.name, cause, ability, amount, hit, crit, 0)
+		DPSMate.DB:DeathHistory(player.name, cause, ability, amount, 1, 0, 0)
 	end
 end
 
@@ -474,6 +474,7 @@ end
 -- Your Healing Potion heals you for 507.
 -- You gain 25 Energy from Relentless Strikes Effect.
 function DPSMate.Parser:SpellSelfBuff(msg)
+	DPSMate:SendMessage(msg)
 	local ability, hit, crit, target, amount = "", 0, 0, "", 0
 	for a, ab in string.gfind(msg, "You gain (.+) Energy from (.+)%.") do DPSMate.DB:BuildBuffs(player.name, player.name, ab, true); DPSMate.DB:DestroyBuffs(player.name, ab); return end
 	for a, ab in string.gfind(msg, "You gain (.+) extra attack through (.+)%.") do DPSMate.DB:BuildBuffs(player.name, player.name, ab, true); DPSMate.DB:DestroyBuffs(player.name, ab); return end
