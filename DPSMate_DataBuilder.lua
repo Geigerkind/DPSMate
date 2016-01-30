@@ -589,6 +589,10 @@ end
 -- Fall damage
 function DPSMate.DB:DamageTaken(Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, Ddodge, Dresist, Damount, cause)
 	if (not Duser.name or DPSMate:TableLength(Duser)==0 or not Dname or cause=="") then return end
+	if (not CombatState and cheatCombat+10<GetTime()) then
+		DPSMate.Options:NewSegment()
+	end
+	CombatState = true
 
 	for cat, val in pairs({[1]="total", [2]="current"}) do 
 		if DPSMate.DB:DTExist(Duser.name, cause, Dname, DPSMateDamageTaken[cat]) then
@@ -614,14 +618,13 @@ function DPSMate.DB:DamageTaken(Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, Ddodge
 			DPSMate.DB:BuildUser(cause, nil)
 			DPSMate.DB:BuildAbility(Dname, nil)
 			if not DPSMateDamageTaken[cat][DPSMateUser[Duser.name][1]] then
-				DPSMateDamageTaken[cat][DPSMateUser[Duser.name][1]] = {}
+				DPSMateDamageTaken[cat][DPSMateUser[Duser.name][1]] = {
+					i = {}
+				}
 			end
 			if not DPSMateDamageTaken[cat][DPSMateUser[Duser.name][1]][DPSMateUser[cause][1]] then
 				DPSMateDamageTaken[cat][DPSMateUser[Duser.name][1]][DPSMateUser[cause][1]] = {
-					i = {
-						[1] = {},
-						[2] = 0,
-					},
+					i = 0,
 				}
 			end
 			DPSMateDamageTaken[cat][DPSMateUser[Duser.name][1]][DPSMateUser[cause][1]][DPSMateAbility[Dname][1]] = {
@@ -643,7 +646,8 @@ function DPSMate.DB:DamageTaken(Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, Ddodge
 			if (Dhit == 1) then DPSMateDamageTaken[cat][DPSMateUser[Duser.name][1]][DPSMateUser[cause][1]][DPSMateAbility[Dname][1]][2] = Damount; DPSMateDamageTaken[cat][DPSMateUser[Duser.name][1]][DPSMateUser[cause][1]][DPSMateAbility[Dname][1]][3] = Damount; DPSMateDamageTaken[cat][DPSMateUser[Duser.name][1]][DPSMateUser[cause][1]][DPSMateAbility[Dname][1]][4] = Damount end
 			if (Dcrit == 1) then DPSMateDamageTaken[cat][DPSMateUser[Duser.name][1]][DPSMateUser[cause][1]][DPSMateAbility[Dname][1]][6] = Damount; DPSMateDamageTaken[cat][DPSMateUser[Duser.name][1]][DPSMateUser[cause][1]][DPSMateAbility[Dname][1]][7] = Damount; DPSMateDamageTaken[cat][DPSMateUser[Duser.name][1]][DPSMateUser[cause][1]][DPSMateAbility[Dname][1]][8] = Damount end
 		end
-		DPSMateDamageTaken[cat][DPSMateUser[Duser.name][1]][DPSMateUser[cause][1]]["i"][2] = DPSMateDamageTaken[cat][DPSMateUser[Duser.name][1]][DPSMateUser[cause][1]]["i"][2] + Damount
+		DPSMateDamageTaken[cat][DPSMateUser[Duser.name][1]][DPSMateUser[cause][1]]["i"] = DPSMateDamageTaken[cat][DPSMateUser[Duser.name][1]][DPSMateUser[cause][1]]["i"] + Damount
+		DPSMateDamageTaken[cat][DPSMateUser[Duser.name][1]]["i"][DPSMateCombatTime[val]] = Damount
 	end
 	DPSMate.DB.NeedUpdate = true
 end
@@ -1352,7 +1356,7 @@ function DPSMate.DB:CombatTime()
 			end
 		end
 		MainLastUpdateMinute = MainLastUpdateMinute + arg1
-		if MainLastUpdateMinute>=40 then
+		if MainLastUpdateMinute>=60 then
 			DPSMate.DB:ClearAwaitBuffs()
 			DPSMate.DB:ClearAwaitAbsorb()
 			DPSMate.DB:ClearAwaitHotDispel()

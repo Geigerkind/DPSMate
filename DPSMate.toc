@@ -62,6 +62,8 @@ modules\DPSMate_Details_Damage.lua
 modules\DPSMate_Details_Damage.xml
 modules\DPSMate_Details_DamageTotal.lua
 modules\DPSMate_Details_DamageTotal.xml
+modules\DPSMate_Details_DamageTaken.lua
+modules\DPSMate_Details_DamageTaken.xml
 
 DPSMate_Frame.xml
 DPSMate_Options.xml

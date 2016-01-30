@@ -38,6 +38,7 @@ function DPSMate.Sync:OnUpdate(elapsed)
 			iterator = 6
 		elseif time>=15 and iterator==6 then
 			DPSMate.Sync:DMGTakenAllOut()
+			DPSMate.Sync:DMGTakenStatOut()
 			DPSMate.Sync:DMGTakenAbilityOut()
 			iterator = 7
 		elseif time>=18 and iterator==7 then -- May be Ressource Heavy ? UnitAffectingCombat("player") check
@@ -197,6 +198,8 @@ function DPSMate.Sync:OnEvent(event)
 				DPSMate.Sync:iDispelsIn(arg2, arg4) 
 			elseif arg1 == "DPSMate_DMGTakenAll" then
 				DPSMate.Sync:DMGTakenAllIn(arg2, arg4)
+			elseif arg1 == "DPSMate_DMGTakenStat" then
+				DPSMate.Sync:DMGTakenStatIn(arg2, arg4)
 			elseif arg1 == "DPSMate_DMGTakenAbility" then
 				DPSMate.Sync:DMGTakenAbilityIn(arg2, arg4)
 			elseif arg1 == "DPSMate_EDTAll" then
@@ -319,18 +322,30 @@ function DPSMate.Sync:DMGTakenAllIn(arg2, arg4)
 		DPSMate.DB:BuildUser(ta, oc)
 		local tarid = DPSMateUser[ta][1]
 		if not DPSMateDamageTaken[1][ownerid] then
-			DPSMateDamageTaken[1][ownerid] = {}
+			DPSMateDamageTaken[1][ownerid] = {
+				i = {},
+			}
 		end
 		if not DPSMateDamageTaken[1][ownerid][tarid] then
 			DPSMateDamageTaken[1][ownerid][tarid] = {
-				i = {
-					[1] = {},
-					[2] = 0,
-				},
+				i = 0,
 			}
 		end
-		DPSMateDamageTaken[1][ownerid][tarid]["i"][2] = tonumber(am)
+		DPSMateDamageTaken[1][ownerid][tarid]["i"] = tonumber(am)
 		DPSMate.DB.NeedUpdate = true
+	end
+end
+
+function DPSMate.Sync:DMGTakenStatIn(arg2, arg4)
+	DPSMate.DB:BuildUser(arg4, nil)
+	local ownerid = DPSMateUser[arg4][1]
+	for key, val in string.gfind(arg2, "(.+),(.+)") do
+		if not DPSMateDamageTaken[1][ownerid] then
+			DPSMateDamageTaken[1][ownerid] = {
+				i = {},
+			}
+		end
+		DPSMateDamageDone[1][ownerid]["i"][tonumber(key)] = tonumber(val)
 	end
 end
 
@@ -344,14 +359,13 @@ function DPSMate.Sync:DMGTakenAbilityIn(arg2, arg4)
 		DPSMate.DB:BuildAbility(a, nil)
 		local abilityid = DPSMateAbility[a][1]
 		if not DPSMateDamageTaken[1][ownerid] then
-			DPSMateDamageTaken[1][ownerid] = {}
+			DPSMateDamageTaken[1][ownerid] = {
+				i = {},
+			}
 		end
 		if not DPSMateDamageTaken[1][ownerid][tarid] then
 			DPSMateDamageTaken[1][ownerid][tarid] = {
-				i = {
-					[1] = {},
-					[2] = 0,
-				},
+				i = 0,
 			}
 		end
 		DPSMateDamageTaken[1][ownerid][tarid][abilityid] = {
@@ -849,16 +863,27 @@ end
 function DPSMate.Sync:DMGTakenAllOut()
 	if not DPSMateDamageTaken[1][DPSMateUser[player.name][1]] then return end
 	for cat, val in pairs(DPSMateDamageTaken[1][DPSMateUser[player.name][1]]) do
-		SendAddonMessage("DPSMate_DMGTakenAll", player.class..","..cat..","..val["i"][2], "RAID")
+		if cat~="i" then
+			SendAddonMessage("DPSMate_DMGTakenAll", player.class..","..cat..","..val["i"], "RAID")
+		end
+	end
+end
+
+function DPSMate.Sync:DMGTakenStatOut()
+	if not DPSMateDamageTaken[1][DPSMateUser[player.name][1]] then return end
+	for cat, val in (DPSMateDamageTaken[1][DPSMateUser[player.name][1]]["i"]) do
+		SendAddonMessage("DPSMate_DMGTakenStat", cat..","..val, "RAID")
 	end
 end
 
 function DPSMate.Sync:DMGTakenAbilityOut()
 	if not DPSMateDamageTaken[1][DPSMateUser[player.name][1]] then return end
 	for cat, val in (DPSMateDamageTaken[1][DPSMateUser[player.name][1]]) do
-		for ca, va in pairs(val) do
-			if ca~="i" then
-				SendAddonMessage("DPSMate_DMGTakenAbility", cat..","..DPSMate:GetAbilityById(ca)..","..va[1]..","..va[2]..","..va[3]..","..ceil(va[4])..","..va[5]..","..va[6]..","..va[7]..","..ceil(va[8])..","..va[9]..","..va[10]..","..va[11]..","..va[12]..","..va[13]..","..ceil(va[14]), "RAID")
+		if cat~="i" then
+			for ca, va in pairs(val) do
+				if ca~="i" then
+					SendAddonMessage("DPSMate_DMGTakenAbility", cat..","..DPSMate:GetAbilityById(ca)..","..va[1]..","..va[2]..","..va[3]..","..ceil(va[4])..","..va[5]..","..va[6]..","..va[7]..","..ceil(va[8])..","..va[9]..","..va[10]..","..va[11]..","..va[12]..","..va[13]..","..ceil(va[14]), "RAID")
+				end
 			end
 		end
 	end
@@ -968,7 +993,7 @@ function DPSMate.Sync:DeathsOut()
 	if not DPSMateDeaths[1][DPSMateUser[player.name][1]] then return end
 	for cat, val in pairs(DPSMateDeaths[1][DPSMateUser[player.name][1]]) do -- death count
 		for ca, va in pairs(val) do -- each part
-			if ca~="i" then
+			if ca~="i" and va[1] and va[2] then -- Testing if this prevents the error
 				SendAddonMessage("DPSMate_Deaths", cat..","..ca..","..DPSMate:GetUserById(va[1])..","..DPSMate:GetAbilityById(va[2])..","..va[3]..","..va[4]..","..va[5], "RAID")
 			end
 		end
