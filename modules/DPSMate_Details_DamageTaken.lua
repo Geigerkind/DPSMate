@@ -230,22 +230,22 @@ end
 
 function DPSMate.Modules.DetailsDamageTaken:CreateGraphTable()
 	local lines = {}
-	for i=1, 7 do
+	for i=1, 8 do
 		-- Horizontal
 		lines[i] = DPSMate.Options.graph:DrawLine(DPSMate_Details_DamageTaken_Log, 252, 270-i*30, 617, 270-i*30, 20, {0.5,0.5,0.5,0.5}, "BACKGROUND")
 		lines[i]:Show()
 	end
 	-- Vertical
-	lines[9] = DPSMate.Options.graph:DrawLine(DPSMate_Details_DamageTaken_Log, 302, 260, 302, 45, 20, {0.5,0.5,0.5,0.5}, "BACKGROUND")
+	lines[9] = DPSMate.Options.graph:DrawLine(DPSMate_Details_DamageTaken_Log, 302, 260, 302, 15, 20, {0.5,0.5,0.5,0.5}, "BACKGROUND")
 	lines[9]:Show()
 	
-	lines[10] = DPSMate.Options.graph:DrawLine(DPSMate_Details_DamageTaken_Log, 437, 260, 437, 45, 20, {0.5,0.5,0.5,0.5}, "BACKGROUND")
+	lines[10] = DPSMate.Options.graph:DrawLine(DPSMate_Details_DamageTaken_Log, 437, 260, 437, 15, 20, {0.5,0.5,0.5,0.5}, "BACKGROUND")
 	lines[10]:Show()
 	
-	lines[11] = DPSMate.Options.graph:DrawLine(DPSMate_Details_DamageTaken_Log, 497, 260, 497, 45, 20, {0.5,0.5,0.5,0.5}, "BACKGROUND")
+	lines[11] = DPSMate.Options.graph:DrawLine(DPSMate_Details_DamageTaken_Log, 497, 260, 497, 15, 20, {0.5,0.5,0.5,0.5}, "BACKGROUND")
 	lines[11]:Show()
 	
-	lines[12] = DPSMate.Options.graph:DrawLine(DPSMate_Details_DamageTaken_Log, 557, 260, 557, 45, 20, {0.5,0.5,0.5,0.5}, "BACKGROUND")
+	lines[12] = DPSMate.Options.graph:DrawLine(DPSMate_Details_DamageTaken_Log, 557, 260, 557, 15, 20, {0.5,0.5,0.5,0.5}, "BACKGROUND")
 	lines[12]:Show()
 end
 
