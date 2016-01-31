@@ -195,35 +195,36 @@ end
 -- You hit Blazing Elemental for 187.
 -- You crit Blazing Elemental for 400.
 function DPSMate.Parser:SelfHits(msg)
-	local hit, crit, glance = 0 , 0, 0
+	local hit, crit, glance, block = 0 , 0, 0, 0
 	-- Fall damage
 	if strfind(msg, DPSMate.localization.parser.youfall) then
 		amount = tonumber(strsub(msg, strfind(msg, "%d+")))
-		DPSMate.DB:DamageTaken(player, "Falling", 1, 0, 0, 0, 0, 0, amount, "Environment")
+		DPSMate.DB:DamageTaken(player, "Falling", 1, 0, 0, 0, 0, 0, amount, "Environment", 0)
 	-- Drown damage
 	elseif strfind(msg, DPSMate.localization.parser.youdrown) then
 		amount = tonumber(strsub(msg, strfind(msg, "%d+")))
-		DPSMate.DB:DamageTaken(player, "Drowning", 1, 0, 0, 0, 0, 0, amount, "Environment")
+		DPSMate.DB:DamageTaken(player, "Drowning", 1, 0, 0, 0, 0, 0, amount, "Environment", 0)
 	-- Lava damage
 	elseif strfind(msg, DPSMate.localization.parser.swimminginlava) then
 		amount = tonumber(strsub(msg, strfind(msg, "%d+")))
-		DPSMate.DB:DamageTaken(player, "Lava", 1, 0, 0, 0, 0, 0, amount, "Environment")
+		DPSMate.DB:DamageTaken(player, "Lava", 1, 0, 0, 0, 0, 0, amount, "Environment", 0)
 	-- White hit Damage
 	elseif strfind(msg, DPSMate.localization.parser.youhit) or strfind(msg, DPSMate.localization.parser.youcrit) then
 		for k, t, a in string.gfind(msg, "You (.-) (.+) for (%d+).") do
 			if k == DPSMate.localization.parser.hit then hit=1; else crit=1; end
 			if strfind(msg, "glancing") then glance = 1; hit=0 end
+			if strfind(msg, "blocked") then block = 1; hit=0 end
 			DPSMate.DB:EnemyDamage(DPSMateEDT, player, "AutoAttack", hit, crit, 0, 0, 0, 0, tonumber(a), t)
-			DPSMate.DB:DamageDone(player, "AutoAttack", hit, crit, 0, 0, 0, 0, tonumber(a), glance)
+			DPSMate.DB:DamageDone(player, "AutoAttack", hit, crit, 0, 0, 0, 0, tonumber(a), glance, block)
 		end
 	end
 end
 
 function DPSMate.Parser:SelfMisses(msg)
-	local miss, parry, dodge = 0, 0, 0
-	if strfind(msg, DPSMate.localization.parser.youmiss) then miss = 1; elseif strfind(msg, DPSMate.localization.parser.parries) then parry = 1; elseif strfind(msg, DPSMate.localization.parser.dodges) then dodge = 1; end
+	local miss, parry, dodge, block = 0, 0, 0, 0
+	if strfind(msg, DPSMate.localization.parser.youmiss) then miss = 1; elseif strfind(msg, DPSMate.localization.parser.parries) then parry = 1; elseif strfind(msg, DPSMate.localization.parser.dodges) then dodge = 1; elseif strfind(msg, "blocks") then block = 1; end
 	DPSMate.DB:EnemyDamage(DPSMateEDT, player, "AutoAttack", 0, 0, miss, parry, dodge, 0, 0, 0, "None")
-	DPSMate.DB:DamageDone(player, "AutoAttack", 0, 0, miss, parry, dodge, 0, 0, 0, 0)
+	DPSMate.DB:DamageDone(player, "AutoAttack", 0, 0, miss, parry, dodge, 0, 0, 0, block)
 end
 
 function DPSMate.Parser:SelfSpellDMG(msg)
@@ -245,10 +246,11 @@ function DPSMate.Parser:SelfSpellDMG(msg)
 		-- School and target to be added
 		for ab, t, a in string.gfind(msg, "Your (.+) hits (.+) for (.+).") do ability = ab; target = t; amount = tonumber(strsub(a, strfind(a, "%d+"))); hit=1; end
 		for ab, t, a in string.gfind(msg, "Your (.+) crits (.+) for (.+).") do ability = ab; target = t; amount = tonumber(strsub(a, strfind(a, "%d+"))); crit=1; end
+		if strfind(msg, "blocked") then block = 1; hit=0 end
 		if DPSMate:TContains(DPSMate.Parser.Kicks, ability) then DPSMate.DB:AssignPotentialKick(player.name, ability, target, GetTime()) end
 	end
 	DPSMate.DB:EnemyDamage(DPSMateEDT, player, ability, hit, crit, miss, parry, dodge, resist, amount, target)
-	DPSMate.DB:DamageDone(player, ability, hit, crit, miss, parry, dodge, resist, amount, 0)
+	DPSMate.DB:DamageDone(player, ability, hit, crit, miss, parry, dodge, resist, amount, 0, block)
 end
 
 function DPSMate.Parser:PeriodicDamage(msg)
@@ -261,13 +263,13 @@ function DPSMate.Parser:PeriodicDamage(msg)
 		cause.name = name
 		if cause.name == DPSMate.localization.parser.your2 then cause.name = player.name; else cause.name = strsub(cause.name, 1, strlen(cause.name)-2); end
 		DPSMate.DB:EnemyDamage(DPSMateEDT, cause, strsub(ab, 1, strfind(ab, "%.")-1).."(Periodic)", 1, 0, 0, 0, 0, 0, tonumber(strsub(dmg, strfind(dmg, "%d+"))), tar)
-		DPSMate.DB:DamageDone(cause, strsub(ab, 1, strfind(ab, "%.")-1).."(Periodic)", 1, 0, 0, 0, 0, 0, tonumber(strsub(dmg, strfind(dmg, "%d+"))), 0)
+		DPSMate.DB:DamageDone(cause, strsub(ab, 1, strfind(ab, "%.")-1).."(Periodic)", 1, 0, 0, 0, 0, 0, tonumber(strsub(dmg, strfind(dmg, "%d+"))), 0, 0)
 	end
 end
 
 function DPSMate.Parser:FriendlyPlayerDamage(msg)
 	if strfind(msg, "begins") then return end
-	local target, ability, cause, amount, resist, hit, crit, dodge, parry, miss = "", "", {}, 0, 0, 0, 0, 0, 0, 0
+	local target, ability, cause, amount, resist, hit, crit, dodge, parry, miss, block = "", "", {}, 0, 0, 0, 0, 0, 0, 0, 0
 	if strfind(msg, "was resisted by") then
 		for c, ab, t in string.gfind(msg, "(.-)'s (.+) was resisted by (.+).") do resist=1; cause.name=c; ability=ab; target=t; end
 	elseif strfind(msg, "was dodged by") then
@@ -276,44 +278,48 @@ function DPSMate.Parser:FriendlyPlayerDamage(msg)
 		for c, ab, t in string.gfind(msg, "(.-)'s (.+) was parried by (.+).") do parry=1; cause.name=c; ability=ab; target=t; end
 	elseif strfind(msg, "missed") then
 		for c, ab, t in string.gfind(msg, "(.-)'s (.+) missed (.+).") do miss=1; cause.name=c; ability=ab; target=t; end
+	elseif strfind(msg, DPSMate.localization.parser.wasblockedby) then
+		for c, a, t in string.gfind(msg, "(.-)'s (.+) was blocked by (.+).") do block=1; ability=a; target=t; cause.name=c end
 	elseif strfind(msg, "immune") then
 		-- Wont be collected
 		return
 	else
 		for c, ab, t, a in string.gfind(msg, "(.-)'s (.+) hits (.+) for (.+).") do hit=1; cause.name=c; ability=ab; target=t; amount=tonumber(strsub(a, strfind(a, "%d+"))); end
 		for c, ab, t, a in string.gfind(msg, "(.-)'s (.+) crits (.+) for (.+).") do crit=1; cause.name=c; ability=ab; target=t; amount=tonumber(strsub(a, strfind(a, "%d+"))); end
+		if strfind(msg, "blocked") then block = 1; hit=0 end
 		if DPSMate:TContains(DPSMate.Parser.Kicks, ability) then DPSMate.DB:AssignPotentialKick(cause.name, ability, target, GetTime()) end
 	end
 	DPSMate.DB:EnemyDamage(DPSMateEDT, cause, ability, hit, crit, miss, parry, dodge, resist, amount, target)
-	DPSMate.DB:DamageDone(cause, ability, hit, crit, miss, parry, dodge, resist, amount, 0)
+	DPSMate.DB:DamageDone(cause, ability, hit, crit, miss, parry, dodge, resist, amount, 0, block)
 end
 
 function DPSMate.Parser:FriendlyPlayerHits(msg)
 	-- (...). (608 absorbed/resisted)
-	local target, cause, hit, crit, amount, glance = "", {}, 0, 0, 0, 0
+	local target, cause, hit, crit, amount, glance, block = "", {}, 0, 0, 0, 0, 0
 	if strfind(msg, "lava") then
 		for c, a in string.gfind(msg, "(.-) loses (%d+) health for swimming in lava%.") do cause.name=c; amount=tonumber(a); end
-		DPSMate.DB:DamageTaken(cause, "Lava", 1, 0, 0, 0, 0, 0, amount, "Environment")
+		DPSMate.DB:DamageTaken(cause, "Lava", 1, 0, 0, 0, 0, 0, amount, "Environment", 0)
 	elseif strfind(msg, "falls") then
 		for c, a in string.gfind(msg, "(.-) falls and loses (%d+) health%.") do cause.name=c; amount=tonumber(a); end
-		DPSMate.DB:DamageTaken(cause, "Falling", 1, 0, 0, 0, 0, 0, amount, "Environment")
+		DPSMate.DB:DamageTaken(cause, "Falling", 1, 0, 0, 0, 0, 0, amount, "Environment", 0)
 	elseif strfind(msg, "drowning") then
 		for c, a in string.gfind(msg, "(.-) is drowning and loses (%d+) health%.") do cause.name=c; amount=tonumber(a); end
-		DPSMate.DB:DamageTaken(cause, "Drowning", 1, 0, 0, 0, 0, 0, amount, "Environment")
+		DPSMate.DB:DamageTaken(cause, "Drowning", 1, 0, 0, 0, 0, 0, amount, "Environment", 0)
 	else
 		for c, k, t, a in string.gfind(msg, "(.-) (.-) (.+) for (.+)%.") do cause.name=c; target=t; amount=tonumber(strsub(a, strfind(a, "%d+"))); if k=="hits" then hit=1 else crit=1 end end
 		if strfind(msg, "glancing") then glance = 1; hit=0 end
+		if strfind(msg, "blocked") then block = 1; hit=0 end
 		DPSMate.DB:EnemyDamage(DPSMateEDT, cause, "AutoAttack", hit, crit, 0, 0, 0, 0, amount, target)
-		DPSMate.DB:DamageDone(cause, "AutoAttack", hit, crit, 0, 0, 0, 0, amount, glance)
+		DPSMate.DB:DamageDone(cause, "AutoAttack", hit, crit, 0, 0, 0, 0, amount, glance, block)
 	end
 end
 
 function DPSMate.Parser:FriendlyPlayerMisses(msg)
-	local miss, parry, dodge, cause = 0, 0, 0, {}
-	if strfind(msg, "misses") then miss = 1 elseif strfind(msg, "parries") then parry = 1 elseif strfind(msg, "dodges") then dodge = 1 end
+	local miss, parry, dodge, cause, block = 0, 0, 0, {}, 0
+	if strfind(msg, "misses") then miss = 1 elseif strfind(msg, "parries") then parry = 1 elseif strfind(msg, "dodges") then dodge = 1 elseif strfind(msg, "blocks") then block = 1 end
 	cause.name = strsub(msg, 1, strfind(msg, " ")-1)
 	DPSMate.DB:EnemyDamage(DPSMateEDT, cause, "AutoAttack", 0, 0, miss, parry, dodge, 0, 0, "None")
-	DPSMate.DB:DamageDone(cause, "AutoAttack", 0, 0, miss, parry, dodge, 0, 0, 0)
+	DPSMate.DB:DamageDone(cause, "AutoAttack", 0, 0, miss, parry, dodge, 0, 0, 0, block)
 end
 
 -- You reflect 20 Holy damage to Razzashi Serpent.
@@ -321,7 +327,7 @@ function DPSMate.Parser:SpellDamageShieldsOnSelf(msg)
 	local target, amount = "", 0
 	for a, ta in string.gfind(msg, "You reflect (.+) to (.+)%.") do target=ta; amount=tonumber(strsub(a, strfind(a, "%d+"))) end
 	DPSMate.DB:EnemyDamage(DPSMateEDT, player, "Reflection (Thorns etc.)", 1, 0, 0, 0, 0, 0, amount, target)
-	DPSMate.DB:DamageDone(player, "Reflection (Thorns etc.)", 1, 0, 0, 0, 0, 0, amount, 0)
+	DPSMate.DB:DamageDone(player, "Reflection (Thorns etc.)", 1, 0, 0, 0, 0, 0, amount, 0, 0)
 end
 
 -- Helboar reflects 4 Fire damage to you.
@@ -329,7 +335,7 @@ function DPSMate.Parser:SpellDamageShieldsOnOthers(msg)
 	local target, cause, amount = "", {}, 0
 	for c, a, ta in string.gfind(msg, "(.+) reflects (.+) to (.+)%.") do cause.name=c; target=ta; amount=tonumber(strsub(a, strfind(a, "%d+"))) end
 	if target~="you" then DPSMate.DB:EnemyDamage(DPSMateEDT, cause, "Reflection (Thorns etc.)", 1, 0, 0, 0, 0, 0, amount, target) end
-	DPSMate.DB:DamageDone(cause, "Reflection (Thorns etc.)", 1, 0, 0, 0, 0, 0, amount, 0)
+	DPSMate.DB:DamageDone(cause, "Reflection (Thorns etc.)", 1, 0, 0, 0, 0, 0, amount, 0, 0)
 end
 
 ----------------------------------------------------------------------------------
@@ -474,7 +480,6 @@ end
 -- Your Healing Potion heals you for 507.
 -- You gain 25 Energy from Relentless Strikes Effect.
 function DPSMate.Parser:SpellSelfBuff(msg)
-	DPSMate:SendMessage(msg)
 	local ability, hit, crit, target, amount = "", 0, 0, "", 0
 	for a, ab in string.gfind(msg, "You gain (.+) Energy from (.+)%.") do DPSMate.DB:BuildBuffs(player.name, player.name, ab, true); DPSMate.DB:DestroyBuffs(player.name, ab); return end
 	for a, ab in string.gfind(msg, "You gain (.+) extra attack through (.+)%.") do DPSMate.DB:BuildBuffs(player.name, player.name, ab, true); DPSMate.DB:DestroyBuffs(player.name, ab); return end

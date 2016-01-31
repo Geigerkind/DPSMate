@@ -343,11 +343,19 @@
 				</Backdrop>
 				<Layers>
 					<Layer level="ARTWORK">
-						<FontString name="$parent_Glance" inherits="GameFontNormal" text="Glance" justifyH="LEFT">
+						<FontString name="$parent_Block" inherits="GameFontNormal" text="Block" justifyH="LEFT">
 							<Size x="50" y="24" />
 							<Anchors>
 								<Anchor point="TOPLEFT">
 									<Offset x="10" y="-38" />
+								</Anchor>
+							</Anchors>
+						</FontString>
+						<FontString name="$parent_Glance" inherits="GameFontNormal" text="Glance" justifyH="LEFT">
+							<Size x="50" y="24" />
+							<Anchors>
+								<Anchor point="TOP" relativeTo="$parent_Block" relativePoint="BOTTOM">
+									<Offset x="0" y="-6" />
 								</Anchor>
 							</Anchors>
 						</FontString>
@@ -362,7 +370,7 @@
 						<FontString name="$parent_Amount" inherits="GameFontNormal" text="Amount" justifyH="LEFT">
 							<Size x="135" y="24" />
 							<Anchors>
-								<Anchor point="LEFT" relativeTo="$parent_Glance" relativePoint="RIGHT">
+								<Anchor point="LEFT" relativeTo="$parent_Block" relativePoint="RIGHT">
 									<Offset x="0" y="32" />
 								</Anchor>
 							</Anchors>
@@ -421,16 +429,23 @@
 							<Size x="120" y="24" />
 							<Anchors>
 								<Anchor point="TOP" relativeTo="$parent_Dodge" relativePoint="BOTTOM">
-									<Offset x="0" y="-6" />
+									<Offset x="0" y="-4" />
 								</Anchor>
 							</Anchors>
 						</FontString>
-						<FontString name="$parent_Average1" inherits="GameFontNormalSmall" text="10000">
+						<FontString name="$parent_Average0" inherits="GameFontNormalSmall" text="10000">
 							<Size x="60" y="30" />
 							<Anchors>
 								<Anchor point="TOP" relativeTo="$parent_Average" relativePoint="BOTTOM">
 									<Offset x="-3" y="0" />
 								</Anchor>
+							</Anchors>
+							<Color r="1" g="1" b="1" />
+						</FontString>
+						<FontString name="$parent_Average1" inherits="GameFontNormalSmall" text="10000">
+							<Size x="60" y="30" />
+							<Anchors>
+								<Anchor point="TOP" relativeTo="$parent_Average0" relativePoint="BOTTOM" />
 							</Anchors>
 							<Color r="1" g="1" b="1" />
 						</FontString>
@@ -476,12 +491,19 @@
 							</Anchors>
 							<Color r="1" g="1" b="1" />
 						</FontString>
-						<FontString name="$parent_Min1" inherits="GameFontNormalSmall" text="10000">
+						<FontString name="$parent_Min0" inherits="GameFontNormalSmall" text="10000">
 							<Size x="60" y="30" />
 							<Anchors>
 								<Anchor point="TOP" relativeTo="$parent_Min" relativePoint="BOTTOM">
 									<Offset x="-3" y="0" />
 								</Anchor>
+							</Anchors>
+							<Color r="1" g="1" b="1" />
+						</FontString>
+						<FontString name="$parent_Min1" inherits="GameFontNormalSmall" text="10000">
+							<Size x="60" y="30" />
+							<Anchors>
+								<Anchor point="TOP" relativeTo="$parent_Min0" relativePoint="BOTTOM" />
 							</Anchors>
 							<Color r="1" g="1" b="1" />
 						</FontString>
@@ -527,12 +549,19 @@
 							</Anchors>
 							<Color r="1" g="1" b="1" />
 						</FontString>
-						<FontString name="$parent_Max1" inherits="GameFontNormalSmall" text="10000">
+						<FontString name="$parent_Max0" inherits="GameFontNormalSmall" text="10000">
 							<Size x="60" y="30" />
 							<Anchors>
 								<Anchor point="TOP" relativeTo="$parent_Max" relativePoint="BOTTOM">
 									<Offset x="-3" y="0" />
 								</Anchor>
+							</Anchors>
+							<Color r="1" g="1" b="1" />
+						</FontString>
+						<FontString name="$parent_Max1" inherits="GameFontNormalSmall" text="10000">
+							<Size x="60" y="30" />
+							<Anchors>
+								<Anchor point="TOP" relativeTo="$parent_Max0" relativePoint="BOTTOM" />
 							</Anchors>
 							<Color r="1" g="1" b="1" />
 						</FontString>
@@ -581,9 +610,14 @@
 					</Layer>
 				</Layers>
 				<Frames>
-					<Frame name="$parent_Amount1" inherits="DPSMateTableAmountTemplate">
+					<Frame name="$parent_Amount0" inherits="DPSMateTableAmountTemplate">
 						<Anchors>
 							<Anchor point="TOP" relativeTo="$parent_Amount" relativePoint="BOTTOM" />
+						</Anchors>
+					</Frame>
+					<Frame name="$parent_Amount1" inherits="DPSMateTableAmountTemplate">
+						<Anchors>
+							<Anchor point="TOP" relativeTo="$parent_Amount0" relativePoint="BOTTOM" />
 						</Anchors>
 					</Frame>
 					<Frame name="$parent_Amount2" inherits="DPSMateTableAmountTemplate">

@@ -516,7 +516,7 @@ function DPSMate.DB:BuildAbility(name, school)
 end
 
 -- First crit/hit av value will be half if it is not the first hit actually. Didnt want to add an exception for it though. Maybe later :/
-function DPSMate.DB:DamageDone(Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, Ddodge, Dresist, Damount, Dglance)
+function DPSMate.DB:DamageDone(Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, Ddodge, Dresist, Damount, Dglance, Dblock)
 	if (not Duser.name or DPSMate:TableLength(Duser)==0 or not Dname or not Damount) then return end -- Parsing failure, I guess at AEO periodic abilities
 	if (not CombatState and cheatCombat+10<GetTime()) then
 		DPSMate.Options:NewSegment()
@@ -533,6 +533,7 @@ function DPSMate.DB:DamageDone(Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, Ddodge,
 			DPSMateDamageDone[cat][DPSMateUser[Duser.name][1]][DPSMateAbility[Dname][1]][12] = DPSMateDamageDone[cat][DPSMateUser[Duser.name][1]][DPSMateAbility[Dname][1]][12] + Dresist
 			DPSMateDamageDone[cat][DPSMateUser[Duser.name][1]][DPSMateAbility[Dname][1]][13] = DPSMateDamageDone[cat][DPSMateUser[Duser.name][1]][DPSMateAbility[Dname][1]][13] + Damount
 			DPSMateDamageDone[cat][DPSMateUser[Duser.name][1]][DPSMateAbility[Dname][1]][14] = DPSMateDamageDone[cat][DPSMateUser[Duser.name][1]][DPSMateAbility[Dname][1]][14] + Dglance
+			DPSMateDamageDone[cat][DPSMateUser[Duser.name][1]][DPSMateAbility[Dname][1]][18] = DPSMateDamageDone[cat][DPSMateUser[Duser.name][1]][DPSMateAbility[Dname][1]][18] + Dblock
 			if Dhit == 1 then
 				if (Damount < DPSMateDamageDone[cat][DPSMateUser[Duser.name][1]][DPSMateAbility[Dname][1]][2] or DPSMateDamageDone[cat][DPSMateUser[Duser.name][1]][DPSMateAbility[Dname][1]][2] == 0) then DPSMateDamageDone[cat][DPSMateUser[Duser.name][1]][DPSMateAbility[Dname][1]][2] = Damount end
 				if Damount > DPSMateDamageDone[cat][DPSMateUser[Duser.name][1]][DPSMateAbility[Dname][1]][3] then DPSMateDamageDone[cat][DPSMateUser[Duser.name][1]][DPSMateAbility[Dname][1]][3] = Damount end
@@ -545,6 +546,10 @@ function DPSMate.DB:DamageDone(Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, Ddodge,
 				if (Damount < DPSMateDamageDone[cat][DPSMateUser[Duser.name][1]][DPSMateAbility[Dname][1]][15] or DPSMateDamageDone[cat][DPSMateUser[Duser.name][1]][DPSMateAbility[Dname][1]][15] == 0) then DPSMateDamageDone[cat][DPSMateUser[Duser.name][1]][DPSMateAbility[Dname][1]][15] = Damount end
 				if Damount > DPSMateDamageDone[cat][DPSMateUser[Duser.name][1]][DPSMateAbility[Dname][1]][16] then DPSMateDamageDone[cat][DPSMateUser[Duser.name][1]][DPSMateAbility[Dname][1]][16] = Damount end
 				DPSMateDamageDone[cat][DPSMateUser[Duser.name][1]][DPSMateAbility[Dname][1]][17] = (DPSMateDamageDone[cat][DPSMateUser[Duser.name][1]][DPSMateAbility[Dname][1]][17]+Damount)/2
+			elseif Dblock == 1 then
+				if (Damount < DPSMateDamageDone[cat][DPSMateUser[Duser.name][1]][DPSMateAbility[Dname][1]][19] or DPSMateDamageDone[cat][DPSMateUser[Duser.name][1]][DPSMateAbility[Dname][1]][19] == 0) then DPSMateDamageDone[cat][DPSMateUser[Duser.name][1]][DPSMateAbility[Dname][1]][19] = Damount end
+				if Damount > DPSMateDamageDone[cat][DPSMateUser[Duser.name][1]][DPSMateAbility[Dname][1]][20] then DPSMateDamageDone[cat][DPSMateUser[Duser.name][1]][DPSMateAbility[Dname][1]][20] = Damount end
+				DPSMateDamageDone[cat][DPSMateUser[Duser.name][1]][DPSMateAbility[Dname][1]][21] = (DPSMateDamageDone[cat][DPSMateUser[Duser.name][1]][DPSMateAbility[Dname][1]][21]+Damount)/2
 			end
 		else
 			DPSMate.DB:BuildUser(Duser.name, Duser.class)
@@ -574,11 +579,16 @@ function DPSMate.DB:DamageDone(Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, Ddodge,
 				[14] = Dglance,
 				[15] = 0,
 				[16] = 0,
-				[17] = 0
+				[17] = 0,
+				[18] = Dblock,
+				[19] = 0,
+				[20] = 0,
+				[21] = 0
 			}
 			if (Dhit == 1) then DPSMateDamageDone[cat][DPSMateUser[Duser.name][1]][DPSMateAbility[Dname][1]][2] = Damount; DPSMateDamageDone[cat][DPSMateUser[Duser.name][1]][DPSMateAbility[Dname][1]][3] = Damount; DPSMateDamageDone[cat][DPSMateUser[Duser.name][1]][DPSMateAbility[Dname][1]][4] = Damount end
 			if (Dcrit == 1) then DPSMateDamageDone[cat][DPSMateUser[Duser.name][1]][DPSMateAbility[Dname][1]][6] = Damount; DPSMateDamageDone[cat][DPSMateUser[Duser.name][1]][DPSMateAbility[Dname][1]][7] = Damount; DPSMateDamageDone[cat][DPSMateUser[Duser.name][1]][DPSMateAbility[Dname][1]][8] = Damount end
 			if (Dglance == 1) then DPSMateDamageDone[cat][DPSMateUser[Duser.name][1]][DPSMateAbility[Dname][1]][15] = Damount; DPSMateDamageDone[cat][DPSMateUser[Duser.name][1]][DPSMateAbility[Dname][1]][16] = Damount; DPSMateDamageDone[cat][DPSMateUser[Duser.name][1]][DPSMateAbility[Dname][1]][17] = Damount end
+			if (Dblock == 1) then DPSMateDamageDone[cat][DPSMateUser[Duser.name][1]][DPSMateAbility[Dname][1]][19] = Damount; DPSMateDamageDone[cat][DPSMateUser[Duser.name][1]][DPSMateAbility[Dname][1]][20] = Damount; DPSMateDamageDone[cat][DPSMateUser[Duser.name][1]][DPSMateAbility[Dname][1]][21] = Damount end
 		end
 		DPSMateDamageDone[cat][DPSMateUser[Duser.name][1]]["i"][2] = DPSMateDamageDone[cat][DPSMateUser[Duser.name][1]]["i"][2] + Damount
 		DPSMateDamageDone[cat][DPSMateUser[Duser.name][1]]["i"][1][DPSMateCombatTime[val]] = Damount

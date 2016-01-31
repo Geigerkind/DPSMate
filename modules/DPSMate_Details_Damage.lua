@@ -105,8 +105,17 @@ function DPSMate.Modules.DetailsDamage:SelectDetailsButton(i)
 	if (arr[DPSMateUser[DetailsUser][1]][ability]) then user=DPSMateUser[DetailsUser][1]; pet=0; else if DPSMateUser[DetailsUser]["pet"] then user=DPSMateUser[DPSMateUser[DetailsUser]["pet"]][1]; pet=5; else user=DPSMateUser[DetailsUser][1]; pet=0; end end
 	getglobal("DPSMate_Details_Log_ScrollButton"..i.."_selected"):Show()
 	
-	local hit, crit, miss, parry, dodge, resist, hitMin, hitMax, critMin, critMax, hitav, critav, glance, glanceMin, glanceMax, glanceav = arr[user][ability][1], arr[user][ability][5], arr[user][ability][9], arr[user][ability][10], arr[user][ability][11], arr[user][ability][12], arr[user][ability][2], arr[user][ability][3], arr[user][ability][6], arr[user][ability][7], arr[user][ability][4], arr[user][ability][8], arr[user][ability][14], arr[user][ability][15], arr[user][ability][16], arr[user][ability][17]
-	local total, max = hit+crit+miss+parry+dodge+resist+glance, DPSMate:TMax({hit, crit, miss, parry, dodge, resist, glance})
+	local hit, crit, miss, parry, dodge, resist, hitMin, hitMax, critMin, critMax, hitav, critav, glance, glanceMin, glanceMax, glanceav, block, blockMin, blockMax, blockav = arr[user][ability][1], arr[user][ability][5], arr[user][ability][9], arr[user][ability][10], arr[user][ability][11], arr[user][ability][12], arr[user][ability][2], arr[user][ability][3], arr[user][ability][6], arr[user][ability][7], arr[user][ability][4], arr[user][ability][8], arr[user][ability][14], arr[user][ability][15], arr[user][ability][16], arr[user][ability][17], arr[user][ability][18], arr[user][ability][19], arr[user][ability][20], arr[user][ability][21]
+	local total, max = hit+crit+miss+parry+dodge+resist+glance+block, DPSMate:TMax({hit, crit, miss, parry, dodge, resist, glance, block})
+	
+	-- Block
+	getglobal("DPSMate_Details_LogDetails_Amount0_Amount"):SetText(block)
+	getglobal("DPSMate_Details_LogDetails_Amount0_Percent"):SetText(ceil(100*block/total).."%")
+	getglobal("DPSMate_Details_LogDetails_Amount0_StatusBar"):SetValue(ceil(100*block/max))
+	getglobal("DPSMate_Details_LogDetails_Amount0_StatusBar"):SetStatusBarColor(0.3,0.7,1.0,1)
+	getglobal("DPSMate_Details_LogDetails_Average0"):SetText(ceil(blockav))
+	getglobal("DPSMate_Details_LogDetails_Min0"):SetText(blockMin)
+	getglobal("DPSMate_Details_LogDetails_Max0"):SetText(blockMax)
 	
 	-- Glance
 	getglobal("DPSMate_Details_LogDetails_Amount1_Amount"):SetText(glance)
