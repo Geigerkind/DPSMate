@@ -33,6 +33,8 @@ DPSMate.Parser.procs = {
 	
 	-- Priest
 	"Power Infusion",
+	
+	-- Druid
 }
 
 -- Local Variables

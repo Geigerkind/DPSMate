@@ -17,55 +17,83 @@ function DPSMate.Sync:OnUpdate(elapsed)
 		time=time+elapsed
 		if iterator==1 then
 			DPSMate.Sync:DMGDoneAllOut()
-			DPSMate.Sync:DMGDoneStatOut()
-			DPSMate.Sync:DMGDoneAbilityOut()
 			iterator = 2
 		elseif time>=3 and iterator==2 then
-			DPSMate.Sync:HealingAllOut(DPSMateEHealing, "E")
-			DPSMate.Sync:HealingAbilityOut(DPSMateEHealing, "E")
+			DPSMate.Sync:DMGDoneStatOut()
 			iterator = 3
 		elseif time>=6 and iterator==3 then
-			DPSMate.Sync:HealingAllOut(DPSMateTHealing, "T")
-			DPSMate.Sync:HealingAbilityOut(DPSMateTHealing, "T")
+			DPSMate.Sync:DMGDoneAbilityOut()
 			iterator = 4
 		elseif time>=9 and iterator==4 then
-			DPSMate.Sync:HealingAllOut(DPSMateOverhealing, "O")
-			DPSMate.Sync:HealingAbilityOut(DPSMateOverhealing, "O")
+			DPSMate.Sync:HealingAllOut(DPSMateEHealing, "E")
 			iterator = 5
 		elseif time>=12 and iterator==5 then
-			DPSMate.Sync:AbsorbsOut() 
-			DPSMate.Sync:DispelsOut()
+			DPSMate.Sync:HealingAbilityOut(DPSMateEHealing, "E")
 			iterator = 6
 		elseif time>=15 and iterator==6 then
-			DPSMate.Sync:DMGTakenAllOut()
-			DPSMate.Sync:DMGTakenStatOut()
-			DPSMate.Sync:DMGTakenAbilityOut()
+			DPSMate.Sync:HealingAllOut(DPSMateTHealing, "T")
 			iterator = 7
-		elseif time>=18 and iterator==7 then -- May be Ressource Heavy ? UnitAffectingCombat("player") check
-			DPSMate.Sync:EDAllOut(DPSMateEDD, "D")
-			DPSMate.Sync:EDAbilityOut(DPSMateEDD, "D")
+		elseif time>=18 and iterator==7 then
+			DPSMate.Sync:HealingAbilityOut(DPSMateTHealing, "T")
 			iterator = 8
-		elseif time>=21 and iterator==8 then -- May be Ressource Heavy ? UnitAffectingCombat("player") check
-			DPSMate.Sync:EDAllOut(DPSMateEDT, "T")
-			DPSMate.Sync:EDAbilityOut(DPSMateEDT, "T")
+		elseif time>=21 and iterator==8 then
+			DPSMate.Sync:HealingAllOut(DPSMateOverhealing, "O")
 			iterator = 9
 		elseif time>=24 and iterator==9 then
-			DPSMate.Sync:HealingTakenAllOut(DPSMateHealingTaken, "T")
-			DPSMate.Sync:HealingTakenAbilityOut(DPSMateHealingTaken, "T")
+			DPSMate.Sync:HealingAbilityOut(DPSMateOverhealing, "O")
 			iterator = 10
 		elseif time>=27 and iterator==10 then
-			DPSMate.Sync:HealingTakenAllOut(DPSMateEHealingTaken, "E")
-			DPSMate.Sync:HealingTakenAbilityOut(DPSMateEHealingTaken, "E")
+			DPSMate.Sync:AbsorbsOut() 
 			iterator = 11
 		elseif time>=30 and iterator==11 then
-			DPSMate.Sync:DeathsAllOut()
-			DPSMate.Sync:DeathsOut()
+			DPSMate.Sync:DispelsOut()
 			iterator = 12
 		elseif time>=33 and iterator==12 then
-			DPSMate.Sync:InterruptsAllOut()
-			DPSMate.Sync:InterruptsAbilityOut()
+			DPSMate.Sync:DMGTakenAllOut()
 			iterator = 13
 		elseif time>=36 and iterator==13 then
+			DPSMate.Sync:DMGTakenStatOut()
+			iterator = 14
+		elseif time>=39 and iterator==14 then
+			DPSMate.Sync:DMGTakenAbilityOut()
+			iterator = 15
+		elseif time>=42 and iterator==15 then
+			DPSMate.Sync:EDAllOut(DPSMateEDD, "D")
+			iterator = 16
+		elseif time>=45 and iterator==16 then
+			DPSMate.Sync:EDAbilityOut(DPSMateEDD, "D")
+			iterator = 17
+		elseif time>=48 and iterator==17 then
+			DPSMate.Sync:EDAllOut(DPSMateEDT, "T")
+			iterator = 18
+		elseif time>=51 and iterator==18 then
+			DPSMate.Sync:EDAbilityOut(DPSMateEDT, "T")
+			iterator = 19
+		elseif time>=54 and iterator==19 then
+			DPSMate.Sync:HealingTakenAllOut(DPSMateHealingTaken, "T")
+			iterator = 20
+		elseif time>=57 and iterator==20 then
+			DPSMate.Sync:HealingTakenAbilityOut(DPSMateHealingTaken, "T")
+			iterator = 21
+		elseif time>=60 and iterator==21 then
+			DPSMate.Sync:HealingTakenAllOut(DPSMateEHealingTaken, "E")
+			iterator = 22
+		elseif time>=63 and iterator==22 then
+			DPSMate.Sync:HealingTakenAbilityOut(DPSMateEHealingTaken, "E")
+			iterator = 23
+		elseif time>=66 and iterator==23 then
+			DPSMate.Sync:DeathsAllOut()
+			iterator = 24
+		elseif time>=69 and iterator==24 then
+			DPSMate.Sync:DeathsOut()
+			iterator = 25
+		elseif time>=72 and iterator==25 then
+			DPSMate.Sync:InterruptsAllOut()
+			iterator = 26
+		elseif time>=75 and iterator==26 then
+			DPSMate.Sync:InterruptsAbilityOut()
+			iterator = 27
+		elseif time>=78 and iterator==27 then
 			DPSMate.Sync:AurasOut()
 			DPSMate.Sync.Async = false
 			iterator = 1
@@ -77,6 +105,28 @@ end
 ----------------------------------------------------------------------------------
 --------------                       GENERAL                        --------------                                  
 ----------------------------------------------------------------------------------
+
+function DPSMate.Sync:GetSummarizedTable(arr)
+	local newArr, i, dmg, time, dis = {}, 1, 0, nil, 1
+	local TL = DPSMate:TableLength(arr)
+	if TL>100 then dis = floor(TL/100) end
+	for cat, val in pairs(arr) do
+		if dis>1 then
+			dmg=dmg+val[2]
+			if i<dis then
+				if not time then time=val[1] end -- first time val
+			else
+				table.insert(newArr, {(val[1]+time)/2, dmg/(val[1]-time)}) -- last time val // subtracting from each other to get the time in which the damage is being done
+				time, dmg, i = nil, 0, 1
+			end
+		else
+			table.insert(newArr, val)
+		end
+		i=i+1
+	end
+	
+	return newArr
+end
 
 function DPSMate.Sync:Vote()
 	DPSMate_Vote:Hide()
@@ -167,7 +217,19 @@ function DPSMate.Sync:OnEvent(event)
 			elseif arg1 == "DPSMate_DMGDoneStat" then
 				DPSMate.Sync:DMGDoneStatIn(arg2, arg4)
 			elseif arg1 == "DPSMate_DMGDoneAbility" then
-				DPSMate.Sync:DMGDoneAbilityIn(arg2, arg4)
+				DPSMate.Sync:DMGDoneAbilityIn(arg2, arg4, 1)
+			elseif arg1 == "DPSMate_DMGDoneAbility2" then
+				DPSMate.Sync:DMGDoneAbilityIn(arg2, arg4, 4)
+			elseif arg1 == "DPSMate_DMGDoneAbility3" then
+				DPSMate.Sync:DMGDoneAbilityIn(arg2, arg4, 7)
+			elseif arg1 == "DPSMate_DMGDoneAbility4" then
+				DPSMate.Sync:DMGDoneAbilityIn(arg2, arg4, 10)
+			elseif arg1 == "DPSMate_DMGDoneAbility5" then
+				DPSMate.Sync:DMGDoneAbilityIn(arg2, arg4, 13)
+			elseif arg1 == "DPSMate_DMGDoneAbility6" then
+				DPSMate.Sync:DMGDoneAbilityIn(arg2, arg4, 16)
+			elseif arg1 == "DPSMate_DMGDoneAbility7" then
+				DPSMate.Sync:DMGDoneAbilityIn(arg2, arg4, 19)
 			elseif arg1 == "DPSMate_EHealingAll" then
 				DPSMate.Sync:HealingAllIn(arg2, arg4, DPSMateEHealing)
 			elseif arg1 == "DPSMate_EHealingAbility" then
@@ -201,7 +263,17 @@ function DPSMate.Sync:OnEvent(event)
 			elseif arg1 == "DPSMate_DMGTakenStat" then
 				DPSMate.Sync:DMGTakenStatIn(arg2, arg4)
 			elseif arg1 == "DPSMate_DMGTakenAbility" then
-				DPSMate.Sync:DMGTakenAbilityIn(arg2, arg4)
+				DPSMate.Sync:DMGTakenAbilityIn(arg2, arg4, 1)
+			elseif arg1 == "DPSMate_DMGTakenAbility2" then
+				DPSMate.Sync:DMGTakenAbilityIn(arg2, arg4, 4)
+			elseif arg1 == "DPSMate_DMGTakenAbility3" then
+				DPSMate.Sync:DMGTakenAbilityIn(arg2, arg4, 7)
+			elseif arg1 == "DPSMate_DMGTakenAbility4" then
+				DPSMate.Sync:DMGTakenAbilityIn(arg2, arg4, 10)
+			elseif arg1 == "DPSMate_DMGTakenAbility5" then
+				DPSMate.Sync:DMGTakenAbilityIn(arg2, arg4, 13)
+			elseif arg1 == "DPSMate_DMGTakenAbility6" then
+				DPSMate.Sync:DMGTakenAbilityIn(arg2, arg4, 16)
 			elseif arg1 == "DPSMate_EDTAll" then
 				DPSMate.Sync:EDAllIn(DPSMateEDT, arg2, arg4)
 			elseif arg1 == "DPSMate_EDTAbility" then
@@ -277,9 +349,9 @@ function DPSMate.Sync:DMGDoneStatIn(arg2, arg4)
 	end
 end
 
-function DPSMate.Sync:DMGDoneAbilityIn(arg2, arg4)
+function DPSMate.Sync:DMGDoneAbilityIn(arg2, arg4, p)
 	-- ability, a1, b1, a2, b2 etc
-	for a,a1,a2,a3,a4,a5,a6,a7,a8,a9,a10,a11,a12,a13 in string.gfind(arg2, "(.+),(.+),(.+),(.+),(.+),(.+),(.+),(.+),(.+),(.+),(.+),(.+),(.+),(.+)") do 
+	for a,a1,a2,a3 in string.gfind(arg2, "(.+),(.+),(.+),(.+)") do 
 		DPSMate.DB:BuildUser(arg4, nil)
 		local ownerid = DPSMateUser[arg4][1]
 		DPSMate.DB:BuildAbility(a, nil)
@@ -292,21 +364,12 @@ function DPSMate.Sync:DMGDoneAbilityIn(arg2, arg4)
 				},
 			}
 		end
-		DPSMateDamageDone[1][ownerid][abilityid] = {
-			[1] = tonumber(a1),
-			[2] = tonumber(a2),
-			[3] = tonumber(a3),
-			[4] = tonumber(a4),
-			[5] = tonumber(a5),
-			[6] = tonumber(a6),
-			[7] = tonumber(a7),
-			[8] = tonumber(a8),
-			[9] = tonumber(a9),
-			[10] = tonumber(a10),
-			[11] = tonumber(a11),
-			[12] = tonumber(a12),
-			[13] = tonumber(a13),
-		}
+		if not DPSMateDamageDone[1][ownerid][abilityid] then
+			DPSMateDamageDone[1][ownerid][abilityid] = {}
+		end
+		DPSMateDamageDone[1][ownerid][abilityid][p] = tonumber(a1)
+		DPSMateDamageDone[1][ownerid][abilityid][p+1] = tonumber(a2)
+		DPSMateDamageDone[1][ownerid][abilityid][p+2] = tonumber(a3)
 	end
 end
 
@@ -339,6 +402,7 @@ end
 function DPSMate.Sync:DMGTakenStatIn(arg2, arg4)
 	DPSMate.DB:BuildUser(arg4, nil)
 	local ownerid = DPSMateUser[arg4][1]
+	if not ownerid then return end
 	for key, val in string.gfind(arg2, "(.+),(.+)") do
 		if not DPSMateDamageTaken[1][ownerid] then
 			DPSMateDamageTaken[1][ownerid] = {
@@ -349,9 +413,9 @@ function DPSMate.Sync:DMGTakenStatIn(arg2, arg4)
 	end
 end
 
-function DPSMate.Sync:DMGTakenAbilityIn(arg2, arg4)
+function DPSMate.Sync:DMGTakenAbilityIn(arg2, arg4, p)
 	-- ability, a1, b1, a2, b2 etc
-	for ta,a,a1,a2,a3,a4,a5,a6,a7,a8,a9,a10,a11,a12,a13,a14 in string.gfind(arg2, "(.+),(.+),(.+),(.+),(.+),(.+),(.+),(.+),(.+),(.+),(.+),(.+),(.+),(.+),(.+),(.+)") do 
+	for ta,a,a1,a2,a3 in string.gfind(arg2, "(.+),(.+),(.+),(.+),(.+)") do 
 		DPSMate.DB:BuildUser(arg4, nil)
 		local ownerid = DPSMateUser[arg4][1]
 		DPSMate.DB:BuildUser(ta, nil)
@@ -368,22 +432,12 @@ function DPSMate.Sync:DMGTakenAbilityIn(arg2, arg4)
 				i = 0,
 			}
 		end
-		DPSMateDamageTaken[1][ownerid][tarid][abilityid] = {
-			[1] = tonumber(a1),
-			[2] = tonumber(a2),
-			[3] = tonumber(a3),
-			[4] = tonumber(a4),
-			[5] = tonumber(a5),
-			[6] = tonumber(a6),
-			[7] = tonumber(a7),
-			[8] = tonumber(a8),
-			[9] = tonumber(a9),
-			[10] = tonumber(a10),
-			[11] = tonumber(a11),
-			[12] = tonumber(a12),
-			[13] = tonumber(a13),
-			[14] = tonumber(a14),
-		}
+		if not DPSMateDamageTaken[1][ownerid][tarid][abilityid] then
+			DPSMateDamageTaken[1][ownerid][tarid][abilityid] = {}
+		end
+		DPSMateDamageTaken[1][ownerid][tarid][abilityid][p] = tonumber(a1)
+		DPSMateDamageTaken[1][ownerid][tarid][abilityid][p+1] = tonumber(a2)
+		DPSMateDamageTaken[1][ownerid][tarid][abilityid][p+2] = tonumber(a3)
 	end
 end
 
@@ -842,8 +896,8 @@ end
 -- I will change the index from 2 to 1 later at the clean up
 function DPSMate.Sync:DMGDoneStatOut()
 	if not DPSMateDamageDone[1][DPSMateUser[player.name][1]] then return end
-	for cat, val in (DPSMateDamageDone[1][DPSMateUser[player.name][1]]["i"][1]) do
-		SendAddonMessage("DPSMate_DMGDoneStat", cat..","..val, "RAID")
+	for cat, val in DPSMate.Sync:GetSummarizedTable(DPSMateDamageDone[1][DPSMateUser[player.name][1]]["i"][1]) do
+		SendAddonMessage("DPSMate_DMGDoneStat", val[1]..","..val[2], "RAID")
 	end
 end
 
@@ -851,7 +905,14 @@ function DPSMate.Sync:DMGDoneAbilityOut()
 	if not DPSMateDamageDone[1][DPSMateUser[player.name][1]] then return end
 	for cat, val in (DPSMateDamageDone[1][DPSMateUser[player.name][1]]) do
 		if cat~="i" then
-			SendAddonMessage("DPSMate_DMGDoneAbility", DPSMate:GetAbilityById(cat)..","..val[1]..","..val[2]..","..val[3]..","..ceil(val[4])..","..val[5]..","..val[6]..","..val[7]..","..ceil(val[8])..","..val[9]..","..val[10]..","..val[11]..","..val[12]..","..val[13], "RAID")
+			local ability = DPSMate:GetAbilityById(cat)
+			SendAddonMessage("DPSMate_DMGDoneAbility", ability..","..val[1]..","..val[2]..","..val[3], "RAID")
+			SendAddonMessage("DPSMate_DMGDoneAbility2", ability..","..ceil(val[4])..","..val[5]..","..val[6], "RAID")
+			SendAddonMessage("DPSMate_DMGDoneAbility3", ability..","..val[7]..","..ceil(val[8])..","..val[9], "RAID")
+			SendAddonMessage("DPSMate_DMGDoneAbility4", ability..","..val[10]..","..val[11]..","..val[12], "RAID")
+			SendAddonMessage("DPSMate_DMGDoneAbility5", ability..","..val[13]..","..val[14]..","..val[15], "RAID")
+			SendAddonMessage("DPSMate_DMGDoneAbility6", ability..","..val[16]..","..ceil(val[17])..","..val[18], "RAID")
+			SendAddonMessage("DPSMate_DMGDoneAbility7", ability..","..val[19]..","..val[20]..","..ceil(val[21]), "RAID")
 		end
 	end
 end
@@ -871,8 +932,8 @@ end
 
 function DPSMate.Sync:DMGTakenStatOut()
 	if not DPSMateDamageTaken[1][DPSMateUser[player.name][1]] then return end
-	for cat, val in (DPSMateDamageTaken[1][DPSMateUser[player.name][1]]["i"]) do
-		SendAddonMessage("DPSMate_DMGTakenStat", cat..","..val, "RAID")
+	for cat, val in DPSMate.Sync:GetSummarizedTable(DPSMateDamageTaken[1][DPSMateUser[player.name][1]]["i"]) do
+		SendAddonMessage("DPSMate_DMGTakenStat", val[1]..","..val[2], "RAID")
 	end
 end
 
@@ -882,7 +943,14 @@ function DPSMate.Sync:DMGTakenAbilityOut()
 		if cat~="i" then
 			for ca, va in pairs(val) do
 				if ca~="i" then
-					SendAddonMessage("DPSMate_DMGTakenAbility", cat..","..DPSMate:GetAbilityById(ca)..","..va[1]..","..va[2]..","..va[3]..","..ceil(va[4])..","..va[5]..","..va[6]..","..va[7]..","..ceil(va[8])..","..va[9]..","..va[10]..","..va[11]..","..va[12]..","..va[13]..","..ceil(va[14]), "RAID")
+					local ability = DPSMate:GetAbilityById(ca)
+					local target = DPSMate:GetUserById(cat)
+					SendAddonMessage("DPSMate_DMGTakenAbility", target..","..ability..","..va[1]..","..va[2]..","..va[3], "RAID")
+					SendAddonMessage("DPSMate_DMGTakenAbility2", target..","..ability..","..ceil(va[4])..","..va[5]..","..va[6], "RAID")
+					SendAddonMessage("DPSMate_DMGTakenAbility3", target..","..ability..","..va[7]..","..ceil(va[8])..","..va[9], "RAID")
+					SendAddonMessage("DPSMate_DMGTakenAbility4", target..","..ability..","..va[10]..","..va[11]..","..va[12], "RAID")
+					SendAddonMessage("DPSMate_DMGTakenAbility5", target..","..ability..","..va[13]..","..ceil(va[14])..","..va[15], "RAID")
+					SendAddonMessage("DPSMate_DMGTakenAbility6", target..","..ability..","..va[16]..","..va[17]..","..ceil(va[18]), "RAID")
 				end
 			end
 		end

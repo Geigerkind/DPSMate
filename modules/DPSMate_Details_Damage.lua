@@ -44,7 +44,7 @@ function DPSMate.Modules.DetailsDamage:UpdateDetails(obj, key)
 		PieChart = false
 	end
 	DetailsUser = obj.user
-	DPSMate_Details_Title:SetText("Damage done of "..obj.user)
+	DPSMate_Details_Title:SetText("Damage done by "..obj.user)
 	DPSMate_Details:Show()
 	UIDropDownMenu_Initialize(DPSMate_Details_DiagramLegend_Procs, DPSMate.Modules.DetailsDamage.ProcsDropDown)
 	DPSMate.Modules.DetailsDamage:ScrollFrame_Update()
@@ -274,32 +274,18 @@ function DPSMate.Modules.DetailsDamage:ProcsDropDown()
 end
 
 function DPSMate.Modules.DetailsDamage:SortLineTable(t)
-	local newArr = {}
-	for cat, val in pairs(t[DPSMateUser[DetailsUser][1]]["i"][1]) do
-		local i=1
-		while true do
-			if (not newArr[i]) then 
-				table.insert(newArr, i, {cat, val})
-				break
-			end
-			if cat<newArr[i][1] then
-				table.insert(newArr, i, {cat, val})
-				break
-			end
-			i=i+1
-		end
-	end
+	local newArr = t[DPSMateUser[DetailsUser][1]]["i"][1]
 	if DPSMateUser[DetailsUser]["pet"] then
 		if t[DPSMateUser[DPSMateUser[DetailsUser]["pet"]][1]] then
-			for cat, val in pairs(t[DPSMateUser[DPSMateUser[DetailsUser]["pet"]][1]]["i"][1]) do
+			for _, val in pairs(t[DPSMateUser[DPSMateUser[DetailsUser]["pet"]][1]]["i"][1]) do
 				local i=1
 				while true do
 					if (not newArr[i]) then 
-						table.insert(newArr, i, {cat, val})
+						table.insert(newArr, i, val)
 						break
 					end
-					if cat<newArr[i][1] then
-						table.insert(newArr, i, {cat, val})
+					if val[1]<newArr[i][1] then
+						table.insert(newArr, i, val)
 						break
 					end
 					i=i+1
@@ -310,31 +296,9 @@ function DPSMate.Modules.DetailsDamage:SortLineTable(t)
 	return newArr
 end
 
-function DPSMate.Modules.DetailsDamage:GetSummarizedTable(arr, cbt)
+function DPSMate.Modules.DetailsDamage:GetSummarizedTable(arr)
 	arr = DPSMate.Modules.DetailsDamage:SortLineTable(arr)
-	local newArr, lastCBT, i = {}, 0, 1
-	local TL = DPSMate:TableLength(arr)
-	local dis = 1
-	if TL>100 then dis = floor(TL/100) end
-	local dmg, time = 0, nil
-	for cat, val in pairs(arr) do
-		if dis>1 then
-			dmg=dmg+val[2]
-			if i<dis then
-				if not time then time=val[1] end -- first time val
-			else
-				table.insert(newArr, {(val[1]+time)/2, dmg/(val[1]-time)}) -- last time val // subtracting from each other to get the time in which the damage is being done
-				time = nil
-				dmg = 0
-				i=1
-			end
-		else
-			table.insert(newArr, val)
-		end
-		i=i+1
-	end
-	
-	return newArr
+	return DPSMate.Sync:GetSummarizedTable(arr)
 end
 
 function DPSMate.Modules.DetailsDamage:GetMaxLineVal(t)

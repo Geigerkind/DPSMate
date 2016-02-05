@@ -63,49 +63,8 @@ function DPSMate.Modules.DetailsDamageTotal:UpdateLineGraph()
 	DPSMate.Modules.DetailsDamageTotal:AddTotalDataSeries()
 end
 
-function DPSMate.Modules.DetailsDamageTotal:SortLineTable(t)
-	local newArr = {}
-	for cat, val in pairs(t) do
-		local i=1
-		while true do
-			if (not newArr[i]) then 
-				table.insert(newArr, i, {cat, val})
-				break
-			end
-			if cat<newArr[i][1] then
-				table.insert(newArr, i, {cat, val})
-				break
-			end
-			i=i+1
-		end
-	end
-	return newArr
-end
-
-function DPSMate.Modules.DetailsDamageTotal:GetSummarizedTable(arr, cbt)
-	local newArr, lastCBT, i = {}, 0, 1
-	local TL = DPSMate:TableLength(arr)
-	local dis = 1
-	if TL>50 then dis = floor(TL/50) end
-	local dmg, time = 0, nil
-	for cat, val in pairs(arr) do
-		if dis>1 then
-			dmg=dmg+val[2]
-			if i<dis then
-				if not time then time=val[1] end -- first time val
-			else
-				table.insert(newArr, {(val[1]+time)/2, dmg/(val[1]-time)}) -- last time val // subtracting from each other to get the time in which the damage is being done
-				time = nil
-				dmg = 0
-				i=1
-			end
-		else
-			table.insert(newArr, val)
-		end
-		i=i+1
-	end
-	
-	return newArr
+function DPSMate.Modules.DetailsDamageTotal:GetSummarizedTable(arr)
+	return DPSMate.Sync:GetSummarizedTable(arr)
 end
 
 function DPSMate.Modules.DetailsDamageTotal:GetMaxLineVal(t)
@@ -147,20 +106,33 @@ end
 
 local totSumTable = {}
 function DPSMate.Modules.DetailsDamageTotal:AddTotalDataSeries()
-	local sumTable = {[0]=0}
+	local sumTable, newArr = {[0]=0}, {}
 	
 	for cat, val in pairs(db) do
 		for ca, va in pairs(db[cat]["i"][1]) do
-			if sumTable[ca] then
-				sumTable[ca] = sumTable[ca] + va
+			if sumTable[va[1]] then
+				sumTable[va[1]] = sumTable[va[1]] + va[2]
 			else
-				sumTable[ca] = va
+				sumTable[va[1]] = va[2]
 			end
 		end
 	end
+	for cat, val in pairs(sumTable) do
+		local i=1
+		while true do
+			if (not newArr[i]) then 
+				table.insert(newArr, i, {cat, val})
+				break
+			end
+			if cat<newArr[i][1] then
+				table.insert(newArr, i, {cat, val})
+				break
+			end
+			i=i+1
+		end
+	end
 	
-	sumTable = DPSMate.Modules.DetailsDamageTotal:SortLineTable(sumTable)
-	totSumTable = DPSMate.Modules.DetailsDamageTotal:GetSummarizedTable(sumTable, cbt)
+	totSumTable = DPSMate.Modules.DetailsDamageTotal:GetSummarizedTable(newArr)
 	
 	for cat, val in pairs(totSumTable) do
 		val[2] = val[2]/4
@@ -195,7 +167,7 @@ function DPSMate.Modules.DetailsDamageTotal:GetTableValues()
 				elseif DPSMateUser[name][2] == "mage" or DPSMateUser[name][2] == "warlock" or DPSMateUser[name][2] == "shaman" or DPSMateUser[name][2] == "druid" then
 					delay = 6.5
 				end
-				for _, v in pairs(DPSMate.Modules.DetailsDamageTotal:SortLineTable(va[1])) do
+				for _, v in pairs(va[1]) do
 					if (v[1]-last)>=delay then
 						last = v[1]
 					else
@@ -263,8 +235,7 @@ function DPSMate.Modules.DetailsDamageTotal:AddLinesButton(uid, obj)
 		end
 	end
 	
-	sumTable = DPSMate.Modules.DetailsDamageTotal:SortLineTable(sumTable)
-	sumTable = DPSMate.Modules.DetailsDamageTotal:GetSummarizedTable(sumTable, cbt)
+	sumTable = DPSMate.Modules.DetailsDamageTotal:GetSummarizedTable(sumTable)
 	
 	g:AddDataSeries(sumTable, {ColorTable[1], {}}, {})
 	table.insert(buttons, {ColorTable[1], uid, sumTable})

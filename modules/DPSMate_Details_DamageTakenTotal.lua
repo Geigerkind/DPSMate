@@ -63,49 +63,8 @@ function DPSMate.Modules.DetailsDamageTakenTotal:UpdateLineGraph()
 	DPSMate.Modules.DetailsDamageTakenTotal:AddTotalDataSeries()
 end
 
-function DPSMate.Modules.DetailsDamageTakenTotal:SortLineTable(t)
-	local newArr = {}
-	for cat, val in pairs(t) do
-		local i=1
-		while true do
-			if (not newArr[i]) then 
-				table.insert(newArr, i, {cat, val})
-				break
-			end
-			if cat<newArr[i][1] then
-				table.insert(newArr, i, {cat, val})
-				break
-			end
-			i=i+1
-		end
-	end
-	return newArr
-end
-
-function DPSMate.Modules.DetailsDamageTakenTotal:GetSummarizedTable(arr, cbt)
-	local newArr, lastCBT, i = {}, 0, 1
-	local TL = DPSMate:TableLength(arr)
-	local dis = 1
-	if TL>50 then dis = floor(TL/50) end
-	local dmg, time = 0, nil
-	for cat, val in pairs(arr) do
-		if dis>1 then
-			dmg=dmg+val[2]
-			if i<dis then
-				if not time then time=val[1] end -- first time val
-			else
-				table.insert(newArr, {(val[1]+time)/2, dmg/(val[1]-time)}) -- last time val // subtracting from each other to get the time in which the damage is being done
-				time = nil
-				dmg = 0
-				i=1
-			end
-		else
-			table.insert(newArr, val)
-		end
-		i=i+1
-	end
-	
-	return newArr
+function DPSMate.Modules.DetailsDamageTakenTotal:GetSummarizedTable(arr)
+	return DPSMate.Sync:GetSummarizedTable(arr)
 end
 
 function DPSMate.Modules.DetailsDamageTakenTotal:GetMaxLineVal(t)
@@ -150,20 +109,33 @@ end
 
 local totSumTable = {}
 function DPSMate.Modules.DetailsDamageTakenTotal:AddTotalDataSeries()
-	local sumTable = {[0]=0}
+	local sumTable, newArr = {[0]=0}, {}
 	
 	for cat, val in pairs(db) do
 		for ca, va in pairs(db[cat]["i"]) do
-			if sumTable[ca] then
-				sumTable[ca] = sumTable[ca] + va
+			if sumTable[va[1]] then
+				sumTable[va[1]] = sumTable[va[1]] + va[2]
 			else
-				sumTable[ca] = va
+				sumTable[va[1]] = va[2]
 			end
 		end
 	end
+	for cat, val in pairs(sumTable) do
+		local i=1
+		while true do
+			if (not newArr[i]) then 
+				table.insert(newArr, i, {cat, val})
+				break
+			end
+			if cat<newArr[i][1] then
+				table.insert(newArr, i, {cat, val})
+				break
+			end
+			i=i+1
+		end
+	end
 	
-	sumTable = DPSMate.Modules.DetailsDamageTakenTotal:SortLineTable(sumTable)
-	totSumTable = DPSMate.Modules.DetailsDamageTakenTotal:GetSummarizedTable(sumTable, cbt)
+	totSumTable = DPSMate.Modules.DetailsDamageTakenTotal:GetSummarizedTable(newArr)
 	
 	for cat, val in pairs(totSumTable) do
 		val[2] = val[2]/4
@@ -179,7 +151,7 @@ end
 function DPSMate.Modules.DetailsDamageTakenTotal:GetTableValues()
 	local arr, total = {}, 0
 	for cat, val in pairs(db) do
-		local crit, totCrit, miss, totMiss, hit, totHit, crush = 0, 0.000001, 0, 0.000001, 0, 0.000001, 0
+		local CV, crit, totCrit, miss, totMiss, hit, totHit, crush = 0, 0, 0.000001, 0, 0.000001, 0, 0.000001, 0
 		local name = DPSMate:GetUserById(cat)
 		for ca, va in pairs(val) do
 			if ca~="i" then
@@ -200,10 +172,11 @@ function DPSMate.Modules.DetailsDamageTakenTotal:GetTableValues()
 						end
 					end
 				end
-				table.insert(arr, {name, va["i"], crit, miss, totCrit, totMiss, cat, hit, totHit, crush, totCrush})
-				total = total + va["i"]
+				CV = CV + va["i"]
 			end
 		end
+		table.insert(arr, {name, CV, crit, miss, totCrit, totMiss, cat, hit, totHit, crush, totCrush})
+		total = total + CV
 	end
 	local newArr = {}
 	for cat, val in pairs(arr) do

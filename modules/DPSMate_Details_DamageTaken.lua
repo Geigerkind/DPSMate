@@ -206,7 +206,7 @@ end
 
 function DPSMate.Modules.DetailsDamageTaken:UpdateLineGraph()
 	local arr = db
-	local sumTable = DPSMate.Modules.DetailsDamageTaken:GetSummarizedTable(arr, cbt)
+	local sumTable = DPSMate.Modules.DetailsDamageTaken:GetSummarizedTable(arr)
 	local max = DPSMate.Modules.DetailsDamageTaken:GetMaxLineVal(sumTable)
 	
 	g2:ResetData()
@@ -249,50 +249,8 @@ function DPSMate.Modules.DetailsDamageTaken:CreateGraphTable()
 	lines[12]:Show()
 end
 
-function DPSMate.Modules.DetailsDamageTaken:SortLineTable(t)
-	local newArr = {}
-	for cat, val in pairs(t[DPSMateUser[DetailsUser][1]]["i"]) do
-		local i=1
-		while true do
-			if (not newArr[i]) then 
-				table.insert(newArr, i, {cat, val})
-				break
-			end
-			if cat<newArr[i][1] then
-				table.insert(newArr, i, {cat, val})
-				break
-			end
-			i=i+1
-		end
-	end
-	return newArr
-end
-
-function DPSMate.Modules.DetailsDamageTaken:GetSummarizedTable(arr, cbt)
-	arr = DPSMate.Modules.DetailsDamageTaken:SortLineTable(arr)
-	local newArr, lastCBT, i = {}, 0, 1
-	local TL = DPSMate:TableLength(arr)
-	local dis = 1
-	if TL>100 then dis = floor(TL/100) end
-	local dmg, time = 0, nil
-	for cat, val in pairs(arr) do
-		if dis>1 then
-			dmg=dmg+val[2]
-			if i<dis then
-				if not time then time=val[1] end -- first time val
-			else
-				table.insert(newArr, {(val[1]+time)/2, dmg/(val[1]-time)}) -- last time val // subtracting from each other to get the time in which the damage is being done
-				time = nil
-				dmg = 0
-				i=1
-			end
-		else
-			table.insert(newArr, val)
-		end
-		i=i+1
-	end
-	
-	return newArr
+function DPSMate.Modules.DetailsDamageTaken:GetSummarizedTable(arr)
+	return DPSMate.Sync:GetSummarizedTable(arr[DPSMateUser[DetailsUser][1]]["i"])
 end
 
 function DPSMate.Modules.DetailsDamageTaken:GetMaxLineVal(t)
