@@ -70,6 +70,8 @@ modules\DPSMate_Details_EDD.lua
 modules\DPSMate_Details_EDD.xml
 modules\DPSMate_Details_EDT.lua
 modules\DPSMate_Details_EDT.xml
+modules\DPSMate_Details_Healing.lua
+modules\DPSMate_Details_Healing.xml
 
 DPSMate_Frame.xml
 DPSMate_Options.xml
