@@ -74,6 +74,8 @@ modules\DPSMate_Details_Healing.lua
 modules\DPSMate_Details_Healing.xml
 modules\DPSMate_Details_EHealing.lua
 modules\DPSMate_Details_EHealing.xml
+modules\DPSMate_Details_Overhealing.lua
+modules\DPSMate_Details_Overhealing.xml
 
 DPSMate_Frame.xml
 DPSMate_Options.xml
