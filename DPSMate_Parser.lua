@@ -472,6 +472,8 @@ function DPSMate.Parser:GetUnitByName(target)
 	else
 		if target==UnitName("player") then
 			unit="player"
+		elseif target==UnitName("target") then
+			unit="target"
 		end
 	end
 	return unit

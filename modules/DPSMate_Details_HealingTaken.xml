@@ -1,0 +1,502 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+    ..\..\..\FrameXML\UI.xsd">
+	
+	<Button name="DPSMate_Details_HealingTaken_ScrollButton" virtual="true">
+		<Size x="220" y="24" />
+		<Layers>
+			<Layer level="ARTWORT">
+				<Texture name="$parent_Icon" file="Interface\AddOns\DPSMate\images\dummy">
+					<Size x="24" y="24" />
+					<Anchors>
+						<Anchor point="TOPLEFT" />
+					</Anchors>
+				</Texture>
+				<FontString name="$parent_Name" inherits="GameFontNormalSmall" text="Sinister Strike Eviscrate" justifyH="LEFT">
+					<Size x="110" y="24" />
+					<Anchors>
+						<Anchor point="LEFT" relativeTo="$parent_Icon" relativePoint="RIGHT">
+							<Offset x="5" y="0" />
+						</Anchor>
+					</Anchors>
+				</FontString>
+				<FontString name="$parent_Value" inherits="GameFontNormalSmall" text="500000 (20.43%)">
+					<Size x="70" y="24" />
+					<Anchors>
+						<Anchor point="RIGHT">
+							<Offset x="-5" y="0" />
+						</Anchor>
+					</Anchors>
+				</FontString>
+			</Layer>
+			<Layer level="BACKGROUND">
+				<Texture name="$parent_selected">
+					<Anchors>
+						<Anchor point="TOPLEFT" />
+						<Anchor point="BOTTOMRIGHT" />
+					</Anchors>
+					<Color r="1" g="1" b="1" a="0.5" />
+				</Texture>
+			</Layer>
+		</Layers>
+		<Scripts>
+			<OnClick>
+				if this:GetParent():GetName()=="DPSMate_Details_HealingTaken_LogCreature" then
+					DPSMate.Modules.DetailsHealingTaken:SelectCreatureButton(this:GetID())
+				else
+					DPSMate.Modules.DetailsHealingTaken:SelectDetailsButton(getglobal("DPSMate_Details_HealingTaken_Log_ScrollFrame").index, this:GetID())
+				end
+			</OnClick>
+		</Scripts>
+	</Button>
+	
+	<Frame name="DPSMateTableAmountTemplate" virtual="true">
+		<Size x="140" y="30" />
+		<Layers>
+			<Layer level="ARTWORK">
+				<FontString name="$parent_Amount" inherits="GameFontNormalSmall" text="1000">
+					<Size x="35" y="24" />
+					<Anchors>
+						<Anchor point="LEFT"/>
+					</Anchors>
+					<Color r="1" g="1" b="1" />
+				</FontString>
+				<FontString name="$parent_Percent" inherits="GameFontNormalSmall" text="100%">
+					<Size x="40" y="24" />
+					<Anchors>
+						<Anchor point="RIGHT">
+							<Offset x="-3" y="0" />
+						</Anchor>
+					</Anchors>
+					<Color r="1" g="1" b="1" />
+				</FontString>
+			</Layer>
+		</Layers>
+		<Frames>
+			<StatusBar name="$parent_StatusBar">
+				<Size x="65" y="12" />
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="$parent_Amount" relativePoint="RIGHT" />
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						this:SetMinMaxValues(1,100)
+						this:SetStatusBarTexture("Interface\\AddOns\\DPSMate\\images\\statusbar\\Healbot")
+						this:SetValue(100)
+					</OnLoad>
+				</Scripts>
+			</StatusBar>
+		</Frames>
+	</Frame>
+	
+	<Frame name="DPSMate_Details_HealingTaken" parent="UIParent" movable="true" hidden="true">
+		<Size x="900" y="600" />
+		<Anchors>
+			<Anchor point="CENTER" />
+		</Anchors>
+		<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+			<BackgroundInsets left="6" right="6" top="6" bottom="6" />
+			<TileSize val="16" />
+			<EdgeSize val="16" />
+			<Color r="0.157" g="0.08" b="0.06" a="1" />
+		</Backdrop>
+		<Layers>
+			<Layer level="ARTWORK">
+				<FontString name="$parent_Title" inherits="GameFontNormalHuge" justifyH="LEFT" justifyV="CENTER" text="Damage done for Shino">
+					<Size x="900" y="40" />
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset x="20" y="-10" />
+						</Anchor>
+					</Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+		<Scripts>
+			<OnLoad>
+				this:SetClampedToScreen()
+				getglobal(this:GetName().."_Title"):SetFont("Fonts\\FRIZQT__.TTF", 24)
+			</OnLoad>
+			<OnMouseDown>
+				this:StartMoving()
+			</OnMouseDown>
+			<OnMouseUp>
+				this:StopMovingOrSizing()
+			</OnMouseUp>
+		</Scripts>
+		<Frames>
+			<Button name="$parent_CloseButton">
+				<Size x="30" y="30" />
+				<Anchors>
+					<Anchor point="TOPRIGHT" relativeTo="$parent" relativePoint="TOPRIGHT">
+						<Offset>
+							<AbsDimension x="0" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnEnter>
+						GameTooltip:SetOwner(this, "ANCHOR_RIGHT")
+						GameTooltip:SetText(DPSMate.localization.details.close, nil, nil, nil, nil, 1)
+						GameTooltip:Show()
+					</OnEnter>
+					<OnLeave>
+						GameTooltip:Hide()
+					</OnLeave>
+					<OnClick>
+						DPSMate_Details_HealingTaken:Hide()
+						PlaySound("igMainMenuOptionCheckBoxOff")
+					</OnClick>
+				</Scripts>
+				<NormalTexture file="Interface\Buttons\UI-Panel-MinimizeButton-Up"/>
+				<PushedTexture file="Interface\Buttons\UI-Panel-MinimizeButton-Down"/>
+				<HighlightTexture file="Interface\Buttons\UI-Panel-MinimizeButton-Highlight" alphaMode="ADD"/>
+			</Button>
+			<Frame name="$parent_DiagramLine">
+				<Size x="870" y="250" />
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset x="15" y="-65" />
+					</Anchor>
+				</Anchors>
+				<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+					<BackgroundInsets left="6" right="6" top="6" bottom="6" />
+					<TileSize val="16" />
+					<EdgeSize val="16" />
+					<Color r="0.157" g="0.08" b="0.06" a="0.5" />
+				</Backdrop>
+			</Frame>
+			<Frame name="$parent_LogCreature">
+				<Size x="245" y="270" />
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parent_DiagramLine" relativePoint="BOTTOMLEFT" />
+				</Anchors>
+				<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+					<BackgroundInsets left="6" right="6" top="6" bottom="6" />
+					<TileSize val="16" />
+					<EdgeSize val="16" />
+					<Color r="0.157" g="0.08" b="0.06" a="0.5" />
+				</Backdrop>
+				<Frames>
+					<ScrollFrame name="$parent_ScrollFrame" inherits="FauxScrollFrameTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="0" y="-5" />
+								</Offset>
+							</Anchor>
+							<Anchor point="BOTTOMRIGHT">
+								<Offset>
+								  <AbsDimension x="-27" y="4"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnVerticalScroll>
+								FauxScrollFrame_OnVerticalScroll(24, DPSMate.Modules.DetailsDamage.ScrollFrame_Update) 
+							</OnVerticalScroll>
+					   </Scripts>
+					</ScrollFrame>
+					<Button name="$parent_ScrollButton1" inherits="DPSMate_Details_HealingTaken_ScrollButton" id="1">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset x="5" y="-5" />
+							</Anchor>
+						</Anchors>
+					</Button>
+					<Button name="$parent_ScrollButton2" inherits="DPSMate_Details_HealingTaken_ScrollButton"  id="2">
+						<Anchors>
+							<Anchor point="TOP" relativeTo="$parent_ScrollButton1" relativePoint="BOTTOM">
+								<Offset x="0" y="-2" />
+							</Anchor>
+						</Anchors>
+					</Button>
+					<Button name="$parent_ScrollButton3" inherits="DPSMate_Details_HealingTaken_ScrollButton"  id="3">
+						<Anchors>
+							<Anchor point="TOP" relativeTo="$parent_ScrollButton2" relativePoint="BOTTOM">
+								<Offset x="0" y="-2" />
+							</Anchor>
+						</Anchors>
+					</Button>
+					<Button name="$parent_ScrollButton4" inherits="DPSMate_Details_HealingTaken_ScrollButton"  id="4">
+						<Anchors>
+							<Anchor point="TOP" relativeTo="$parent_ScrollButton3" relativePoint="BOTTOM">
+								<Offset x="0" y="-2" />
+							</Anchor>
+						</Anchors>
+					</Button>
+					<Button name="$parent_ScrollButton5" inherits="DPSMate_Details_HealingTaken_ScrollButton"  id="5">
+						<Anchors>
+							<Anchor point="TOP" relativeTo="$parent_ScrollButton4" relativePoint="BOTTOM">
+								<Offset x="0" y="-2" />
+							</Anchor>
+						</Anchors>
+					</Button>
+					<Button name="$parent_ScrollButton6" inherits="DPSMate_Details_HealingTaken_ScrollButton"  id="6">
+						<Anchors>
+							<Anchor point="TOP" relativeTo="$parent_ScrollButton5" relativePoint="BOTTOM">
+								<Offset x="0" y="-2" />
+							</Anchor>
+						</Anchors>
+					</Button>
+					<Button name="$parent_ScrollButton7" inherits="DPSMate_Details_HealingTaken_ScrollButton"  id="7">
+						<Anchors>
+							<Anchor point="TOP" relativeTo="$parent_ScrollButton6" relativePoint="BOTTOM">
+								<Offset x="0" y="-2" />
+							</Anchor>
+						</Anchors>
+					</Button>
+					<Button name="$parent_ScrollButton8" inherits="DPSMate_Details_HealingTaken_ScrollButton"  id="8">
+						<Anchors>
+							<Anchor point="TOP" relativeTo="$parent_ScrollButton7" relativePoint="BOTTOM">
+								<Offset x="0" y="-2" />
+							</Anchor>
+						</Anchors>
+					</Button>
+					<Button name="$parent_ScrollButton9" inherits="DPSMate_Details_HealingTaken_ScrollButton"  id="9">
+						<Anchors>
+							<Anchor point="TOP" relativeTo="$parent_ScrollButton8" relativePoint="BOTTOM">
+								<Offset x="0" y="-2" />
+							</Anchor>
+						</Anchors>
+					</Button>
+					<Button name="$parent_ScrollButton10" inherits="DPSMate_Details_HealingTaken_ScrollButton"  id="10">
+						<Anchors>
+							<Anchor point="TOP" relativeTo="$parent_ScrollButton9" relativePoint="BOTTOM">
+								<Offset x="0" y="-2" />
+							</Anchor>
+						</Anchors>
+					</Button>
+				</Frames>
+			</Frame>
+			<Frame name="$parent_Log">
+				<Size x="245" y="270" />
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parent_LogCreature" relativePoint="TOPRIGHT" />
+				</Anchors>
+				<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+					<BackgroundInsets left="6" right="6" top="6" bottom="6" />
+					<TileSize val="16" />
+					<EdgeSize val="16" />
+					<Color r="0.157" g="0.08" b="0.06" a="0.5" />
+				</Backdrop>
+				<Scripts>
+					<OnLoad>
+						DPSMate.Modules.DetailsHealingTaken:CreateGraphTable()
+					</OnLoad>
+				</Scripts>
+				<Frames>
+					<ScrollFrame name="$parent_ScrollFrame" inherits="FauxScrollFrameTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="0" y="-5" />
+								</Offset>
+							</Anchor>
+							<Anchor point="BOTTOMRIGHT">
+								<Offset>
+								  <AbsDimension x="-27" y="4"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnVerticalScroll>
+								FauxScrollFrame_OnVerticalScroll(24, DPSMate.Modules.DetailsDamage.ScrollFrame_Update) 
+							</OnVerticalScroll>
+					   </Scripts>
+					</ScrollFrame>
+					<Button name="$parent_ScrollButton1" inherits="DPSMate_Details_HealingTaken_ScrollButton" id="1">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset x="5" y="-5" />
+							</Anchor>
+						</Anchors>
+					</Button>
+					<Button name="$parent_ScrollButton2" inherits="DPSMate_Details_HealingTaken_ScrollButton"  id="2">
+						<Anchors>
+							<Anchor point="TOP" relativeTo="$parent_ScrollButton1" relativePoint="BOTTOM">
+								<Offset x="0" y="-2" />
+							</Anchor>
+						</Anchors>
+					</Button>
+					<Button name="$parent_ScrollButton3" inherits="DPSMate_Details_HealingTaken_ScrollButton"  id="3">
+						<Anchors>
+							<Anchor point="TOP" relativeTo="$parent_ScrollButton2" relativePoint="BOTTOM">
+								<Offset x="0" y="-2" />
+							</Anchor>
+						</Anchors>
+					</Button>
+					<Button name="$parent_ScrollButton4" inherits="DPSMate_Details_HealingTaken_ScrollButton"  id="4">
+						<Anchors>
+							<Anchor point="TOP" relativeTo="$parent_ScrollButton3" relativePoint="BOTTOM">
+								<Offset x="0" y="-2" />
+							</Anchor>
+						</Anchors>
+					</Button>
+					<Button name="$parent_ScrollButton5" inherits="DPSMate_Details_HealingTaken_ScrollButton"  id="5">
+						<Anchors>
+							<Anchor point="TOP" relativeTo="$parent_ScrollButton4" relativePoint="BOTTOM">
+								<Offset x="0" y="-2" />
+							</Anchor>
+						</Anchors>
+					</Button>
+					<Button name="$parent_ScrollButton6" inherits="DPSMate_Details_HealingTaken_ScrollButton"  id="6">
+						<Anchors>
+							<Anchor point="TOP" relativeTo="$parent_ScrollButton5" relativePoint="BOTTOM">
+								<Offset x="0" y="-2" />
+							</Anchor>
+						</Anchors>
+					</Button>
+					<Button name="$parent_ScrollButton7" inherits="DPSMate_Details_HealingTaken_ScrollButton"  id="7">
+						<Anchors>
+							<Anchor point="TOP" relativeTo="$parent_ScrollButton6" relativePoint="BOTTOM">
+								<Offset x="0" y="-2" />
+							</Anchor>
+						</Anchors>
+					</Button>
+					<Button name="$parent_ScrollButton8" inherits="DPSMate_Details_HealingTaken_ScrollButton"  id="8">
+						<Anchors>
+							<Anchor point="TOP" relativeTo="$parent_ScrollButton7" relativePoint="BOTTOM">
+								<Offset x="0" y="-2" />
+							</Anchor>
+						</Anchors>
+					</Button>
+					<Button name="$parent_ScrollButton9" inherits="DPSMate_Details_HealingTaken_ScrollButton"  id="9">
+						<Anchors>
+							<Anchor point="TOP" relativeTo="$parent_ScrollButton8" relativePoint="BOTTOM">
+								<Offset x="0" y="-2" />
+							</Anchor>
+						</Anchors>
+					</Button>
+					<Button name="$parent_ScrollButton10" inherits="DPSMate_Details_HealingTaken_ScrollButton"  id="10">
+						<Anchors>
+							<Anchor point="TOP" relativeTo="$parent_ScrollButton9" relativePoint="BOTTOM">
+								<Offset x="0" y="-2" />
+							</Anchor>
+						</Anchors>
+					</Button>
+				</Frames>
+			</Frame>
+			<Frame name="$parent_LogDetails">
+				<Size x="380" y="270" />
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="$parent_Log" relativePoint="RIGHT" />
+				</Anchors>
+				<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+					<BackgroundInsets left="6" right="6" top="6" bottom="6" />
+					<TileSize val="16" />
+					<EdgeSize val="16" />
+					<Color r="0.157" g="0.08" b="0.06" a="0.5" />
+				</Backdrop>
+				<Layers>
+					<Layer level="ARTWORK">
+						<FontString name="$parent_Hit" inherits="GameFontNormal" text="Hit" justifyH="LEFT">
+							<Size x="50" y="24" />
+							<Anchors>
+								<Anchor point="TOPLEFT">
+									<Offset x="10" y="-38" />
+								</Anchor>
+							</Anchors>
+						</FontString>
+						<FontString name="$parent_Crit" inherits="GameFontNormal" text="Crit" justifyH="LEFT">
+							<Size x="50" y="24" />
+							<Anchors>
+								<Anchor point="TOP" relativeTo="$parent_Hit" relativePoint="BOTTOM">
+									<Offset x="0" y="-6" />
+								</Anchor>
+							</Anchors>
+						</FontString>
+						<FontString name="$parent_Amount" inherits="GameFontNormal" text="Amount" justifyH="LEFT">
+							<Size x="135" y="24" />
+							<Anchors>
+								<Anchor point="LEFT" relativeTo="$parent_Hit" relativePoint="RIGHT">
+									<Offset x="0" y="32" />
+								</Anchor>
+							</Anchors>
+						</FontString>
+						<FontString name="$parent_Average" inherits="GameFontNormal" text="Average" justifyH="LEFT">
+							<Size x="60" y="24" />
+							<Anchors>
+								<Anchor point="LEFT" relativeTo="$parent_Amount" relativePoint="RIGHT" />
+							</Anchors>
+						</FontString>
+						<FontString name="$parent_Min" inherits="GameFontNormal" text="Min" justifyH="LEFT">
+							<Size x="60" y="24" />
+							<Anchors>
+								<Anchor point="LEFT" relativeTo="$parent_Average" relativePoint="RIGHT" />
+							</Anchors>
+						</FontString>
+						<FontString name="$parent_Max" inherits="GameFontNormal" text="Max" justifyH="LEFT">
+							<Size x="60" y="24" />
+							<Anchors>
+								<Anchor point="LEFT" relativeTo="$parent_Min" relativePoint="RIGHT" />
+							</Anchors>
+						</FontString>
+						<FontString name="$parent_Average1" inherits="GameFontNormalSmall" text="10000">
+							<Size x="60" y="30" />
+							<Anchors>
+								<Anchor point="TOP" relativeTo="$parent_Average" relativePoint="BOTTOM">
+									<Offset x="-3" y="0" />
+								</Anchor>
+							</Anchors>
+							<Color r="1" g="1" b="1" />
+						</FontString>
+						<FontString name="$parent_Average2" inherits="GameFontNormalSmall" text="10000">
+							<Size x="60" y="30" />
+							<Anchors>
+								<Anchor point="TOP" relativeTo="$parent_Average1" relativePoint="BOTTOM" />
+							</Anchors>
+							<Color r="1" g="1" b="1" />
+						</FontString>
+						<FontString name="$parent_Min1" inherits="GameFontNormalSmall" text="10000">
+							<Size x="60" y="30" />
+							<Anchors>
+								<Anchor point="TOP" relativeTo="$parent_Min" relativePoint="BOTTOM">
+									<Offset x="-3" y="0" />
+								</Anchor>
+							</Anchors>
+							<Color r="1" g="1" b="1" />
+						</FontString>
+						<FontString name="$parent_Min2" inherits="GameFontNormalSmall" text="10000">
+							<Size x="60" y="30" />
+							<Anchors>
+								<Anchor point="TOP" relativeTo="$parent_Min1" relativePoint="BOTTOM" />
+							</Anchors>
+							<Color r="1" g="1" b="1" />
+						</FontString>
+						<FontString name="$parent_Max1" inherits="GameFontNormalSmall" text="10000">
+							<Size x="60" y="30" />
+							<Anchors>
+								<Anchor point="TOP" relativeTo="$parent_Max" relativePoint="BOTTOM">
+									<Offset x="-3" y="0" />
+								</Anchor>
+							</Anchors>
+							<Color r="1" g="1" b="1" />
+						</FontString>
+						<FontString name="$parent_Max2" inherits="GameFontNormalSmall" text="10000">
+							<Size x="60" y="30" />
+							<Anchors>
+								<Anchor point="TOP" relativeTo="$parent_Max1" relativePoint="BOTTOM" />
+							</Anchors>
+							<Color r="1" g="1" b="1" />
+						</FontString>
+					</Layer>
+				</Layers>
+				<Frames>
+					<Frame name="$parent_Amount1" inherits="DPSMateTableAmountTemplate">
+						<Anchors>
+							<Anchor point="TOP" relativeTo="$parent_Amount" relativePoint="BOTTOM" />
+						</Anchors>
+					</Frame>
+					<Frame name="$parent_Amount2" inherits="DPSMateTableAmountTemplate">
+						<Anchors>
+							<Anchor point="TOP" relativeTo="$parent_Amount1" relativePoint="BOTTOM" />
+						</Anchors>
+					</Frame>
+				</Frames>
+			</Frame>
+		</Frames>
+	</Frame>
+	
+</Ui>

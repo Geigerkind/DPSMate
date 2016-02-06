@@ -44,7 +44,7 @@ function DPSMate.Modules.DetailsEHealing:UpdateDetails(obj, key)
 		PieChart = false
 	end
 	DetailsUser = obj.user
-	DPSMate_Details_EHealing_Title:SetText("EHealing done by "..obj.user)
+	DPSMate_Details_EHealing_Title:SetText("Effective healing done by "..obj.user)
 	DPSMate_Details_EHealing:Show()
 	UIDropDownMenu_Initialize(DPSMate_Details_EHealing_DiagramLegend_Procs, DPSMate.Modules.DetailsEHealing.ProcsDropDown)
 	DPSMate.Modules.DetailsEHealing:ScrollFrame_Update()
