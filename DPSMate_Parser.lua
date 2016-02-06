@@ -469,6 +469,10 @@ function DPSMate.Parser:GetUnitByName(target)
 				unit="raid"..i; break
 			end
 		end
+	else
+		if target==UnitName("player") then
+			unit="player"
+		end
 	end
 	return unit
 end
