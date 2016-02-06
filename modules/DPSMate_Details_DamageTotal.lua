@@ -53,7 +53,6 @@ end
 
 function DPSMate.Modules.DetailsDamageTotal:UpdateLineGraph()	
 	g:ResetData()
-	g:SetXAxis(0,cbt)
 	g:SetGridColor({0.5,0.5,0.5,0.5})
 	g:SetAxisDrawing(true,true)
 	g:SetAxisColor({1.0,1.0,1.0,1.0})
@@ -67,11 +66,11 @@ function DPSMate.Modules.DetailsDamageTotal:GetSummarizedTable(arr)
 	return DPSMate.Sync:GetSummarizedTable(arr)
 end
 
-function DPSMate.Modules.DetailsDamageTotal:GetMaxLineVal(t)
+function DPSMate.Modules.DetailsDamageTotal:GetMaxLineVal(t, p)
 	local max = 0
 	for cat, val in pairs(t) do
-		if val[2]>max then
-			max=val[2]
+		if val[p]>max then
+			max=val[p]
 		end
 	end
 	return max
@@ -137,9 +136,11 @@ function DPSMate.Modules.DetailsDamageTotal:AddTotalDataSeries()
 	for cat, val in pairs(totSumTable) do
 		val[2] = val[2]/4
 	end
-	local totMax = DPSMate.Modules.DetailsDamageTotal:GetMaxLineVal(totSumTable)
+	local totMax = DPSMate.Modules.DetailsDamageTotal:GetMaxLineVal(totSumTable, 2)
+	local time = DPSMate.Modules.DetailsDamageTotal:GetMaxLineVal(totSumTable, 1)
+	g:SetXAxis(0,time)
 	g:SetYAxis(0,totMax+200)
-	g:SetGridSpacing(cbt/10,totMax/4)
+	g:SetGridSpacing(time/10,totMax/4)
 	
 	g:AddDataSeries(totSumTable,{{1.0,0.0,0.0,0.8}, {1.0,1.0,0.0,0.8}}, {})
 end

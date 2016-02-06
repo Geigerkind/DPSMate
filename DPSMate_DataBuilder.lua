@@ -591,7 +591,7 @@ function DPSMate.DB:DamageDone(Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, Ddodge,
 			if (Dblock == 1) then DPSMateDamageDone[cat][DPSMateUser[Duser.name][1]][DPSMateAbility[Dname][1]][19] = Damount; DPSMateDamageDone[cat][DPSMateUser[Duser.name][1]][DPSMateAbility[Dname][1]][20] = Damount; DPSMateDamageDone[cat][DPSMateUser[Duser.name][1]][DPSMateAbility[Dname][1]][21] = Damount end
 		end
 		DPSMateDamageDone[cat][DPSMateUser[Duser.name][1]]["i"][2] = DPSMateDamageDone[cat][DPSMateUser[Duser.name][1]]["i"][2] + Damount
-		table.insert(DPSMateDamageDone[cat][DPSMateUser[Duser.name][1]]["i"][1], {DPSMateCombatTime[val], Damount})
+		if Damount > 0 then table.insert(DPSMateDamageDone[cat][DPSMateUser[Duser.name][1]]["i"][1], {DPSMateCombatTime[val], Damount}) end
 	end
 	DPSMate.DB.NeedUpdate = true
 end
@@ -599,7 +599,8 @@ end
 -- Fall damage
 function DPSMate.DB:DamageTaken(Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, Ddodge, Dresist, Damount, cause, Dcrush)
 	if (not Duser.name or DPSMate:TableLength(Duser)==0 or not Dname or cause=="") then return end
-
+	CombatState = true
+	
 	for cat, val in pairs({[1]="total", [2]="current"}) do 
 		if DPSMate.DB:DTExist(Duser.name, cause, Dname, DPSMateDamageTaken[cat]) then
 			DPSMateDamageTaken[cat][DPSMateUser[Duser.name][1]][DPSMateUser[cause][1]][DPSMateAbility[Dname][1]][1] = DPSMateDamageTaken[cat][DPSMateUser[Duser.name][1]][DPSMateUser[cause][1]][DPSMateAbility[Dname][1]][1] + Dhit
@@ -663,13 +664,14 @@ function DPSMate.DB:DamageTaken(Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, Ddodge
 			if (Dcrush == 1) then DPSMateDamageTaken[cat][DPSMateUser[Duser.name][1]][DPSMateUser[cause][1]][DPSMateAbility[Dname][1]][16] = Damount; DPSMateDamageTaken[cat][DPSMateUser[Duser.name][1]][DPSMateUser[cause][1]][DPSMateAbility[Dname][1]][17] = Damount; DPSMateDamageTaken[cat][DPSMateUser[Duser.name][1]][DPSMateUser[cause][1]][DPSMateAbility[Dname][1]][18] = Damount end
 		end
 		DPSMateDamageTaken[cat][DPSMateUser[Duser.name][1]][DPSMateUser[cause][1]]["i"] = DPSMateDamageTaken[cat][DPSMateUser[Duser.name][1]][DPSMateUser[cause][1]]["i"] + Damount
-		table.insert(DPSMateDamageTaken[cat][DPSMateUser[Duser.name][1]]["i"], {DPSMateCombatTime[val], Damount})
+		if Damount > 0 then table.insert(DPSMateDamageTaken[cat][DPSMateUser[Duser.name][1]]["i"], {DPSMateCombatTime[val], Damount}) end
 	end
 	DPSMate.DB.NeedUpdate = true
 end
 
-function DPSMate.DB:EnemyDamage(arr, Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, Ddodge, Dresist, Damount, cause)
+function DPSMate.DB:EnemyDamage(arr, Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, Ddodge, Dresist, Damount, cause, Dblock, Dcrush)
 	if (not Duser.name or DPSMate:TableLength(Duser)==0 or not Dname or not Damount) then return end
+	CombatState = true
 	for cat, val in pairs({[1]="total", [2]="current"}) do 
 		if DPSMate.DB:EDDExist(Duser.name, cause, Dname, arr[cat]) then
 			arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser.name][1]][DPSMateAbility[Dname][1]][1] = arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser.name][1]][DPSMateAbility[Dname][1]][1] + Dhit
@@ -679,6 +681,8 @@ function DPSMate.DB:EnemyDamage(arr, Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, D
 			arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser.name][1]][DPSMateAbility[Dname][1]][11] = arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser.name][1]][DPSMateAbility[Dname][1]][11] + Ddodge
 			arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser.name][1]][DPSMateAbility[Dname][1]][12] = arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser.name][1]][DPSMateAbility[Dname][1]][12] + Dresist
 			arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser.name][1]][DPSMateAbility[Dname][1]][13] = arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser.name][1]][DPSMateAbility[Dname][1]][13] + Damount
+			arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser.name][1]][DPSMateAbility[Dname][1]][14] = arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser.name][1]][DPSMateAbility[Dname][1]][14] + Dblock
+			arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser.name][1]][DPSMateAbility[Dname][1]][18] = arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser.name][1]][DPSMateAbility[Dname][1]][18] + Dcrush
 			if Dhit == 1 then
 				if (Damount < arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser.name][1]][DPSMateAbility[Dname][1]][2] or arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser.name][1]][DPSMateAbility[Dname][1]][2] == 0) then arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser.name][1]][DPSMateAbility[Dname][1]][2] = Damount end
 				if Damount > arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser.name][1]][DPSMateAbility[Dname][1]][3] then arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser.name][1]][DPSMateAbility[Dname][1]][3] = Damount end
@@ -687,20 +691,27 @@ function DPSMate.DB:EnemyDamage(arr, Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, D
 				if (Damount < arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser.name][1]][DPSMateAbility[Dname][1]][6] or arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser.name][1]][DPSMateAbility[Dname][1]][6] == 0) then arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser.name][1]][DPSMateAbility[Dname][1]][6] = Damount end
 				if Damount > arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser.name][1]][DPSMateAbility[Dname][1]][7] then arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser.name][1]][DPSMateAbility[Dname][1]][7] = Damount end
 				arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser.name][1]][DPSMateAbility[Dname][1]][8] = (arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser.name][1]][DPSMateAbility[Dname][1]][8]+Damount)/2
+			elseif Dblock == 1 then
+				if (Damount < arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser.name][1]][DPSMateAbility[Dname][1]][15] or arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser.name][1]][DPSMateAbility[Dname][1]][15] == 0) then arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser.name][1]][DPSMateAbility[Dname][1]][15] = Damount end
+				if Damount > arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser.name][1]][DPSMateAbility[Dname][1]][16] then arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser.name][1]][DPSMateAbility[Dname][1]][16] = Damount end
+				arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser.name][1]][DPSMateAbility[Dname][1]][17] = (arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser.name][1]][DPSMateAbility[Dname][1]][17]+Damount)/2
+			elseif Dcrush == 1 then
+				if (Damount < arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser.name][1]][DPSMateAbility[Dname][1]][19] or arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser.name][1]][DPSMateAbility[Dname][1]][19] == 0) then arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser.name][1]][DPSMateAbility[Dname][1]][19] = Damount end
+				if Damount > arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser.name][1]][DPSMateAbility[Dname][1]][20] then arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser.name][1]][DPSMateAbility[Dname][1]][20] = Damount end
+				arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser.name][1]][DPSMateAbility[Dname][1]][21] = (arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser.name][1]][DPSMateAbility[Dname][1]][21]+Damount)/2
 			end
 		else
 			DPSMate.DB:BuildUser(Duser.name, Duser.class)
 			DPSMate.DB:BuildUser(cause, nil)
 			DPSMate.DB:BuildAbility(Dname, nil)
 			if not arr[cat][DPSMateUser[cause][1]] then
-				arr[cat][DPSMateUser[cause][1]] = {}
+				arr[cat][DPSMateUser[cause][1]] = {
+					i = {},
+				}
 			end
 			if not arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser.name][1]] then
 				arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser.name][1]] = {
-					i = {
-						[1] = {},
-						[2] = 0,
-					},
+					i = 0,
 				}
 			end
 			arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser.name][1]][DPSMateAbility[Dname][1]] = {
@@ -717,11 +728,22 @@ function DPSMate.DB:EnemyDamage(arr, Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, D
 				[11] = Ddodge, -- dodge
 				[12] = Dresist, -- resist
 				[13] = Damount, -- amount
+				[14] = Dblock,
+				[15] = 0,
+				[16] = 0,
+				[17] = 0,
+				[18] = Dcrush,
+				[19] = 0,
+				[20] = 0,
+				[21] = 0,
 			}
 			if (Dhit == 1) then arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser.name][1]][DPSMateAbility[Dname][1]][2] = Damount; arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser.name][1]][DPSMateAbility[Dname][1]][3] = Damount; arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser.name][1]][DPSMateAbility[Dname][1]][4] = Damount end
 			if (Dcrit == 1) then arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser.name][1]][DPSMateAbility[Dname][1]][6] = Damount; arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser.name][1]][DPSMateAbility[Dname][1]][7] = Damount; arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser.name][1]][DPSMateAbility[Dname][1]][8] = Damount end
+			if (Dblock == 1) then arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser.name][1]][DPSMateAbility[Dname][1]][15] = Damount; arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser.name][1]][DPSMateAbility[Dname][1]][16] = Damount; arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser.name][1]][DPSMateAbility[Dname][1]][17] = Damount end
+			if (Dcrush == 1) then arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser.name][1]][DPSMateAbility[Dname][1]][19] = Damount; arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser.name][1]][DPSMateAbility[Dname][1]][20] = Damount; arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser.name][1]][DPSMateAbility[Dname][1]][21] = Damount end
 		end
-		arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser.name][1]]["i"][2] = arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser.name][1]]["i"][2] + Damount
+		arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser.name][1]]["i"] = arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser.name][1]]["i"] + Damount
+		if Damount > 0 then table.insert(arr[cat][DPSMateUser[cause][1]]["i"], {DPSMateCombatTime[val], Damount}) end
 	end
 	DPSMate.DB.NeedUpdate = true
 end

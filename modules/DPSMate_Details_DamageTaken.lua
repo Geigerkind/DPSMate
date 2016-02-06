@@ -144,7 +144,7 @@ function DPSMate.Modules.DetailsDamageTaken:SelectDetailsButton(p,i)
 	getglobal("DPSMate_Details_DamageTaken_LogDetails_Amount1_Amount"):SetText(crush)
 	getglobal("DPSMate_Details_DamageTaken_LogDetails_Amount1_Percent"):SetText(ceil(100*crush/total).."%")
 	getglobal("DPSMate_Details_DamageTaken_LogDetails_Amount1_StatusBar"):SetValue(ceil(100*crush/max))
-	getglobal("DPSMate_Details_DamageTaken_LogDetails_Amount1_StatusBar"):SetStatusBarColor(0.0,0.0,1.0,1)
+	getglobal("DPSMate_Details_DamageTaken_LogDetails_Amount1_StatusBar"):SetStatusBarColor(1.0,0.7,0.3,1)
 	getglobal("DPSMate_Details_DamageTaken_LogDetails_Average1"):SetText(ceil(crushav))
 	getglobal("DPSMate_Details_DamageTaken_LogDetails_Min1"):SetText(crushMin)
 	getglobal("DPSMate_Details_DamageTaken_LogDetails_Max1"):SetText(crushMax)
@@ -207,12 +207,13 @@ end
 function DPSMate.Modules.DetailsDamageTaken:UpdateLineGraph()
 	local arr = db
 	local sumTable = DPSMate.Modules.DetailsDamageTaken:GetSummarizedTable(arr)
-	local max = DPSMate.Modules.DetailsDamageTaken:GetMaxLineVal(sumTable)
+	local max = DPSMate.Modules.DetailsDamageTaken:GetMaxLineVal(sumTable, 2)
+	local time = DPSMate.Modules.DetailsDamageTaken:GetMaxLineVal(sumTable, 1)
 	
 	g2:ResetData()
-	g2:SetXAxis(0,cbt)
+	g2:SetXAxis(0,time)
 	g2:SetYAxis(0,max+200)
-	g2:SetGridSpacing(cbt/10,max/7)
+	g2:SetGridSpacing(time/10,max/7)
 	g2:SetGridColor({0.5,0.5,0.5,0.5})
 	g2:SetAxisDrawing(true,true)
 	g2:SetAxisColor({1.0,1.0,1.0,1.0})
@@ -253,11 +254,11 @@ function DPSMate.Modules.DetailsDamageTaken:GetSummarizedTable(arr)
 	return DPSMate.Sync:GetSummarizedTable(arr[DPSMateUser[DetailsUser][1]]["i"])
 end
 
-function DPSMate.Modules.DetailsDamageTaken:GetMaxLineVal(t)
+function DPSMate.Modules.DetailsDamageTaken:GetMaxLineVal(t, p)
 	local max = 0
 	for cat, val in pairs(t) do
-		if val[2]>max then
-			max=val[2]
+		if val[p]>max then
+			max=val[p]
 		end
 	end
 	return max

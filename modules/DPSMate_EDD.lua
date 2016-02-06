@@ -19,7 +19,9 @@ function DPSMate.Modules.EDD:GetSortedTable(arr)
 	for c, v in pairs(arr) do
 		local CV = 0
 		for cat, val in pairs(v) do
-			CV = CV+val["i"][2]
+			if cat~="i" then
+				CV = CV+val["i"]
+			end
 		end
 		local i = 1
 		while true do
@@ -46,28 +48,43 @@ function DPSMate.Modules.EDD:EvalTable(user, k)
 	local arr = DPSMate:GetMode(k)
 	if not arr[user[1]] then return end
 	for cat, val in pairs(arr[user[1]]) do
-		for ca, va in pairs(val) do
-			if ca~="i" then
-				if temp[ca] then temp[ca]=temp[ca]+va[13] else temp[ca]=va[13] end
-			end
-		end
-	total=total+val["i"][2]
-	end
-	for cat, val in pairs(temp) do
-		local i = 1
-		while true do
-			if (not d[i]) then
-				table.insert(a, i, cat)
-				table.insert(d, i, val)
-				break
-			else
-				if (d[i] < val) then
-					table.insert(a, i, cat)
-					table.insert(d, i, val)
-					break
+		if cat~="i" then
+			local ta, td = {}, {}
+			for ca, va in pairs(val) do
+				if ca~="i" then
+					local i = 1
+					while true do
+						if (not td[i]) then
+							table.insert(ta, i, ca)
+							table.insert(td, i, va[13])
+							break
+						else
+							if (td[i] < va[13]) then
+								table.insert(ta, i, ca)
+								table.insert(td, i, va[13])
+								break
+							end
+						end
+						i = i + 1
+					end
 				end
 			end
-			i = i + 1
+			local i = 1
+			while true do
+				if (not d[i]) then
+					table.insert(a, i, cat)
+					table.insert(d, i, {val["i"], ta, td})
+					break
+				else
+					if (d[i] < val["i"]) then
+						table.insert(a, i, cat)
+						table.insert(d, i, {val["i"], ta, td})
+						break
+					end
+				end
+				i = i + 1
+			end
+			total=total+val["i"]
 		end
 	end
 	return a, total, d
@@ -96,9 +113,21 @@ function DPSMate.Modules.EDD:ShowTooltip(user, k)
 	if DPSMateSettings["informativetooltips"] then
 		for i=1, DPSMateSettings["subviewrows"] do
 			if not a[i] then break end
-			GameTooltip:AddDoubleLine(i..". "..DPSMate:GetAbilityById(a[i]),c[i],1,1,1,1,1,1)
+			GameTooltip:AddDoubleLine(i..". "..DPSMate:GetUserById(a[i]),c[i][1],1,1,1,1,1,1)
+			for p=1, 3 do
+				if not c[i][2][p] then break end
+				GameTooltip:AddDoubleLine("       "..p..". "..DPSMate:GetAbilityById(c[i][2][p]),c[i][3][p],0.5,0.5,0.5,0.5,0.5,0.5)
+			end
 		end
 	end
 end
 
+
+function DPSMate.Modules.EDD:OpenDetails(obj, key)
+	DPSMate.Modules.DetailsEDD:UpdateDetails(obj, key)
+end
+
+function DPSMate.Modules.Damage:OpenTotalDetails(obj, key)
+	DPSMate.Modules.DetailsDamageTotal:UpdateDetails(obj, key)
+end
 

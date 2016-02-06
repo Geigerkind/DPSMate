@@ -337,6 +337,7 @@ function DPSMate.Sync:DMGDoneStatIn(arg2, arg4)
 	DPSMate.DB:BuildUser(arg4, nil)
 	local ownerid = DPSMateUser[arg4][1]
 	for key, val in string.gfind(arg2, "(.+),(.+)") do
+		key = tonumber(key)
 		if not DPSMateDamageDone[1][ownerid] then
 			DPSMateDamageDone[1][ownerid] = {
 				i = {
@@ -345,7 +346,8 @@ function DPSMate.Sync:DMGDoneStatIn(arg2, arg4)
 				},
 			}
 		end
-		DPSMateDamageDone[1][ownerid]["i"][1][tonumber(key)] = tonumber(val)
+		DPSMateDamageDone[1][ownerid]["i"][1][key] = tonumber(val)
+		if key>DPSMateCombatTime["total"] then DPSMateCombatTime["total"]=key end
 	end
 end
 
@@ -404,12 +406,14 @@ function DPSMate.Sync:DMGTakenStatIn(arg2, arg4)
 	local ownerid = DPSMateUser[arg4][1]
 	if not ownerid then return end
 	for key, val in string.gfind(arg2, "(.+),(.+)") do
+		key = tonumber(key)
 		if not DPSMateDamageTaken[1][ownerid] then
 			DPSMateDamageTaken[1][ownerid] = {
 				i = {},
 			}
 		end
-		DPSMateDamageDone[1][ownerid]["i"][tonumber(key)] = tonumber(val)
+		DPSMateDamageDone[1][ownerid]["i"][key] = tonumber(val)
+		if key>DPSMateCombatTime["total"] then DPSMateCombatTime["total"]=key end
 	end
 end
 
