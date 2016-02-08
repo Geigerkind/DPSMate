@@ -518,7 +518,7 @@ end
 -- First crit/hit av value will be half if it is not the first hit actually. Didnt want to add an exception for it though. Maybe later :/
 function DPSMate.DB:DamageDone(Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, Ddodge, Dresist, Damount, Dglance, Dblock)
 	if (not Duser.name or DPSMate:TableLength(Duser)==0 or not Dname or not Damount) then return end -- Parsing failure, I guess at AEO periodic abilities
-	if (not CombatState and cheatCombat+10<GetTime() and Damount > 0) then
+	if (not CombatState and cheatCombat+10<GetTime()) then
 		DPSMate.Options:NewSegment()
 	end
 	CombatState = true
@@ -599,7 +599,7 @@ end
 -- Fall damage
 function DPSMate.DB:DamageTaken(Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, Ddodge, Dresist, Damount, cause, Dcrush)
 	if (not Duser.name or DPSMate:TableLength(Duser)==0 or not Dname or cause=="") then return end
-	CombatState = true
+	--CombatState = true
 	
 	for cat, val in pairs({[1]="total", [2]="current"}) do 
 		if DPSMate.DB:DTExist(Duser.name, cause, Dname, DPSMateDamageTaken[cat]) then
@@ -631,13 +631,14 @@ function DPSMate.DB:DamageTaken(Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, Ddodge
 			DPSMate.DB:BuildAbility(Dname, nil)
 			if not DPSMateDamageTaken[cat][DPSMateUser[Duser.name][1]] then
 				DPSMateDamageTaken[cat][DPSMateUser[Duser.name][1]] = {
-					i = {}
+					i = {
+						[1] = {},
+						[2] = 0,
+					}
 				}
 			end
 			if not DPSMateDamageTaken[cat][DPSMateUser[Duser.name][1]][DPSMateUser[cause][1]] then
-				DPSMateDamageTaken[cat][DPSMateUser[Duser.name][1]][DPSMateUser[cause][1]] = {
-					i = 0,
-				}
+				DPSMateDamageTaken[cat][DPSMateUser[Duser.name][1]][DPSMateUser[cause][1]] = {}
 			end
 			DPSMateDamageTaken[cat][DPSMateUser[Duser.name][1]][DPSMateUser[cause][1]][DPSMateAbility[Dname][1]] = {
 				[1] = Dhit, -- hit
@@ -663,15 +664,15 @@ function DPSMate.DB:DamageTaken(Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, Ddodge
 			if (Dcrit == 1) then DPSMateDamageTaken[cat][DPSMateUser[Duser.name][1]][DPSMateUser[cause][1]][DPSMateAbility[Dname][1]][6] = Damount; DPSMateDamageTaken[cat][DPSMateUser[Duser.name][1]][DPSMateUser[cause][1]][DPSMateAbility[Dname][1]][7] = Damount; DPSMateDamageTaken[cat][DPSMateUser[Duser.name][1]][DPSMateUser[cause][1]][DPSMateAbility[Dname][1]][8] = Damount end
 			if (Dcrush == 1) then DPSMateDamageTaken[cat][DPSMateUser[Duser.name][1]][DPSMateUser[cause][1]][DPSMateAbility[Dname][1]][16] = Damount; DPSMateDamageTaken[cat][DPSMateUser[Duser.name][1]][DPSMateUser[cause][1]][DPSMateAbility[Dname][1]][17] = Damount; DPSMateDamageTaken[cat][DPSMateUser[Duser.name][1]][DPSMateUser[cause][1]][DPSMateAbility[Dname][1]][18] = Damount end
 		end
-		DPSMateDamageTaken[cat][DPSMateUser[Duser.name][1]][DPSMateUser[cause][1]]["i"] = DPSMateDamageTaken[cat][DPSMateUser[Duser.name][1]][DPSMateUser[cause][1]]["i"] + Damount
-		if Damount > 0 then table.insert(DPSMateDamageTaken[cat][DPSMateUser[Duser.name][1]]["i"], {DPSMateCombatTime[val], Damount}) end
+		DPSMateDamageTaken[cat][DPSMateUser[Duser.name][1]]["i"][2] = DPSMateDamageTaken[cat][DPSMateUser[Duser.name][1]]["i"][2] + Damount
+		if Damount > 0 then table.insert(DPSMateDamageTaken[cat][DPSMateUser[Duser.name][1]]["i"][1], {DPSMateCombatTime[val], Damount}) end
 	end
 	DPSMate.DB.NeedUpdate = true
 end
 
 function DPSMate.DB:EnemyDamage(arr, Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, Ddodge, Dresist, Damount, cause, Dblock, Dcrush)
 	if (not Duser.name or DPSMate:TableLength(Duser)==0 or not Dname or not Damount) then return end
-	CombatState = true
+	--CombatState = true
 	for cat, val in pairs({[1]="total", [2]="current"}) do 
 		if DPSMate.DB:EDDExist(Duser.name, cause, Dname, arr[cat]) then
 			arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser.name][1]][DPSMateAbility[Dname][1]][1] = arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser.name][1]][DPSMateAbility[Dname][1]][1] + Dhit
@@ -940,15 +941,21 @@ function DPSMate.DB:RegisterAbsorb(owner, ability, abilityTarget)
 			i = {
 				[1] = 0,
 				[2] = 0,
+				[3] = 0,
+				[4] = 0,
 			},
 		})
 	end
 end
 
-local broken, brokenAbsorb = 2, 0
-function DPSMate.DB:SetUnregisterVariables(broAbsorb)
-	broken = 1
-	brokenAbsorb = broAbsorb
+local broken = {2,0,0,0}
+function DPSMate.DB:SetUnregisterVariables(broAbsorb, ab, c)
+	DPSMate.DB:BuildAbility(ab, nil)
+	DPSMate.DB:BuildUser(c, nil)
+	broken[1] = 1
+	broken[2] = broAbsorb
+	broken[3] = DPSMateAbility[ab][1]
+	broken[4] = DPSMateUser[c][1]
 end
 
 function DPSMate.DB:UnregisterAbsorb(ability, abilityTarget)
@@ -956,13 +963,14 @@ function DPSMate.DB:UnregisterAbsorb(ability, abilityTarget)
 		local AbsorbingAbility = DPSMate.DB:GetActiveAbsorbAbilityByPlayer(ability, abilityTarget, cat)
 		if AbsorbingAbility[1] then
 			if DPSMateAbsorbs[cat][DPSMateUser[abilityTarget][1]][AbsorbingAbility[1]][AbsorbingAbility[2]][AbsorbingAbility[3]]["i"][1] == 0 then
-				DPSMateAbsorbs[cat][DPSMateUser[abilityTarget][1]][AbsorbingAbility[1]][AbsorbingAbility[2]][AbsorbingAbility[3]]["i"][1] = broken
-				DPSMateAbsorbs[cat][DPSMateUser[abilityTarget][1]][AbsorbingAbility[1]][AbsorbingAbility[2]][AbsorbingAbility[3]]["i"][2] = brokenAbsorb
+				DPSMateAbsorbs[cat][DPSMateUser[abilityTarget][1]][AbsorbingAbility[1]][AbsorbingAbility[2]][AbsorbingAbility[3]]["i"][1] = broken[1]
+				DPSMateAbsorbs[cat][DPSMateUser[abilityTarget][1]][AbsorbingAbility[1]][AbsorbingAbility[2]][AbsorbingAbility[3]]["i"][2] = broken[2]
+				DPSMateAbsorbs[cat][DPSMateUser[abilityTarget][1]][AbsorbingAbility[1]][AbsorbingAbility[2]][AbsorbingAbility[3]]["i"][3] = broken[3]
+				DPSMateAbsorbs[cat][DPSMateUser[abilityTarget][1]][AbsorbingAbility[1]][AbsorbingAbility[2]][AbsorbingAbility[3]]["i"][4] = broken[4]
 			end
 		end
 	end
-	broken = 2
-	brokenAbsorb = 0
+	broken = {2,0,0,0}
 	DPSMate.DB.NeedUpdate = true
 end
 

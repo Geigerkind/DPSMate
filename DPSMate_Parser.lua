@@ -224,8 +224,8 @@ end
 
 function DPSMate.Parser:SelfMisses(msg)
 	local miss, parry, dodge, block = 0, 0, 0, 0
-	if strfind(msg, DPSMate.localization.parser.youmiss) then miss = 1; elseif strfind(msg, DPSMate.localization.parser.parries) then parry = 1; elseif strfind(msg, DPSMate.localization.parser.dodges) then dodge = 1; elseif strfind(msg, "blocks") then block = 1; end
-	DPSMate.DB:EnemyDamage(DPSMateEDT, player, "AutoAttack", 0, 0, miss, parry, dodge, 0, 0, 0, "None", block, 0)
+	if strfind(msg, DPSMate.localization.parser.youmiss) then miss = 1; elseif strfind(msg, DPSMate.localization.parser.parries) then parry = 1; elseif strfind(msg, DPSMate.localization.parser.dodges) then dodge = 1; else block = 1; end
+	DPSMate.DB:EnemyDamage(DPSMateEDT, player, "AutoAttack", 0, 0, miss, parry, dodge, 0, 0, "None", block, 0)
 	DPSMate.DB:DamageDone(player, "AutoAttack", 0, 0, miss, parry, dodge, 0, 0, 0, block)
 end
 
@@ -570,13 +570,13 @@ end
 
 -- Heavy War Golem hits/crits you for 8. (59 absorbed)
 function DPSMate.Parser:CreatureVsSelfHitsAbsorb(msg)
-	for c, a, absorbed in string.gfind(msg, "(.+) hits you for (.+)%. ((.+) absorbed)") do DPSMate.DB:SetUnregisterVariables(tonumber(absorbed)) end
-	for c, a, absorbed in string.gfind(msg, "(.+) crits you for (.+)%. ((.+) absorbed)") do DPSMate.DB:SetUnregisterVariables(tonumber(absorbed)) end
+	for c, a, absorbed in string.gfind(msg, "(.+) hits you for (.+)%. %((.+) absorbed%)") do DPSMate.DB:SetUnregisterVariables(tonumber(absorbed), "AutoAttack", c) end
+	for c, a, absorbed in string.gfind(msg, "(.+) crits you for (.+)%. %((.+) absorbed%)") do DPSMate.DB:SetUnregisterVariables(tonumber(absorbed), "AutoAttack", c) end
 end
 
 function DPSMate.Parser:CreatureVsCreatureHitsAbsorb(msg)
-	for c, ta, a, absorbed in string.gfind(msg, "(.+) hits (.+) for (.+)%. ((.+) absorbed)") do DPSMate.DB:SetUnregisterVariables(tonumber(absorbed)) end
-	for c, ta, a, absorbed in string.gfind(msg, "(.+) crits (.+) for (.+)%. ((.+) absorbed)") do DPSMate.DB:SetUnregisterVariables(tonumber(absorbed)) end
+	for c, ta, a, absorbed in string.gfind(msg, "(.+) hits (.+) for (.+)%. %((.+) absorbed%)") do DPSMate.DB:SetUnregisterVariables(tonumber(absorbed), "AutoAttack", c) end
+	for c, ta, a, absorbed in string.gfind(msg, "(.+) crits (.+) for (.+)%. %((.+) absorbed%)") do DPSMate.DB:SetUnregisterVariables(tonumber(absorbed), "AutoAttack", c) end
 end
 
 -- Heavy War Golem attacks. You absorb all the damage.
@@ -590,13 +590,13 @@ end
 
 -- Heavy War Golem's Trample hits/crits you for 51 (Fire damage). (48 absorbed)
 function DPSMate.Parser:CreatureVsSelfSpellDamageAbsorb(msg)
-	for c, a, absorbed in string.gfind(msg, "(.+)'s (.+) hits you for (.+)%. ((.+) absorbed)") do DPSMate.DB:SetUnregisterVariables(tonumber(absorbed)) end
-	for c, a, absorbed in string.gfind(msg, "(.+)'s (.+) crits you for (.+)%. ((.+) absorbed)") do DPSMate.DB:SetUnregisterVariables(tonumber(absorbed)) end
+	for c, a, absorbed in string.gfind(msg, "(.+)'s (.+) hits you for (.+)%. %((.+) absorbed%)") do DPSMate.DB:SetUnregisterVariables(tonumber(absorbed), a, c) end
+	for c, a, absorbed in string.gfind(msg, "(.+)'s (.+) crits you for (.+)%. %((.+) absorbed%)") do DPSMate.DB:SetUnregisterVariables(tonumber(absorbed), a, c) end
 end
 
 function DPSMate.Parser:CreatureVsCreatureSpellDamageAbsorb(msg)
-	for c, ta, a, absorbed in string.gfind(msg, "(.+)'s (.+) hits (.+) for (.+)%. ((.+) absorbed)") do DPSMate.DB:SetUnregisterVariables(tonumber(absorbed)) end
-	for c, ta, a, absorbed in string.gfind(msg, "(.+)'s (.+) crits (.+) for (.+)%. ((.+) absorbed)") do DPSMate.DB:SetUnregisterVariables(tonumber(absorbed)) end
+	for c, ta, a, absorbed in string.gfind(msg, "(.+)'s (.+) hits (.+) for (.+)%. %((.+) absorbed%)") do DPSMate.DB:SetUnregisterVariables(tonumber(absorbed), a, c) end
+	for c, ta, a, absorbed in string.gfind(msg, "(.+)'s (.+) crits (.+) for (.+)%. %((.+) absorbed%)") do DPSMate.DB:SetUnregisterVariables(tonumber(absorbed), a, c) end
 end
 
 function DPSMate.Parser:SpellPeriodicSelfBuffAbsorb(msg)

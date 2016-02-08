@@ -17,79 +17,71 @@ DPSMate:Register("damagetaken", DPSMate.Modules.DamageTaken)
 function DPSMate.Modules.DamageTaken:GetSortedTable(arr)
 	local b, a, total = {}, {}, 0
 	for c, v in pairs(arr) do
-		local CV = 0
-		for cat, val in pairs(v) do
-			if cat~="i" then
-			CV = CV+val["i"]
-			end
-		end
 		local i = 1
 		while true do
 			if (not b[i]) then
-				table.insert(b, i, CV)
+				table.insert(b, i, v["i"][2])
 				table.insert(a, i, c)
 				break
 			else
-				if b[i] < CV then
-					table.insert(b, i, CV)
+				if b[i] < v["i"][2] then
+					table.insert(b, i, v["i"][2])
 					table.insert(a, i, c)
 					break
 				end
 			end
 			i=i+1
 		end
-		total = total + CV
+		total = total + v["i"][2]
 	end
 	return b, total, a
 end
 
 function DPSMate.Modules.DamageTaken:EvalTable(user, k)
-	local a, u, p, d, total = {}, {}, {}, {}, 0
+	local a, d = {}, {}
 	local arr = DPSMate:GetMode(k)
 	if not arr[user[1]] then return end
 	for cat, val in pairs(arr[user[1]]) do
 		if cat~="i" then
-		local CV = 0
-		local ta, tb = {}, {}
-		for ca, va in pairs(val) do
-			if ca~="i" then
-				CV = CV + va[13]
-				local i = 1
-				while true do
-					if (not tb[i]) then
-						table.insert(ta, i, ca)
-						table.insert(tb, i, va[13])
-						break
-					else
-						if (tb[i] < va[13]) then
+			local ta, tb, CV = {}, {}, 0
+			for ca, va in pairs(val) do
+				if ca~="i" then
+					CV = CV + va[13]
+					local i = 1
+					while true do
+						if (not tb[i]) then
 							table.insert(ta, i, ca)
 							table.insert(tb, i, va[13])
 							break
+						else
+							if (tb[i] < va[13]) then
+								table.insert(ta, i, ca)
+								table.insert(tb, i, va[13])
+								break
+							end
 						end
+						i = i + 1
 					end
-					i = i + 1
 				end
 			end
-		end
-		local i = 1
-		while true do
-			if (not d[i]) then
-				table.insert(a, i, cat)
-				table.insert(d, i, {CV, ta, tb})
-				break
-			else
-				if (d[i][1] < CV) then
+			local i = 1
+			while true do
+				if (not d[i]) then
 					table.insert(a, i, cat)
 					table.insert(d, i, {CV, ta, tb})
 					break
+				else
+					if (d[i][1] < CV) then
+						table.insert(a, i, cat)
+						table.insert(d, i, {CV, ta, tb})
+						break
+					end
 				end
+				i = i + 1
 			end
-			i = i + 1
-		end
-		total=total+val["i"]
 		end
 	end
-	return a, total, d
+	return a, arr[user[1]]["i"][2], d
 end
 
 function DPSMate.Modules.DamageTaken:GetSettingValues(arr, cbt, k)
