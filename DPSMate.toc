@@ -82,6 +82,8 @@ modules\DPSMate_Details_EHealingTaken.lua
 modules\DPSMate_Details_EHealingTaken.xml
 modules\DPSMate_Details_Absorbs.lua
 modules\DPSMate_Details_Absorbs.xml
+modules\DPSMate_Details_AbsorbsTaken.lua
+modules\DPSMate_Details_AbsorbsTaken.xml
 
 DPSMate_Frame.xml
 DPSMate_Options.xml

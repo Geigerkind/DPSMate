@@ -70,9 +70,10 @@ function DPSMate.Modules.AbsorbsTaken:EvalTable(user, k)
 	local b, a, total = {}, {}, 0
 	if not arr[user[1]] then return end
 	for cat, val in pairs(arr[user[1]]) do -- 28 Target
+		local PerTargetAbsorb, ta, tb = 0, {}, {}
 		for ca, va in pairs(val) do -- Power Word Shield
 			if ca~="i" then
-				local PerAbilityAbsorb = 0
+				local PerAbilityAbsorb, taa, tbb, temp = 0, {}, {}, {}
 				for c, v in pairs(va) do -- 1
 					local PerShieldAbsorb = 0
 					for ce, ve in pairs(v) do
@@ -82,20 +83,64 @@ function DPSMate.Modules.AbsorbsTaken:EvalTable(user, k)
 								p=ceil(DPSMateDamageTaken[1][user[1]][ce][ve[1]][14])
 							end
 							PerShieldAbsorb=PerShieldAbsorb+ve[2]*p
+							if not temp[ce] then temp[ce] = {} end
+							if not temp[ce][ve[1]] then temp[ce][ve[1]] = ve[2]*p else temp[ce][ve[1]] =temp[ce][ve[1]]+ve[2]*p end
 						end
+					end
+					if v["i"][1]==1 then
+						PerShieldAbsorb=PerShieldAbsorb+v["i"][2]
+						if not temp[v["i"][4]] then temp[v["i"][4]] = {} end
+						if not temp[v["i"][4]][v["i"][3]] then temp[v["i"][4]][v["i"][3]] = v["i"][2] else temp[v["i"][4]][v["i"][3]] = temp[v["i"][4]][v["i"][3]] + v["i"][2] end
 					end
 					PerAbilityAbsorb=PerAbilityAbsorb+PerShieldAbsorb
 				end
+				PerTargetAbsorb=PerTargetAbsorb+PerAbilityAbsorb
+				for ut, utt in temp do
+					local CVV, qa, qd = 0, {}, {}
+					for qt, qtt in utt do
+						CVV = CVV + qtt
+						local i = 1
+						while true do
+							if (not qd[i]) then
+								table.insert(qd, i, qtt)
+								table.insert(qa, i, qt)
+								break
+							else
+								if qd[i] < qtt then
+									table.insert(qd, i, qtt)
+									table.insert(qa, i, qt)
+									break
+								end
+							end
+							i=i+1
+						end
+					end
+					local i = 1
+					while true do
+						if (not tbb[i]) then
+							table.insert(tbb, i, {CVV, qa, qd})
+							table.insert(taa, i, ut)
+							break
+						else
+							if tbb[i][1] < CVV then
+								table.insert(tbb, i, {CVV, qa, qd})
+								table.insert(taa, i, ut)
+								break
+							end
+						end
+						i=i+1
+					end
+				end
 				local i = 1
 				while true do
-					if (not b[i]) then
-						table.insert(b, i, PerAbilityAbsorb)
-						table.insert(a, i, cat)
+					if (not tb[i]) then
+						table.insert(tb, i, {PerAbilityAbsorb, taa, tbb})
+						table.insert(ta, i, ca)
 						break
 					else
-						if b[i] < PerAbilityAbsorb then
-							table.insert(b, i, PerAbilityAbsorb)
-							table.insert(a, i, cat)
+						if tb[i] < PerAbilityAbsorb then
+							table.insert(tb, i, {PerAbilityAbsorb, taa, tbb})
+							table.insert(ta, i, ca)
 							break
 						end
 					end
@@ -103,8 +148,24 @@ function DPSMate.Modules.AbsorbsTaken:EvalTable(user, k)
 				end
 			end
 		end
+		local i = 1
+		while true do
+			if (not b[i]) then
+				table.insert(b, i, {PerTargetAbsorb, ta, tb})
+				table.insert(a, i, cat)
+				break
+			else
+				if b[i] < PerTargetAbsorb then
+					table.insert(b, i, {PerTargetAbsorb, ta, tb})
+					table.insert(a, i, cat)
+					break
+				end
+			end
+			i=i+1
+		end
+		total=total+PerTargetAbsorb
 	end
-	return b, total, a
+	return a, total, b
 end
 
 function DPSMate.Modules.AbsorbsTaken:GetSettingValues(arr, cbt, k)
@@ -129,9 +190,16 @@ function DPSMate.Modules.AbsorbsTaken:ShowTooltip(user, k)
 	if DPSMateSettings["informativetooltips"] then
 		for i=1, DPSMateSettings["subviewrows"] do
 			if not a[i] then break end
-			GameTooltip:AddDoubleLine(i..". "..DPSMate:GetUserById(c[i]),a[i],1,1,1,1,1,1)
+			GameTooltip:AddDoubleLine(i..". "..DPSMate:GetUserById(a[i]),c[i][1],1,1,1,1,1,1)
 		end
 	end
 end
 
+function DPSMate.Modules.AbsorbsTaken:OpenDetails(obj, key)
+	DPSMate.Modules.DetailsAbsorbsTaken:UpdateDetails(obj, key)
+end
+
+function DPSMate.Modules.Damage:OpenTotalDetails(obj, key)
+	DPSMate.Modules.DetailsDamageTotal:UpdateDetails(obj, key)
+end
 

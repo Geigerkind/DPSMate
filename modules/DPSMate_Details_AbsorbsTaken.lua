@@ -1,5 +1,5 @@
 -- Global Variables
-DPSMate.Modules.DetailsAbsorbs = {}
+DPSMate.Modules.DetailsAbsorbsTaken = {}
 
 -- Local variables
 local DetailsArr, DetailsTotal, DmgArr, DetailUser, DetailsSelected  = {}, 0, {}, "", 1
@@ -33,26 +33,26 @@ local icons = {
 local curKey = 1
 local db, cbt = {}, 0
 
-function DPSMate.Modules.DetailsAbsorbs:UpdateDetails(obj, key)
+function DPSMate.Modules.DetailsAbsorbsTaken:UpdateDetails(obj, key)
 	curKey = key
 	db, cbt = DPSMate:GetMode(key)
 	if (PieChart) then
-		g2=DPSMate.Options.graph:CreateGraphLine("LineGraph",DPSMate_Details_Absorbs_DiagramLine,"CENTER","CENTER",0,0,960,230)
+		g2=DPSMate.Options.graph:CreateGraphLine("LineGraph",DPSMate_Details_AbsorbsTaken_DiagramLine,"CENTER","CENTER",0,0,960,230)
 		PieChart = false
 	end
 	DetailsUser = obj.user
-	DPSMate_Details_Absorbs_Title:SetText("Absorbs by "..obj.user)
-	DPSMate_Details_Absorbs:Show()
-	DPSMate.Modules.DetailsAbsorbs:ScrollFrame_Update()
-	DPSMate.Modules.DetailsAbsorbs:SelectCreatureButton(1)
-	DPSMate.Modules.DetailsAbsorbs:SelectCauseButton(1,1)
-	DPSMate.Modules.DetailsAbsorbs:SelectCauseABButton(1,1,1)
-	DPSMate.Modules.DetailsAbsorbs:UpdateLineGraph()
+	DPSMate_Details_AbsorbsTaken_Title:SetText("AbsorbsTaken by "..obj.user)
+	DPSMate_Details_AbsorbsTaken:Show()
+	DPSMate.Modules.DetailsAbsorbsTaken:ScrollFrame_Update()
+	DPSMate.Modules.DetailsAbsorbsTaken:SelectCreatureButton(1)
+	DPSMate.Modules.DetailsAbsorbsTaken:SelectCauseButton(1,1)
+	DPSMate.Modules.DetailsAbsorbsTaken:SelectCauseABButton(1,1,1)
+	DPSMate.Modules.DetailsAbsorbsTaken:UpdateLineGraph()
 end
 
-function DPSMate.Modules.DetailsAbsorbs:ScrollFrame_Update()
+function DPSMate.Modules.DetailsAbsorbsTaken:ScrollFrame_Update()
 	local line, lineplusoffset
-	local path = "DPSMate_Details_Absorbs_LogCreature"
+	local path = "DPSMate_Details_AbsorbsTaken_LogCreature"
 	local obj = getglobal(path.."_ScrollFrame")
 	local arr = db
 	local pet, len = "", DPSMate:TableLength(arr[DPSMateUser[DetailsUser][1]])-5
@@ -83,9 +83,9 @@ function DPSMate.Modules.DetailsAbsorbs:ScrollFrame_Update()
 	end
 end
 
-function DPSMate.Modules.DetailsAbsorbs:SelectCreatureButton(i)
+function DPSMate.Modules.DetailsAbsorbsTaken:SelectCreatureButton(i)
 	local line, lineplusoffset
-	local path = "DPSMate_Details_Absorbs_Log"
+	local path = "DPSMate_Details_AbsorbsTaken_Log"
 	local obj = getglobal(path.."_ScrollFrame")
 	obj.index = i
 	local arr = db
@@ -117,14 +117,14 @@ function DPSMate.Modules.DetailsAbsorbs:SelectCreatureButton(i)
 		getglobal(path.."_ScrollButton1_selected"):Show()
 	end
 	for p=1, 10 do
-		getglobal("DPSMate_Details_Absorbs_LogCreature_ScrollButton"..p.."_selected"):Hide()
+		getglobal("DPSMate_Details_AbsorbsTaken_LogCreature_ScrollButton"..p.."_selected"):Hide()
 	end
-	getglobal("DPSMate_Details_Absorbs_LogCreature_ScrollButton"..i.."_selected"):Show()
+	getglobal("DPSMate_Details_AbsorbsTaken_LogCreature_ScrollButton"..i.."_selected"):Show()
 end
 
-function DPSMate.Modules.DetailsAbsorbs:SelectCauseButton(i,p)
+function DPSMate.Modules.DetailsAbsorbsTaken:SelectCauseButton(i,p)
 	local line, lineplusoffset
-	local path = "DPSMate_Details_Absorbs_LogTwo"
+	local path = "DPSMate_Details_AbsorbsTaken_LogTwo"
 	local obj = getglobal(path.."_ScrollFrame")
 	obj.index = i
 	obj.indextwo = p
@@ -157,14 +157,14 @@ function DPSMate.Modules.DetailsAbsorbs:SelectCauseButton(i,p)
 		getglobal(path.."_ScrollButton1_selected"):Show()
 	end
 	for p=1, 10 do
-		getglobal("DPSMate_Details_Absorbs_Log_ScrollButton"..p.."_selected"):Hide()
+		getglobal("DPSMate_Details_AbsorbsTaken_Log_ScrollButton"..p.."_selected"):Hide()
 	end
-	getglobal("DPSMate_Details_Absorbs_Log_ScrollButton"..p.."_selected"):Show()
+	getglobal("DPSMate_Details_AbsorbsTaken_Log_ScrollButton"..p.."_selected"):Show()
 end
 
-function DPSMate.Modules.DetailsAbsorbs:SelectCauseABButton(i,p,q)
+function DPSMate.Modules.DetailsAbsorbsTaken:SelectCauseABButton(i,p,q)
 	local line, lineplusoffset
-	local path = "DPSMate_Details_Absorbs_LogThree"
+	local path = "DPSMate_Details_AbsorbsTaken_LogThree"
 	local obj = getglobal(path.."_ScrollFrame")
 	obj.index = i
 	obj.indextwo = p
@@ -197,16 +197,16 @@ function DPSMate.Modules.DetailsAbsorbs:SelectCauseABButton(i,p,q)
 		getglobal(path.."_ScrollButton"..line.."_selected"):Hide()
 	end
 	for p=1, 10 do
-		getglobal("DPSMate_Details_Absorbs_LogTwo_ScrollButton"..p.."_selected"):Hide()
+		getglobal("DPSMate_Details_AbsorbsTaken_LogTwo_ScrollButton"..p.."_selected"):Hide()
 	end
-	getglobal("DPSMate_Details_Absorbs_LogTwo_ScrollButton"..q.."_selected"):Show()
+	getglobal("DPSMate_Details_AbsorbsTaken_LogTwo_ScrollButton"..q.."_selected"):Show()
 end
 
-function DPSMate.Modules.DetailsAbsorbs:UpdateLineGraph()
+function DPSMate.Modules.DetailsAbsorbsTaken:UpdateLineGraph()
 	local arr = db
-	local sumTable = DPSMate.Modules.DetailsAbsorbs:GetSummarizedTable(arr)
-	local max = DPSMate.Modules.DetailsAbsorbs:GetMaxLineVal(sumTable, 2)
-	local time = DPSMate.Modules.DetailsAbsorbs:GetMaxLineVal(sumTable, 1)
+	local sumTable = DPSMate.Modules.DetailsAbsorbsTaken:GetSummarizedTable(arr)
+	local max = DPSMate.Modules.DetailsAbsorbsTaken:GetMaxLineVal(sumTable, 2)
+	local time = DPSMate.Modules.DetailsAbsorbsTaken:GetMaxLineVal(sumTable, 1)
 	
 	g2:ResetData()
 	g2:SetXAxis(0,time)
@@ -227,10 +227,10 @@ function DPSMate.Modules.DetailsAbsorbs:UpdateLineGraph()
 	g2:AddDataSeries(Data1,{{1.0,0.0,0.0,0.8}, {1.0,0.0,0.0,0.8}}, {})
 end
 
-function DPSMate.Modules.DetailsAbsorbs:SortLineTable(arr)
+function DPSMate.Modules.DetailsAbsorbsTaken:SortLineTable(arr)
 	local newArr = {}
-	for cat, val in pairs(arr) do
-		for ca, va in pairs(val[DPSMateUser[DetailsUser][1]]["i"]) do
+	for cat, val in pairs(arr[DPSMateUser[DetailsUser][1]]) do
+		for ca, va in pairs(val["i"]) do
 			local i, dmg = 1, 5
 			if va[4] then
 				dmg = va[4]
@@ -256,11 +256,11 @@ function DPSMate.Modules.DetailsAbsorbs:SortLineTable(arr)
 	return newArr
 end
 
-function DPSMate.Modules.DetailsAbsorbs:GetSummarizedTable(arr)
-	return DPSMate.Sync:GetSummarizedTable(DPSMate.Modules.DetailsAbsorbs:SortLineTable(arr))
+function DPSMate.Modules.DetailsAbsorbsTaken:GetSummarizedTable(arr)
+	return DPSMate.Sync:GetSummarizedTable(DPSMate.Modules.DetailsAbsorbsTaken:SortLineTable(arr))
 end
 
-function DPSMate.Modules.DetailsAbsorbs:GetMaxLineVal(t, p)
+function DPSMate.Modules.DetailsAbsorbsTaken:GetMaxLineVal(t, p)
 	local max = 0
 	for cat, val in pairs(t) do
 		if val[p]>max then
