@@ -98,11 +98,13 @@ function DPSMate.Modules.DetailsDeaths:SelectDetailsButton(i)
 	getglobal("DPSMate_Details_Deaths_Log_ScrollButton"..i.."_selected"):Show()
 	
 	for cat, val in DetailsArr[i][3] do
-		local type = "HIT"
+		local name = DPSMate:GetUserById(val[1])
+		local type,r,g,b = "HIT", DPSMate:GetClassColor(DPSMateUser[name][2])
 		if val[4]==1 then type="CRIT" elseif val[4]==2 then type="CRUSH" end
 		getglobal("DPSMate_Details_Deaths_LogDetails_Row"..cat.."_GameTime"):SetText(val[7])
 		getglobal("DPSMate_Details_Deaths_LogDetails_Row"..cat.."_CombatTime"):SetText(val[6])
-		getglobal("DPSMate_Details_Deaths_LogDetails_Row"..cat.."_Cause"):SetText(DPSMate:GetUserById(val[1]))
+		getglobal("DPSMate_Details_Deaths_LogDetails_Row"..cat.."_Cause"):SetText(name)
+		getglobal("DPSMate_Details_Deaths_LogDetails_Row"..cat.."_Cause"):SetTextColor(r,g,b,1)
 		getglobal("DPSMate_Details_Deaths_LogDetails_Row"..cat.."_Ability"):SetText(DPSMate:GetAbilityById(val[2]))
 		getglobal("DPSMate_Details_Deaths_LogDetails_Row"..cat.."_Type"):SetText(type)
 		if val[5]==1 then

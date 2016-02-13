@@ -378,6 +378,7 @@ function DPSMate:GetClassColor(class)
 			return 0.78,0.61,0.43, "Warrior"
 		end
 	end
+	return 0.78,0.61,0.43, "Warrior"
 end
 
 function DPSMate:GetMode(k)
