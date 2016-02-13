@@ -90,6 +90,8 @@ modules\DPSMate_Details_Deaths.lua
 modules\DPSMate_Details_Deaths.xml
 modules\DPSMate_Details_Interrupts.lua
 modules\DPSMate_Details_Interrupts.xml
+modules\DPSMate_Details_Dispels.lua
+modules\DPSMate_Details_Dispels.xml
 
 DPSMate_Frame.xml
 DPSMate_Options.xml

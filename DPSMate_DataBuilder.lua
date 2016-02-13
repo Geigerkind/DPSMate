@@ -1139,7 +1139,7 @@ function DPSMate.DB:EvaluateDispel()
 			if ConfirmedDispel[cat] then
 				local check = nil
 				for q, t in ConfirmedDispel[cat] do
-					if (va[3]-t[2])<=2 then
+					if (va[3]-t[2])<=1 then
 						check = t[1]
 						table.remove(ConfirmedDispel[cat], q)
 					end
