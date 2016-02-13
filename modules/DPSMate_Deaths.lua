@@ -56,7 +56,7 @@ function DPSMate.Modules.Deaths:EvalTable(user, k)
 		if arr[user[1]][p] then 
 			for ca, va in pairs(arr[user[1]][p]) do -- 1 (Death)
 				if ca~="i" then
-					table.insert(b, ca, {va[3], va[5]})
+					table.insert(b, ca, {va[3], va[5], va[4]})
 					table.insert(a, ca, va[2])
 				end
 			end
@@ -87,10 +87,12 @@ function DPSMate.Modules.Deaths:ShowTooltip(user,k)
 	if DPSMateSettings["informativetooltips"] then
 		for i=1, DPSMateSettings["subviewrows"] do
 			if not a[i] then break end
+			local type = " (HIT)"
+			if c[i][3]==1 then type=" (CRIT)" elseif c[i][3]==2 then type=" (CRUSH)" end
 			if c[i][2]==1 then
-				GameTooltip:AddDoubleLine(i..". "..DPSMate:GetAbilityById(a[i]),"+"..c[i][1],0.67,0.83,0.45,0.67,0.83,0.45)
+				GameTooltip:AddDoubleLine(i..". "..DPSMate:GetAbilityById(a[i])..type,"+"..c[i][1],0.67,0.83,0.45,0.67,0.83,0.45)
 			else
-				GameTooltip:AddDoubleLine(i..". "..DPSMate:GetAbilityById(a[i]),"-"..c[i][1],0.77,0.12,0.23,0.77,0.12,0.23)
+				GameTooltip:AddDoubleLine(i..". "..DPSMate:GetAbilityById(a[i])..type,"-"..c[i][1],0.77,0.12,0.23,0.77,0.12,0.23)
 			end
 		end
 	end

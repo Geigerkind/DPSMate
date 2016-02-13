@@ -363,7 +363,7 @@ function DPSMate.Parser:CreatureVsSelfHits(msg)
 	if strfind(msg, "blocked") then block=1; hit=0 end
 	DPSMate.DB:EnemyDamage(DPSMateEDD, player, "AutoAttack", hit, crit, 0, 0, 0, 0, amount, cause, block, crush)
 	DPSMate.DB:DamageTaken(player, "AutoAttack", hit, crit, 0, 0, 0, 0, amount, cause, crush)
-	DPSMate.DB:DeathHistory(player.name, cause, "AutoAttack", amount, hit, crit, 0)
+	DPSMate.DB:DeathHistory(player.name, cause, "AutoAttack", amount, hit, crit, 0, crush)
 end
 
 -- Firetail Scorpid attacks. You parry.
@@ -390,7 +390,7 @@ function DPSMate.Parser:CreatureVsSelfSpellDamage(msg)
 		DPSMate.DB:UnregisterPotentialKick(cause, ability, GetTime())
 		DPSMate.DB:EnemyDamage(DPSMateEDD, player, ability, hit, crit, 0, 0, 0, resist, amount, cause, 0, 0)
 		DPSMate.DB:DamageTaken(player, ability, hit, crit, 0, 0, 0, resist, amount, cause, 0)
-		DPSMate.DB:DeathHistory(player.name, cause, ability, amount, hit, crit, 0)
+		DPSMate.DB:DeathHistory(player.name, cause, ability, amount, hit, crit, 0, 0)
 	end
 end
 
@@ -403,7 +403,7 @@ function DPSMate.Parser:PeriodicSelfDamage(msg)
 		for a, c, ab in string.gfind(msg, "You suffer (.+) from (.+)'s (.+)%.") do cause=c; ability=ab; amount=tonumber(strsub(a, strfind(a, "%d+"))) end
 		DPSMate.DB:EnemyDamage(DPSMateEDD, player, ability.."(Periodic)", 1, 0, 0, 0, 0, 0, amount, cause, 0, 0)
 		DPSMate.DB:DamageTaken(player, ability.."(Periodic)", 1, 0, 0, 0, 0, 0, amount, cause, 0)
-		DPSMate.DB:DeathHistory(player.name, cause, ability.."(Periodic)", amount, 1, 0, 0)
+		DPSMate.DB:DeathHistory(player.name, cause, ability.."(Periodic)", amount, 1, 0, 0, 0)
 	end
 end
 
@@ -416,7 +416,7 @@ function DPSMate.Parser:CreatureVsCreatureHits(msg)
 	if strfind(msg, "blocked") then block=1; hit=0 end
 	DPSMate.DB:EnemyDamage(DPSMateEDD, target, "AutoAttack", hit, crit, 0, 0, 0, 0, amount, cause, block, crush)
 	DPSMate.DB:DamageTaken(target, "AutoAttack", hit, crit, 0, 0, 0, 0, amount, cause, crush)
-	DPSMate.DB:DeathHistory(target.name, cause, "AutoAttack", amount, hit, crit, 0)
+	DPSMate.DB:DeathHistory(target.name, cause, "AutoAttack", amount, hit, crit, 0, crush)
 end
 
 -- Ember Worg attacks. Ikaa parries.
@@ -439,7 +439,7 @@ function DPSMate.Parser:SpellPeriodicDamageTaken(msg)
 		for ta, a, c, ab in string.gfind(msg, "(.-) suffers (.+) from (.+)'s (.+)%.") do target.name=ta; cause=c; ability=ab; amount=tonumber(strsub(a, strfind(a, "%d+"))) end
 		DPSMate.DB:EnemyDamage(DPSMateEDD, target, ability.."(Periodic)", 1, 0, 0, 0, 0, 0, amount, cause, 0, 0)
 		DPSMate.DB:DamageTaken(target, ability.."(Periodic)", 1, 0, 0, 0, 0, 0, amount, cause, 0)
-		DPSMate.DB:DeathHistory(target.name, cause, ability.."(Periodic)", amount, 1, 0, 0)
+		DPSMate.DB:DeathHistory(target.name, cause, ability.."(Periodic)", amount, 1, 0, 0, 0)
 	end
 end
 
@@ -453,7 +453,7 @@ function DPSMate.Parser:CreatureVsCreatureSpellDamage(msg)
 	DPSMate.DB:UnregisterPotentialKick(cause, ability, GetTime())
 	DPSMate.DB:EnemyDamage(DPSMateEDD, target, ability, hit, crit, 0, 0, 0, resist, amount, cause, 0, 0)
 	DPSMate.DB:DamageTaken(target, ability, hit, crit, 0, 0, 0, resist, amount, cause, 0)
-	DPSMate.DB:DeathHistory(target.name, cause, ability, amount, hit, crit, 0)
+	DPSMate.DB:DeathHistory(target.name, cause, ability, amount, hit, crit, 0, 0)
 end
 
 ----------------------------------------------------------------------------------
@@ -512,7 +512,7 @@ function DPSMate.Parser:SpellSelfBuff(msg)
 	DPSMate.DB:Healing(DPSMateEHealing, player, ability, hit, crit, amount-overheal, target)
 	DPSMate.DB:Healing(DPSMateOverhealing, player, ability, hit, crit, overheal, target)
 	DPSMate.DB:Healing(DPSMateTHealing, player, ability, hit, crit, amount, target)
-	DPSMate.DB:DeathHistory(target, player.name, ability, amount, hit, crit, 1)
+	DPSMate.DB:DeathHistory(target, player.name, ability, amount, hit, crit, 1, 0)
 end
 
 -- You gain First Aid.
@@ -532,7 +532,7 @@ function DPSMate.Parser:SpellPeriodicSelfBuff(msg) -- Maybe some loss here?
 		DPSMate.DB:Healing(DPSMateEHealing, cause, ability.."(Periodic)", 1, 0, amount-overheal, target)
 		DPSMate.DB:Healing(DPSMateOverhealing, cause, ability.."(Periodic)", 1, 0, overheal, target)
 		DPSMate.DB:Healing(DPSMateTHealing, cause, ability.."(Periodic)", 1, 0, amount, target)
-		DPSMate.DB:DeathHistory(player.name, cause.name, ability.."(Periodic)", amount, 1, 0, 1)
+		DPSMate.DB:DeathHistory(player.name, cause.name, ability.."(Periodic)", amount, 1, 0, 1, 0)
 	end
 end
 
@@ -552,7 +552,7 @@ function DPSMate.Parser:SpellPeriodicFriendlyPlayerBuffs(msg)
 	DPSMate.DB:Healing(DPSMateEHealing, cause, ability.."(Periodic)", 1, 0, amount-overheal, target)
 	DPSMate.DB:Healing(DPSMateOverhealing, cause, ability.."(Periodic)", 1, 0, overheal, target)
 	DPSMate.DB:Healing(DPSMateTHealing, cause, ability.."(Periodic)", 1, 0, amount, target)
-	DPSMate.DB:DeathHistory(target, cause.name, ability.."(Periodic)", amount, 1, 0, 1)
+	DPSMate.DB:DeathHistory(target, cause.name, ability.."(Periodic)", amount, 1, 0, 1, 0)
 end
 
 -- A1bea's Flash of Light heals you/Baz for 90.
@@ -570,7 +570,7 @@ function DPSMate.Parser:SpellHostilePlayerBuff(msg)
 	DPSMate.DB:Healing(DPSMateEHealing, cause, ability, hit, crit, amount-overheal, target)
 	DPSMate.DB:Healing(DPSMateOverhealing, cause, ability, hit, crit, overheal, target)
 	DPSMate.DB:Healing(DPSMateTHealing, cause, ability, hit, crit, amount, target)
-	DPSMate.DB:DeathHistory(target, cause.name, ability, amount, hit, crit, 1)
+	DPSMate.DB:DeathHistory(target, cause.name, ability, amount, hit, crit, 1, 0)
 end
 
 ----------------------------------------------------------------------------------
