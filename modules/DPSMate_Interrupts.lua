@@ -96,4 +96,11 @@ function DPSMate.Modules.Interrupts:ShowTooltip(user,k)
 	end
 end
 
+function DPSMate.Modules.Interrupts:OpenDetails(obj, key)
+	DPSMate.Modules.DetailsInterrupts:UpdateDetails(obj, key)
+end
+
+function DPSMate.Modules.Damage:OpenTotalDetails(obj, key)
+	DPSMate.Modules.DetailsDamageTotal:UpdateDetails(obj, key)
+end
 

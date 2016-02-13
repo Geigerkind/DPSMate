@@ -88,7 +88,8 @@ modules\DPSMate_Details_HealingAndAbsorbs.lua
 modules\DPSMate_Details_HealingAndAbsorbs.xml
 modules\DPSMate_Details_Deaths.lua
 modules\DPSMate_Details_Deaths.xml
-
+modules\DPSMate_Details_Interrupts.lua
+modules\DPSMate_Details_Interrupts.xml
 
 DPSMate_Frame.xml
 DPSMate_Options.xml
