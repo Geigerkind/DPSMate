@@ -20,7 +20,7 @@ function DPSMate.Modules.Deaths:GetSortedTable(arr)
 		for cat, val in pairs(arr) do -- 28
 			local CV = 0
 			for ca, va in pairs(val) do -- 1 (Death)
-				if va["i"]==1 then
+				if va["i"][1]==1 then
 					CV=CV+1
 				end
 			end
@@ -52,7 +52,7 @@ function DPSMate.Modules.Deaths:EvalTable(user, k)
 	local p = 1
 	if not arr[user[1]] then return end
 	if arr[user[1]][1] then 
-		if arr[user[1]][1]["i"]~=1 then p=2 else p=1 end 
+		if arr[user[1]][1]["i"][1]~=1 then p=2 else p=1 end 
 		if arr[user[1]][p] then 
 			for ca, va in pairs(arr[user[1]][p]) do -- 1 (Death)
 				if ca~="i" then
@@ -90,12 +90,19 @@ function DPSMate.Modules.Deaths:ShowTooltip(user,k)
 			local type = " (HIT)"
 			if c[i][3]==1 then type=" (CRIT)" elseif c[i][3]==2 then type=" (CRUSH)" end
 			if c[i][2]==1 then
-				GameTooltip:AddDoubleLine(i..". "..DPSMate:GetAbilityById(a[i])..type,"+"..c[i][1],0.67,0.83,0.45,0.67,0.83,0.45)
+				GameTooltip:AddDoubleLine(i..". "..DPSMate:GetAbilityById(a[i]),"+"..c[i][1]..type,0.67,0.83,0.45,0.67,0.83,0.45)
 			else
-				GameTooltip:AddDoubleLine(i..". "..DPSMate:GetAbilityById(a[i])..type,"-"..c[i][1],0.77,0.12,0.23,0.77,0.12,0.23)
+				GameTooltip:AddDoubleLine(i..". "..DPSMate:GetAbilityById(a[i]),"-"..c[i][1]..type,0.77,0.12,0.23,0.77,0.12,0.23)
 			end
 		end
 	end
 end
 
+function DPSMate.Modules.Deaths:OpenDetails(obj, key)
+	DPSMate.Modules.DetailsDeaths:UpdateDetails(obj, key)
+end
+
+function DPSMate.Modules.Damage:OpenTotalDetails(obj, key)
+	DPSMate.Modules.DetailsDamageTotal:UpdateDetails(obj, key)
+end
 

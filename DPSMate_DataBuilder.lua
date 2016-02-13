@@ -1183,11 +1183,11 @@ function DPSMate.DB:UnregisterDeath(target)
 	if not DPSMateUser[target] then return end
 	for cat, val in pairs({[1]="total", [2]="current"}) do 
 		if DPSMateDeaths[cat][DPSMateUser[target][1]] then
-			DPSMateDeaths[cat][DPSMateUser[target][1]][1]["i"]={1, DPSMateCombatTime[val]}
+			DPSMateDeaths[cat][DPSMateUser[target][1]][1]["i"]=1
 		end
 	end
 end
--- l. 846
+
 function DPSMate.DB:DeathHistory(target, cause, ability, amount, hit, crit, type, crush)
 	if (not target or target=="" or not cause or cause=="" or amount==0) then return end
 	DPSMate.DB:BuildUser(target, nil)
@@ -1201,12 +1201,12 @@ function DPSMate.DB:DeathHistory(target, cause, ability, amount, hit, crit, type
 			DPSMateDeaths[cat][DPSMateUser[target][1]][1] = {
 				i = {
 					[1] = 0,
-					[2] = 0,
+					[2] = GameTime_GetTime(),
 				},
 			}
 		end
 		if DPSMateDeaths[cat][DPSMateUser[target][1]][1]["i"][1]==1 then
-			table.insert(DPSMateDeaths[cat][DPSMateUser[target][1]], 1, {i = {0,0}})
+			table.insert(DPSMateDeaths[cat][DPSMateUser[target][1]], 1, {i = {0,""}})
 		end
 		local hitCritCrush = 0
 		if crit==1 then hitCritCrush = 1 elseif crush==1 then hitCritCrush = 2 end
@@ -1216,6 +1216,8 @@ function DPSMate.DB:DeathHistory(target, cause, ability, amount, hit, crit, type
 			[3] = amount,
 			[4] = hitCritCrush,
 			[5] = type,
+			[6] = DPSMateCombatTime[val],
+			[7] = GameTime_GetTime(),
 		})
 		if DPSMateDeaths[cat][DPSMateUser[target][1]][1][DPSMateSettings["subviewrows"]+1] then
 			table.remove(DPSMateDeaths[cat][DPSMateUser[target][1]][1], DPSMateSettings["subviewrows"]+1)
