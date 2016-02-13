@@ -392,9 +392,9 @@ function DPSMate.Parser:PeriodicSelfDamage(msg)
 	local cause, ability, amount = "", "", 0
 	if not strfind(msg, "afflicted") then
 		for a, c, ab in string.gfind(msg, "You suffer (.+) from (.+)'s (.+)%.") do cause=c; ability=ab; amount=tonumber(strsub(a, strfind(a, "%d+"))) end
-		DPSMate.DB:EnemyDamage(DPSMateEDD, player, ability, 1, 0, 0, 0, 0, 0, amount, cause, 0, 0)
-		DPSMate.DB:DamageTaken(player, ability, 1, 0, 0, 0, 0, 0, amount, cause, 0)
-		DPSMate.DB:DeathHistory(player.name, cause, ability, amount, 1, 0, 0)
+		DPSMate.DB:EnemyDamage(DPSMateEDD, player, ability.."(Periodic)", 1, 0, 0, 0, 0, 0, amount, cause, 0, 0)
+		DPSMate.DB:DamageTaken(player, ability.."(Periodic)", 1, 0, 0, 0, 0, 0, amount, cause, 0)
+		DPSMate.DB:DeathHistory(player.name, cause, ability.."(Periodic)", amount, 1, 0, 0)
 	end
 end
 
@@ -428,9 +428,9 @@ function DPSMate.Parser:SpellPeriodicDamageTaken(msg)
 	local target, cause, ability, amount = {}, "", "", 0
 	if not strfind(msg, "afflicted") then
 		for ta, a, c, ab in string.gfind(msg, "(.-) suffers (.+) from (.+)'s (.+)%.") do target.name=ta; cause=c; ability=ab; amount=tonumber(strsub(a, strfind(a, "%d+"))) end
-		DPSMate.DB:EnemyDamage(DPSMateEDD, target, ability, 1, 0, 0, 0, 0, 0, amount, cause, 0, 0)
-		DPSMate.DB:DamageTaken(target, ability, 1, 0, 0, 0, 0, 0, amount, cause, 0)
-		DPSMate.DB:DeathHistory(target.name, cause, ability, amount, 1, 0, 0)
+		DPSMate.DB:EnemyDamage(DPSMateEDD, target, ability.."(Periodic)", 1, 0, 0, 0, 0, 0, amount, cause, 0, 0)
+		DPSMate.DB:DamageTaken(target, ability.."(Periodic)", 1, 0, 0, 0, 0, 0, amount, cause, 0)
+		DPSMate.DB:DeathHistory(target.name, cause, ability.."(Periodic)", amount, 1, 0, 0)
 	end
 end
 
@@ -518,12 +518,12 @@ function DPSMate.Parser:SpellPeriodicSelfBuff(msg) -- Maybe some loss here?
 	for a, ta, ab in string.gfind(msg, "You gain (.+) health from (.+)'s (.+)%.") do amount=tonumber(strsub(a, strfind(a, "%d+"))); ability=ab; target=player.name; cause.name=ta end
 	if amount>0 then -- Workaround as long as I dont have buffs implemented
 		overheal = DPSMate.Parser:GetOverhealByName(amount, target)
-		DPSMate.DB:HealingTaken(DPSMateHealingTaken, target, ability, 1, 0, amount, cause.name)
-		DPSMate.DB:HealingTaken(DPSMateEHealingTaken, target, ability, 1, 0, amount-overheal, cause.name)
-		DPSMate.DB:Healing(DPSMateEHealing, cause, ability, 1, 0, amount-overheal, target)
-		DPSMate.DB:Healing(DPSMateOverhealing, cause, ability, 1, 0, overheal, target)
-		DPSMate.DB:Healing(DPSMateTHealing, cause, ability, 1, 0, amount, target)
-		DPSMate.DB:DeathHistory(player.name, cause.name, ability, amount, 1, 0, 1)
+		DPSMate.DB:HealingTaken(DPSMateHealingTaken, target, ability.."(Periodic)", 1, 0, amount, cause.name)
+		DPSMate.DB:HealingTaken(DPSMateEHealingTaken, target, ability.."(Periodic)", 1, 0, amount-overheal, cause.name)
+		DPSMate.DB:Healing(DPSMateEHealing, cause, ability.."(Periodic)", 1, 0, amount-overheal, target)
+		DPSMate.DB:Healing(DPSMateOverhealing, cause, ability.."(Periodic)", 1, 0, overheal, target)
+		DPSMate.DB:Healing(DPSMateTHealing, cause, ability.."(Periodic)", 1, 0, amount, target)
+		DPSMate.DB:DeathHistory(player.name, cause.name, ability.."(Periodic)", amount, 1, 0, 1)
 	end
 end
 
@@ -538,12 +538,12 @@ function DPSMate.Parser:SpellPeriodicFriendlyPlayerBuffs(msg)
 	for ta, a, ab in string.gfind(msg, "(.+) gains (.+) health from your (.+)%.") do target=ta; amount=tonumber(strsub(a, strfind(a, "%d+"))); ability=ab; cause.name=player.name end
 	for ta, a, c, ab in string.gfind(msg, "(.+) gains (.+) health from (.+)'s (.+)%.") do target=ta; amount=tonumber(strsub(a, strfind(a, "%d+"))); ability=ab; cause.name=c end
 	overheal = DPSMate.Parser:GetOverhealByName(amount, target)
-	DPSMate.DB:HealingTaken(DPSMateHealingTaken, target, ability, 1, 0, amount, cause.name)
-	DPSMate.DB:HealingTaken(DPSMateEHealingTaken, target, ability, 1, 0, amount-overheal, cause.name)
-	DPSMate.DB:Healing(DPSMateEHealing, cause, ability, 1, 0, amount-overheal, target)
-	DPSMate.DB:Healing(DPSMateOverhealing, cause, ability, 1, 0, overheal, target)
-	DPSMate.DB:Healing(DPSMateTHealing, cause, ability, 1, 0, amount, target)
-	DPSMate.DB:DeathHistory(target, cause.name, ability, amount, 1, 0, 1)
+	DPSMate.DB:HealingTaken(DPSMateHealingTaken, target, ability.."(Periodic)", 1, 0, amount, cause.name)
+	DPSMate.DB:HealingTaken(DPSMateEHealingTaken, target, ability.."(Periodic)", 1, 0, amount-overheal, cause.name)
+	DPSMate.DB:Healing(DPSMateEHealing, cause, ability.."(Periodic)", 1, 0, amount-overheal, target)
+	DPSMate.DB:Healing(DPSMateOverhealing, cause, ability.."(Periodic)", 1, 0, overheal, target)
+	DPSMate.DB:Healing(DPSMateTHealing, cause, ability.."(Periodic)", 1, 0, amount, target)
+	DPSMate.DB:DeathHistory(target, cause.name, ability.."(Periodic)", amount, 1, 0, 1)
 end
 
 -- A1bea's Flash of Light heals you/Baz for 90.

@@ -22,26 +22,28 @@ function DPSMate.Modules.Absorbs:GetSortedTable(arr)
 		for ca, va in pairs(val) do -- 28 Owner
 			local PerOwnerAbsorb = 0
 			for c, v in pairs(va) do -- Power Word: Shield
-				local PerAbilityAbsorb = 0
-				for ce, ve in pairs(v) do -- 1
-					local PerShieldAbsorb = 0
-					for cet, vel in pairs(ve) do
-						if cet~="i" then
-							local p = 5
-							if DPSMateDamageTaken[1][cat] then
-								if DPSMateDamageTaken[1][cat][cet][vel[1]][14]~=0 then
-									p=ceil(DPSMateDamageTaken[1][cat][cet][vel[1]][14])
+				if c~="i" then
+					local PerAbilityAbsorb = 0
+					for ce, ve in pairs(v) do -- 1
+						local PerShieldAbsorb = 0
+						for cet, vel in pairs(ve) do
+							if cet~="i" then
+								local p = 5
+								if DPSMateDamageTaken[1][cat] then
+									if DPSMateDamageTaken[1][cat][cet][vel[1]][14]~=0 then
+										p=ceil(DPSMateDamageTaken[1][cat][cet][vel[1]][14])
+									end
 								end
+								PerShieldAbsorb=PerShieldAbsorb+vel[2]*p
 							end
-							PerShieldAbsorb=PerShieldAbsorb+vel[2]*p
 						end
+						if ve["i"][1]==1 then
+							PerShieldAbsorb=PerShieldAbsorb+ve["i"][2]
+						end
+						PerAbilityAbsorb = PerAbilityAbsorb+PerShieldAbsorb
 					end
-					if ve["i"][1]==1 then
-						PerShieldAbsorb=PerShieldAbsorb+ve["i"][2]
-					end
-					PerAbilityAbsorb = PerAbilityAbsorb+PerShieldAbsorb
+					PerOwnerAbsorb = PerOwnerAbsorb+PerAbilityAbsorb
 				end
-				PerOwnerAbsorb = PerOwnerAbsorb+PerAbilityAbsorb
 			end
 			if not temp[ca] then temp[ca] = PerOwnerAbsorb else temp[ca]=temp[ca]+PerOwnerAbsorb end
 			PerPlayerAbsorb = PerPlayerAbsorb+PerOwnerAbsorb
@@ -76,41 +78,58 @@ function DPSMate.Modules.Absorbs:EvalTable(user, k)
 		for ca, va in pairs(val) do -- 28 Owner
 			if ca==user[1] then
 				for c, v in pairs(va) do -- Power Word: Shield
-					local PerAbilityAbsorb, temp, taa, tdd = 0, {}, {}, {}
-					for ce, ve in pairs(v) do -- 1
-						local PerShieldAbsorb = 0
-						for cet, vel in pairs(ve) do
-							if cet~="i" then
-								local p = 5
-								if DPSMateDamageTaken[1][cat][cet][vel[1]][14]~=0 then
-									p=ceil(DPSMateDamageTaken[1][cat][cet][vel[1]][14])
+					if c~="i" then
+						local PerAbilityAbsorb, temp, taa, tdd = 0, {}, {}, {}
+						for ce, ve in pairs(v) do -- 1
+							local PerShieldAbsorb = 0
+							for cet, vel in pairs(ve) do
+								if cet~="i" then
+									local p = 5
+									if DPSMateDamageTaken[1][cat][cet][vel[1]][14]~=0 then
+										p=ceil(DPSMateDamageTaken[1][cat][cet][vel[1]][14])
+									end
+									PerShieldAbsorb=PerShieldAbsorb+vel[2]*p
+									if not temp[cet] then temp[cet] = {} end
+									if not temp[cet][vel[1]] then temp[cet][vel[1]] = vel[2]*p else temp[cet][vel[1]] =temp[cet][vel[1]]+vel[2]*p end
 								end
-								PerShieldAbsorb=PerShieldAbsorb+vel[2]*p
-								if not temp[cet] then temp[cet] = {} end
-								if not temp[cet][vel[1]] then temp[cet][vel[1]] = vel[2]*p else temp[cet][vel[1]] =temp[cet][vel[1]]+vel[2]*p end
 							end
+							if ve["i"][1]==1 then
+								PerShieldAbsorb=PerShieldAbsorb+ve["i"][2]
+								if not temp[ve["i"][4]] then temp[ve["i"][4]] = {} end
+								if not temp[ve["i"][4]][ve["i"][3]] then temp[ve["i"][4]][ve["i"][3]] = ve["i"][2] else temp[ve["i"][4]][ve["i"][3]] = temp[ve["i"][4]][ve["i"][3]] + ve["i"][2] end
+							end
+							PerAbilityAbsorb = PerAbilityAbsorb+PerShieldAbsorb
 						end
-						if ve["i"][1]==1 then
-							PerShieldAbsorb=PerShieldAbsorb+ve["i"][2]
-							if not temp[ve["i"][4]] then temp[ve["i"][4]] = {} end
-							if not temp[ve["i"][4]][ve["i"][3]] then temp[ve["i"][4]][ve["i"][3]] = ve["i"][2] else temp[ve["i"][4]][ve["i"][3]] = temp[ve["i"][4]][ve["i"][3]] + ve["i"][2] end
-						end
-						PerAbilityAbsorb = PerAbilityAbsorb+PerShieldAbsorb
-					end
-					for ut, utt in temp do
-						local CVV, qa, qd = 0, {}, {}
-						for qt, qtt in utt do
-							CVV = CVV + qtt
-							local i = 1
-							while true do
-								if (not qd[i]) then
-									table.insert(qd, i, qtt)
-									table.insert(qa, i, qt)
-									break
-								else
-									if qd[i] < qtt then
+						for ut, utt in temp do
+							local CVV, qa, qd = 0, {}, {}
+							for qt, qtt in utt do
+								CVV = CVV + qtt
+								local i = 1
+								while true do
+									if (not qd[i]) then
 										table.insert(qd, i, qtt)
 										table.insert(qa, i, qt)
+										break
+									else
+										if qd[i] < qtt then
+											table.insert(qd, i, qtt)
+											table.insert(qa, i, qt)
+											break
+										end
+									end
+									i=i+1
+								end
+							end
+							local i = 1
+							while true do
+								if (not tdd[i]) then
+									table.insert(tdd, i, {CVV, qa, qd})
+									table.insert(taa, i, ut)
+									break
+								else
+									if tdd[i][1] < CVV then
+										table.insert(tdd, i, {CVV, qa, qd})
+										table.insert(taa, i, ut)
 										break
 									end
 								end
@@ -119,36 +138,21 @@ function DPSMate.Modules.Absorbs:EvalTable(user, k)
 						end
 						local i = 1
 						while true do
-							if (not tdd[i]) then
-								table.insert(tdd, i, {CVV, qa, qd})
-								table.insert(taa, i, ut)
+							if (not td[i]) then
+								table.insert(td, i, {PerAbilityAbsorb, taa, tdd})
+								table.insert(ta, i, c)
 								break
 							else
-								if tdd[i][1] < CVV then
-									table.insert(tdd, i, {CVV, qa, qd})
-									table.insert(taa, i, ut)
+								if td[i][1] < PerAbilityAbsorb then
+									table.insert(td, i, {PerAbilityAbsorb, taa, tdd})
+									table.insert(ta, i, c)
 									break
 								end
 							end
 							i=i+1
 						end
+						CV = CV + PerAbilityAbsorb
 					end
-					local i = 1
-					while true do
-						if (not td[i]) then
-							table.insert(td, i, {PerAbilityAbsorb, taa, tdd})
-							table.insert(ta, i, c)
-							break
-						else
-							if td[i][1] < PerAbilityAbsorb then
-								table.insert(td, i, {PerAbilityAbsorb, taa, tdd})
-								table.insert(ta, i, c)
-								break
-							end
-						end
-						i=i+1
-					end
-					CV = CV + PerAbilityAbsorb
 				end
 				break
 			end

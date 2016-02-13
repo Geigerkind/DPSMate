@@ -76,7 +76,7 @@ function DPSMate.Modules.EDD:EvalTable(user, k)
 					table.insert(d, i, {val["i"], ta, td})
 					break
 				else
-					if (d[i] < val["i"]) then
+					if (d[i][1] < val["i"]) then
 						table.insert(a, i, cat)
 						table.insert(d, i, {val["i"], ta, td})
 						break

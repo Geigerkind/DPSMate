@@ -498,7 +498,7 @@ function DPSMate.DB:GetNumPartyMembers()
 end
 
 function DPSMate.DB:BuildUser(Dname, Dclass)
-	if (not DPSMateUser[Dname] and type(Dname)~="table") then -- Added to find the table bug
+	if (not DPSMateUser[Dname] and Dname) then -- Added to find the table bug
 		DPSMateUser[Dname] = {
 			[1] = DPSMate:TableLength(DPSMateUser)+1,
 			[2] = Dclass,
@@ -932,7 +932,9 @@ function DPSMate.DB:RegisterAbsorb(owner, ability, abilityTarget)
 			DPSMateAbsorbs[cat][DPSMateUser[abilityTarget][1]] = {}
 		end
 		if not DPSMateAbsorbs[cat][DPSMateUser[abilityTarget][1]][DPSMateUser[owner][1]] then
-			DPSMateAbsorbs[cat][DPSMateUser[abilityTarget][1]][DPSMateUser[owner][1]] = {}
+			DPSMateAbsorbs[cat][DPSMateUser[abilityTarget][1]][DPSMateUser[owner][1]] = {
+				i = {},
+			}
 		end
 		if not DPSMateAbsorbs[cat][DPSMateUser[abilityTarget][1]][DPSMateUser[owner][1]][DPSMateAbility[ability][1]] then
 			DPSMateAbsorbs[cat][DPSMateUser[abilityTarget][1]][DPSMateUser[owner][1]][DPSMateAbility[ability][1]] = {}
@@ -967,6 +969,7 @@ function DPSMate.DB:UnregisterAbsorb(ability, abilityTarget)
 				DPSMateAbsorbs[cat][DPSMateUser[abilityTarget][1]][AbsorbingAbility[1]][AbsorbingAbility[2]][AbsorbingAbility[3]]["i"][2] = broken[2]
 				DPSMateAbsorbs[cat][DPSMateUser[abilityTarget][1]][AbsorbingAbility[1]][AbsorbingAbility[2]][AbsorbingAbility[3]]["i"][3] = broken[3]
 				DPSMateAbsorbs[cat][DPSMateUser[abilityTarget][1]][AbsorbingAbility[1]][AbsorbingAbility[2]][AbsorbingAbility[3]]["i"][4] = broken[4]
+				table.insert(DPSMateAbsorbs[cat][DPSMateUser[abilityTarget][1]][AbsorbingAbility[1]]["i"], {DPSMateCombatTime[val], broken[4], broken[3], broken[2]})
 			end
 		end
 	end
@@ -981,11 +984,13 @@ function DPSMate.DB:GetActiveAbsorbAbilityByPlayer(ability, abilityTarget, cat)
 	if DPSMateAbsorbs[cat][DPSMateUser[abilityTarget][1]] then
 		for cat, val in pairs(DPSMateAbsorbs[cat][DPSMateUser[abilityTarget][1]]) do
 			for ca, va in pairs(val) do
-				for c, v in pairs(va) do
-					for ce, ve in pairs(v) do
-						if ve[1]==0 and ca==DPSMateAbility[ability][1] then
-							ActiveShield = {cat, ca, c}
-							break
+				if ca~="i" then
+					for c, v in pairs(va) do
+						for ce, ve in pairs(v) do
+							if ve[1]==0 and ca==DPSMateAbility[ability][1] then
+								ActiveShield = {cat, ca, c}
+								break
+							end
 						end
 					end
 				end
@@ -1002,11 +1007,13 @@ function DPSMate.DB:GetAbsorbingShield(ability, abilityTarget, cat)
 		local activeShields = {}
 		for cat, val in pairs(DPSMateAbsorbs[cat][DPSMateUser[abilityTarget][1]]) do
 			for ca, va in pairs(val) do
-				for c, v in pairs(va) do
-					for ce, ve in pairs(v) do
-						if ve[1]==0 then
-							activeShields[cat] = {ca,c}
-							break
+				if ca~="i" then
+					for c, v in pairs(va) do
+						for ce, ve in pairs(v) do
+							if ve[1]==0 then
+								activeShields[cat] = {ca,c}
+								break
+							end
 						end
 					end
 				end
@@ -1071,6 +1078,7 @@ function DPSMate.DB:Absorb(ability, abilityTarget, incTarget)
 			end
 			DPSMateAbsorbs[cat][DPSMateUser[abilityTarget][1]][AbsorbingAbility[1]][AbsorbingAbility[2][1]][AbsorbingAbility[2][2]][DPSMateUser[incTarget][1]][1] = DPSMateAbility[ability][1] 
 			DPSMateAbsorbs[cat][DPSMateUser[abilityTarget][1]][AbsorbingAbility[1]][AbsorbingAbility[2][1]][AbsorbingAbility[2][2]][DPSMateUser[incTarget][1]][2] = DPSMateAbsorbs[cat][DPSMateUser[abilityTarget][1]][AbsorbingAbility[1]][AbsorbingAbility[2][1]][AbsorbingAbility[2][2]][DPSMateUser[incTarget][1]][2]+1 
+			table.insert(DPSMateAbsorbs[cat][DPSMateUser[abilityTarget][1]][AbsorbingAbility[1]]["i"], {DPSMateCombatTime[val], DPSMateUser[incTarget][1], DPSMateAbility[ability][1]})
 		end
 	end
 end

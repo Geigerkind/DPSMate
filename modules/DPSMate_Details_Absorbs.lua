@@ -37,7 +37,7 @@ function DPSMate.Modules.DetailsAbsorbs:UpdateDetails(obj, key)
 	curKey = key
 	db, cbt = DPSMate:GetMode(key)
 	if (PieChart) then
-		g2=DPSMate.Options.graph:CreateGraphLine("LineGraph",DPSMate_Details_Absorbs_DiagramLine,"CENTER","CENTER",0,0,850,230)
+		g2=DPSMate.Options.graph:CreateGraphLine("LineGraph",DPSMate_Details_Absorbs_DiagramLine,"CENTER","CENTER",0,0,960,230)
 		PieChart = false
 	end
 	DetailsUser = obj.user
@@ -227,8 +227,35 @@ function DPSMate.Modules.DetailsAbsorbs:UpdateLineGraph()
 	g2:AddDataSeries(Data1,{{1.0,0.0,0.0,0.8}, {1.0,0.0,0.0,0.8}}, {})
 end
 
+function DPSMate.Modules.DetailsAbsorbs:SortLineTable(arr)
+	local newArr = {}
+	for cat, val in pairs(arr) do
+		for ca, va in pairs(val[DPSMateUser[DetailsUser][1]]["i"]) do
+			local i, dmg = 1, 5
+			if va[4] then
+				dmg = va[4]
+			elseif DPSMateDamageTaken[1][DPSMateUser[DetailsUser][1]][va[2]][va[3]][14] then
+				dmg = DPSMateDamageTaken[1][DPSMateUser[DetailsUser][1]][va[2]][va[3]][14]
+			end
+			while true do
+				if (not newArr[i]) then
+					table.insert(newArr, i, {va[1], dmg})
+					break
+				else
+					if newArr[i][1] > va[1] then
+						table.insert(newArr, i, {va[1], dmg})
+						break
+					end
+				end
+				i=i+1
+			end
+		end
+	end
+	return newArr
+end
+
 function DPSMate.Modules.DetailsAbsorbs:GetSummarizedTable(arr)
-	return DPSMate.Sync:GetSummarizedTable(arr[DPSMateUser[DetailsUser][1]]["i"][1])
+	return DPSMate.Sync:GetSummarizedTable(DPSMate.Modules.DetailsAbsorbs:SortLineTable(arr))
 end
 
 function DPSMate.Modules.DetailsAbsorbs:GetMaxLineVal(t, p)
