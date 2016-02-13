@@ -139,39 +139,40 @@ function DPSMate.Modules.HealingAndAbsorbs:EvalTable(user, k)
 		local i = 1
 		while true do
 			if (not f[i]) then
-				table.insert(f, i, val)
+				table.insert(f, i, {val, false})
 				table.insert(h, i, cat)
 				break
 			else
-				if f[i] < val then
-					table.insert(f, i, val)
+				if f[i][1] < val then
+					table.insert(f, i, {val, false})
 					table.insert(h, i, cat)
 					break
 				end
 			end
 			i=i+1
 		end
+		total=total+val
 	end
 
 	for cat, val in pairs(b) do
 		local i = 1
 		while true do
 			if (not f[i]) then
-				table.insert(f, i, val)
+				table.insert(f, i, {val, true})
 				table.insert(h, i, cat)
 				break
 			else
-				if f[i] < val then
-					table.insert(f, i, val)
+				if f[i][1] < val then
+					table.insert(f, i, {val, true})
 					table.insert(h, i, cat)
 					break
 				end
 			end
 			i=i+1
 		end
+		total=total+val
 	end
-	
-	return f, total, h
+	return h, total, f
 end
 
 function DPSMate.Modules.HealingAndAbsorbs:GetSettingValues(arr, cbt, k)
@@ -197,9 +198,17 @@ function DPSMate.Modules.HealingAndAbsorbs:ShowTooltip(user, k)
 	if DPSMateSettings["informativetooltips"] then
 		for i=1, DPSMateSettings["subviewrows"] do
 			if not a[i] then break end
-			GameTooltip:AddDoubleLine(i..". "..DPSMate:GetAbilityById(c[i]),a[i],1,1,1,1,1,1)
+			GameTooltip:AddDoubleLine(i..". "..DPSMate:GetAbilityById(a[i]),c[i][1],1,1,1,1,1,1)
 		end
 	end
+end
+
+function DPSMate.Modules.HealingAndAbsorbs:OpenDetails(obj, key)
+	DPSMate.Modules.DetailsHealingAndAbsorbs:UpdateDetails(obj, key)
+end
+
+function DPSMate.Modules.Damage:OpenTotalDetails(obj, key)
+	DPSMate.Modules.DetailsDamageTotal:UpdateDetails(obj, key)
 end
 
 

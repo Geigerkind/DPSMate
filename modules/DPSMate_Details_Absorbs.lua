@@ -230,25 +230,27 @@ end
 function DPSMate.Modules.DetailsAbsorbs:SortLineTable(arr)
 	local newArr = {}
 	for cat, val in pairs(arr) do
-		for ca, va in pairs(val[DPSMateUser[DetailsUser][1]]["i"]) do
-			local i, dmg = 1, 5
-			if va[4] then
-				dmg = va[4]
-			elseif DPSMateDamageTaken[1][DPSMateUser[DetailsUser][1]][va[2]][va[3]][14] then
-				dmg = DPSMateDamageTaken[1][DPSMateUser[DetailsUser][1]][va[2]][va[3]][14]
-			end
-			if dmg>0 then
-				while true do
-					if (not newArr[i]) then
-						table.insert(newArr, i, {va[1], dmg})
-						break
-					else
-						if newArr[i][1] > va[1] then
+		if val[DPSMateUser[DetailsUser][1]] then
+			for ca, va in pairs(val[DPSMateUser[DetailsUser][1]]["i"]) do
+				local i, dmg = 1, 5
+				if va[4] then
+					dmg = va[4]
+				elseif DPSMateDamageTaken[1][DPSMateUser[DetailsUser][1]][va[2]][va[3]][14] then
+					dmg = DPSMateDamageTaken[1][DPSMateUser[DetailsUser][1]][va[2]][va[3]][14]
+				end
+				if dmg>0 then
+					while true do
+						if (not newArr[i]) then
 							table.insert(newArr, i, {va[1], dmg})
 							break
+						else
+							if newArr[i][1] > va[1] then
+								table.insert(newArr, i, {va[1], dmg})
+								break
+							end
 						end
+						i=i+1
 					end
-					i=i+1
 				end
 			end
 		end
