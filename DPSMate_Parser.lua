@@ -659,7 +659,10 @@ DPSMate.Parser.DePoison = {
 	[3] = "Purify",
 }
 DPSMate.Parser.DebuffTypes = {}
-
+DPSMate.Parser.HotDispels = {
+	[1] = "Abolish Poison",
+	[2] = "Abolish Disease",
+}
 -- You gain Abolish Poison.
 -- Abolish Poison fades from you.
 -- Your Poison is removed.

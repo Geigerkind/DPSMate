@@ -213,7 +213,7 @@ function DPSMate.Sync:OnEvent(event)
 				local owner, ability, abilityTarget, time = "", "", "", 0
 				for o,a,at,t in string.gfind(arg2, "(.+),(.+),(.+),(.+)") do owner=o;ability=a;abilityTarget=at;time=tonumber(t) end
 				if DPSMate:TContains(DPSMate.Parser.Kicks, ability) then DPSMate.DB:AwaitAfflictedStun(owner, ability, abilityTarget, time) end
-				DPSMate.DB:AwaitHotDispel(ability, abilityTarget, owner, time)
+				if DPSMate:TContains(DPSMate.Parser.HotDispels, ability) then DPSMate.DB:AwaitHotDispel(ability, abilityTarget, owner, time) end
 				DPSMate.DB:AwaitingBuff(owner, ability, abilityTarget, time)
 				DPSMate.DB:AwaitingAbsorbConfirmation(owner, ability, abilityTarget, time)
 			elseif arg1 == "DPSMate_DMGDoneAll" then

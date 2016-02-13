@@ -1082,7 +1082,9 @@ end
 
 local AwaitDispel = {}
 function DPSMate.DB:AwaitDispel(ability, target, cause, time)
-	table.insert(AwaitDispel, {cause, target, ability, time})
+	if not AwaitDispel[target] then AwaitDispel[target] = {} end
+	table.insert(AwaitDispel[target], {cause, ability, time})
+	DPSMate.DB:EvaluateDispel()
 	--DPSMate:SendMessage("Awaiting Dispel! - "..cause.." - "..target.." - "..ability.." - "..time)
 end
 
@@ -1101,50 +1103,80 @@ function DPSMate.DB:AwaitHotDispel(ability, target, cause, time)
 	--DPSMate:SendMessage("Awaiting Dispel! - "..cause.." - "..target.." - "..ability.." - "..time)
 end
 
-function DPSMate.DB:ClearAwaitHotDispel()
-	for cat, val in pairs(AwaitHotDispel) do
-		if (GetTime()-val[4])>=10 then
-			table.remove(AwaitHotDispel, cat)
-			break
-		end
-	end
-end
-
 local ActiveHotDispel = {}
 function DPSMate.DB:RegisterHotDispel(target, ability)
 	for cat, val in pairs(AwaitHotDispel) do
 		--DPSMate:SendMessage(val[2].."="..target)
 		--DPSMate:SendMessage(val[3].."="..ability)
 		if val[2]==target and val[3]==ability then
-			table.insert(ActiveHotDispel, {val[1], val[2], val[3]})
+			if not ActiveHotDispel[val[2]] then ActiveHotDispel[val[2]] = {} end
+			table.insert(ActiveHotDispel[val[2]], {val[1], val[3]})
 			--DPSMate:SendMessage("Confirmed")
 			break
 		end
  	end
 end
 
+function DPSMate.DB:ClearAwaitHotDispel()
+	for cat, val in pairs(AwaitHotDispel) do
+		if (GetTime()-val[4])>=10 then
+			table.remove(AwaitHotDispel, cat)
+		end
+	end
+end
+
+local ConfirmedDispel = {}
 function DPSMate.DB:ConfirmRealDispel(ability, target, time)
-	for cat, val in pairs(AwaitDispel) do
-		if val[2] == target and (time-val[4])<=1 and DPSMate:TContains(DPSMate.Parser["Dispels"], val[3]) then -- Maybe a bug is caused now? Cause I changed the table
-			DPSMate.DB:Dispels(val[1], val[3], val[2], ability)
-			--DPSMate:SendMessage("Confirmed!")
-			table.remove(AwaitDispel, cat)
-			return
+	if not ConfirmedDispel[target] then ConfirmedDispel[target] = {} end
+	table.insert(ConfirmedDispel[target], {ability, time})
+	DPSMate.DB:EvaluateDispel()
+	--DPSMate.DB:Dispels("Unknown", "Unknown", target, ability)
+end
+
+function DPSMate.DB:EvaluateDispel()
+	for cat, val in AwaitDispel do
+		for ca, va in val do
+			if ConfirmedDispel[cat] then
+				local check = nil
+				for q, t in ConfirmedDispel[cat] do
+					if (va[3]-t[2])<=2 then
+						check = t[1]
+						table.remove(ConfirmedDispel[cat], q)
+					end
+				end
+				if check then
+					DPSMate.DB:Dispels(va[1], va[2], cat, check)
+					table.remove(AwaitDispel[cat], ca)
+					--DPSMate:SendMessage("Direct Removed!")
+					return
+				end
+			end
 		end
 	end
-	for cat, val in pairs(ActiveHotDispel) do
-		if val[2]==target and DPSMate:TContains(DPSMate.Parser["De"..DPSMateAbility[ability][2]], val[3]) then
-			DPSMate.DB:Dispels(val[1], val[3], val[2], ability)
-			return
+	for cat, val in ActiveHotDispel do
+		for ca, va in val do
+			if ConfirmedDispel[cat] then
+				local check = nil
+				for q, t in ConfirmedDispel[cat] do
+					if DPSMate:TContains(DPSMate.Parser["De"..DPSMateAbility[t[1]][2]], va[2]) then
+						check = t[1]
+						table.remove(ConfirmedDispel[cat], q)
+					end
+				end
+				if check then
+					DPSMate.DB:Dispels(va[1], va[2], cat, check)
+					return
+				end
+			end
 		end
 	end
-	DPSMate.DB:Dispels("Unknown", "Unknown", target, ability)
 end
 
 function DPSMate.DB:UnregisterHotDispel(target, ability)
-	for cat, val in pairs(ActiveHotDispel) do
-		if val[2]==target and val[3]==ability then
-			table.remove(ActiveHotDispel, cat)
+	if not ActiveHotDispel[target] then return end
+	for cat, val in pairs(ActiveHotDispel[target]) do
+		if val[2]==ability then
+			table.remove(ActiveHotDispel[target], cat)
 			--DPSMate:SendMessage("Unregistered!")
 			break
 		end
