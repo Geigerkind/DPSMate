@@ -92,6 +92,8 @@ modules\DPSMate_Details_Interrupts.lua
 modules\DPSMate_Details_Interrupts.xml
 modules\DPSMate_Details_Dispels.lua
 modules\DPSMate_Details_Dispels.xml
+modules\DPSMate_Details_DispelsReceived.lua
+modules\DPSMate_Details_DispelsReceived.xml
 
 DPSMate_Frame.xml
 DPSMate_Options.xml

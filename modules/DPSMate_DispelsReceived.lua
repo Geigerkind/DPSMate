@@ -137,4 +137,11 @@ function DPSMate.Modules.DispelsReceived:ShowTooltip(user,k)
 	end
 end
 
+function DPSMate.Modules.DispelsReceived:OpenDetails(obj, key)
+	DPSMate.Modules.DetailsDispelsReceived:UpdateDetails(obj, key)
+end
+
+function DPSMate.Modules.Damage:OpenTotalDetails(obj, key)
+	DPSMate.Modules.DetailsDamageTotal:UpdateDetails(obj, key)
+end
 

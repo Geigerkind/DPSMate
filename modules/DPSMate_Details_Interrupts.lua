@@ -161,10 +161,13 @@ function DPSMate.Modules.DetailsInterrupts:SelectCreatureButton(i)
 			getglobal(path..line):Hide()
 		end
 		getglobal(path..line.."_selected"):Hide()
-		if DetailsSelected == lineplusoffset then
-			getglobal(path..line.."_selected"):Show()
-		end
 	end
+	for p=1, 14 do
+		getglobal("DPSMate_Details_Interrupts_Log_ScrollButton"..p.."_selected"):Hide()
+	end
+	getglobal(path.."1_selected"):Show()
+	DPSMate.Modules.DetailsInterrupts:SelectCreatureAbilityButton(i, 1)
+	getglobal("DPSMate_Details_Interrupts_Log_ScrollButton"..i.."_selected"):Show()
 end
 
 function DPSMate.Modules.DetailsInterrupts:SelectCreatureAbilityButton(i, p)
@@ -192,8 +195,9 @@ function DPSMate.Modules.DetailsInterrupts:SelectCreatureAbilityButton(i, p)
 			getglobal(path..line):Hide()
 		end
 		getglobal(path..line.."_selected"):Hide()
-		if DetailsSelected == lineplusoffset then
-			getglobal(path..line.."_selected"):Show()
-		end
 	end
+	for i=1, 14 do
+		getglobal("DPSMate_Details_Interrupts_LogTwo_ScrollButton"..i.."_selected"):Hide()
+	end
+	getglobal("DPSMate_Details_Interrupts_LogTwo_ScrollButton"..p.."_selected"):Show()
 end

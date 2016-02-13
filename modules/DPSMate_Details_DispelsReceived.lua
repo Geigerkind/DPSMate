@@ -1,5 +1,5 @@
 -- Global Variables
-DPSMate.Modules.DetailsDispels = {}
+DPSMate.Modules.DetailsDispelsReceived = {}
 
 -- Local variables
 local DetailsArr, DetailsTotal, DmgArr, DetailUser, DetailsSelected  = {}, 0, {}, "", 1
@@ -32,90 +32,102 @@ local icons = {
 local curKey = 1
 local db, cbt = {}, 0
 
-function DPSMate.Modules.DetailsDispels:UpdateDetails(obj, key)
+function DPSMate.Modules.DetailsDispelsReceived:UpdateDetails(obj, key)
 	curKey = key
 	db, cbt = DPSMate:GetMode(key)
 	DetailsUser = obj.user
-	DPSMate_Details_Dispels_Title:SetText("Dispels by "..obj.user)
-	DPSMate_Details_Dispels:Show()
-	DPSMate.Modules.DetailsDispels:ScrollFrame_Update()
-	DPSMate.Modules.DetailsDispels:SelectCreatureButton(1)
-	DPSMate.Modules.DetailsDispels:SelectCreatureAbilityButton(1,1)
+	DPSMate_Details_DispelsReceived_Title:SetText("Dispels received by "..obj.user)
+	DPSMate_Details_DispelsReceived:Show()
+	DPSMate.Modules.DetailsDispelsReceived:ScrollFrame_Update()
+	DPSMate.Modules.DetailsDispelsReceived:SelectCreatureButton(1)
+	DPSMate.Modules.DetailsDispelsReceived:SelectCreatureAbilityButton(1,1)
 end
 
-function DPSMate.Modules.DetailsDispels:EvalTable()
-	local a, b, total = {}, {}, 0
-	for cat, val in pairs(db[DPSMateUser[DetailsUser][1]]) do -- 41 Ability
-		if cat~="i" then
-			local CV, ta, tb = 0, {}, {}
-			for ca, va in pairs(val) do
-				local taa, tbb = {}, {}
-				for c, v in pairs(va) do
-					CV = CV + v
-					local i = 1
-					while true do
-						if (not tbb[i]) then
-							table.insert(tbb, i, v)
-							table.insert(taa, i, c)
-							break
-						else
-							if tbb[i] < v then
-								table.insert(tbb, i, v)
-								table.insert(taa, i, c)
-								break
+function DPSMate.Modules.DetailsDispelsReceived:EvalTable()
+	local b, a, temp, total = {}, {}, {}, 0
+	for cat, val in pairs(db) do -- 3 Owner
+		temp[cat] = {
+			[1] = 0,
+			[2] = {},
+			[3] = {}
+		}
+		for ca, va in pairs(val) do -- 42 Ability
+			if ca~="i" then
+				local ta, tb, CV = {}, {}, 0
+				for c, v in pairs(va) do -- 3 Target
+					if c==DPSMateUser[DetailsUser][1] then
+						for ce, ve in pairs(v) do
+							temp[cat][1]=temp[cat][1]+ve
+							CV = CV + ve
+							local i = 1
+							while true do
+								if (not tb[i]) then
+									table.insert(tb, i, ve)
+									table.insert(ta, i, ce)
+									break
+								else
+									if tb < ve then
+										table.insert(tb, i, ve)
+										table.insert(ta, i, ce)
+										break
+									end
+								end
+								i=i+1
 							end
 						end
-						i=i+1
+						break
 					end
 				end
 				local i = 1
 				while true do
-					if (not tb[i]) then
-						table.insert(tb, i, {CV, taa, tbb})
-						table.insert(ta, i, ca)
+					if (not temp[cat][3][i]) then
+						table.insert(temp[cat][3], i, {CV, ta, tb})
+						table.insert(temp[cat][2], i, ca)
 						break
 					else
-						if tb[i][1] < CV then
-							table.insert(tb, i, {CV, taa, tbb})
-							table.insert(ta, i, ca)
+						if temp[cat][3][i][1] < CV then
+							table.insert(temp[cat][3], i, {CV, ta, tb})
+							table.insert(temp[cat][2], i, ca)
 							break
 						end
 					end
 					i=i+1
 				end
 			end
-			local i = 1
-			while true do
-				if (not b[i]) then
-					table.insert(b, i, {CV, ta, tb})
+		end
+	end
+	for cat, val in pairs(temp) do
+		local i = 1
+		while true do
+			if (not b[i]) then
+				table.insert(b, i, val)
+				table.insert(a, i, cat)
+				break
+			else
+				if b[i][1] < val[1] then
+					table.insert(b, i, val)
 					table.insert(a, i, cat)
 					break
-				else
-					if b[i][1] < CV then
-						table.insert(b, i, {CV, ta, tb})
-						table.insert(a, i, cat)
-						break
-					end
 				end
-				i=i+1
 			end
-			total = total + CV
+			i=i+1
 		end
+		total = total + val[1]
 	end
 	return a, total, b
 end
 
-function DPSMate.Modules.DetailsDispels:ScrollFrame_Update()
+function DPSMate.Modules.DetailsDispelsReceived:ScrollFrame_Update()
 	local line, lineplusoffset
-	local obj = getglobal("DPSMate_Details_Dispels_Log_ScrollFrame")
-	local path = "DPSMate_Details_Dispels_Log_ScrollButton"
-	DetailsArr, DetailsTotal, DmgArr = DPSMate.Modules.DetailsDispels:EvalTable()
+	local obj = getglobal("DPSMate_Details_DispelsReceived_Log_ScrollFrame")
+	local path = "DPSMate_Details_DispelsReceived_Log_ScrollButton"
+	DetailsArr, DetailsTotal, DmgArr = DPSMate.Modules.DetailsDispelsReceived:EvalTable()
 	local len = DPSMate:TableLength(DetailsArr)
 	FauxScrollFrame_Update(obj,len,10,24)
 	for line=1,14 do
 		lineplusoffset = line + FauxScrollFrame_GetOffset(obj)
 		if DetailsArr[lineplusoffset] ~= nil then
-			getglobal(path..line.."_Name"):SetText(DPSMate:GetAbilityById(DetailsArr[lineplusoffset]))
+			getglobal(path..line.."_Name"):SetText(DPSMate:GetUserById(DetailsArr[lineplusoffset]))
 			getglobal(path..line.."_Value"):SetText(DmgArr[lineplusoffset][1].." ("..string.format("%.2f", 100*DmgArr[lineplusoffset][1]/DetailsTotal).."%)")
 			getglobal(path..line.."_Icon"):SetTexture("Interface\\AddOns\\DPSMate\\images\\dummy")
 			if len < 14 then
@@ -133,17 +145,17 @@ function DPSMate.Modules.DetailsDispels:ScrollFrame_Update()
 	end
 end
 
-function DPSMate.Modules.DetailsDispels:SelectCreatureButton(i)
+function DPSMate.Modules.DetailsDispelsReceived:SelectCreatureButton(i)
 	local line, lineplusoffset
-	local obj = getglobal("DPSMate_Details_Dispels_LogTwo_ScrollFrame")
+	local obj = getglobal("DPSMate_Details_DispelsReceived_LogTwo_ScrollFrame")
 	obj.index = i
-	local path = "DPSMate_Details_Dispels_LogTwo_ScrollButton"
+	local path = "DPSMate_Details_DispelsReceived_LogTwo_ScrollButton"
 	local len = DPSMate:TableLength(DmgArr[i][2])
 	FauxScrollFrame_Update(obj,len,10,24)
 	for line=1,14 do
 		lineplusoffset = line + FauxScrollFrame_GetOffset(obj)
 		if DmgArr[i][2][lineplusoffset] ~= nil then
-			getglobal(path..line.."_Name"):SetText(DPSMate:GetUserById(DmgArr[i][2][lineplusoffset]))
+			getglobal(path..line.."_Name"):SetText(DPSMate:GetAbilityById(DmgArr[i][2][lineplusoffset]))
 			getglobal(path..line.."_Value"):SetText(DmgArr[i][3][lineplusoffset][1].." ("..string.format("%.2f", 100*DmgArr[i][3][lineplusoffset][1]/DmgArr[i][1]).."%)")
 			getglobal(path..line.."_Icon"):SetTexture("Interface\\AddOns\\DPSMate\\images\\dummy")
 			if len < 14 then
@@ -160,18 +172,18 @@ function DPSMate.Modules.DetailsDispels:SelectCreatureButton(i)
 		getglobal(path..line.."_selected"):Hide()
 	end
 	for p=1, 14 do
-		getglobal("DPSMate_Details_Dispels_Log_ScrollButton"..p.."_selected"):Hide()
+		getglobal("DPSMate_Details_DispelsReceived_Log_ScrollButton"..p.."_selected"):Hide()
 	end
 	getglobal(path.."1_selected"):Show()
-	DPSMate.Modules.DetailsDispels:SelectCreatureAbilityButton(i, 1)
-	getglobal("DPSMate_Details_Dispels_Log_ScrollButton"..i.."_selected"):Show()
+	DPSMate.Modules.DetailsDispelsReceived:SelectCreatureAbilityButton(i, 1)
+	getglobal("DPSMate_Details_DispelsReceived_Log_ScrollButton"..i.."_selected"):Show()
 end
 
-function DPSMate.Modules.DetailsDispels:SelectCreatureAbilityButton(i, p)
+function DPSMate.Modules.DetailsDispelsReceived:SelectCreatureAbilityButton(i, p)
 	local line, lineplusoffset
-	local obj = getglobal("DPSMate_Details_Dispels_LogThree_ScrollFrame")
+	local obj = getglobal("DPSMate_Details_DispelsReceived_LogThree_ScrollFrame")
 	obj.index = i
-	local path = "DPSMate_Details_Dispels_LogThree_ScrollButton"
+	local path = "DPSMate_Details_DispelsReceived_LogThree_ScrollButton"
 	local len = DPSMate:TableLength(DmgArr[i][3][p][2])
 	FauxScrollFrame_Update(obj,len,10,24)
 	for line=1,14 do
@@ -194,7 +206,7 @@ function DPSMate.Modules.DetailsDispels:SelectCreatureAbilityButton(i, p)
 		getglobal(path..line.."_selected"):Hide()
 	end
 	for i=1, 14 do
-		getglobal("DPSMate_Details_Dispels_LogTwo_ScrollButton"..i.."_selected"):Hide()
+		getglobal("DPSMate_Details_DispelsReceived_LogTwo_ScrollButton"..i.."_selected"):Hide()
 	end
-	getglobal("DPSMate_Details_Dispels_LogTwo_ScrollButton"..p.."_selected"):Show()
+	getglobal("DPSMate_Details_DispelsReceived_LogTwo_ScrollButton"..p.."_selected"):Show()
 end
