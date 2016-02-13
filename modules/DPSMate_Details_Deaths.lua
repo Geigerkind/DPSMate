@@ -44,11 +44,9 @@ end
 
 function DPSMate.Modules.DetailsDeaths:EvalTable()
 	local arr = {}
-	for cat, val in db do -- user
-		for ca, va in val do -- each death
-			if va["i"][1] == 1 then
-				table.insert(arr, {va[1][1], va["i"][2], va})
-			end
+	for cat, val in db[DPSMateUser[DetailsUser][1]] do -- user
+		if val["i"][1] == 1 then
+			table.insert(arr, {val[1][1], val["i"][2], val})
 		end
 	end
 	return arr
