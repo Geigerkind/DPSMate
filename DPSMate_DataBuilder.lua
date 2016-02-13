@@ -912,15 +912,12 @@ function DPSMate.DB:ConfirmAbsorbApplication(ability, abilityTarget, time)
 		if val[4]<=time and val[2]==ability then
 			if val[3]==abilityTarget then
 				DPSMate.DB:RegisterAbsorb(val[1], val[2], val[3])
-			--	DPSMate:SendMessage("Confirmed!")
 				table.remove(Await, cat)
-				break
-			end
-			if val[3]=="" then
-			
+				return
 			end
 		end
 	end
+	DPSMate.DB:RegisterAbsorb("Unknown", ability, abilityTarget)
 end
 
 function DPSMate.DB:RegisterAbsorb(owner, ability, abilityTarget)

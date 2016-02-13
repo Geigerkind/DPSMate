@@ -155,21 +155,30 @@ function DPSMate.Parser:OnEvent(event)
 			DPSMate.Parser:SpellHostilePlayerBuffDispels(arg1)
 		end
 	elseif event == "CHAT_MSG_SPELL_PERIODIC_FRIENDLYPLAYER_BUFFS" then
-		if arg1 then DPSMate.Parser:SpellPeriodicFriendlyPlayerBuffs(arg1) end
+		if arg1 then 
+			DPSMate.Parser:SpellPeriodicFriendlyPlayerBuffs(arg1)
+			DPSMate.Parser:SpellPeriodicFriendlyPlayerBuffsAbsorb(arg1)
+		end
 	elseif event == "CHAT_MSG_SPELL_HOSTILEPLAYER_BUFF" then
 		if arg1 then 
 			DPSMate.Parser:SpellHostilePlayerBuff(arg1) 
 			DPSMate.Parser:SpellHostilePlayerBuffDispels(arg1)
 		end
 	elseif event == "CHAT_MSG_SPELL_PERIODIC_HOSTILEPLAYER_BUFFS" then
-		if arg1 then DPSMate.Parser:SpellPeriodicFriendlyPlayerBuffs(arg1) end
+		if arg1 then 
+			DPSMate.Parser:SpellPeriodicFriendlyPlayerBuffs(arg1)
+			DPSMate.Parser:SpellPeriodicFriendlyPlayerBuffsAbsorb(arg1)
+		end
 	elseif event == "CHAT_MSG_SPELL_PARTY_BUFF" then
 		if arg1 then 
 			DPSMate.Parser:SpellHostilePlayerBuff(arg1)
 			DPSMate.Parser:SpellHostilePlayerBuffDispels(arg1)
 		end
 	elseif event == "CHAT_MSG_SPELL_PERIODIC_PARTY_BUFFS" then
-		if arg1 then DPSMate.Parser:SpellPeriodicFriendlyPlayerBuffs(arg1) end
+		if arg1 then 
+			DPSMate.Parser:SpellPeriodicFriendlyPlayerBuffs(arg1)
+			DPSMate.Parser:SpellPeriodicFriendlyPlayerBuffsAbsorb(arg1)
+		end
 	-- Absorb
 	elseif event == "CHAT_MSG_SPELL_AURA_GONE_SELF" then
 		if arg1 then DPSMate.Parser:SpellAuraGoneSelf(arg1) end
@@ -528,15 +537,15 @@ function DPSMate.Parser:SpellPeriodicSelfBuff(msg) -- Maybe some loss here?
 end
 
 -- Catrala gains Last Stand.
--- Raptor gains 35 Happiness from Giggity's Feed Pet Effect.
+-- Raptor gains 35 Happiness from Giggity's Feed Pet Effect. --> Causes error
 -- Sivir gains 11 health from your First Aid.
 -- Sivir gains 11 health from Albea's First Aid.
 -- Soulstoke gains 25 Energy from Soulstoke's Relentless Strikes Effect.
 function DPSMate.Parser:SpellPeriodicFriendlyPlayerBuffs(msg)
 	local cause, ability, target, amount = {}, "", "", 0
-	for ta, ab in string.gfind(msg, "(.+) gains (.+)%.") do if not strfind(msg, "from") then DPSMate.DB:ConfirmBuff(ta, ab, GetTime()); DPSMate.DB:RegisterHotDispel(ta, ab) return end end
 	for ta, a, ab in string.gfind(msg, "(.+) gains (.+) health from your (.+)%.") do target=ta; amount=tonumber(strsub(a, strfind(a, "%d+"))); ability=ab; cause.name=player.name end
 	for ta, a, c, ab in string.gfind(msg, "(.+) gains (.+) health from (.+)'s (.+)%.") do target=ta; amount=tonumber(strsub(a, strfind(a, "%d+"))); ability=ab; cause.name=c end
+	for ta, ab in string.gfind(msg, "(.+) gains (.+)%.") do if not strfind(msg, "from") then DPSMate.DB:ConfirmBuff(ta, ab, GetTime()); DPSMate.DB:RegisterHotDispel(ta, ab) end; return end
 	overheal = DPSMate.Parser:GetOverhealByName(amount, target)
 	DPSMate.DB:HealingTaken(DPSMateHealingTaken, target, ability.."(Periodic)", 1, 0, amount, cause.name)
 	DPSMate.DB:HealingTaken(DPSMateEHealingTaken, target, ability.."(Periodic)", 1, 0, amount-overheal, cause.name)
@@ -601,6 +610,10 @@ end
 
 function DPSMate.Parser:SpellPeriodicSelfBuffAbsorb(msg)
 	for ab in string.gfind(msg, "You gain (.+)%.") do if DPSMate:TContains(DPSMate.DB.ShieldFlags, ab) then DPSMate.DB:ConfirmAbsorbApplication(ab, player.name, GetTime()) end end
+end
+
+function DPSMate.Parser:SpellPeriodicFriendlyPlayerBuffsAbsorb(msg)
+	for ta, ab in string.gfind(msg, "(.+) gains (.+)%.") do if DPSMate:TContains(DPSMate.DB.ShieldFlags, ab) then DPSMate.DB:ConfirmAbsorbApplication(ab, ta, GetTime()) end end
 end
 
 -- Power Word: Shield fades from you.
