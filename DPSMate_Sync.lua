@@ -59,12 +59,14 @@ function DPSMate.Sync:OnUpdate(elapsed)
 			iterator = 15
 		elseif time>=42 and iterator==15 then
 			DPSMate.Sync:EDAllOut(DPSMateEDD, "D")
+			DPSMate.Sync:EDStatOut(DPSMateEDD, "D")
 			iterator = 16
 		elseif time>=45 and iterator==16 then
 			DPSMate.Sync:EDAbilityOut(DPSMateEDD, "D")
 			iterator = 17
 		elseif time>=48 and iterator==17 then
 			DPSMate.Sync:EDAllOut(DPSMateEDT, "T")
+			DPSMate.Sync:EDStatOut(DPSMateEDT, "T")
 			iterator = 18
 		elseif time>=51 and iterator==18 then
 			DPSMate.Sync:EDAbilityOut(DPSMateEDT, "T")
@@ -260,10 +262,14 @@ function DPSMate.Sync:OnEvent(event)
 				DPSMate.Sync:EDAllIn(DPSMateEDT, arg2, arg4)
 			elseif arg1 == "DPSMate_EDTAbility" then
 				DPSMate.Sync:EDAbilityIn(DPSMateEDT, arg2, arg4)
+			elseif arg1 == "DPSMate_EDTStat" then
+				DPSMate.Sync:EDStatIn(DPSMateEDT, arg2, arg4)
 			elseif arg1 == "DPSMate_EDDAll" then
 				DPSMate.Sync:EDAllIn(DPSMateEDD, arg2, arg4)
 			elseif arg1 == "DPSMate_EDDAbility" then
 				DPSMate.Sync:EDAbilityIn(DPSMateEDD, arg2, arg4)
+			elseif arg1 == "DPSMate_EDDStat" then
+				DPSMate.Sync:EDStatIn(DPSMateEDD, arg2, arg4)
 			elseif arg1 == "DPSMate_DeathsAll" then
 				DPSMate.Sync:DeathsAllIn(arg2, arg4) 
 			elseif arg1 == "DPSMate_Deaths" then
@@ -438,18 +444,26 @@ function DPSMate.Sync:EDAllIn(arr, arg2, arg4)
 	DPSMate.DB:BuildUser(arg4, t[1])
 	DPSMate.DB:BuildUser(t[2], nil)
 	if not arr[1][DPSMateUser[t[2]][1]] then
-		arr[1][DPSMateUser[t[2]][1]] = {
-			i = {},
-		}
+		arr[1][DPSMateUser[t[2]][1]] = {}
 	end
 	arr[1][DPSMateUser[t[2]][1]][DPSMateUser[arg4][1]] = {
-		i = tonumber(t[3]),
+		i = {
+			[1] = {},
+			[2] = tonumber(t[3]),
+		},
 	}
 	DPSMate.DB.NeedUpdate = true
 end
 
 function DPSMate.Sync:EDStatIn(arr, arg2, arg4)
-
+	local t = {}
+	string.gsub(arg2, "(.-),", function(c) table.insert(t,c) end)
+	DPSMate.DB:BuildUser(arg4, nil)
+	DPSMate.DB:BuildUser(t[1], nil)
+	if not arr[1][DPSMateUser[t[1]][1]] then return end
+	t[2] = tonumber(t[2])
+	table.insert(arr[1][DPSMateUser[t[2]][1]][DPSMateUser[arg4][1]]["i"][1], {t[2], tonumber(t[3])})
+	if t[2]>DPSMateCombatTime["total"] then DPSMateCombatTime["total"]=t[2] end
 end
 
 function DPSMate.Sync:EDAbilityIn(arr, arg2, arg4)
@@ -839,13 +853,19 @@ end
 function DPSMate.Sync:EDAllOut(arr, prefix)
 	for cat, val in pairs(arr[1]) do
 		if val[DPSMateUser[player.name][1]] then
-			SendAddonMessage("DPSMate_ED"..prefix.."All", player.class..","..DPSMate:GetUserById(cat)..","..val[DPSMateUser[player.name][1]]["i"]..",", "RAID")
+			SendAddonMessage("DPSMate_ED"..prefix.."All", player.class..","..DPSMate:GetUserById(cat)..","..val[DPSMateUser[player.name][1]]["i"][2]..",", "RAID")
 		end
 	end
 end
 
 function DPSMate.Sync:EDStatOut(arr, prefix)
-	
+	for cat, val in arr[1] do
+		if val[DPSMateUser[player.name][1]] then
+			for ca, va in DPSMate.Sync:GetSummarizedTable(val[DPSMateUser[player.name][1]]["i"][1]) do
+				SendAddonMessage("DPSMate_ED"..prefix.."Stat", DPSMate:GetUserById(cat)..","..va[1]..","..va[2]..",", "RAID")
+			end
+		end
+	end
 end
 
 function DPSMate.Sync:EDAbilityOut(arr, prefix)
