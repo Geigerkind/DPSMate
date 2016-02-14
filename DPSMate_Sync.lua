@@ -115,18 +115,16 @@ function DPSMate.Sync:GetSummarizedTable(arr)
 	local newArr, i, dmg, time, dis = {}, 1, 0, nil, 1
 	local TL = DPSMate:TableLength(arr)
 	if TL>100 then dis = floor(TL/100) end
-	for cat, val in pairs(arr) do
+	for cat, val in arr do
 		if dis>1 then
 			dmg=dmg+val[2]
-			if i<dis then
-				if not time then time=val[1] end -- first time val
-			else
-				if time then
-					if (val[1]-time)>0 then
-						table.insert(newArr, {(val[1]+time)/2, dmg/(val[1]-time)}) -- last time val // subtracting from each other to get the time in which the damage is being done
-						time, dmg, i = nil, 0, 1
-					end
+			if time then
+				if i>dis and (val[1]-time)>0 then
+					table.insert(newArr, {(val[1]+time)/2, dmg/(val[1]-time)}) -- last time val // subtracting from each other to get the time in which the damage is being done
+					time, dmg, i = nil, 0, 1
 				end
+			else
+				time=val[1]
 			end
 		else
 			table.insert(newArr, val)
