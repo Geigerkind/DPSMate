@@ -448,6 +448,10 @@ function DPSMate.Sync:EDAllIn(arr, arg2, arg4)
 	DPSMate.DB.NeedUpdate = true
 end
 
+function DPSMate.Sync:EDStatIn(arr, arg2, arg4)
+
+end
+
 function DPSMate.Sync:EDAbilityIn(arr, arg2, arg4)
 	local t = {}
 	string.gsub(arg2, "(.-),", function(c) table.insert(t,c) end)
@@ -838,6 +842,10 @@ function DPSMate.Sync:EDAllOut(arr, prefix)
 			SendAddonMessage("DPSMate_ED"..prefix.."All", player.class..","..DPSMate:GetUserById(cat)..","..val[DPSMateUser[player.name][1]]["i"]..",", "RAID")
 		end
 	end
+end
+
+function DPSMate.Sync:EDStatOut(arr, prefix)
+	
 end
 
 function DPSMate.Sync:EDAbilityOut(arr, prefix)

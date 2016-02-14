@@ -706,13 +706,14 @@ function DPSMate.DB:EnemyDamage(arr, Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, D
 			DPSMate.DB:BuildUser(cause, nil)
 			DPSMate.DB:BuildAbility(Dname, nil)
 			if not arr[cat][DPSMateUser[cause][1]] then
-				arr[cat][DPSMateUser[cause][1]] = {
-					i = {},
-				}
+				arr[cat][DPSMateUser[cause][1]] = {}
 			end
 			if not arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser.name][1]] then
 				arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser.name][1]] = {
-					i = 0,
+					i = {
+						[1] = {},
+						[2] = 0,
+					},
 				}
 			end
 			arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser.name][1]][DPSMateAbility[Dname][1]] = {
@@ -743,8 +744,8 @@ function DPSMate.DB:EnemyDamage(arr, Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, D
 			if (Dblock == 1) then arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser.name][1]][DPSMateAbility[Dname][1]][15] = Damount; arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser.name][1]][DPSMateAbility[Dname][1]][16] = Damount; arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser.name][1]][DPSMateAbility[Dname][1]][17] = Damount end
 			if (Dcrush == 1) then arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser.name][1]][DPSMateAbility[Dname][1]][19] = Damount; arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser.name][1]][DPSMateAbility[Dname][1]][20] = Damount; arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser.name][1]][DPSMateAbility[Dname][1]][21] = Damount end
 		end
-		arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser.name][1]]["i"] = arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser.name][1]]["i"] + Damount
-		if Damount > 0 then table.insert(arr[cat][DPSMateUser[cause][1]]["i"], {DPSMateCombatTime[val], Damount}) end
+		arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser.name][1]]["i"][2] = arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser.name][1]]["i"][2] + Damount
+		if Damount > 0 then table.insert(arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser.name][1]]["i"][1], {DPSMateCombatTime[val], Damount}) end
 	end
 	DPSMate.DB.NeedUpdate = true
 end

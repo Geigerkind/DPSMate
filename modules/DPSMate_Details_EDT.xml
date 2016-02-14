@@ -42,10 +42,10 @@
 		</Layers>
 		<Scripts>
 			<OnClick>
-				if this:GetParent():GetName()=="DPSMate_Details_DamageTaken_LogCreature" then
-					DPSMate.Modules.DetailsDamageTaken:SelectCreatureButton(this:GetID())
+				if this:GetParent():GetName()=="DPSMate_Details_EDT_LogCreature" then
+					DPSMate.Modules.DetailsEDT:SelectCreatureButton(this:GetID())
 				else
-					DPSMate.Modules.DetailsDamageTaken:SelectDetailsButton(getglobal("DPSMate_Details_DamageTaken_Log_ScrollFrame").index, this:GetID())
+					DPSMate.Modules.DetailsEDT:SelectDetailsButton(getglobal("DPSMate_Details_EDT_Log_ScrollFrame").index, this:GetID())
 				end
 			</OnClick>
 		</Scripts>

@@ -20,7 +20,7 @@ function DPSMate.Modules.EDT:GetSortedTable(arr)
 		local CV = 0
 		for cat, val in pairs(v) do
 			if cat~="i" then
-				CV = CV+val["i"]
+				CV = CV+val["i"][2]
 			end
 		end
 		local i = 1
@@ -48,44 +48,42 @@ function DPSMate.Modules.EDT:EvalTable(user, k)
 	local arr = DPSMate:GetMode(k)
 	if arr[user[1]] then
 		for cat, val in pairs(arr[user[1]]) do
-			if cat~="i" then
-				local ta, tb = {}, {}
-				for ca, va in pairs(val) do
-					if ca~="i" then
-						local i = 1
-						while true do
-							if (not tb[i]) then
+			local ta, tb = {}, {}
+			for ca, va in pairs(val) do
+				if ca~="i" then
+					local i = 1
+					while true do
+						if (not tb[i]) then
+							table.insert(ta, i, ca)
+							table.insert(tb, i, va[13])
+							break
+						else
+							if (tb[i] < va[13]) then
 								table.insert(ta, i, ca)
 								table.insert(tb, i, va[13])
 								break
-							else
-								if (tb[i] < va[13]) then
-									table.insert(ta, i, ca)
-									table.insert(tb, i, va[13])
-									break
-								end
 							end
-							i = i + 1
 						end
+						i = i + 1
 					end
 				end
-				local i = 1
-				while true do
-					if (not d[i]) then
-						table.insert(a, i, cat)
-						table.insert(d, i, {val["i"], ta, tb})
-						break
-					else
-						if (d[i][1] < val["i"]) then
-							table.insert(a, i, cat)
-							table.insert(d, i, {val["i"], ta, tb})
-							break
-						end
-					end
-					i = i + 1
-				end
-				total=total+val["i"]
 			end
+			local i = 1
+			while true do
+				if (not d[i]) then
+					table.insert(a, i, cat)
+					table.insert(d, i, {val["i"][2], ta, tb})
+					break
+				else
+					if (d[i][1] < val["i"][2]) then
+						table.insert(a, i, cat)
+						table.insert(d, i, {val["i"][2], ta, tb})
+						break
+					end
+				end
+				i = i + 1
+			end
+			total=total+val["i"][2]
 		end
 	end
 	return a, total, d

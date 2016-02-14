@@ -259,8 +259,30 @@ function DPSMate.Modules.DetailsEDD:CreateGraphTable()
 	lines[12]:Show()
 end
 
+function DPSMate.Modules.DetailsEDD:SortLineTable(arr)
+	local newArr = {}
+	for cat, val in arr[DPSMateUser[DetailsUser][1]] do
+		for ca, va in val["i"][1] do
+			local i = 1
+			while true do
+				if not newArr[i] then
+					table.insert(newArr, i, va)
+					break
+				else
+					if newArr[i][1] > va[1] then
+						table.insert(newArr, i, va)
+						break
+					end
+				end
+				i = i +1
+			end
+		end
+	end
+	return newArr
+end
+
 function DPSMate.Modules.DetailsEDD:GetSummarizedTable(arr)
-	return DPSMate.Sync:GetSummarizedTable(arr[DPSMateUser[DetailsUser][1]]["i"])
+	return DPSMate.Sync:GetSummarizedTable(DPSMate.Modules.DetailsEDD:SortLineTable(arr))
 end
 
 function DPSMate.Modules.DetailsEDD:GetMaxLineVal(t, p)
