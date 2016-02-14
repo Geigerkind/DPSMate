@@ -617,7 +617,10 @@ function DPSMate.Sync:DeathsAllIn(arg2, arg4)
 		DPSMateDeaths[1][DPSMateUser[arg4][1]] = {}
 	end
 	DPSMateDeaths[1][DPSMateUser[arg4][1]][t[2]] = {
-		i = tonumber(t[3]),
+		i = {
+			[1] = tonumber(t[3]),
+			[2] = t[4],
+		},
 	}
 	DPSMate.DB.NeedUpdate = true
 end
@@ -638,6 +641,8 @@ function DPSMate.Sync:DeathsIn(arg2, arg4)
 		[3] = tonumber(t[5]),
 		[4] = tonumber(t[6]),
 		[5] = tonumber(t[7]),
+		[6] = tonumber(t[8]),
+		[7] = t[9],
 	}
 end
 
@@ -915,7 +920,7 @@ end
 function DPSMate.Sync:DeathsAllOut()
 	if not DPSMateDeaths[1][DPSMateUser[player.name][1]] then return end
 	for cat, val in pairs(DPSMateDeaths[1][DPSMateUser[player.name][1]]) do -- death count
-		SendAddonMessage("DPSMate_DeathsAll", player.class..","..cat..","..val["i"]..",", "RAID")
+		SendAddonMessage("DPSMate_DeathsAll", player.class..","..cat..","..val["i"][1]..","..val["i"][2]..",", "RAID")
 	end
 end
 
@@ -924,7 +929,7 @@ function DPSMate.Sync:DeathsOut()
 	for cat, val in pairs(DPSMateDeaths[1][DPSMateUser[player.name][1]]) do -- death count
 		for ca, va in pairs(val) do -- each part
 			if ca~="i" then -- Testing if this prevents the error
-				SendAddonMessage("DPSMate_Deaths", cat..","..ca..","..DPSMate:GetUserById(va[1])..","..DPSMate:GetAbilityById(va[2])..","..va[3]..","..va[4]..","..va[5]..",", "RAID")
+				SendAddonMessage("DPSMate_Deaths", cat..","..ca..","..DPSMate:GetUserById(va[1])..","..DPSMate:GetAbilityById(va[2])..","..va[3]..","..va[4]..","..va[5]..","..va[6]..","..va[7]..",", "RAID")
 			end
 		end
 	end

@@ -1183,7 +1183,6 @@ function DPSMate.DB:UnregisterHotDispel(target, ability)
 	end
 end
 
--- l. 798
 function DPSMate.DB:Dispels(cause, Dname, target, ability)
 	if (cause=="" or not Dname or Dname=="") then return end
 	DPSMate.DB:BuildUser(cause, nil)
