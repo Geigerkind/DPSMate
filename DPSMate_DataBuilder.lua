@@ -1215,7 +1215,8 @@ function DPSMate.DB:UnregisterDeath(target)
 	if not DPSMateUser[target] then return end
 	for cat, val in pairs({[1]="total", [2]="current"}) do 
 		if DPSMateDeaths[cat][DPSMateUser[target][1]] then
-			DPSMateDeaths[cat][DPSMateUser[target][1]][1]["i"]=1
+			DPSMateDeaths[cat][DPSMateUser[target][1]][1]["i"][1]=1
+			DPSMateDeaths[cat][DPSMateUser[target][1]][1]["i"][2]=GameTime_GetTime()
 		end
 	end
 end
@@ -1233,7 +1234,7 @@ function DPSMate.DB:DeathHistory(target, cause, ability, amount, hit, crit, type
 			DPSMateDeaths[cat][DPSMateUser[target][1]][1] = {
 				i = {
 					[1] = 0,
-					[2] = GameTime_GetTime(),
+					[2] = "",
 				},
 			}
 		end
