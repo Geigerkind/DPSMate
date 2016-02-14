@@ -6,14 +6,12 @@ local player = {}
 player["name"] = UnitName("player")
 local a,b = UnitClass("player")
 player["class"] = strlower(b)
-local time = 0
-local iterator = 1
-local voteStarter = false
+local time, iterator, voteStarter = 0, 1, false
 
 -- Beginn Functions
 
 function DPSMate.Sync:OnUpdate(elapsed)
-	if DPSMate.DB.loaded then
+	if DPSMate.DB.loaded and DPSMateSettings["sync"] then
 		time=time+elapsed
 		if iterator==1 then
 			DPSMate.Sync:DMGDoneAllOut()
@@ -26,18 +24,21 @@ function DPSMate.Sync:OnUpdate(elapsed)
 			iterator = 4
 		elseif time>=9 and iterator==4 then
 			DPSMate.Sync:HealingAllOut(DPSMateEHealing, "E")
+			DPSMate.Sync:HealingStatOut(DPSMateEHealing, "E")
 			iterator = 5
 		elseif time>=12 and iterator==5 then
 			DPSMate.Sync:HealingAbilityOut(DPSMateEHealing, "E")
 			iterator = 6
 		elseif time>=15 and iterator==6 then
 			DPSMate.Sync:HealingAllOut(DPSMateTHealing, "T")
+			DPSMate.Sync:HealingStatOut(DPSMateTHealing, "T")
 			iterator = 7
 		elseif time>=18 and iterator==7 then
 			DPSMate.Sync:HealingAbilityOut(DPSMateTHealing, "T")
 			iterator = 8
 		elseif time>=21 and iterator==8 then
 			DPSMate.Sync:HealingAllOut(DPSMateOverhealing, "O")
+			DPSMate.Sync:HealingStatOut(DPSMateOverhealing, "O")
 			iterator = 9
 		elseif time>=24 and iterator==9 then
 			DPSMate.Sync:HealingAbilityOut(DPSMateOverhealing, "O")
@@ -97,10 +98,10 @@ function DPSMate.Sync:OnUpdate(elapsed)
 			iterator = 27
 		elseif time>=78 and iterator==27 then
 			DPSMate.Sync:AurasOut()
-			DPSMate.Sync.Async = false
-			iterator = 1
-			time = 0
+			DPSMate.Sync.Async, iterator, time = false, 1, 0
 		end
+	else
+		DPSMate.Sync.Async, iterator, time = false, 1, 0
 	end
 end
 
@@ -130,7 +131,6 @@ function DPSMate.Sync:GetSummarizedTable(arr)
 		end
 		i=i+1
 	end
-	
 	return newArr
 end
 
@@ -226,14 +226,20 @@ function DPSMate.Sync:OnEvent(event)
 				DPSMate.Sync:DMGDoneAbilityIn(arg2, arg4)
 			elseif arg1 == "DPSMate_EHealingAll" then
 				DPSMate.Sync:HealingAllIn(arg2, arg4, DPSMateEHealing)
+			elseif arg1 == "DPSMate_EHealingStat" then
+				DPSMate.Sync:HealingStatIn(arg2, arg4, DPSMateEHealing)
 			elseif arg1 == "DPSMate_EHealingAbility" then
 				DPSMate.Sync:HealingAbilityIn(arg2, arg4, DPSMateEHealing)
 			elseif arg1 == "DPSMate_THealingAll" then
 				DPSMate.Sync:HealingAllIn(arg2, arg4, DPSMateTHealing)
+			elseif arg1 == "DPSMate_THealingStat" then
+				DPSMate.Sync:HealingStatIn(arg2, arg4, DPSMateTHealing)
 			elseif arg1 == "DPSMate_THealingAbility" then
 				DPSMate.Sync:HealingAbilityIn(arg2, arg4, DPSMateTHealing)
 			elseif arg1 == "DPSMate_OHealingAll" then
 				DPSMate.Sync:HealingAllIn(arg2, arg4, DPSMateOverhealing)
+			elseif arg1 == "DPSMate_OHealingStat" then
+				DPSMate.Sync:HealingStatIn(arg2, arg4, DPSMateOverhealing)
 			elseif arg1 == "DPSMate_OHealingAbility" then
 				DPSMate.Sync:HealingAbilityIn(arg2, arg4, DPSMateOverhealing)
 			elseif arg1 == "DPSMate_THealingTakenAll" then
@@ -320,18 +326,11 @@ function DPSMate.Sync:DMGDoneAllIn(arg2, arg4)
 end
 
 function DPSMate.Sync:DMGDoneStatIn(arg2, arg4)
-	DPSMate.DB:BuildUser(arg4, nil)
 	local t = {}
 	string.gsub(arg2, "(.-),", function(c) table.insert(t,c) end)
+	DPSMate.DB:BuildUser(arg4, nil)
 	t[1] = tonumber(t[1])
-	if not DPSMateDamageDone[1][DPSMateUser[arg4][1]] then
-		DPSMateDamageDone[1][DPSMateUser[arg4][1]] = {
-			i = {
-				[1] = {},
-				[2] = 0,
-			},
-		}
-	end
+	if not DPSMateDamageDone[1][DPSMateUser[arg4][1]] then return end
 	table.insert(DPSMateDamageDone[1][DPSMateUser[arg4][1]]["i"][1], {t[1], tonumber(t[2])})
 	if t[1]>DPSMateCombatTime["total"] then DPSMateCombatTime["total"]=t[1] end
 end
@@ -516,6 +515,16 @@ function DPSMate.Sync:HealingAllIn(arg2, arg4, arr)
 		},
 	}
 	DPSMate.DB.NeedUpdate = true
+end
+
+function DPSMate.Sync:HealingStatIn(arg2, arg4, arr)
+	local t = {}
+	string.gsub(arg2, "(.-),", function(c) table.insert(t,c) end)
+	DPSMate.DB:BuildUser(arg4, nil)
+	t[1] = tonumber(t[1])
+	if not arr[1][DPSMateUser[arg4][1]] then return end
+	table.insert(arr[1][DPSMateUser[arg4][1]]["i"][2], {t[1], tonumber(t[2])})
+	if t[1]>DPSMateCombatTime["total"] then DPSMateCombatTime["total"]=t[1] end
 end
 
 function DPSMate.Sync:HealingAbilityIn(arg2, arg4, arr)
@@ -887,6 +896,13 @@ end
 function DPSMate.Sync:HealingAllOut(arr, prefix)
 	if arr[1][DPSMateUser[player.name][1]] then
 		SendAddonMessage("DPSMate_"..prefix.."HealingAll", player.class..","..arr[1][DPSMateUser[player.name][1]]["i"][1]..",", "RAID")
+	end
+end
+
+function DPSMate.Sync:HealingStatOut(arr, prefix)
+	if not arr[1][DPSMateUser[player.name][1]] then return end
+	for cat, val in DPSMate.Sync:GetSummarizedTable(arr[1][DPSMateUser[player.name][1]]["i"][2]) do
+		SendAddonMessage("DPSMate_"..prefix.."Stat", val[1]..","..val[2]..",", "RAID")
 	end
 end
 
