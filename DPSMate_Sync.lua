@@ -45,6 +45,7 @@ function DPSMate.Sync:OnUpdate(elapsed)
 			iterator = 10
 		elseif time>=27 and iterator==10 then
 			DPSMate.Sync:AbsorbsOut() 
+			DPSMate.Sync:AbsorbsStatOut()
 			iterator = 11
 		elseif time>=30 and iterator==11 then
 			DPSMate.Sync:DispelsOut()
@@ -591,7 +592,9 @@ function DPSMate.Sync:iAbsorbsIn(arg2, arg4)
 		DPSMateAbsorbs[1][DPSMateUser[arg4][1]] = {}
 	end
 	if not DPSMateAbsorbs[1][DPSMateUser[arg4][1]][DPSMateUser[t[1]][1]] then
-		DPSMateAbsorbs[1][DPSMateUser[arg4][1]][DPSMateUser[t[1]][1]] = {}
+		DPSMateAbsorbs[1][DPSMateUser[arg4][1]][DPSMateUser[t[1]][1]] = {
+			i = {},
+		}
 	end
 	if not DPSMateAbsorbs[1][DPSMateUser[arg4][1]][DPSMateUser[t[1]][1]][DPSMateAbility[t[2]][1]] then
 		DPSMateAbsorbs[1][DPSMateUser[arg4][1]][DPSMateUser[t[1]][1]][DPSMateAbility[t[2]][1]] = {}
@@ -604,6 +607,22 @@ function DPSMate.Sync:iAbsorbsIn(arg2, arg4)
 			[4] = tonumber(t[7]),
 		},
 	}
+end
+
+function DPSMate.Sync:AbsorbsStatIn(arg2, arg4)
+	local t = {}
+	string.gsub(arg2, "(.-),", function(c) table.insert(t,c) end)
+	DPSMate.DB:BuildUser(arg4, nil)
+	DPSMate.DB:BuildUser(t[1], nil)
+	if not DPSMateAbsorbs[1][DPSMateUser[arg4][1]] then return end
+	if not DPSMateAbsorbs[1][DPSMateUser[arg4][1]][DPSMateUser[t[1]][1]] then return end
+	t[2] = tonumber(t[2])
+	if t[4] then
+		table.insert(DPSMateAbsorbs[1][DPSMateUser[arg4][1]][DPSMateUser[t[1]][1]]["i"], {t[2], tonumber(t[3]), tonumber(t[4]), tonumber(t[5])})
+	else
+		table.insert(DPSMateAbsorbs[1][DPSMateUser[arg4][1]][DPSMateUser[t[1]][1]]["i"], {t[2], tonumber(t[3]), tonumber(t[4])})
+	end
+	if t[1]>DPSMateCombatTime["total"] then DPSMateCombatTime["total"]=t[1] end
 end
 
 function DPSMate.Sync:AbsorbsIn(arg2, arg4) 
@@ -937,6 +956,19 @@ function DPSMate.Sync:AbsorbsOut()
 						SendAddonMessage("DPSMate_Absorbs", DPSMate:GetUserById(cat)..","..DPSMate:GetAbilityById(ca)..","..c..","..DPSMate:GetUserById(ce)..","..ve[1]..","..ve[2]..",", "RAID")
 					end
 				end
+			end
+		end
+	end
+end
+
+function DPSMate.Sync:AbsorbsStatOut()
+	if not DPSMateAbsorbs[1][DPSMateUser[player.name][1]] then return end
+	for cat, val in DPSMateAbsorbs[1][DPSMateUser[player.name][1]] do -- owner
+		for ca, va in val["i"] do
+			if va[4] then
+				SendAddonMessage("DPSMate_AbsorbsStat", DPSMate:GetUserById(cat)..","..va[1]..","..va[2]..","..va[3]..","..va[4]..",", "RAID")
+			else
+				SendAddonMessage("DPSMate_AbsorbsStat", DPSMate:GetUserById(cat)..","..va[1]..","..va[2]..","..va[3]..",", "RAID")
 			end
 		end
 	end
