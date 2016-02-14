@@ -44,7 +44,7 @@ function DPSMate.Modules.Decurses:GetSortedTable(arr)
 			end
 			i=i+1
 		end
-		total = total + val["i"]
+		total = total + CV
 	end
 	return b, total, a
 end
@@ -80,6 +80,7 @@ function DPSMate.Modules.Decurses:EvalTable(user, k)
 			end
 			i=i+1
 		end
+		total=total+val
 	end
 	return a, total, b
 end
@@ -111,4 +112,11 @@ function DPSMate.Modules.Decurses:ShowTooltip(user,k)
 	end
 end
 
+function DPSMate.Modules.Decurses:OpenDetails(obj, key)
+	DPSMate.Modules.DetailsDecurses:UpdateDetails(obj, key)
+end
+
+function DPSMate.Modules.Damage:OpenTotalDetails(obj, key)
+	DPSMate.Modules.DetailsDamageTotal:UpdateDetails(obj, key)
+end
 

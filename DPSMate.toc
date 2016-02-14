@@ -94,6 +94,22 @@ modules\DPSMate_Details_Dispels.lua
 modules\DPSMate_Details_Dispels.xml
 modules\DPSMate_Details_DispelsReceived.lua
 modules\DPSMate_Details_DispelsReceived.xml
+modules\DPSMate_Details_Decurses.lua
+modules\DPSMate_Details_Decurses.xml
+modules\DPSMate_Details_DecursesReceived.lua
+modules\DPSMate_Details_DecursesReceived.xml
+modules\DPSMate_Details_CureDisease.lua
+modules\DPSMate_Details_CureDisease.xml
+modules\DPSMate_Details_CureDiseaseReceived.lua
+modules\DPSMate_Details_CureDiseaseReceived.xml
+modules\DPSMate_Details_CurePoison.lua
+modules\DPSMate_Details_CurePoison.xml
+modules\DPSMate_Details_CurePoisonReceived.lua
+modules\DPSMate_Details_CurePoisonReceived.xml
+modules\DPSMate_Details_LiftMagic.lua
+modules\DPSMate_Details_LiftMagic.xml
+modules\DPSMate_Details_LiftMagicReceived.lua
+modules\DPSMate_Details_LiftMagicReceived.xml
 
 DPSMate_Frame.xml
 DPSMate_Options.xml

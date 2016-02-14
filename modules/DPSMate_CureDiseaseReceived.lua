@@ -141,4 +141,11 @@ function DPSMate.Modules.CureDiseaseReceived:ShowTooltip(user,k)
 	end
 end
 
+function DPSMate.Modules.CureDiseaseReceived:OpenDetails(obj, key)
+	DPSMate.Modules.DetailsCureDiseaseReceived:UpdateDetails(obj, key)
+end
+
+function DPSMate.Modules.Damage:OpenTotalDetails(obj, key)
+	DPSMate.Modules.DetailsDamageTotal:UpdateDetails(obj, key)
+end
 

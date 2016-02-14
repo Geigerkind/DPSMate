@@ -141,4 +141,11 @@ function DPSMate.Modules.LiftMagicReceived:ShowTooltip(user,k)
 	end
 end
 
+function DPSMate.Modules.LiftMagicReceived:OpenDetails(obj, key)
+	DPSMate.Modules.DetailsLiftMagicReceived:UpdateDetails(obj, key)
+end
+
+function DPSMate.Modules.Damage:OpenTotalDetails(obj, key)
+	DPSMate.Modules.DetailsDamageTotal:UpdateDetails(obj, key)
+end
 
