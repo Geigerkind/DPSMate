@@ -73,13 +73,15 @@ function DPSMate.Sync:OnUpdate(elapsed)
 			DPSMate.Sync:EDAbilityOut(DPSMateEDT, "T")
 			iterator = 19
 		elseif time>=54 and iterator==19 then
-			DPSMate.Sync:HealingTakenAllOut(DPSMateHealingTaken, "T")
+			DPSMate.Sync:HealingAllOut(DPSMateHealingTaken, "TTaken")
+			DPSMate.Sync:HealingStatOut(DPSMateHealingTaken, "TTaken")
 			iterator = 20
 		elseif time>=57 and iterator==20 then
 			DPSMate.Sync:HealingTakenAbilityOut(DPSMateHealingTaken, "T")
 			iterator = 21
 		elseif time>=60 and iterator==21 then
-			DPSMate.Sync:HealingTakenAllOut(DPSMateEHealingTaken, "E")
+			DPSMate.Sync:HealingAllOut(DPSMateEHealingTaken, "ETaken")
+			DPSMate.Sync:HealingStatOut(DPSMateEHealingTaken, "ETaken")
 			iterator = 22
 		elseif time>=63 and iterator==22 then
 			DPSMate.Sync:HealingTakenAbilityOut(DPSMateEHealingTaken, "E")
@@ -242,12 +244,16 @@ function DPSMate.Sync:OnEvent(event)
 				DPSMate.Sync:HealingStatIn(arg2, arg4, DPSMateOverhealing)
 			elseif arg1 == "DPSMate_OHealingAbility" then
 				DPSMate.Sync:HealingAbilityIn(arg2, arg4, DPSMateOverhealing)
-			elseif arg1 == "DPSMate_THealingTakenAll" then
-				DPSMate.Sync:HealingTakenAllIn(arg2, arg4, DPSMateHealingTaken)
-			elseif arg1 == "DPSMate_THealingTakenAbility" then
+			elseif arg1 == "DPSMate_TTakenHealingAll" then
+				DPSMate.Sync:HealingAllIn(arg2, arg4, DPSMateHealingTaken)
+			elseif arg1 == "DPSMate_TTakenHealingStat" then
+				DPSMate.Sync:HealingStatIn(arg2, arg4, DPSMateHealingTaken)
+			elseif arg1 == "DPSMate_TTakenHealingAbility" then
 				DPSMate.Sync:HealingTakenAbilityIn(arg2, arg4, DPSMateHealingTaken)
 			elseif arg1 == "DPSMate_EHealingTakenAll" then
-				DPSMate.Sync:HealingTakenAllIn(arg2, arg4, DPSMateEHealingTaken)
+				DPSMate.Sync:HealingAllIn(arg2, arg4, DPSMateEHealingTaken)
+			elseif arg1 == "DPSMate_ETakenHealingStat" then
+				DPSMate.Sync:HealingStatIn(arg2, arg4, DPSMateEHealingTaken)
 			elseif arg1 == "DPSMate_EHealingTakenAbility" then
 				DPSMate.Sync:HealingTakenAbilityIn(arg2, arg4, DPSMateEHealingTaken)
 			elseif arg1 == "DPSMate_Absorbs" then
@@ -549,19 +555,6 @@ end
 ----------------------------------------------------------------------------------
 --------------                    Healing taken                     --------------                                  
 ----------------------------------------------------------------------------------
-
-function DPSMate.Sync:HealingTakenAllIn(arg2, arg4, arr)
-	local t = {}
-	string.gsub(arg2, "(.-),", function(c) table.insert(t,c) end)
-	DPSMate.DB:BuildUser(arg4, t[1])
-	arr[1][DPSMateUser[arg4][1]] = {
-		i = {
-			[1] = {},
-			[2] = tonumber(t[2]),
-		},
-	}
-	DPSMate.DB.NeedUpdate = true
-end
 
 function DPSMate.Sync:HealingTakenAbilityIn(arg2, arg4, arr)
 	local t = {}
@@ -918,12 +911,6 @@ end
 ----------------------------------------------------------------------------------
 --------------                    Healing taken                     --------------                                  
 ----------------------------------------------------------------------------------
-
-function DPSMate.Sync:HealingTakenAllOut(arr, prefix)
-	if arr[1][DPSMateUser[player.name][1]] then
-		SendAddonMessage("DPSMate_"..prefix.."HealingTakenAll", player.class..","..arr[1][DPSMateUser[player.name][1]]["i"][2]..",", "RAID")
-	end
-end
 
 function DPSMate.Sync:HealingTakenAbilityOut(arr, prefix)
 	if not arr[1][DPSMateUser[player.name][1]] then return end
