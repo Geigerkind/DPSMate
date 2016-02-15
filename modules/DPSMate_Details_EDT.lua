@@ -54,9 +54,9 @@ function DPSMate.Modules.DetailsEDT:ScrollFrame_Update()
 	local path = "DPSMate_Details_EDT_LogCreature"
 	local obj = getglobal(path.."_ScrollFrame")
 	local arr = db
-	local pet, len = "", DPSMate:TableLength(arr[DPSMateUser[DetailsUser][1]])-5
+	local pet, len = "", DPSMate:TableLength(arr[DPSMateUser[DetailsUser][1]])
 	DetailsArr, DetailsTotal, DmgArr = DPSMate.RegistredModules[DPSMateSettings["windows"][curKey]["CurMode"]]:EvalTable(DPSMateUser[DetailsUser], curKey)
-	FauxScrollFrame_Update(obj,DPSMate:TableLength(arr),10,24)
+	FauxScrollFrame_Update(obj,len,10,24)
 	for line=1,10 do
 		lineplusoffset = line + FauxScrollFrame_GetOffset(obj)
 		if DetailsArr[lineplusoffset] ~= nil then
@@ -86,16 +86,16 @@ function DPSMate.Modules.DetailsEDT:SelectCreatureButton(i)
 	local line, lineplusoffset
 	local path = "DPSMate_Details_EDT_Log"
 	local obj = getglobal(path.."_ScrollFrame")
-	obj.index = i
+	if i then obj.index = i else i=obj.index end
 	local arr = db
-	local pet, len = "", DPSMate:TableLength(arr[DPSMateUser[DetailsUser][1]])-5
-	FauxScrollFrame_Update(obj,DPSMate:TableLength(arr),10,24)
+	local pet, len = "", DPSMate:TableLength(DmgArr[i][2])
+	FauxScrollFrame_Update(obj,len,10,24)
 	for line=1,10 do
 		lineplusoffset = line + FauxScrollFrame_GetOffset(obj)
 		if DmgArr[i][2][lineplusoffset] ~= nil then
 			local ability = DPSMate:GetAbilityById(DmgArr[i][2][lineplusoffset])
 			getglobal(path.."_ScrollButton"..line.."_Name"):SetText(ability)
-			getglobal(path.."_ScrollButton"..line.."_Value"):SetText(DmgArr[i][3][lineplusoffset].." ("..string.format("%.2f", (DmgArr[i][3][lineplusoffset]*100/DetailsTotal)).."%)")
+			getglobal(path.."_ScrollButton"..line.."_Value"):SetText(DmgArr[i][3][lineplusoffset].." ("..string.format("%.2f", (DmgArr[i][3][lineplusoffset]*100/DmgArr[i][1])).."%)")
 			if icons[ability] then
 				getglobal(path.."_ScrollButton"..line.."_Icon"):SetTexture(icons[ability])
 			else

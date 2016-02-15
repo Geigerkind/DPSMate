@@ -194,7 +194,7 @@
 						</Anchors>
 						<Scripts>
 							<OnVerticalScroll>
-								FauxScrollFrame_OnVerticalScroll(24, DPSMate.Modules.DetailsDamage.ScrollFrame_Update) 
+								FauxScrollFrame_OnVerticalScroll(24, DPSMate.Modules.DetailsHealingTaken.ScrollFrame_Update) 
 							</OnVerticalScroll>
 					   </Scripts>
 					</ScrollFrame>
@@ -302,7 +302,7 @@
 						</Anchors>
 						<Scripts>
 							<OnVerticalScroll>
-								FauxScrollFrame_OnVerticalScroll(24, DPSMate.Modules.DetailsDamage.ScrollFrame_Update) 
+								FauxScrollFrame_OnVerticalScroll(24, DPSMate.Modules.DetailsHealingTaken.SelectCreatureButton) 
 							</OnVerticalScroll>
 					   </Scripts>
 					</ScrollFrame>

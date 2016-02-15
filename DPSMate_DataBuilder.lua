@@ -950,12 +950,14 @@ end
 
 local broken = {2,0,0,0}
 function DPSMate.DB:SetUnregisterVariables(broAbsorb, ab, c)
-	DPSMate.DB:BuildAbility(ab, nil)
-	DPSMate.DB:BuildUser(c, nil)
-	broken[1] = 1
-	broken[2] = broAbsorb
-	broken[3] = DPSMateAbility[ab][1]
-	broken[4] = DPSMateUser[c][1]
+	if broAbsorb and ab and c then
+		DPSMate.DB:BuildAbility(ab, nil)
+		DPSMate.DB:BuildUser(c, nil)
+		broken[1] = 1
+		broken[2] = broAbsorb
+		broken[3] = DPSMateAbility[ab][1]
+		broken[4] = DPSMateUser[c][1]
+	end
 end
 
 function DPSMate.DB:UnregisterAbsorb(ability, abilityTarget)

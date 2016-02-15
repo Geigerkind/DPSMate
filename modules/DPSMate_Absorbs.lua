@@ -157,22 +157,24 @@ function DPSMate.Modules.Absorbs:EvalTable(user, k)
 				break
 			end
 		end
-		local i = 1
-		while true do
-			if (not b[i]) then
-				table.insert(b, i, {CV,ta,td})
-				table.insert(a, i, cat)
-				break
-			else
-				if b[i][1] < CV then
+		if CV>0 then
+			local i = 1
+			while true do
+				if (not b[i]) then
 					table.insert(b, i, {CV,ta,td})
 					table.insert(a, i, cat)
 					break
+				else
+					if b[i][1] < CV then
+						table.insert(b, i, {CV,ta,td})
+						table.insert(a, i, cat)
+						break
+					end
 				end
+				i=i+1
 			end
-			i=i+1
+			total = total + CV
 		end
-		total = total + CV
 	end
 	return a, total, b
 end
