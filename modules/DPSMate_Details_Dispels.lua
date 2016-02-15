@@ -49,9 +49,9 @@ function DPSMate.Modules.DetailsDispels:EvalTable()
 		if cat~="i" then
 			local CV, ta, tb = 0, {}, {}
 			for ca, va in pairs(val) do
-				local taa, tbb = {}, {}
+				local taa, tbb, CVV = {}, {}, 0
 				for c, v in pairs(va) do
-					CV = CV + v
+					CVV = CVV + v
 					local i = 1
 					while true do
 						if (not tbb[i]) then
@@ -71,18 +71,19 @@ function DPSMate.Modules.DetailsDispels:EvalTable()
 				local i = 1
 				while true do
 					if (not tb[i]) then
-						table.insert(tb, i, {CV, taa, tbb})
+						table.insert(tb, i, {CVV, taa, tbb})
 						table.insert(ta, i, ca)
 						break
 					else
-						if tb[i][1] < CV then
-							table.insert(tb, i, {CV, taa, tbb})
+						if tb[i][1] < CVV then
+							table.insert(tb, i, {CVV, taa, tbb})
 							table.insert(ta, i, ca)
 							break
 						end
 					end
 					i=i+1
 				end
+				CV = CV + CVV
 			end
 			local i = 1
 			while true do

@@ -85,8 +85,8 @@ DPSMate.Options.Options = {
 	[3] = {
 		type = 'group',
 		args = {
-			report = {
 				order = 10,
+			report = {
 				type = 'execute',
 				name = DPSMate.localization.config.report,
 				desc = DPSMate.localization.desc.report,
@@ -490,6 +490,7 @@ function DPSMate.Options:PopUpAccept(bool, bypass)
 		DPSMate.Modules.Interrupts.DB = DPSMateInterrupts
 		DPSMate.Modules.AurasGained.DB = DPSMateAurasGained
 		DPSMate.Modules.AurasLost.DB = DPSMateAurasGained
+		DPSMate.Modules.AurasUptimers.DB = DPSMateAurasGained
 		for _, val in pairs(DPSMateSettings["windows"]) do
 			if not val["options"][2]["total"] and not val["options"][2]["currentfight"] then
 				val["options"][2]["total"] = true

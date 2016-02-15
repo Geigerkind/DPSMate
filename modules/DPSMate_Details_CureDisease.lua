@@ -49,10 +49,10 @@ function DPSMate.Modules.DetailsCureDisease:EvalTable()
 		if cat~="i" then
 			local CV, ta, tb = 0, {}, {}
 			for ca, va in pairs(val) do
-				local taa, tbb = {}, {}
+				local taa, tbb, CVV = {}, {}, 0
 				for c, v in pairs(va) do
 					if DPSMateAbility[DPSMate:GetAbilityById(c)][2]=="Disease" then -- Performance can be increased here
-						CV = CV + v
+						CVV = CVV + v
 						local i = 1
 						while true do
 							if (not tbb[i]) then
@@ -73,18 +73,19 @@ function DPSMate.Modules.DetailsCureDisease:EvalTable()
 				local i = 1
 				while true do
 					if (not tb[i]) then
-						table.insert(tb, i, {CV, taa, tbb})
+						table.insert(tb, i, {CVV, taa, tbb})
 						table.insert(ta, i, ca)
 						break
 					else
-						if tb[i][1] < CV then
-							table.insert(tb, i, {CV, taa, tbb})
+						if tb[i][1] < CVV then
+							table.insert(tb, i, {CVV, taa, tbb})
 							table.insert(ta, i, ca)
 							break
 						end
 					end
 					i=i+1
 				end
+				CV = CV + CVV
 			end
 			if CV>0 then
 				local i = 1

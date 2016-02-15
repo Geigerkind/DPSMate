@@ -52,13 +52,9 @@ function DPSMate.Modules.AurasUptimers:EvalTable(user, k)
 	local arr = DPSMate:GetMode(k)
 	for cat, val in pairs(arr[user[1]]) do -- 3 Ability
 		local CV = 0
-		for ca, va in pairs(val) do -- each one
-			if ca==1 then
-				for ce, ve in pairs(va) do
-					if arr[user[1]][cat][2][ce] then
-						CV=CV+(arr[user[1]][cat][2][ce]-ve)
-					end
-				end
+		for ca, va in pairs(val[1]) do -- each one
+			if arr[user[1]][cat][2][ca] then
+				CV=CV+(arr[user[1]][cat][2][ca]-va)
 			end
 		end
 		if temp[cat] then temp[cat]=temp[cat]+CV else temp[cat]=CV end

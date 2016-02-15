@@ -969,7 +969,7 @@ function DPSMate.DB:UnregisterAbsorb(ability, abilityTarget)
 				DPSMateAbsorbs[cat][DPSMateUser[abilityTarget][1]][AbsorbingAbility[1]][AbsorbingAbility[2]][AbsorbingAbility[3]]["i"][2] = broken[2]
 				DPSMateAbsorbs[cat][DPSMateUser[abilityTarget][1]][AbsorbingAbility[1]][AbsorbingAbility[2]][AbsorbingAbility[3]]["i"][3] = broken[3]
 				DPSMateAbsorbs[cat][DPSMateUser[abilityTarget][1]][AbsorbingAbility[1]][AbsorbingAbility[2]][AbsorbingAbility[3]]["i"][4] = broken[4]
-				table.insert(DPSMateAbsorbs[cat][DPSMateUser[abilityTarget][1]][AbsorbingAbility[1]]["i"], {DPSMateCombatTime[val], broken[4], broken[3], broken[2]})
+				if broken[2]>0 then table.insert(DPSMateAbsorbs[cat][DPSMateUser[abilityTarget][1]][AbsorbingAbility[1]]["i"], {DPSMateCombatTime[val], broken[4], broken[3], broken[2]}) end
 			end
 		end
 	end
@@ -1390,6 +1390,10 @@ function DPSMate.DB:BuildBuffs(cause, target, ability, bool)
 		end
 		if not DPSMateAurasGained[cat][DPSMateUser[target][1]][DPSMateAbility[ability][1]][3][DPSMateUser[cause][1]] then
 			DPSMateAurasGained[cat][DPSMateUser[target][1]][DPSMateAbility[ability][1]][3][DPSMateUser[cause][1]] = 0
+		end
+		local TL = DPSMate:TableLength(DPSMateAurasGained[cat][DPSMateUser[target][1]][DPSMateAbility[ability][1]][1])
+		if not DPSMateAurasGained[cat][DPSMateUser[target][1]][DPSMateAbility[ability][1]][2][TL] then
+			DPSMateAurasGained[cat][DPSMateUser[target][1]][DPSMateAbility[ability][1]][2][TL] = DPSMateAurasGained[cat][DPSMateUser[target][1]][DPSMateAbility[ability][1]][1][TL]
 		end
 		table.insert(DPSMateAurasGained[cat][DPSMateUser[target][1]][DPSMateAbility[ability][1]][1], DPSMateCombatTime[val])
 		DPSMateAurasGained[cat][DPSMateUser[target][1]][DPSMateAbility[ability][1]][3][DPSMateUser[cause][1]] = DPSMateAurasGained[cat][DPSMateUser[target][1]][DPSMateAbility[ability][1]][3][DPSMateUser[cause][1]] + 1
