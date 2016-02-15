@@ -90,22 +90,24 @@ function DPSMate.Modules.CurePoisonReceived:EvalTable(user, k)
 		end
 	end
 	for cat, val in pairs(temp) do
-		local i = 1
-		while true do
-			if (not b[i]) then
-				table.insert(b, i, val)
-				table.insert(a, i, cat)
-				break
-			else
-				if b[i][1] < val[1] then
+		if val[1]>0 then
+			local i = 1
+			while true do
+				if (not b[i]) then
 					table.insert(b, i, val)
 					table.insert(a, i, cat)
 					break
+				else
+					if b[i][1] < val[1] then
+						table.insert(b, i, val)
+						table.insert(a, i, cat)
+						break
+					end
 				end
+				i=i+1
 			end
-			i=i+1
+			total = total + val[1]
 		end
-		total = total + val[1]
 	end
 	return a, total, b
 end

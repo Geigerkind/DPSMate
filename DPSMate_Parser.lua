@@ -641,6 +641,9 @@ DPSMate.Parser.Dispels = {
 	[4] = "Purify",
 	[5] = "Dispel Magic",
 	[6] = "Abolish Poison",
+	[7] = "Abolish Disease",
+	[8] = "Devour Magic",
+	[9] = "Cure Disease",
 }
 DPSMate.Parser.DeCurse = {
 	[1] = "Remove Curse",
@@ -648,10 +651,14 @@ DPSMate.Parser.DeCurse = {
 }
 DPSMate.Parser.DeMagic = {
 	[1] = "Cleanse",
+	[2] = "Dispel Magic",
+	[3] = "Devour Magic",
 }
 DPSMate.Parser.DeDisease = {
 	[1] = "Cleanse",
 	[2] = "Purify",
+	[3] = "Abolish Disease",
+	[4] = "Cure Disease",
 }
 DPSMate.Parser.DePoison = {
 	[1] = "Cleanse",
@@ -696,7 +703,7 @@ end
 -- Avrora's  Curse of Agony is removed.
 -- Your Curse of Agony is removed.
 function DPSMate.Parser:SpellBreakAura(msg) 
-	for ta, ab in string.gfind(msg, "(.+)'s (.+) is removed.") do DPSMate.DB:ConfirmRealDispel(ab, player.name, GetTime()) end
+	for ta, ab in string.gfind(msg, "(.+)'s (.+) is removed.") do DPSMate.DB:ConfirmRealDispel(ab, ta, GetTime()) end
 	for ab in string.gfind(msg, "Your (.+) is removed.") do DPSMate.DB:ConfirmRealDispel(ab, player.name, GetTime()) end
 end
 
