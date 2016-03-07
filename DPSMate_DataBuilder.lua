@@ -1,3 +1,7 @@
+-- NOtes
+-- Dispelling for unknown or if people use macros like castspellbyname support
+
+
 -- Global Variables
 DPSMate.DB.loaded = false
 DPSMate.DB.ShieldFlags = {
@@ -816,7 +820,7 @@ function DPSMate.DB:Healing(arr, Duser, Dname, Dhit, Dcrit, Damount)
 end
 
 function DPSMate.DB:HealingTaken(arr, Duser, Dname, Dhit, Dcrit, Damount, target)
-	if (not Duser or not Dname or Dname=="") then return end
+	if (not Duser or not Dname or Dname=="" and target) then return end
 	DPSMate.DB:BuildUser(Duser, nil)
 	DPSMate.DB:BuildUser(target, nil)
 	DPSMate.DB:BuildAbility(Dname, nil)
@@ -1373,6 +1377,7 @@ end
 
 function DPSMate.DB:BuildBuffs(cause, target, ability, bool)
 	if (not target or target=="" or not cause or cause=="") then return end
+	DPSMate:SendMessage("Build "..ability)
 	DPSMate.DB:BuildUser(target, nil)
 	DPSMate.DB:BuildUser(cause, nil)
 	DPSMate.DB:BuildAbility(ability, nil)
@@ -1392,8 +1397,9 @@ function DPSMate.DB:BuildBuffs(cause, target, ability, bool)
 			DPSMateAurasGained[cat][DPSMateUser[target][1]][DPSMateAbility[ability][1]][3][DPSMateUser[cause][1]] = 0
 		end
 		local TL = DPSMate:TableLength(DPSMateAurasGained[cat][DPSMateUser[target][1]][DPSMateAbility[ability][1]][1])
-		if not DPSMateAurasGained[cat][DPSMateUser[target][1]][DPSMateAbility[ability][1]][2][TL] then
-			DPSMateAurasGained[cat][DPSMateUser[target][1]][DPSMateAbility[ability][1]][2][TL] = DPSMateAurasGained[cat][DPSMateUser[target][1]][DPSMateAbility[ability][1]][1][TL]
+		local TLTWO = DPSMate:TableLength(DPSMateAurasGained[cat][DPSMateUser[target][1]][DPSMateAbility[ability][1]][2])
+		for i=1, (TL-TLTWO) do
+			table.insert(DPSMateAurasGained[cat][DPSMateUser[target][1]][DPSMateAbility[ability][1]][2], DPSMateAurasGained[cat][DPSMateUser[target][1]][DPSMateAbility[ability][1]][1][TLTWO+i])
 		end
 		table.insert(DPSMateAurasGained[cat][DPSMateUser[target][1]][DPSMateAbility[ability][1]][1], DPSMateCombatTime[val])
 		DPSMateAurasGained[cat][DPSMateUser[target][1]][DPSMateAbility[ability][1]][3][DPSMateUser[cause][1]] = DPSMateAurasGained[cat][DPSMateUser[target][1]][DPSMateAbility[ability][1]][3][DPSMateUser[cause][1]] + 1
@@ -1404,12 +1410,18 @@ end
 -- Lag machine!
 function DPSMate.DB:DestroyBuffs(target, ability)
 	if (not target or target=="" or ability=="") then return end
+	DPSMate:SendMessage("Destroy "..ability)
 	DPSMate.DB:BuildUser(target, nil)
 	DPSMate.DB:BuildAbility(ability, nil)
 	for cat, val in pairs({[1]="total", [2]="current"}) do 
 		if not DPSMateAurasGained[cat][DPSMateUser[target][1]] then
 			DPSMate.DB:BuildBuffs("Unknown", target, ability, false)
-		elseif not DPSMateAurasGained[cat][DPSMateUser[target][1]][DPSMateAbility[ability][1]] then
+		end
+		if not DPSMateAurasGained[cat][DPSMateUser[target][1]][DPSMateAbility[ability][1]] then
+			DPSMate.DB:BuildBuffs("Unknown", target, ability, false)
+		end
+		local TL = DPSMate:TableLength(DPSMateAurasGained[cat][DPSMateUser[target][1]][DPSMateAbility[ability][1]][2])+1
+		if not DPSMateAurasGained[cat][DPSMateUser[target][1]][DPSMateAbility[ability][1]][1][TL] then
 			DPSMate.DB:BuildBuffs("Unknown", target, ability, false)
 		end
 		table.insert(DPSMateAurasGained[cat][DPSMateUser[target][1]][DPSMateAbility[ability][1]][2], DPSMateCombatTime[val])

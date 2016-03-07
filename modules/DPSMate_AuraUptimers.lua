@@ -55,21 +55,22 @@ function DPSMate.Modules.AurasUptimers:EvalTable(user, k)
 		for ca, va in pairs(val[1]) do -- each one
 			if arr[user[1]][cat][2][ca] then
 				CV=CV+(arr[user[1]][cat][2][ca]-va)
+				DPSMate:SendMessage((arr[user[1]][cat][2][ca]-va))
 			end
 		end
-		if temp[cat] then temp[cat]=temp[cat]+CV else temp[cat]=CV end
-	end
-	for cat, val in pairs(temp) do
+		--DPSMate:SendMessage(DPSMate:GetAbilityById(cat).." - "..CV)
+		--DPSMate:SendMessage(DPSMateCombatTime["total"])
+		--DPSMate:SendMessage("---------------------------------------")
 		local i = 1
-		val = ceil((100*val)/DPSMateCombatTime["total"])
+		CV = ceil((100*CV)/DPSMateCombatTime["total"])
 		while true do
 			if (not b[i]) then
-				table.insert(b, i, val)
+				table.insert(b, i, CV)
 				table.insert(a, i, cat)
 				break
 			else
-				if b[i] < val then
-					table.insert(b, i, val)
+				if b[i] < CV then
+					table.insert(b, i, CV)
 					table.insert(a, i, cat)
 					break
 				end

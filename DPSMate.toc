@@ -1,4 +1,4 @@
-## Interface: 10900
+## Interface: 11200
 ## Title: DPSMate |cFFFF8080-Shino-|r
 ## Title-deDE: DPSMate |cFFFF8080-Shino-|r
 ## Notes: DPSMate tracks the fight and provides statistics [TO BE EDITED]

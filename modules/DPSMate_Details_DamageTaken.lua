@@ -251,7 +251,7 @@ function DPSMate.Modules.DetailsDamageTaken:CreateGraphTable()
 end
 
 function DPSMate.Modules.DetailsDamageTaken:GetSummarizedTable(arr)
-	return DPSMate.Sync:GetSummarizedTable(arr[DPSMateUser[DetailsUser][1]]["i"])
+	return DPSMate.Sync:GetSummarizedTable(arr[DPSMateUser[DetailsUser][1]]["i"][1])
 end
 
 function DPSMate.Modules.DetailsDamageTaken:GetMaxLineVal(t, p)
