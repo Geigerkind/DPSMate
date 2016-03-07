@@ -10,6 +10,8 @@
 libs\AceLibrary\AceLibrary.lua
 libs\Dewdrop-2.0\Dewdrop-2.0.lua
 libs\GraphLib\Graph-1.0\Graph-1.0.lua
+libs\AceLocale\AceLocale-2.2.lua
+libs\Babble-Spell-2.3\Babble-Spell-2.3.lua
 
 DPSMate.lua
 
@@ -110,6 +112,8 @@ modules\DPSMate_Details_LiftMagic.lua
 modules\DPSMate_Details_LiftMagic.xml
 modules\DPSMate_Details_LiftMagicReceived.lua
 modules\DPSMate_Details_LiftMagicReceived.xml
+modules\DPSMate_Details_Auras.lua
+modules\DPSMate_Details_Auras.xml
 
 DPSMate_Frame.xml
 DPSMate_Options.xml

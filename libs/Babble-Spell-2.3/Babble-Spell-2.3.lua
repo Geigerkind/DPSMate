@@ -9,7 +9,7 @@ Description: A library to provide localizations for spells.
 Dependencies: AceLibrary, AceLocale-2.2
 ]]
 
-local MAJOR_VERSION = "Babble-Spell-2.2"
+local MAJOR_VERSION = "Babble-Spell-2.3"
 local MINOR_VERSION = tonumber(string.sub("$Revision: 15059 $", 12, -3))
 
 if not AceLibrary then error(MAJOR_VERSION .. " requires AceLibrary") end
@@ -27,6 +27,14 @@ local BabbleSpell = AceLibrary("AceLocale-2.2"):new(MAJOR_VERSION)
 
 BabbleSpell:RegisterTranslations("enUS", function()
 	return {
+		-- Costum Added
+		["Holy Strength"] = true,
+		["Earthstrike"] = true,
+		["Rogue Armor Energize"] = true,
+		["Relentless Strikes Effect"] = true,
+		["Net"] = true,
+		
+		-- Original spells
 		["Abolish Disease"] = true,
 		["Abolish Poison Effect"] = true,
 		["Abolish Poison"] = true,
@@ -6224,6 +6232,14 @@ BabbleSpell:RegisterTranslations("koKR", function()
 end)
 
 local spellIcons = {
+	-- Costum Icons
+	["Holy Strength"] = "spell_holy_blessingofstrength",
+	["Earthstrike"] = "spell_nature_abolishmagic", 
+	["Rogue Armor Energize"] = "trade_engineering",
+	["Relentless Strikes Effect"] = "ability_warrior_decisivestrike",
+	["Net"] = "inv_misc_net_01",
+	
+	-- Original Icons
 	["Abolish Disease"] = "Spell_Nature_NullifyDisease",
 	["Abolish Poison Effect"] = "Spell_Nature_NullifyPoison_02",
 	["Abolish Poison"] = "Spell_Nature_NullifyPoison_02",

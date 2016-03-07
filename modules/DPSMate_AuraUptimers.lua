@@ -48,21 +48,21 @@ function DPSMate.Modules.AurasUptimers:GetSortedTable(arr)
 end
 
 function DPSMate.Modules.AurasUptimers:EvalTable(user, k)
-	local a, b, temp, total = {}, {}, {}, 0
+	local a, b, total = {}, {}, 0
 	local arr = DPSMate:GetMode(k)
 	for cat, val in pairs(arr[user[1]]) do -- 3 Ability
 		local CV = 0
 		for ca, va in pairs(val[1]) do -- each one
 			if arr[user[1]][cat][2][ca] then
 				CV=CV+(arr[user[1]][cat][2][ca]-va)
-				DPSMate:SendMessage((arr[user[1]][cat][2][ca]-va))
+				--DPSMate:SendMessage((arr[user[1]][cat][2][ca]-va))
 			end
 		end
 		--DPSMate:SendMessage(DPSMate:GetAbilityById(cat).." - "..CV)
 		--DPSMate:SendMessage(DPSMateCombatTime["total"])
 		--DPSMate:SendMessage("---------------------------------------")
 		local i = 1
-		CV = ceil((100*CV)/DPSMateCombatTime["total"])
+		CV = string.format("%.2f", (100*CV)/DPSMateCombatTime["total"])
 		while true do
 			if (not b[i]) then
 				table.insert(b, i, CV)
@@ -108,4 +108,11 @@ function DPSMate.Modules.AurasUptimers:ShowTooltip(user,k)
 	end
 end
 
+function DPSMate.Modules.AurasUptimers:OpenDetails(obj, key)
+	DPSMate.Modules.Auras:UpdateDetails(obj, key)
+end
+
+function DPSMate.Modules.Damage:OpenTotalDetails(obj, key)
+	DPSMate.Modules.DetailsDamageTotal:UpdateDetails(obj, key)
+end
 
