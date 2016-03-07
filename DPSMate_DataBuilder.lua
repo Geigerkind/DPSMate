@@ -1377,7 +1377,7 @@ end
 
 function DPSMate.DB:BuildBuffs(cause, target, ability, bool)
 	if (not target or target=="" or not cause or cause=="") then return end
-	DPSMate:SendMessage("Build "..ability)
+	--DPSMate:SendMessage("Build "..ability)
 	DPSMate.DB:BuildUser(target, nil)
 	DPSMate.DB:BuildUser(cause, nil)
 	DPSMate.DB:BuildAbility(ability, nil)
@@ -1410,7 +1410,7 @@ end
 -- Lag machine!
 function DPSMate.DB:DestroyBuffs(target, ability)
 	if (not target or target=="" or ability=="") then return end
-	DPSMate:SendMessage("Destroy "..ability)
+	--DPSMate:SendMessage("Destroy "..ability)
 	DPSMate.DB:BuildUser(target, nil)
 	DPSMate.DB:BuildAbility(ability, nil)
 	for cat, val in pairs({[1]="total", [2]="current"}) do 

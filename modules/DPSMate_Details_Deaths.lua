@@ -95,6 +95,16 @@ function DPSMate.Modules.DetailsDeaths:SelectDetailsButton(i)
 	end
 	getglobal("DPSMate_Details_Deaths_Log_ScrollButton"..i.."_selected"):Show()
 	
+	for i=1, 10 do
+		getglobal("DPSMate_Details_Deaths_LogDetails_Row"..i.."_GameTime"):SetText()
+		getglobal("DPSMate_Details_Deaths_LogDetails_Row"..i.."_CombatTime"):SetText()
+		getglobal("DPSMate_Details_Deaths_LogDetails_Row"..i.."_Cause"):SetText()
+		getglobal("DPSMate_Details_Deaths_LogDetails_Row"..i.."_Cause"):SetTextColor()
+		getglobal("DPSMate_Details_Deaths_LogDetails_Row"..i.."_Ability"):SetText()
+		getglobal("DPSMate_Details_Deaths_LogDetails_Row"..i.."_Type"):SetText()
+		getglobal("DPSMate_Details_Deaths_LogDetails_Row"..i.."_HealIn"):SetText()
+		getglobal("DPSMate_Details_Deaths_LogDetails_Row"..i.."_DamageIn"):SetText()
+	end
 	for cat, val in DetailsArr[i][3] do
 		if cat~="i" then
 			local name = DPSMate:GetUserById(val[1])
