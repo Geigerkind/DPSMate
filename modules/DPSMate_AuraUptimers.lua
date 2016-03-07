@@ -48,28 +48,31 @@ function DPSMate.Modules.AurasUptimers:GetSortedTable(arr)
 end
 
 function DPSMate.Modules.AurasUptimers:EvalTable(user, k)
-	local a, b, total = {}, {}, 0
+	local a, b, c, total = {}, {}, {}, 0
 	local arr = DPSMate:GetMode(k)
 	for cat, val in pairs(arr[user[1]]) do -- 3 Ability
-		local CV = 0
+		local CV, CVV = 0, 0
 		for ca, va in pairs(val[1]) do -- each one
 			if arr[user[1]][cat][2][ca] then
 				CV=CV+(arr[user[1]][cat][2][ca]-va)
 				--DPSMate:SendMessage((arr[user[1]][cat][2][ca]-va))
 			end
+			CVV=CVV+1
 		end
 		--DPSMate:SendMessage(DPSMate:GetAbilityById(cat).." - "..CV)
 		--DPSMate:SendMessage(DPSMateCombatTime["total"])
 		--DPSMate:SendMessage("---------------------------------------")
 		local i = 1
-		CV = string.format("%.2f", (100*CV)/DPSMateCombatTime["total"])
+		CV = tonumber(string.format("%.2f", (100*CV)/DPSMateCombatTime["total"]))
 		while true do
 			if (not b[i]) then
+				table.insert(c, i, CVV)
 				table.insert(b, i, CV)
 				table.insert(a, i, cat)
 				break
 			else
 				if b[i] < CV then
+					table.insert(c, i, CVV)
 					table.insert(b, i, CV)
 					table.insert(a, i, cat)
 					break
@@ -78,7 +81,7 @@ function DPSMate.Modules.AurasUptimers:EvalTable(user, k)
 			i=i+1
 		end
 	end
-	return a, total, b
+	return a, total, b, c
 end
 
 function DPSMate.Modules.AurasUptimers:GetSettingValues(arr, cbt, k)

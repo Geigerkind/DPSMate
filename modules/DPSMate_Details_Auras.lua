@@ -43,8 +43,7 @@ end
 
 function DPSMate.Modules.Auras:SortTable()
 	local t, u = {}, {}
-	local a,_,b	= DPSMate.Modules.AurasUptimers:EvalTable(DPSMateUser[DetailsUser], curKey)
-	local _,_,c = DPSMate.Modules.AurasGained:EvalTable(DPSMateUser[DetailsUser], curKey)
+	local a,_,b,c = DPSMate.Modules.AurasUptimers:EvalTable(DPSMateUser[DetailsUser], curKey)
 	local p1,p2 = 1, 1
 	for cat, val in a do
 		local name = DPSMate:GetAbilityById(val)
