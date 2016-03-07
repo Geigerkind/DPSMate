@@ -1,6 +1,6 @@
 -- Global Variables
 DPSMate.Modules.FriendlyFire = {}
-DPSMate.Modules.FriendlyFire.Hist = "DMGTaken"
+DPSMate.Modules.FriendlyFire.Hist = "EDTaken"
 DPSMate.Options.Options[1]["args"]["friendlyfire"] = {
 	order = 260,
 	type = 'toggle',
@@ -19,8 +19,9 @@ function DPSMate.Modules.FriendlyFire:GetSortedTable(arr)
 	for c, v in pairs(arr) do
 		local cName = DPSMate:GetUserById(c)
 		for cat, val in pairs(v) do
-			if DPSMateUser[cName][3]==1 and DPSMateUser[DPSMate:GetUserById(cat)][3]==1 then
-				if temp[c] then temp[c]=temp[c]+val["i"][3] else temp[c] = val["i"][3] end
+			local catName = DPSMate:GetUserById(cat)
+			if DPSMateUser[cName][3] == DPSMateUser[catName][3] and DPSMateUser[catName][3] and DPSMateUser[cName][3] then
+				if temp[cat] then temp[cat]=temp[cat]+val["i"][2] else temp[cat] = val["i"][2] end
 			end
 		end
 	end
@@ -48,38 +49,37 @@ end
 function DPSMate.Modules.FriendlyFire:EvalTable(user, k)
 	local a, d, total, temp = {}, {}, 0, {}
 	local arr = DPSMate:GetMode(k)
-	if not arr[user[1]] then return end
-	for cat, val in pairs(arr[user[1]]) do
-		temp[cat] = {
-			[1] = 0,
-			[2] = {},
-			[3] = {},
-		}
-		if user[3]==1 and DPSMateUser[DPSMate:GetUserById(cat)][3]==1 then
-			for ca, va in pairs(val) do
-				if ca~="i" then
-					temp[cat][1]=temp[cat][1]+va[13]
-					local i = 1
-					while true do
-						if (not temp[cat][3][i]) then
-							table.insert(temp[cat][3], i, va[13])
-							table.insert(temp[cat][2], i, ca)
-							break
-						else
-							if temp[cat][3][i] < va[13] then
-								table.insert(temp[cat][3], i, va[13])
-								table.insert(temp[cat][2], i, ca)
+	for c, v in pairs(arr) do
+		local cName = DPSMate:GetUserById(c)
+		if v[user[1]] and DPSMateUser[cName][3] == user[3] and DPSMateUser[cName][3] then
+			for cat, val in v[user[1]] do
+				if cat~="i" then
+					if temp[c] then 
+						temp[c][1]=temp[c][1]+val[13]
+						local i = 1
+						while true do
+							if (not temp[c][3][i]) then
+								table.insert(temp[c][3], i, val[13])
+								table.insert(temp[c][2], i, cat)
 								break
+							else
+								if temp[c][3][i] < val[13] then
+									table.insert(temp[c][3], i, val[13])
+									table.insert(temp[c][2], i, cat)
+									break
+								end
 							end
+							i=i+1
 						end
-						i=i+1
+					else 
+						temp[c] = {val[13], {}, {}}	
 					end
 				end
 			end
 		end
 	end
 	for cat, val in pairs(temp) do
-		if val[1]~=0 then
+		if val~=0 then
 			local i = 1
 			while true do
 				if (not d[i]) then
@@ -125,7 +125,7 @@ function DPSMate.Modules.FriendlyFire:ShowTooltip(user, k)
 		for i=1, DPSMateSettings["subviewrows"] do
 			if not a[i] then break end
 			GameTooltip:AddDoubleLine(i..". "..DPSMate:GetUserById(a[i]),c[i][1],1,1,1,1,1,1)
-			for p=1, 3 do 
+			for p=1, 4 do 
 				if not c[i][2][p] or c[i][3][p]==0 then break end
 				GameTooltip:AddDoubleLine("       "..p..". "..DPSMate:GetAbilityById(c[i][2][p]),c[i][3][p],0.5,0.5,0.5,0.5,0.5,0.5)
 			end

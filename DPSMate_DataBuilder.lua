@@ -278,7 +278,7 @@ function DPSMate.DB:OnEvent(event)
 		DPSMate.Modules.DPS.DB = DPSMateDamageDone
 		DPSMate.Modules.Damage.DB = DPSMateDamageDone
 		DPSMate.Modules.DamageTaken.DB = DPSMateDamageTaken
-		DPSMate.Modules.FriendlyFire.DB = DPSMateDamageTaken
+		DPSMate.Modules.FriendlyFire.DB = DPSMateEDT
 		DPSMate.Modules.DTPS.DB = DPSMateDamageTaken
 		DPSMate.Modules.EDD.DB = DPSMateEDD
 		DPSMate.Modules.EDT.DB = DPSMateEDT
@@ -355,14 +355,14 @@ function DPSMate.DB:IsReallyPet()
 		for i=1, 4 do
 			local name = UnitName("party"..i)
 			if DPSMateUser[name] then
-				DPSMateUser[name]["isPet"] = false
+				DPSMateUser[name][4] = false
 			end
 		end
 	elseif UnitInRaid("player") then
 		for i=1, 40 do
 			local name = UnitName("raid"..i)
 			if DPSMateUser[name] then
-				DPSMateUser[name]["isPet"] = false
+				DPSMateUser[name][4] = false
 			end
 		end
 	end
@@ -383,8 +383,8 @@ function DPSMate.DB:GetPets()
 			end
 		end
 	else
-		if UnitName("pet") then
-			pets[UnitName("player")] = UnitName("pet")
+		if UnitName(5) then
+			pets[UnitName("player")] = UnitName(5)
 		end
 	end
 	return pets
@@ -410,9 +410,9 @@ end
 function DPSMate.DB:AssignPet()
 	local pets = DPSMate.DB:GetPets()
 	for cat, val in pairs(pets) do
-		DPSMateUser[cat]["pet"] = val
+		DPSMateUser[cat][5] = val
 		if not DPSMateUser[val] then DPSMate.DB:BuildUser(val, nil) end
-		DPSMateUser[val]["isPet"] = true
+		DPSMateUser[val][4] = true
 	end
 end
 
@@ -424,13 +424,16 @@ function DPSMate.DB:AssignClass()
 		for i=1,4 do
 			local name = UnitName("party"..i)
 			if name then
+				local fac = UnitFactionGroup("party"..i) or ""
 				DPSMate.DB:BuildUser(name, nil)
 				t,classEng = UnitClass("party"..i)
 				if (classEng) then
 					DPSMateUser[name][2] = strlower(classEng)
 				end
-				if UnitIsFriend("party"..i,"player") then
+				if fac == "Alliance" then
 					DPSMateUser[name][3] = 1
+				elseif fac == "Horde" then
+					DPSMateUser[name][3] = 0
 				end
 			end
 		end
@@ -438,13 +441,16 @@ function DPSMate.DB:AssignClass()
 		for i=1,40 do
 			local name = UnitName("raid"..i)
 			if name then
+				local fac = UnitFactionGroup("raid"..i) or ""
 				DPSMate.DB:BuildUser(name, nil)
 				t,classEng = UnitClass("raid"..i)
 				if (classEng) then
 					DPSMateUser[name][2] = strlower(classEng)
 				end
-				if UnitIsFriend("raid"..i,"player") then
+				if fac == "Alliance" then
 					DPSMateUser[name][3] = 1
+				elseif fac == "Horde" then
+					DPSMateUser[name][3] = 0
 				end
 			end
 		end
@@ -455,13 +461,16 @@ function DPSMate.DB:PlayerTargetChanged()
 	if UnitIsPlayer("target") then
 		local name = UnitName("target")
 		local a, class = UnitClass("target")
+		local fac = UnitFactionGroup("target") or ""
 		if DPSMateUser[name] then
 			DPSMateUser[name][2] = strlower(class)
 		else
 			DPSMate.DB:BuildUser(name, strlower(class))
 		end
-		if UnitIsFriend("target","player") then
+		if fac == "Alliance" then
 			DPSMateUser[name][3] = 1
+		elseif fac == "Horde" then
+			DPSMateUser[name][3] = 0
 		end
 	end
 end

@@ -463,6 +463,7 @@ function DPSMate.Options:PopUpAccept(bool, bypass)
 		DPSMate.Modules.DPS.DB = DPSMateDamageDone
 		DPSMate.Modules.Damage.DB = DPSMateDamageDone
 		DPSMate.Modules.DamageTaken.DB = DPSMateDamageTaken
+		DPSMate.Modules.FriendlyFire.DB = DPSMateEDT
 		DPSMate.Modules.DTPS.DB = DPSMateDamageTaken
 		DPSMate.Modules.EDD.DB = DPSMateEDD
 		DPSMate.Modules.EDT.DB = DPSMateEDT

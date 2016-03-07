@@ -102,7 +102,7 @@ function DPSMate.Modules.DetailsDamage:SelectDetailsButton(i)
 	end
 	-- Performance?
 	local ability = tonumber(DetailsArr[lineplusoffset][1])
-	if (arr[DPSMateUser[DetailsUser][1]][ability]) then user=DPSMateUser[DetailsUser][1]; pet=0; else if DPSMateUser[DetailsUser]["pet"] then user=DPSMateUser[DPSMateUser[DetailsUser]["pet"]][1]; pet=5; else user=DPSMateUser[DetailsUser][1]; pet=0; end end
+	if (arr[DPSMateUser[DetailsUser][1]][ability]) then user=DPSMateUser[DetailsUser][1]; pet=0; else if DPSMateUser[DetailsUser][5] then user=DPSMateUser[DPSMateUser[DetailsUser][5]][1]; pet=5; else user=DPSMateUser[DetailsUser][1]; pet=0; end end
 	getglobal("DPSMate_Details_Log_ScrollButton"..i.."_selected"):Show()
 	
 	local hit, crit, miss, parry, dodge, resist, hitMin, hitMax, critMin, critMax, hitav, critav, glance, glanceMin, glanceMax, glanceav, block, blockMin, blockMax, blockav = arr[user][ability][1], arr[user][ability][5], arr[user][ability][9], arr[user][ability][10], arr[user][ability][11], arr[user][ability][12], arr[user][ability][2], arr[user][ability][3], arr[user][ability][6], arr[user][ability][7], arr[user][ability][4], arr[user][ability][8], arr[user][ability][14], arr[user][ability][15], arr[user][ability][16], arr[user][ability][17], arr[user][ability][18], arr[user][ability][19], arr[user][ability][20], arr[user][ability][21]
@@ -186,7 +186,7 @@ function DPSMate.Modules.DetailsDamage:UpdatePie()
 	g:ResetPie()
 	for cat, val in pairs(DetailsArr) do
 		local ability = tonumber(DetailsArr[cat][1])
-		if (DetailsArr[cat][2]) then user=DPSMateUser[DPSMateUser[DetailsUser]["pet"]][1] else user=DPSMateUser[DetailsUser][1] end
+		if (DetailsArr[cat][2]) then user=DPSMateUser[DPSMateUser[DetailsUser][5]][1] else user=DPSMateUser[DetailsUser][1] end
 		local percent = (arr[user][ability][13]*100/DetailsTotal)
 		g:AddPie(percent, 0)
 	end
@@ -276,9 +276,9 @@ end
 
 function DPSMate.Modules.DetailsDamage:SortLineTable(t)
 	local newArr = t[DPSMateUser[DetailsUser][1]]["i"][1]
-	if DPSMateUser[DetailsUser]["pet"] then
-		if t[DPSMateUser[DPSMateUser[DetailsUser]["pet"]][1]] then
-			for _, val in pairs(t[DPSMateUser[DPSMateUser[DetailsUser]["pet"]][1]]["i"][1]) do
+	if DPSMateUser[DetailsUser][5] then
+		if t[DPSMateUser[DPSMateUser[DetailsUser][5]][1]] then
+			for _, val in pairs(t[DPSMateUser[DPSMateUser[DetailsUser][5]][1]]["i"][1]) do
 				local i=1
 				while true do
 					if (not newArr[i]) then 

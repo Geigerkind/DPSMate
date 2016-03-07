@@ -18,10 +18,10 @@ function DPSMate.Modules.Damage:GetSortedTable(arr)
 	local b, a, total = {}, {}, 0
 	for cat, val in pairs(arr) do
 		local name = DPSMate:GetUserById(cat)
-		if (not DPSMateUser[name]["isPet"]) then
+		if (not DPSMateUser[name][4]) then
 			local CV = val["i"][2]
-			if DPSMate:PlayerExist(DPSMateUser, DPSMateUser[name]["pet"]) and arr[DPSMateUser[DPSMateUser[name]["pet"]][1]] then
-				CV=CV+arr[DPSMateUser[DPSMateUser[name]["pet"]][1]]["i"][2]
+			if DPSMate:PlayerExist(DPSMateUser, DPSMateUser[name][5]) and arr[DPSMateUser[DPSMateUser[name][5]][1]] then
+				CV=CV+arr[DPSMateUser[DPSMateUser[name][5]][1]]["i"][2]
 			end
 			local i = 1
 			while true do
@@ -48,12 +48,12 @@ function DPSMate.Modules.Damage:EvalTable(user, k)
 	local a, u, p, d, total, pet = {}, {}, {}, {}, 0, false
 	local arr = DPSMate:GetMode(k)
 	if not arr[user[1]] then return end
-	if (user["pet"] and user["pet"] ~= "Unknown" and arr[DPSMateUser[user["pet"]][1]]) then u={user[1],DPSMateUser[user["pet"]][1]} else u={user[1]} end
+	if (user[5] and user[5] ~= "Unknown" and arr[DPSMateUser[user[5]][1]]) then u={user[1],DPSMateUser[user[5]][1]} else u={user[1]} end
 	for _, v in pairs(u) do
 		for cat, val in pairs(arr[v]) do
 			if (type(val) == "table" and cat~="i") then
 				if val[13]~=0 and cat~="" then
-					if (DPSMateUser[DPSMate:GetUserById(v)]["isPet"]) then pet=true; else pet=false; end
+					if (DPSMateUser[DPSMate:GetUserById(v)][4]) then pet=true; else pet=false; end
 					local i = 1
 					while true do
 						if (not d[i]) then
