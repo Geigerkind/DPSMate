@@ -4,31 +4,6 @@ DPSMate.Modules.DetailsLiftMagic = {}
 -- Local variables
 local DetailsArr, DetailsTotal, DmgArr, DetailUser, DetailsSelected  = {}, 0, {}, "", 1
 local g, g2
-local icons = {
-	-- General
-	["AutoAttack"] = "Interface\\ICONS\\inv_sword_39",
-	["Lightning Strike"] = "Interface\\ICONS\\spell_holy_mindvision",
-	["Fatal Wound"] = "Interface\\ICONS\\ability_backstab",
-	["Falling"] = "Interface\\ICONS\\spell_magic_featherfall",
-	["Thorium Grenade"] = "Interface\\ICONS\\inv_misc_bomb_08",
-	["Crystal Charge"] = "Interface\\ICONS\\inv_misc_gem_opal_01",
-	["Shoot Bow"] = "Interface\\ICONS\\ability_marksmanship",
-	
-	-- Rogues
-	["Sinister Strike"] = "Interface\\ICONS\\spell_shadow_ritualofsacrifice",
-	["Blade Flurry"] = "Interface\\ICONS\\ability_warrior_punishingblow",
-	["Eviscerate"] = "Interface\\ICONS\\ability_rogue_eviscerate",
-	["Garrote(Periodic)"] = "Interface\\ICONS\\ability_rogue_garrote",
-	["Rupture(Periodic)"] = "Interface\\ICONS\\ability_rogue_rupture",
-	["Instant Poison VI"] = "Interface\\ICONS\\ability_poisons", 
-	["Instant Poison V"] = "Interface\\ICONS\\ability_poisons", 
-	["Instant Poison IV"] = "Interface\\ICONS\\ability_poisons", 
-	["Instant Poison III"] = "Interface\\ICONS\\ability_poisons", 
-	["Instant Poison II"] = "Interface\\ICONS\\ability_poisons", 
-	["Instant Poison I"] = "Interface\\ICONS\\ability_poisons", 
-	["Kick"] = "Interface\\ICONS\\ability_kick", 
-	
-}
 local curKey = 1
 local db, cbt = {}, 0
 
@@ -120,9 +95,10 @@ function DPSMate.Modules.DetailsLiftMagic:ScrollFrame_Update()
 	for line=1,14 do
 		lineplusoffset = line + FauxScrollFrame_GetOffset(obj)
 		if DetailsArr[lineplusoffset] ~= nil then
-			getglobal(path..line.."_Name"):SetText(DPSMate:GetAbilityById(DetailsArr[lineplusoffset]))
+			local ability = DPSMate:GetAbilityById(DetailsArr[lineplusoffset])
+			getglobal(path..line.."_Name"):SetText(ability)
 			getglobal(path..line.."_Value"):SetText(DmgArr[lineplusoffset][1].." ("..string.format("%.2f", 100*DmgArr[lineplusoffset][1]/DetailsTotal).."%)")
-			getglobal(path..line.."_Icon"):SetTexture("Interface\\AddOns\\DPSMate\\images\\dummy")
+			getglobal(path..line.."_Icon"):SetTexture(DPSMate.BabbleSpell:GetSpellIcon(strsub(ability, 1, (strfind(ability, "%(") or 0)-1) or ability))
 			if len < 14 then
 				getglobal(path..line):SetWidth(235)
 				getglobal(path..line.."_Name"):SetWidth(125)
@@ -182,9 +158,10 @@ function DPSMate.Modules.DetailsLiftMagic:SelectCreatureAbilityButton(i, p)
 	for line=1,14 do
 		lineplusoffset = line + FauxScrollFrame_GetOffset(obj)
 		if DmgArr[i][3][p][2][lineplusoffset] ~= nil then
-			getglobal(path..line.."_Name"):SetText(DPSMate:GetAbilityById(DmgArr[i][3][p][2][lineplusoffset]))
+			local ability = DPSMate:GetAbilityById(DmgArr[i][3][p][2][lineplusoffset])
+			getglobal(path..line.."_Name"):SetText(ability)
 			getglobal(path..line.."_Value"):SetText(DmgArr[i][3][p][3][lineplusoffset].." ("..string.format("%.2f", 100*DmgArr[i][3][p][3][lineplusoffset]/DmgArr[i][3][p][1]).."%)")
-			getglobal(path..line.."_Icon"):SetTexture("Interface\\AddOns\\DPSMate\\images\\dummy")
+			getglobal(path..line.."_Icon"):SetTexture(DPSMate.BabbleSpell:GetSpellIcon(strsub(ability, 1, (strfind(ability, "%(") or 0)-1) or ability))
 			if len < 14 then
 				getglobal(path..line):SetWidth(235)
 				getglobal(path..line.."_Name"):SetWidth(125)

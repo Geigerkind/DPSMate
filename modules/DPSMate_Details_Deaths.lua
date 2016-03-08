@@ -2,33 +2,8 @@
 DPSMate.Modules.DetailsDeaths = {}
 
 -- Local variables
-local DetailsArr, DetailsTotal, DmgArr, DetailUser, DetailsSelected  = {}, 0, {}, "", 1
+local DetailsArr, DetailsTotal, DmgArr, DetailsUser, DetailsSelected  = {}, 0, {}, "", 1
 local g, g2
-local icons = {
-	-- General
-	["AutoAttack"] = "Interface\\ICONS\\inv_sword_39",
-	["Lightning Strike"] = "Interface\\ICONS\\spell_holy_mindvision",
-	["Fatal Wound"] = "Interface\\ICONS\\ability_backstab",
-	["Falling"] = "Interface\\ICONS\\spell_magic_featherfall",
-	["Thorium Grenade"] = "Interface\\ICONS\\inv_misc_bomb_08",
-	["Crystal Charge"] = "Interface\\ICONS\\inv_misc_gem_opal_01",
-	["Shoot Bow"] = "Interface\\ICONS\\ability_marksmanship",
-	
-	-- Rogues
-	["Sinister Strike"] = "Interface\\ICONS\\spell_shadow_ritualofsacrifice",
-	["Blade Flurry"] = "Interface\\ICONS\\ability_warrior_punishingblow",
-	["Eviscerate"] = "Interface\\ICONS\\ability_rogue_eviscerate",
-	["Garrote(Periodic)"] = "Interface\\ICONS\\ability_rogue_garrote",
-	["Rupture(Periodic)"] = "Interface\\ICONS\\ability_rogue_rupture",
-	["Instant Poison VI"] = "Interface\\ICONS\\ability_poisons", 
-	["Instant Poison V"] = "Interface\\ICONS\\ability_poisons", 
-	["Instant Poison IV"] = "Interface\\ICONS\\ability_poisons", 
-	["Instant Poison III"] = "Interface\\ICONS\\ability_poisons", 
-	["Instant Poison II"] = "Interface\\ICONS\\ability_poisons", 
-	["Instant Poison I"] = "Interface\\ICONS\\ability_poisons", 
-	["Kick"] = "Interface\\ICONS\\ability_kick", 
-	
-}
 local curKey = 1
 local db, cbt = {}, 0
 
@@ -58,7 +33,7 @@ function DPSMate.Modules.DetailsDeaths:ScrollFrame_Update()
 	local arr = db
 	DetailsArr = DPSMate.Modules.DetailsDeaths:EvalTable()
 	local len = DPSMate:TableLength(DetailsArr)
-	FauxScrollFrame_Update(obj,DPSMate:TableLength(arr),10,24)
+	FauxScrollFrame_Update(obj,len,10,24)
 	for line=1,14 do
 		lineplusoffset = line + FauxScrollFrame_GetOffset(obj)
 		if DetailsArr[lineplusoffset] ~= nil then

@@ -510,7 +510,7 @@ function DPSMate.Parser:SpellSelfBuff(msg)
 	DPSMate.DB:HealingTaken(DPSMateHealingTaken, target, ability, hit, crit, amount, player.name)
 	DPSMate.DB:HealingTaken(DPSMateEHealingTaken, target, ability, hit, crit, amount-overheal, player.name)
 	DPSMate.DB:Healing(DPSMateEHealing, player, ability, hit, crit, amount-overheal, target)
-	DPSMate.DB:Healing(DPSMateOverhealing, player, ability, hit, crit, overheal, target)
+	if overheal>0 then DPSMate.DB:Healing(DPSMateOverhealing, player, ability, hit, crit, overheal, target) end
 	DPSMate.DB:Healing(DPSMateTHealing, player, ability, hit, crit, amount, target)
 	DPSMate.DB:DeathHistory(target, player.name, ability, amount, hit, crit, 1, 0)
 end
@@ -530,7 +530,7 @@ function DPSMate.Parser:SpellPeriodicSelfBuff(msg) -- Maybe some loss here?
 	DPSMate.DB:HealingTaken(DPSMateHealingTaken, target, ability.."(Periodic)", 1, 0, amount, cause.name)
 	DPSMate.DB:HealingTaken(DPSMateEHealingTaken, target, ability.."(Periodic)", 1, 0, amount-overheal, cause.name)
 	DPSMate.DB:Healing(DPSMateEHealing, cause, ability.."(Periodic)", 1, 0, amount-overheal, target)
-	DPSMate.DB:Healing(DPSMateOverhealing, cause, ability.."(Periodic)", 1, 0, overheal, target)
+	if overheal>0 then DPSMate.DB:Healing(DPSMateOverhealing, cause, ability.."(Periodic)", 1, 0, overheal, target) end
 	DPSMate.DB:Healing(DPSMateTHealing, cause, ability.."(Periodic)", 1, 0, amount, target)
 	DPSMate.DB:DeathHistory(player.name, cause.name, ability.."(Periodic)", amount, 1, 0, 1, 0)
 end
@@ -550,7 +550,7 @@ function DPSMate.Parser:SpellPeriodicFriendlyPlayerBuffs(msg)
 	DPSMate.DB:HealingTaken(DPSMateHealingTaken, target, ability.."(Periodic)", 1, 0, amount, cause.name)
 	DPSMate.DB:HealingTaken(DPSMateEHealingTaken, target, ability.."(Periodic)", 1, 0, amount-overheal, cause.name)
 	DPSMate.DB:Healing(DPSMateEHealing, cause, ability.."(Periodic)", 1, 0, amount-overheal, target)
-	DPSMate.DB:Healing(DPSMateOverhealing, cause, ability.."(Periodic)", 1, 0, overheal, target)
+	if overheal>0 then DPSMate.DB:Healing(DPSMateOverhealing, cause, ability.."(Periodic)", 1, 0, overheal, target) end
 	DPSMate.DB:Healing(DPSMateTHealing, cause, ability.."(Periodic)", 1, 0, amount, target)
 	DPSMate.DB:DeathHistory(target, cause.name, ability.."(Periodic)", amount, 1, 0, 1, 0)
 end
@@ -569,7 +569,7 @@ function DPSMate.Parser:SpellHostilePlayerBuff(msg)
 	DPSMate.DB:HealingTaken(DPSMateHealingTaken, target, ability, hit, crit, amount, cause.name)
 	DPSMate.DB:HealingTaken(DPSMateEHealingTaken, target, ability, hit, crit, amount-overheal, cause.name)
 	DPSMate.DB:Healing(DPSMateEHealing, cause, ability, hit, crit, amount-overheal, target)
-	DPSMate.DB:Healing(DPSMateOverhealing, cause, ability, hit, crit, overheal, target)
+	if overheal>0 then DPSMate.DB:Healing(DPSMateOverhealing, cause, ability, hit, crit, overheal, target) end
 	DPSMate.DB:Healing(DPSMateTHealing, cause, ability, hit, crit, amount, target)
 	DPSMate.DB:DeathHistory(target, cause.name, ability, amount, hit, crit, 1, 0)
 end

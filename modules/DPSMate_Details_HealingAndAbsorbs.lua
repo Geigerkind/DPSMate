@@ -2,34 +2,9 @@
 DPSMate.Modules.DetailsHealingAndAbsorbs = {}
 
 -- Local variables
-local DetailsArr, DetailsTotal, DmgArr, DetailUser, Details_HealingAndAbsorbsSelected  = {}, 0, {}, "", 1
+local DetailsArr, DetailsTotal, DmgArr, DetailsUser, DetailsSelected  = {}, 0, {}, "", 1
 local PieChart = true
 local g, g2
-local icons = {
-	-- General
-	["AutoAttack"] = "Interface\\ICONS\\inv_sword_39",
-	["Lightning Strike"] = "Interface\\ICONS\\spell_holy_mindvision",
-	["Fatal Wound"] = "Interface\\ICONS\\ability_backstab",
-	["Falling"] = "Interface\\ICONS\\spell_magic_featherfall",
-	["Thorium Grenade"] = "Interface\\ICONS\\inv_misc_bomb_08",
-	["Crystal Charge"] = "Interface\\ICONS\\inv_misc_gem_opal_01",
-	["Shoot Bow"] = "Interface\\ICONS\\ability_marksmanship",
-	
-	-- Rogues
-	["Sinister Strike"] = "Interface\\ICONS\\spell_shadow_ritualofsacrifice",
-	["Blade Flurry"] = "Interface\\ICONS\\ability_warrior_punishingblow",
-	["Eviscerate"] = "Interface\\ICONS\\ability_rogue_eviscerate",
-	["Garrote(Periodic)"] = "Interface\\ICONS\\ability_rogue_garrote",
-	["Rupture(Periodic)"] = "Interface\\ICONS\\ability_rogue_rupture",
-	["Instant Poison VI"] = "Interface\\ICONS\\ability_poisons", 
-	["Instant Poison V"] = "Interface\\ICONS\\ability_poisons", 
-	["Instant Poison IV"] = "Interface\\ICONS\\ability_poisons", 
-	["Instant Poison III"] = "Interface\\ICONS\\ability_poisons", 
-	["Instant Poison II"] = "Interface\\ICONS\\ability_poisons", 
-	["Instant Poison I"] = "Interface\\ICONS\\ability_poisons", 
-	["Kick"] = "Interface\\ICONS\\ability_kick", 
-	
-}
 local curKey = 1
 local db, cbt = {}, 0
 
@@ -57,20 +32,16 @@ function DPSMate.Modules.DetailsHealingAndAbsorbs:ScrollFrame_Update()
 	local line, lineplusoffset
 	local obj = getglobal("DPSMate_Details_HealingAndAbsorbs_Log_ScrollFrame")
 	local arr = db
-	local len = DPSMate:TableLength(arr[DPSMateUser[DetailsUser][1]])-5
 	DetailsArr, DetailsTotal, DmgArr = DPSMate.RegistredModules[DPSMateSettings["windows"][curKey]["CurMode"]]:EvalTable(DPSMateUser[DetailsUser], curKey)
-	FauxScrollFrame_Update(obj,DPSMate:TableLength(arr),10,24)
+	local len = DPSMate:TableLength(DetailsArr)
+	FauxScrollFrame_Update(obj,len,10,24)
 	for line=1,10 do
 		lineplusoffset = line + FauxScrollFrame_GetOffset(obj)
 		if DetailsArr[lineplusoffset] ~= nil then
 			local ability = DPSMate:GetAbilityById(DetailsArr[lineplusoffset])
 			getglobal("DPSMate_Details_HealingAndAbsorbs_Log_ScrollButton"..line.."_Name"):SetText(ability)
 			getglobal("DPSMate_Details_HealingAndAbsorbs_Log_ScrollButton"..line.."_Value"):SetText(DmgArr[lineplusoffset][1].." ("..string.format("%.2f", (DmgArr[lineplusoffset][1]*100/DetailsTotal)).."%)")
-			if icons[ability] then
-				getglobal("DPSMate_Details_HealingAndAbsorbs_Log_ScrollButton"..line.."_Icon"):SetTexture(icons[ability])
-			else
-				getglobal("DPSMate_Details_HealingAndAbsorbs_Log_ScrollButton"..line.."_Icon"):SetTexture("Interface\\AddOns\\DPSMate\\images\\dummy")
-			end
+			getglobal("DPSMate_Details_HealingAndAbsorbs_Log_ScrollButton"..line.."_Icon"):SetTexture(DPSMate.BabbleSpell:GetSpellIcon(strsub(ability, 1, (strfind(ability, "%(") or 0)-1) or ability))
 			if len < 10 then
 				getglobal("DPSMate_Details_HealingAndAbsorbs_Log_ScrollButton"..line):SetWidth(235)
 				getglobal("DPSMate_Details_HealingAndAbsorbs_Log_ScrollButton"..line.."_Name"):SetWidth(125)
@@ -83,7 +54,7 @@ function DPSMate.Modules.DetailsHealingAndAbsorbs:ScrollFrame_Update()
 			getglobal("DPSMate_Details_HealingAndAbsorbs_Log_ScrollButton"..line):Hide()
 		end
 		getglobal("DPSMate_Details_HealingAndAbsorbs_Log_ScrollButton"..line.."_selected"):Hide()
-		if Details_HealingAndAbsorbsSelected == lineplusoffset then
+		if DetailsSelected == lineplusoffset then
 			getglobal("DPSMate_Details_HealingAndAbsorbs_Log_ScrollButton"..line.."_selected"):Show()
 		end
 	end
@@ -95,7 +66,7 @@ function DPSMate.Modules.DetailsHealingAndAbsorbs:SelectDetails_HealingAndAbsorb
 	local arr = DPSMateEHealing[curKey]
 	local user = DPSMateUser[DetailsUser][1]
 	
-	Details_HealingAndAbsorbsSelected = lineplusoffset
+	DetailsSelected = lineplusoffset
 	for p=1, 10 do
 		getglobal("DPSMate_Details_HealingAndAbsorbs_Log_ScrollButton"..p.."_selected"):Hide()
 	end

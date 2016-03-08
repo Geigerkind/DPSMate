@@ -2,34 +2,9 @@
 DPSMate.Modules.DetailsAbsorbs = {}
 
 -- Local variables
-local DetailsArr, DetailsTotal, DmgArr, DetailUser, DetailsSelected  = {}, 0, {}, "", 1
+local DetailsArr, DetailsTotal, DmgArr, DetailsUser, DetailsSelected  = {}, 0, {}, "", 1
 local PieChart = true
 local g, g2
-local icons = {
-	-- General
-	["AutoAttack"] = "Interface\\ICONS\\inv_sword_39",
-	["Lightning Strike"] = "Interface\\ICONS\\spell_holy_mindvision",
-	["Fatal Wound"] = "Interface\\ICONS\\ability_backstab",
-	["Falling"] = "Interface\\ICONS\\spell_magic_featherfall",
-	["Thorium Grenade"] = "Interface\\ICONS\\inv_misc_bomb_08",
-	["Crystal Charge"] = "Interface\\ICONS\\inv_misc_gem_opal_01",
-	["Shoot Bow"] = "Interface\\ICONS\\ability_marksmanship",
-	
-	-- Rogues
-	["Sinister Strike"] = "Interface\\ICONS\\spell_shadow_ritualofsacrifice",
-	["Blade Flurry"] = "Interface\\ICONS\\ability_warrior_punishingblow",
-	["Eviscerate"] = "Interface\\ICONS\\ability_rogue_eviscerate",
-	["Garrote(Periodic)"] = "Interface\\ICONS\\ability_rogue_garrote",
-	["Rupture(Periodic)"] = "Interface\\ICONS\\ability_rogue_rupture",
-	["Instant Poison VI"] = "Interface\\ICONS\\ability_poisons", 
-	["Instant Poison V"] = "Interface\\ICONS\\ability_poisons", 
-	["Instant Poison IV"] = "Interface\\ICONS\\ability_poisons", 
-	["Instant Poison III"] = "Interface\\ICONS\\ability_poisons", 
-	["Instant Poison II"] = "Interface\\ICONS\\ability_poisons", 
-	["Instant Poison I"] = "Interface\\ICONS\\ability_poisons", 
-	["Kick"] = "Interface\\ICONS\\ability_kick", 
-	
-}
 local curKey = 1
 local db, cbt = {}, 0
 
@@ -55,9 +30,9 @@ function DPSMate.Modules.DetailsAbsorbs:ScrollFrame_Update()
 	local path = "DPSMate_Details_Absorbs_LogCreature"
 	local obj = getglobal(path.."_ScrollFrame")
 	local arr = db
-	local pet, len = "", DPSMate:TableLength(arr[DPSMateUser[DetailsUser][1]])-5
 	DetailsArr, DetailsTotal, DmgArr = DPSMate.RegistredModules[DPSMateSettings["windows"][curKey]["CurMode"]]:EvalTable(DPSMateUser[DetailsUser], curKey)
-	FauxScrollFrame_Update(obj,DPSMate:TableLength(arr),10,24)
+	local pet, len = "", DPSMate:TableLength(DetailsArr)
+	FauxScrollFrame_Update(obj,len,10,24)
 	for line=1,10 do
 		lineplusoffset = line + FauxScrollFrame_GetOffset(obj)
 		if DetailsArr[lineplusoffset] ~= nil then
@@ -89,19 +64,16 @@ function DPSMate.Modules.DetailsAbsorbs:SelectCreatureButton(i)
 	local obj = getglobal(path.."_ScrollFrame")
 	obj.index = i
 	local arr = db
-	local pet, len = "", DPSMate:TableLength(arr[DPSMateUser[DetailsUser][1]])-5
-	FauxScrollFrame_Update(obj,DPSMate:TableLength(arr),10,24)
+	local pet, len = "", DPSMate:TableLength(DmgArr[i][2])
+	FauxScrollFrame_Update(obj,len,10,24)
+	DetailsSelected = i
 	for line=1,10 do
 		lineplusoffset = line + FauxScrollFrame_GetOffset(obj)
 		if DmgArr[i][2][lineplusoffset] ~= nil then
 			local ability = DPSMate:GetAbilityById(DmgArr[i][2][lineplusoffset])
 			getglobal(path.."_ScrollButton"..line.."_Name"):SetText(ability)
 			getglobal(path.."_ScrollButton"..line.."_Value"):SetText(DmgArr[i][3][lineplusoffset][1].." ("..string.format("%.2f", (DmgArr[i][3][lineplusoffset][1]*100/DetailsTotal)).."%)")
-			if icons[ability] then
-				getglobal(path.."_ScrollButton"..line.."_Icon"):SetTexture(icons[ability])
-			else
-				getglobal(path.."_ScrollButton"..line.."_Icon"):SetTexture("Interface\\AddOns\\DPSMate\\images\\dummy")
-			end
+			getglobal(path.."_ScrollButton"..line.."_Icon"):SetTexture(DPSMate.BabbleSpell:GetSpellIcon(strsub(ability, 1, (strfind(ability, "%(") or 0)-1) or ability))
 			if len < 10 then
 				getglobal(path.."_ScrollButton"..line):SetWidth(235)
 				getglobal(path.."_ScrollButton"..line.."_Name"):SetWidth(125)
@@ -129,19 +101,15 @@ function DPSMate.Modules.DetailsAbsorbs:SelectCauseButton(i,p)
 	obj.index = i
 	obj.indextwo = p
 	local arr = db
-	local pet, len = "", DPSMate:TableLength(arr[DPSMateUser[DetailsUser][1]])-5
-	FauxScrollFrame_Update(obj,DPSMate:TableLength(arr),10,24)
+	local pet, len = "", DPSMate:TableLength(DmgArr[i][3][p][2])
+	FauxScrollFrame_Update(obj,len,10,24)
 	for line=1,10 do
 		lineplusoffset = line + FauxScrollFrame_GetOffset(obj)
 		if DmgArr[i][3][p][2][lineplusoffset] ~= nil then
 			local user = DPSMate:GetUserById(DmgArr[i][3][p][2][lineplusoffset])
 			getglobal(path.."_ScrollButton"..line.."_Name"):SetText(user)
 			getglobal(path.."_ScrollButton"..line.."_Value"):SetText(DmgArr[i][3][p][3][lineplusoffset][1].." ("..string.format("%.2f", (DmgArr[i][3][p][3][lineplusoffset][1]*100/DmgArr[i][3][p][1])).."%)")
-			if icons[user] then
-				getglobal(path.."_ScrollButton"..line.."_Icon"):SetTexture(icons[user])
-			else
-				getglobal(path.."_ScrollButton"..line.."_Icon"):SetTexture("Interface\\AddOns\\DPSMate\\images\\dummy")
-			end
+			getglobal(path.."_ScrollButton"..line.."_Icon"):SetTexture("Interface\\AddOns\\DPSMate\\images\\dummy")
 			if len < 10 then
 				getglobal(path.."_ScrollButton"..line):SetWidth(235)
 				getglobal(path.."_ScrollButton"..line.."_Name"):SetWidth(125)
@@ -170,19 +138,15 @@ function DPSMate.Modules.DetailsAbsorbs:SelectCauseABButton(i,p,q)
 	obj.indextwo = p
 	obj.indexthree = q
 	local arr = db
-	local pet, len = "", DPSMate:TableLength(arr[DPSMateUser[DetailsUser][1]])-5
-	FauxScrollFrame_Update(obj,DPSMate:TableLength(arr),10,24)
+	local pet, len = "", DPSMate:TableLength(DmgArr[i][3][p][3][q][2])
+	FauxScrollFrame_Update(obj,len,10,24)
 	for line=1,10 do
 		lineplusoffset = line + FauxScrollFrame_GetOffset(obj)
 		if DmgArr[i][3][p][3][q][2][lineplusoffset] ~= nil then
 			local ability = DPSMate:GetAbilityById(DmgArr[i][3][p][3][q][2][lineplusoffset])
 			getglobal(path.."_ScrollButton"..line.."_Name"):SetText(ability)
 			getglobal(path.."_ScrollButton"..line.."_Value"):SetText(DmgArr[i][3][p][3][q][3][lineplusoffset].." ("..string.format("%.2f", (DmgArr[i][3][p][3][q][3][lineplusoffset]*100/DmgArr[i][3][p][3][q][1])).."%)")
-			if icons[ability] then
-				getglobal(path.."_ScrollButton"..line.."_Icon"):SetTexture(icons[ability])
-			else
-				getglobal(path.."_ScrollButton"..line.."_Icon"):SetTexture("Interface\\AddOns\\DPSMate\\images\\dummy")
-			end
+			getglobal(path.."_ScrollButton"..line.."_Icon"):SetTexture(DPSMate.BabbleSpell:GetSpellIcon(strsub(ability, 1, (strfind(ability, "%(") or 0)-1) or ability))
 			if len < 10 then
 				getglobal(path.."_ScrollButton"..line):SetWidth(235)
 				getglobal(path.."_ScrollButton"..line.."_Name"):SetWidth(125)

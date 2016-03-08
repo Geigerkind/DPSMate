@@ -2,34 +2,9 @@
 DPSMate.Modules.DetailsDamage = {}
 
 -- Local variables
-local DetailsArr, DetailsTotal, DmgArr, DetailUser, DetailsSelected  = {}, 0, {}, "", 1
+local DetailsArr, DetailsTotal, DmgArr, DetailsUser, DetailsSelected  = {}, 0, {}, "", 1
 local PieChart = true
 local g, g2
-local icons = {
-	-- General
-	["AutoAttack"] = "Interface\\ICONS\\inv_sword_39",
-	["Lightning Strike"] = "Interface\\ICONS\\spell_holy_mindvision",
-	["Fatal Wound"] = "Interface\\ICONS\\ability_backstab",
-	["Falling"] = "Interface\\ICONS\\spell_magic_featherfall",
-	["Thorium Grenade"] = "Interface\\ICONS\\inv_misc_bomb_08",
-	["Crystal Charge"] = "Interface\\ICONS\\inv_misc_gem_opal_01",
-	["Shoot Bow"] = "Interface\\ICONS\\ability_marksmanship",
-	
-	-- Rogues
-	["Sinister Strike"] = "Interface\\ICONS\\spell_shadow_ritualofsacrifice",
-	["Blade Flurry"] = "Interface\\ICONS\\ability_warrior_punishingblow",
-	["Eviscerate"] = "Interface\\ICONS\\ability_rogue_eviscerate",
-	["Garrote(Periodic)"] = "Interface\\ICONS\\ability_rogue_garrote",
-	["Rupture(Periodic)"] = "Interface\\ICONS\\ability_rogue_rupture",
-	["Instant Poison VI"] = "Interface\\ICONS\\ability_poisons", 
-	["Instant Poison V"] = "Interface\\ICONS\\ability_poisons", 
-	["Instant Poison IV"] = "Interface\\ICONS\\ability_poisons", 
-	["Instant Poison III"] = "Interface\\ICONS\\ability_poisons", 
-	["Instant Poison II"] = "Interface\\ICONS\\ability_poisons", 
-	["Instant Poison I"] = "Interface\\ICONS\\ability_poisons", 
-	["Kick"] = "Interface\\ICONS\\ability_kick", 
-	
-}
 local curKey = 1
 local db, cbt = {}, 0
 
@@ -57,35 +32,32 @@ function DPSMate.Modules.DetailsDamage:ScrollFrame_Update()
 	local line, lineplusoffset
 	local obj = getglobal("DPSMate_Details_Log_ScrollFrame")
 	local arr = db
-	local pet, len = "", DPSMate:TableLength(arr[DPSMateUser[DetailsUser][1]])-5
+	local path = "DPSMate_Details_Log"
 	DetailsArr, DetailsTotal, DmgArr = DPSMate.RegistredModules[DPSMateSettings["windows"][curKey]["CurMode"]]:EvalTable(DPSMateUser[DetailsUser], curKey)
-	FauxScrollFrame_Update(obj,DPSMate:TableLength(arr),10,24)
+	local pet, len = "", DPSMate:TableLength(DetailsArr)
+	FauxScrollFrame_Update(obj,len,10,24)
 	for line=1,10 do
 		lineplusoffset = line + FauxScrollFrame_GetOffset(obj)
 		if DetailsArr[lineplusoffset] ~= nil then
 			if DetailsArr[lineplusoffset][2] then pet="(Pet)" else pet="" end
 			local ability = DPSMate:GetAbilityById(DetailsArr[lineplusoffset][1])
-			getglobal("DPSMate_Details_Log_ScrollButton"..line.."_Name"):SetText(ability..pet)
-			getglobal("DPSMate_Details_Log_ScrollButton"..line.."_Value"):SetText(DmgArr[lineplusoffset].." ("..string.format("%.2f", (DmgArr[lineplusoffset]*100/DetailsTotal)).."%)")
-			if icons[ability] then
-				getglobal("DPSMate_Details_Log_ScrollButton"..line.."_Icon"):SetTexture(icons[ability])
-			else
-				getglobal("DPSMate_Details_Log_ScrollButton"..line.."_Icon"):SetTexture("Interface\\AddOns\\DPSMate\\images\\dummy")
-			end
+			getglobal(path.."_ScrollButton"..line.."_Name"):SetText(ability..pet)
+			getglobal(path.."_ScrollButton"..line.."_Value"):SetText(DmgArr[lineplusoffset].." ("..string.format("%.2f", (DmgArr[lineplusoffset]*100/DetailsTotal)).."%)")
+			getglobal(path.."_ScrollButton"..line.."_Icon"):SetTexture(DPSMate.BabbleSpell:GetSpellIcon(strsub(ability, 1, (strfind(ability, "%(") or 0)-1) or ability))
 			if len < 10 then
-				getglobal("DPSMate_Details_Log_ScrollButton"..line):SetWidth(235)
-				getglobal("DPSMate_Details_Log_ScrollButton"..line.."_Name"):SetWidth(125)
+				getglobal(path.."_ScrollButton"..line):SetWidth(235)
+				getglobal(path.."_ScrollButton"..line.."_Name"):SetWidth(125)
 			else
-				getglobal("DPSMate_Details_Log_ScrollButton"..line):SetWidth(220)
-				getglobal("DPSMate_Details_Log_ScrollButton"..line.."_Name"):SetWidth(110)
+				getglobal(path.."_ScrollButton"..line):SetWidth(220)
+				getglobal(path.."_ScrollButton"..line.."_Name"):SetWidth(110)
 			end
-			getglobal("DPSMate_Details_Log_ScrollButton"..line):Show()
+			getglobal(path.."_ScrollButton"..line):Show()
 		else
-			getglobal("DPSMate_Details_Log_ScrollButton"..line):Hide()
+			getglobal(path.."_ScrollButton"..line):Hide()
 		end
-		getglobal("DPSMate_Details_Log_ScrollButton"..line.."_selected"):Hide()
+		getglobal(path.."_ScrollButton"..line.."_selected"):Hide()
 		if DetailsSelected == lineplusoffset then
-			getglobal("DPSMate_Details_Log_ScrollButton"..line.."_selected"):Show()
+			getglobal(path.."_ScrollButton"..line.."_selected"):Show()
 		end
 	end
 end
