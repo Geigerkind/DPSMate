@@ -1012,7 +1012,7 @@ end
 
 function DPSMate.Options:OnVerticalScroll(obj, arg1, pre)
 	if not pre then pre = 20 end
-	local maxScroll = getglobal(obj:GetName().."_Child"):GetHeight()
+	local maxScroll = getglobal(obj:GetName().."_Child"):GetHeight()-100
 	local Scroll = obj:GetVerticalScroll()
 	local toScroll = (Scroll - (pre*arg1))
 	if toScroll < 0 then
