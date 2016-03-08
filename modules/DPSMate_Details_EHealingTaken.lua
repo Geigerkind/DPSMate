@@ -177,7 +177,7 @@ function DPSMate.Modules.DetailsEHealingTaken:CreateGraphTable()
 end
 
 function DPSMate.Modules.DetailsEHealingTaken:GetSummarizedTable(arr)
-	return DPSMate.Sync:GetSummarizedTable(arr[DPSMateUser[DetailsUser][1]]["i"][1])
+	return DPSMate.Sync:GetSummarizedTable(arr[DPSMateUser[DetailsUser][1]]["i"][2])
 end
 
 function DPSMate.Modules.DetailsEHealingTaken:GetMaxLineVal(t, p)

@@ -20,19 +20,19 @@ function DPSMate.Modules.EffectiveHealingTaken:GetSortedTable(arr)
 		local i = 1
 		while true do
 			if (not b[i]) then
-				table.insert(b, i, v["i"][2])
+				table.insert(b, i, v["i"][1])
 				table.insert(a, i, c)
 				break
 			else
-				if b[i] < v["i"][2] then
-					table.insert(b, i, v["i"][2])
+				if b[i] < v["i"][1] then
+					table.insert(b, i, v["i"][1])
 					table.insert(a, i, c)
 					break
 				end
 			end
 			i=i+1
 		end
-		total = total + v["i"][2]
+		total = total + v["i"][1]
 	end
 	return b, total, a
 end
@@ -78,7 +78,7 @@ function DPSMate.Modules.EffectiveHealingTaken:EvalTable(user, k)
 					i = i + 1
 				end
 			end
-			total=total+arr[user[1]]["i"][2]
+			total=total+arr[user[1]]["i"][1]
 		end
 	end
 	return a, total, d

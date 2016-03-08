@@ -838,8 +838,8 @@ function DPSMate.DB:HealingTaken(arr, Duser, Dname, Dhit, Dcrit, Damount, target
 		if not arr[cat][DPSMateUser[Duser][1]] then
 			arr[cat][DPSMateUser[Duser][1]] = {
 				i = {
-					[1] = {},
-					[2] = 0,
+					[1] = 0,
+					[2] = {},
 				}
 			}
 		end
@@ -888,8 +888,8 @@ function DPSMate.DB:HealingTaken(arr, Duser, Dname, Dhit, Dcrit, Damount, target
 		arr[cat][DPSMateUser[Duser][1]][DPSMateUser[target][1]][DPSMateAbility[Dname][1]][1] = arr[cat][DPSMateUser[Duser][1]][DPSMateUser[target][1]][DPSMateAbility[Dname][1]][1]+Damount
 		arr[cat][DPSMateUser[Duser][1]][DPSMateUser[target][1]][DPSMateAbility[Dname][1]][2] = arr[cat][DPSMateUser[Duser][1]][DPSMateUser[target][1]][DPSMateAbility[Dname][1]][2]+Dhit
 		arr[cat][DPSMateUser[Duser][1]][DPSMateUser[target][1]][DPSMateAbility[Dname][1]][3] = arr[cat][DPSMateUser[Duser][1]][DPSMateUser[target][1]][DPSMateAbility[Dname][1]][3]+Dcrit
-		arr[cat][DPSMateUser[Duser][1]]["i"][2] = arr[cat][DPSMateUser[Duser][1]]["i"][2]+Damount
-		if Damount > 0 then table.insert(arr[cat][DPSMateUser[Duser][1]]["i"][1], {DPSMateCombatTime[val], Damount}) end
+		arr[cat][DPSMateUser[Duser][1]]["i"][1] = arr[cat][DPSMateUser[Duser][1]]["i"][1]+Damount
+		if Damount > 0 then table.insert(arr[cat][DPSMateUser[Duser][1]]["i"][2], {DPSMateCombatTime[val], Damount}) end
 	end
 	DPSMate.DB.NeedUpdate = true
 end

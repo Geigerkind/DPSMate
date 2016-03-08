@@ -466,7 +466,7 @@ function DPSMate.Sync:EDStatIn(arr, arg2, arg4)
 	DPSMate.DB:BuildUser(t[1], nil)
 	if not arr[1][DPSMateUser[t[1]][1]] then return end
 	t[2] = tonumber(t[2])
-	table.insert(arr[1][DPSMateUser[t[2]][1]][DPSMateUser[arg4][1]]["i"][1], {t[2], tonumber(t[3])})
+	table.insert(arr[1][DPSMateUser[t[1]][1]][DPSMateUser[arg4][1]]["i"][1], {t[2], tonumber(t[3])})
 	if t[2]>DPSMateCombatTime["total"] then DPSMateCombatTime["total"]=t[2] end
 end
 
@@ -599,7 +599,7 @@ function DPSMate.Sync:iAbsorbsIn(arg2, arg4)
 	if not DPSMateAbsorbs[1][DPSMateUser[arg4][1]][DPSMateUser[t[1]][1]][DPSMateAbility[t[2]][1]] then
 		DPSMateAbsorbs[1][DPSMateUser[arg4][1]][DPSMateUser[t[1]][1]][DPSMateAbility[t[2]][1]] = {}
 	end
-	DPSMateAbsorbs[1][pid][ownerid][abilityid][tonumber(t[3])] = {
+	DPSMateAbsorbs[1][DPSMateUser[arg4][1]][DPSMateUser[t[1]][1]][DPSMateAbility[t[2]][1]][tonumber(t[3])] = {
 		i = {
 			[1] = tonumber(t[4]),
 			[2] = tonumber(t[5]),
