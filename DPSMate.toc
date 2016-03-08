@@ -114,6 +114,8 @@ modules\DPSMate_Details_LiftMagicReceived.lua
 modules\DPSMate_Details_LiftMagicReceived.xml
 modules\DPSMate_Details_Auras.lua
 modules\DPSMate_Details_Auras.xml
+modules\DPSMate_Details_FriendlyFire.lua
+modules\DPSMate_Details_FriendlyFire.xml
 
 DPSMate_Frame.xml
 DPSMate_Options.xml

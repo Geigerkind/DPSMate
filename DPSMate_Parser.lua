@@ -522,18 +522,17 @@ end
 -- You gain 61 health from Nenea's Rejuvenation.
 function DPSMate.Parser:SpellPeriodicSelfBuff(msg) -- Maybe some loss here?
 	local cause, ability, target, amount = {}, "", "", 0
-	for ab in string.gfind(msg, "You gain (.+)%.") do if not strfind(msg, "from") then DPSMate.DB:ConfirmBuff(player.name, ab, GetTime()); DPSMate.DB:RegisterHotDispel(player.name, ab) end end
+	if strfind(msg, "begins to") then return end
+	for ab in string.gfind(msg, "You gain (.+)%.") do if not strfind(msg, "from") then DPSMate.DB:ConfirmBuff(player.name, ab, GetTime()); DPSMate.DB:RegisterHotDispel(player.name, ab) end; return end
 	for a, ab in string.gfind(msg, "You gain (.+) health from (.+)%.") do amount=tonumber(strsub(a, strfind(a, "%d+"))); ability=ab; target=player.name; cause.name=player.name end
 	for a, ta, ab in string.gfind(msg, "You gain (.+) health from (.+)'s (.+)%.") do amount=tonumber(strsub(a, strfind(a, "%d+"))); ability=ab; target=player.name; cause.name=ta end
-	if amount>0 then -- Workaround as long as I dont have buffs implemented
-		overheal = DPSMate.Parser:GetOverhealByName(amount, target)
-		DPSMate.DB:HealingTaken(DPSMateHealingTaken, target, ability.."(Periodic)", 1, 0, amount, cause.name)
-		DPSMate.DB:HealingTaken(DPSMateEHealingTaken, target, ability.."(Periodic)", 1, 0, amount-overheal, cause.name)
-		DPSMate.DB:Healing(DPSMateEHealing, cause, ability.."(Periodic)", 1, 0, amount-overheal, target)
-		DPSMate.DB:Healing(DPSMateOverhealing, cause, ability.."(Periodic)", 1, 0, overheal, target)
-		DPSMate.DB:Healing(DPSMateTHealing, cause, ability.."(Periodic)", 1, 0, amount, target)
-		DPSMate.DB:DeathHistory(player.name, cause.name, ability.."(Periodic)", amount, 1, 0, 1, 0)
-	end
+	overheal = DPSMate.Parser:GetOverhealByName(amount, target)
+	DPSMate.DB:HealingTaken(DPSMateHealingTaken, target, ability.."(Periodic)", 1, 0, amount, cause.name)
+	DPSMate.DB:HealingTaken(DPSMateEHealingTaken, target, ability.."(Periodic)", 1, 0, amount-overheal, cause.name)
+	DPSMate.DB:Healing(DPSMateEHealing, cause, ability.."(Periodic)", 1, 0, amount-overheal, target)
+	DPSMate.DB:Healing(DPSMateOverhealing, cause, ability.."(Periodic)", 1, 0, overheal, target)
+	DPSMate.DB:Healing(DPSMateTHealing, cause, ability.."(Periodic)", 1, 0, amount, target)
+	DPSMate.DB:DeathHistory(player.name, cause.name, ability.."(Periodic)", amount, 1, 0, 1, 0)
 end
 
 -- Catrala gains Last Stand.
@@ -543,9 +542,10 @@ end
 -- Soulstoke gains 25 Energy from Soulstoke's Relentless Strikes Effect.
 function DPSMate.Parser:SpellPeriodicFriendlyPlayerBuffs(msg)
 	local cause, ability, target, amount = {}, "", "", 0
+	if strfind(msg, "begins to") then return end
+	for ta, ab in string.gfind(msg, "(.+) gains (.+)%.") do if not strfind(msg, "from") then DPSMate.DB:ConfirmBuff(ta, ab, GetTime()); DPSMate.DB:RegisterHotDispel(ta, ab) end; return end
 	for ta, a, ab in string.gfind(msg, "(.+) gains (.+) health from your (.+)%.") do target=ta; amount=tonumber(strsub(a, strfind(a, "%d+"))); ability=ab; cause.name=player.name end
 	for ta, a, c, ab in string.gfind(msg, "(.+) gains (.+) health from (.+)'s (.+)%.") do target=ta; amount=tonumber(strsub(a, strfind(a, "%d+"))); ability=ab; cause.name=c end
-	for ta, ab in string.gfind(msg, "(.+) gains (.+)%.") do if not strfind(msg, "from") then DPSMate.DB:ConfirmBuff(ta, ab, GetTime()); DPSMate.DB:RegisterHotDispel(ta, ab) end; return end
 	overheal = DPSMate.Parser:GetOverhealByName(amount, target)
 	DPSMate.DB:HealingTaken(DPSMateHealingTaken, target, ability.."(Periodic)", 1, 0, amount, cause.name)
 	DPSMate.DB:HealingTaken(DPSMateEHealingTaken, target, ability.."(Periodic)", 1, 0, amount-overheal, cause.name)
@@ -559,6 +559,7 @@ end
 -- Albea's Flash of Light critically heals you/Baz for 135.
 function DPSMate.Parser:SpellHostilePlayerBuff(msg)
 	local cause, ability, target, amount, hit, crit = {}, "", "", 0, 0, 0
+	if strfind(msg, "begins to") or strfind(msg, "Rage") then return end
 	for c, a, ta, ab in string.gfind(msg, "(.+) gains (.+) Energy from (.+)'s (.+)%.") do DPSMate.DB:BuildBuffs(c, ta, ab, true); DPSMate.DB:DestroyBuffs(c, ab); return end
 	for c, a, ab in string.gfind(msg, "(.+) gains (.+) extra attack through (.+)%.") do DPSMate.DB:BuildBuffs(c, c, ab, true); DPSMate.DB:DestroyBuffs(c, ab); return end
 	for c, ab, ta, a in string.gfind(msg, "(.+)'s (.+) heals (.+) for (.+)%.") do hit=1; crit=0; amount=tonumber(strsub(a, strfind(a, "%d+"))); ability=ab; target=ta; cause.name=c end

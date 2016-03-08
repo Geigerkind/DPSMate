@@ -324,6 +324,7 @@ end
 function DPSMate:SetStatusBarValue()
 	if not DPSMate:WindowsExist() then return end
 	DPSMate:HideStatusBars()
+	--DPSMate:SendMessage("Hidden!")
 	for k,c in pairs(DPSMateSettings.windows) do
 		local arr, cbt = DPSMate:GetMode(k)
 		local user, val, perc, strt = DPSMate:GetSettingValues(arr,cbt,k)
@@ -331,9 +332,12 @@ function DPSMate:SetStatusBarValue()
 			getglobal("DPSMate_"..c["name"].."_ScrollFrame_Child_Total_Name"):SetText("Total")
 			getglobal("DPSMate_"..c["name"].."_ScrollFrame_Child_Total_Value"):SetText(strt[1]..strt[2])
 		end
+		--DPSMate:SendMessage(c["name"])
 		if (user[1]) then
 			for i=1, 30 do
+				--DPSMate:SendMessage("Test 1")
 				if (not user[i]) then break end -- To prevent visual issues
+				--DPSMate:SendMessage("Test 2")
 				local statusbar, name, value, texture, p = getglobal("DPSMate_"..c["name"].."_ScrollFrame_Child_StatusBar"..i), getglobal("DPSMate_"..c["name"].."_ScrollFrame_Child_StatusBar"..i.."_Name"), getglobal("DPSMate_"..c["name"].."_ScrollFrame_Child_StatusBar"..i.."_Value"), getglobal("DPSMate_"..c["name"].."_ScrollFrame_Child_StatusBar"..i.."_Icon"), ""
 				getglobal("DPSMate_"..c["name"].."_ScrollFrame_Child"):SetHeight((i+1)*(c["barheight"]+c["barspacing"])-100)
 				

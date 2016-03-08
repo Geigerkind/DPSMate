@@ -13,6 +13,22 @@ local Debuffs = {
 	"Rend",
 	"Net",
 	"Poison",
+	"Blizzard",
+	"Winter's Chill",
+	"Chilled",
+	"Frostbolt",
+	"Frostbite",
+	"Cone of Cold",
+	"Frost Nova",
+	"Dazed",
+	"Volatile Infection",
+	"Disarm",
+	"Psychic Scream",
+	"Corrosive Acid Spit",
+	"Poison Mind",
+	"Knockdown",
+	"Smite",
+	"Mind Flay",
 }
 
 function DPSMate.Modules.Auras:UpdateDetails(obj, key)

@@ -20,12 +20,15 @@ function DPSMate.Modules.FriendlyFire:GetSortedTable(arr)
 		local cName = DPSMate:GetUserById(c)
 		for cat, val in pairs(v) do
 			local catName = DPSMate:GetUserById(cat)
+			--DPSMate:SendMessage(catName.." and "..cName)
+			--DPSMate:SendMessage((DPSMateUser[cName][3] or "").." and "..(DPSMateUser[catName][3] or ""))
 			if DPSMateUser[cName][3] == DPSMateUser[catName][3] and DPSMateUser[catName][3] and DPSMateUser[cName][3] then
 				if temp[cat] then temp[cat]=temp[cat]+val["i"][2] else temp[cat] = val["i"][2] end
 			end
 		end
 	end
 	for cat, val in pairs(temp) do
+		--DPSMate:SendMessage(val)
 		local i = 1
 		while true do
 			if (not b[i]) then
@@ -72,7 +75,7 @@ function DPSMate.Modules.FriendlyFire:EvalTable(user, k)
 							i=i+1
 						end
 					else 
-						temp[c] = {val[13], {}, {}}	
+						temp[c] = {val[13], {[1]=cat}, {[1]=val[13]}}	
 					end
 				end
 			end
@@ -133,4 +136,11 @@ function DPSMate.Modules.FriendlyFire:ShowTooltip(user, k)
 	end
 end
 
+function DPSMate.Modules.FriendlyFire:OpenDetails(obj, key)
+	DPSMate.Modules.DetailsFF:UpdateDetails(obj, key)
+end
+
+function DPSMate.Modules.Damage:OpenTotalDetails(obj, key)
+	DPSMate.Modules.DetailsDamageTotal:UpdateDetails(obj, key)
+end
 

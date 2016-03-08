@@ -278,10 +278,10 @@ function DPSMate.DB:OnEvent(event)
 		DPSMate.Modules.DPS.DB = DPSMateDamageDone
 		DPSMate.Modules.Damage.DB = DPSMateDamageDone
 		DPSMate.Modules.DamageTaken.DB = DPSMateDamageTaken
-		DPSMate.Modules.FriendlyFire.DB = DPSMateEDT
 		DPSMate.Modules.DTPS.DB = DPSMateDamageTaken
 		DPSMate.Modules.EDD.DB = DPSMateEDD
 		DPSMate.Modules.EDT.DB = DPSMateEDT
+		DPSMate.Modules.FriendlyFire.DB = DPSMateEDT
 		DPSMate.Modules.Healing.DB = DPSMateTHealing
 		DPSMate.Modules.HPS.DB = DPSMateTHealing
 		DPSMate.Modules.Overhealing.DB = DPSMateOverhealing
@@ -829,7 +829,8 @@ function DPSMate.DB:Healing(arr, Duser, Dname, Dhit, Dcrit, Damount)
 end
 
 function DPSMate.DB:HealingTaken(arr, Duser, Dname, Dhit, Dcrit, Damount, target)
-	if (not Duser or not Dname or Dname=="" and target) then return end
+	if (not Duser or not Dname or Dname=="" or Duser==" ") then return end
+	--DPSMate:SendMessage(cause or "")
 	DPSMate.DB:BuildUser(Duser, nil)
 	DPSMate.DB:BuildUser(target, nil)
 	DPSMate.DB:BuildAbility(Dname, nil)
