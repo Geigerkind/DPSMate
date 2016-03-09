@@ -1,5 +1,7 @@
 -- Notes
 -- "Smbd reflects..." (Thorns etc.)
+-- (%s%(%a-%))
+-- /script local t = {}; for a,b,c,d in string.gfind("You hit Peter Hallow for 184.", "You (%a%a?)\it (.+) for (%d+)%.%s?(.*)") do t[1]=a;t[2]=b;t[3]=c;t[4]=d end; DPSMate:SendMessage(t[3]); DPSMate:SendMessage(t[4])
 
 -- Global Variables
 DPSMate.Parser.procs = {
@@ -38,15 +40,15 @@ DPSMate.Parser.procs = {
 }
 
 -- Local Variables
-local player = {}
-player["name"] = UnitName("player")
-local a,b = UnitClass("player")
-player["class"] = strlower(b)
+local player = UnitName("player")
+local _,playerclass = UnitClass("player")
+local strgfind = string.gfind
+local t = {}
 
 -- Begin Functions
 
 function DPSMate.Parser:OnLoad()
-	DPSMate.DB:BuildUser(player.name, player.class)
+	DPSMate.DB:BuildUser(playername, strlower(playerclass))
 end
 
 function DPSMate.Parser:OnEvent(event)
@@ -206,217 +208,263 @@ end
 -- You hit Blazing Elemental for 187.
 -- You crit Blazing Elemental for 400.
 function DPSMate.Parser:SelfHits(msg)
-	local hit, crit, glance, block = 0 , 0, 0, 0
-	-- Fall damage
-	if strfind(msg, DPSMate.localization.parser.youfall) then
-		amount = tonumber(strsub(msg, strfind(msg, "%d+")))
-		DPSMate.DB:DamageTaken(player, "Falling", 1, 0, 0, 0, 0, 0, amount, "Environment", 0)
-	-- Drown damage
-	elseif strfind(msg, DPSMate.localization.parser.youdrown) then
-		amount = tonumber(strsub(msg, strfind(msg, "%d+")))
-		DPSMate.DB:DamageTaken(player, "Drowning", 1, 0, 0, 0, 0, 0, amount, "Environment", 0)
-	-- Lava damage
-	elseif strfind(msg, DPSMate.localization.parser.swimminginlava) then
-		amount = tonumber(strsub(msg, strfind(msg, "%d+")))
-		DPSMate.DB:DamageTaken(player, "Lava", 1, 0, 0, 0, 0, 0, amount, "Environment", 0)
-	-- White hit Damage
-	elseif strfind(msg, DPSMate.localization.parser.youhit) or strfind(msg, DPSMate.localization.parser.youcrit) then
-		for k, t, a in string.gfind(msg, "You (.-) (.+) for (%d+).") do
-			if k == DPSMate.localization.parser.hit then hit=1; else crit=1; end
-			if strfind(msg, "glancing") then glance = 1; hit=0 end
-			if strfind(msg, "blocked") then block = 1; hit=0 end
-			DPSMate.DB:EnemyDamage(DPSMateEDT, player, "AutoAttack", hit, crit, 0, 0, 0, 0, tonumber(a), t, block, glance)
-			DPSMate.DB:DamageDone(player, "AutoAttack", hit, crit, 0, 0, 0, 0, tonumber(a), glance, block)
-		end
+	t = {}
+	for a,b,c,d in strgfind(msg, "You (%a%a?)\it (.+) for (%d+)\.%s?(.*)") do
+		if a == "h" then t[1]=1;t[2]=0 end
+		if d == "(glancing)" then t[3]=1;t[1]=0;t[2]=0 elseif d ~= "" then t[4]=1;t[1]=0;t[2]=0 end
+		DPSMate.DB:EnemyDamage(DPSMateEDT, player, "AutoAttack", t[1] or 0, t[2] or 1, 0, 0, 0, 0, tonumber(c), b, t[4] or 0, t[3] or 0)
+		DPSMate.DB:DamageDone(player, "AutoAttack", t[1] or 0, t[2] or 1, 0, 0, 0, 0, tonumber(c), t[3] or 0, t[4] or 0)
+		return
+	end
+	for a in strgfind(msg, "You fall and lose (%d+) health%.") do
+		DPSMate.DB:DamageTaken(player, "Falling", 1, 0, 0, 0, 0, 0, tonumber(a), "Environment", 0)
+		return
+	end
+	for a in strgfind(msg, "You lose (%d+) health for swimming in lava%.") do
+		DPSMate.DB:DamageTaken(player, "Lava", 1, 0, 0, 0, 0, 0, tonumber(a), "Environment", 0)
+		return
+	end
+	for a in strgfind(msg, "You are drowning and lose (%d+) health%.") do
+		DPSMate.DB:DamageTaken(player, "Drowning", 1, 0, 0, 0, 0, 0, tonumber(a), "Environment", 0)
+		return
 	end
 end
 
 function DPSMate.Parser:SelfMisses(msg)
-	local miss, parry, dodge, block = 0, 0, 0, 0
-	if strfind(msg, DPSMate.localization.parser.youmiss) then miss = 1; elseif strfind(msg, DPSMate.localization.parser.parries) then parry = 1; elseif strfind(msg, DPSMate.localization.parser.dodges) then dodge = 1; else block = 1; end
-	DPSMate.DB:EnemyDamage(DPSMateEDT, player, "AutoAttack", 0, 0, miss, parry, dodge, 0, 0, "None", block, 0)
-	DPSMate.DB:DamageDone(player, "AutoAttack", 0, 0, miss, parry, dodge, 0, 0, 0, block)
+	-- Filter out immune message --> using them?
+	t = {}
+	for a in strgfind(msg, "You miss (.+)%.") do 
+		DPSMate.DB:EnemyDamage(DPSMateEDT, player, "AutoAttack", 0, 0, 1, 0, 0, 0, 0, a, 0, 0)
+		DPSMate.DB:DamageDone(player, "AutoAttack", 0, 0, 1, 0, 0, 0, 0, 0, 0)
+		return
+	end
+	for a,b in strgfind(msg, "You attack%. (.+) (%a-)%.") do 
+		if b=="parries" then t[1]=1 elseif b=="dodges" then t[2]=1 else t[3]=1 end
+		DPSMate.DB:EnemyDamage(DPSMateEDT, player, "AutoAttack", 0, 0, 0, t[1] or 0, t[2] or 0, 0, 0, a, t[3] or 0, 0)
+		DPSMate.DB:DamageDone(player, "AutoAttack", 0, 0, 0, t[1] or 0, t[2] or 0, 0, 0, 0, t[3] or 0)
+	end
 end
 
+-- /script for a,b,c,d in string.gfind("You hit Firetail Scorpid for 140. (445 blocked)", "You (%a%a?)\it (.+) for (%d+)\.%s?(%a?)") do if e ~= "" then DPSMate:SendMessage(d) else DPSMate:SendMessage("Test") end end
+-- (...) 149 (Fire damage). (50 resisted) -> Some potential?
 function DPSMate.Parser:SelfSpellDMG(msg)
-	local target, hit, crit, amount, ability, resist, parry, dodge, miss, block = "", 0, 0, 0, "", 0, 0, 0, 0, 0
-	if strfind(msg, DPSMate.localization.parser.wasresistedby) then
-		for a, t in string.gfind(msg, "Your (.+) was resisted by (.+).") do resist=1; ability=a; target=t; end
-	elseif strfind(msg, DPSMate.localization.parser.isparriedby) then
-		for a, t in string.gfind(msg, "Your (.+) is parried by (.+).") do parry=1; ability=a; target=t; end
-	elseif strfind(msg, DPSMate.localization.parser.wasdodgedby) then
-		for a, t in string.gfind(msg, "Your (.+) was dodged by (.+).") do dodge=1; ability=a; target=t; end
-	elseif strfind(msg, DPSMate.localization.parser.missed) then
-		for a, t in string.gfind(msg, "Your (.+) missed (.+).") do miss=1; ability=a; target=t; end
-	elseif strfind(msg, DPSMate.localization.parser.wasblockedby) then
-		for a, t in string.gfind(msg, "Your (.+) was blocked by (.+).") do block=1; ability=a; target=t; end
-	elseif strfind(msg, DPSMate.localization.parser.immune) then
-		-- Decided not to collect immune data
+	-- Filter out immune message -> using them?
+	t = {}
+	for a,b,c,d,e in strgfind(msg, "Your (.+) (%a%a?)\its (.+) for (%d+)(.*)\.%s?(.*)") do 
+		t[1] = tonumber(d)
+		if b=="h" then t[2]=1;t[3]=0 end
+		if e ~= "" then t[4]=1;t[2]=0;t[3]=0 end
+		if DPSMate:TContains(DPSMate.Parser.Kicks, a) then DPSMate.DB:AssignPotentialKick(player, a, c, GetTime()) end
+		DPSMate.DB:EnemyDamage(DPSMateEDT, player, a,  t[2] or 0, t[3] or 1, 0, 0, 0, 0, t[1], c, t[4] or 0, 0)
+		DPSMate.DB:DamageDone(player, a, t[2] or 0, t[3] or 1, 0, 0, 0, 0, t[1], 0, t[4] or 0)
 		return
-	else
-		-- School and target to be added
-		for ab, t, a in string.gfind(msg, "Your (.+) hits (.+) for (.+).") do ability = ab; target = t; amount = tonumber(strsub(a, strfind(a, "%d+"))); hit=1; end
-		for ab, t, a in string.gfind(msg, "Your (.+) crits (.+) for (.+).") do ability = ab; target = t; amount = tonumber(strsub(a, strfind(a, "%d+"))); crit=1; end
-		if strfind(msg, "blocked") then block = 1; hit=0 end
-		if DPSMate:TContains(DPSMate.Parser.Kicks, ability) then DPSMate.DB:AssignPotentialKick(player.name, ability, target, GetTime()) end
 	end
-	DPSMate.DB:EnemyDamage(DPSMateEDT, player, ability, hit, crit, miss, parry, dodge, resist, amount, target, block, 0)
-	DPSMate.DB:DamageDone(player, ability, hit, crit, miss, parry, dodge, resist, amount, 0, block)
+	for a,b,c in strgfind(msg, "Your (.+) was (.-) by (.+)%.") do 
+		if b=="dodged" then t[1]=1 elseif b=="blocked" then t[2]=1 else t[3]=1 end
+		DPSMate.DB:EnemyDamage(DPSMateEDT, player, a, 0, 0, 0, 0, t[1] or 0, t[3] or 0, 0, c, t[2] or 0, 0)
+		DPSMate.DB:DamageDone(player, a, 0, 0, 0, 0, t[1] or 0, t[3] or 0, 0, 0, t[2] or 0)
+		return
+	end
+	for a,b in strgfind(msg, "Your (.+) is parried by (.+)%.") do 
+		DPSMate.DB:EnemyDamage(DPSMateEDT, player, a, 0, 0, 0, 1, 0, 0, 0, b, 0, 0)
+		DPSMate.DB:DamageDone(player, a, 0, 0, 0, 1, 0, 0, 0, 0, 0)
+		return
+	end
+	for a,b in strgfind(msg, "Your (.+) missed (.+)%.") do 
+		DPSMate.DB:EnemyDamage(DPSMateEDT, f, a, 0, 0, 1, 0, 0, 0, 0, b, 0, 0)
+		DPSMate.DB:DamageDone(f, a, 0, 0, 1, 0, 0, 0, 0, 0, 0)
+		return
+	end
 end
 
+-- /script for a,b,c,d,e in string.gfind("Lucker suffers 107 Physical damage from Shino's Garrote.", "(.+) suffers (%d+) (%a-) damage from [(your),(.+)'s] (.+)%.") do DPSMate:SendMessage(d) end
 function DPSMate.Parser:PeriodicDamage(msg)
-	local cause = {}
+	t = {}
 	-- (NAME) is afflicted by (ABILITY). => Filtered out for now.
-	for ta, ab in string.gfind(msg, "(.+) is afflicted by (.+)%.") do if DPSMate:TContains(DPSMate.Parser.Kicks, ab) then DPSMate.DB:ConfirmAfflictedStun(ta, ab, GetTime()) end end -- That is wrong, it is not always the player!
-	-- School has to be added and target
-	for tar, dmg, name, ab in string.gfind(msg, "(.+) suffers (.+) from (.-) (.+)") do -- Here might be some loss
-		if not name then return end
-		cause.name = name
-		if cause.name == DPSMate.localization.parser.your2 then cause.name = player.name; else cause.name = strsub(cause.name, 1, strlen(cause.name)-2); end
-		DPSMate.DB:EnemyDamage(DPSMateEDT, cause, strsub(ab, 1, strfind(ab, "%.")-1).."(Periodic)", 1, 0, 0, 0, 0, 0, tonumber(strsub(dmg, strfind(dmg, "%d+"))), tar, 0, 0)
-		DPSMate.DB:DamageDone(cause, strsub(ab, 1, strfind(ab, "%.")-1).."(Periodic)", 1, 0, 0, 0, 0, 0, tonumber(strsub(dmg, strfind(dmg, "%d+"))), 0, 0)
+	for a,b in strgfind(msg, "(.+) is afflicted by (.+)%.") do if DPSMate:TContains(DPSMate.Parser.Kicks, b) then DPSMate.DB:ConfirmAfflictedStun(a, b, GetTime()) end; return end
+	-- School can be used now but how and when?
+	for a,b,c,d,e in strgfind(msg, "(.+) suffers (%d+) (%a-) damage from (.+)'?s? (.+)%.") do
+		if d == "your" then t[1] = {name=player} else t[1] = {name=strsub(d, 1, strfind(d, "%'s")-1)} end -- I wonder if there is a way to avoid Shino!!!'s!!! in the parsed string
+		t[2] = tonumber(b)
+		DPSMate.DB:EnemyDamage(DPSMateEDT, t[1], e.."(Periodic)", 1, 0, 0, 0, 0, 0, t[2], d, 0, 0)
+		DPSMate.DB:DamageDone(t[1], e.."(Periodic)", 1, 0, 0, 0, 0, 0, t[2], 0, 0)
 	end
 end
 
+-- immune and begins
 function DPSMate.Parser:FriendlyPlayerDamage(msg)
-	if strfind(msg, "begins") then return end
-	local target, ability, cause, amount, resist, hit, crit, dodge, parry, miss, block = "", "", {}, 0, 0, 0, 0, 0, 0, 0, 0
-	if strfind(msg, "was resisted by") then
-		for c, ab, t in string.gfind(msg, "(.-)'s (.+) was resisted by (.+).") do resist=1; cause.name=c; ability=ab; target=t; end
-	elseif strfind(msg, "was dodged by") then
-		for c, ab, t in string.gfind(msg, "(.-)'s (.+) was dodged by (.+).") do dodge=1; cause.name=c; ability=ab; target=t; end
-	elseif strfind(msg, "is parried by") then
-		for c, ab, t in string.gfind(msg, "(.-)'s (.+) was parried by (.+).") do parry=1; cause.name=c; ability=ab; target=t; end
-	elseif strfind(msg, "missed") then
-		for c, ab, t in string.gfind(msg, "(.-)'s (.+) missed (.+).") do miss=1; cause.name=c; ability=ab; target=t; end
-	elseif strfind(msg, DPSMate.localization.parser.wasblockedby) then
-		for c, a, t in string.gfind(msg, "(.-)'s (.+) was blocked by (.+).") do block=1; ability=a; target=t; cause.name=c end
-	elseif strfind(msg, "immune") then
-		-- Wont be collected
+	t = {}
+	for f,a,b,c,d,e in strgfind(msg, "(.-)'s (.+) (%a%a?)\its (.+) for (%d+)(.*)\.%s?(.*)") do 
+		t[1] = tonumber(d)
+		if b=="h" then t[2]=1;t[3]=0 end
+		if e ~= "" then t[4]=1;t[2]=0;t[3]=0 end
+		if DPSMate:TContains(DPSMate.Parser.Kicks, a) then DPSMate.DB:AssignPotentialKick(f, a, c, GetTime()) end
+		DPSMate.DB:EnemyDamage(DPSMateEDT, f, a,  t[2] or 0, t[3] or 1, 0, 0, 0, 0, t[1], c, t[4] or 0, 0)
+		DPSMate.DB:DamageDone(f, a, t[2] or 0, t[3] or 1, 0, 0, 0, 0, t[1], 0, t[4] or 0)
 		return
-	else
-		for c, ab, t, a in string.gfind(msg, "(.-)'s (.+) hits (.+) for (.+).") do hit=1; cause.name=c; ability=ab; target=t; amount=tonumber(strsub(a, strfind(a, "%d+"))); end
-		for c, ab, t, a in string.gfind(msg, "(.-)'s (.+) crits (.+) for (.+).") do crit=1; cause.name=c; ability=ab; target=t; amount=tonumber(strsub(a, strfind(a, "%d+"))); end
-		if strfind(msg, "blocked") then block = 1; hit=0 end
-		if DPSMate:TContains(DPSMate.Parser.Kicks, ability) then DPSMate.DB:AssignPotentialKick(cause.name, ability, target, GetTime()) end
 	end
-	DPSMate.DB:EnemyDamage(DPSMateEDT, cause, ability, hit, crit, miss, parry, dodge, resist, amount, target, block, 0)
-	DPSMate.DB:DamageDone(cause, ability, hit, crit, miss, parry, dodge, resist, amount, 0, block)
+	for f,a,b,c in strgfind(msg, "(.-)'s (.+) was (.-) by (.+)%.") do 
+		if b=="dodged" then t[1]=1 elseif b=="blocked" then t[2]=1 else t[3]=1 end
+		DPSMate.DB:EnemyDamage(DPSMateEDT, f, a, 0, 0, 0, 0, t[1] or 0, t[3] or 0, 0, c, t[2] or 0, 0)
+		DPSMate.DB:DamageDone(f, a, 0, 0, 0, 0, t[1] or 0, t[3] or 0, 0, 0, t[2] or 0)
+		return
+	end
+	for f,a,b in strgfind(msg, "(.-)'s (.+) is parried by (.+)%.") do
+		DPSMate.DB:EnemyDamage(DPSMateEDT, f, a, 0, 0, 0, 1, 0, 0, 0, b, 0, 0)
+		DPSMate.DB:DamageDone(f, a, 0, 0, 0, 1, 0, 0, 0, 0, 0)
+		return
+	end
+	for f,a,b in strgfind(msg, "(.-)'s (.+) missed (.+)%.") do 
+		DPSMate.DB:EnemyDamage(DPSMateEDT, f, a, 0, 0, 1, 0, 0, 0, 0, b, 0, 0)
+		DPSMate.DB:DamageDone(f, a, 0, 0, 1, 0, 0, 0, 0, 0, 0)
+		return
+	end
 end
 
 function DPSMate.Parser:FriendlyPlayerHits(msg)
-	-- (...). (608 absorbed/resisted)
-	local target, cause, hit, crit, amount, glance, block = "", {}, 0, 0, 0, 0, 0
-	if strfind(msg, "lava") then
-		for c, a in string.gfind(msg, "(.-) loses (%d+) health for swimming in lava%.") do cause.name=c; amount=tonumber(a); end
-		DPSMate.DB:DamageTaken(cause, "Lava", 1, 0, 0, 0, 0, 0, amount, "Environment", 0)
-	elseif strfind(msg, "falls") then
-		for c, a in string.gfind(msg, "(.-) falls and loses (%d+) health%.") do cause.name=c; amount=tonumber(a); end
-		DPSMate.DB:DamageTaken(cause, "Falling", 1, 0, 0, 0, 0, 0, amount, "Environment", 0)
-	elseif strfind(msg, "drowning") then
-		for c, a in string.gfind(msg, "(.-) is drowning and loses (%d+) health%.") do cause.name=c; amount=tonumber(a); end
-		DPSMate.DB:DamageTaken(cause, "Drowning", 1, 0, 0, 0, 0, 0, amount, "Environment", 0)
-	else
-		for c, k, t, a in string.gfind(msg, "(.-) (.-) (.+) for (.+)%.") do cause.name=c; target=t; amount=tonumber(strsub(a, strfind(a, "%d+"))); if k=="hits" then hit=1 else crit=1 end end
-		if strfind(msg, "glancing") then glance = 1; hit=0 end
-		if strfind(msg, "blocked") then block = 1; hit=0 end
-		DPSMate.DB:EnemyDamage(DPSMateEDT, cause, "AutoAttack", hit, crit, 0, 0, 0, 0, amount, target, block, glance)
-		DPSMate.DB:DamageDone(cause, "AutoAttack", hit, crit, 0, 0, 0, 0, amount, glance, block)
+	t = {}
+	for a,b,c,d,e in strgfind(msg, "(.-) (%a%a?)\its (.+) for (%d+)\.%s?(.*)") do
+		if b=="h" then t[3]=1;t[4]=0 end
+		DPSMate:SendMessage(e)
+		if e=="(glancing)" then t[1]=1;t[3]=0;t[4]=0 elseif e~="" then t[2]=1;t[3]=0;t[4]=0 end
+		t[5] = tonumber(d)
+		DPSMate.DB:EnemyDamage(DPSMateEDT, a, "AutoAttack", t[3] or 0, t[4] or 1, 0, 0, 0, 0, t[5], c, t[2] or 0, t[1] or 0)
+		DPSMate.DB:DamageDone(a, "AutoAttack", t[3] or 0, t[4] or 1, 0, 0, 0, 0, t[5], t[1] or 0, t[2] or 0)
+		return
+	end
+	-- (...). (608 absorbed/resisted) -> Therefore here some loss
+	for a,b in strgfind(msg, "(.-) loses (%d+) health for swimming in lava%.") do
+		DPSMate.DB:DamageTaken(a, "Lava", 1, 0, 0, 0, 0, 0, tonumber(b), "Environment", 0)
+		return
+	end
+	for a,b in strgfind(msg, "(.-) falls and loses (%d+) health%.") do
+		DPSMate.DB:DamageTaken(a, "Falling", 1, 0, 0, 0, 0, 0, tonumber(b), "Environment", 0)
+		return
+	end
+	for a,b in strgfind(msg, "(.-) is drowning and loses (%d+) health%.") do
+		DPSMate.DB:DamageTaken(a, "Drowning", 1, 0, 0, 0, 0, 0, tonumber(b), "Environment", 0)
+		return
 	end
 end
 
 function DPSMate.Parser:FriendlyPlayerMisses(msg)
-	local miss, parry, dodge, cause, block = 0, 0, 0, {}, 0
-	if strfind(msg, "misses") then miss = 1 elseif strfind(msg, "parries") then parry = 1 elseif strfind(msg, "dodges") then dodge = 1 elseif strfind(msg, "blocks") then block = 1 end
-	cause.name = strsub(msg, 1, strfind(msg, " ")-1)
-	DPSMate.DB:EnemyDamage(DPSMateEDT, cause, "AutoAttack", 0, 0, miss, parry, dodge, 0, 0, "None", block, 0)
-	DPSMate.DB:DamageDone(cause, "AutoAttack", 0, 0, miss, parry, dodge, 0, 0, 0, block)
+	t = {}
+	for a,b in strgfind(msg, "(.-) misses (.+)%.") do 
+		DPSMate.DB:EnemyDamage(DPSMateEDT, a, "AutoAttack", 0, 0, 1, 0, 0, 0, 0, b, 0, 0)
+		DPSMate.DB:DamageDone(a, "AutoAttack", 0, 0, 1, 0, 0, 0, 0, 0, 0)
+		return
+	end
+	for a,b,c in strgfind(msg, "(.-) attacks%. (.+) (%a-)%.") do 
+		if c=="parries" then t[1]=1 elseif c=="dodges" then t[2]=1 else t[3]=1 end 
+		DPSMate.DB:EnemyDamage(DPSMateEDT, a, "AutoAttack", 0, 0, 0, t[1] or 0, t[2] or 0, 0, 0, b, t[3] or 0, 0)
+		DPSMate.DB:DamageDone(a, "AutoAttack", 0, 0, 0, t[1] or 0, t[2] or 0, 0, 0, 0, t[3] or 0)
+		return
+	end
 end
 
 -- You reflect 20 Holy damage to Razzashi Serpent.
 function DPSMate.Parser:SpellDamageShieldsOnSelf(msg)
-	local target, amount = "", 0
-	for a, ta in string.gfind(msg, "You reflect (.+) to (.+)%.") do target=ta; amount=tonumber(strsub(a, strfind(a, "%d+"))) end
-	DPSMate.DB:EnemyDamage(DPSMateEDT, player, "Reflection (Thorns etc.)", 1, 0, 0, 0, 0, 0, amount, target, 0, 0)
-	DPSMate.DB:DamageDone(player, "Reflection (Thorns etc.)", 1, 0, 0, 0, 0, 0, amount, 0, 0)
+	for a,b,c in strgfind(msg, "You reflect (%d+) (%a-) damage to (.+)%.") do 
+		local am = tonumber(a)
+		DPSMate.DB:EnemyDamage(DPSMateEDT, player, "Reflection", 1, 0, 0, 0, 0, 0, am, c, 0, 0)
+		DPSMate.DB:DamageDone(player, "Reflection", 1, 0, 0, 0, 0, 0, am, 0, 0)
+	end
 end
 
 -- Helboar reflects 4 Fire damage to you.
 function DPSMate.Parser:SpellDamageShieldsOnOthers(msg)
-	local target, cause, amount = "", {}, 0
-	for c, a, ta in string.gfind(msg, "(.+) reflects (.+) to (.+)%.") do cause.name=c; target=ta; amount=tonumber(strsub(a, strfind(a, "%d+"))) end
-	if target~="you" then target=player.name end
-	DPSMate.DB:EnemyDamage(DPSMateEDT, cause, "Reflection (Thorns etc.)", 1, 0, 0, 0, 0, 0, amount, target, 0, 0)
-	DPSMate.DB:DamageDone(cause, "Reflection (Thorns etc.)", 1, 0, 0, 0, 0, 0, amount, 0, 0)
+	for a,b,c,d in string.gfind(msg, "(.+) reflects (%d+) (%a-) damage to (.+)%.") do
+		local am,ta = tonumber(b)
+		if d == "you" then ta=player end
+		DPSMate.DB:EnemyDamage(DPSMateEDT, a, "Reflection", 1, 0, 0, 0, 0, 0, am, ta or d, 0, 0)
+		DPSMate.DB:DamageDone(a, "Reflection", 1, 0, 0, 0, 0, 0, am, 0, 0)
+	end
 end
 
 ----------------------------------------------------------------------------------
 --------------                    Damage taken                      --------------                                  
 ----------------------------------------------------------------------------------
 
--- War Reaver hits/crits you for 66.
+-- War Reaver hits/crits you for 66 (Fire damage). (45 resisted)
 function DPSMate.Parser:CreatureVsSelfHits(msg)
-	local cause, hit, crit, amount, absorbed, crush, block = "", 0, 0, 0, 0, 0, 0
-	for c, a in string.gfind(msg, "(.+) hits you for (.+)%.") do hit=1; cause=c; amount=tonumber(strsub(a, strfind(a, "%d+"))) end
-	for c, a in string.gfind(msg, "(.+) crits you for (.+)%.") do crit=1; cause=c; amount=tonumber(strsub(a, strfind(a, "%d+"))) end -- Absorbtion has to be parsed individually
-	if strfind(msg, "crushing") then crush=1; hit=0 end
-	if strfind(msg, "blocked") then block=1; hit=0 end
-	DPSMate.DB:EnemyDamage(DPSMateEDD, player, "AutoAttack", hit, crit, 0, 0, 0, 0, amount, cause, block, crush)
-	DPSMate.DB:DamageTaken(player, "AutoAttack", hit, crit, 0, 0, 0, 0, amount, cause, crush)
-	DPSMate.DB:DeathHistory(player.name, cause, "AutoAttack", amount, hit, crit, 0, crush)
+	t = {}
+	for a,b,c,d in strgfind(msg, "(.+) (%a%a?)\its you for (%d+)(.*)\.%s?(.*)") do
+		if b=="h" then t[1]=1;t[2]=0 end
+		if strfind(d, "crushing") then t[3]=1;t[1]=0;t[2]=0 elseif strfind(d, "blocked") then t[4]=1;t[1]=0;t[2]=0 end
+		t[5] = tonumber(c)
+		DPSMate.DB:EnemyDamage(DPSMateEDD, player, "AutoAttack", t[1] or 0, t[2] or 1, 0, 0, 0, 0, t[5], a, t[4] or 0, t[3] or 0)
+		DPSMate.DB:DamageTaken(player, "AutoAttack", t[1] or 0, t[2] or 1, 0, 0, 0, 0, t[5], a, t[3] or 0)
+		DPSMate.DB:DeathHistory(player, a, "AutoAttack", t[5], t[1] or 0, t[2] or 1, 0, t[3] or 0)
+		return
+	end
 end
 
 -- Firetail Scorpid attacks. You parry.
 -- Firetail Scorpid attacks. You dodge.
 -- Firetail Scorpid misses you.
 function DPSMate.Parser:CreatureVsSelfMisses(msg)
-	local cause, miss, parry, dodge, block = "", 0, 0, 0, 0
-	for c, k in string.gfind(msg, "(.+) attacks. You (.+)%.") do cause=c; if k=="parry" then parry=1 elseif k=="dodge" then dodge=1 else block=1 end end
-	for c in string.gfind(msg, "(.+) misses you%.") do cause=c; miss=1 end
-	DPSMate.DB:EnemyDamage(DPSMateEDD, player, "AutoAttack", 0, 0, miss, parry, dodge, 0, 0, cause, block, 0)
-	DPSMate.DB:DamageTaken(player, "AutoAttack", 0, 0, miss, parry, dodge, 0, 0, cause, 0)
+	t = {}
+	for a in strgfind(msg, "(.+) misses you%.") do 
+		DPSMate.DB:EnemyDamage(DPSMateEDD, player, "AutoAttack", 0, 0, 1, 0, 0, 0, 0, a, 0, 0)
+		DPSMate.DB:DamageTaken(player, "AutoAttack", 0, 0, 1, 0, 0, 0, 0, a, 0)
+		return
+	end
+	for a,b in strgfind(msg, "(.+) attacks. You (.+)%.") do 
+		if b=="parry" then t[1]=1 elseif b=="dodge" then t[2]=1 else t[3]=1 end 
+		DPSMate.DB:EnemyDamage(DPSMateEDD, player, "AutoAttack", 0, 0, 0, t[1] or 0, t[2] or 0, 0, 0, a, t[3] or 0, 0)
+		DPSMate.DB:DamageTaken(player, "AutoAttack", 0, 0, 0, t[1] or 0, t[2] or 0, 0, 0, a, 0)
+		return
+	end
 end 
 
--- Thaurissan Spy performs Dazed on you. (Implementing it later)
+-- Thaurissan Spy performs Dazed on you. (Implementing it later) !!!!!
 -- Thaurissan Spy's Poison was resisted.
 -- Thaurissan Spy's Backstab hits/crits you for 116.
 -- Flamekin Torcher's Fireball hits/crits you for 86 Fire damage. (School?)
 function DPSMate.Parser:CreatureVsSelfSpellDamage(msg)
-	local cause, ability, amount, resist, hit, crit, absorbed = "", "", 0, 0, 0, 0, 0
-	if not strfind(msg, "performs") then
-		for c, ab, a in string.gfind(msg, "(.+)'s (.-) hits you for (.+)%.") do hit=1; cause=c; ability=ab; amount=tonumber(strsub(a, strfind(a, "%d+"))) end
-		for c, ab, a in string.gfind(msg, "(.+)'s (.-) crits you for (.+)%.") do crit=1; cause=c; ability=ab; amount=tonumber(strsub(a, strfind(a, "%d+"))) end -- Absorbtion has to be parsed individually
-		for c, ab in string.gfind(msg, "(.+)'s (.-) was resisted.") do resist=1; cause=c; ability=ab end
-		DPSMate.DB:UnregisterPotentialKick(cause, ability, GetTime())
-		DPSMate.DB:EnemyDamage(DPSMateEDD, player, ability, hit, crit, 0, 0, 0, resist, amount, cause, 0, 0)
-		DPSMate.DB:DamageTaken(player, ability, hit, crit, 0, 0, 0, resist, amount, cause, 0)
-		DPSMate.DB:DeathHistory(player.name, cause, ability, amount, hit, crit, 0, 0)
+	t = {}
+	for a,b,c,d,e in strgfind(msg, "(.+)'s (.+) (%a%a?)\its you for (%d+)(.*)\.%s?(.*)") do -- Potential here to track school and resisted damage
+		if c=="h" then t[1]=1;t[2]=0 end
+		t[3] = tonumber(d)
+		DPSMate.DB:UnregisterPotentialKick(a, b, GetTime())
+		DPSMate.DB:EnemyDamage(DPSMateEDD, player, b, t[1] or 0, t[2] or 1, 0, 0, 0, 0, t[3], a, 0, 0)
+		DPSMate.DB:DamageTaken(player, b, t[1] or 0, t[2] or 1, 0, 0, 0, 0, t[3], a, 0)
+		DPSMate.DB:DeathHistory(player, a, b, t[3], t[1] or 0, t[2] or 1, 0, 0)
+		return
+	end
+	for a,b in strgfind(msg, "(.+)'s (.+) was resisted.") do
+		DPSMate.DB:EnemyDamage(DPSMateEDD, player, b, 0, 0, 0, 0, 0, 1, 0, a, 0, 0)
+		DPSMate.DB:DamageTaken(player, b, 0, 0, 0, 0, 0, 1, 0, a, 0)
+		return
 	end
 end
 
--- You are afflicted by Dazed. (Implementing it later maybe)
+-- You are afflicted by Dazed. (Implementing it later maybe) !!!!!!
 -- You are afflicted by Infected Bite.
 -- You suffer 8 Nature damage from Ember Worg's Infected Bite. (3 resisted) (School? + resist?)
 function DPSMate.Parser:PeriodicSelfDamage(msg)
-	local cause, ability, amount = "", "", 0
-	if not strfind(msg, "afflicted") then
-		for a, c, ab in string.gfind(msg, "You suffer (.+) from (.+)'s (.+)%.") do cause=c; ability=ab; amount=tonumber(strsub(a, strfind(a, "%d+"))) end
-		DPSMate.DB:EnemyDamage(DPSMateEDD, player, ability.."(Periodic)", 1, 0, 0, 0, 0, 0, amount, cause, 0, 0)
-		DPSMate.DB:DamageTaken(player, ability.."(Periodic)", 1, 0, 0, 0, 0, 0, amount, cause, 0)
-		DPSMate.DB:DeathHistory(player.name, cause, ability.."(Periodic)", amount, 1, 0, 0, 0)
+	t = {}
+	for a,b,c,d,e in strgfind(msg, "You suffer (%d+) (%a+) damage from (.+)'s (.+)\.%s?(.*)") do -- Potential to track school and resisted damage
+		t[1] = tonumber(a)
+		DPSMate.DB:EnemyDamage(DPSMateEDD, player, d.."(Periodic)", 1, 0, 0, 0, 0, 0, t[1], c, 0, 0)
+		DPSMate.DB:DamageTaken(player, d.."(Periodic)", 1, 0, 0, 0, 0, 0, t[1], c, 0)
+		DPSMate.DB:DeathHistory(player, c, d.."(Periodic)", t[1], 1, 0, 0, 0)
+		return
 	end
 end
 
--- Ember Worg hits/crits Ikaa for 58.
+-- Ember Worg hits/crits Ikaa for 58 (Fire damage). (41 resisted/blocked)
 function DPSMate.Parser:CreatureVsCreatureHits(msg) 
-	local target, cause, hit, crit, amount, crush, block = {}, "", 0, 0, 0, 0, 0
-	for c, ta, a in string.gfind(msg, "(.+) hits (.-) for (.+)%.") do hit=1; cause=c; target.name = ta; amount=tonumber(strsub(a, strfind(a, "%d+"))); end
-	for c, ta, a in string.gfind(msg, "(.+) crits (.-) for (.+)%.") do crit=1; cause=c; target.name = ta; amount=tonumber(strsub(a, strfind(a, "%d+"))); end
-	if strfind(msg, "crushing") then crush=1; hit=0 end
-	if strfind(msg, "blocked") then block=1; hit=0 end
-	DPSMate.DB:EnemyDamage(DPSMateEDD, target, "AutoAttack", hit, crit, 0, 0, 0, 0, amount, cause, block, crush)
-	DPSMate.DB:DamageTaken(target, "AutoAttack", hit, crit, 0, 0, 0, 0, amount, cause, crush)
-	DPSMate.DB:DeathHistory(target.name, cause, "AutoAttack", amount, hit, crit, 0, crush)
+	t = {}
+	for a,b,c,d,e in strgfind(msg, "(.+) (%a%a?)\its (.+) for (%d+)(.*)\.%s?(.*)") do
+		if b=="h" then t[1]=1;t[2]=0 end
+		if strfind(e, "crushing") then t[3]=1;t[1]=0;t[2]=0 elseif strfind(e, "blocked") then t[4]=1;t[1]=0;t[2]=0 end
+		t[5] = tonumber(d)
+		DPSMate.DB:EnemyDamage(DPSMateEDD, c, "AutoAttack", t[1] or 0, t[2] or 1, 0, 0, 0, 0, t[5], a, t[4] or 0, t[3] or 0)
+		DPSMate.DB:DamageTaken(c, "AutoAttack", t[1] or 0, t[2] or 1, 0, 0, 0, 0, t[5], a, t[3] or 0)
+		DPSMate.DB:DeathHistory(c, a, "AutoAttack", t[5], t[1] or 0, t[2] or 1, 0, t[3] or 0)
+		return
+	end
 end
 
 -- Ember Worg attacks. Ikaa parries.
@@ -424,36 +472,51 @@ end
 -- Ember Worg misses Ikaa.
 -- Young Wolf attacks. Senpie absorbs all the damage.
 function DPSMate.Parser:CreatureVsCreatureMisses(msg)
-	local target, cause, miss, parry, dodge, block = {}, "", 0, 0, 0, 0
-	for c, ta, k in string.gfind(msg, "(.+) attacks%. (.-) (.+)%.") do cause=c; target.name = ta; if k=="parries" then parry=1 elseif k=="dodges" then dodge=1 else block=1 end end
-	for c, ta in string.gfind(msg, "(.+) misses (.+)%.") do cause=c; miss=1; target.name = ta end
-	DPSMate.DB:EnemyDamage(DPSMateEDD, target, "AutoAttack", 0, 0, miss, parry, dodge, 0, 0, cause, block, 0)
-	DPSMate.DB:DamageTaken(target, "AutoAttack", 0, 0, miss, parry, dodge, 0, 0, cause, 0)
+	t = {}
+	for a,b,c in strgfind(msg, "(.+) attacks%. (.-) (.+)%.") do 
+		if c=="parries" then t[1]=1 elseif c=="dodges" then t[2]=1 else t[3]=1 end 
+		DPSMate.DB:EnemyDamage(DPSMateEDD, b, "AutoAttack", 0, 0, 0, t[1] or 0, t[2] or 0, 0, 0, a, t[3] or 0, 0)
+		DPSMate.DB:DamageTaken(b, "AutoAttack", 0, 0, 0, t[1] or 0, t[2] or 0, 0, 0, a, 0)
+		return
+	end
+	for a,b in strgfind(msg, "(.+) misses (.+)%.") do 
+		DPSMate.DB:EnemyDamage(DPSMateEDD, b, "AutoAttack", 0, 0, 1, 0, 0, 0, 0, a, 0, 0)
+		DPSMate.DB:DamageTaken(b, "AutoAttack", 0, 0, 1, 0, 0, 0, 0, a, 0)
+		return 
+	end
 end
 
 -- Ikaa is afflicted by Infected Bite.
 -- Ikaa suffers 15 Nature damage from Ember Worg's Infected Bite. (3 resisted)
 function DPSMate.Parser:SpellPeriodicDamageTaken(msg)
-	local target, cause, ability, amount = {}, "", "", 0
-	if not strfind(msg, "afflicted") then
-		for ta, a, c, ab in string.gfind(msg, "(.-) suffers (.+) from (.+)'s (.+)%.") do target.name=ta; cause=c; ability=ab; amount=tonumber(strsub(a, strfind(a, "%d+"))) end
-		DPSMate.DB:EnemyDamage(DPSMateEDD, target, ability.."(Periodic)", 1, 0, 0, 0, 0, 0, amount, cause, 0, 0)
-		DPSMate.DB:DamageTaken(target, ability.."(Periodic)", 1, 0, 0, 0, 0, 0, amount, cause, 0)
-		DPSMate.DB:DeathHistory(target.name, cause, ability.."(Periodic)", amount, 1, 0, 0, 0)
+	t = {}
+	for a,b,c,d,e in string.gfind(msg, "(.+) suffers (%d+) (%a+) damage from (.+)'s (.+)\.%s?(.*)") do -- Potential to track resisted damage and school
+		t[1] = tonumber(b)
+		DPSMate.DB:EnemyDamage(DPSMateEDD, a, d.."(Periodic)", 1, 0, 0, 0, 0, 0, t[1], d, 0, 0)
+		DPSMate.DB:DamageTaken(a, d.."(Periodic)", 1, 0, 0, 0, 0, 0, t[1], d, 0)
+		DPSMate.DB:DeathHistory(a, d, d.."(Periodic)", t[1], 1, 0, 0, 0)
+		return
 	end
 end
 
 -- Black Broodling's Fireball was resisted by Ikaa.
 -- Black Broodling's Fireball hits/crits Ikaa for 342 Fire damage. (100 resisted) (School + resist ?)
 function DPSMate.Parser:CreatureVsCreatureSpellDamage(msg)
-	local target, cause, hit, crit, resist, ability, amount = {}, "", 0, 0, 0, "", 0
-	for c, ab, ta in string.gfind(msg, "(.+)'s (.+) was resisted by (.+)%.") do resist=1; cause=c; target.name = ta; ability=ab end
-	for c, ab, ta, a in string.gfind(msg, "(.+)'s (.+) hits (.+) for (.+)%.") do hit=1; cause=c; target.name = ta; ability=ab; amount=tonumber(strsub(a, strfind(a, "%d+"))) end
-	for c, ab, ta, a in string.gfind(msg, "(.+)'s (.+) crits (.+) for (.+)%.") do crit=1; cause=c; target.name = ta; ability=ab; amount=tonumber(strsub(a, strfind(a, "%d+"))) end
-	DPSMate.DB:UnregisterPotentialKick(cause, ability, GetTime())
-	DPSMate.DB:EnemyDamage(DPSMateEDD, target, ability, hit, crit, 0, 0, 0, resist, amount, cause, 0, 0)
-	DPSMate.DB:DamageTaken(target, ability, hit, crit, 0, 0, 0, resist, amount, cause, 0)
-	DPSMate.DB:DeathHistory(target.name, cause, ability, amount, hit, crit, 0, 0)
+	t = {}
+	for a,b,c,d,e,f in strgfind(msg, "(.+)'s (.+) (%a%a?)\its (.+) for (%d+)(.*)\.%s?(.*)") do
+		if c=="h" then t[1]=1;t[2]=0 end
+		t[3] = tonumber(e)
+		DPSMate.DB:UnregisterPotentialKick(a, b, GetTime())
+		DPSMate.DB:EnemyDamage(DPSMateEDD, d, b, t[1] or 0, t[2] or 1, 0, 0, 0, 0, t[3], a, 0, 0)
+		DPSMate.DB:DamageTaken(d, b, t[1] or 0, t[2] or 1, 0, 0, 0, 0, t[3], a, 0)
+		DPSMate.DB:DeathHistory(d, a, b, t[3], t[1] or 0, t[2] or 1, 0, 0)
+		return
+	end
+	for a,b,c in strgfind(msg, "(.+)'s (.+) was resisted by (.+)%.") do
+		DPSMate.DB:EnemyDamage(DPSMateEDD, c, b, 0, 0, 0, 0, 0, 1, 0, a, 0, 0)
+		DPSMate.DB:DamageTaken(c, b, 0, 0, 0, 0, 0, 1, 0, a, 0)
+		return
+	end
 end
 
 ----------------------------------------------------------------------------------
@@ -500,19 +563,41 @@ end
 -- Your Healing Potion heals you for 507.
 -- You gain 25 Energy from Relentless Strikes Effect.
 function DPSMate.Parser:SpellSelfBuff(msg)
-	local ability, hit, crit, target, amount = "", 0, 0, "", 0
-	for a, ab in string.gfind(msg, "You gain (.+) Energy from (.+)%.") do DPSMate.DB:BuildBuffs(player.name, player.name, ab, true); DPSMate.DB:DestroyBuffs(player.name, ab); return end
-	for a, ab in string.gfind(msg, "You gain (.+) extra attack through (.+)%.") do DPSMate.DB:BuildBuffs(player.name, player.name, ab, true); DPSMate.DB:DestroyBuffs(player.name, ab); return end
-	for ab, ta, a in string.gfind(msg, "Your (.+) heals (.+) for (.+)%.") do hit=1; crit=0; ability=ab; target=ta; amount=tonumber(strsub(a, strfind(a, "%d+"))) end
-	for ab, ta, a in string.gfind(msg, "Your (.+) critically heals (.+) for (.+)%.") do crit=1; hit=0; ability=ab; target=ta; amount=tonumber(strsub(a, strfind(a, "%d+"))) end
-	if target=="you" then target=player.name end
-	overheal = DPSMate.Parser:GetOverhealByName(amount, target)
-	DPSMate.DB:HealingTaken(DPSMateHealingTaken, target, ability, hit, crit, amount, player.name)
-	DPSMate.DB:HealingTaken(DPSMateEHealingTaken, target, ability, hit, crit, amount-overheal, player.name)
-	DPSMate.DB:Healing(DPSMateEHealing, player, ability, hit, crit, amount-overheal, target)
-	if overheal>0 then DPSMate.DB:Healing(DPSMateOverhealing, player, ability, hit, crit, overheal, target) end
-	DPSMate.DB:Healing(DPSMateTHealing, player, ability, hit, crit, amount, target)
-	DPSMate.DB:DeathHistory(target, player.name, ability, amount, hit, crit, 1, 0)
+	t = {}
+	for a,b,c in string.gfind(msg, "Your (.+) heals (.+) for (%d+)%.") do 
+		if b=="you" then t[1]=player end
+		t[2] = tonumber(c)
+		overheal = DPSMate.Parser:GetOverhealByName(t[2], t[1] or b)
+		DPSMate.DB:HealingTaken(DPSMateHealingTaken, t[1] or b, a, 1, 0, t[2], player)
+		DPSMate.DB:HealingTaken(DPSMateEHealingTaken, t[1] or b, a, 1, 0, t[2]-overheal, player)
+		DPSMate.DB:Healing(DPSMateEHealing, player, a, 1, 0, t[2]-overheal, t[1] or b)
+		if overheal>0 then DPSMate.DB:Healing(DPSMateOverhealing, player, a, 1, 0, overheal, t[1] or b) end
+		DPSMate.DB:Healing(DPSMateTHealing, player, a, 1, 0, t[2], t[1] or b)
+		DPSMate.DB:DeathHistory(t[1] or b, player, a, t[2], 1, 0, 1, 0)
+		return
+	end
+	for a,b,c in string.gfind(msg, "Your (.+) critically heals (.+) for (%d+)%.") do 
+		if b=="you" then t[1]=player end
+		t[2] = tonumber(c)
+		overheal = DPSMate.Parser:GetOverhealByName(t[2], t[1] or b)
+		DPSMate.DB:HealingTaken(DPSMateHealingTaken, t[1] or b, a, 0, 1, t[2], player)
+		DPSMate.DB:HealingTaken(DPSMateEHealingTaken, t[1] or b, a, 0, 1, t[2]-overheal, player)
+		DPSMate.DB:Healing(DPSMateEHealing, player, a, 0, 1, t[2]-overheal, t[1] or b)
+		if overheal>0 then DPSMate.DB:Healing(DPSMateOverhealing, player, a, 0, 1, overheal, t[1] or b) end
+		DPSMate.DB:Healing(DPSMateTHealing, player, a, 0, 1, t[2], t[1] or b)
+		DPSMate.DB:DeathHistory(t[1] or b, player, a, t[2], 0, 1, 1, 0)
+		return
+	end
+	for a,b in strgfind(msg, "You gain (%d+) Energy from (.+)%.") do -- Potential to gain energy values for class evaluation
+		DPSMate.DB:BuildBuffs(player, player, b, true)
+		DPSMate.DB:DestroyBuffs(player, b)
+		return
+	end
+	for a,b in strgfind(msg, "You gain (%d) extra attack through (.+)%.") do -- Potential for more evaluation
+		DPSMate.DB:BuildBuffs(player, player, b, true)
+		DPSMate.DB:DestroyBuffs(player, b)
+		return
+	end	
 end
 
 -- You gain First Aid.
@@ -521,18 +606,34 @@ end
 -- You gain 11 health from First Aid.
 -- You gain 61 health from Nenea's Rejuvenation.
 function DPSMate.Parser:SpellPeriodicSelfBuff(msg) -- Maybe some loss here?
-	local cause, ability, target, amount = {}, "", "", 0
-	if strfind(msg, "begins to") then return end
-	for ab in string.gfind(msg, "You gain (.+)%.") do if not strfind(msg, "from") then DPSMate.DB:ConfirmBuff(player.name, ab, GetTime()); DPSMate.DB:RegisterHotDispel(player.name, ab) end; return end
-	for a, ab in string.gfind(msg, "You gain (.+) health from (.+)%.") do amount=tonumber(strsub(a, strfind(a, "%d+"))); ability=ab; target=player.name; cause.name=player.name end
-	for a, ta, ab in string.gfind(msg, "You gain (.+) health from (.+)'s (.+)%.") do amount=tonumber(strsub(a, strfind(a, "%d+"))); ability=ab; target=player.name; cause.name=ta end
-	overheal = DPSMate.Parser:GetOverhealByName(amount, target)
-	DPSMate.DB:HealingTaken(DPSMateHealingTaken, target, ability.."(Periodic)", 1, 0, amount, cause.name)
-	DPSMate.DB:HealingTaken(DPSMateEHealingTaken, target, ability.."(Periodic)", 1, 0, amount-overheal, cause.name)
-	DPSMate.DB:Healing(DPSMateEHealing, cause, ability.."(Periodic)", 1, 0, amount-overheal, target)
-	if overheal>0 then DPSMate.DB:Healing(DPSMateOverhealing, cause, ability.."(Periodic)", 1, 0, overheal, target) end
-	DPSMate.DB:Healing(DPSMateTHealing, cause, ability.."(Periodic)", 1, 0, amount, target)
-	DPSMate.DB:DeathHistory(player.name, cause.name, ability.."(Periodic)", amount, 1, 0, 1, 0)
+	t = {}
+	for a in strgfind(msg, "You gain (%a+)%.") do
+		DPSMate.DB:ConfirmBuff(player, a, GetTime())
+		DPSMate.DB:RegisterHotDispel(player, a)
+		return 
+	end
+	for a,b,c in strgfind(msg, "You gain (%d+) health from (.+)'s (.+)%.") do
+		t[1]=tonumber(a)
+		overheal = DPSMate.Parser:GetOverhealByName(t[1], player)
+		DPSMate.DB:HealingTaken(DPSMateHealingTaken, player, c.."(Periodic)", 1, 0, t[1], b)
+		DPSMate.DB:HealingTaken(DPSMateEHealingTaken, player, c.."(Periodic)", 1, 0, t[1]-overheal, b)
+		DPSMate.DB:Healing(DPSMateEHealing, b, c.."(Periodic)", 1, 0, t[1]-overheal, player)
+		if overheal>0 then DPSMate.DB:Healing(DPSMateOverhealing, b, c.."(Periodic)", 1, 0, overheal, player) end
+		DPSMate.DB:Healing(DPSMateTHealing, b, c.."(Periodic)", 1, 0, t[1], player)
+		DPSMate.DB:DeathHistory(player, b, c.."(Periodic)", t[1], 1, 0, 1, 0)
+		return
+	end
+	for a,b in strgfind(msg, "You gain (%d+) health from (.+)%.") do 
+		t[1] = tonumber(a)
+		overheal = DPSMate.Parser:GetOverhealByName(t[1], player)
+		DPSMate.DB:HealingTaken(DPSMateHealingTaken, player, b.."(Periodic)", 1, 0, t[1], player)
+		DPSMate.DB:HealingTaken(DPSMateEHealingTaken, player, b.."(Periodic)", 1, 0, t[1]-overheal, player)
+		DPSMate.DB:Healing(DPSMateEHealing, player, b.."(Periodic)", 1, 0, t[1]-overheal, player)
+		if overheal>0 then DPSMate.DB:Healing(DPSMateOverhealing, player, b.."(Periodic)", 1, 0, overheal, player) end
+		DPSMate.DB:Healing(DPSMateTHealing, player, b.."(Periodic)", 1, 0, t[1], player)
+		DPSMate.DB:DeathHistory(player, player, b.."(Periodic)", t[1], 1, 0, 1, 0)
+		return
+	end
 end
 
 -- Catrala gains Last Stand.
@@ -541,37 +642,75 @@ end
 -- Sivir gains 11 health from Albea's First Aid.
 -- Soulstoke gains 25 Energy from Soulstoke's Relentless Strikes Effect.
 function DPSMate.Parser:SpellPeriodicFriendlyPlayerBuffs(msg)
-	local cause, ability, target, amount = {}, "", "", 0
-	if strfind(msg, "begins to") then return end
-	for ta, ab in string.gfind(msg, "(.+) gains (.+)%.") do if not strfind(msg, "from") then DPSMate.DB:ConfirmBuff(ta, ab, GetTime()); DPSMate.DB:RegisterHotDispel(ta, ab) end; return end
-	for ta, a, ab in string.gfind(msg, "(.+) gains (.+) health from your (.+)%.") do target=ta; amount=tonumber(strsub(a, strfind(a, "%d+"))); ability=ab; cause.name=player.name end
-	for ta, a, c, ab in string.gfind(msg, "(.+) gains (.+) health from (.+)'s (.+)%.") do target=ta; amount=tonumber(strsub(a, strfind(a, "%d+"))); ability=ab; cause.name=c end
-	overheal = DPSMate.Parser:GetOverhealByName(amount, target)
-	DPSMate.DB:HealingTaken(DPSMateHealingTaken, target, ability.."(Periodic)", 1, 0, amount, cause.name)
-	DPSMate.DB:HealingTaken(DPSMateEHealingTaken, target, ability.."(Periodic)", 1, 0, amount-overheal, cause.name)
-	DPSMate.DB:Healing(DPSMateEHealing, cause, ability.."(Periodic)", 1, 0, amount-overheal, target)
-	if overheal>0 then DPSMate.DB:Healing(DPSMateOverhealing, cause, ability.."(Periodic)", 1, 0, overheal, target) end
-	DPSMate.DB:Healing(DPSMateTHealing, cause, ability.."(Periodic)", 1, 0, amount, target)
-	DPSMate.DB:DeathHistory(target, cause.name, ability.."(Periodic)", amount, 1, 0, 1, 0)
+	t = {}
+	for f,a in strgfind(msg, "(.+) gains (%a+)%.") do
+		DPSMate.DB:ConfirmBuff(f, a, GetTime())
+		DPSMate.DB:RegisterHotDispel(f, a)
+		return 
+	end
+	for f,a,b,c in strgfind(msg, "(.+) gains (%d+) health from (.+)'s (.+)%.") do
+		t[1]=tonumber(a)
+		overheal = DPSMate.Parser:GetOverhealByName(t[1], f)
+		DPSMate.DB:HealingTaken(DPSMateHealingTaken, f, c.."(Periodic)", 1, 0, t[1], b)
+		DPSMate.DB:HealingTaken(DPSMateEHealingTaken, f, c.."(Periodic)", 1, 0, t[1]-overheal, b)
+		DPSMate.DB:Healing(DPSMateEHealing, b, c.."(Periodic)", 1, 0, t[1]-overheal, f)
+		if overheal>0 then DPSMate.DB:Healing(DPSMateOverhealing, b, c.."(Periodic)", 1, 0, overheal, f) end
+		DPSMate.DB:Healing(DPSMateTHealing, b, c.."(Periodic)", 1, 0, t[1], f)
+		DPSMate.DB:DeathHistory(f, b, c.."(Periodic)", t[1], 1, 0, 1, 0)
+		return
+	end
+	for f,a,b in strgfind(msg, "(.+) gains (%d+) health from (.+)%.") do 
+		t[1] = tonumber(a)
+		overheal = DPSMate.Parser:GetOverhealByName(t[1], f)
+		DPSMate.DB:HealingTaken(DPSMateHealingTaken, f, b.."(Periodic)", 1, 0, t[1], f)
+		DPSMate.DB:HealingTaken(DPSMateEHealingTaken, f, b.."(Periodic)", 1, 0, t[1]-overheal, f)
+		DPSMate.DB:Healing(DPSMateEHealing, f, b.."(Periodic)", 1, 0, t[1]-overheal, f)
+		if overheal>0 then DPSMate.DB:Healing(DPSMateOverhealing, f, b.."(Periodic)", 1, 0, overheal, f) end
+		DPSMate.DB:Healing(DPSMateTHealing, f, b.."(Periodic)", 1, 0, t[1], f)
+		DPSMate.DB:DeathHistory(f, f, b.."(Periodic)", t[1], 1, 0, 1, 0)
+		return
+	end
 end
 
 -- A1bea's Flash of Light heals you/Baz for 90.
 -- Albea's Flash of Light critically heals you/Baz for 135.
+-- if strfind(msg, "begins to") or strfind(msg, "Rage") then return end
 function DPSMate.Parser:SpellHostilePlayerBuff(msg)
-	local cause, ability, target, amount, hit, crit = {}, "", "", 0, 0, 0
-	if strfind(msg, "begins to") or strfind(msg, "Rage") then return end
-	for c, a, ta, ab in string.gfind(msg, "(.+) gains (.+) Energy from (.+)'s (.+)%.") do DPSMate.DB:BuildBuffs(c, ta, ab, true); DPSMate.DB:DestroyBuffs(c, ab); return end
-	for c, a, ab in string.gfind(msg, "(.+) gains (.+) extra attack through (.+)%.") do DPSMate.DB:BuildBuffs(c, c, ab, true); DPSMate.DB:DestroyBuffs(c, ab); return end
-	for c, ab, ta, a in string.gfind(msg, "(.+)'s (.+) heals (.+) for (.+)%.") do hit=1; crit=0; amount=tonumber(strsub(a, strfind(a, "%d+"))); ability=ab; target=ta; cause.name=c end
-	for c, ab, ta, a in string.gfind(msg, "(.+)'s (.+) critically heals (.+) for (.+)%.") do crit=1; hit=0; amount=tonumber(strsub(a, strfind(a, "%d+"))); ability=ab; target=ta; cause.name=c end
-	if target=="you" then target=player.name end
-	overheal = DPSMate.Parser:GetOverhealByName(amount, target)
-	DPSMate.DB:HealingTaken(DPSMateHealingTaken, target, ability, hit, crit, amount, cause.name)
-	DPSMate.DB:HealingTaken(DPSMateEHealingTaken, target, ability, hit, crit, amount-overheal, cause.name)
-	DPSMate.DB:Healing(DPSMateEHealing, cause, ability, hit, crit, amount-overheal, target)
-	if overheal>0 then DPSMate.DB:Healing(DPSMateOverhealing, cause, ability, hit, crit, overheal, target) end
-	DPSMate.DB:Healing(DPSMateTHealing, cause, ability, hit, crit, amount, target)
-	DPSMate.DB:DeathHistory(target, cause.name, ability, amount, hit, crit, 1, 0)
+	t = {}
+	for a,b,c,d in strgfind(msg, "(.+)'s (.+) heals (.+) for (%d+)%.") do 
+		t[1] = tonumber(d)
+		if c=="you" then t[2]=player end
+		overheal = DPSMate.Parser:GetOverhealByName(t[1], t[2] or c)
+		DPSMate.DB:HealingTaken(DPSMateHealingTaken, t[2] or c, b, 1, 0, t[1], a)
+		DPSMate.DB:HealingTaken(DPSMateEHealingTaken, t[2] or c, b, 1, 0, t[1]-overheal, a)
+		DPSMate.DB:Healing(DPSMateEHealing, a, b, 1, 0, t[1]-overheal, t[2] or c)
+		if overheal>0 then DPSMate.DB:Healing(DPSMateOverhealing, a, b, 1, 0, overheal, t[2] or c) end
+		DPSMate.DB:Healing(DPSMateTHealing, a, b, 1, 0, t[1], t[2] or c)
+		DPSMate.DB:DeathHistory(t[2] or c, a, b, t[1], 1, 0, 1, 0)
+		return
+	end
+	for a,b,c,d in strgfind(msg, "(.+)'s (.+) critically heals (.+) for (%d+)%.") do 
+		t[1] = tonumber(d)
+		if c=="you" then t[2]=player end
+		overheal = DPSMate.Parser:GetOverhealByName(t[1], t[2] or c)
+		DPSMate.DB:HealingTaken(DPSMateHealingTaken, t[2] or c, b, 0, 1, t[1], a)
+		DPSMate.DB:HealingTaken(DPSMateEHealingTaken, t[2] or c, b, 0, 1, t[1]-overheal, a)
+		DPSMate.DB:Healing(DPSMateEHealing, a, b, 0, 1, t[1]-overheal, t[2] or c)
+		if overheal>0 then DPSMate.DB:Healing(DPSMateOverhealing, a, b, 0, 1, overheal, t[2] or c) end
+		DPSMate.DB:Healing(DPSMateTHealing, a, b, 0, 1, t[1], t[2] or c)
+		DPSMate.DB:DeathHistory(t[2] or c, a, b, t[1], 0, 1, 1, 0)
+		return
+	end
+	for a,b,c,d in strgfind(msg, "(.+) gains (%d+) Energy from (.+)'s (.+)%.") do
+		DPSMate.DB:BuildBuffs(c, a, d, true)
+		DPSMate.DB:DestroyBuffs(c, d)
+		return 
+	end
+	for a,b,c in strgfind(msg, "(.+) gains (%d+) extra attack through (.+)%.") do
+		DPSMate.DB:BuildBuffs(a, a, c, true)
+		DPSMate.DB:DestroyBuffs(a, c)
+		return 
+	end
 end
 
 ----------------------------------------------------------------------------------
@@ -580,55 +719,51 @@ end
 
 -- Heavy War Golem hits/crits you for 8. (59 absorbed)
 function DPSMate.Parser:CreatureVsSelfHitsAbsorb(msg)
-	for c, a, absorbed in string.gfind(msg, "(.+) hits you for (.+)%. %((.+) absorbed%)") do DPSMate.DB:SetUnregisterVariables(tonumber(absorbed), "AutoAttack", c) end
-	for c, a, absorbed in string.gfind(msg, "(.+) crits you for (.+)%. %((.+) absorbed%)") do DPSMate.DB:SetUnregisterVariables(tonumber(absorbed), "AutoAttack", c) end
+	for c, b, a, absorbed in strgfind(msg, "(.+) (%a%a?)\its you for (.+)%. %((%d+) absorbed%)") do DPSMate.DB:SetUnregisterVariables(tonumber(absorbed), "AutoAttack", c) end
 end
 
 function DPSMate.Parser:CreatureVsCreatureHitsAbsorb(msg)
-	for c, ta, a, absorbed in string.gfind(msg, "(.+) hits (.+) for (.+)%. %((.+) absorbed%)") do DPSMate.DB:SetUnregisterVariables(tonumber(absorbed), "AutoAttack", c) end
-	for c, ta, a, absorbed in string.gfind(msg, "(.+) crits (.+) for (.+)%. %((.+) absorbed%)") do DPSMate.DB:SetUnregisterVariables(tonumber(absorbed), "AutoAttack", c) end
+	for c, b, a, absorbed in strgfind(msg, "(.+) (%a%a?)\its (.+) for (.+)%. %((%d+) absorbed%)") do DPSMate.DB:SetUnregisterVariables(tonumber(absorbed), "AutoAttack", c) end
 end
 
 -- Heavy War Golem attacks. You absorb all the damage.
 function DPSMate.Parser:CreatureVsSelfMissesAbsorb(msg)
-	for c in string.gfind(msg, "(.+) attacks%. You absorb all the damage%.") do DPSMate.DB:Absorb("AutoAttack", player.name, c) end
+	for c in strgfind(msg, "(.+) attacks%. You absorb all the damage%.") do DPSMate.DB:Absorb("AutoAttack", player, c) end
 end
 
 function DPSMate.Parser:CreatureVsCreatureMissesAbsorb(msg)
-	for c, ta in string.gfind(msg, "(.+) attacks%. (.+) absorbs all the damage%.") do DPSMate.DB:Absorb("AutoAttack", ta, c) end
+	for c, ta in strgfind(msg, "(.+) attacks%. (.+) absorbs all the damage%.") do DPSMate.DB:Absorb("AutoAttack", ta, c) end
 end
 
 -- Heavy War Golem's Trample hits/crits you for 51 (Fire damage). (48 absorbed)
 function DPSMate.Parser:CreatureVsSelfSpellDamageAbsorb(msg)
-	for c, a, absorbed in string.gfind(msg, "(.+)'s (.+) hits you for (.+)%. %((.+) absorbed%)") do DPSMate.DB:SetUnregisterVariables(tonumber(absorbed), a, c) end
-	for c, a, absorbed in string.gfind(msg, "(.+)'s (.+) crits you for (.+)%. %((.+) absorbed%)") do DPSMate.DB:SetUnregisterVariables(tonumber(absorbed), a, c) end
+	for c, ab, b, a, absorbed in strgfind(msg, "(.+)'s (.+) (%a%a?)\its you for (.+)%. %((%d+) absorbed%)") do DPSMate.DB:SetUnregisterVariables(tonumber(absorbed), ab, c) end
 end
 
 function DPSMate.Parser:CreatureVsCreatureSpellDamageAbsorb(msg)
-	for c, ta, a, absorbed in string.gfind(msg, "(.+)'s (.+) hits (.+) for (.+)%. %((.+) absorbed%)") do DPSMate.DB:SetUnregisterVariables(tonumber(absorbed), a, c) end
-	for c, ta, a, absorbed in string.gfind(msg, "(.+)'s (.+) crits (.+) for (.+)%. %((.+) absorbed%)") do DPSMate.DB:SetUnregisterVariables(tonumber(absorbed), a, c) end
+	for c, ab, b, a, x, absorbed in strgfind(msg, "(.+)'s (.+) (%a%a?)\its (.+) for (.+)%. %((%d+) absorbed%)") do DPSMate.DB:SetUnregisterVariables(tonumber(absorbed), ab, c) end
 end
 
 function DPSMate.Parser:SpellPeriodicSelfBuffAbsorb(msg)
-	for ab in string.gfind(msg, "You gain (.+)%.") do if DPSMate:TContains(DPSMate.DB.ShieldFlags, ab) then DPSMate.DB:ConfirmAbsorbApplication(ab, player.name, GetTime()) end end
+	for ab in strgfind(msg, "You gain (.+)%.") do if DPSMate:TContains(DPSMate.DB.ShieldFlags, ab) then DPSMate.DB:ConfirmAbsorbApplication(ab, player, GetTime()) end end
 end
 
 function DPSMate.Parser:SpellPeriodicFriendlyPlayerBuffsAbsorb(msg)
-	for ta, ab in string.gfind(msg, "(.+) gains (.+)%.") do if DPSMate:TContains(DPSMate.DB.ShieldFlags, ab) then DPSMate.DB:ConfirmAbsorbApplication(ab, ta, GetTime()) end end
+	for ta, ab in strgfind(msg, "(.+) gains (.+)%.") do if DPSMate:TContains(DPSMate.DB.ShieldFlags, ab) then DPSMate.DB:ConfirmAbsorbApplication(ab, ta, GetTime()) end end
 end
 
 -- Power Word: Shield fades from you.
 function DPSMate.Parser:SpellAuraGoneSelf(msg)
-	for ab in string.gfind(msg, "(.+) fades from you%.") do if DPSMate:TContains(DPSMate.DB.ShieldFlags, ab) then DPSMate.DB:UnregisterAbsorb(ab, player.name) end; DPSMate.DB:DestroyBuffs(player.name, ab); DPSMate.DB:UnregisterHotDispel(player.name, ab) end
+	for ab in strgfind(msg, "(.+) fades from you%.") do if DPSMate:TContains(DPSMate.DB.ShieldFlags, ab) then DPSMate.DB:UnregisterAbsorb(ab, player) end; DPSMate.DB:DestroyBuffs(player, ab); DPSMate.DB:UnregisterHotDispel(player, ab) end
 end
 
 -- Power Word: Shield fades from Senpie.
 function DPSMate.Parser:SpellAuraGoneParty(msg)
-	for ab, ta in string.gfind(msg, "(.+) fades from (.+)%.") do if DPSMate:TContains(DPSMate.DB.ShieldFlags, ab) then DPSMate.DB:UnregisterAbsorb(ab, ta) end; DPSMate.DB:DestroyBuffs(ta, ab); DPSMate.DB:UnregisterHotDispel(ta, ab) end
+	for ab, ta in strgfind(msg, "(.+) fades from (.+)%.") do if DPSMate:TContains(DPSMate.DB.ShieldFlags, ab) then DPSMate.DB:UnregisterAbsorb(ab, ta) end; DPSMate.DB:DestroyBuffs(ta, ab); DPSMate.DB:UnregisterHotDispel(ta, ab) end
 end
 
 function DPSMate.Parser:SpellAuraGoneOther(msg)
-	for ab, ta in string.gfind(msg, "(.+) fades from (.+)%.") do if DPSMate:TContains(DPSMate.DB.ShieldFlags, ab) then DPSMate.DB:UnregisterAbsorb(ab, ta) end; DPSMate.DB:DestroyBuffs(ta, ab); DPSMate.DB:UnregisterHotDispel(ta, ab) end
+	for ab, ta in strgfind(msg, "(.+) fades from (.+)%.") do if DPSMate:TContains(DPSMate.DB.ShieldFlags, ab) then DPSMate.DB:UnregisterAbsorb(ab, ta) end; DPSMate.DB:DestroyBuffs(ta, ab); DPSMate.DB:UnregisterHotDispel(ta, ab) end
 end
 
 ----------------------------------------------------------------------------------
@@ -692,20 +827,20 @@ end
 
 -- Is it really "yourself"?
 function DPSMate.Parser:SpellSelfBuffDispels(msg)
-	for ab in string.gfind(msg, "You cast (.+)%.") do if DPSMate:TContains(DPSMate.Parser.Dispels, ab) then DPSMate.DB:AwaitDispel(ab, player.name, player.name, GetTime()) end end
+	for ab in strgfind(msg, "You cast (.+)%.") do if DPSMate:TContains(DPSMate.Parser.Dispels, ab) then DPSMate.DB:AwaitDispel(ab, player, player, GetTime()) end end
 end
 
 -- Avrora casts Remove Curse on you.
 -- Avrora casts Remove Curse on Avrora.
 function DPSMate.Parser:SpellHostilePlayerBuffDispels(msg)
-	for c, ab, ta in string.gfind(msg, "(.+) casts (.+) on (.+)%.") do if DPSMate:TContains(DPSMate.Parser.Dispels, ab) then if ta=="you" then DPSMate.DB:AwaitDispel(ab, player.name, c, GetTime()) else  DPSMate.DB:AwaitDispel(ab, ta, c, GetTime()) end end end
+	for c, ab, ta in strgfind(msg, "(.+) casts (.+) on (.+)%.") do if DPSMate:TContains(DPSMate.Parser.Dispels, ab) then if ta=="you" then DPSMate.DB:AwaitDispel(ab, player, c, GetTime()) else  DPSMate.DB:AwaitDispel(ab, ta, c, GetTime()) end end end
 end
 
 -- Avrora's  Curse of Agony is removed.
 -- Your Curse of Agony is removed.
 function DPSMate.Parser:SpellBreakAura(msg) 
-	for ta, ab in string.gfind(msg, "(.+)'s (.+) is removed.") do DPSMate.DB:ConfirmRealDispel(ab, ta, GetTime()) end
-	for ab in string.gfind(msg, "Your (.+) is removed.") do DPSMate.DB:ConfirmRealDispel(ab, player.name, GetTime()) end
+	for ta, ab in strgfind(msg, "(.+)'s (.+) is removed.") do DPSMate.DB:ConfirmRealDispel(ab, ta, GetTime()) end
+	for ab in strgfind(msg, "Your (.+) is removed.") do DPSMate.DB:ConfirmRealDispel(ab, player, GetTime()) end
 end
 
 ----------------------------------------------------------------------------------
@@ -715,11 +850,11 @@ end
 -- You die.
 -- Senpie dies.
 function DPSMate.Parser:CombatFriendlyDeath(msg)
-	for ta in string.gfind(msg, "(.-) (.-)%.") do if ta=="You" then DPSMate.DB:UnregisterDeath(player.name) else DPSMate.DB:UnregisterDeath(ta) end end
+	for ta in strgfind(msg, "(.-) (.-)%.") do if ta=="You" then DPSMate.DB:UnregisterDeath(player) else DPSMate.DB:UnregisterDeath(ta) end end
 end
 
 function DPSMate.Parser:CombatHostileDeaths(msg)
-	for ta in string.gfind(msg, "(.-) dies%.") do DPSMate.DB:UnregisterDeath(ta) end
+	for ta in strgfind(msg, "(.-) dies%.") do DPSMate.DB:UnregisterDeath(ta) end
 end
 
 ----------------------------------------------------------------------------------
@@ -754,5 +889,5 @@ DPSMate.Parser.Kicks = {
 
 -- Scalding Broodling begins to cast Fireball.
 function DPSMate.Parser:CreatureVsCreatureSpellDamageInterrupts(msg)
-	for c, ab in string.gfind(msg, "(.+) begins to cast (.+)%.") do DPSMate.DB:RegisterPotentialKick(c, ab, GetTime()) end
+	for c, ab in strgfind(msg, "(.+) begins to cast (.+)%.") do DPSMate.DB:RegisterPotentialKick(c, ab, GetTime()) end
 end
