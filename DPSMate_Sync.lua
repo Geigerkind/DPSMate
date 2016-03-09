@@ -16,90 +16,104 @@ function DPSMate.Sync:OnUpdate(elapsed)
 		if iterator==1 then
 			DPSMate.Sync:DMGDoneAllOut()
 			iterator = 2
-		elseif time>=3 and iterator==2 then
-			DPSMate.Sync:DMGDoneStatOut()
-			iterator = 3
-		elseif time>=6 and iterator==3 then
+		elseif time>=1 and iterator==2 then
 			DPSMate.Sync:DMGDoneAbilityOut()
+			iterator = 3
+		elseif time>=2 and iterator==3 then
+			DPSMate.Sync:DMGDoneStatOut()
 			iterator = 4
-		elseif time>=9 and iterator==4 then
+		elseif time>=5 and iterator==4 then
 			DPSMate.Sync:HealingAllOut(DPSMateEHealing, "E")
-			DPSMate.Sync:HealingStatOut(DPSMateEHealing, "E")
 			iterator = 5
-		elseif time>=12 and iterator==5 then
+		elseif time>=6 and iterator==5 then
 			DPSMate.Sync:HealingAbilityOut(DPSMateEHealing, "E")
 			iterator = 6
-		elseif time>=15 and iterator==6 then
-			DPSMate.Sync:HealingAllOut(DPSMateTHealing, "T")
-			DPSMate.Sync:HealingStatOut(DPSMateTHealing, "T")
+		elseif time>=7 and iterator==6 then
+			DPSMate.Sync:HealingStatOut(DPSMateEHealing, "E")
 			iterator = 7
-		elseif time>=18 and iterator==7 then
-			DPSMate.Sync:HealingAbilityOut(DPSMateTHealing, "T")
+		elseif time>=10 and iterator==7 then
+			DPSMate.Sync:HealingAllOut(DPSMateTHealing, "T")
 			iterator = 8
-		elseif time>=21 and iterator==8 then
-			DPSMate.Sync:HealingAllOut(DPSMateOverhealing, "O")
-			DPSMate.Sync:HealingStatOut(DPSMateOverhealing, "O")
+		elseif time>=11 and iterator==8 then
+			DPSMate.Sync:HealingAbilityOut(DPSMateTHealing, "T")
 			iterator = 9
-		elseif time>=24 and iterator==9 then
-			DPSMate.Sync:HealingAbilityOut(DPSMateOverhealing, "O")
+		elseif time>=12 and iterator==9 then
+			DPSMate.Sync:HealingStatOut(DPSMateTHealing, "T")
 			iterator = 10
-		elseif time>=27 and iterator==10 then
+		elseif time>=15 and iterator==10 then
+			DPSMate.Sync:HealingAllOut(DPSMateOverhealing, "O")
+			iterator = 11
+		elseif time>=16 and iterator==11 then
+			DPSMate.Sync:HealingAbilityOut(DPSMateOverhealing, "O")
+			iterator = 12
+		elseif time>=17 and iterator==12 then
+			DPSMate.Sync:HealingStatOut(DPSMateOverhealing, "O")
+			iterator = 13
+		elseif time>=20 and iterator==13 then
 			DPSMate.Sync:AbsorbsOut() 
 			DPSMate.Sync:AbsorbsStatOut()
-			iterator = 11
-		elseif time>=30 and iterator==11 then
-			DPSMate.Sync:DispelsOut()
-			iterator = 12
-		elseif time>=33 and iterator==12 then
-			DPSMate.Sync:DMGTakenAllOut()
-			iterator = 13
-		elseif time>=36 and iterator==13 then
-			DPSMate.Sync:DMGTakenStatOut()
 			iterator = 14
-		elseif time>=39 and iterator==14 then
-			DPSMate.Sync:DMGTakenAbilityOut()
+		elseif time>=23 and iterator==14 then
+			DPSMate.Sync:DispelsOut()
 			iterator = 15
-		elseif time>=42 and iterator==15 then
-			DPSMate.Sync:EDAllOut(DPSMateEDD, "D")
-			DPSMate.Sync:EDStatOut(DPSMateEDD, "D")
+		elseif time>=26 and iterator==15 then
+			DPSMate.Sync:DMGTakenAllOut()
 			iterator = 16
-		elseif time>=45 and iterator==16 then
-			DPSMate.Sync:EDAbilityOut(DPSMateEDD, "D")
+		elseif time>=27 and iterator==16 then
+			DPSMate.Sync:DMGTakenAbilityOut()
 			iterator = 17
-		elseif time>=48 and iterator==17 then
-			DPSMate.Sync:EDAllOut(DPSMateEDT, "T")
-			DPSMate.Sync:EDStatOut(DPSMateEDT, "T")
+		elseif time>=28 and iterator==17 then
+			DPSMate.Sync:DMGTakenStatOut()
 			iterator = 18
-		elseif time>=51 and iterator==18 then
-			DPSMate.Sync:EDAbilityOut(DPSMateEDT, "T")
+		elseif time>=31 and iterator==18 then
+			DPSMate.Sync:EDAllOut(DPSMateEDD, "D")
 			iterator = 19
-		elseif time>=54 and iterator==19 then
-			DPSMate.Sync:HealingAllOut(DPSMateHealingTaken, "TTaken")
-			DPSMate.Sync:HealingStatOut(DPSMateHealingTaken, "TTaken")
+		elseif time>=32 and iterator==19 then
+			DPSMate.Sync:EDAbilityOut(DPSMateEDD, "D")
 			iterator = 20
-		elseif time>=57 and iterator==20 then
-			DPSMate.Sync:HealingTakenAbilityOut(DPSMateHealingTaken, "T")
+		elseif time>=33 and iterator==20 then
+			DPSMate.Sync:EDStatOut(DPSMateEDD, "D")
 			iterator = 21
-		elseif time>=60 and iterator==21 then
-			DPSMate.Sync:HealingAllOut(DPSMateEHealingTaken, "ETaken")
-			DPSMate.Sync:HealingStatOut(DPSMateEHealingTaken, "ETaken")
+		elseif time>=36 and iterator==21 then
+			DPSMate.Sync:EDAllOut(DPSMateEDT, "T")
 			iterator = 22
-		elseif time>=63 and iterator==22 then
-			DPSMate.Sync:HealingTakenAbilityOut(DPSMateEHealingTaken, "E")
+		elseif time>=37 and iterator==22 then
+			DPSMate.Sync:EDStatOut(DPSMateEDT, "T")
 			iterator = 23
-		elseif time>=66 and iterator==23 then
-			DPSMate.Sync:DeathsAllOut()
+		elseif time>=38 and iterator==23 then
+			DPSMate.Sync:EDAbilityOut(DPSMateEDT, "T")
 			iterator = 24
-		elseif time>=69 and iterator==24 then
-			DPSMate.Sync:DeathsOut()
+		elseif time>=41 and iterator==24 then
+			DPSMate.Sync:HealingAllOut(DPSMateHealingTaken, "TTaken")
 			iterator = 25
-		elseif time>=72 and iterator==25 then
-			DPSMate.Sync:InterruptsAllOut()
+		elseif time>=42 and iterator==25 then
+			DPSMate.Sync:HealingTakenAbilityOut(DPSMateHealingTaken, "T")
 			iterator = 26
-		elseif time>=75 and iterator==26 then
-			DPSMate.Sync:InterruptsAbilityOut()
+		elseif time>=43 and iterator==26 then
+			DPSMate.Sync:HealingStatOut(DPSMateHealingTaken, "TTaken")
 			iterator = 27
-		elseif time>=78 and iterator==27 then
+		elseif time>=46 and iterator==27 then
+			DPSMate.Sync:HealingAllOut(DPSMateEHealingTaken, "ETaken")
+			iterator = 28
+		elseif time>=47 and iterator==28 then
+			DPSMate.Sync:HealingTakenAbilityOut(DPSMateEHealingTaken, "E")
+			iterator = 29
+		elseif time>=48 and iterator==29 then
+			DPSMate.Sync:HealingStatOut(DPSMateEHealingTaken, "ETaken")
+			iterator = 30
+		elseif time>=51 and iterator==30 then
+			DPSMate.Sync:DeathsAllOut()
+			iterator = 31
+		elseif time>=52 and iterator==31 then
+			DPSMate.Sync:DeathsOut()
+			iterator = 32
+		elseif time>=55 and iterator==32 then
+			DPSMate.Sync:InterruptsAllOut()
+			iterator = 33
+		elseif time>=56 and iterator==33 then
+			DPSMate.Sync:InterruptsAbilityOut()
+			iterator = 34
+		elseif time>=59 and iterator==34 then
 			DPSMate.Sync:AurasOut()
 			DPSMate.Sync.Async, iterator, time = false, 1, 0
 		end
@@ -247,9 +261,9 @@ function DPSMate.Sync:OnEvent(event)
 				DPSMate.Sync:HealingAllIn(arg2, arg4, DPSMateHealingTaken)
 			elseif arg1 == "DPSMate_TTakenHealingStat" then
 				DPSMate.Sync:HealingStatIn(arg2, arg4, DPSMateHealingTaken)
-			elseif arg1 == "DPSMate_TTakenHealingAbility" then
+			elseif arg1 == "DPSMate_THealingTakenAbility" then
 				DPSMate.Sync:HealingTakenAbilityIn(arg2, arg4, DPSMateHealingTaken)
-			elseif arg1 == "DPSMate_EHealingTakenAll" then
+			elseif arg1 == "DPSMate_ETakenHealingAll" then
 				DPSMate.Sync:HealingAllIn(arg2, arg4, DPSMateEHealingTaken)
 			elseif arg1 == "DPSMate_ETakenHealingStat" then
 				DPSMate.Sync:HealingStatIn(arg2, arg4, DPSMateEHealingTaken)
@@ -562,10 +576,10 @@ function DPSMate.Sync:HealingTakenAbilityIn(arg2, arg4, arr)
 	DPSMate.DB:BuildUser(t[1], nil)
 	DPSMate.DB:BuildAbility(t[2], nil)
 	if not arr[1][DPSMateUser[arg4][1]] then return end
-	if not arr[1][DPSMateUser[arg4][1]][DPSMateUser[t[2]][1]] then
-		arr[1][DPSMateUser[arg4][1]][DPSMateUser[t[2]][1]] = {}
+	if not arr[1][DPSMateUser[arg4][1]][DPSMateUser[t[1]][1]] then
+		arr[1][DPSMateUser[arg4][1]][DPSMateUser[t[1]][1]] = {}
 	end
-	arr[1][DPSMateUser[arg4][1]][DPSMateUser[t[2]][1]][DPSMateAbility[t[1]][1]] = {
+	arr[1][DPSMateUser[arg4][1]][DPSMateUser[t[1]][1]][DPSMateAbility[t[2]][1]] = {
 		[1] = tonumber(t[3]),
 		[2] = tonumber(t[4]),
 		[3] = tonumber(t[5]),
@@ -931,9 +945,9 @@ end
 
 function DPSMate.Sync:HealingTakenAbilityOut(arr, prefix)
 	if not arr[1][DPSMateUser[player.name][1]] then return end
-	for cat, val in (arr[1][DPSMateUser[player.name][1]]) do
+	for cat, val in arr[1][DPSMateUser[player.name][1]] do
 		if cat~="i" then
-			for ca, va in pairs(val) do
+			for ca, va in val do
 				SendAddonMessage("DPSMate_"..prefix.."HealingTakenAbility", DPSMate:GetUserById(cat)..","..DPSMate:GetAbilityById(ca)..","..va[1]..","..va[2]..","..va[3]..","..ceil(va[4])..","..ceil(va[5])..","..va[6]..","..va[7]..","..va[8]..","..va[9]..",", "RAID")
 			end
 		end
