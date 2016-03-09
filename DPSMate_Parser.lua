@@ -277,17 +277,23 @@ function DPSMate.Parser:SelfSpellDMG(msg)
 	end
 end
 
--- /script for a,b,c,d,e in string.gfind("Lucker suffers 107 Physical damage from Shino's Garrote.", "(.+) suffers (%d+) (%a-) damage from [(your),(.+)'s] (.+)%.") do DPSMate:SendMessage(d) end
+-- /script for a,b,c,d,e,f in string.gfind("IanUnderhill suffers 6 Nature damage from your Venom Sting. (6 resisted)", "(.+) suffers (%d+) (%a-) damage from (.+)(%'s?) (.+)%.") do DPSMate:SendMessage(d) end
 function DPSMate.Parser:PeriodicDamage(msg)
 	t = {}
 	-- (NAME) is afflicted by (ABILITY). => Filtered out for now.
 	for a,b in strgfind(msg, "(.+) is afflicted by (.+)%.") do if DPSMate:TContains(DPSMate.Parser.Kicks, b) then DPSMate.DB:ConfirmAfflictedStun(a, b, GetTime()) end; return end
 	-- School can be used now but how and when?
-	for a,b,c,d,e in strgfind(msg, "(.+) suffers (%d+) (%a-) damage from (.+)'?s? (.+)%.") do
-		if d == "your" then t[1] = {name=player} else t[1] = {name=strsub(d, 1, strfind(d, "%'s")-1)} end -- I wonder if there is a way to avoid Shino!!!'s!!! in the parsed string
-		t[2] = tonumber(b)
-		DPSMate.DB:EnemyDamage(DPSMateEDT, t[1], e.."(Periodic)", 1, 0, 0, 0, 0, 0, t[2], d, 0, 0)
-		DPSMate.DB:DamageDone(t[1], e.."(Periodic)", 1, 0, 0, 0, 0, 0, t[2], 0, 0)
+	for a,b,c,d,e in strgfind(msg, "(.+) suffers (%d+) (%a-) damage from (.+)'s (.+)%.") do
+		t[1] = tonumber(b)
+		DPSMate.DB:EnemyDamage(DPSMateEDT, a, e.."(Periodic)", 1, 0, 0, 0, 0, 0, t[1], d, 0, 0)
+		DPSMate.DB:DamageDone(d, e.."(Periodic)", 1, 0, 0, 0, 0, 0, t[1], 0, 0)
+		return
+	end
+	for a,b,c,d in strgfind(msg, "(.+) suffers (%d+) (%a-) damage from your (.+)%.") do
+		t[1] = tonumber(b)
+		DPSMate.DB:EnemyDamage(DPSMateEDT, a, d.."(Periodic)", 1, 0, 0, 0, 0, 0, t[1], player, 0, 0)
+		DPSMate.DB:DamageDone(player, d.."(Periodic)", 1, 0, 0, 0, 0, 0, t[1], 0, 0)
+		return
 	end
 end
 
@@ -325,7 +331,6 @@ function DPSMate.Parser:FriendlyPlayerHits(msg)
 	t = {}
 	for a,b,c,d,e in strgfind(msg, "(.-) (%a%a?)\its (.+) for (%d+)\.%s?(.*)") do
 		if b=="h" then t[3]=1;t[4]=0 end
-		DPSMate:SendMessage(e)
 		if e=="(glancing)" then t[1]=1;t[3]=0;t[4]=0 elseif e~="" then t[2]=1;t[3]=0;t[4]=0 end
 		t[5] = tonumber(d)
 		DPSMate.DB:EnemyDamage(DPSMateEDT, a, "AutoAttack", t[3] or 0, t[4] or 1, 0, 0, 0, 0, t[5], c, t[2] or 0, t[1] or 0)
@@ -492,9 +497,9 @@ function DPSMate.Parser:SpellPeriodicDamageTaken(msg)
 	t = {}
 	for a,b,c,d,e in string.gfind(msg, "(.+) suffers (%d+) (%a+) damage from (.+)'s (.+)\.%s?(.*)") do -- Potential to track resisted damage and school
 		t[1] = tonumber(b)
-		DPSMate.DB:EnemyDamage(DPSMateEDD, a, d.."(Periodic)", 1, 0, 0, 0, 0, 0, t[1], d, 0, 0)
-		DPSMate.DB:DamageTaken(a, d.."(Periodic)", 1, 0, 0, 0, 0, 0, t[1], d, 0)
-		DPSMate.DB:DeathHistory(a, d, d.."(Periodic)", t[1], 1, 0, 0, 0)
+		DPSMate.DB:EnemyDamage(DPSMateEDD, a, e.."(Periodic)", 1, 0, 0, 0, 0, 0, t[1], d, 0, 0)
+		DPSMate.DB:DamageTaken(a, e.."(Periodic)", 1, 0, 0, 0, 0, 0, t[1], d, 0)
+		DPSMate.DB:DeathHistory(a, d, e.."(Periodic)", t[1], 1, 0, 0, 0)
 		return
 	end
 end
@@ -607,11 +612,6 @@ end
 -- You gain 61 health from Nenea's Rejuvenation.
 function DPSMate.Parser:SpellPeriodicSelfBuff(msg) -- Maybe some loss here?
 	t = {}
-	for a in strgfind(msg, "You gain (%a+)%.") do
-		DPSMate.DB:ConfirmBuff(player, a, GetTime())
-		DPSMate.DB:RegisterHotDispel(player, a)
-		return 
-	end
 	for a,b,c in strgfind(msg, "You gain (%d+) health from (.+)'s (.+)%.") do
 		t[1]=tonumber(a)
 		overheal = DPSMate.Parser:GetOverhealByName(t[1], player)
@@ -634,6 +634,11 @@ function DPSMate.Parser:SpellPeriodicSelfBuff(msg) -- Maybe some loss here?
 		DPSMate.DB:DeathHistory(player, player, b.."(Periodic)", t[1], 1, 0, 1, 0)
 		return
 	end
+	for a in strgfind(msg, "You gain (%a+)%.") do
+		DPSMate.DB:ConfirmBuff(player, a, GetTime())
+		DPSMate.DB:RegisterHotDispel(player, a)
+		return 
+	end
 end
 
 -- Catrala gains Last Stand.
@@ -643,11 +648,6 @@ end
 -- Soulstoke gains 25 Energy from Soulstoke's Relentless Strikes Effect.
 function DPSMate.Parser:SpellPeriodicFriendlyPlayerBuffs(msg)
 	t = {}
-	for f,a in strgfind(msg, "(.+) gains (%a+)%.") do
-		DPSMate.DB:ConfirmBuff(f, a, GetTime())
-		DPSMate.DB:RegisterHotDispel(f, a)
-		return 
-	end
 	for f,a,b,c in strgfind(msg, "(.+) gains (%d+) health from (.+)'s (.+)%.") do
 		t[1]=tonumber(a)
 		overheal = DPSMate.Parser:GetOverhealByName(t[1], f)
@@ -669,6 +669,11 @@ function DPSMate.Parser:SpellPeriodicFriendlyPlayerBuffs(msg)
 		DPSMate.DB:Healing(DPSMateTHealing, f, b.."(Periodic)", 1, 0, t[1], f)
 		DPSMate.DB:DeathHistory(f, f, b.."(Periodic)", t[1], 1, 0, 1, 0)
 		return
+	end
+	for f,a in strgfind(msg, "(.+) gains (%a+)%.") do
+		DPSMate.DB:ConfirmBuff(f, a, GetTime())
+		DPSMate.DB:RegisterHotDispel(f, a)
+		return 
 	end
 end
 

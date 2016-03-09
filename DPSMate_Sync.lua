@@ -150,6 +150,7 @@ function DPSMate.Sync:StartVote()
 end
 
 local voteCount = 1
+local participants = 1
 function DPSMate.Sync:CountVote()
 	if voteStarter then
 		voteCount=voteCount+1
@@ -164,7 +165,6 @@ function DPSMate.Sync:CountVote()
 end
 
 local voteTime = 0
-local participants = 1
 function DPSMate.Sync:DismissVote(elapsed)
 	if voteStarter then
 		voteTime=voteTime+elapsed
