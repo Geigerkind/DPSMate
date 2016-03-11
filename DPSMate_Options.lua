@@ -310,13 +310,12 @@ end
 
 function DPSMate.Options:OnEvent(event)
 	if event == "PARTY_MEMBERS_CHANGED" or event == "RAID_ROSTER_UPDATE" then
-		DPSMate:SendMessage("Test")
 		DPSMate.Options:HideWhenSolo()
 		if DPSMate.Options:IsInParty() then
 			if LastPartyNum == 0 then
 				if DPSMateSettings["dataresetsjoinparty"] == 3 then
 					if (GetTime()-LastPopUp) > TimeToNextPopUp and (DPSMate:TableLength(DPSMateUser) ~= 0 or DPSMate:TableLength(DPSMateUserCurrent) ~= 0) then
-						DPSMate_PopUp:Show()
+						DPSMate.Options:ShowResetPopUp()
 						LastPopUp = GetTime()
 					end
 				elseif DPSMateSettings["dataresetsjoinparty"] == 1 then
@@ -328,7 +327,7 @@ function DPSMate.Options:OnEvent(event)
 			elseif LastPartyNum ~= PartyNum	then
 				if DPSMateSettings["dataresetspartyamount"] == 3 then
 					if (GetTime()-LastPopUp) > TimeToNextPopUp and (DPSMate:TableLength(DPSMateUser) ~= 0 or DPSMate:TableLength(DPSMateUserCurrent) ~= 0) then
-						DPSMate_PopUp:Show()
+						DPSMate.Options:ShowResetPopUp()
 						LastPopUp = GetTime()
 					end
 				elseif DPSMateSettings["dataresetspartyamount"] == 1 then
@@ -342,7 +341,7 @@ function DPSMate.Options:OnEvent(event)
 			if LastPartyNum > PartyNum then
 				if DPSMateSettings["dataresetsleaveparty"] == 3 then
 					if (GetTime()-LastPopUp) > TimeToNextPopUp and (DPSMate:TableLength(DPSMateUser) ~= 0 or DPSMate:TableLength(DPSMateUserCurrent) ~= 0) then
-						DPSMate_PopUp:Show()
+						DPSMate.Options:ShowResetPopUp()
 						LastPopUp = GetTime()
 					end
 				elseif DPSMateSettings["dataresetsleaveparty"] == 1 then
@@ -350,29 +349,26 @@ function DPSMate.Options:OnEvent(event)
 				end
 			end
 		end
-		-- Not fired if the player leaves the group
-		--[[
-		elseif LastPartyNum > PartyNum then
-			if DPSMateSettings["dataresetsleaveparty"] == 3 then
-				if (GetTime()-LastPopUp) > TimeToNextPopUp and (DPSMate:TableLength(DPSMateUser) ~= 0 or DPSMate:TableLength(DPSMateUserCurrent) ~= 0) then
-					DPSMate_PopUp:Show()
-					LastPopUp = GetTime()
-				end
-			elseif DPSMateSettings["dataresetsleaveparty"] == 1 then
-				DPSMate.Options:PopUpAccept()
-			end
-		end
-		]]--
 	elseif event == "PLAYER_ENTERING_WORLD" then
 		if DPSMateSettings["dataresetsworld"] == 3 then
 			if (GetTime()-LastPopUp) > TimeToNextPopUp and (DPSMate:TableLength(DPSMateUser) ~= 0 or DPSMate:TableLength(DPSMateUserCurrent) ~= 0) then
-				DPSMate_PopUp:Show()
+				DPSMate.Options:ShowResetPopUp()
 				LastPopUp = GetTime()
 			end
 		elseif DPSMateSettings["dataresetsworld"] == 1 then
 			DPSMate.Options:PopUpAccept()
 		end
 		DPSMate.Options:HideInPvP()
+	end
+end
+
+function DPSMate.Options:ShowResetPopUp()
+	if DPSMateSettings["sync"] then
+		if IsPartyLeader() or DPSMate.DB:IsRaidAssistant() or IsRaidLeader() then
+			DPSMate_PopUp:Show()
+		end
+	else
+		DPSMate_PopUp:Show()
 	end
 end
 
@@ -870,7 +866,7 @@ function DPSMate.Options:ContentBGTextureDropDown()
 end
 
 function DPSMate.Options:SelectDataResets(obj, case)
-	local vars = {["DPSMate_ConfigMenu_Tab_DataResets_EnteringWorld"] = "dataresetsworld", ["DPSMate_ConfigMenu_Tab_DataResets_PartyMemberChanged"] = "dataresetspartyamount", ["DPSMate_ConfigMenu_Tab_DataResets_JoinParty"] = "dataresetsjoinparty", ["DPSMate_ConfigMenu_Tab_DataResets_LeaveParty"] = "dataresetsleaveparty"}
+	local vars = {["DPSMate_ConfigMenu_Tab_DataResets_EnteringWorld"] = "dataresetsworld", ["DPSMate_ConfigMenu_Tab_DataResets_PartyMemberChanged"] = "dataresetspartyamount", ["DPSMate_ConfigMenu_Tab_DataResets_JoinParty"] = "dataresetsjoinparty", ["DPSMate_ConfigMenu_Tab_DataResets_LeaveParty"] = "dataresetsleaveparty", ["DPSMate_ConfigMenu_Tab_DataResets_Sync"] = "dataresetssync"}
 	DPSMateSettings[vars[obj:GetName()]] = case
 	UIDropDownMenu_SetSelectedValue(obj, case)
 end
@@ -895,6 +891,7 @@ function DPSMate.Options:DataResetsDropDown()
 		UIDropDownMenu_SetSelectedValue(DPSMate_ConfigMenu_Tab_DataResets_JoinParty, DPSMateSettings["dataresetsjoinparty"])
 		UIDropDownMenu_SetSelectedValue(DPSMate_ConfigMenu_Tab_DataResets_PartyMemberChanged, DPSMateSettings["dataresetspartyamount"])
 		UIDropDownMenu_SetSelectedValue(DPSMate_ConfigMenu_Tab_DataResets_LeaveParty, DPSMateSettings["dataresetsleaveparty"])
+		UIDropDownMenu_SetSelectedValue(DPSMate_ConfigMenu_Tab_DataResets_Sync, DPSMateSettings["dataresetssync"])
 	end
 	DPSMate_ConfigMenu.visBars8 = true
 end

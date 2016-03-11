@@ -88,6 +88,7 @@ function DPSMate.DB:OnEvent(event)
 				dataresetsjoinparty = 1,
 				dataresetsleaveparty = 2,
 				dataresetspartyamount = 3,
+				dataresetssync = 3,
 				showminimapbutton = true,
 				showtotals = true,
 				hidewhensolo = false,

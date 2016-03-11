@@ -214,8 +214,12 @@ function DPSMate.Sync:Participate()
 end
 
 function DPSMate.Sync:ReceiveStartVote() 
-	DPSMate_Vote:Show()
 	DPSMate.Sync:Participate()
+	if DPSMateSettings["dataresetssync"] == 3 then
+		DPSMate_Vote:Show()
+	elseif DPSMateSettings["dataresetssync"] == 1 then
+		DPSMate.Sync:Vote()
+	end
 end
 
 ----------------------------------------------------------------------------------

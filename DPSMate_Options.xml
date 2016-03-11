@@ -1984,6 +1984,23 @@
 							</OnLoad>
 						</Scripts>
 					</Frame>
+					<Frame name="$parent_Sync" inherits="DPSMate_Template_DropDown">
+						<Size x="120" y="24" />
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent_PartyMemberChanged" relativePoint="BOTTOMLEFT">
+								<Offset x="0" y="-10" />
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								this.aide = DPSMate.localization.config.syncrequesttooltip
+								this.func = DPSMate.Options.DataResetsDropDown
+								this.title = DPSMate.localization.config.syncrequest
+								UIDropDownMenu_SetWidth(120)
+								getglobal(this:GetName().."_Text"):SetText(this.title)
+							</OnLoad>
+						</Scripts>
+					</Frame>
 				</Frames>
 			</Frame>
 			
