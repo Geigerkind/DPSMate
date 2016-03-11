@@ -7,6 +7,10 @@ player["name"] = UnitName("player")
 local a,b = UnitClass("player")
 player["class"] = strlower(b)
 local time, iterator, voteStarter = 0, 1, false
+local t = {}
+local strgsub = string.gsub
+local tinsert = table.insert
+local func = function(c) tinsert(t,c) end
 
 -- Beginn Functions
 
@@ -135,14 +139,14 @@ function DPSMate.Sync:GetSummarizedTable(arr)
 			dmg=dmg+val[2]
 			if time then
 				if i>dis and (val[1]-time)>0 then
-					table.insert(newArr, {(val[1]+time)/2, dmg/(val[1]-time)}) -- last time val // subtracting from each other to get the time in which the damage is being done
+					tinsert(newArr, {(val[1]+time)/2, dmg/(val[1]-time)}) -- last time val // subtracting from each other to get the time in which the damage is being done
 					time, dmg, i = nil, 0, 1
 				end
 			else
 				time=val[1]
 			end
 		else
-			table.insert(newArr, val)
+			tinsert(newArr, val)
 		end
 		i=i+1
 	end
@@ -335,8 +339,8 @@ end
 ----------------------------------------------------------------------------------
 
 function DPSMate.Sync:DMGDoneAllIn(arg2, arg4)
-	local t = {}
-	string.gsub(arg2, "(.-),", function(c) table.insert(t,c) end)
+	t = {}
+	strgsub(arg2, "(.-),", func)
 	DPSMate.DB:BuildUser(arg4, t[1])
 	DPSMateDamageDone[1][DPSMateUser[arg4][1]] = {
 		i = {
@@ -349,18 +353,18 @@ function DPSMate.Sync:DMGDoneAllIn(arg2, arg4)
 end
 
 function DPSMate.Sync:DMGDoneStatIn(arg2, arg4)
-	local t = {}
-	string.gsub(arg2, "(.-),", function(c) table.insert(t,c) end)
+	t = {}
+	strgsub(arg2, "(.-),", func)
 	DPSMate.DB:BuildUser(arg4, nil)
 	t[1] = tonumber(t[1])
 	if not DPSMateDamageDone[1][DPSMateUser[arg4][1]] then return end
-	table.insert(DPSMateDamageDone[1][DPSMateUser[arg4][1]]["i"][1], {t[1], tonumber(t[2])})
+	tinsert(DPSMateDamageDone[1][DPSMateUser[arg4][1]]["i"][1], {t[1], tonumber(t[2])})
 	if t[1]>DPSMateCombatTime["total"] then DPSMateCombatTime["total"]=t[1] end
 end
 
 function DPSMate.Sync:DMGDoneAbilityIn(arg2, arg4)
-	local t = {}
-	string.gsub(arg2, "(.-),", function(c) table.insert(t,c) end)
+	t = {}
+	strgsub(arg2, "(.-),", func)
 	DPSMate.DB:BuildUser(arg4, nil)
 	DPSMate.DB:BuildAbility(t[1], nil)
 	if not DPSMateDamageDone[1][DPSMateUser[arg4][1]] then
@@ -401,8 +405,8 @@ end
 ----------------------------------------------------------------------------------
 
 function DPSMate.Sync:DMGTakenAllIn(arg2, arg4)
-	local t = {}
-	string.gsub(arg2, "(.-),", function(c) table.insert(t,c) end)
+	t = {}
+	strgsub(arg2, "(.-),", func)
 	DPSMate.DB:BuildUser(arg4, t[1])
 	DPSMateDamageTaken[1][DPSMateUser[arg4][1]] = {
 		i = {
@@ -414,18 +418,18 @@ function DPSMate.Sync:DMGTakenAllIn(arg2, arg4)
 end
 
 function DPSMate.Sync:DMGTakenStatIn(arg2, arg4)
-	local t = {}
-	string.gsub(arg2, "(.-),", function(c) table.insert(t,c) end)
+	t = {}
+	strgsub(arg2, "(.-),", func)
 	DPSMate.DB:BuildUser(arg4, nil)
 	if not DPSMateDamageTaken[1][DPSMateUser[arg4][1]] then return end
 	t[1] = tonumber(t[1])
-	table.insert(DPSMateDamageTaken[1][DPSMateUser[arg4][1]]["i"][1], {t[1], tonumber(t[2])})
+	tinsert(DPSMateDamageTaken[1][DPSMateUser[arg4][1]]["i"][1], {t[1], tonumber(t[2])})
 	if t[1]>DPSMateCombatTime["total"] then DPSMateCombatTime["total"]=t[1] end
 end
 
 function DPSMate.Sync:DMGTakenAbilityIn(arg2, arg4)
-	local t = {}
-	string.gsub(arg2, "(.-),", function(c) table.insert(t,c) end)
+	t = {}
+	strgsub(arg2, "(.-),", func)
 	DPSMate.DB:BuildUser(arg4, nil)
 	DPSMate.DB:BuildUser(t[1], nil)
 	DPSMate.DB:BuildAbility(t[2], nil)
@@ -461,8 +465,8 @@ end
 ----------------------------------------------------------------------------------
 
 function DPSMate.Sync:EDAllIn(arr, arg2, arg4)
-	local t = {}
-	string.gsub(arg2, "(.-),", function(c) table.insert(t,c) end)
+	t = {}
+	strgsub(arg2, "(.-),", func)
 	DPSMate.DB:BuildUser(arg4, t[1])
 	DPSMate.DB:BuildUser(t[2], nil)
 	if not arr[1][DPSMateUser[t[2]][1]] then
@@ -478,19 +482,19 @@ function DPSMate.Sync:EDAllIn(arr, arg2, arg4)
 end
 
 function DPSMate.Sync:EDStatIn(arr, arg2, arg4)
-	local t = {}
-	string.gsub(arg2, "(.-),", function(c) table.insert(t,c) end)
+	t = {}
+	strgsub(arg2, "(.-),", func)
 	DPSMate.DB:BuildUser(arg4, nil)
 	DPSMate.DB:BuildUser(t[1], nil)
 	if not arr[1][DPSMateUser[t[1]][1]] then return end
 	t[2] = tonumber(t[2])
-	table.insert(arr[1][DPSMateUser[t[1]][1]][DPSMateUser[arg4][1]]["i"][1], {t[2], tonumber(t[3])})
+	tinsert(arr[1][DPSMateUser[t[1]][1]][DPSMateUser[arg4][1]]["i"][1], {t[2], tonumber(t[3])})
 	if t[2]>DPSMateCombatTime["total"] then DPSMateCombatTime["total"]=t[2] end
 end
 
 function DPSMate.Sync:EDAbilityIn(arr, arg2, arg4)
-	local t = {}
-	string.gsub(arg2, "(.-),", function(c) table.insert(t,c) end)
+	t = {}
+	strgsub(arg2, "(.-),", func)
 	DPSMate.DB:BuildUser(arg4, nil)
 	DPSMate.DB:BuildUser(t[1], nil)
 	DPSMate.DB:BuildAbility(t[2], nil)
@@ -528,8 +532,8 @@ end
 ----------------------------------------------------------------------------------
 
 function DPSMate.Sync:HealingAllIn(arg2, arg4, arr)
-	local t = {}
-	string.gsub(arg2, "(.-),", function(c) table.insert(t,c) end)
+	t = {}
+	strgsub(arg2, "(.-),", func)
 	DPSMate.DB:BuildUser(arg4, t[1])
 	arr[1][DPSMateUser[arg4][1]] = {
 		i = {
@@ -541,18 +545,18 @@ function DPSMate.Sync:HealingAllIn(arg2, arg4, arr)
 end
 
 function DPSMate.Sync:HealingStatIn(arg2, arg4, arr)
-	local t = {}
-	string.gsub(arg2, "(.-),", function(c) table.insert(t,c) end)
+	t = {}
+	strgsub(arg2, "(.-),", func)
 	DPSMate.DB:BuildUser(arg4, nil)
 	t[1] = tonumber(t[1])
 	if not arr[1][DPSMateUser[arg4][1]] then return end
-	table.insert(arr[1][DPSMateUser[arg4][1]]["i"][2], {t[1], tonumber(t[2])})
+	tinsert(arr[1][DPSMateUser[arg4][1]]["i"][2], {t[1], tonumber(t[2])})
 	if t[1]>DPSMateCombatTime["total"] then DPSMateCombatTime["total"]=t[1] end
 end
 
 function DPSMate.Sync:HealingAbilityIn(arg2, arg4, arr)
-	local t = {}
-	string.gsub(arg2, "(.-),", function(c) table.insert(t,c) end)
+	t = {}
+	strgsub(arg2, "(.-),", func)
 	DPSMate.DB:BuildUser(arg4, nil)
 	DPSMate.DB:BuildAbility(t[1], nil)
 	if not arr[1][DPSMateUser[arg4][1]] then return end
@@ -574,8 +578,8 @@ end
 ----------------------------------------------------------------------------------
 
 function DPSMate.Sync:HealingTakenAbilityIn(arg2, arg4, arr)
-	local t = {}
-	string.gsub(arg2, "(.-),", function(c) table.insert(t,c) end)
+	t = {}
+	strgsub(arg2, "(.-),", func)
 	DPSMate.DB:BuildUser(arg4, nil)
 	DPSMate.DB:BuildUser(t[1], nil)
 	DPSMate.DB:BuildAbility(t[2], nil)
@@ -601,8 +605,8 @@ end
 ----------------------------------------------------------------------------------
 
 function DPSMate.Sync:iAbsorbsIn(arg2, arg4) 
-	local t = {}
-	string.gsub(arg2, "(.-),", function(c) table.insert(t,c) end)
+	t = {}
+	strgsub(arg2, "(.-),", func)
 	DPSMate.DB:BuildUser(arg4, nil)
 	DPSMate.DB:BuildUser(t[1], nil)
 	DPSMate.DB:BuildAbility(t[2], nil)
@@ -628,24 +632,24 @@ function DPSMate.Sync:iAbsorbsIn(arg2, arg4)
 end
 
 function DPSMate.Sync:AbsorbsStatIn(arg2, arg4)
-	local t = {}
-	string.gsub(arg2, "(.-),", function(c) table.insert(t,c) end)
+	t = {}
+	strgsub(arg2, "(.-),", func)
 	DPSMate.DB:BuildUser(arg4, nil)
 	DPSMate.DB:BuildUser(t[1], nil)
 	if not DPSMateAbsorbs[1][DPSMateUser[arg4][1]] then return end
 	if not DPSMateAbsorbs[1][DPSMateUser[arg4][1]][DPSMateUser[t[1]][1]] then return end
 	t[2] = tonumber(t[2])
 	if t[4] then
-		table.insert(DPSMateAbsorbs[1][DPSMateUser[arg4][1]][DPSMateUser[t[1]][1]]["i"], {t[2], tonumber(t[3]), tonumber(t[4]), tonumber(t[5])})
+		tinsert(DPSMateAbsorbs[1][DPSMateUser[arg4][1]][DPSMateUser[t[1]][1]]["i"], {t[2], tonumber(t[3]), tonumber(t[4]), tonumber(t[5])})
 	else
-		table.insert(DPSMateAbsorbs[1][DPSMateUser[arg4][1]][DPSMateUser[t[1]][1]]["i"], {t[2], tonumber(t[3]), tonumber(t[4])})
+		tinsert(DPSMateAbsorbs[1][DPSMateUser[arg4][1]][DPSMateUser[t[1]][1]]["i"], {t[2], tonumber(t[3]), tonumber(t[4])})
 	end
 	if t[1]>DPSMateCombatTime["total"] then DPSMateCombatTime["total"]=t[1] end
 end
 
 function DPSMate.Sync:AbsorbsIn(arg2, arg4) 
-	local t = {}
-	string.gsub(arg2, "(.-),", function(c) table.insert(t,c) end)
+	t = {}
+	strgsub(arg2, "(.-),", func)
 	DPSMate.DB:BuildUser(arg4, nil)
 	DPSMate.DB:BuildUser(t[1], nil)
 	DPSMate.DB:BuildUser(t[4], nil)
@@ -664,8 +668,8 @@ end
 ----------------------------------------------------------------------------------
 
 function DPSMate.Sync:DeathsAllIn(arg2, arg4) 
-	local t = {}
-	string.gsub(arg2, "(.-),", function(c) table.insert(t,c) end)
+	t = {}
+	strgsub(arg2, "(.-),", func)
 	DPSMate.DB:BuildUser(arg4, t[1])
 	t[2] = tonumber(t[2])
 	if not DPSMateDeaths[1][DPSMateUser[arg4][1]] then
@@ -681,8 +685,8 @@ function DPSMate.Sync:DeathsAllIn(arg2, arg4)
 end
 
 function DPSMate.Sync:DeathsIn(arg2, arg4)
-	local t = {}
-	string.gsub(arg2, "(.-),", function(c) table.insert(t,c) end)
+	t = {}
+	strgsub(arg2, "(.-),", func)
 	DPSMate.DB:BuildUser(arg4, nil)
 	DPSMate.DB:BuildUser(t[3], nil)
 	DPSMate.DB:BuildAbility(t[4], nil)
@@ -706,8 +710,8 @@ end
 ----------------------------------------------------------------------------------
 
 function DPSMate.Sync:InterruptsAllIn(arg2, arg4)
-	local t = {}
-	string.gsub(arg2, "(.-),", function(c) table.insert(t,c) end)
+	t = {}
+	strgsub(arg2, "(.-),", func)
 	DPSMate.DB:BuildUser(arg4, t[1])
 	DPSMateInterrupts[1][DPSMateUser[arg4][1]] = {
 		i = tonumber(t[2]),
@@ -716,8 +720,8 @@ function DPSMate.Sync:InterruptsAllIn(arg2, arg4)
 end
 
 function DPSMate.Sync:InterruptsAbilityIn(arg2, arg4)
-	local t = {}
-	string.gsub(arg2, "(.-),", function(c) table.insert(t,c) end)
+	t = {}
+	strgsub(arg2, "(.-),", func)
 	DPSMate.DB:BuildUser(arg4, nil)
 	DPSMate.DB:BuildUser(t[2], nil)
 	DPSMate.DB:BuildAbility(t[1], nil)
@@ -737,8 +741,8 @@ end
 ----------------------------------------------------------------------------------
 
 function DPSMate.Sync:iDispelsIn(arg2, arg4)
-	local t = {}
-	string.gsub(arg2, "(.-),", function(c) table.insert(t,c) end)
+	t = {}
+	strgsub(arg2, "(.-),", func)
 	DPSMate.DB:BuildUser(arg4, nil)
 	DPSMateDispels[1][DPSMateUser[arg4][1]] = {
 		i = tonumber(arg2),
@@ -747,8 +751,8 @@ function DPSMate.Sync:iDispelsIn(arg2, arg4)
 end
 
 function DPSMate.Sync:DispelsIn(arg2, arg4)
-	local t = {}
-	string.gsub(arg2, "(.-),", function(c) table.insert(t,c) end)
+	t = {}
+	strgsub(arg2, "(.-),", func)
 	DPSMate.DB:BuildUser(arg4, nil)
 	DPSMate.DB:BuildUser(t[2], nil)
 	DPSMate.DB:BuildAbility(t[1], nil)
@@ -768,8 +772,8 @@ end
 ----------------------------------------------------------------------------------
 
 function DPSMate.Sync:AurasAllIn(arg2, arg4)
-	local t = {}
-	string.gsub(arg2, "(.-),", function(c) table.insert(t,c) end)
+	t = {}
+	strgsub(arg2, "(.-),", func)
 	DPSMate.DB:BuildUser(arg4, nil)
 	DPSMate.DB:BuildAbility(t[1], nil)
 	if not DPSMateAurasGained[1][DPSMateUser[arg4][1]] then
@@ -787,16 +791,16 @@ function DPSMate.Sync:AurasAllIn(arg2, arg4)
 end
 
 function DPSMate.Sync:AurasStartEndIn(arg2, arg4, prefix)
-	local t = {}
-	string.gsub(arg2, "(.-),", function(c) table.insert(t,c) end)
+	t = {}
+	strgsub(arg2, "(.-),", func)
 	DPSMate.DB:BuildUser(arg4, nil)
 	DPSMate.DB:BuildAbility(t[1], nil)
 	DPSMateAurasGained[1][DPSMateUser[arg4][1]][DPSMateAbility[t[1]][1]][prefix][tonumber(t[2])] = tonumber(t[3])
 end
 
 function DPSMate.Sync:AurasCauseIn(arg2, arg4)
-	local t = {}
-	string.gsub(arg2, "(.-),", function(c) table.insert(t,c) end)
+	t = {}
+	strgsub(arg2, "(.-),", func)
 	DPSMate.DB:BuildUser(arg4, nil)
 	DPSMate.DB:BuildUser(t[2], nil)
 	DPSMate.DB:BuildAbility(t[1], nil)
