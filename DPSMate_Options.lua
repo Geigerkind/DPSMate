@@ -256,6 +256,7 @@ function DPSMate.Options:InitializeConfigMenu()
 		DPSMate_MiniMap:Hide()
 	end
 	DPSMate_ConfigMenu_Tab_GeneralOptions_Total:SetChecked(DPSMateSettings["showtotals"])
+	DPSMate_ConfigMenu_Tab_GeneralOptions_BossFights:SetChecked(DPSMateSettings["onlybossfights"])
 	DPSMate_ConfigMenu_Tab_GeneralOptions_Solo:SetChecked(DPSMateSettings["hidewhensolo"])
 	DPSMate_ConfigMenu_Tab_GeneralOptions_Combat:SetChecked(DPSMateSettings["hideincombat"])
 	DPSMate_ConfigMenu_Tab_GeneralOptions_PVP:SetChecked(DPSMateSettings["hideinpvp"])
@@ -1008,27 +1009,17 @@ function DPSMate.Options:InializePlayerDewDrop(obj)
 end
 
 function DPSMate.Options:NewSegment()
-	-- Need to add a new check
-	local modes = {["DMGDone"] = DPSMateDamageDone[2], ["DMGTaken"] = DPSMateDamageTaken[2], ["EDDone"] = DPSMateEDD[2], ["EDTaken"] = DPSMateEDT[2], ["THealing"] = DPSMateTHealing[2], ["EHealing"] = DPSMateEHealing[2], ["OHealing"] = DPSMateOverhealing[2], ["EHealingTaken"] = DPSMateEHealingTaken[2], ["THealingTaken"] = DPSMateHealingTaken[2], ["Absorbs"] = DPSMateAbsorbs[2], ["Deaths"] = DPSMateDeaths[2], ["Interrupts"] = DPSMateInterrupts[2], ["Dispels"] = DPSMateDispels[2], ["Auras"] = DPSMateAurasGained[2]}
-	
 	-- Get name of this session
-	local a,_,_ = DPSMate.RegistredModules["enemydamagetaken"]:GetSettingValues(DPSMateEDT[2], DPSMateCombatTime["current"], 1)
-	table.insert(DPSMateHistory["names"], 1, (a[1] or "Unknown").." - "..GameTime_GetTime())
-	
-	for cat, val in pairs(modes) do
-		table.insert(DPSMateHistory[cat], 1, DPSMate:CopyTable(val))
-		if DPSMate:TableLength(DPSMateHistory[cat])>DPSMateSettings["datasegments"] then
-			for i=DPSMateSettings["datasegments"]+1, DPSMate:TableLength(DPSMateHistory[cat]) do
-				table.remove(DPSMateHistory[cat], i)
-			end
-			table.remove(DPSMateHistory[cat], DPSMateSettings["datasegments"]+1)
+	local _,_,a = DPSMate.Modules.EDT:GetSortedTable(DPSMateEDT[2])
+	local name = DPSMate:GetUserById(a[1]) or "Unknown"
+	if DPSMateSettings["onlybossfights"] then
+		if DPSMate.BabbleBoss:Contains(name) then
+			DPSMate.Options:CreateSegment(name)
 		end
-		if DPSMate:TableLength(DPSMateCombatTime["segments"])>DPSMateSettings["datasegments"] then
-			for i=DPSMateSettings["datasegments"]+1, DPSMate:TableLength(DPSMateCombatTime["segments"]) do
-				table.remove(DPSMateCombatTime["segments"], i)
-			end
-		end
+	else
+		DPSMate.Options:CreateSegment(name)
 	end
+	
 	DPSMateDamageDone[2] = {}
 	DPSMateDamageTaken[2] = {}
 	DPSMateEDD[2] = {}
@@ -1043,11 +1034,31 @@ function DPSMate.Options:NewSegment()
 	DPSMateInterrupts[2] = {}
 	DPSMateDispels[2] = {}
 	DPSMateAurasGained[2] = {}
-	table.insert(DPSMateCombatTime["segments"], 1, DPSMateCombatTime["current"])
 	DPSMateCombatTime["current"] = 1
 	DPSMate:SetStatusBarValue()
+end
+
+function DPSMate.Options:CreateSegment(name)
+	-- Need to add a new check
+	local modes = {["DMGDone"] = DPSMateDamageDone[2], ["DMGTaken"] = DPSMateDamageTaken[2], ["EDDone"] = DPSMateEDD[2], ["EDTaken"] = DPSMateEDT[2], ["THealing"] = DPSMateTHealing[2], ["EHealing"] = DPSMateEHealing[2], ["OHealing"] = DPSMateOverhealing[2], ["EHealingTaken"] = DPSMateEHealingTaken[2], ["THealingTaken"] = DPSMateHealingTaken[2], ["Absorbs"] = DPSMateAbsorbs[2], ["Deaths"] = DPSMateDeaths[2], ["Interrupts"] = DPSMateInterrupts[2], ["Dispels"] = DPSMateDispels[2], ["Auras"] = DPSMateAurasGained[2]}
+	
+	table.insert(DPSMateHistory["names"], 1, name.." - "..GameTime_GetTime())
+	for cat, val in pairs(modes) do
+		table.insert(DPSMateHistory[cat], 1, DPSMate:CopyTable(val))
+		if DPSMate:TableLength(DPSMateHistory[cat])>DPSMateSettings["datasegments"] then
+			for i=DPSMateSettings["datasegments"]+1, DPSMate:TableLength(DPSMateHistory[cat]) do
+				table.remove(DPSMateHistory[cat], i)
+			end
+			table.remove(DPSMateHistory[cat], DPSMateSettings["datasegments"]+1)
+		end
+		if DPSMate:TableLength(DPSMateCombatTime["segments"])>DPSMateSettings["datasegments"] then
+			for i=DPSMateSettings["datasegments"]+1, DPSMate:TableLength(DPSMateCombatTime["segments"]) do
+				table.remove(DPSMateCombatTime["segments"], i)
+			end
+		end
+	end
+	table.insert(DPSMateCombatTime["segments"], 1, DPSMateCombatTime["current"])
 	DPSMate.Options:InitializeSegments()
-	DPSMate.Options.Dewdrop:Close()
 end
 
 function DPSMate.Options:InitializeSegments()

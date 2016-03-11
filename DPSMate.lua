@@ -68,6 +68,7 @@ DPSMate.Events = {
 DPSMate.Registered = true
 DPSMate.RegistredModules = {}
 DPSMate.BabbleSpell = AceLibrary("Babble-Spell-2.3")
+DPSMate.BabbleBoss = AceLibrary("Babble-Boss-2.3")
 
 -- Local Variables
 local classcolor = {

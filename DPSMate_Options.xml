@@ -2093,6 +2093,11 @@
 								getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.bossfights)
 							</OnLoad>
 							<OnClick>
+								if DPSMateSettings["onlybossfights"] then
+									DPSMateSettings["onlybossfights"] = false
+								else
+									DPSMateSettings["onlybossfights"] = true
+								end
 							</OnClick>
 						</Scripts>
 					</CheckButton>

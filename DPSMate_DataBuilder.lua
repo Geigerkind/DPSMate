@@ -240,7 +240,8 @@ function DPSMate.DB:OnEvent(event)
 				showtooltips = true,
 				informativetooltips = true,
 				subviewrows = 4,
-				tooltipanchor = 5
+				tooltipanchor = 5,
+				onlybossfights = false,
 			}
 		end
 		if DPSMateHistory == nil then 
@@ -684,6 +685,10 @@ function DPSMate.DB:DamageTaken(Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, Ddodge
 end
 
 function DPSMate.DB:EnemyDamage(arr, Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, Ddodge, Dresist, Damount, cause, Dblock, Dcrush)
+	if (not CombatState and cheatCombat+10<GetTime()) then
+		DPSMate.Options:NewSegment()
+	end
+	CombatState, CombatTime = true, 0
 	for cat, val in pairs({[1]="total", [2]="current"}) do 
 		if DPSMate.DB:EDDExist(Duser, cause, Dname, arr[cat]) then
 			arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][1] = arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][1] + Dhit
