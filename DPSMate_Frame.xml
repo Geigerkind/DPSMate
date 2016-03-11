@@ -45,7 +45,12 @@
 				getglobal(this:GetName().."_BG"):SetAlpha(0.5)
 			</OnLoad>
 			<OnMouseUp>
-				DPSMate.Options:UpdateDetails(this)
+				if arg1 == "LeftButton" then
+					DPSMate.Options:UpdateDetails(this)
+				else
+					DPSMate.Options:InializeReportChannel()
+					DPSMate.Options:OpenMenu(4, this)
+				end
 			</OnMouseUp>
 			<OnEnter>
 				DPSMate.Options:ShowTooltip()

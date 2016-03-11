@@ -57,13 +57,13 @@ function DPSMate.Modules.Damage:EvalTable(user, k)
 					local i = 1
 					while true do
 						if (not d[i]) then
-							table.insert(a, i, {cat, pet})
-							table.insert(d, i, val[13])
+							table.insert(a, i, cat)
+							table.insert(d, i, {val[13], pet})
 							break
 						else
-							if (d[i] < val[13]) then
-								table.insert(a, i, {cat, pet})
-								table.insert(d, i, val[13])
+							if (d[i][1] < val[13]) then
+								table.insert(a, i, cat)
+								table.insert(d, i, {val[13], pet})
 								break
 							end
 						end
@@ -101,8 +101,8 @@ function DPSMate.Modules.Damage:ShowTooltip(user,k)
 	if DPSMateSettings["informativetooltips"] then
 		for i=1, DPSMateSettings["subviewrows"] do
 			if not a[i] then break end
-			if a[i][2] then pet="(Pet)" else pet="" end
-			GameTooltip:AddDoubleLine(i..". "..DPSMate:GetAbilityById(a[i][1])..pet,c[i],1,1,1,1,1,1)
+			if c[i][2] then pet="(Pet)" else pet="" end
+			GameTooltip:AddDoubleLine(i..". "..DPSMate:GetAbilityById(a[i])..pet,c[i][1],1,1,1,1,1,1)
 		end
 	end
 end

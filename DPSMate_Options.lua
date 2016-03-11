@@ -172,12 +172,36 @@ DPSMate.Options.Options = {
 		},
 		handler = DPSMate.Options,
 	},
+	[4] = {
+		type = 'group',
+		args = {
+			report = {
+				order = 10,
+				type = 'group',
+				name = "Report details",
+				desc = "TO BE ADDED!",
+				args = {
+					whisper = {
+						order = 10,
+						type = "text",
+						name = "Whisper",
+						desc = "TO BE ADDED!",
+						get = function() return "" end,
+						set = function(name) DPSMate.Options:ReportUserDetails(DPSMate.Options.Dewdrop:GetOpenedParent(), "Whisper", name); DPSMate.Options.Dewdrop:Close() end,
+						usage = "<name>",
+					},
+				},
+			},
+		},
+		handler = DPSMate.Options,
+	},
 }
 
 -- Local Variables
 local LastPopUp = 0
 local TimeToNextPopUp = 1
 local PartyNum, LastPartyNum = 0, 0
+local SelectedChannel = "Raid"
 
 -- Begin Functions
 
@@ -600,7 +624,7 @@ function DPSMate.Options:ChannelDropDown()
 		}
 	end
 	
-	UIDropDownMenu_SetSelectedValue(DPSMate_Report_Channel, "Raid")
+	UIDropDownMenu_SetSelectedValue(DPSMate_Report_Channel, SelectedChannel)
 end
 
 function DPSMate.Options:WindowDropDown()
@@ -902,14 +926,10 @@ end
 
 function DPSMate.Options:Report()
 	local channel = UIDropDownMenu_GetSelectedValue(DPSMate_Report_Channel)
+	SelectedChannel = channel
 	local arr, cbt = DPSMate:GetMode(DPSMate_Report.PaKey)
 	local chn, index, name, value, perc = nil, nil, nil, nil, nil
-	local con = getglobal("DPSMate_Report_You"):GetChecked()
-	if con then
-		name, perc, value = DPSMate:EvalTable(DPSMate_Report.PaKey)
-	else
-		name, value, perc = DPSMate:GetSettingValues(arr, cbt, DPSMate_Report.PaKey)
-	end
+	name, value, perc = DPSMate:GetSettingValues(arr, cbt, DPSMate_Report.PaKey)
 	if (channel == "Whisper") then
 		chn = "WHISPER"; index = DPSMate_Report_Editbox:GetText();
 	elseif DPSMate:TContains({"Raid","Party","Say","Officer","Guild"}, channel) then
@@ -920,13 +940,56 @@ function DPSMate.Options:Report()
 	SendChatMessage("DPSMate - "..DPSMate.localization.reportfor..DPSMate:GetModeName(DPSMate_Report.PaKey).." - "..getglobal("DPSMate_"..DPSMateSettings["windows"][DPSMate_Report.PaKey]["name"].."_Head_Font"):GetText(), chn, nil, index)
 	for i=1, DPSMate_Report_Lines:GetValue() do
 		if (not value[i] or value[i] == 0) then break end
-		if con then
-			SendChatMessage(i..". "..DPSMate:GetAbilityById(name[i][1]).." - "..value[i], chn, nil, index)
-		else
-			SendChatMessage(i..". "..name[i].." -"..value[i], chn, nil, index)
-		end
+		SendChatMessage(i..". "..name[i].." -"..value[i], chn, nil, index)
 	end
 	DPSMate_Report:Hide()
+end
+
+local AbilityModes = {"damage", "dps", "healing", "hps", "overhealing", "effectivehealing", "effectivehps", "deaths", "interrupts", "dispels", "aurasgained", "auraslost", "aurasuptime"}
+function DPSMate.Options:ReportUserDetails(obj, channel, name)
+	local Key, user = obj:GetParent():GetParent():GetParent().Key, obj.user
+	local a,b,c = DPSMate.RegistredModules[DPSMateSettings["windows"][Key]["CurMode"]]:EvalTable(DPSMateUser[user], Key)
+	local chn, index
+	if (channel == "Whisper") then
+		chn = "WHISPER"; index = name;
+	elseif DPSMate:TContains({"Raid","Party","Say","Officer","Guild"}, channel) then
+		chn = channel
+	else
+		chn = "CHANNEL"; index = GetChannelName(channel)
+	end
+	SendChatMessage("Report of "..user.."'s "..getglobal("DPSMate_"..DPSMateSettings["windows"][Key]["name"].."_Head_Font"):GetText().." - "..DPSMate:GetModeName(Key), chn, nil, index)
+	for i=1, 5 do
+		if (not a[i]) then break end
+		local p
+		if type(c[i])=="table" then p = c[i][1] else p = c[i] end
+		if DPSMate:TContains(AbilityModes, DPSMateSettings["windows"][Key]["CurMode"]) then
+			SendChatMessage(i..". "..DPSMate:GetAbilityById(a[i]).." - "..p, chn, nil, index)
+		else
+			SendChatMessage(i..". "..DPSMate:GetUserById(a[i]).." - "..p, chn, nil, index)
+		end
+	end
+end
+
+function DPSMate.Options:InializeReportChannel()
+	local channel, i = {[1]="Raid",[2]="Party",[3]="Say",[4]="Officer",[5]="Guild"}, 1
+	local path = DPSMate.Options.Options[4]["args"]["report"]["args"]
+	
+	while true do
+		local id, name = GetChannelName(i);
+		if (not name) then break end
+		table.insert(channel, name)
+		i=i+1
+	end
+	
+	for cat, val in channel do
+		path["a"..cat] = {
+			order = 10*cat+10,
+			type = "execute",
+			name = val,
+			desc = "TO BE ADDED!",
+			func = loadstring('DPSMate.Options:ReportUserDetails(DPSMate.Options.Dewdrop:GetOpenedParent(), "'..val..'"); DPSMate.Options.Dewdrop:Close()'),
+		}
+	end
 end
 
 function DPSMate.Options:NewSegment()

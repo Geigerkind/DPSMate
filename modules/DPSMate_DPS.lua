@@ -51,22 +51,22 @@ function DPSMate.Modules.DPS:EvalTable(user, k)
 	local a, u, p, d, total, pet = {}, {}, {}, {}, 0, false
 	local arr = DPSMate:GetMode(k)
 	if not arr[user[1]] then return end
-	if (user["pet"] and user["pet"] ~= "Unknown" and arr[DPSMateUser[user["pet"]][1]]) then u={user[1],DPSMateUser[user["pet"]][1]} else u={user[1]} end
+	if (user[5] and user[5] ~= "Unknown" and arr[DPSMateUser[user[5]][1]]) then u={user[1],DPSMateUser[user[5]][1]} else u={user[1]} end
 	for _, v in pairs(u) do
 		for cat, val in pairs(arr[v]) do
 			if (type(val) == "table" and cat~="i") then
 				if val[13]~=0 and cat~="" then
-					if (DPSMateUser[DPSMate:GetUserById(v)]["isPet"]) then pet=true; else pet=false; end
+					if (DPSMateUser[DPSMate:GetUserById(v)][4]) then pet=true; else pet=false; end
 					local i = 1
 					while true do
 						if (not d[i]) then
-							table.insert(a, i, {cat, pet})
-							table.insert(d, i, val[13])
+							table.insert(a, i, cat)
+							table.insert(d, i, {val[13], pet})
 							break
 						else
-							if (d[i] < val[13]) then
-								table.insert(a, i, {cat, pet})
-								table.insert(d, i, val[13])
+							if (d[i][1] < val[13]) then
+								table.insert(a, i, cat)
+								table.insert(d, i, {val[13], pet})
 								break
 							end
 						end
@@ -99,13 +99,13 @@ function DPSMate.Modules.DPS:GetSettingValues(arr, cbt, k)
 end
 
 function DPSMate.Modules.DPS:ShowTooltip(user,k)
-	local a,b,c = DPSMate.Modules.Damage:EvalTable(DPSMateUser[user], k)
+	local a,b,c = DPSMate.Modules.DPS:EvalTable(DPSMateUser[user], k)
 	local pet = ""
 	if DPSMateSettings["informativetooltips"] then
 		for i=1, DPSMateSettings["subviewrows"] do
 			if not a[i] then break end
-			if a[i][2] then pet="(Pet)" else pet="" end
-			GameTooltip:AddDoubleLine(i..". "..DPSMate:GetAbilityById(a[i][1])..pet,c[i],1,1,1,1,1,1)
+			if c[i][2] then pet="(Pet)" else pet="" end
+			GameTooltip:AddDoubleLine(i..". "..DPSMate:GetAbilityById(a[i])..pet,c[i][1],1,1,1,1,1,1)
 		end
 	end
 end

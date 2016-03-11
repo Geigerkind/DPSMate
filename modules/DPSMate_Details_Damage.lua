@@ -39,10 +39,10 @@ function DPSMate.Modules.DetailsDamage:ScrollFrame_Update()
 	for line=1,10 do
 		lineplusoffset = line + FauxScrollFrame_GetOffset(obj)
 		if DetailsArr[lineplusoffset] ~= nil then
-			if DetailsArr[lineplusoffset][2] then pet="(Pet)" else pet="" end
-			local ability = DPSMate:GetAbilityById(DetailsArr[lineplusoffset][1])
+			if DmgArr[lineplusoffset][2] then pet="(Pet)" else pet="" end
+			local ability = DPSMate:GetAbilityById(DetailsArr[lineplusoffset])
 			getglobal(path.."_ScrollButton"..line.."_Name"):SetText(ability..pet)
-			getglobal(path.."_ScrollButton"..line.."_Value"):SetText(DmgArr[lineplusoffset].." ("..string.format("%.2f", (DmgArr[lineplusoffset]*100/DetailsTotal)).."%)")
+			getglobal(path.."_ScrollButton"..line.."_Value"):SetText(DmgArr[lineplusoffset][1].." ("..string.format("%.2f", (DmgArr[lineplusoffset][1]*100/DetailsTotal)).."%)")
 			getglobal(path.."_ScrollButton"..line.."_Icon"):SetTexture(DPSMate.BabbleSpell:GetSpellIcon(strsub(ability, 1, (strfind(ability, "%(") or 0)-1) or ability))
 			if len < 10 then
 				getglobal(path.."_ScrollButton"..line):SetWidth(235)

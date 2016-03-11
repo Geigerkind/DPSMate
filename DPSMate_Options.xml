@@ -926,19 +926,6 @@
 					</Layer>
 				</Layers>
 			</Frame>
-			<CheckButton name="$parent_You" inherits="DPSMate_Template_CheckButton">
-				<Size x="20" y="20" />
-				<Anchors>
-					<Anchor point="LEFT" relativeTo="$parent_Channel" relativePoint="RIGHT">
-						<Offset x="-12" y="1" />
-					</Anchor>
-				</Anchors>
-				<Scripts>
-					<OnLoad>
-						getglobal(this:GetName().."_Title"):SetText("You")
-					</OnLoad>
-				</Scripts>
-			</CheckButton>
 			<Slider name="$parent_Lines" inherits="OptionsSliderTemplate">
 				<Size>
 					<AbsDimension x="160" y="14" />
