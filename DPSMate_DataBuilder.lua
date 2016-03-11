@@ -243,6 +243,7 @@ function DPSMate.DB:OnEvent(event)
 		end
 		if DPSMateHistory == nil then 
 			DPSMateHistory = {
+				names = {},
 				DMGDone = {},
 				DMGTaken = {},
 				EDDone = {},

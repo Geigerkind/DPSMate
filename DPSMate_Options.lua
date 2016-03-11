@@ -447,6 +447,7 @@ function DPSMate.Options:PopUpAccept(bool, bypass)
 			DPSMateInterrupts = {[1]={},[2]={}}
 			DPSMateAurasGained = {[1]={},[2]={}}
 			DPSMateHistory = {
+				names = {},
 				DMGDone = {},
 				DMGTaken = {},
 				EDDone = {},
@@ -1010,6 +1011,10 @@ function DPSMate.Options:NewSegment()
 	-- Need to add a new check
 	local modes = {["DMGDone"] = DPSMateDamageDone[2], ["DMGTaken"] = DPSMateDamageTaken[2], ["EDDone"] = DPSMateEDD[2], ["EDTaken"] = DPSMateEDT[2], ["THealing"] = DPSMateTHealing[2], ["EHealing"] = DPSMateEHealing[2], ["OHealing"] = DPSMateOverhealing[2], ["EHealingTaken"] = DPSMateEHealingTaken[2], ["THealingTaken"] = DPSMateHealingTaken[2], ["Absorbs"] = DPSMateAbsorbs[2], ["Deaths"] = DPSMateDeaths[2], ["Interrupts"] = DPSMateInterrupts[2], ["Dispels"] = DPSMateDispels[2], ["Auras"] = DPSMateAurasGained[2]}
 	
+	-- Get name of this session
+	local a,_,_ = DPSMate.RegistredModules["enemydamagetaken"]:GetSettingValues(DPSMateEDT[2], DPSMateCombatTime["current"], 1)
+	table.insert(DPSMateHistory["names"], 1, (a[1] or "Unknown").." - "..GameTime_GetTime())
+	
 	for cat, val in pairs(modes) do
 		table.insert(DPSMateHistory[cat], 1, DPSMate:CopyTable(val))
 		if DPSMate:TableLength(DPSMateHistory[cat])>DPSMateSettings["datasegments"] then
@@ -1071,7 +1076,7 @@ function DPSMate.Options:InitializeSegments()
 		DPSMate.Options.Options[2]["args"]["segment"..i] = {
 			order = 20+i*10,
 			type = 'toggle',
-			name = "Segment "..i,
+			name = i..". "..DPSMateHistory["names"][i],
 			desc = "Fight deatails for segment "..i,
 			get = loadstring('return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["options"][2]["segment'..i..'"];'),
 			set = loadstring('DPSMate.Options:ToggleDrewDrop(2, "segment'..i..'", DPSMate.Options.Dewdrop:GetOpenedParent());'),
@@ -1079,7 +1084,7 @@ function DPSMate.Options:InitializeSegments()
 		DPSMate.Options.Options[3]["args"]["deletesegment"]["args"]["segment"..i] = {
 			order = i*10,
 			type = 'execute',
-			name = "Segment "..i,
+			name = i..". "..DPSMateHistory["names"][i],
 			desc = "Remove segment "..i,
 			func = loadstring('DPSMate.Options:RemoveSegment('..i..');'),
 		}
