@@ -569,18 +569,6 @@ end
 -- You gain 25 Energy from Relentless Strikes Effect.
 function DPSMate.Parser:SpellSelfBuff(msg)
 	t = {}
-	for a,b,c in string.gfind(msg, "Your (.+) heals (.+) for (%d+)%.") do 
-		if b=="you" then t[1]=player end
-		t[2] = tonumber(c)
-		overheal = DPSMate.Parser:GetOverhealByName(t[2], t[1] or b)
-		DPSMate.DB:HealingTaken(DPSMateHealingTaken, t[1] or b, a, 1, 0, t[2], player)
-		DPSMate.DB:HealingTaken(DPSMateEHealingTaken, t[1] or b, a, 1, 0, t[2]-overheal, player)
-		DPSMate.DB:Healing(DPSMateEHealing, player, a, 1, 0, t[2]-overheal, t[1] or b)
-		if overheal>0 then DPSMate.DB:Healing(DPSMateOverhealing, player, a, 1, 0, overheal, t[1] or b) end
-		DPSMate.DB:Healing(DPSMateTHealing, player, a, 1, 0, t[2], t[1] or b)
-		DPSMate.DB:DeathHistory(t[1] or b, player, a, t[2], 1, 0, 1, 0)
-		return
-	end
 	for a,b,c in string.gfind(msg, "Your (.+) critically heals (.+) for (%d+)%.") do 
 		if b=="you" then t[1]=player end
 		t[2] = tonumber(c)
@@ -591,6 +579,18 @@ function DPSMate.Parser:SpellSelfBuff(msg)
 		if overheal>0 then DPSMate.DB:Healing(DPSMateOverhealing, player, a, 0, 1, overheal, t[1] or b) end
 		DPSMate.DB:Healing(DPSMateTHealing, player, a, 0, 1, t[2], t[1] or b)
 		DPSMate.DB:DeathHistory(t[1] or b, player, a, t[2], 0, 1, 1, 0)
+		return
+	end
+	for a,b,c in string.gfind(msg, "Your (.+) heals (.+) for (%d+)%.") do 
+		if b=="you" then t[1]=player end
+		t[2] = tonumber(c)
+		overheal = DPSMate.Parser:GetOverhealByName(t[2], t[1] or b)
+		DPSMate.DB:HealingTaken(DPSMateHealingTaken, t[1] or b, a, 1, 0, t[2], player)
+		DPSMate.DB:HealingTaken(DPSMateEHealingTaken, t[1] or b, a, 1, 0, t[2]-overheal, player)
+		DPSMate.DB:Healing(DPSMateEHealing, player, a, 1, 0, t[2]-overheal, t[1] or b)
+		if overheal>0 then DPSMate.DB:Healing(DPSMateOverhealing, player, a, 1, 0, overheal, t[1] or b) end
+		DPSMate.DB:Healing(DPSMateTHealing, player, a, 1, 0, t[2], t[1] or b)
+		DPSMate.DB:DeathHistory(t[1] or b, player, a, t[2], 1, 0, 1, 0)
 		return
 	end
 	for a,b in strgfind(msg, "You gain (%d+) Energy from (.+)%.") do -- Potential to gain energy values for class evaluation
@@ -682,18 +682,6 @@ end
 -- if strfind(msg, "begins to") or strfind(msg, "Rage") then return end
 function DPSMate.Parser:SpellHostilePlayerBuff(msg)
 	t = {}
-	for a,b,c,d in strgfind(msg, "(.+)'s (.+) heals (.+) for (%d+)%.") do 
-		t[1] = tonumber(d)
-		if c=="you" then t[2]=player end
-		overheal = DPSMate.Parser:GetOverhealByName(t[1], t[2] or c)
-		DPSMate.DB:HealingTaken(DPSMateHealingTaken, t[2] or c, b, 1, 0, t[1], a)
-		DPSMate.DB:HealingTaken(DPSMateEHealingTaken, t[2] or c, b, 1, 0, t[1]-overheal, a)
-		DPSMate.DB:Healing(DPSMateEHealing, a, b, 1, 0, t[1]-overheal, t[2] or c)
-		if overheal>0 then DPSMate.DB:Healing(DPSMateOverhealing, a, b, 1, 0, overheal, t[2] or c) end
-		DPSMate.DB:Healing(DPSMateTHealing, a, b, 1, 0, t[1], t[2] or c)
-		DPSMate.DB:DeathHistory(t[2] or c, a, b, t[1], 1, 0, 1, 0)
-		return
-	end
 	for a,b,c,d in strgfind(msg, "(.+)'s (.+) critically heals (.+) for (%d+)%.") do 
 		t[1] = tonumber(d)
 		if c=="you" then t[2]=player end
@@ -704,6 +692,18 @@ function DPSMate.Parser:SpellHostilePlayerBuff(msg)
 		if overheal>0 then DPSMate.DB:Healing(DPSMateOverhealing, a, b, 0, 1, overheal, t[2] or c) end
 		DPSMate.DB:Healing(DPSMateTHealing, a, b, 0, 1, t[1], t[2] or c)
 		DPSMate.DB:DeathHistory(t[2] or c, a, b, t[1], 0, 1, 1, 0)
+		return
+	end
+	for a,b,c,d in strgfind(msg, "(.+)'s (.+) heals (.+) for (%d+)%.") do 
+		t[1] = tonumber(d)
+		if c=="you" then t[2]=player end
+		overheal = DPSMate.Parser:GetOverhealByName(t[1], t[2] or c)
+		DPSMate.DB:HealingTaken(DPSMateHealingTaken, t[2] or c, b, 1, 0, t[1], a)
+		DPSMate.DB:HealingTaken(DPSMateEHealingTaken, t[2] or c, b, 1, 0, t[1]-overheal, a)
+		DPSMate.DB:Healing(DPSMateEHealing, a, b, 1, 0, t[1]-overheal, t[2] or c)
+		if overheal>0 then DPSMate.DB:Healing(DPSMateOverhealing, a, b, 1, 0, overheal, t[2] or c) end
+		DPSMate.DB:Healing(DPSMateTHealing, a, b, 1, 0, t[1], t[2] or c)
+		DPSMate.DB:DeathHistory(t[2] or c, a, b, t[1], 1, 0, 1, 0)
 		return
 	end
 	for a,b,c,d in strgfind(msg, "(.+) gains (%d+) Energy from (.+)'s (.+)%.") do
