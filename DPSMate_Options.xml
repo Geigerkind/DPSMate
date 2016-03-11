@@ -2201,7 +2201,7 @@
 				</Scripts>
 				<HitRectInsets left="0" right="0" top="10" bottom="10"/> 
 				<ScrollChild>
-					<Frame name="$parent_Container">
+					<Frame name="$parent_Child">
 						<Size x="300" y="1300" />
 						<Frames>
 							<Frame name="$parent_DPS" inherits="DPSMate_Template_BoxColumns">
