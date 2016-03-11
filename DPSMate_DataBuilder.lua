@@ -33,6 +33,8 @@ local LastUpdate = 0
 local MainLastUpdate = 0
 local MainUpdateTime = 1.5
 local MainLastUpdateMinute = 0
+local CombatTime = 0
+local CombatBuffer = 3
 
 -- Begin Functions
 
@@ -535,7 +537,7 @@ function DPSMate.DB:DamageDone(Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, Ddodge,
 	if (not CombatState and cheatCombat+10<GetTime()) then
 		DPSMate.Options:NewSegment()
 	end
-	CombatState = true
+	CombatState, CombatTime = true, 0
 	
 	for cat, val in pairs({[1]="total", [2]="current"}) do 
 		if DPSMate.DB:DDExist(Duser, Dname, DPSMateDamageDone[cat]) then
@@ -1486,11 +1488,15 @@ function DPSMate.DB:CombatTime()
 	f:SetScript("OnUpdate", function(self, elapsed)
 		if (CombatState) then
 			LastUpdate = LastUpdate + arg1
+			CombatTime = CombatTime + arg1
 			if LastUpdate>=UpdateTime then
 				DPSMateCombatTime["total"] = DPSMateCombatTime["total"] + LastUpdate
 				DPSMateCombatTime["current"] = DPSMateCombatTime["current"] + LastUpdate
-				if not DPSMate.DB:AffectingCombat() then CombatState = false end
 				LastUpdate = 0
+			end
+			if CombatTime>=CombatBuffer then
+				if not DPSMate.DB:AffectingCombat() then CombatState = false end
+				CombatTime = 0
 			end
 		end
 		if DPSMate.DB.NeedUpdate then
