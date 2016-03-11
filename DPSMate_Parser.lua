@@ -634,7 +634,7 @@ function DPSMate.Parser:SpellPeriodicSelfBuff(msg) -- Maybe some loss here?
 		DPSMate.DB:DeathHistory(player, player, b.."(Periodic)", t[1], 1, 0, 1, 0)
 		return
 	end
-	for a in strgfind(msg, "You gain (%a+)%.") do
+	for a in strgfind(msg, "You gain (.+)%.") do
 		DPSMate.DB:ConfirmBuff(player, a, GetTime())
 		DPSMate.DB:RegisterHotDispel(player, a)
 		return 
@@ -670,7 +670,7 @@ function DPSMate.Parser:SpellPeriodicFriendlyPlayerBuffs(msg)
 		DPSMate.DB:DeathHistory(f, f, b.."(Periodic)", t[1], 1, 0, 1, 0)
 		return
 	end
-	for f,a in strgfind(msg, "(.+) gains (%a+)%.") do
+	for f,a in strgfind(msg, "(.+) gains (.+)%.") do
 		DPSMate.DB:ConfirmBuff(f, a, GetTime())
 		DPSMate.DB:RegisterHotDispel(f, a)
 		return 

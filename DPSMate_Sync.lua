@@ -235,12 +235,13 @@ function DPSMate.Sync:OnEvent(event)
 		if DPSMateSettings["sync"] and DPSMate.DB.loaded then
 			if arg4 == player.name then return end 
 			if arg1 == "DPSMate" then
-				local owner, ability, abilityTarget, time = "", "", "", 0
-				for o,a,at,t in string.gfind(arg2, "(.+),(.+),(.+),(.+)") do owner=o;ability=a;abilityTarget=at;time=tonumber(t) end
-				if DPSMate:TContains(DPSMate.Parser.Kicks, ability) then DPSMate.DB:AwaitAfflictedStun(owner, ability, abilityTarget, time) end
-				if DPSMate:TContains(DPSMate.Parser.HotDispels, ability) then DPSMate.DB:AwaitHotDispel(ability, abilityTarget, owner, time) end
-				DPSMate.DB:AwaitingBuff(owner, ability, abilityTarget, time)
-				DPSMate.DB:AwaitingAbsorbConfirmation(owner, ability, abilityTarget, time)
+				t = {}
+				strgsub(arg2, "(.-),", func) -- name, aura, target, time
+				t[4] = tonumber(t[4])
+				if DPSMate:TContains(DPSMate.Parser.Kicks, ability) then DPSMate.DB:AwaitAfflictedStun(t[1], t[2], t[3], t[4]) end
+				if DPSMate:TContains(DPSMate.Parser.HotDispels, ability) then DPSMate.DB:AwaitHotDispel(t[2], t[3], t[1], t[4]) end
+				DPSMate.DB:AwaitingBuff(t[1], t[2], t[3], t[4])
+				DPSMate.DB:AwaitingAbsorbConfirmation(t[1], t[2], t[3], t[4])
 			elseif arg1 == "DPSMate_DMGDoneAll" then
 				DPSMate.Sync:DMGDoneAllIn(arg2, arg4)
 			elseif arg1 == "DPSMate_DMGDoneStat" then
@@ -823,7 +824,7 @@ DPSMate.Parser.UseAction = function(slot, checkCursor, onSelf)
 		local target, time = nil, GetTime()
 		if not UnitName("target") or not UnitIsPlayer("target") then target = player.name else target = UnitName("target") end
 		
-		if DPSMateSettings["sync"] then SendAddonMessage("DPSMate", player.name..","..aura..","..target..","..time, "RAID") end
+		if DPSMateSettings["sync"] then SendAddonMessage("DPSMate", player.name..","..aura..","..target..","..time..",", "RAID") end
 		
 		if DPSMate:TContains(DPSMate.Parser.Kicks, ability) then DPSMate.DB:AwaitAfflictedStun(player.name, aura, target, time) end
 		DPSMate.DB:AwaitingBuff(player.name, aura, target, time)
@@ -832,6 +833,34 @@ DPSMate.Parser.UseAction = function(slot, checkCursor, onSelf)
 	DPSMate.Parser.oldUseAction(slot, checkCursor, onSelf)
 end
 UseAction = DPSMate.Parser.UseAction
+
+-- Hooking CastSpellByName function in order to get the owner of the spell.
+local oldCastSpellByName = CastSpellByName
+DPSMate.Parser.CastSpellByName = function(spellName, onSelf)
+	local target, time = nil, GetTime()
+	if not UnitName("target") or not UnitIsPlayer("target") then target = player.name else target = UnitName("target") end
+	if DPSMateSettings["sync"] then SendAddonMessage("DPSMate", player.name..","..spellName..","..target..","..time..",", "RAID") end
+	if DPSMate:TContains(DPSMate.Parser.Kicks, ability) then DPSMate.DB:AwaitAfflictedStun(player.name, spellName, target, time) end
+	DPSMate.DB:AwaitingBuff(player.name, spellName, target, time)
+	DPSMate.DB:AwaitingAbsorbConfirmation(player.name, spellName, target, time)
+	oldCastSpellByName(spellName, onSelf)
+end
+CastSpellByName = DPSMate.Parser.CastSpellByName
+
+-- Hooking CastSpell function in order to get the owner of the spell.
+local oldCastSpell = CastSpell
+DPSMate.Parser.CastSpell = function(spellID, spellbookType)
+	local spellName, spellRank = GetSpellName(spellID, spellbookType)
+	local target, time = nil, GetTime()
+	if not UnitName("target") or not UnitIsPlayer("target") then target = player.name else target = UnitName("target") end
+	if DPSMateSettings["sync"] then SendAddonMessage("DPSMate", player.name..","..spellName..","..target..","..time..",", "RAID") end
+	if DPSMate:TContains(DPSMate.Parser.Kicks, ability) then DPSMate.DB:AwaitAfflictedStun(player.name, spellName, target, time) end
+	DPSMate.DB:AwaitingBuff(player.name, spellName, target, time)
+	DPSMate.DB:AwaitingAbsorbConfirmation(player.name, spellName, target, time)
+	oldCastSpell(spellID, spellbookType)
+end
+CastSpell = DPSMate.Parser.CastSpell
+
 
 ----------------------------------------------------------------------------------
 --------------                     DAMAGE DONE                      --------------                                  
