@@ -635,6 +635,7 @@ function DPSMate.Parser:SpellPeriodicSelfBuff(msg) -- Maybe some loss here?
 		return
 	end
 	for a in strgfind(msg, "You gain (.+)%.") do
+		if strfind(a, "from") then return end
 		DPSMate.DB:ConfirmBuff(player, a, GetTime())
 		DPSMate.DB:RegisterHotDispel(player, a)
 		return 
@@ -671,6 +672,7 @@ function DPSMate.Parser:SpellPeriodicFriendlyPlayerBuffs(msg)
 		return
 	end
 	for f,a in strgfind(msg, "(.+) gains (.+)%.") do
+		if strfind(a, "from") then return end
 		DPSMate.DB:ConfirmBuff(f, a, GetTime())
 		DPSMate.DB:RegisterHotDispel(f, a)
 		return 
