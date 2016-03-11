@@ -848,7 +848,7 @@ function DPSMate.Options:ContentBGTextureDropDown()
 				edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border", tile = true, tileSize = 32, edgeSize = 32, 
 				insets = { left = 11, right = 12, top = 12, bottom = 11 }
 			})
-			getglobal("DropDownList1Backdrop"):SetBackdropColor(DPSMateSettings["contentbgcolor"][1], DPSMateSettings["contentbgcolor"][2], DPSMateSettings["contentbgcolor"][3])
+			getglobal("DropDownList1Backdrop"):SetBackdropColor(DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["contentbgcolor"][1], DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["contentbgcolor"][2], DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["contentbgcolor"][3])
 		end)
 		i=i+1
 	end
@@ -957,7 +957,7 @@ function DPSMate.Options:ReportUserDetails(obj, channel, name)
 	else
 		chn = "CHANNEL"; index = GetChannelName(channel)
 	end
-	SendChatMessage("Report of "..user.."'s "..getglobal("DPSMate_"..DPSMateSettings["windows"][Key]["name"].."_Head_Font"):GetText().." - "..DPSMate:GetModeName(Key), chn, nil, index)
+	SendChatMessage("DPSMate - Report of "..user.."'s "..getglobal("DPSMate_"..DPSMateSettings["windows"][Key]["name"].."_Head_Font"):GetText().." - "..DPSMate:GetModeName(Key), chn, nil, index)
 	for i=1, 5 do
 		if (not a[i]) then break end
 		local p
@@ -970,10 +970,24 @@ function DPSMate.Options:ReportUserDetails(obj, channel, name)
 	end
 end
 
-function DPSMate.Options:InializeReportChannel()
+function DPSMate.Options:InializePlayerDewDrop(obj)
 	local channel, i = {[1]="Raid",[2]="Party",[3]="Say",[4]="Officer",[5]="Guild"}, 1
 	local path = DPSMate.Options.Options[4]["args"]["report"]["args"]
+	-- Name
+	DPSMate.Options.Options[4]["args"]["player"] = {
+		order = 1,
+		type = "header",
+		name = obj.user,
+	}
+	DPSMate.Options.Options[4]["args"]["details"] = {
+		order = 2,
+		type = "execute",
+		name = "Open details",
+		desc = "TO BE ADDED!",
+		func = function() DPSMate.Options:UpdateDetails(obj); DPSMate.Options.Dewdrop:Close() end,
+	}
 	
+	-- Report channel
 	while true do
 		local id, name = GetChannelName(i);
 		if (not name) then break end

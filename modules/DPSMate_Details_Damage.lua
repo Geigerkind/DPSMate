@@ -73,7 +73,7 @@ function DPSMate.Modules.DetailsDamage:SelectDetailsButton(i)
 		getglobal("DPSMate_Details_Log_ScrollButton"..p.."_selected"):Hide()
 	end
 	-- Performance?
-	local ability = tonumber(DetailsArr[lineplusoffset][1])
+	local ability = tonumber(DetailsArr[lineplusoffset])
 	if (arr[DPSMateUser[DetailsUser][1]][ability]) then user=DPSMateUser[DetailsUser][1]; pet=0; else if DPSMateUser[DetailsUser][5] then user=DPSMateUser[DPSMateUser[DetailsUser][5]][1]; pet=5; else user=DPSMateUser[DetailsUser][1]; pet=0; end end
 	getglobal("DPSMate_Details_Log_ScrollButton"..i.."_selected"):Show()
 	
@@ -157,8 +157,8 @@ function DPSMate.Modules.DetailsDamage:UpdatePie()
 	local arr = db
 	g:ResetPie()
 	for cat, val in pairs(DetailsArr) do
-		local ability = tonumber(DetailsArr[cat][1])
-		if (DetailsArr[cat][2]) then user=DPSMateUser[DPSMateUser[DetailsUser][5]][1] else user=DPSMateUser[DetailsUser][1] end
+		local ability = tonumber(DetailsArr[cat])
+		if (DmgArr[cat][2]) then user=DPSMateUser[DPSMateUser[DetailsUser][5]][1] else user=DPSMateUser[DetailsUser][1] end
 		local percent = (arr[user][ability][13]*100/DetailsTotal)
 		g:AddPie(percent, 0)
 	end

@@ -48,7 +48,7 @@
 				if arg1 == "LeftButton" then
 					DPSMate.Options:UpdateDetails(this)
 				else
-					DPSMate.Options:InializeReportChannel()
+					DPSMate.Options:InializePlayerDewDrop(this)
 					DPSMate.Options:OpenMenu(4, this)
 				end
 			</OnMouseUp>

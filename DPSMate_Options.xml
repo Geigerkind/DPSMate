@@ -133,6 +133,7 @@
 					getglobal("DPSMate_ConfigMenu_Menu_Button"..i.."Text"):SetTextColor(1,0.82,0,1)
 				end
 				this.selected=true
+				DPSMate_ConfigMenu_Menu.Key = this.Key
 				getglobal(this:GetName().."Texture"):Show()
 				getglobal(this:GetName().."Text"):SetTextColor(1,1,1,1)
 				this.func()
@@ -164,6 +165,7 @@
 						getglobal(this:GetParent():GetName().."_Button3"):Show()
 						this:GetParent().after:ClearAllPoints()
 						this:GetParent().after:SetPoint("TOP", this:GetParent(), "BOTTOM", 0, -42)
+						DPSMate_ConfigMenu_Menu.Key = this:GetParent().Key
 					</OnClick>
 				</Scripts>
 				<NormalTexture file="Interface\AddOns\DPSMate\images\UI-Panel-ExpandButton-Up" />
@@ -1552,6 +1554,13 @@
 				<Anchors>
 					<Anchor point="LEFT" relativeTo="$parent_Menu" relativePoint="RIGHT" />
 				</Anchors>
+				<Scripts>
+					<OnShow>
+						getglobal(this:GetName().."_BGColor_SwatchBg").r = DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["titlebarbgcolor"][1]
+						getglobal(this:GetName().."_BGColor_SwatchBg").g = DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["titlebarbgcolor"][2]
+						getglobal(this:GetName().."_BGColor_SwatchBg").b = DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["titlebarbgcolor"][3]
+					</OnShow>
+				</Scripts>
 				<Frames>
 					<CheckButton name="$parent_Enable" inherits="DPSMate_Template_CheckButton">
 						<Anchors>
@@ -1676,9 +1685,9 @@
 						<Scripts>
 							<OnLoad>
 								getglobal(this:GetName().."_Font"):SetText(DPSMate.localization.config.bgcolor)
-								getglobal(this:GetName().."_SwatchBg").r = 1.0
-								getglobal(this:GetName().."_SwatchBg").g = 1.0
-								getglobal(this:GetName().."_SwatchBg").b = 1.0
+								getglobal(this:GetName().."_SwatchBg").r = 1
+								getglobal(this:GetName().."_SwatchBg").g = 1
+								getglobal(this:GetName().."_SwatchBg").b = 1
 								this.aide = DPSMate.localization.config.bgcolorTooltip
 								this.var = "titlebarbgcolor"
 								this.func = function()
@@ -1815,6 +1824,13 @@
 				<Anchors>
 					<Anchor point="LEFT" relativeTo="$parent_Menu" relativePoint="RIGHT" />
 				</Anchors>
+				<Scripts>
+					<OnShow>
+						getglobal(this:GetName().."_BGColor_SwatchBg").r = DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["contentbgcolor"][1]
+						getglobal(this:GetName().."_BGColor_SwatchBg").g = DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["contentbgcolor"][2]
+						getglobal(this:GetName().."_BGColor_SwatchBg").b = DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["contentbgcolor"][3]
+					</OnShow>
+				</Scripts>
 				<Frames>
 					<Frame name="$parent_BGDropDown" inherits="DPSMate_Template_BGDropDown">
 						<Anchors>
@@ -1862,9 +1878,9 @@
 						<Scripts>
 							<OnLoad>
 								getglobal(this:GetName().."_Font"):SetText(DPSMate.localization.config.bgcolor)
-								getglobal(this:GetName().."_SwatchBg").r = 1.0
-								getglobal(this:GetName().."_SwatchBg").g = 1.0
-								getglobal(this:GetName().."_SwatchBg").b = 1.0
+								getglobal(this:GetName().."_SwatchBg").r = 1
+								getglobal(this:GetName().."_SwatchBg").g = 1
+								getglobal(this:GetName().."_SwatchBg").b = 1
 								this.aide=DPSMate.localization.config.bgcolorTooltip
 								this.var = "contentbgcolor"
 								this.func = function()
