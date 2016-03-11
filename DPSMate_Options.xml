@@ -4006,6 +4006,7 @@
 				this:RegisterEvent("ADDON_LOADED")
 				this:RegisterEvent("PLAYER_ENTERING_WORLD")
 				
+				this:RegisterEvent("UPDATE_MOUSEOVER_UNIT")
 				this:RegisterEvent("PARTY_MEMBERS_CHANGED")
 				this:RegisterEvent("RAID_ROSTER_UPDATE")
 				

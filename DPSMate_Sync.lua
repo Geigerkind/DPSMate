@@ -11,6 +11,7 @@ local t = {}
 local strgsub = string.gsub
 local tinsert = table.insert
 local func = function(c) tinsert(t,c) end
+local LastMouseover = nil
 
 -- Beginn Functions
 
@@ -237,11 +238,11 @@ function DPSMate.Sync:OnEvent(event)
 			if arg1 == "DPSMate" then
 				t = {}
 				strgsub(arg2, "(.-),", func) -- name, aura, target, time
-				t[4] = tonumber(t[4])
-				if DPSMate:TContains(DPSMate.Parser.Kicks, ability) then DPSMate.DB:AwaitAfflictedStun(t[1], t[2], t[3], t[4]) end
-				if DPSMate:TContains(DPSMate.Parser.HotDispels, ability) then DPSMate.DB:AwaitHotDispel(t[2], t[3], t[1], t[4]) end
-				DPSMate.DB:AwaitingBuff(t[1], t[2], t[3], t[4])
-				DPSMate.DB:AwaitingAbsorbConfirmation(t[1], t[2], t[3], t[4])
+				t[3] = tonumber(t[3])
+				if DPSMate:TContains(DPSMate.Parser.Kicks, ability) then DPSMate.DB:AwaitAfflictedStun(arg4, t[1], t[2], t[3]) end
+				if DPSMate:TContains(DPSMate.Parser.HotDispels, ability) then DPSMate.DB:AwaitHotDispel(t[1], t[2], arg4, t[3]) end
+				DPSMate.DB:AwaitingBuff(arg4, t[1], t[2], t[3])
+				DPSMate.DB:AwaitingAbsorbConfirmation(arg4, t[1], t[2], t[3])
 			elseif arg1 == "DPSMate_DMGDoneAll" then
 				DPSMate.Sync:DMGDoneAllIn(arg2, arg4)
 			elseif arg1 == "DPSMate_DMGDoneStat" then
@@ -332,6 +333,8 @@ function DPSMate.Sync:OnEvent(event)
 				DPSMate.Sync:CountParticipants()
 			end
 		end
+	elseif event == "UPDATE_MOUSEOVER_UNIT" then
+		LastMouseover = UnitName("mouseover")
 	end
 end
 
@@ -489,6 +492,8 @@ function DPSMate.Sync:EDStatIn(arr, arg2, arg4)
 	DPSMate.DB:BuildUser(t[1], nil)
 	if not arr[1][DPSMateUser[t[1]][1]] then return end
 	t[2] = tonumber(t[2])
+	if not t[1] then DPSMate:SendMessage(arg4) end
+	if not arg4 then DPSMate:SendMessage(t[1]) end
 	tinsert(arr[1][DPSMateUser[t[1]][1]][DPSMateUser[arg4][1]]["i"][1], {t[2], tonumber(t[3])})
 	if t[2]>DPSMateCombatTime["total"] then DPSMateCombatTime["total"]=t[2] end
 end
@@ -821,11 +826,9 @@ DPSMate.Parser.UseAction = function(slot, checkCursor, onSelf)
 	local aura = DPSMate_TooltipTextLeft1:GetText()
 	DPSMate_Tooltip:Hide()
 	if aura then
-		local target, time = nil, GetTime()
-		if not UnitName("target") or not UnitIsPlayer("target") then target = player.name else target = UnitName("target") end
-		
-		if DPSMateSettings["sync"] then SendAddonMessage("DPSMate", player.name..","..aura..","..target..","..time..",", "RAID") end
-		
+		local target, time = UnitName("target"), GetTime()
+		if not target then target = LastMouseover end
+		if target and DPSMateSettings["sync"] then SendAddonMessage("DPSMate", aura..","..target..","..time..",", "RAID") end
 		if DPSMate:TContains(DPSMate.Parser.Kicks, ability) then DPSMate.DB:AwaitAfflictedStun(player.name, aura, target, time) end
 		DPSMate.DB:AwaitingBuff(player.name, aura, target, time)
 		DPSMate.DB:AwaitingAbsorbConfirmation(player.name, aura, target, time)
@@ -837,9 +840,9 @@ UseAction = DPSMate.Parser.UseAction
 -- Hooking CastSpellByName function in order to get the owner of the spell.
 local oldCastSpellByName = CastSpellByName
 DPSMate.Parser.CastSpellByName = function(spellName, onSelf)
-	local target, time = nil, GetTime()
-	if not UnitName("target") or not UnitIsPlayer("target") then target = player.name else target = UnitName("target") end
-	if DPSMateSettings["sync"] then SendAddonMessage("DPSMate", player.name..","..spellName..","..target..","..time..",", "RAID") end
+	local target, time = UnitName("target"), GetTime()
+	if not target then target = LastMouseover end
+	if target and DPSMateSettings["sync"] then SendAddonMessage("DPSMate", aura..","..target..","..time..",", "RAID") end
 	if DPSMate:TContains(DPSMate.Parser.Kicks, ability) then DPSMate.DB:AwaitAfflictedStun(player.name, spellName, target, time) end
 	DPSMate.DB:AwaitingBuff(player.name, spellName, target, time)
 	DPSMate.DB:AwaitingAbsorbConfirmation(player.name, spellName, target, time)
@@ -851,16 +854,15 @@ CastSpellByName = DPSMate.Parser.CastSpellByName
 local oldCastSpell = CastSpell
 DPSMate.Parser.CastSpell = function(spellID, spellbookType)
 	local spellName, spellRank = GetSpellName(spellID, spellbookType)
-	local target, time = nil, GetTime()
-	if not UnitName("target") or not UnitIsPlayer("target") then target = player.name else target = UnitName("target") end
-	if DPSMateSettings["sync"] then SendAddonMessage("DPSMate", player.name..","..spellName..","..target..","..time..",", "RAID") end
+	local target, time = UnitName("target"), GetTime()
+	if not target then target = LastMouseover end
+	if target and DPSMateSettings["sync"] then SendAddonMessage("DPSMate", aura..","..target..","..time..",", "RAID") end
 	if DPSMate:TContains(DPSMate.Parser.Kicks, ability) then DPSMate.DB:AwaitAfflictedStun(player.name, spellName, target, time) end
 	DPSMate.DB:AwaitingBuff(player.name, spellName, target, time)
 	DPSMate.DB:AwaitingAbsorbConfirmation(player.name, spellName, target, time)
 	oldCastSpell(spellID, spellbookType)
 end
 CastSpell = DPSMate.Parser.CastSpell
-
 
 ----------------------------------------------------------------------------------
 --------------                     DAMAGE DONE                      --------------                                  
