@@ -842,7 +842,7 @@ local oldCastSpellByName = CastSpellByName
 DPSMate.Parser.CastSpellByName = function(spellName, onSelf)
 	local target, time = UnitName("target"), GetTime()
 	if not target then target = LastMouseover end
-	if target and DPSMateSettings["sync"] then SendAddonMessage("DPSMate", aura..","..target..","..time..",", "RAID") end
+	if target and DPSMateSettings["sync"] then SendAddonMessage("DPSMate", spellName..","..target..","..time..",", "RAID") end
 	if DPSMate:TContains(DPSMate.Parser.Kicks, ability) then DPSMate.DB:AwaitAfflictedStun(player.name, spellName, target, time) end
 	DPSMate.DB:AwaitingBuff(player.name, spellName, target, time)
 	DPSMate.DB:AwaitingAbsorbConfirmation(player.name, spellName, target, time)
@@ -856,7 +856,7 @@ DPSMate.Parser.CastSpell = function(spellID, spellbookType)
 	local spellName, spellRank = GetSpellName(spellID, spellbookType)
 	local target, time = UnitName("target"), GetTime()
 	if not target then target = LastMouseover end
-	if target and DPSMateSettings["sync"] then SendAddonMessage("DPSMate", aura..","..target..","..time..",", "RAID") end
+	if target and DPSMateSettings["sync"] then SendAddonMessage("DPSMate", spellName..","..target..","..time..",", "RAID") end
 	if DPSMate:TContains(DPSMate.Parser.Kicks, ability) then DPSMate.DB:AwaitAfflictedStun(player.name, spellName, target, time) end
 	DPSMate.DB:AwaitingBuff(player.name, spellName, target, time)
 	DPSMate.DB:AwaitingAbsorbConfirmation(player.name, spellName, target, time)
