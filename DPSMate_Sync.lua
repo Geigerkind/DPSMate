@@ -926,7 +926,7 @@ end
 function DPSMate.Sync:HealingStatOut(arr, prefix)
 	if not arr[1][DPSMateUser[player.name][1]] then return end
 	for cat, val in DPSMate.Sync:GetSummarizedTable(arr[1][DPSMateUser[player.name][1]]["i"][2]) do
-		SendAddonMessage("DPSMate_"..prefix.."Stat", val[1]..","..val[2]..",", "RAID")
+		SendAddonMessage("DPSMate_"..prefix.."HealingStat", val[1]..","..val[2]..",", "RAID")
 	end
 end
 

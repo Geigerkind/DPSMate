@@ -310,6 +310,7 @@ end
 
 function DPSMate.Options:OnEvent(event)
 	if event == "PARTY_MEMBERS_CHANGED" or event == "RAID_ROSTER_UPDATE" then
+		DPSMate:SendMessage("Test")
 		DPSMate.Options:HideWhenSolo()
 		if DPSMate.Options:IsInParty() then
 			if LastPartyNum == 0 then
@@ -336,6 +337,17 @@ function DPSMate.Options:OnEvent(event)
 				DPSMate.DB:IsReallyPet()
 				DPSMate.DB:AssignClass()
 				DPSMate.DB:AssignPet()
+			end
+		else
+			if LastPartyNum > PartyNum then
+				if DPSMateSettings["dataresetsleaveparty"] == 3 then
+					if (GetTime()-LastPopUp) > TimeToNextPopUp and (DPSMate:TableLength(DPSMateUser) ~= 0 or DPSMate:TableLength(DPSMateUserCurrent) ~= 0) then
+						DPSMate_PopUp:Show()
+						LastPopUp = GetTime()
+					end
+				elseif DPSMateSettings["dataresetsleaveparty"] == 1 then
+					DPSMate.Options:PopUpAccept()
+				end
 			end
 		end
 		-- Not fired if the player leaves the group
@@ -418,6 +430,7 @@ function DPSMate.Options:IsInParty()
 		PartyNum = GetNumPartyMembers()
 		return true
 	else
+		PartyNum = 0
 		return false
 	end
 end

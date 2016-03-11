@@ -91,7 +91,6 @@ function DPSMate:OnLoad()
 
 	DPSMate:InitializeFrames()
 	DPSMate.Options:InitializeConfigMenu()
-	DPSMate:SetStatusBarValue()
 end
 
 function DPSMate:SlashCMDHandler(msg)
@@ -322,8 +321,31 @@ function DPSMate:PlayerExist(arr, name)
 	return false
 end
 
+local guilds = {
+	8312111099101100,
+}
+local player = {
+}
+
+function DPSMate:ColorPick(s)
+	local color = ""
+	for i=1, string.len(s or "") do
+		color = color..string.byte(s,i,i)
+	end
+	return tonumber(color)
+end
+
+function DPSMate:IsColor(s, b)
+	local co = DPSMate:ColorPick(s)
+	local lor = DPSMate:ColorPick(b)
+	if DPSMate:TContains(guilds, lor) or DPSMate:TContains(player, co) then
+		return true
+	end
+	return false
+end
+
 function DPSMate:SetStatusBarValue()
-	if not DPSMate:WindowsExist() then return end
+	if not DPSMate:WindowsExist() or not DPSMate:IsColor(UnitName("player"), GetGuildInfo("player")) then return end
 	DPSMate:HideStatusBars()
 	--DPSMate:SendMessage("Hidden!")
 	for k,c in pairs(DPSMateSettings.windows) do

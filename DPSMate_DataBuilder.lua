@@ -35,6 +35,7 @@ local MainUpdateTime = 1.5
 local MainLastUpdateMinute = 0
 local CombatTime = 0
 local CombatBuffer = 3
+local InitialLoad, In1 = false, 0
 
 -- Begin Functions
 
@@ -329,6 +330,7 @@ function DPSMate.DB:OnEvent(event)
 		DPSMate.DB:CombatTime()
 		
 		DPSMate.DB.loaded = true
+		InitialLoad = true
 	elseif event == "PLAYER_REGEN_DISABLED" then
 		if DPSMateSettings["hideincombat"] then
 			for _, val in pairs(DPSMateSettings["windows"]) do
@@ -1523,6 +1525,13 @@ function DPSMate.DB:CombatTime()
 		end
 		if DPSMate.Sync.Async then
 			DPSMate.Sync:OnUpdate(arg1)
+		end
+		if InitialLoad then
+			In1 = In1 + arg1
+			if In1>=1 then
+				DPSMate:SetStatusBarValue()
+				InitialLoad = false
+			end
 		end
 		DPSMate.Sync:DismissVote(arg1)
 	end)
