@@ -105,7 +105,7 @@ function DPSMate.Modules.DPS:ShowTooltip(user,k)
 		for i=1, DPSMateSettings["subviewrows"] do
 			if not a[i] then break end
 			if c[i][2] then pet="(Pet)" else pet="" end
-			GameTooltip:AddDoubleLine(i..". "..DPSMate:GetAbilityById(a[i])..pet,c[i][1],1,1,1,1,1,1)
+			GameTooltip:AddDoubleLine(i..". "..DPSMate:GetAbilityById(a[i])..pet,c[i][1].." ("..string.format("%.2f", 100*c[i][1]/b).."%)",1,1,1,1,1,1)
 		end
 	end
 end
