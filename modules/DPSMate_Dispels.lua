@@ -5,13 +5,13 @@ DPSMate.Options.Options[1]["args"]["dispels"] = {
 	order = 180,
 	type = 'toggle',
 	name = DPSMate.localization.config.dispels,
-	desc = DPSMate.localization.desc.dispels,
+	desc = "Show Dispels.",
 	get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["options"][1]["dispels"] end,
 	set = function() DPSMate.Options:ToggleDrewDrop(1, "dispels", DPSMate.Options.Dewdrop:GetOpenedParent()) end,
 }
 
 -- Register the moodule
-DPSMate:Register("dispels", DPSMate.Modules.Dispels)
+DPSMate:Register("dispels", DPSMate.Modules.Dispels, "Dispels")
 
 
 function DPSMate.Modules.Dispels:GetSortedTable(arr)

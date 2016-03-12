@@ -5,13 +5,13 @@ DPSMate.Options.Options[1]["args"]["deaths"] = {
 	order = 160,
 	type = 'toggle',
 	name = DPSMate.localization.config.deaths,
-	desc = DPSMate.localization.desc.deaths,
+	desc = "Show Deaths.",
 	get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["options"][1]["deaths"] end,
 	set = function() DPSMate.Options:ToggleDrewDrop(1, "deaths", DPSMate.Options.Dewdrop:GetOpenedParent()) end,
 }
 
 -- Register the moodule
-DPSMate:Register("deaths", DPSMate.Modules.Deaths)
+DPSMate:Register("deaths", DPSMate.Modules.Deaths, "Deaths")
 
 
 function DPSMate.Modules.Deaths:GetSortedTable(arr)

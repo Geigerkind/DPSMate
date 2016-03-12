@@ -5,13 +5,13 @@ DPSMate.Options.Options[1]["args"]["diseasecurereceived"] = {
 	order = 205,
 	type = 'toggle',
 	name = 'Disease cure received',
-	desc = 'TO BE ADDED!',
+	desc = "Show Disease cure received.",
 	get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["options"][1]["diseasecurereceived"] end,
 	set = function() DPSMate.Options:ToggleDrewDrop(1, "diseasecurereceived", DPSMate.Options.Dewdrop:GetOpenedParent()) end,
 }
 
 -- Register the moodule
-DPSMate:Register("diseasecurereceived", DPSMate.Modules.CureDiseaseReceived)
+DPSMate:Register("diseasecurereceived", DPSMate.Modules.CureDiseaseReceived, "Disease cure received")
 
 
 function DPSMate.Modules.CureDiseaseReceived:GetSortedTable(arr)

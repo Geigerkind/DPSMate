@@ -5,13 +5,13 @@ DPSMate.Options.Options[1]["args"]["aurasgained"] = {
 	order = 230,
 	type = 'toggle',
 	name = 'Auras gained',
-	desc = 'TO BE ADDED!',
+	desc = "Show Auras gained.",
 	get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["options"][1]["aurasgained"] end,
 	set = function() DPSMate.Options:ToggleDrewDrop(1, "aurasgained", DPSMate.Options.Dewdrop:GetOpenedParent()) end,
 }
 
 -- Register the moodule
-DPSMate:Register("aurasgained", DPSMate.Modules.AurasGained)
+DPSMate:Register("aurasgained", DPSMate.Modules.AurasGained, "Auras gained")
 
 
 function DPSMate.Modules.AurasGained:GetSortedTable(arr)

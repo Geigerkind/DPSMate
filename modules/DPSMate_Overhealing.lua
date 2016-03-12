@@ -5,13 +5,13 @@ DPSMate.Options.Options[1]["args"]["overhealing"] = {
 	order = 80,
 	type = 'toggle',
 	name = DPSMate.localization.config.overhealing,
-	desc = DPSMate.localization.desc.overhealing,
+	desc = "Show Overhealing.",
 	get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["options"][1]["overhealing"] end,
 	set = function() DPSMate.Options:ToggleDrewDrop(1, "overhealing", DPSMate.Options.Dewdrop:GetOpenedParent()) end,
 }
 
 -- Register the moodule
-DPSMate:Register("overhealing", DPSMate.Modules.Overhealing)
+DPSMate:Register("overhealing", DPSMate.Modules.Overhealing, "Overhealing")
 
 
 function DPSMate.Modules.Overhealing:GetSortedTable(arr)

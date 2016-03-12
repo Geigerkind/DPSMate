@@ -5,13 +5,13 @@ DPSMate.Options.Options[1]["args"]["healing"] = {
 	order = 60,
 	type = 'toggle',
 	name = DPSMate.localization.config.healing,
-	desc = DPSMate.localization.desc.healing,
+	desc = "Show Healing.",
 	get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["options"][1]["healing"] end,
 	set = function() DPSMate.Options:ToggleDrewDrop(1, "healing", DPSMate.Options.Dewdrop:GetOpenedParent()) end,
 }
 
 -- Register the moodule
-DPSMate:Register("healing", DPSMate.Modules.Healing)
+DPSMate:Register("healing", DPSMate.Modules.Healing, "Healing")
 
 
 function DPSMate.Modules.Healing:GetSortedTable(arr)

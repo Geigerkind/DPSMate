@@ -5,13 +5,13 @@ DPSMate.Options.Options[1]["args"]["dispelsreceived"] = {
 	order = 190,
 	type = 'toggle',
 	name = 'Dispels received',
-	desc = 'TO BE ADDED!',
+	desc = "Show Dispels received.",
 	get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["options"][1]["dispelsreceived"] end,
 	set = function() DPSMate.Options:ToggleDrewDrop(1, "dispelsreceived", DPSMate.Options.Dewdrop:GetOpenedParent()) end,
 }
 
 -- Register the moodule
-DPSMate:Register("dispelsreceived", DPSMate.Modules.DispelsReceived)
+DPSMate:Register("dispelsreceived", DPSMate.Modules.DispelsReceived, "Dispels received")
 
 
 function DPSMate.Modules.DispelsReceived:GetSortedTable(arr)

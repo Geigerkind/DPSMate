@@ -67,6 +67,7 @@ DPSMate.Events = {
 }
 DPSMate.Registered = true
 DPSMate.RegistredModules = {}
+DPSMate.ModuleNames = {}
 DPSMate.BabbleSpell = AceLibrary("Babble-Spell-2.3")
 DPSMate.BabbleBoss = AceLibrary("Babble-Boss-2.3")
 
@@ -482,6 +483,7 @@ function DPSMate:SendMessage(msg)
 	DEFAULT_CHAT_FRAME:AddMessage("|cFFFF8080"..DPSMate.localization.name.."|r: "..msg)
 end
 
-function DPSMate:Register(prefix, table)
+function DPSMate:Register(prefix, table, name)
+	DPSMate.ModuleNames[name] = prefix
 	DPSMate.RegistredModules[prefix] = table
 end

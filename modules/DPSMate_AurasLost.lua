@@ -5,13 +5,13 @@ DPSMate.Options.Options[1]["args"]["auraslost"] = {
 	order = 240,
 	type = 'toggle',
 	name = 'Auras lost',
-	desc = 'TO BE ADDED!',
+	desc = "Show Auras lost.",
 	get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["options"][1]["auraslost"] end,
 	set = function() DPSMate.Options:ToggleDrewDrop(1, "auraslost", DPSMate.Options.Dewdrop:GetOpenedParent()) end,
 }
 
 -- Register the moodule
-DPSMate:Register("auraslost", DPSMate.Modules.AurasLost)
+DPSMate:Register("auraslost", DPSMate.Modules.AurasLost, "Auras lost")
 
 
 function DPSMate.Modules.AurasLost:GetSortedTable(arr)

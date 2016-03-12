@@ -5,13 +5,13 @@ DPSMate.Options.Options[1]["args"]["healingandabsorbs"] = {
 	order = 130,
 	type = 'toggle',
 	name = 'Healing and Absorbs',
-	desc = 'TO BE ADDED!',
+	desc = "Show Healing and Absorbs.",
 	get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["options"][1]["healingandabsorbs"] end,
 	set = function() DPSMate.Options:ToggleDrewDrop(1, "healingandabsorbs", DPSMate.Options.Dewdrop:GetOpenedParent()) end,
 }
 
 -- Register the moodule
-DPSMate:Register("healingandabsorbs", DPSMate.Modules.HealingAndAbsorbs)
+DPSMate:Register("healingandabsorbs", DPSMate.Modules.HealingAndAbsorbs, "Healing and Absorbs")
 
 
 function DPSMate.Modules.HealingAndAbsorbs:GetSortedTable(arr, k)

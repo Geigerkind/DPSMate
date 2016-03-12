@@ -5,13 +5,13 @@ DPSMate.Options.Options[1]["args"]["effectivehps"] = {
 	order = 100,
 	type = 'toggle',
 	name = 'Effective HPS',
-	desc = 'TO BE ADDED!',
+	desc = "Show Effective HPS.",
 	get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["options"][1]["effectivehps"] end,
 	set = function() DPSMate.Options:ToggleDrewDrop(1, "effectivehps", DPSMate.Options.Dewdrop:GetOpenedParent()) end,
 }
 
 -- Register the moodule
-DPSMate:Register("effectivehps", DPSMate.Modules.EffectiveHPS)
+DPSMate:Register("effectivehps", DPSMate.Modules.EffectiveHPS, "Effective HPS")
 
 
 function DPSMate.Modules.EffectiveHPS:GetSortedTable(arr)

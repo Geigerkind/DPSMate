@@ -5,13 +5,13 @@ DPSMate.Options.Options[1]["args"]["decursesreceived"] = {
 	order = 197,
 	type = 'toggle',
 	name = 'Decurses received',
-	desc = 'TO BE ADDED!',
+	desc = "Show Decurses received.",
 	get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["options"][1]["decursesreceived"] end,
 	set = function() DPSMate.Options:ToggleDrewDrop(1, "decursesreceived", DPSMate.Options.Dewdrop:GetOpenedParent()) end,
 }
 
 -- Register the moodule
-DPSMate:Register("decursesreceived", DPSMate.Modules.DecursesReceived)
+DPSMate:Register("decursesreceived", DPSMate.Modules.DecursesReceived, "Decurses received")
 
 
 function DPSMate.Modules.DecursesReceived:GetSortedTable(arr)

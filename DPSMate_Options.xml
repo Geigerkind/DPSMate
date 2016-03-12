@@ -38,7 +38,7 @@
 			<OnClick>
 				for cat, _ in pairs(DPSMateSettings["windows"]) do
 					for i=1, 3 do
-						getglobal("DPSMate_ConfigMenu_Menu_Button"..(6+cat).."_Button"..i.."Texture"):Hide()
+						getglobal("DPSMate_ConfigMenu_Menu_Button"..(7+cat).."_Button"..i.."Texture"):Hide()
 					end
 				end
 				for i=1, this:GetParent():GetParent().num do
@@ -78,7 +78,7 @@
 			<OnClick>
 				for cat, _ in pairs(DPSMateSettings["windows"]) do
 					for i=1, 3 do
-						getglobal("DPSMate_ConfigMenu_Menu_Button"..(6+cat).."_Button"..i.."Texture"):Hide()
+						getglobal("DPSMate_ConfigMenu_Menu_Button"..(7+cat).."_Button"..i.."Texture"):Hide()
 					end
 				end
 				for i=1, this:GetParent():GetParent():GetParent().num do
@@ -124,7 +124,7 @@
 			<OnClick>
 				for cat, _ in pairs(DPSMateSettings["windows"]) do
 					for i=1, 3 do
-						getglobal("DPSMate_ConfigMenu_Menu_Button"..(6+cat).."_Button"..i.."Texture"):Hide()
+						getglobal("DPSMate_ConfigMenu_Menu_Button"..(7+cat).."_Button"..i.."Texture"):Hide()
 					end
 				end
 				for i=1, this:GetParent():GetParent().num do
@@ -150,13 +150,13 @@
 				<Scripts>
 					<OnClick>
 						for cat, val in pairs(DPSMateSettings["windows"]) do
-							getglobal("DPSMate_ConfigMenu_Menu_Button"..(6+cat).."Expand"):Show()
-							getglobal("DPSMate_ConfigMenu_Menu_Button"..(6+cat).."Collapse"):Hide()
-							getglobal("DPSMate_ConfigMenu_Menu_Button"..(6+cat).."_Button1"):Hide()
-							getglobal("DPSMate_ConfigMenu_Menu_Button"..(6+cat).."_Button2"):Hide()
-							getglobal("DPSMate_ConfigMenu_Menu_Button"..(6+cat).."_Button3"):Hide()
-							getglobal("DPSMate_ConfigMenu_Menu_Button"..(6+cat)).after:ClearAllPoints()
-							getglobal("DPSMate_ConfigMenu_Menu_Button"..(6+cat)).after:SetPoint("TOP", getglobal("DPSMate_ConfigMenu_Menu_Button"..(6+cat)), "BOTTOM")
+							getglobal("DPSMate_ConfigMenu_Menu_Button"..(7+cat).."Expand"):Show()
+							getglobal("DPSMate_ConfigMenu_Menu_Button"..(7+cat).."Collapse"):Hide()
+							getglobal("DPSMate_ConfigMenu_Menu_Button"..(7+cat).."_Button1"):Hide()
+							getglobal("DPSMate_ConfigMenu_Menu_Button"..(7+cat).."_Button2"):Hide()
+							getglobal("DPSMate_ConfigMenu_Menu_Button"..(7+cat).."_Button3"):Hide()
+							getglobal("DPSMate_ConfigMenu_Menu_Button"..(7+cat)).after:ClearAllPoints()
+							getglobal("DPSMate_ConfigMenu_Menu_Button"..(7+cat)).after:SetPoint("TOP", getglobal("DPSMate_ConfigMenu_Menu_Button"..(7+cat)), "BOTTOM")
 						end
 						this:Hide()
 						getglobal(this:GetParent():GetName().."Collapse"):Show()
@@ -530,6 +530,149 @@
 			</Layer>
 		</Layers>
 	</Frame>
+	<Button name="DPSMate_Template_ModeButton" hidden="true" virtual="true">
+		<Size x="105" y="14" />
+		<Layers>
+			<Layer level="OVERLAY">
+				<FontString name="$parentText" inherits="GameFontNormalSmall" justifyH="LEFT" justifyV="CENTER">
+					<Size x="105" y="14" />
+					<Anchors>
+						<Anchor point="TOP">
+							<Offset x="3" y="0" />
+						</Anchor>
+					</Anchors>
+					<Color r="1" g="1" b="1" />
+				</FontString>
+			</Layer>
+			<Layer level="ARTWORK">
+				<Texture name="$parentTexture" file="Interface\AddOns\DPSMate\images\UI-Listbox-Highlight2" hidden="true">
+					<Size x="105" y="14" />
+				</Texture>
+			</Layer>
+		</Layers>
+		<Scripts>
+			<OnEnter>
+				getglobal(this:GetName().."Text"):SetTextColor(1,0.82,0,1)
+			</OnEnter>
+			<OnLeave>
+				if (not this.selected) then
+					getglobal(this:GetName().."Text"):SetTextColor(1,1,1,1)
+				end
+			</OnLeave>
+			<OnClick>
+				local pa = strsub(this:GetName(), 1, strfind(this:GetName(), "%d+")-1)
+				for i=1, 15 do
+					getglobal(pa..i).selected=false
+					getglobal(pa..i.."Texture"):Hide()
+					getglobal(pa..i.."Text"):SetTextColor(1,1,1,1)
+				end
+				this.selected=true
+				getglobal(this:GetName().."Texture"):Show()
+				getglobal(this:GetName().."Text"):SetTextColor(1,0.82,0,1)
+			</OnClick>
+		</Scripts>
+		<HighlightTexture file="Interface\AddOns\DPSMate\images\UI-Listbox-Highlight2" alphaMode="ADD" />
+	</Button>
+	<ScrollFrame name="DPSMate_Template_Modes_Box" virtual="true">
+		<Size x="115" y="220" />
+		<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+			<BackgroundInsets left="4" right="4" top="4" bottom="4" />
+			<TileSize val="12" />
+			<EdgeSize val="12" />
+			<Color r="0.157" g="0.08" b="0.06" a="0.5" />
+		</Backdrop>
+		<Layers>
+			<Layer level="ARTWORK">
+				<FontString name="$parent_Title" inherits="GameFontNormal" justifyH="LEFT" text="Test">
+					<Size x="115" y="20" />
+					<Anchors>
+						<Anchor point="TOP">
+							<Offset x="10" y="17" />
+						</Anchor>
+					</Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+		<Frames>
+			<Button name="$parent_Button1" inherits="DPSMate_Template_ModeButton">
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset x="0" y="-5" />
+					</Anchor>
+				</Anchors>
+			</Button>
+			<Button name="$parent_Button2" inherits="DPSMate_Template_ModeButton">
+				<Anchors>
+					<Anchor point="TOP" relativeTo="$parent_Button1" relativePoint="BOTTOM" />
+				</Anchors>
+			</Button>
+			<Button name="$parent_Button3" inherits="DPSMate_Template_ModeButton">
+				<Anchors>
+					<Anchor point="TOP" relativeTo="$parent_Button2" relativePoint="BOTTOM" />
+				</Anchors>
+			</Button>
+			<Button name="$parent_Button4" inherits="DPSMate_Template_ModeButton">
+				<Anchors>
+					<Anchor point="TOP" relativeTo="$parent_Button3" relativePoint="BOTTOM" />
+				</Anchors>
+			</Button>
+			<Button name="$parent_Button5" inherits="DPSMate_Template_ModeButton">
+				<Anchors>
+					<Anchor point="TOP" relativeTo="$parent_Button4" relativePoint="BOTTOM" />
+				</Anchors>
+			</Button>
+			<Button name="$parent_Button6" inherits="DPSMate_Template_ModeButton">
+				<Anchors>
+					<Anchor point="TOP" relativeTo="$parent_Button5" relativePoint="BOTTOM" />
+				</Anchors>
+			</Button>
+			<Button name="$parent_Button7" inherits="DPSMate_Template_ModeButton">
+				<Anchors>
+					<Anchor point="TOP" relativeTo="$parent_Button6" relativePoint="BOTTOM" />
+				</Anchors>
+			</Button>
+			<Button name="$parent_Button8" inherits="DPSMate_Template_ModeButton">
+				<Anchors>
+					<Anchor point="TOP" relativeTo="$parent_Button7" relativePoint="BOTTOM" />
+				</Anchors>
+			</Button>
+			<Button name="$parent_Button9" inherits="DPSMate_Template_ModeButton">
+				<Anchors>
+					<Anchor point="TOP" relativeTo="$parent_Button8" relativePoint="BOTTOM" />
+				</Anchors>
+			</Button>
+			<Button name="$parent_Button10" inherits="DPSMate_Template_ModeButton">
+				<Anchors>
+					<Anchor point="TOP" relativeTo="$parent_Button9" relativePoint="BOTTOM" />
+				</Anchors>
+			</Button>
+			<Button name="$parent_Button11" inherits="DPSMate_Template_ModeButton">
+				<Anchors>
+					<Anchor point="TOP" relativeTo="$parent_Button10" relativePoint="BOTTOM" />
+				</Anchors>
+			</Button>
+			<Button name="$parent_Button12" inherits="DPSMate_Template_ModeButton">
+				<Anchors>
+					<Anchor point="TOP" relativeTo="$parent_Button11" relativePoint="BOTTOM" />
+				</Anchors>
+			</Button>
+			<Button name="$parent_Button13" inherits="DPSMate_Template_ModeButton">
+				<Anchors>
+					<Anchor point="TOP" relativeTo="$parent_Button12" relativePoint="BOTTOM" />
+				</Anchors>
+			</Button>
+			<Button name="$parent_Button14" inherits="DPSMate_Template_ModeButton">
+				<Anchors>
+					<Anchor point="TOP" relativeTo="$parent_Button13" relativePoint="BOTTOM" />
+				</Anchors>
+			</Button>
+			<Button name="$parent_Button15" inherits="DPSMate_Template_ModeButton">
+				<Anchors>
+					<Anchor point="TOP" relativeTo="$parent_Button14" relativePoint="BOTTOM" />
+				</Anchors>
+			</Button>
+		</Frames>
+	</ScrollFrame>
 	
 	----------------------------------------------------------------------------------
 	--------------                DPSMate MiniMap Icon                  --------------                                  
@@ -1180,6 +1323,21 @@
 					<Button name="$parent_Button6" inherits="DPSMate_Template_MenuButton">
 						<Anchors>
 							<Anchor point="TOP" relativeTo="$parent_Button5" relativePoint="BOTTOM" />
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								getglobal(this:GetName().."Text"):SetText(DPSMate.localization.config.modes)
+								this.func = function()
+									getglobal(this:GetParent():GetParent():GetName()..this:GetParent().selected):Hide()
+									getglobal(this:GetParent():GetParent():GetName().."_Tab_Modes"):Show()
+									this:GetParent().selected = "_Tab_Modes"
+								end
+							</OnLoad>
+						</Scripts>
+					</Button>
+					<Button name="$parent_Button7" inherits="DPSMate_Template_MenuButton">
+						<Anchors>
+							<Anchor point="TOP" relativeTo="$parent_Button6" relativePoint="BOTTOM" />
 						</Anchors>
 						<Scripts>
 							<OnLoad>
@@ -3945,6 +4103,111 @@
 							</OnLoad>
 						</Scripts>
 					</Frame>
+				</Frames>
+			</Frame>
+			
+			<Frame name="$parent_Tab_Modes" inherits="DPSMate_Template_Box" hidden="true">
+				<Size x="301" y="250" />
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="$parent_Menu" relativePoint="RIGHT" />
+				</Anchors>
+				<Frames>
+					<ScrollFrame name="$parent_left" inherits="DPSMate_Template_Modes_Box">
+						<Anchors>
+							<Anchor point="LEFT">
+								<Offset x="5" y="-10" />
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								getglobal(this:GetName().."_Title"):SetText("Shown modes")
+							</OnLoad>
+							<OnShow>
+								DPSMate.Options:UpdateConfigModes(this, 0, true)
+							</OnShow>
+							<OnMouseWheel>
+								DPSMate.Options:UpdateConfigModes(this, arg1, true) 
+							</OnMouseWheel>
+						</Scripts>
+					</ScrollFrame>
+					<ScrollFrame name="$parent_right" inherits="DPSMate_Template_Modes_Box">
+						<Anchors>
+							<Anchor point="LEFT" relativeTo="$parent_left" relativePoint="RIGHT">
+								<Offset x="60" y="0" />
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								getglobal(this:GetName().."_Title"):SetText("Hidden modes")
+							</OnLoad>
+							<OnShow>
+								DPSMate.Options:UpdateConfigModes(this, 0, false)
+							</OnShow>
+							<OnMouseWheel>
+								DPSMate.Options:UpdateConfigModes(this, arg1, false) 
+							</OnMouseWheel>
+						</Scripts>
+					</ScrollFrame>
+					<Button name="$parent_moveLeft" inherits="DPSMate_Template_Button">
+						<Size x="60" y="28" />
+						<Anchors>
+							<Anchor point="LEFT" relativeTo="$parent_left" relativePoint="RIGHT">
+								<Offset x="0" y="12" />
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								this.aide = ""
+								getglobal(this:GetName().."Text"):SetText("&lt;---")
+							</OnLoad>
+							<OnClick>
+								local pa = this:GetParent():GetName()
+								for i=1, 15 do
+									if getglobal(pa.."_right_Button"..i).selected then
+										local num = getglobal(pa.."_right_Button"..i.."Text"):GetText()
+										DPSMateSettings["hiddenmodes"][DPSMate.ModuleNames[num]] = nil
+										DPSMate.Options.Options[1]["args"][DPSMate.ModuleNames[num]] = nil
+										DPSMate.Options:UpdateConfigModes(getglobal(pa.."_left"), 0, true)
+										DPSMate.Options:UpdateConfigModes(getglobal(pa.."_right"), 0, false)
+										DPSMate.Options.Options[1]["args"][DPSMate.ModuleNames[num]] = {
+											order = 300,
+											type = 'toggle',
+											name = num,
+											desc = "Show "..num..",",
+											get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["options"][1][DPSMate.ModuleNames[num]] end,
+											set = function() DPSMate.Options:ToggleDrewDrop(1, DPSMate.ModuleNames[num], DPSMate.Options.Dewdrop:GetOpenedParent()) end,
+										}
+										break
+									end
+								end
+							</OnClick>
+						</Scripts>
+					</Button>
+					<Button name="$parent_moveRight" inherits="DPSMate_Template_Button">
+						<Size x="60" y="28" />
+						<Anchors>
+							<Anchor point="TOP" relativeTo="$parent_moveLeft" relativePoint="BOTTOM" />
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								this.aide = ""
+								getglobal(this:GetName().."Text"):SetText("---&gt;")
+							</OnLoad>
+							<OnClick>
+								local pa = this:GetParent():GetName()
+								for i=1, 15 do
+									if getglobal(pa.."_left_Button"..i).selected then
+										local num = getglobal(pa.."_left_Button"..i.."Text"):GetText()
+										DPSMateSettings["hiddenmodes"][DPSMate.ModuleNames[num]] = true
+										DPSMate.Options.Options[1]["args"][DPSMate.ModuleNames[num]] = nil
+										DPSMate.Options:UpdateConfigModes(getglobal(pa.."_left"), 0, true)
+										DPSMate.Options:UpdateConfigModes(getglobal(pa.."_right"), 0, false)
+										break
+									end
+								end
+							</OnClick>
+						</Scripts>
+					</Button>
 				</Frames>
 			</Frame>
 			

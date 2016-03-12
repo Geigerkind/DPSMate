@@ -5,13 +5,13 @@ DPSMate.Options.Options[1]["args"]["dtps"] = {
 	order = 35,
 	type = 'toggle',
 	name = 'DTPS',
-	desc = 'TO BE ADDED',
+	desc = "Show DTPS.",
 	get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["options"][1]["dtps"] end,
 	set = function() DPSMate.Options:ToggleDrewDrop(1, "dtps", DPSMate.Options.Dewdrop:GetOpenedParent()) end,
 }
 
 -- Register the moodule
-DPSMate:Register("dtps", DPSMate.Modules.DTPS)
+DPSMate:Register("dtps", DPSMate.Modules.DTPS, "DTPS")
 
 
 function DPSMate.Modules.DTPS:GetSortedTable(arr)

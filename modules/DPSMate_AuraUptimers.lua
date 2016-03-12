@@ -5,13 +5,13 @@ DPSMate.Options.Options[1]["args"]["aurasuptime"] = {
 	order = 250,
 	type = 'toggle',
 	name = 'Aura uptime',
-	desc = 'TO BE ADDED!',
+	desc = "Show Aura uptime.",
 	get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["options"][1]["aurasuptime"] end,
 	set = function() DPSMate.Options:ToggleDrewDrop(1, "aurasuptime", DPSMate.Options.Dewdrop:GetOpenedParent()) end,
 }
 
 -- Register the moodule
-DPSMate:Register("aurasuptime", DPSMate.Modules.AurasUptimers)
+DPSMate:Register("aurasuptime", DPSMate.Modules.AurasUptimers, "Aura uptime")
 
 
 function DPSMate.Modules.AurasUptimers:GetSortedTable(arr)

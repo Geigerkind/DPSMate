@@ -208,17 +208,17 @@ local SelectedChannel = "Raid"
 function DPSMate.Options:InitializeConfigMenu()
 	-- Inialize Extra Buttons
 	for cat, val in pairs(DPSMateSettings["windows"]) do
-		local f = CreateFrame("Button", "DPSMate_ConfigMenu_Menu_Button"..(6+cat), DPSMate_ConfigMenu_Menu, "DPSMate_Template_WindowButton")
+		local f = CreateFrame("Button", "DPSMate_ConfigMenu_Menu_Button"..(7+cat), DPSMate_ConfigMenu_Menu, "DPSMate_Template_WindowButton")
 		f.Key = cat
-		getglobal("DPSMate_ConfigMenu_Menu_Button"..(6+cat).."Text"):SetText(val["name"])
+		getglobal("DPSMate_ConfigMenu_Menu_Button"..(7+cat).."Text"):SetText(val["name"])
 		if cat>1 then
-			f:SetPoint("TOP", getglobal("DPSMate_ConfigMenu_Menu_Button"..(5+cat)), "BOTTOM")
-			getglobal("DPSMate_ConfigMenu_Menu_Button"..(5+cat)).after = f
+			f:SetPoint("TOP", getglobal("DPSMate_ConfigMenu_Menu_Button"..(6+cat)), "BOTTOM")
+			getglobal("DPSMate_ConfigMenu_Menu_Button"..(6+cat)).after = f
 		else
 			f:SetPoint("TOP", DPSMate_ConfigMenu_Menu_Button1, "BOTTOM")
 		end
 		f.after = DPSMate_ConfigMenu_Menu_Button2
-		DPSMate_ConfigMenu.num = 6+cat
+		DPSMate_ConfigMenu.num = 7+cat
 		f.func = function()
 			getglobal(this:GetParent():GetParent():GetName()..this:GetParent().selected):Hide()
 			getglobal(this:GetParent():GetParent():GetName().."_Tab_Window"):Show()
@@ -228,7 +228,7 @@ function DPSMate.Options:InitializeConfigMenu()
 	local TL = DPSMate:TableLength(DPSMateSettings["windows"])
 	if TL>=1 then
 		DPSMate_ConfigMenu_Menu_Button2:ClearAllPoints()
-		DPSMate_ConfigMenu_Menu_Button2:SetPoint("TOP", getglobal("DPSMate_ConfigMenu_Menu_Button"..(6+TL)), "BOTTOM")
+		DPSMate_ConfigMenu_Menu_Button2:SetPoint("TOP", getglobal("DPSMate_ConfigMenu_Menu_Button"..(7+TL)), "BOTTOM")
 	end
 		
 	-- Tab Window
@@ -306,6 +306,11 @@ function DPSMate.Options:InitializeConfigMenu()
 	DPSMate_ConfigMenu_Tab_Tooltips_Tooltips:SetChecked(DPSMateSettings["showtooltips"])
 	DPSMate_ConfigMenu_Tab_Tooltips_InformativeTooltips:SetChecked(DPSMateSettings["informativetooltips"])
 	DPSMate_ConfigMenu_Tab_Tooltips_Rows:SetValue(DPSMateSettings["subviewrows"])
+	
+	-- Mode menu
+	for cat, _ in DPSMateSettings["hiddenmodes"] do
+		DPSMate.Options.Options[1]["args"][cat] = nil
+	end
 end
 
 function DPSMate.Options:OnEvent(event)
@@ -596,6 +601,41 @@ function DPSMate.Options:DropDownStyleReset()
 		if button.tex then
 			button.tex:Hide()
 		end
+	end
+end
+
+function DPSMate.Options:UpdateConfigModes(obj, o, p) 
+	local line, lineplusoffset
+	local TL = DPSMate:TableLength(DPSMate.ModuleNames)
+	local path, t = obj:GetName().."_Button", {}
+	if p then
+		for cat, val in DPSMate.ModuleNames do
+			if not DPSMate:TContains(DPSMateSettings["hiddenmodes"], val) then
+				table.insert(t, 1, cat)
+			end
+		end
+	else
+		for cat, val in DPSMate.ModuleNames do
+			if DPSMate:TContains(DPSMateSettings["hiddenmodes"], val) then
+				table.insert(t, 1, cat)
+			end
+		end
+	end
+	local TL = DPSMate:TableLength(t)
+	obj.offset = (obj.offset or 0) - o 
+	if obj.offset > (TL-15) then obj.offset = (TL-15) end
+	if obj.offset < 0 then obj.offset = 0 end
+	for line=1, 15 do
+		lineplusoffset = line + obj.offset
+		if t[lineplusoffset] then
+			getglobal(path..line.."Text"):SetText(t[lineplusoffset])
+			getglobal(path..line):Show()
+		else
+			getglobal(path..line):Hide()
+		end
+		getglobal(path..line.."Texture"):Hide()
+		getglobal(path..line.."Text"):SetTextColor(1,1,1,1)
+		getglobal(path..line).selected = false
 	end
 end
 

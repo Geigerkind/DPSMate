@@ -5,13 +5,13 @@ DPSMate.Options.Options[1]["args"]["effectivehealing"] = {
 	order = 90,
 	type = 'toggle',
 	name = 'Effective healing',
-	desc = 'TO BE ADDED!',
+	desc = "Show Effective healing.",
 	get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["options"][1]["effectivehealing"] end,
 	set = function() DPSMate.Options:ToggleDrewDrop(1, "effectivehealing", DPSMate.Options.Dewdrop:GetOpenedParent()) end,
 }
 
 -- Register the moodule
-DPSMate:Register("effectivehealing", DPSMate.Modules.EffectiveHealing)
+DPSMate:Register("effectivehealing", DPSMate.Modules.EffectiveHealing, "Effective healing")
 
 
 function DPSMate.Modules.EffectiveHealing:GetSortedTable(arr)

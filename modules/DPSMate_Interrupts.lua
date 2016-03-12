@@ -5,13 +5,13 @@ DPSMate.Options.Options[1]["args"]["interrupts"] = {
 	order = 160,
 	type = 'toggle',
 	name = DPSMate.localization.config.interrupts,
-	desc = DPSMate.localization.desc.interrupts,
+	desc = "Show Interrupts.",
 	get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["options"][1]["interrupts"] end,
 	set = function() DPSMate.Options:ToggleDrewDrop(1, "interrupts", DPSMate.Options.Dewdrop:GetOpenedParent()) end,
 }
 
 -- Register the moodule
-DPSMate:Register("interrupts", DPSMate.Modules.Interrupts)
+DPSMate:Register("interrupts", DPSMate.Modules.Interrupts, "Interrupts")
 
 
 function DPSMate.Modules.Interrupts:GetSortedTable(arr)

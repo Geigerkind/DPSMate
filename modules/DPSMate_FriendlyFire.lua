@@ -5,13 +5,13 @@ DPSMate.Options.Options[1]["args"]["friendlyfire"] = {
 	order = 260,
 	type = 'toggle',
 	name = 'Friendly fire',
-	desc = 'TO BE ADDED!',
+	desc = "Show Friendly fire.",
 	get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["options"][1]["friendlyfire"] end,
 	set = function() DPSMate.Options:ToggleDrewDrop(1, "friendlyfire", DPSMate.Options.Dewdrop:GetOpenedParent()) end,
 }
 
 -- Register the moodule
-DPSMate:Register("friendlyfire", DPSMate.Modules.FriendlyFire)
+DPSMate:Register("friendlyfire", DPSMate.Modules.FriendlyFire, "Friendly fire")
 
 
 function DPSMate.Modules.FriendlyFire:GetSortedTable(arr)

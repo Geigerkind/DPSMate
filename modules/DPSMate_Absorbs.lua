@@ -5,13 +5,13 @@ DPSMate.Options.Options[1]["args"]["absorbs"] = {
 	order = 110,
 	type = 'toggle',
 	name = 'Absorbs',
-	desc = 'TO BE ADDED!',
+	desc = "Show Absorbs.",
 	get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["options"][1]["absorbs"] end,
 	set = function() DPSMate.Options:ToggleDrewDrop(1, "absorbs", DPSMate.Options.Dewdrop:GetOpenedParent()) end,
 }
 
 -- Register the moodule
-DPSMate:Register("absorbs", DPSMate.Modules.Absorbs)
+DPSMate:Register("absorbs", DPSMate.Modules.Absorbs, "Absorbs")
 
 
 function DPSMate.Modules.Absorbs:GetSortedTable(arr)

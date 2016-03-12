@@ -5,13 +5,13 @@ DPSMate.Options.Options[1]["args"]["liftmagic"] = {
 	order = 220,
 	type = 'toggle',
 	name = 'Magic lifted',
-	desc = 'TO BE ADDED!',
+	desc = "Show Magic lifted.",
 	get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["options"][1]["liftmagic"] end,
 	set = function() DPSMate.Options:ToggleDrewDrop(1, "liftmagic", DPSMate.Options.Dewdrop:GetOpenedParent()) end,
 }
 
 -- Register the moodule
-DPSMate:Register("liftmagic", DPSMate.Modules.LiftMagic)
+DPSMate:Register("liftmagic", DPSMate.Modules.LiftMagic, "Magic lifted")
 
 
 function DPSMate.Modules.LiftMagic:GetSortedTable(arr)

@@ -244,6 +244,7 @@ function DPSMate.DB:OnEvent(event)
 				subviewrows = 4,
 				tooltipanchor = 5,
 				onlybossfights = false,
+				hiddenmodes = {},
 			}
 		end
 		if DPSMateHistory == nil then 
@@ -1369,17 +1370,19 @@ function DPSMate.DB:AwaitingBuff(cause, ability, target, time)
 	--DPSMate:SendMessage("Awaiting buff!"..ability)
 end
 
+-- deprecated function cause of gettime??
 function DPSMate.DB:ClearAwaitBuffs()
 	for cat, val in pairs(AwaitBuff) do
-		if (GetTime()-val[4])>=5 then
+		if (GetTime()-(val[4] or 0))>=5 then
 			table.remove(AwaitBuff, cat)
 		end
 	end
 end
 
+-- deprecated function cause of gettime??
 function DPSMate.DB:ConfirmBuff(target, ability, time)
 	for cat, val in pairs(AwaitBuff) do
-		if val[4]<=time then
+		if val[4]<=(time or 0) then
 			if val[2]==ability and val[3]==target then
 				DPSMate.DB:BuildBuffs(val[1], target, ability, false)
 				--DPSMate:SendMessage("Confirmed Buff!")

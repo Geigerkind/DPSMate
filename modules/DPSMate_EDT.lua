@@ -5,13 +5,13 @@ DPSMate.Options.Options[1]["args"]["enemydamagetaken"] = {
 	order = 50,
 	type = 'toggle',
 	name = DPSMate.localization.config.enemydamagetaken,
-	desc = DPSMate.localization.desc.enemydmgtaken,
+	desc = "Show Enemy damage taken.",
 	get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["options"][1]["enemydamagetaken"] end,
 	set = function() DPSMate.Options:ToggleDrewDrop(1, "enemydamagetaken", DPSMate.Options.Dewdrop:GetOpenedParent()) end,
 }
 
 -- Register the moodule
-DPSMate:Register("enemydamagetaken", DPSMate.Modules.EDT)
+DPSMate:Register("enemydamagetaken", DPSMate.Modules.EDT, "Enemy damage taken")
 
 
 function DPSMate.Modules.EDT:GetSortedTable(arr)

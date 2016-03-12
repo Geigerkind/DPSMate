@@ -5,13 +5,13 @@ DPSMate.Options.Options[1]["args"]["hps"] = {
 	order = 70,
 	type = 'toggle',
 	name = 'HPS',
-	desc = 'TO BE ADDED!',
+	desc = "Show HPS.",
 	get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["options"][1]["hps"] end,
 	set = function() DPSMate.Options:ToggleDrewDrop(1, "hps", DPSMate.Options.Dewdrop:GetOpenedParent()) end,
 }
 
 -- Register the moodule
-DPSMate:Register("hps", DPSMate.Modules.HPS)
+DPSMate:Register("hps", DPSMate.Modules.HPS, "HPS")
 
 
 function DPSMate.Modules.HPS:GetSortedTable(arr)

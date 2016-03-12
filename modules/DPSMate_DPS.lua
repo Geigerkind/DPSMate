@@ -5,13 +5,13 @@ DPSMate.Options.Options[1]["args"]["dps"] = {
 	order = 10,
 	type = 'toggle',
 	name = DPSMate.localization.config.dps,
-	desc = DPSMate.localization.desc.dps,
+	desc = "Show DPS.",
 	get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["options"][1]["dps"] end,
 	set = function() DPSMate.Options:ToggleDrewDrop(1, "dps", DPSMate.Options.Dewdrop:GetOpenedParent()) end,
 }
 
 -- Register the moodule
-DPSMate:Register("dps", DPSMate.Modules.DPS)
+DPSMate:Register("dps", DPSMate.Modules.DPS, "DPS")
 
 
 function DPSMate.Modules.DPS:GetSortedTable(arr)
