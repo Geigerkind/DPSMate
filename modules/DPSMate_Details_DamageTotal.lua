@@ -37,6 +37,14 @@ function DPSMate.Modules.DetailsDamageTotal:UpdateDetails(obj, key)
 		{0.5,1.0,0.0},
 		{0.5,0.0,1.0},
 		{0.0,1.0,0.5},
+		{0.0,0.25,0.5},
+		{0.25,0,0.5},
+		{0.5,0.25,0.0},
+		{0.5,0.0,0.25},
+		{0.5,0.75,0.0},
+		{0.5,0.0,0.75},
+		{0.0,0.75,0.5},
+		{0.75,0.0,0.5},
 	}
 	if not g then
 		g=DPSMate.Options.graph:CreateGraphLine("LineGraph",DPSMate_Details_DamageTotal_DiagramLine,"CENTER","CENTER",0,0,750,230)
@@ -56,7 +64,7 @@ function DPSMate.Modules.DetailsDamageTotal:UpdateLineGraph()
 	g:SetGridColor({0.5,0.5,0.5,0.5})
 	g:SetAxisDrawing(true,true)
 	g:SetAxisColor({1.0,1.0,1.0,1.0})
-	g:SetAutoScale(false)
+	g:SetAutoScale(true)
 	g:SetYLabels(true, false)
 	g:SetXLabels(true)
 	DPSMate.Modules.DetailsDamageTotal:AddTotalDataSeries()
@@ -132,15 +140,11 @@ function DPSMate.Modules.DetailsDamageTotal:AddTotalDataSeries()
 	end
 	
 	totSumTable = DPSMate.Modules.DetailsDamageTotal:GetSummarizedTable(newArr)
-	
-	for cat, val in pairs(totSumTable) do
-		val[2] = val[2]/4
-	end
 	local totMax = DPSMate.Modules.DetailsDamageTotal:GetMaxLineVal(totSumTable, 2)
 	local time = DPSMate.Modules.DetailsDamageTotal:GetMaxLineVal(totSumTable, 1)
 	g:SetXAxis(0,time)
-	g:SetYAxis(0,totMax+200)
-	g:SetGridSpacing(time/10,totMax/4)
+	g:SetYAxis(0,totMax+5000)
+	g:SetGridSpacing(time/10,(totMax+5000)/16)
 	
 	g:AddDataSeries(totSumTable,{{1.0,0.0,0.0,0.8}, {1.0,1.0,0.0,0.8}}, {})
 end
@@ -316,8 +320,8 @@ function DPSMate.Modules.DetailsDamageTotal:ShowTooltip(user, obj)
 	GameTooltip:AddLine(name.."'s damage done", 1,1,1)
 	for i=1, DPSMateSettings["subviewrows"] do
 		if not a[i] then break end
-		if a[i][2] then pet="(Pet)" else pet="" end
-		GameTooltip:AddDoubleLine(i..". "..DPSMate:GetAbilityById(a[i][1])..pet,c[i],1,1,1,1,1,1)
+		if c[i][2] then pet="(Pet)" else pet="" end
+		GameTooltip:AddDoubleLine(i..". "..DPSMate:GetAbilityById(a[i])..pet,c[i][1].." ("..string.format("%.2f", 100*c[i][1]/b).."%)",1,1,1,1,1,1)
 	end
 	GameTooltip:Show()
 end

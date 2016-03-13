@@ -37,6 +37,14 @@ function DPSMate.Modules.DetailsDamageTakenTotal:UpdateDetails(obj, key)
 		{0.5,1.0,0.0},
 		{0.5,0.0,1.0},
 		{0.0,1.0,0.5},
+		{0.0,0.25,0.5},
+		{0.25,0,0.5},
+		{0.5,0.25,0.0},
+		{0.5,0.0,0.25},
+		{0.5,0.75,0.0},
+		{0.5,0.0,0.75},
+		{0.0,0.75,0.5},
+		{0.75,0.0,0.5},
 	}
 	if not g then
 		g=DPSMate.Options.graph:CreateGraphLine("LineGraph",DPSMate_Details_DamageTakenTotal_DiagramLine,"CENTER","CENTER",0,0,750,230)
@@ -111,7 +119,7 @@ function DPSMate.Modules.DetailsDamageTakenTotal:AddTotalDataSeries()
 	local sumTable, newArr = {[0]=0}, {}
 	
 	for cat, val in pairs(db) do
-		for ca, va in pairs(db[cat]["i"]) do
+		for ca, va in pairs(db[cat]["i"][1]) do
 			if sumTable[va[1]] then
 				sumTable[va[1]] = sumTable[va[1]] + va[2]
 			else
@@ -135,10 +143,6 @@ function DPSMate.Modules.DetailsDamageTakenTotal:AddTotalDataSeries()
 	end
 	
 	totSumTable = DPSMate.Modules.DetailsDamageTakenTotal:GetSummarizedTable(newArr)
-	
-	for cat, val in pairs(totSumTable) do
-		val[2] = val[2]/4
-	end
 	local totMax = DPSMate.Modules.DetailsDamageTakenTotal:GetMaxLineVal(totSumTable, 2)
 	local time = DPSMate.Modules.DetailsDamageTakenTotal:GetMaxLineVal(totSumTable, 1)
 	g:SetXAxis(0,time)
@@ -171,9 +175,9 @@ function DPSMate.Modules.DetailsDamageTakenTotal:GetTableValues()
 							totMiss=totMiss+v[1]+v[5]+v[9]+v[10]+v[11]+v[12]+v[15]
 							miss=miss+v[9]+v[10]+v[11]+v[12]
 						end
+						CV = CV + v[13]
 					end
 				end
-				CV = CV + va["i"]
 			end
 		end
 		table.insert(arr, {name, CV, crit, miss, totCrit, totMiss, cat, hit, totHit, crush, totCrush})
@@ -221,10 +225,9 @@ function DPSMate.Modules.DetailsDamageTakenTotal:CheckButtonCheckAll(obj)
 end
 
 function DPSMate.Modules.DetailsDamageTakenTotal:AddLinesButton(uid, obj)
-	local sumTable = db[uid]["i"]
+	local sumTable = db[uid]["i"][1]
 	local user = DPSMate:GetUserById(uid)
 	
-	sumTable = DPSMate.Modules.DetailsDamageTakenTotal:SortLineTable(sumTable)
 	sumTable = DPSMate.Modules.DetailsDamageTakenTotal:GetSummarizedTable(sumTable, cbt)
 	
 	g:AddDataSeries(sumTable, {ColorTable[1], {}}, {})
@@ -301,10 +304,10 @@ function DPSMate.Modules.DetailsDamageTakenTotal:ShowTooltip(user, obj)
 	GameTooltip:AddLine(name.."'s damage taken", 1,1,1)
 	for i=1, DPSMateSettings["subviewrows"] do
 		if not a[i] then break end
-		GameTooltip:AddDoubleLine(i..". "..DPSMate:GetUserById(a[i]),c[i][1],1,1,1,1,1,1)
+		GameTooltip:AddDoubleLine(i..". "..DPSMate:GetUserById(a[i]),c[i][1].." ("..string.format("%.2f", 100*c[i][1]/b).."%)",1,1,1,1,1,1)
 		for p=1, 3 do 
 			if not c[i][2][p] or c[i][3][p]==0 then break end
-			GameTooltip:AddDoubleLine("       "..p..". "..DPSMate:GetAbilityById(c[i][2][p]),c[i][3][p],0.5,0.5,0.5,0.5,0.5,0.5)
+			GameTooltip:AddDoubleLine("       "..p..". "..DPSMate:GetAbilityById(c[i][2][p]),c[i][3][p].." ("..string.format("%.2f", 100*c[i][3][p]/c[i][1]).."%)",0.5,0.5,0.5,0.5,0.5,0.5)
 		end
 	end
 	GameTooltip:Show()

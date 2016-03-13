@@ -1153,9 +1153,10 @@ function DPSMate.Options:InitializeSegments()
 	end
 end
 
-function DPSMate.Options:OnVerticalScroll(obj, arg1, pre)
-	if not pre then pre = 20 end
+function DPSMate.Options:OnVerticalScroll(obj, arg1, pre, spec)
+	pre = pre or 20
 	local maxScroll = getglobal(obj:GetName().."_Child"):GetHeight()-100
+	if spec then maxScroll = maxScroll + 100 end
 	local Scroll = obj:GetVerticalScroll()
 	local toScroll = (Scroll - (pre*arg1))
 	if toScroll < 0 then

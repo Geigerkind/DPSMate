@@ -787,6 +787,7 @@ DPSMate.Parser.Dispels = {
 	[7] = "Abolish Disease",
 	[8] = "Devour Magic",
 	[9] = "Cure Disease",
+	[10] = "Poison Cleansing Totem",
 }
 DPSMate.Parser.DeCurse = {
 	[1] = "Remove Curse",
@@ -807,6 +808,7 @@ DPSMate.Parser.DePoison = {
 	[1] = "Cleanse",
 	[2] = "Abolish Poison",
 	[3] = "Purify",
+	[4] = "Poison Cleansing Totem",
 }
 DPSMate.Parser.DebuffTypes = {}
 DPSMate.Parser.HotDispels = {

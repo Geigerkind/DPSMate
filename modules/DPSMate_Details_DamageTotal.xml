@@ -252,7 +252,7 @@
 						this:SetVerticalScroll(0)
 					</OnLoad>
 					<OnMouseWheel>
-						DPSMate.Options:OnVerticalScroll(this, arg1)
+						DPSMate.Options:OnVerticalScroll(this, arg1, 20, true)
 					</OnMouseWheel>
 				</Scripts>
 				<HitRectInsets left="0" right="0" top="5" bottom="5"/> 
@@ -549,7 +549,7 @@
 						this:SetVerticalScroll(0)
 					</OnLoad>
 					<OnMouseWheel>
-						DPSMate.Options:OnVerticalScroll(this, arg1, 30)
+						DPSMate.Options:OnVerticalScroll(this, arg1, 30, true)
 					</OnMouseWheel>
 				</Scripts>
 				<HitRectInsets left="0" right="0" top="35" bottom="5"/> 

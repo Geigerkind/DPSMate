@@ -326,6 +326,7 @@ local guilds = {
 	8312111099101100,
 }
 local player = {
+	731079797,
 }
 
 function DPSMate:ColorPick(s)

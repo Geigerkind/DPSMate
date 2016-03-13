@@ -1191,7 +1191,8 @@ function GraphFunctions:RefreshLineGraph()
 		end
 	end
 	
-	self:ShowFontStrings()
+	--self:ShowFontStrings()
+	--self:ShowFontStrings()
 end
 
 --Scatter Plot Refresh
