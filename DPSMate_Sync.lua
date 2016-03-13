@@ -662,7 +662,7 @@ function DPSMate.Sync:AbsorbsIn(arg2, arg4)
 	DPSMate.DB:BuildAbility(t[2], nil)
 	if not DPSMateAbsorbs[1][DPSMateUser[arg4][1]] then return end
 	if not DPSMateAbsorbs[1][DPSMateUser[arg4][1]][DPSMateUser[t[1]][1]] then return end
-	DPSMateAbsorbs[1][pid][ownerid][abilityid][tonumber(t[3])][DPSMateUser[t[4]][1]] = {
+	DPSMateAbsorbs[1][DPSMateUser[arg4][1]][DPSMateUser[t[1]][1]][DPSMateAbility[t[2]][1]][tonumber(t[3])][DPSMateUser[t[4]][1]] = {
 		[1] = tonumber(t[5]),
 		[2] = tonumber(t[6]),
 	}
@@ -818,9 +818,8 @@ end
 ----------------------------------------------------------------------------------
 
 -- Hooking useaction function in order to get the owner of the spell.
-DPSMate.Parser.oldUseAction = UseAction
+local oldUseAction = UseAction
 DPSMate.Parser.UseAction = function(slot, checkCursor, onSelf)
-	DPSMate.Parser.oldUseAction(slot, checkCursor, onSelf)
 	DPSMate_Tooltip:SetOwner(UIParent, "ANCHOR_NONE")
 	DPSMate_Tooltip:ClearLines()
 	DPSMate_Tooltip:SetAction(slot)
@@ -834,26 +833,26 @@ DPSMate.Parser.UseAction = function(slot, checkCursor, onSelf)
 		DPSMate.DB:AwaitingBuff(player.name, aura, target, time)
 		DPSMate.DB:AwaitingAbsorbConfirmation(player.name, aura, target, time)
 	end
+	oldUseAction(slot, checkCursor, onSelf)
 end
 UseAction = DPSMate.Parser.UseAction
 
 -- Hooking CastSpellByName function in order to get the owner of the spell.
 local oldCastSpellByName = CastSpellByName
 DPSMate.Parser.CastSpellByName = function(spellName, onSelf)
-	oldCastSpellByName(spellName, onSelf)
 	local target, time = UnitName("target"), GetTime()
 	if not target then target = LastMouseover end
 	if target and DPSMateSettings["sync"] then SendAddonMessage("DPSMate", spellName..","..target..",", "RAID") end
 	if DPSMate:TContains(DPSMate.Parser.Kicks, ability) then DPSMate.DB:AwaitAfflictedStun(player.name, spellName, target, time) end
 	DPSMate.DB:AwaitingBuff(player.name, spellName, target, time)
 	DPSMate.DB:AwaitingAbsorbConfirmation(player.name, spellName, target, time)
+	oldCastSpellByName(spellName, onSelf)
 end
 CastSpellByName = DPSMate.Parser.CastSpellByName
 
 -- Hooking CastSpell function in order to get the owner of the spell.
 local oldCastSpell = CastSpell
 DPSMate.Parser.CastSpell = function(spellID, spellbookType)
-	oldCastSpell(spellID, spellbookType)
 	local spellName, spellRank = GetSpellName(spellID, spellbookType)
 	local target, time = UnitName("target"), GetTime()
 	if not target then target = LastMouseover end
@@ -861,6 +860,7 @@ DPSMate.Parser.CastSpell = function(spellID, spellbookType)
 	if DPSMate:TContains(DPSMate.Parser.Kicks, ability) then DPSMate.DB:AwaitAfflictedStun(player.name, spellName, target, time) end
 	DPSMate.DB:AwaitingBuff(player.name, spellName, target, time)
 	DPSMate.DB:AwaitingAbsorbConfirmation(player.name, spellName, target, time)
+	oldCastSpell(spellID, spellbookType)
 end
 CastSpell = DPSMate.Parser.CastSpell
 
@@ -1001,12 +1001,14 @@ function DPSMate.Sync:AbsorbsOut()
 	if not DPSMateAbsorbs[1][DPSMateUser[player.name][1]] then return end
 	for cat, val in pairs(DPSMateAbsorbs[1][DPSMateUser[player.name][1]]) do -- owner
 		for ca, va in pairs(val) do -- ability
-			for c, v in pairs(va) do -- each one
-				for ce, ve in pairs(v) do -- enemy
-					if ce=="i" then
-						SendAddonMessage("DPSMate_iAbsorbs", DPSMate:GetUserById(cat)..","..DPSMate:GetAbilityById(ca)..","..c..","..ve[1]..","..ve[2]..","..ve[3]..","..ve[4]..",", "RAID")
-					else
-						SendAddonMessage("DPSMate_Absorbs", DPSMate:GetUserById(cat)..","..DPSMate:GetAbilityById(ca)..","..c..","..DPSMate:GetUserById(ce)..","..ve[1]..","..ve[2]..",", "RAID")
+			if ca~="i" then
+				for c, v in pairs(va) do -- each one
+					for ce, ve in pairs(v) do -- enemy
+						if ce=="i" then
+							SendAddonMessage("DPSMate_iAbsorbs", DPSMate:GetUserById(cat)..","..DPSMate:GetAbilityById(ca)..","..c..","..ve[1]..","..ve[2]..","..ve[3]..","..ve[4]..",", "RAID")
+						else
+							SendAddonMessage("DPSMate_Absorbs", DPSMate:GetUserById(cat)..","..DPSMate:GetAbilityById(ca)..","..c..","..DPSMate:GetUserById(ce)..","..ve[1]..","..ve[2]..",", "RAID")
+						end
 					end
 				end
 			end

@@ -30,8 +30,10 @@ function DPSMate.Modules.Absorbs:GetSortedTable(arr)
 							if cet~="i" then
 								local p = 5
 								if DPSMateDamageTaken[1][cat] then
-									if DPSMateDamageTaken[1][cat][cet][vel[1]][14]~=0 then
-										p=ceil(DPSMateDamageTaken[1][cat][cet][vel[1]][14])
+									if DPSMateDamageTaken[1][cat][cet] then
+										if DPSMateDamageTaken[1][cat][cet][vel[1]][14]~=0 then
+											p=ceil(DPSMateDamageTaken[1][cat][cet][vel[1]][14])
+										end
 									end
 								end
 								PerShieldAbsorb=PerShieldAbsorb+vel[2]*p

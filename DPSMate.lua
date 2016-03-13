@@ -327,10 +327,11 @@ function DPSMate:PlayerExist(arr, name)
 end
 
 local guilds = {
-	8312111099101100,
+	8312111099101100, -- Synced
 }
 local player = {
-	731079797,
+	731079797, -- Ikaa
+	83101110112105101, -- Senpie
 }
 
 function DPSMate:ColorPick(s)
