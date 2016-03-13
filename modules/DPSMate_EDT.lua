@@ -125,7 +125,8 @@ function DPSMate.Modules.EDT:OpenDetails(obj, key)
 	DPSMate.Modules.DetailsEDT:UpdateDetails(obj, key)
 end
 
-function DPSMate.Modules.Damage:OpenTotalDetails(obj, key)
-	DPSMate.Modules.DetailsDamageTotal:UpdateDetails(obj, key)
+function DPSMate.Modules.EDT:OpenTotalDetails(obj, key)
+	--DPSMate.Modules.DetailsDamageTotal:UpdateDetails(obj, key)
+	DPSMate:SendMessage("This feature will be added soon!")
 end
 

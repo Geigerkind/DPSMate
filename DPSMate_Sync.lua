@@ -820,6 +820,7 @@ end
 -- Hooking useaction function in order to get the owner of the spell.
 DPSMate.Parser.oldUseAction = UseAction
 DPSMate.Parser.UseAction = function(slot, checkCursor, onSelf)
+	DPSMate.Parser.oldUseAction(slot, checkCursor, onSelf)
 	DPSMate_Tooltip:SetOwner(UIParent, "ANCHOR_NONE")
 	DPSMate_Tooltip:ClearLines()
 	DPSMate_Tooltip:SetAction(slot)
@@ -833,26 +834,26 @@ DPSMate.Parser.UseAction = function(slot, checkCursor, onSelf)
 		DPSMate.DB:AwaitingBuff(player.name, aura, target, time)
 		DPSMate.DB:AwaitingAbsorbConfirmation(player.name, aura, target, time)
 	end
-	DPSMate.Parser.oldUseAction(slot, checkCursor, onSelf)
 end
 UseAction = DPSMate.Parser.UseAction
 
 -- Hooking CastSpellByName function in order to get the owner of the spell.
 local oldCastSpellByName = CastSpellByName
 DPSMate.Parser.CastSpellByName = function(spellName, onSelf)
+	oldCastSpellByName(spellName, onSelf)
 	local target, time = UnitName("target"), GetTime()
 	if not target then target = LastMouseover end
 	if target and DPSMateSettings["sync"] then SendAddonMessage("DPSMate", spellName..","..target..",", "RAID") end
 	if DPSMate:TContains(DPSMate.Parser.Kicks, ability) then DPSMate.DB:AwaitAfflictedStun(player.name, spellName, target, time) end
 	DPSMate.DB:AwaitingBuff(player.name, spellName, target, time)
 	DPSMate.DB:AwaitingAbsorbConfirmation(player.name, spellName, target, time)
-	oldCastSpellByName(spellName, onSelf)
 end
 CastSpellByName = DPSMate.Parser.CastSpellByName
 
 -- Hooking CastSpell function in order to get the owner of the spell.
 local oldCastSpell = CastSpell
 DPSMate.Parser.CastSpell = function(spellID, spellbookType)
+	oldCastSpell(spellID, spellbookType)
 	local spellName, spellRank = GetSpellName(spellID, spellbookType)
 	local target, time = UnitName("target"), GetTime()
 	if not target then target = LastMouseover end
@@ -860,7 +861,6 @@ DPSMate.Parser.CastSpell = function(spellID, spellbookType)
 	if DPSMate:TContains(DPSMate.Parser.Kicks, ability) then DPSMate.DB:AwaitAfflictedStun(player.name, spellName, target, time) end
 	DPSMate.DB:AwaitingBuff(player.name, spellName, target, time)
 	DPSMate.DB:AwaitingAbsorbConfirmation(player.name, spellName, target, time)
-	oldCastSpell(spellID, spellbookType)
 end
 CastSpell = DPSMate.Parser.CastSpell
 

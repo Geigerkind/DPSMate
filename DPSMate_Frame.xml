@@ -3,7 +3,7 @@
     xsi:schemaLocation="http://www.blizzard.com/wow/ui/
     ..\..\..\FrameXML\UI.xsd">
 	
-	<StatusBar name="DPSMate_StatusBar" virtual="true">
+	<StatusBar name="DPSMate_Bar" virtual="true">
 		<Size y="12" />
 		<Layers>
 			<Layer level="ARTWORK">
@@ -38,6 +38,9 @@
 				</Texture>
 			</Layer>
 		</Layers>
+	</StatusBar>
+	
+	<StatusBar name="DPSMate_StatusBar" inherits="DPSMate_Bar" virtual="true">
 		<Scripts>
 			<OnLoad>
 				this:SetMinMaxValues(1,100)
@@ -58,6 +61,22 @@
 			<OnLeave>
 				GameTooltip:Hide()
 			</OnLeave>
+		</Scripts>
+	</StatusBar>
+	
+	<StatusBar name="DPSMate_StatusBarTotal" inherits="DPSMate_Bar" virtual="true">
+		<Scripts>
+			<OnEnter>
+				GameTooltip:SetOwner(this, "TOPLEFT")
+				GameTooltip:AddLine("LeftClick to open the details.")
+				GameTooltip:Show()
+			</OnEnter>
+			<OnLeave>
+				GameTooltip:Hide()
+			</OnLeave>
+			<OnMouseUp>
+				DPSMate.Options:UpdateTotalDetails(this)
+			</OnMouseUp>
 		</Scripts>
 	</StatusBar>
 	
@@ -228,13 +247,7 @@
 					<Frame name="$parent_Child">
 						<Size x="400" />
 						<Frames>
-							<StatusBar name="$parent_Total" inherits="DPSMate_StatusBar">
-								<Scripts>
-									<OnMouseUp>
-										DPSMate.Options:UpdateTotalDetails(this)
-									</OnMouseUp>
-								</Scripts>
-							</StatusBar>
+							<StatusBar name="$parent_Total" inherits="DPSMate_StatusBarTotal" />
 							<StatusBar name="$parent_StatusBar1" inherits="DPSMate_StatusBar" />
 							<StatusBar name="$parent_StatusBar2" inherits="DPSMate_StatusBar" />
 							<StatusBar name="$parent_StatusBar3" inherits="DPSMate_StatusBar" />

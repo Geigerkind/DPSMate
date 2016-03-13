@@ -1404,6 +1404,7 @@ function DPSMate.Options:ShowTooltip()
 		DPSMate.RegistredModules[DPSMateSettings["windows"][DPSMate_Details.PaKey]["CurMode"]]:ShowTooltip(this.user, DPSMate_Details.PaKey)
 		GameTooltip:AddLine(" ")
 		GameTooltip:AddLine("LeftClick to open the details.")
+		GameTooltip:AddLine("RightClick to open the menu.")
 		GameTooltip:Show()
 	end
 end

@@ -147,8 +147,9 @@ function DPSMate.Modules.DecursesReceived:OpenDetails(obj, key)
 	DPSMate.Modules.DetailsDecursesReceived:UpdateDetails(obj, key)
 end
 
-function DPSMate.Modules.Damage:OpenTotalDetails(obj, key)
-	DPSMate.Modules.DetailsDamageTotal:UpdateDetails(obj, key)
+function DPSMate.Modules.DecursesReceived:OpenTotalDetails(obj, key)
+	--DPSMate.Modules.DetailsDamageTotal:UpdateDetails(obj, key)
+	DPSMate:SendMessage("This feature will be added soon!")
 end
 
 
