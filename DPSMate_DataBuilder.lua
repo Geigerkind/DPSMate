@@ -77,9 +77,12 @@ function DPSMate.DB:OnEvent(event)
 						titlebarsync = true,
 						titlebartexture = "Healbot",
 						titlebarbgcolor = {0.01568627450980392,0,1},
+						titlebarfontcolor = {1.0,0.82,0.0},
+						barfontcolor = {1.0,1.0,1.0},
 						contentbgtexture = "UI-Tooltip-Background",
 						contentbgcolor = {0.01568627450980392,0,1},
-						numberformat = 1
+						numberformat = 1,
+						opacity = 1,
 					}
 				},
 				lock = false,

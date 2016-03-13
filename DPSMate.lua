@@ -164,6 +164,8 @@ function DPSMate:InitializeFrames()
 		if not val["titlebar"] then
 			head:Hide()
 		end
+		frame:SetAlpha(val["opacity"])
+		head.font:SetTextColor(val["titlebarfontcolor"][1],val["titlebarfontcolor"][2],val["titlebarfontcolor"][3])
 		head.bg:SetTexture(DPSMate.Options.statusbars[val["titlebartexture"]])
 		head.bg:SetVertexColor(val["titlebarbgcolor"][1], val["titlebarbgcolor"][2], val["titlebarbgcolor"][3])
 		head.font:SetFont(DPSMate.Options.fonts[val["titlebarfont"]], val["titlebarfontsize"], DPSMate.Options.fontflags[val["titlebarfontflag"]])
@@ -215,7 +217,9 @@ function DPSMate:InitializeFrames()
 		
 			-- Styles
 			bar.name:SetFont(DPSMate.Options.fonts[val["barfont"]], val["barfontsize"], DPSMate.Options.fontflags[val["barfontflag"]])
+			bar.name:SetTextColor(val["barfontcolor"][1],val["barfontcolor"][2],val["barfontcolor"][3])
 			bar.value:SetFont(DPSMate.Options.fonts[val["barfont"]], val["barfontsize"], DPSMate.Options.fontflags[val["barfontflag"]])
+			bar.value:SetTextColor(val["barfontcolor"][1],val["barfontcolor"][2],val["barfontcolor"][3])
 			bar:SetStatusBarTexture(DPSMate.Options.statusbars[val["bartexture"]])
 			bar.bg:SetTexture(DPSMate.Options.statusbars[val["bartexture"]])
 			bar:SetHeight(val["barheight"])

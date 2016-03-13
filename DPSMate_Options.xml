@@ -219,6 +219,10 @@
 							DPSMate_ConfigMenu_Tab_Bars_BarFontFlagText:SetFont(DPSMate.Options.fonts["FRIZQT"], 12, DPSMate.Options.fontflags[DPSMateSettings["windows"][this:GetParent().Key]["barfontflag"]])
 							UIDropDownMenu_SetSelectedValue(DPSMate_ConfigMenu_Tab_Bars_BarTexture, DPSMateSettings["windows"][this:GetParent().Key]["bartexture"])
 							DPSMate_ConfigMenu_Tab_Bars_BarTexture.tex:SetTexture(DPSMate.Options.statusbars[DPSMateSettings["windows"][this:GetParent().Key]["bartexture"]])
+							DPSMate_ConfigMenu_Tab_Bars_FontColorNormalTexture:SetVertexColor(DPSMateSettings["windows"][this:GetParent().Key]["barfontcolor"][1], DPSMateSettings["windows"][this:GetParent().Key]["barfontcolor"][2], DPSMateSettings["windows"][this:GetParent().Key]["barfontcolor"][3])
+							DPSMate_ConfigMenu_Tab_Bars_FontColor_SwatchBg.r = DPSMateSettings["windows"][this:GetParent().Key]["barfontcolor"][1]
+							DPSMate_ConfigMenu_Tab_Bars_FontColor_SwatchBg.g = DPSMateSettings["windows"][this:GetParent().Key]["barfontcolor"][2]
+							DPSMate_ConfigMenu_Tab_Bars_FontColor_SwatchBg.b = DPSMateSettings["windows"][this:GetParent().Key]["barfontcolor"][3]
 						end
 					</OnLoad>
 				</Scripts>
@@ -244,6 +248,13 @@
 							DPSMate_ConfigMenu_Tab_TitleBar_Box1_Config:SetChecked(DPSMateSettings["windows"][this:GetParent().Key]["titlebarconfig"])
 							DPSMate_ConfigMenu_Tab_TitleBar_Box1_Sync:SetChecked(DPSMateSettings["windows"][this:GetParent().Key]["titlebarsync"])
 							DPSMate_ConfigMenu_Tab_TitleBar_BGColorNormalTexture:SetVertexColor(DPSMateSettings["windows"][this:GetParent().Key]["titlebarbgcolor"][1], DPSMateSettings["windows"][this:GetParent().Key]["titlebarbgcolor"][2], DPSMateSettings["windows"][this:GetParent().Key]["titlebarbgcolor"][3])
+							DPSMate_ConfigMenu_Tab_TitleBar_BGColor_SwatchBg.r = DPSMateSettings["windows"][this:GetParent().Key]["titlebarbgcolor"][1]
+							DPSMate_ConfigMenu_Tab_TitleBar_BGColor_SwatchBg.g = DPSMateSettings["windows"][this:GetParent().Key]["titlebarbgcolor"][2]
+							DPSMate_ConfigMenu_Tab_TitleBar_BGColor_SwatchBg.b = DPSMateSettings["windows"][this:GetParent().Key]["titlebarbgcolor"][3]
+							DPSMate_ConfigMenu_Tab_TitleBar_FontColorNormalTexture:SetVertexColor(DPSMateSettings["windows"][this:GetParent().Key]["titlebarfontcolor"][1], DPSMateSettings["windows"][this:GetParent().Key]["titlebarfontcolor"][2], DPSMateSettings["windows"][this:GetParent().Key]["titlebarfontcolor"][3])
+							DPSMate_ConfigMenu_Tab_TitleBar_FontColor_SwatchBg.r = DPSMateSettings["windows"][this:GetParent().Key]["titlebarfontcolor"][1]
+							DPSMate_ConfigMenu_Tab_TitleBar_FontColor_SwatchBg.g = DPSMateSettings["windows"][this:GetParent().Key]["titlebarfontcolor"][2]
+							DPSMate_ConfigMenu_Tab_TitleBar_FontColor_SwatchBg.b = DPSMateSettings["windows"][this:GetParent().Key]["titlebarfontcolor"][3]
 							UIDropDownMenu_SetSelectedValue(DPSMate_ConfigMenu_Tab_TitleBar_BarTexture, DPSMateSettings["windows"][this:GetParent().Key]["titlebartexture"])
 							DPSMate_ConfigMenu_Tab_TitleBar_BarTexture.tex:SetTexture(DPSMate.Options.statusbars[DPSMateSettings["windows"][this:GetParent().Key]["titlebartexture"]])
 							UIDropDownMenu_SetSelectedValue(DPSMate_ConfigMenu_Tab_TitleBar_BarFont, DPSMateSettings["windows"][this:GetParent().Key]["titlebarfont"])
@@ -273,8 +284,12 @@
 								insets = { left = 4, right = 4, top = 4, bottom = 4 }
 							})
 							DPSMate_ConfigMenu_Tab_Content_Scale:SetValue(DPSMateSettings["windows"][this:GetParent().Key]["scale"])
+							DPSMate_ConfigMenu_Tab_Content_Opacity:SetValue(DPSMateSettings["windows"][this:GetParent().Key]["opacity"])
 							DPSMate_ConfigMenu_Tab_Content_BGDropDown_Texture:SetBackdropColor(DPSMateSettings["windows"][this:GetParent().Key]["contentbgcolor"][1], DPSMateSettings["windows"][this:GetParent().Key]["contentbgcolor"][2], DPSMateSettings["windows"][this:GetParent().Key]["contentbgcolor"][3])
 							DPSMate_ConfigMenu_Tab_Content_BGColorNormalTexture:SetVertexColor(DPSMateSettings["windows"][this:GetParent().Key]["contentbgcolor"][1], DPSMateSettings["windows"][this:GetParent().Key]["contentbgcolor"][2], DPSMateSettings["windows"][this:GetParent().Key]["contentbgcolor"][3])
+							DPSMate_ConfigMenu_Tab_Content_BGColor_SwatchBg.r = DPSMateSettings["windows"][this:GetParent().Key]["contentbgcolor"][1]
+							DPSMate_ConfigMenu_Tab_Content_BGColor_SwatchBg.g = DPSMateSettings["windows"][this:GetParent().Key]["contentbgcolor"][2]
+							DPSMate_ConfigMenu_Tab_Content_BGColor_SwatchBg.b = DPSMateSettings["windows"][this:GetParent().Key]["contentbgcolor"][3]
 							UIDropDownMenu_SetSelectedValue(DPSMate_ConfigMenu_Tab_Content_NumberFormat, DPSMateSettings["windows"][this:GetParent().Key]["numberformat"])
 							UIDropDownMenu_SetSelectedValue(DPSMate_ConfigMenu_Tab_Content_BGDropDown, DPSMateSettings["windows"][this:GetParent().Key]["contentbgtexture"])
 							DPSMate_ConfigMenu_Tab_Content_BGDropDownText:SetText(DPSMateSettings["windows"][this:GetParent().Key]["contentbgtexture"])
@@ -1649,6 +1664,29 @@
 							</OnLoad>
 						</Scripts>
 					</Slider>
+					<Button name="$parent_FontColor" inherits="DPSMate_Template_Colorpicker">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent_BarHeight" relativePoint="BOTTOMLEFT">
+								<Offset x="0" y="-15" />
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								getglobal(this:GetName().."_Font"):SetText(DPSMate.localization.config.fontcolor)
+								getglobal(this:GetName().."_SwatchBg").r = 1
+								getglobal(this:GetName().."_SwatchBg").g = 1
+								getglobal(this:GetName().."_SwatchBg").b = 1
+								this.aide = DPSMate.localization.config.fontcolorTooltip
+								this.var = "barfontcolor"
+								this.func = function()
+									for i=1, 30 do
+										getglobal("DPSMate_"..DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["name"].."_ScrollFrame_Child_StatusBar"..i.."_Name"):SetTextColor(DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["barfontcolor"][1], DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["barfontcolor"][2], DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["barfontcolor"][3])
+										getglobal("DPSMate_"..DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["name"].."_ScrollFrame_Child_StatusBar"..i.."_Value"):SetTextColor(DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["barfontcolor"][1], DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["barfontcolor"][2], DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["barfontcolor"][3])
+									end
+								end
+							</OnLoad>
+						</Scripts>
+					</Button>
 					<CheckButton name="$parent_ClassIcons" inherits="DPSMate_Template_CheckButton">
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="$Parent_BarSpacing" relativePoint="BOTTOMLEFT">
@@ -1837,7 +1875,7 @@
 					<Button name="$parent_BGColor" inherits="DPSMate_Template_Colorpicker">
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="$parent_BarTexture" relativePoint="BOTTOMLEFT">
-								<Offset x="20" y="-10" />
+								<Offset x="20" y="-5" />
 							</Anchor>
 						</Anchors>
 						<Scripts>
@@ -1849,7 +1887,27 @@
 								this.aide = DPSMate.localization.config.bgcolorTooltip
 								this.var = "titlebarbgcolor"
 								this.func = function()
-									getglobal("DPSMate_"..DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["name"].."_Head_Background"):SetVertexColor(DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["titlebarbgcolor"][1], DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["titlebarbgcolor"][2], DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["titlebarbgcolor"][3], 1)
+									getglobal("DPSMate_"..DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["name"].."_Head_Background"):SetVertexColor(DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["titlebarbgcolor"][1], DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["titlebarbgcolor"][2], DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["titlebarbgcolor"][3])
+								end
+							</OnLoad>
+						</Scripts>
+					</Button>
+					<Button name="$parent_FontColor" inherits="DPSMate_Template_Colorpicker">
+						<Anchors>
+							<Anchor point="TOP" relativeTo="$parent_BGColor" relativePoint="BOTTOM">
+								<Offset x="0" y="-5" />
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								getglobal(this:GetName().."_Font"):SetText(DPSMate.localization.config.fontcolor)
+								getglobal(this:GetName().."_SwatchBg").r = 1
+								getglobal(this:GetName().."_SwatchBg").g = 1
+								getglobal(this:GetName().."_SwatchBg").b = 1
+								this.aide = DPSMate.localization.config.fontcolorTooltip
+								this.var = "titlebarfontcolor"
+								this.func = function()
+									getglobal("DPSMate_"..DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["name"].."_Head_Font"):SetTextColor(DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["titlebarfontcolor"][1], DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["titlebarfontcolor"][2], DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["titlebarfontcolor"][3])
 								end
 							</OnLoad>
 						</Scripts>
@@ -2027,6 +2085,27 @@
 							</OnLoad>
 						</Scripts>
 					</Slider>
+					<Slider name="$parent_Opacity" inherits="DPSMate_Template_Slider">
+						<Anchors>
+							<Anchor point="TOP" relativeTo="$parent_Scale" relativePoint="BOTTOM">
+								<Offset x="0" y="-30" />
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								this.aide = DPSMate.localization.config.opacityTooltip
+								this.func = function() 
+									DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["opacity"] = this:GetValue()
+									getglobal("DPSMate_"..DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["name"]):SetAlpha(DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["opacity"])
+								end
+								this:SetMinMaxValues(0.0,1.0)
+								this:SetValueStep(0.1)
+								getglobal(this:GetName().."Text"):SetText(DPSMate.localization.config.opacity)
+								getglobal(this:GetName().."Low"):SetText("0.0")
+								getglobal(this:GetName().."High"):SetText("1.0")
+							</OnLoad>
+						</Scripts>
+					</Slider>
 					<Button name="$parent_BGColor" inherits="DPSMate_Template_Colorpicker">
 						<Anchors>
 							<Anchor point="LEFT" relativeTo="$parent_Scale" relativePoint="RIGHT">
@@ -2051,8 +2130,8 @@
 					<Frame name="$parent_NumberFormat" inherits="DPSMate_Template_DropDown">
 						<Size x="120" y="24" />
 						<Anchors>
-							<Anchor point="TOPLEFT" relativeTo="$parent_Scale" relativePoint="BOTTOMLEFT">
-								<Offset x="-15" y="-28" />
+							<Anchor point="LEFT" relativeTo="$parent_Opacity" relativePoint="RIGHT">
+								<Offset x="0" y="0" />
 							</Anchor>
 						</Anchors>
 						<Scripts>
