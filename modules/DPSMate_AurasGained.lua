@@ -77,6 +77,7 @@ function DPSMate.Modules.AurasGained:EvalTable(user, k)
 			end
 			i=i+1
 		end
+		total = total + val
 	end
 	return a, total, b
 end

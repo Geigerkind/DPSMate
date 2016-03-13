@@ -49,7 +49,7 @@ end
 
 function DPSMate.Modules.AurasUptimers:EvalTable(user, k)
 	local a, b, c, total = {}, {}, {}, 0
-	local arr = DPSMate:GetMode(k)
+	local arr, cbt = DPSMate:GetMode(k)
 	for cat, val in pairs(arr[user[1]]) do -- 3 Ability
 		local CV, CVV = 0, 0
 		for ca, va in pairs(val[1]) do -- each one
@@ -63,7 +63,7 @@ function DPSMate.Modules.AurasUptimers:EvalTable(user, k)
 		--DPSMate:SendMessage(DPSMateCombatTime["total"])
 		--DPSMate:SendMessage("---------------------------------------")
 		local i = 1
-		CV = tonumber(string.format("%.2f", (100*CV)/DPSMateCombatTime["total"]))
+		CV = tonumber(string.format("%.2f", (100*CV)/cbt))
 		while true do
 			if (not b[i]) then
 				table.insert(c, i, CVV)
