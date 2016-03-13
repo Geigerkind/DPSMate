@@ -107,8 +107,8 @@
 				</Anchors>
 				<Layers>
 					<Layer level="BACKGROUND">
-						<Texture name="$parent_Background" alphaMode="ADD">
-							<Color r="1" g="0.82" b="0" a="1"/>
+						<Texture name="$parent_Background">
+							<Color r="1" g="0.82" b="0"/>
 							<Anchors>
 								<Anchor point="TOPLEFT"/>
 								<Anchor point="BOTTOMRIGHT"/>
@@ -207,8 +207,8 @@
 				</Anchors>
 				<Layers>
 					<Layer leve="BACKGROUND">
-						<Texture name="$parent_Background" file="Interface\Tooltips\UI-Tooltip-Background" alphaMode="ADD">
-							<Color r="1" g="1" b="1" a="0.5"/>
+						<Texture name="$parent_Background" file="Interface\Tooltips\UI-Tooltip-Background">
+							<Color r="1" g="1" b="1"/>
 							<Anchors>
 								<Anchor point="TOPLEFT"/>
 								<Anchor point="BOTTOMRIGHT"/>

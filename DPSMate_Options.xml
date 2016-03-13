@@ -1849,7 +1849,7 @@
 								this.aide = DPSMate.localization.config.bgcolorTooltip
 								this.var = "titlebarbgcolor"
 								this.func = function()
-									getglobal("DPSMate_"..DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["name"].."_Head_Background"):SetVertexColor(DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["titlebarbgcolor"][1], DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["titlebarbgcolor"][2], DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["titlebarbgcolor"][3])
+									getglobal("DPSMate_"..DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["name"].."_Head_Background"):SetVertexColor(DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["titlebarbgcolor"][1], DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["titlebarbgcolor"][2], DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["titlebarbgcolor"][3], 1)
 								end
 							</OnLoad>
 						</Scripts>

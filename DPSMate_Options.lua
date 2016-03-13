@@ -880,6 +880,7 @@ function DPSMate.Options:ContentBGTextureDropDown()
 			edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 12, edgeSize = 12, 
 			insets = { left = 4, right = 4, top = 4, bottom = 4 }
 		})
+		getglobal("DPSMate_ConfigMenu_Tab_Content_BGDropDown_Texture"):SetBackdropColor(DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["contentbgcolor"][1], DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["contentbgcolor"][2], DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["contentbgcolor"][3])
 		getglobal("DPSMate_"..DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["name"].."_ScrollFrame_Background"):SetTexture(DPSMate.Options.bgtexture[this.value])
     end
 	
@@ -1339,7 +1340,7 @@ function DPSMate.Options:SetColor()
 	frame.r = r
 	frame.g = g
 	frame.b = b
-
+	
 	DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key][ColorPickerFrame.var] = {r,g,b}
 	
 	ColorPickerFrame.rfunc()
