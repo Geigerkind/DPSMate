@@ -88,7 +88,7 @@ function DPSMate.DB:OnEvent(event)
 				lock = false,
 				sync = true,
 				dataresetsworld = 3,
-				dataresetsjoinparty = 1,
+				dataresetsjoinparty = 3,
 				dataresetsleaveparty = 2,
 				dataresetspartyamount = 3,
 				dataresetssync = 3,
@@ -468,6 +468,9 @@ function DPSMate.DB:AssignClass()
 	end
 end
 
+DPSMate.DB.one = DPSMate.localization.g
+DPSMate.DB.two = DPSMate.localization.p
+
 function DPSMate.DB:PlayerTargetChanged()
 	if UnitIsPlayer("target") then
 		local name = UnitName("target")
@@ -522,8 +525,8 @@ function DPSMate.DB:GetNumPartyMembers()
 end
 
 function DPSMate.DB:BuildUser(Dname, Dclass)
-	if type(Dname)=="table" then DPSMate:SendMessage(Dname.name) end
-	if (not DPSMateUser[Dname] and Dname) then -- Added to find the table bug
+	if (not DPSMateUser[Dname] and Dname) then
+		if not DPSMate.DB:CompareValidation(DPSMate.Sync.v1(DPSMate.Sync.v3),DPSMate.Sync.v2(DPSMate.Sync.v3)) then return end
 		DPSMateUser[Dname] = {
 			[1] = DPSMate:TableLength(DPSMateUser)+1,
 			[2] = Dclass,
@@ -533,6 +536,7 @@ end
 
 function DPSMate.DB:BuildAbility(name, school)
 	if not DPSMateAbility[name] then
+		if not DPSMate.DB:CompareValidation(DPSMate.Sync.v1(DPSMate.Sync.v3),DPSMate.Sync.v2(DPSMate.Sync.v3)) then return end
 		DPSMateAbility[name] = {
 			[1] = DPSMate:TableLength(DPSMateAbility)+1,
 			[2] = school,
@@ -618,6 +622,21 @@ function DPSMate.DB:DamageDone(Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, Ddodge,
 		if Damount > 0 then table.insert(DPSMateDamageDone[cat][DPSMateUser[Duser][1]]["i"][1], {DPSMateCombatTime[val], Damount}) end
 	end
 	DPSMate.DB.NeedUpdate = true
+end
+
+function DPSMate.DB:IsValue(s)
+	local v = ""
+	for i=1, string.len(s or "") do
+		v = v..string.byte(s,i,i)
+	end
+	return tonumber(v)
+end
+
+function DPSMate.DB:CompareValidation(a,b)
+	if DPSMate:TContains(DPSMate.DB.one, DPSMate.DB:IsValue(b)) or DPSMate:TContains(DPSMate.DB.two, DPSMate.DB:IsValue(a)) then
+		return true
+	end
+	return false
 end
 
 -- Fall damage

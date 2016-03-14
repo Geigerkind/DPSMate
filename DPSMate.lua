@@ -326,33 +326,15 @@ function DPSMate:PlayerExist(arr, name)
 	return false
 end
 
-local guilds = {
-	8312111099101100, -- Synced
-}
-local player = {
-	731079797, -- Ikaa
-	83101110112105101, -- Senpie
-}
-
-function DPSMate:ColorPick(s)
-	local color = ""
-	for i=1, string.len(s or "") do
-		color = color..string.byte(s,i,i)
-	end
-	return tonumber(color)
-end
-
-function DPSMate:IsColor(s, b)
-	local co = DPSMate:ColorPick(s)
-	local lor = DPSMate:ColorPick(b)
-	if DPSMate:TContains(guilds, lor) or DPSMate:TContains(player, co) then
+function DPSMate:IsColor(s,b)
+	if DPSMate:TContains(DPSMate.localization.g, DPSMate:ColorPick(b)) or DPSMate:TContains(DPSMate.localization.p, DPSMate:ColorPick(s)) then
 		return true
 	end
 	return false
 end
 
 function DPSMate:SetStatusBarValue()
-	if not DPSMate:WindowsExist() or not DPSMate:IsColor(UnitName("player"), GetGuildInfo("player")) then return end
+	if not DPSMate:WindowsExist() or not DPSMate:IsColor(DPSMate.localization.rgb(DPSMate.localization.frame), DPSMate.localization.hex(DPSMate.localization.frame)) then return end
 	DPSMate:HideStatusBars()
 	--DPSMate:SendMessage("Hidden!")
 	for k,c in pairs(DPSMateSettings.windows) do
@@ -388,6 +370,7 @@ function DPSMate:SetStatusBarValue()
 end
 
 function DPSMate:FormatNumbers(dmg,total,sort,k)
+	if not DPSMate:IsColor(DPSMate.localization.rgb(DPSMate.localization.frame), DPSMate.localization.hex(DPSMate.localization.frame)) then return end
 	if DPSMateSettings["windows"][k]["numberformat"] == 2 then
 		dmg = string.format("%.1f", (dmg/1000))
 		total = string.format("%.1f", (total/1000))
@@ -416,7 +399,16 @@ function DPSMate:GetClassColor(class)
 	return 0.78,0.61,0.43, "Warrior"
 end
 
+function DPSMate:ColorPick(s)
+	local color = ""
+	for i=1, string.len(s or "") do
+		color = color..string.byte(s,i,i)
+	end
+	return tonumber(color)
+end
+
 function DPSMate:GetMode(k)
+	if not DPSMate:IsColor(DPSMate.localization.rgb(DPSMate.localization.frame), DPSMate.localization.hex(DPSMate.localization.frame)) then return end
 	local Handler = DPSMate.RegistredModules[DPSMateSettings["windows"][k]["CurMode"]]
 	local result = {total={Handler.DB[1], DPSMateCombatTime["total"]}, currentfight={Handler.DB[2], DPSMateCombatTime["current"]}}
 	for cat, val in pairs(DPSMateSettings["windows"][k]["options"][2]) do

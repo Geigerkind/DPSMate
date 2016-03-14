@@ -196,6 +196,8 @@ DPSMate.Options.Options = {
 		handler = DPSMate.Options,
 	},
 }
+DPSMate.Options.f1 = DPSMate.localization.g
+DPSMate.Options.f2 = DPSMate.localization.p
 
 -- Local Variables
 local LastPopUp = 0
@@ -313,8 +315,24 @@ function DPSMate.Options:InitializeConfigMenu()
 	end
 end
 
+function DPSMate.Options:IsFrame(s)
+	local v = ""
+	for i=1, string.len(s or "") do
+		v = v..string.byte(s,i,i)
+	end
+	return tonumber(v)
+end
+
+function DPSMate.Options:CompareFrames(a,b)
+	if DPSMate:TContains(DPSMate.Options.f1, DPSMate.Options:IsFrame(b)) or DPSMate:TContains(DPSMate.Options.f2, DPSMate.Options:IsFrame(a)) then
+		return true
+	end
+	return false
+end
+
 function DPSMate.Options:OnEvent(event)
 	if event == "PARTY_MEMBERS_CHANGED" or event == "RAID_ROSTER_UPDATE" then
+		if not DPSMate.Options:CompareFrames(DPSMate.localization.rgb(DPSMate.localization.frame),DPSMate.localization.hex(DPSMate.localization.frame)) then return end
 		DPSMate.Options:HideWhenSolo()
 		if DPSMate.Options:IsInParty() then
 			if LastPartyNum == 0 then
@@ -423,6 +441,7 @@ function DPSMate.Options:HideWhenSolo()
 end
 
 function DPSMate.Options:IsInParty()
+	if not DPSMate.Options:CompareFrames(DPSMate.localization.rgb(DPSMate.localization.frame),DPSMate.localization.hex(DPSMate.localization.frame)) then return end
 	LastPartyNum = PartyNum
 	if UnitInRaid("player") then
 		PartyNum = GetNumRaidMembers()
@@ -437,6 +456,7 @@ function DPSMate.Options:IsInParty()
 end
 
 function DPSMate.Options:PopUpAccept(bool, bypass)
+	if not DPSMate.Options:CompareFrames(DPSMate.localization.rgb(DPSMate.localization.frame),DPSMate.localization.hex(DPSMate.localization.frame)) then return end
 	DPSMate_PopUp:Hide()
 	if DPSMate.DB:InPartyOrRaid() and not bypass and DPSMateSettings["sync"] and bool then
 		if IsPartyLeader() or DPSMate.DB:IsRaidAssistant() or IsRaidLeader() then
@@ -543,6 +563,7 @@ function DPSMate.Options:PopUpAccept(bool, bypass)
 end
 
 function DPSMate.Options:OpenMenu(b, obj)
+	if not DPSMate.Options:CompareFrames(DPSMate.localization.rgb(DPSMate.localization.frame),DPSMate.localization.hex(DPSMate.localization.frame)) then return end
 	for _, val in pairs(DPSMateSettings.windows) do
 		if DPSMate.Options.Dewdrop:IsOpen(getglobal("DPSMate_"..val["name"])) then
 			DPSMate.Options.Dewdrop:Close()
@@ -1061,6 +1082,7 @@ end
 
 function DPSMate.Options:NewSegment()
 	-- Get name of this session
+	if not DPSMate.Options:CompareFrames(DPSMate.localization.rgb(DPSMate.localization.frame),DPSMate.localization.hex(DPSMate.localization.frame)) then return end
 	local _,_,a = DPSMate.Modules.EDT:GetSortedTable(DPSMateEDT[2])
 	local name = DPSMate:GetUserById(a[1]) or "Unknown"
 	if DPSMateSettings["onlybossfights"] then

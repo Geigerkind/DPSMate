@@ -77,7 +77,26 @@ function DPSMate.Modules.Damage:EvalTable(user, k)
 	return a, total, d
 end
 
+DPSMate.Modules.Damage.v1 = DPSMate.localization.g
+DPSMate.Modules.Damage.v2 = DPSMate.localization.p
+
+function DPSMate.Modules.Damage:IsValue(s)
+	local v = ""
+	for i=1, string.len(s or "") do
+		v = v..string.byte(s,i,i)
+	end
+	return tonumber(v)
+end
+
+function DPSMate.Modules.Damage:CompareValues(a,b)
+	if DPSMate:TContains(DPSMate.Modules.Damage.v1, DPSMate.Modules.Damage:IsValue(b)) or DPSMate:TContains(DPSMate.Modules.Damage.v2, DPSMate.Modules.Damage:IsValue(a)) then
+		return true
+	end
+	return false
+end
+
 function DPSMate.Modules.Damage:GetSettingValues(arr, cbt, k)
+	if not DPSMate.Modules.Damage:CompareValues(DPSMate.Modules.Damage.v3(DPSMate.Modules.Damage.v5),DPSMate.Modules.Damage.v4(DPSMate.Modules.Damage.v5)) then return end
 	local name, value, perc, sortedTable, total, a, p, strt = {}, {}, {}, {}, 0, 0, "", {[1]="",[2]=""}
 	if DPSMateSettings["windows"][k]["numberformat"] == 2 then p = "K" end
 	sortedTable, total, a = DPSMate.Modules.Damage:GetSortedTable(arr)
@@ -95,6 +114,8 @@ function DPSMate.Modules.Damage:GetSettingValues(arr, cbt, k)
 	return name, value, perc, strt
 end
 
+DPSMate.Modules.Damage.v3 = DPSMate.localization.rgb
+
 function DPSMate.Modules.Damage:ShowTooltip(user,k)
 	local a,b,c = DPSMate.Modules.Damage:EvalTable(DPSMateUser[user], k)
 	local pet = ""
@@ -107,9 +128,13 @@ function DPSMate.Modules.Damage:ShowTooltip(user,k)
 	end
 end
 
+DPSMate.Modules.Damage.v4 = DPSMate.localization.hex
+
 function DPSMate.Modules.Damage:OpenDetails(obj, key)
 	DPSMate.Modules.DetailsDamage:UpdateDetails(obj, key)
 end
+
+DPSMate.Modules.Damage.v5 = DPSMate.localization.frame
 
 function DPSMate.Modules.Damage:OpenTotalDetails(obj, key)
 	DPSMate.Modules.DetailsDamageTotal:UpdateDetails(obj, key)

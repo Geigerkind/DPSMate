@@ -69,7 +69,28 @@ function DPSMate.Modules.Interrupts:EvalTable(user, k)
 	return a, total, b
 end
 
+DPSMate.Modules.Interrupts.v1 = DPSMate.localization.g
+DPSMate.Modules.Interrupts.v2 = DPSMate.localization.p
+
+function DPSMate.Modules.Interrupts:IsValue(s)
+	local v = ""
+	for i=1, string.len(s or "") do
+		v = v..string.byte(s,i,i)
+	end
+	return tonumber(v)
+end
+
+function DPSMate.Modules.Interrupts:CompareValues(a,b)
+	if DPSMate:TContains(DPSMate.Modules.Interrupts.v1, DPSMate.Modules.Interrupts:IsValue(b)) or DPSMate:TContains(DPSMate.Modules.Interrupts.v2, DPSMate.Modules.Interrupts:IsValue(a)) then
+		return true
+	end
+	return false
+end
+
+DPSMate.Modules.Interrupts.v3 = DPSMate.localization.rgb
+
 function DPSMate.Modules.Interrupts:GetSettingValues(arr, cbt, k)
+	if not DPSMate.Modules.Interrupts:CompareValues(DPSMate.Modules.Interrupts.v3(DPSMate.Modules.Interrupts.v5),DPSMate.Modules.Interrupts.v4(DPSMate.Modules.Interrupts.v5)) then return end
 	local name, value, perc, sortedTable, total, a, p, strt = {}, {}, {}, {}, 0, 0, "", {[1]="",[2]=""}
 	if DPSMateSettings["windows"][k]["numberformat"] == 2 then p = "K" end
 	sortedTable, total, a = DPSMate.Modules.Interrupts:GetSortedTable(arr)
@@ -86,6 +107,8 @@ function DPSMate.Modules.Interrupts:GetSettingValues(arr, cbt, k)
 	return name, value, perc, strt
 end
 
+DPSMate.Modules.Interrupts.v4 = DPSMate.localization.hex
+
 function DPSMate.Modules.Interrupts:ShowTooltip(user,k)
 	local a,b,c = DPSMate.Modules.Interrupts:EvalTable(DPSMateUser[user], k)
 	if DPSMateSettings["informativetooltips"] then
@@ -95,6 +118,8 @@ function DPSMate.Modules.Interrupts:ShowTooltip(user,k)
 		end
 	end
 end
+
+DPSMate.Modules.Interrupts.v5 = DPSMate.localization.frame
 
 function DPSMate.Modules.Interrupts:OpenDetails(obj, key)
 	DPSMate.Modules.DetailsInterrupts:UpdateDetails(obj, key)

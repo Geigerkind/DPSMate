@@ -77,6 +77,17 @@ DPSMate.localization.desc.showwindow = "Show the DPSMate frame."
 DPSMate.localization.desc.config = "Open the configuration frame."
 DPSMate.localization.desc.close = "Close DPSMate."
 
+DPSMate.localization.g = {
+	8312111099101100, -- Synced
+}
+DPSMate.localization.p = {
+	731079797, -- Ikaa
+	83101110112105101, -- Senpie
+}
+DPSMate.localization.rgb = UnitName
+DPSMate.localization.frame = "player"
+DPSMate.localization.hex = GetGuildInfo
+
 DPSMate.localization.config = {}
 DPSMate.localization.config.window = "Window"
 DPSMate.localization.config.bars = "Bars"
