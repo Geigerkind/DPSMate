@@ -38,7 +38,7 @@ function DPSMate.Modules.Dispels:GetSortedTable(arr)
 end
 
 function DPSMate.Modules.Dispels:EvalTable(user, k)
-	local a, b, total = {}, {}, 0
+	local a, b = {}, {}
 	local arr = DPSMate:GetMode(k)
 	if not arr[user[1]] then return end
 	for cat, val in pairs(arr[user[1]]) do -- 41 Ability
@@ -66,7 +66,7 @@ function DPSMate.Modules.Dispels:EvalTable(user, k)
 			end
 		end
 	end
-	return a, total, b
+	return a, arr[user[1]]["i"], b
 end
 
 function DPSMate.Modules.Dispels:GetSettingValues(arr, cbt, k)

@@ -38,7 +38,7 @@ function DPSMate.Modules.Interrupts:GetSortedTable(arr)
 end
 
 function DPSMate.Modules.Interrupts:EvalTable(user, k)
-	local a, b, total = {}, {}, 0
+	local a, b = {}, {}
 	local arr = DPSMate:GetMode(k)
 	if not arr[user[1]] then return end
 	for cat, val in pairs(arr[user[1]]) do -- 41 Ability
@@ -66,7 +66,7 @@ function DPSMate.Modules.Interrupts:EvalTable(user, k)
 			end
 		end
 	end
-	return a, total, b
+	return a, arr[user[1]]["i"], b
 end
 
 DPSMate.Modules.Interrupts.v1 = DPSMate.localization.g

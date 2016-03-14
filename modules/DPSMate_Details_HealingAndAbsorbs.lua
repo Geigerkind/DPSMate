@@ -246,8 +246,11 @@ function DPSMate.Modules.DetailsHealingAndAbsorbs:SortLineTable()
 				local i, dmg = 1, 5
 				if va[4] then
 					dmg = va[4]
-				elseif DPSMateDamageTaken[1][DPSMateUser[DetailsUser][1]][va[2]][va[3]][14] then
-					dmg = DPSMateDamageTaken[1][DPSMateUser[DetailsUser][1]][va[2]][va[3]][14]
+				end
+				if DPSMateDamageTaken[1][DPSMateUser[DetailsUser][1]][va[2]] then
+					if DPSMateDamageTaken[1][DPSMateUser[DetailsUser][1]][va[2]][va[3]] then
+						dmg = DPSMateDamageTaken[1][DPSMateUser[DetailsUser][1]][va[2]][va[3]][14]
+					end
 				end
 				if dmg>0 then
 					while true do
