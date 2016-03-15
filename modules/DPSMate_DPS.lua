@@ -6,7 +6,7 @@ DPSMate.Options.Options[1]["args"]["dps"] = {
 	type = 'toggle',
 	name = DPSMate.localization.config.dps,
 	desc = "Show DPS.",
-	get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["options"][1]["dps"] end,
+	get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["options"][1]["dps"] end, -- Addons might conflicting here with dewdrop
 	set = function() DPSMate.Options:ToggleDrewDrop(1, "dps", DPSMate.Options.Dewdrop:GetOpenedParent()) end,
 }
 

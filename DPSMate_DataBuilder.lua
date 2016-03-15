@@ -551,37 +551,38 @@ function DPSMate.DB:DamageDone(Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, Ddodge,
 	end
 	CombatState, CombatTime = true, 0
 	
+	DPSMate.DB:BuildUser(Duser, nil)
+	DPSMate.DB:BuildAbility(Dname, nil)
 	for cat, val in pairs({[1]="total", [2]="current"}) do 
 		if DPSMate.DB:DDExist(Duser, Dname, DPSMateDamageDone[cat]) then
-			DPSMateDamageDone[cat][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][1] = DPSMateDamageDone[cat][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][1] + Dhit
-			DPSMateDamageDone[cat][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][5] = DPSMateDamageDone[cat][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][5] + Dcrit
-			DPSMateDamageDone[cat][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][9] = DPSMateDamageDone[cat][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][9] + Dmiss
-			DPSMateDamageDone[cat][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][10] = DPSMateDamageDone[cat][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][10] + Dparry
-			DPSMateDamageDone[cat][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][11] = DPSMateDamageDone[cat][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][11] + Ddodge
-			DPSMateDamageDone[cat][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][12] = DPSMateDamageDone[cat][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][12] + Dresist
-			DPSMateDamageDone[cat][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][13] = DPSMateDamageDone[cat][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][13] + Damount
-			DPSMateDamageDone[cat][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][14] = DPSMateDamageDone[cat][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][14] + Dglance
-			DPSMateDamageDone[cat][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][18] = DPSMateDamageDone[cat][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][18] + Dblock
+			local path = DPSMateDamageDone[cat][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]]
+			path[1] = path[1] + Dhit
+			path[5] = path[5] + Dcrit
+			path[9] = path[9] + Dmiss
+			path[10] = path[10] + Dparry
+			path[11] = path[11] + Ddodge
+			path[12] = path[12] + Dresist
+			path[13] = path[13] + Damount
+			path[14] = path[14] + Dglance
+			path[18] = path[18] + Dblock
 			if Dhit == 1 then
-				if (Damount < DPSMateDamageDone[cat][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][2] or DPSMateDamageDone[cat][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][2] == 0) then DPSMateDamageDone[cat][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][2] = Damount end
-				if Damount > DPSMateDamageDone[cat][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][3] then DPSMateDamageDone[cat][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][3] = Damount end
-				DPSMateDamageDone[cat][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][4] = (DPSMateDamageDone[cat][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][4]+Damount)/2
+				if (Damount < path[2] or path[2] == 0) then path[2] = Damount end
+				if Damount > path[3] then path[3] = Damount end
+				path[4] = (path[4]+Damount)/2
 			elseif Dcrit == 1 then
-				if (Damount < DPSMateDamageDone[cat][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][6] or DPSMateDamageDone[cat][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][6] == 0) then DPSMateDamageDone[cat][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][6] = Damount end
-				if Damount > DPSMateDamageDone[cat][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][7] then DPSMateDamageDone[cat][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][7] = Damount end
-				DPSMateDamageDone[cat][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][8] = (DPSMateDamageDone[cat][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][8]+Damount)/2
+				if (Damount < path[6] or path[6] == 0) then path[6] = Damount end
+				if Damount > path[7] then path[7] = Damount end
+				path[8] = (path[8]+Damount)/2
 			elseif Dglance == 1 then
-				if (Damount < DPSMateDamageDone[cat][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][15] or DPSMateDamageDone[cat][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][15] == 0) then DPSMateDamageDone[cat][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][15] = Damount end
-				if Damount > DPSMateDamageDone[cat][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][16] then DPSMateDamageDone[cat][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][16] = Damount end
-				DPSMateDamageDone[cat][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][17] = (DPSMateDamageDone[cat][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][17]+Damount)/2
+				if (Damount < path[15] or path[15] == 0) then path[15] = Damount end
+				if Damount > path[16] then path[16] = Damount end
+				path[17] = (path[17]+Damount)/2
 			elseif Dblock == 1 then
-				if (Damount < DPSMateDamageDone[cat][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][19] or DPSMateDamageDone[cat][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][19] == 0) then DPSMateDamageDone[cat][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][19] = Damount end
-				if Damount > DPSMateDamageDone[cat][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][20] then DPSMateDamageDone[cat][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][20] = Damount end
-				DPSMateDamageDone[cat][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][21] = (DPSMateDamageDone[cat][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][21]+Damount)/2
+				if (Damount < path[19] or path[19] == 0) then path[19] = Damount end
+				if Damount > path[20] then path[20] = Damount end
+				path[21] = (path[21]+Damount)/2
 			end
 		else
-			DPSMate.DB:BuildUser(Duser, nil)
-			DPSMate.DB:BuildAbility(Dname, nil)
 			if (not DPSMateDamageDone[cat][DPSMateUser[Duser][1]]) then
 				DPSMateDamageDone[cat][DPSMateUser[Duser][1]] = {
 					i = {
@@ -613,10 +614,11 @@ function DPSMate.DB:DamageDone(Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, Ddodge,
 				[20] = 0,
 				[21] = 0
 			}
-			if (Dhit == 1) then DPSMateDamageDone[cat][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][2] = Damount; DPSMateDamageDone[cat][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][3] = Damount; DPSMateDamageDone[cat][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][4] = Damount end
-			if (Dcrit == 1) then DPSMateDamageDone[cat][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][6] = Damount; DPSMateDamageDone[cat][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][7] = Damount; DPSMateDamageDone[cat][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][8] = Damount end
-			if (Dglance == 1) then DPSMateDamageDone[cat][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][15] = Damount; DPSMateDamageDone[cat][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][16] = Damount; DPSMateDamageDone[cat][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][17] = Damount end
-			if (Dblock == 1) then DPSMateDamageDone[cat][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][19] = Damount; DPSMateDamageDone[cat][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][20] = Damount; DPSMateDamageDone[cat][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][21] = Damount end
+			local path = DPSMateDamageDone[cat][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]]
+			if (Dhit == 1) then path[2] = Damount; path[3] = Damount; path[4] = Damount end
+			if (Dcrit == 1) then path[6] = Damount; path[7] = Damount; path[8] = Damount end
+			if (Dglance == 1) then path[15] = Damount; path[16] = Damount; path[17] = Damount end
+			if (Dblock == 1) then path[19] = Damount; path[20] = Damount; path[21] = Damount end
 		end
 		DPSMateDamageDone[cat][DPSMateUser[Duser][1]]["i"][2] = DPSMateDamageDone[cat][DPSMateUser[Duser][1]]["i"][2] + Damount
 		if Damount > 0 then table.insert(DPSMateDamageDone[cat][DPSMateUser[Duser][1]]["i"][1], {DPSMateCombatTime[val], Damount}) end
@@ -641,34 +643,35 @@ end
 
 -- Fall damage
 function DPSMate.DB:DamageTaken(Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, Ddodge, Dresist, Damount, cause, Dcrush)
+	DPSMate.DB:BuildUser(Duser, nil)
+	DPSMate.DB:BuildUser(cause, nil)
+	DPSMate.DB:BuildAbility(Dname, nil)
 	for cat, val in pairs({[1]="total", [2]="current"}) do 
 		if DPSMate.DB:DTExist(Duser, cause, Dname, DPSMateDamageTaken[cat]) then
-			DPSMateDamageTaken[cat][DPSMateUser[Duser][1]][DPSMateUser[cause][1]][DPSMateAbility[Dname][1]][1] = DPSMateDamageTaken[cat][DPSMateUser[Duser][1]][DPSMateUser[cause][1]][DPSMateAbility[Dname][1]][1] + Dhit
-			DPSMateDamageTaken[cat][DPSMateUser[Duser][1]][DPSMateUser[cause][1]][DPSMateAbility[Dname][1]][5] = DPSMateDamageTaken[cat][DPSMateUser[Duser][1]][DPSMateUser[cause][1]][DPSMateAbility[Dname][1]][5] + Dcrit
-			DPSMateDamageTaken[cat][DPSMateUser[Duser][1]][DPSMateUser[cause][1]][DPSMateAbility[Dname][1]][9] = DPSMateDamageTaken[cat][DPSMateUser[Duser][1]][DPSMateUser[cause][1]][DPSMateAbility[Dname][1]][9] + Dmiss
-			DPSMateDamageTaken[cat][DPSMateUser[Duser][1]][DPSMateUser[cause][1]][DPSMateAbility[Dname][1]][15] = DPSMateDamageTaken[cat][DPSMateUser[Duser][1]][DPSMateUser[cause][1]][DPSMateAbility[Dname][1]][15] + Dcrush
-			DPSMateDamageTaken[cat][DPSMateUser[Duser][1]][DPSMateUser[cause][1]][DPSMateAbility[Dname][1]][10] = DPSMateDamageTaken[cat][DPSMateUser[Duser][1]][DPSMateUser[cause][1]][DPSMateAbility[Dname][1]][10] + Dparry
-			DPSMateDamageTaken[cat][DPSMateUser[Duser][1]][DPSMateUser[cause][1]][DPSMateAbility[Dname][1]][11] = DPSMateDamageTaken[cat][DPSMateUser[Duser][1]][DPSMateUser[cause][1]][DPSMateAbility[Dname][1]][11] + Ddodge
-			DPSMateDamageTaken[cat][DPSMateUser[Duser][1]][DPSMateUser[cause][1]][DPSMateAbility[Dname][1]][12] = DPSMateDamageTaken[cat][DPSMateUser[Duser][1]][DPSMateUser[cause][1]][DPSMateAbility[Dname][1]][12] + Dresist
-			DPSMateDamageTaken[cat][DPSMateUser[Duser][1]][DPSMateUser[cause][1]][DPSMateAbility[Dname][1]][13] = DPSMateDamageTaken[cat][DPSMateUser[Duser][1]][DPSMateUser[cause][1]][DPSMateAbility[Dname][1]][13] + Damount
-			DPSMateDamageTaken[cat][DPSMateUser[Duser][1]][DPSMateUser[cause][1]][DPSMateAbility[Dname][1]][14] = (DPSMateDamageTaken[cat][DPSMateUser[Duser][1]][DPSMateUser[cause][1]][DPSMateAbility[Dname][1]][14] + Damount)/2
+			local path = DPSMateDamageTaken[cat][DPSMateUser[Duser][1]][DPSMateUser[cause][1]][DPSMateAbility[Dname][1]]
+			path[1] = path[1] + Dhit
+			path[5] = path[5] + Dcrit
+			path[9] = path[9] + Dmiss
+			path[15] = path[15] + Dcrush
+			path[10] = path[10] + Dparry
+			path[11] = path[11] + Ddodge
+			path[12] = path[12] + Dresist
+			path[13] = path[13] + Damount
+			path[14] = (path[14] + Damount)/2
 			if Dhit == 1 then
-				if (Damount < DPSMateDamageTaken[cat][DPSMateUser[Duser][1]][DPSMateUser[cause][1]][DPSMateAbility[Dname][1]][2] or DPSMateDamageTaken[cat][DPSMateUser[Duser][1]][DPSMateUser[cause][1]][DPSMateAbility[Dname][1]][2] == 0) then DPSMateDamageTaken[cat][DPSMateUser[Duser][1]][DPSMateUser[cause][1]][DPSMateAbility[Dname][1]][2] = Damount end
-				if Damount > DPSMateDamageTaken[cat][DPSMateUser[Duser][1]][DPSMateUser[cause][1]][DPSMateAbility[Dname][1]][3] then DPSMateDamageTaken[cat][DPSMateUser[Duser][1]][DPSMateUser[cause][1]][DPSMateAbility[Dname][1]][3] = Damount end
-				DPSMateDamageTaken[cat][DPSMateUser[Duser][1]][DPSMateUser[cause][1]][DPSMateAbility[Dname][1]][4] = (DPSMateDamageTaken[cat][DPSMateUser[Duser][1]][DPSMateUser[cause][1]][DPSMateAbility[Dname][1]][4]+Damount)/2
+				if (Damount < path[2] or path[2] == 0) then path[2] = Damount end
+				if Damount > path[3] then path[3] = Damount end
+				path[4] = (path[4]+Damount)/2
 			elseif Dcrit == 1 then
-				if (Damount < DPSMateDamageTaken[cat][DPSMateUser[Duser][1]][DPSMateUser[cause][1]][DPSMateAbility[Dname][1]][6] or DPSMateDamageTaken[cat][DPSMateUser[Duser][1]][DPSMateUser[cause][1]][DPSMateAbility[Dname][1]][6] == 0) then DPSMateDamageTaken[cat][DPSMateUser[Duser][1]][DPSMateUser[cause][1]][DPSMateAbility[Dname][1]][6] = Damount end
-				if Damount > DPSMateDamageTaken[cat][DPSMateUser[Duser][1]][DPSMateUser[cause][1]][DPSMateAbility[Dname][1]][7] then DPSMateDamageTaken[cat][DPSMateUser[Duser][1]][DPSMateUser[cause][1]][DPSMateAbility[Dname][1]][7] = Damount end
-				DPSMateDamageTaken[cat][DPSMateUser[Duser][1]][DPSMateUser[cause][1]][DPSMateAbility[Dname][1]][8] = (DPSMateDamageTaken[cat][DPSMateUser[Duser][1]][DPSMateUser[cause][1]][DPSMateAbility[Dname][1]][8]+Damount)/2
+				if (Damount < path[6] or path[6] == 0) then path[6] = Damount end
+				if Damount > path[7] then path[7] = Damount end
+				path[8] = (path[8]+Damount)/2
 			elseif Dcrush == 1 then
-				if (Damount < DPSMateDamageTaken[cat][DPSMateUser[Duser][1]][DPSMateUser[cause][1]][DPSMateAbility[Dname][1]][16] or DPSMateDamageTaken[cat][DPSMateUser[Duser][1]][DPSMateUser[cause][1]][DPSMateAbility[Dname][1]][16] == 0) then DPSMateDamageTaken[cat][DPSMateUser[Duser][1]][DPSMateUser[cause][1]][DPSMateAbility[Dname][1]][16] = Damount end
-				if Damount > DPSMateDamageTaken[cat][DPSMateUser[Duser][1]][DPSMateUser[cause][1]][DPSMateAbility[Dname][1]][17] then DPSMateDamageTaken[cat][DPSMateUser[Duser][1]][DPSMateUser[cause][1]][DPSMateAbility[Dname][1]][17] = Damount end
-				DPSMateDamageTaken[cat][DPSMateUser[Duser][1]][DPSMateUser[cause][1]][DPSMateAbility[Dname][1]][18] = (DPSMateDamageTaken[cat][DPSMateUser[Duser][1]][DPSMateUser[cause][1]][DPSMateAbility[Dname][1]][18]+Damount)/2
+				if (Damount < path[16] or path[16] == 0) then path[16] = Damount end
+				if Damount > path[17] then path[17] = Damount end
+				path[18] = (path[18]+Damount)/2
 			end
 		else
-			DPSMate.DB:BuildUser(Duser, nil)
-			DPSMate.DB:BuildUser(cause, nil)
-			DPSMate.DB:BuildAbility(Dname, nil)
 			if not DPSMateDamageTaken[cat][DPSMateUser[Duser][1]] then
 				DPSMateDamageTaken[cat][DPSMateUser[Duser][1]] = {
 					i = {
@@ -700,9 +703,10 @@ function DPSMate.DB:DamageTaken(Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, Ddodge
 				[17] = 0,
 				[18] = 0,
 			}
-			if (Dhit == 1) then DPSMateDamageTaken[cat][DPSMateUser[Duser][1]][DPSMateUser[cause][1]][DPSMateAbility[Dname][1]][2] = Damount; DPSMateDamageTaken[cat][DPSMateUser[Duser][1]][DPSMateUser[cause][1]][DPSMateAbility[Dname][1]][3] = Damount; DPSMateDamageTaken[cat][DPSMateUser[Duser][1]][DPSMateUser[cause][1]][DPSMateAbility[Dname][1]][4] = Damount end
-			if (Dcrit == 1) then DPSMateDamageTaken[cat][DPSMateUser[Duser][1]][DPSMateUser[cause][1]][DPSMateAbility[Dname][1]][6] = Damount; DPSMateDamageTaken[cat][DPSMateUser[Duser][1]][DPSMateUser[cause][1]][DPSMateAbility[Dname][1]][7] = Damount; DPSMateDamageTaken[cat][DPSMateUser[Duser][1]][DPSMateUser[cause][1]][DPSMateAbility[Dname][1]][8] = Damount end
-			if (Dcrush == 1) then DPSMateDamageTaken[cat][DPSMateUser[Duser][1]][DPSMateUser[cause][1]][DPSMateAbility[Dname][1]][16] = Damount; DPSMateDamageTaken[cat][DPSMateUser[Duser][1]][DPSMateUser[cause][1]][DPSMateAbility[Dname][1]][17] = Damount; DPSMateDamageTaken[cat][DPSMateUser[Duser][1]][DPSMateUser[cause][1]][DPSMateAbility[Dname][1]][18] = Damount end
+			local path = DPSMateDamageTaken[cat][DPSMateUser[Duser][1]][DPSMateUser[cause][1]][DPSMateAbility[Dname][1]]
+			if (Dhit == 1) then path[2] = Damount; path[3] = Damount; path[4] = Damount end
+			if (Dcrit == 1) then path[6] = Damount; path[7] = Damount; path[8] = Damount end
+			if (Dcrush == 1) then path[16] = Damount; path[17] = Damount; path[18] = Damount end
 		end
 		DPSMateDamageTaken[cat][DPSMateUser[Duser][1]]["i"][2] = DPSMateDamageTaken[cat][DPSMateUser[Duser][1]]["i"][2] + Damount
 		if Damount > 0 then table.insert(DPSMateDamageTaken[cat][DPSMateUser[Duser][1]]["i"][1], {DPSMateCombatTime[val], Damount}) end
@@ -715,38 +719,40 @@ function DPSMate.DB:EnemyDamage(arr, Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, D
 		DPSMate.Options:NewSegment()
 	end
 	CombatState, CombatTime = true, 0
+	
+	DPSMate.DB:BuildUser(Duser, nil)
+	DPSMate.DB:BuildUser(cause, nil)
+	DPSMate.DB:BuildAbility(Dname, nil)
 	for cat, val in pairs({[1]="total", [2]="current"}) do 
 		if DPSMate.DB:EDDExist(Duser, cause, Dname, arr[cat]) then
-			arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][1] = arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][1] + Dhit
-			arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][5] = arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][5] + Dcrit
-			arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][9] = arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][9] + Dmiss
-			arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][10] = arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][10] + Dparry
-			arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][11] = arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][11] + Ddodge
-			arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][12] = arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][12] + Dresist
-			arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][13] = arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][13] + Damount
-			arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][14] = arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][14] + Dblock
-			arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][18] = arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][18] + Dcrush
+			local path = arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]]
+			path[1] = path[1] + Dhit
+			path[5] = path[5] + Dcrit
+			path[9] = path[9] + Dmiss
+			path[10] = path[10] + Dparry
+			path[11] = path[11] + Ddodge
+			path[12] = path[12] + Dresist
+			path[13] = path[13] + Damount
+			path[14] = path[14] + Dblock
+			path[18] = path[18] + Dcrush
 			if Dhit == 1 then
-				if (Damount < arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][2] or arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][2] == 0) then arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][2] = Damount end
-				if Damount > arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][3] then arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][3] = Damount end
-				arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][4] = (arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][4]+Damount)/2
+				if (Damount < path[2] or path[2] == 0) then path[2] = Damount end
+				if Damount > path[3] then path[3] = Damount end
+				path[4] = (path[4]+Damount)/2
 			elseif Dcrit == 1 then
-				if (Damount < arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][6] or arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][6] == 0) then arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][6] = Damount end
-				if Damount > arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][7] then arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][7] = Damount end
-				arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][8] = (arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][8]+Damount)/2
+				if (Damount < path[6] or path[6] == 0) then path[6] = Damount end
+				if Damount > path[7] then path[7] = Damount end
+				path[8] = (path[8]+Damount)/2
 			elseif Dblock == 1 then
-				if (Damount < arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][15] or arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][15] == 0) then arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][15] = Damount end
-				if Damount > arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][16] then arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][16] = Damount end
-				arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][17] = (arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][17]+Damount)/2
+				if (Damount < path[15] or path[15] == 0) then path[15] = Damount end
+				if Damount > path[16] then path[16] = Damount end
+				path[17] = (path[17]+Damount)/2
 			elseif Dcrush == 1 then
-				if (Damount < arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][19] or arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][19] == 0) then arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][19] = Damount end
-				if Damount > arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][20] then arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][20] = Damount end
-				arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][21] = (arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][21]+Damount)/2
+				if (Damount < path[19] or path[19] == 0) then path[19] = Damount end
+				if Damount > path[20] then path[20] = Damount end
+				path[21] = (path[21]+Damount)/2
 			end
 		else
-			DPSMate.DB:BuildUser(Duser, nil)
-			DPSMate.DB:BuildUser(cause, nil)
-			DPSMate.DB:BuildAbility(Dname, nil)
 			if not arr[cat][DPSMateUser[cause][1]] then
 				arr[cat][DPSMateUser[cause][1]] = {}
 			end
@@ -783,10 +789,11 @@ function DPSMate.DB:EnemyDamage(arr, Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, D
 				[20] = 0,
 				[21] = 0,
 			}
-			if (Dhit == 1) then arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][2] = Damount; arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][3] = Damount; arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][4] = Damount end
-			if (Dcrit == 1) then arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][6] = Damount; arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][7] = Damount; arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][8] = Damount end
-			if (Dblock == 1) then arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][15] = Damount; arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][16] = Damount; arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][17] = Damount end
-			if (Dcrush == 1) then arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][19] = Damount; arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][20] = Damount; arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][21] = Damount end
+			local path = arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]]
+			if (Dhit == 1) then path[2] = Damount; path[3] = Damount; path[4] = Damount end
+			if (Dcrit == 1) then path[6] = Damount; path[7] = Damount; path[8] = Damount end
+			if (Dblock == 1) then path[15] = Damount; path[16] = Damount; path[17] = Damount end
+			if (Dcrush == 1) then path[19] = Damount; path[20] = Damount; path[21] = Damount end
 		end
 		arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser][1]]["i"][2] = arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser][1]]["i"][2] + Damount
 		if Damount > 0 then table.insert(arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser][1]]["i"][1], {DPSMateCombatTime[val], Damount}) end
@@ -819,38 +826,39 @@ function DPSMate.DB:Healing(arr, Duser, Dname, Dhit, Dcrit, Damount)
 				[9] = 0, -- critMax
 			}
 		end
+		local path = arr[cat][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]]
 		if Dhit==1 then
-			if arr[cat][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][4]>0 then
-				arr[cat][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][4] = (arr[cat][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][4]+Damount)/2
+			if path[4]>0 then
+				path[4] = (path[4]+Damount)/2
 			else
-				arr[cat][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][4] = Damount
+				path[4] = Damount
 			end
 		end
 		if Dcrit==1 then
-			if arr[cat][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][5]>0 then
-				arr[cat][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][5] = (arr[cat][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][5]+Damount)/2
+			if path[5]>0 then
+				path[5] = (path[5]+Damount)/2
 			else
-				arr[cat][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][5] = Damount
+				path[5] = Damount
 			end
 		end
-		arr[cat][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][1] = arr[cat][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][1]+Damount
-		arr[cat][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][2] = arr[cat][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][2]+Dhit
-		arr[cat][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][3] = arr[cat][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][3]+Dcrit
+		path[1] = path[1]+Damount
+		path[2] = path[2]+Dhit
+		path[3] = path[3]+Dcrit
 		arr[cat][DPSMateUser[Duser][1]]["i"][1] = arr[cat][DPSMateUser[Duser][1]]["i"][1]+Damount
 		if Dhit==1 then 
-			if Damount<arr[cat][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][6] or arr[cat][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][6]==0 then
-				arr[cat][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][6] = Damount; 
+			if Damount<path[6] or path[6]==0 then
+				path[6] = Damount; 
 			end
-			if Damount>arr[cat][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][7] or arr[cat][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][7]==0 then
-				arr[cat][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][7] = Damount 
+			if Damount>path[7] or path[7]==0 then
+				path[7] = Damount 
 			end
 		end
 		if Dcrit==1 then 
-			if Damount<arr[cat][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][8] or arr[cat][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][8]==0 then
-				arr[cat][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][8] = Damount; 
+			if Damount<path[8] or path[8]==0 then
+				path[8] = Damount; 
 			end
-			if Damount>arr[cat][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][9] or arr[cat][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][9]==0 then
-				arr[cat][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]][9] = Damount 
+			if Damount>path[9] or path[9]==0 then
+				path[9] = Damount 
 			end
 		end
 		if Damount > 0 then table.insert(arr[cat][DPSMateUser[Duser][1]]["i"][2], {DPSMateCombatTime[val], Damount}) end
@@ -887,35 +895,36 @@ function DPSMate.DB:HealingTaken(arr, Duser, Dname, Dhit, Dcrit, Damount, target
 				[9] = 0, -- critMax
 			}
 		end
+		local path = arr[cat][DPSMateUser[Duser][1]][DPSMateUser[target][1]][DPSMateAbility[Dname][1]]
 		if Dhit==1 then
-			if arr[cat][DPSMateUser[Duser][1]][DPSMateUser[target][1]][DPSMateAbility[Dname][1]][4]>0 then
-				arr[cat][DPSMateUser[Duser][1]][DPSMateUser[target][1]][DPSMateAbility[Dname][1]][4] = (arr[cat][DPSMateUser[Duser][1]][DPSMateUser[target][1]][DPSMateAbility[Dname][1]][4]+Damount)/2
+			if path[4]>0 then
+				path[4] = (path[4]+Damount)/2
 			else
-				arr[cat][DPSMateUser[Duser][1]][DPSMateUser[target][1]][DPSMateAbility[Dname][1]][4] = Damount
+				path[4] = Damount
 			end
-			if Damount<arr[cat][DPSMateUser[Duser][1]][DPSMateUser[target][1]][DPSMateAbility[Dname][1]][6] or arr[cat][DPSMateUser[Duser][1]][DPSMateUser[target][1]][DPSMateAbility[Dname][1]][6]==0 then
-				arr[cat][DPSMateUser[Duser][1]][DPSMateUser[target][1]][DPSMateAbility[Dname][1]][6] = Damount; 
+			if Damount<path[6] or path[6]==0 then
+				path[6] = Damount; 
 			end
-			if Damount>arr[cat][DPSMateUser[Duser][1]][DPSMateUser[target][1]][DPSMateAbility[Dname][1]][7] or arr[cat][DPSMateUser[Duser][1]][DPSMateUser[target][1]][DPSMateAbility[Dname][1]][7]==0 then
-				arr[cat][DPSMateUser[Duser][1]][DPSMateUser[target][1]][DPSMateAbility[Dname][1]][7] = Damount 
+			if Damount>path[7] or path[7]==0 then
+				path[7] = Damount 
 			end
 		end
 		if Dcrit==1 then
-			if arr[cat][DPSMateUser[Duser][1]][DPSMateUser[target][1]][DPSMateAbility[Dname][1]][5]>0 then
-				arr[cat][DPSMateUser[Duser][1]][DPSMateUser[target][1]][DPSMateAbility[Dname][1]][5] = (arr[cat][DPSMateUser[Duser][1]][DPSMateUser[target][1]][DPSMateAbility[Dname][1]][6]+Damount)/2
+			if path[5]>0 then
+				path[5] = (path[6]+Damount)/2
 			else
-				arr[cat][DPSMateUser[Duser][1]][DPSMateUser[target][1]][DPSMateAbility[Dname][1]][5] = Damount
+				path[5] = Damount
 			end
-			if Damount<arr[cat][DPSMateUser[Duser][1]][DPSMateUser[target][1]][DPSMateAbility[Dname][1]][8] or arr[cat][DPSMateUser[Duser][1]][DPSMateUser[target][1]][DPSMateAbility[Dname][1]][8]==0 then
-				arr[cat][DPSMateUser[Duser][1]][DPSMateUser[target][1]][DPSMateAbility[Dname][1]][8] = Damount; 
+			if Damount<path[8] or path[8]==0 then
+				path[8] = Damount; 
 			end
-			if Damount>arr[cat][DPSMateUser[Duser][1]][DPSMateUser[target][1]][DPSMateAbility[Dname][1]][9] or arr[cat][DPSMateUser[Duser][1]][DPSMateUser[target][1]][DPSMateAbility[Dname][1]][9]==0 then
-				arr[cat][DPSMateUser[Duser][1]][DPSMateUser[target][1]][DPSMateAbility[Dname][1]][9] = Damount 
+			if Damount>path[9] or path[9]==0 then
+				path[9] = Damount 
 			end
 		end
-		arr[cat][DPSMateUser[Duser][1]][DPSMateUser[target][1]][DPSMateAbility[Dname][1]][1] = arr[cat][DPSMateUser[Duser][1]][DPSMateUser[target][1]][DPSMateAbility[Dname][1]][1]+Damount
-		arr[cat][DPSMateUser[Duser][1]][DPSMateUser[target][1]][DPSMateAbility[Dname][1]][2] = arr[cat][DPSMateUser[Duser][1]][DPSMateUser[target][1]][DPSMateAbility[Dname][1]][2]+Dhit
-		arr[cat][DPSMateUser[Duser][1]][DPSMateUser[target][1]][DPSMateAbility[Dname][1]][3] = arr[cat][DPSMateUser[Duser][1]][DPSMateUser[target][1]][DPSMateAbility[Dname][1]][3]+Dcrit
+		path[1] = path[1]+Damount
+		path[2] = path[2]+Dhit
+		path[3] = path[3]+Dcrit
 		arr[cat][DPSMateUser[Duser][1]]["i"][1] = arr[cat][DPSMateUser[Duser][1]]["i"][1]+Damount
 		if Damount > 0 then table.insert(arr[cat][DPSMateUser[Duser][1]]["i"][2], {DPSMateCombatTime[val], Damount}) end
 	end

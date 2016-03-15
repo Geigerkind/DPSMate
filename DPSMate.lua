@@ -443,7 +443,7 @@ function DPSMate:GetModeName(k)
 		if val then 
 			if strfind(cat, "segment") then
 				local num = tonumber(strsub(cat, 8))
-				return "Segment "..num
+				return DPSMateHistory["names"][num]
 			else
 				return result[cat]
 			end
