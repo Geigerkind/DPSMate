@@ -18,6 +18,7 @@ function DPSMate.Modules.DetailsDamageTaken:UpdateDetails(obj, key)
 	DetailsUser = obj.user
 	DPSMate_Details_DamageTaken_Title:SetText("Damage taken by "..obj.user)
 	DPSMate_Details_DamageTaken:Show()
+	DetailsArr, DetailsTotal, DmgArr = DPSMate.RegistredModules[DPSMateSettings["windows"][curKey]["CurMode"]]:EvalTable(DPSMateUser[DetailsUser], curKey)
 	DPSMate.Modules.DetailsDamageTaken:ScrollFrame_Update()
 	DPSMate.Modules.DetailsDamageTaken:SelectCreatureButton(1)
 	DPSMate.Modules.DetailsDamageTaken:SelectDetailsButton(1,1)
@@ -29,7 +30,6 @@ function DPSMate.Modules.DetailsDamageTaken:ScrollFrame_Update()
 	local path = "DPSMate_Details_DamageTaken_LogCreature"
 	local obj = getglobal(path.."_ScrollFrame")
 	local arr = db
-	DetailsArr, DetailsTotal, DmgArr = DPSMate.RegistredModules[DPSMateSettings["windows"][curKey]["CurMode"]]:EvalTable(DPSMateUser[DetailsUser], curKey)
 	local pet, len = "", DPSMate:TableLength(DetailsArr)
 	FauxScrollFrame_Update(obj,len,10,24)
 	for line=1,10 do
@@ -61,6 +61,7 @@ function DPSMate.Modules.DetailsDamageTaken:SelectCreatureButton(i)
 	local line, lineplusoffset
 	local path = "DPSMate_Details_DamageTaken_Log"
 	local obj = getglobal(path.."_ScrollFrame")
+	i = i or obj.index
 	obj.index = i
 	local arr = db
 	local pet, len = "", DPSMate:TableLength(DmgArr[i][2])

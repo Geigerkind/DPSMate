@@ -393,7 +393,7 @@ end
 -- War Reaver hits/crits you for 66 (Fire damage). (45 resisted)
 function DPSMate.Parser:CreatureVsSelfHits(msg)
 	t = {}
-	for a,b,c,d in strgfind(msg, "(.+) (%a%a?)\its you for (%d+)(.*)\.%s?(.*)") do
+	for a,b,c,d in strgfind(msg, "(.+) (%a%a?)\its you for (%d+)(.*)") do
 		if b=="h" then t[1]=1;t[2]=0 end
 		if strfind(d, "crushing") then t[3]=1;t[1]=0;t[2]=0 elseif strfind(d, "blocked") then t[4]=1;t[1]=0;t[2]=0 end
 		t[5] = tonumber(c)
@@ -428,7 +428,7 @@ end
 -- Flamekin Torcher's Fireball hits/crits you for 86 Fire damage. (School?)
 function DPSMate.Parser:CreatureVsSelfSpellDamage(msg)
 	t = {}
-	for a,b,c,d,e in strgfind(msg, "(.+)'s (.+) (%a%a?)\its you for (%d+)(.*)\.%s?(.*)") do -- Potential here to track school and resisted damage
+	for a,b,c,d,e in strgfind(msg, "(.+)'s (.+) (%a%a?)\its you for (%d+)(.*)") do -- Potential here to track school and resisted damage
 		if c=="h" then t[1]=1;t[2]=0 end
 		t[3] = tonumber(d)
 		DPSMate.DB:UnregisterPotentialKick(a, b, GetTime())
@@ -461,7 +461,7 @@ end
 -- Ember Worg hits/crits Ikaa for 58 (Fire damage). (41 resisted/blocked)
 function DPSMate.Parser:CreatureVsCreatureHits(msg) 
 	t = {}
-	for a,b,c,d,e in strgfind(msg, "(.+) (%a%a?)\its (.+) for (%d+)(.*)\.%s?(.*)") do
+	for a,b,c,d,e in strgfind(msg, "(.+) (%a%a?)\its (.+) for (%d+)(.*)") do
 		if b=="h" then t[1]=1;t[2]=0 end
 		if strfind(e, "crushing") then t[3]=1;t[1]=0;t[2]=0 elseif strfind(e, "blocked") then t[4]=1;t[1]=0;t[2]=0 end
 		t[5] = tonumber(d)
@@ -495,7 +495,7 @@ end
 -- Ikaa suffers 15 Nature damage from Ember Worg's Infected Bite. (3 resisted)
 function DPSMate.Parser:SpellPeriodicDamageTaken(msg)
 	t = {}
-	for a,b,c,d,e in string.gfind(msg, "(.+) suffers (%d+) (%a+) damage from (.+)'s (.+)\.%s?(.*)") do -- Potential to track resisted damage and school
+	for a,b,c,d,e,f in string.gfind(msg, "(.+) suffers (%d+) (%a+) damage from (.+)'s (.+)\.%s?(.*)") do -- Potential to track resisted damage and school
 		t[1] = tonumber(b)
 		DPSMate.DB:EnemyDamage(DPSMateEDD, a, e.."(Periodic)", 1, 0, 0, 0, 0, 0, t[1], d, 0, 0)
 		DPSMate.DB:DamageTaken(a, e.."(Periodic)", 1, 0, 0, 0, 0, 0, t[1], d, 0)
@@ -508,7 +508,7 @@ end
 -- Black Broodling's Fireball hits/crits Ikaa for 342 Fire damage. (100 resisted) (School + resist ?)
 function DPSMate.Parser:CreatureVsCreatureSpellDamage(msg)
 	t = {}
-	for a,b,c,d,e,f in strgfind(msg, "(.+)'s (.+) (%a%a?)\its (.+) for (%d+)(.*)\.%s?(.*)") do
+	for a,b,c,d,e,f in strgfind(msg, "(.+)'s (.+) (%a%a?)\its (.+) for (%d+)(.*)") do
 		if c=="h" then t[1]=1;t[2]=0 end
 		t[3] = tonumber(e)
 		DPSMate.DB:UnregisterPotentialKick(a, b, GetTime())
