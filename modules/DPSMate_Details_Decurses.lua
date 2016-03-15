@@ -117,6 +117,7 @@ end
 function DPSMate.Modules.DetailsDecurses:SelectCreatureButton(i)
 	local line, lineplusoffset
 	local obj = getglobal("DPSMate_Details_Decurses_LogTwo_ScrollFrame")
+	i = i or obj.index
 	obj.index = i
 	local path = "DPSMate_Details_Decurses_LogTwo_ScrollButton"
 	local len = DPSMate:TableLength(DmgArr[i][2])
@@ -151,7 +152,9 @@ end
 function DPSMate.Modules.DetailsDecurses:SelectCreatureAbilityButton(i, p)
 	local line, lineplusoffset
 	local obj = getglobal("DPSMate_Details_Decurses_LogThree_ScrollFrame")
-	obj.index = i
+	i = i or getglobal("DPSMate_Details_Decurses_LogTwo_ScrollFrame").index
+	p = p or obj.index
+	obj.index = p
 	local path = "DPSMate_Details_Decurses_LogThree_ScrollButton"
 	local len = DPSMate:TableLength(DmgArr[i][3][p][2])
 	FauxScrollFrame_Update(obj,len,10,24)
