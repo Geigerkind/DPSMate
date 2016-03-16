@@ -636,6 +636,8 @@ function DPSMate.Parser:SpellPeriodicSelfBuff(msg) -- Maybe some loss here?
 	end
 	for a in strgfind(msg, "You gain (.+)%.") do
 		if strfind(a, "from") then return end
+		if strfind(a, "%(") then a=strsub(a, 1, strfind(a, "%(")-2) end
+		DPSMate:SendMessage(a)
 		DPSMate.DB:ConfirmBuff(player, a, GetTime())
 		DPSMate.DB:RegisterHotDispel(player, a)
 		return 
@@ -673,6 +675,8 @@ function DPSMate.Parser:SpellPeriodicFriendlyPlayerBuffs(msg)
 	end
 	for f,a in strgfind(msg, "(.+) gains (.+)%.") do
 		if strfind(a, "from") then return end
+		if strfind(a, "%(") then a=strsub(a, 1, strfind(a, "%(")-2) end
+		DPSMate:SendMessage(a)
 		DPSMate.DB:ConfirmBuff(f, a, GetTime())
 		DPSMate.DB:RegisterHotDispel(f, a)
 		return 
@@ -766,6 +770,7 @@ end
 
 -- Power Word: Shield fades from Senpie.
 function DPSMate.Parser:SpellAuraGoneParty(msg)
+	DPSMate:SendMessage(msg)
 	for ab, ta in strgfind(msg, "(.+) fades from (.+)%.") do if DPSMate:TContains(DPSMate.DB.ShieldFlags, ab) then DPSMate.DB:UnregisterAbsorb(ab, ta) end; DPSMate.DB:DestroyBuffs(ta, ab); DPSMate.DB:UnregisterHotDispel(ta, ab) end
 end
 
