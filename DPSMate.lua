@@ -72,6 +72,7 @@ DPSMate.BabbleSpell = AceLibrary("Babble-Spell-2.3")
 DPSMate.BabbleBoss = AceLibrary("Babble-Boss-2.3")
 
 -- Local Variables
+local _G = getglobal
 local classcolor = {
 	rogue = {r=1.0, g=0.96, b=0.41},
 	priest = {r=1,g=1,b=1},
@@ -104,7 +105,7 @@ function DPSMate:SlashCMDHandler(msg)
 		elseif cmd == "config" then
 			DPSMate_ConfigMenu:Show()
 		elseif strsub(cmd, 1, 4) == "show" then
-			local frame = getglobal("DPSMate_"..strsub(cmd, 6))
+			local frame = _G("DPSMate_"..strsub(cmd, 6))
 			if frame then
 				DPSMate.Options:Show(frame)
 			else
@@ -114,7 +115,7 @@ function DPSMate:SlashCMDHandler(msg)
 				end
 			end
 		elseif strsub(cmd, 1, 4) == "hide" then
-			local frame = getglobal("DPSMate_"..strsub(cmd, 6))
+			local frame = _G("DPSMate_"..strsub(cmd, 6))
 			if frame then
 				DPSMate.Options:Hide(frame)
 			else
@@ -138,19 +139,19 @@ end
 function DPSMate:InitializeFrames()
 	if not DPSMate:WindowsExist() then return end
 	for k, val in pairs(DPSMateSettings["windows"]) do
-		if not getglobal("DPSMate_"..val["name"]) then
+		if not _G("DPSMate_"..val["name"]) then
 			local f=CreateFrame("Frame", "DPSMate_"..val["name"], UIParent, "DPSMate_Statusframe")
 			f.Key=k
 		end
-		local frame = getglobal("DPSMate_"..val["name"])
+		local frame = _G("DPSMate_"..val["name"])
 			
 		DPSMate.Options:ToggleDrewDrop(1, DPSMate.DB:GetOptionsTrue(1, k), frame)
 		DPSMate.Options:ToggleDrewDrop(2, DPSMate.DB:GetOptionsTrue(2, k), frame)
 		
-		local head = getglobal("DPSMate_"..val["name"].."_Head")
-		head.font = getglobal("DPSMate_"..val["name"].."_Head_Font")
-		head.bg = getglobal("DPSMate_"..val["name"].."_Head_Background")
-		head.sync = getglobal("DPSMate_"..val["name"].."_Head_Sync")
+		local head = _G("DPSMate_"..val["name"].."_Head")
+		head.font = _G("DPSMate_"..val["name"].."_Head_Font")
+		head.bg = _G("DPSMate_"..val["name"].."_Head_Background")
+		head.sync = _G("DPSMate_"..val["name"].."_Head_Sync")
 		
 		if DPSMateSettings["sync"] then
 			head.sync:GetNormalTexture():SetVertexColor(0.67,0.83,0.45,1)
@@ -159,7 +160,7 @@ function DPSMate:InitializeFrames()
 		end
 		
 		if DPSMateSettings["lock"] then
-			getglobal("DPSMate_"..val["name"].."_Resize"):Hide()
+			_G("DPSMate_"..val["name"].."_Resize"):Hide()
 		end
 		if not val["titlebar"] then
 			head:Hide()
@@ -170,40 +171,40 @@ function DPSMate:InitializeFrames()
 		head.bg:SetVertexColor(val["titlebarbgcolor"][1], val["titlebarbgcolor"][2], val["titlebarbgcolor"][3])
 		head.font:SetFont(DPSMate.Options.fonts[val["titlebarfont"]], val["titlebarfontsize"], DPSMate.Options.fontflags[val["titlebarfontflag"]])
 		head:SetHeight(val["titlebarheight"])
-		getglobal("DPSMate_"..val["name"].."_ScrollFrame_Background"):SetTexture(DPSMate.Options.bgtexture[val["contentbgtexture"]])
-		getglobal("DPSMate_"..val["name"].."_ScrollFrame_Background"):SetVertexColor(val["contentbgcolor"][1], val["contentbgcolor"][2], val["contentbgcolor"][3])
+		_G("DPSMate_"..val["name"].."_ScrollFrame_Background"):SetTexture(DPSMate.Options.bgtexture[val["contentbgtexture"]])
+		_G("DPSMate_"..val["name"].."_ScrollFrame_Background"):SetVertexColor(val["contentbgcolor"][1], val["contentbgcolor"][2], val["contentbgcolor"][3])
 		frame:SetScale(val["scale"])
 		
 		-- Styles // Bars
-		local child = getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child")
-		getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_Total"):SetPoint("TOPLEFT", child, "TOPLEFT")
-		getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_Total"):SetPoint("TOPRIGHT", child, "TOPRIGHT")
+		local child = _G("DPSMate_"..val["name"].."_ScrollFrame_Child")
+		_G("DPSMate_"..val["name"].."_ScrollFrame_Child_Total"):SetPoint("TOPLEFT", child, "TOPLEFT")
+		_G("DPSMate_"..val["name"].."_ScrollFrame_Child_Total"):SetPoint("TOPRIGHT", child, "TOPRIGHT")
 		if DPSMateSettings["showtotals"] then
-			getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_Total"):SetHeight(val["barheight"])
+			_G("DPSMate_"..val["name"].."_ScrollFrame_Child_Total"):SetHeight(val["barheight"])
 		else
-			getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_Total"):SetHeight(0.00001)
+			_G("DPSMate_"..val["name"].."_ScrollFrame_Child_Total"):SetHeight(0.00001)
 		end
-		getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_Total"):SetStatusBarTexture(DPSMate.Options.statusbars[val["bartexture"]])
-		getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_Total_BG"):SetTexture(DPSMate.Options.statusbars[val["bartexture"]])
-		getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_Total_Name"):SetFont(DPSMate.Options.fonts[val["barfont"]], val["barfontsize"], DPSMate.Options.fontflags[val["barfontflag"]])
-		getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_Total_Value"):SetFont(DPSMate.Options.fonts[val["barfont"]], val["barfontsize"], DPSMate.Options.fontflags[val["barfontflag"]])
+		_G("DPSMate_"..val["name"].."_ScrollFrame_Child_Total"):SetStatusBarTexture(DPSMate.Options.statusbars[val["bartexture"]])
+		_G("DPSMate_"..val["name"].."_ScrollFrame_Child_Total_BG"):SetTexture(DPSMate.Options.statusbars[val["bartexture"]])
+		_G("DPSMate_"..val["name"].."_ScrollFrame_Child_Total_Name"):SetFont(DPSMate.Options.fonts[val["barfont"]], val["barfontsize"], DPSMate.Options.fontflags[val["barfontflag"]])
+		_G("DPSMate_"..val["name"].."_ScrollFrame_Child_Total_Value"):SetFont(DPSMate.Options.fonts[val["barfont"]], val["barfontsize"], DPSMate.Options.fontflags[val["barfontflag"]])
 		for i=1, 30 do
-			local bar = getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar"..i)
-			bar.name = getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar"..i.."_Name")
-			bar.value = getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar"..i.."_Value")
-			bar.icon = getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar"..i.."_Icon")
-			bar.bg = getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar"..i.."_BG")
+			local bar = _G("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar"..i)
+			bar.name = _G("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar"..i.."_Name")
+			bar.value = _G("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar"..i.."_Value")
+			bar.icon = _G("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar"..i.."_Icon")
+			bar.bg = _G("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar"..i.."_BG")
 			
 			-- Postition
 			bar:SetPoint("TOPLEFT", child, "TOPLEFT")
 			bar:SetPoint("TOPRIGHT", child, "TOPRIGHT")
 			if i>1 then
-				bar:SetPoint("TOPLEFT", getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar"..(i-1)), "BOTTOMLEFT", 0, -1*val["barspacing"])
+				bar:SetPoint("TOPLEFT", _G("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar"..(i-1)), "BOTTOMLEFT", 0, -1*val["barspacing"])
 			else
 				if DPSMateSettings["showtotals"] then
-					bar:SetPoint("TOPLEFT", getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_Total"), "BOTTOMLEFT", 0, -1*val["barspacing"])
+					bar:SetPoint("TOPLEFT", _G("DPSMate_"..val["name"].."_ScrollFrame_Child_Total"), "BOTTOMLEFT", 0, -1*val["barspacing"])
 				else
-					bar:SetPoint("TOPLEFT", getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_Total"), "BOTTOMLEFT", 0, -1)
+					bar:SetPoint("TOPLEFT", _G("DPSMate_"..val["name"].."_ScrollFrame_Child_Total"), "BOTTOMLEFT", 0, -1)
 				end
 			end
 			if val["classicons"] then
@@ -301,6 +302,13 @@ function DPSMate:CopyTable(t)
 	return s
 end
 
+function DPSMate:IsColor(s,b)
+	if DPSMate:TContains(DPSMate.localization.g, DPSMate:ColorPick(b)) or DPSMate:TContains(DPSMate.localization.p, DPSMate:ColorPick(s)) then
+		return true
+	end
+	return false
+end
+
 function DPSMate:GetUserById(id)
 	for cat, val in pairs(DPSMateUser) do
 		if val[1] == id then
@@ -326,13 +334,6 @@ function DPSMate:PlayerExist(arr, name)
 	return false
 end
 
-function DPSMate:IsColor(s,b)
-	if DPSMate:TContains(DPSMate.localization.g, DPSMate:ColorPick(b)) or DPSMate:TContains(DPSMate.localization.p, DPSMate:ColorPick(s)) then
-		return true
-	end
-	return false
-end
-
 function DPSMate:SetStatusBarValue()
 	if not DPSMate:WindowsExist() or not DPSMate:IsColor(DPSMate.localization.rgb(DPSMate.localization.frame), DPSMate.localization.hex(DPSMate.localization.frame)) then return end
 	DPSMate:HideStatusBars()
@@ -341,8 +342,8 @@ function DPSMate:SetStatusBarValue()
 		local arr, cbt = DPSMate:GetMode(k)
 		local user, val, perc, strt = DPSMate:GetSettingValues(arr,cbt,k)
 		if DPSMateSettings["showtotals"] then
-			getglobal("DPSMate_"..c["name"].."_ScrollFrame_Child_Total_Name"):SetText("Total")
-			getglobal("DPSMate_"..c["name"].."_ScrollFrame_Child_Total_Value"):SetText(strt[1]..strt[2])
+			_G("DPSMate_"..c["name"].."_ScrollFrame_Child_Total_Name"):SetText("Total")
+			_G("DPSMate_"..c["name"].."_ScrollFrame_Child_Total_Value"):SetText(strt[1]..strt[2])
 		end
 		--DPSMate:SendMessage(c["name"])
 		if (user[1]) then
@@ -350,8 +351,8 @@ function DPSMate:SetStatusBarValue()
 				--DPSMate:SendMessage("Test 1")
 				if (not user[i]) then break end -- To prevent visual issues
 				--DPSMate:SendMessage("Test 2")
-				local statusbar, name, value, texture, p = getglobal("DPSMate_"..c["name"].."_ScrollFrame_Child_StatusBar"..i), getglobal("DPSMate_"..c["name"].."_ScrollFrame_Child_StatusBar"..i.."_Name"), getglobal("DPSMate_"..c["name"].."_ScrollFrame_Child_StatusBar"..i.."_Value"), getglobal("DPSMate_"..c["name"].."_ScrollFrame_Child_StatusBar"..i.."_Icon"), ""
-				getglobal("DPSMate_"..c["name"].."_ScrollFrame_Child"):SetHeight((i+1)*(c["barheight"]+c["barspacing"]))
+				local statusbar, name, value, texture, p = _G("DPSMate_"..c["name"].."_ScrollFrame_Child_StatusBar"..i), _G("DPSMate_"..c["name"].."_ScrollFrame_Child_StatusBar"..i.."_Name"), _G("DPSMate_"..c["name"].."_ScrollFrame_Child_StatusBar"..i.."_Value"), _G("DPSMate_"..c["name"].."_ScrollFrame_Child_StatusBar"..i.."_Icon"), ""
+				_G("DPSMate_"..c["name"].."_ScrollFrame_Child"):SetHeight((i+1)*(c["barheight"]+c["barspacing"]))
 				
 				local r,g,b,img = DPSMate:GetClassColor(user[i])
 				statusbar:SetStatusBarColor(r,g,b, 1)
@@ -454,7 +455,7 @@ end
 function DPSMate:HideStatusBars()
 	for _,val in pairs(DPSMateSettings.windows) do
 		for i=1, 30 do
-			getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar"..i):Hide()
+			_G("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar"..i):Hide()
 		end
 	end
 end
