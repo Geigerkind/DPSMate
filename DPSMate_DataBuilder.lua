@@ -756,8 +756,6 @@ function DPSMate.DB:EnemyDamage(arr, Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, D
 			if not arr[cat][DPSMateUser[cause][1]] then
 				arr[cat][DPSMateUser[cause][1]] = {}
 			end
-			if not cause then DPSMate:SendMessage("DUser"); DPSMate:SendMessage(Duser or ""); DPSMate:SendMessage(Dname) end
-			if not Duser then DPSMate:SendMessage("Cause"); DPSMate:SendMessage(cause or ""); DPSMate:SendMessage(Dname) end
 			if not arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser][1]] then
 				arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser][1]] = {
 					i = {

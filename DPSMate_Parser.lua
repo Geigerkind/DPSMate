@@ -271,8 +271,8 @@ function DPSMate.Parser:SelfSpellDMG(msg)
 		return
 	end
 	for a,b in strgfind(msg, "Your (.+) missed (.+)%.") do 
-		DPSMate.DB:EnemyDamage(DPSMateEDT, f, a, 0, 0, 1, 0, 0, 0, 0, b, 0, 0)
-		DPSMate.DB:DamageDone(f, a, 0, 0, 1, 0, 0, 0, 0, 0, 0)
+		DPSMate.DB:EnemyDamage(DPSMateEDT, player, a, 0, 0, 1, 0, 0, 0, 0, b, 0, 0)
+		DPSMate.DB:DamageDone(player, a, 0, 0, 1, 0, 0, 0, 0, 0, 0)
 		return
 	end
 end
@@ -378,7 +378,7 @@ end
 
 -- Helboar reflects 4 Fire damage to you.
 function DPSMate.Parser:SpellDamageShieldsOnOthers(msg)
-	for a,b,c,d in string.gfind(msg, "(.+) reflects (%d+) (%a-) damage to (.+)%.") do
+	for a,b,c,d in strgfind(msg, "(.+) reflects (%d+) (%a-) damage to (.+)%.") do
 		local am,ta = tonumber(b)
 		if d == "you" then ta=player end
 		DPSMate.DB:EnemyDamage(DPSMateEDT, a, "Reflection", 1, 0, 0, 0, 0, 0, am, ta or d, 0, 0)
@@ -449,7 +449,7 @@ end
 -- You suffer 8 Nature damage from Ember Worg's Infected Bite. (3 resisted) (School? + resist?)
 function DPSMate.Parser:PeriodicSelfDamage(msg)
 	t = {}
-	for a,b,c,d,e in strgfind(msg, "You suffer (%d+) (%a+) damage from (.+)'s (.+)\.%s?(.*)") do -- Potential to track school and resisted damage
+	for a,b,c,d,e in strgfind(msg, "You suffer (%d+) (%a+) damage from (.+)'s (.+)%.(.*)") do -- Potential to track school and resisted damage
 		t[1] = tonumber(a)
 		DPSMate.DB:EnemyDamage(DPSMateEDD, player, d.."(Periodic)", 1, 0, 0, 0, 0, 0, t[1], c, 0, 0)
 		DPSMate.DB:DamageTaken(player, d.."(Periodic)", 1, 0, 0, 0, 0, 0, t[1], c, 0)
@@ -495,7 +495,7 @@ end
 -- Ikaa suffers 15 Nature damage from Ember Worg's Infected Bite. (3 resisted)
 function DPSMate.Parser:SpellPeriodicDamageTaken(msg)
 	t = {}
-	for a,b,c,d,e,f in string.gfind(msg, "(.+) suffers (%d+) (%a+) damage from (.+)'s (.+)\.%s?(.*)") do -- Potential to track resisted damage and school
+	for a,b,c,d,e,f in strgfind(msg, "(.+) suffers (%d+) (%a+) damage from (.+)'s (.+)%.(.*)") do -- Potential to track resisted damage and school
 		t[1] = tonumber(b)
 		DPSMate.DB:EnemyDamage(DPSMateEDD, a, e.."(Periodic)", 1, 0, 0, 0, 0, 0, t[1], d, 0, 0)
 		DPSMate.DB:DamageTaken(a, e.."(Periodic)", 1, 0, 0, 0, 0, 0, t[1], d, 0)
@@ -569,7 +569,7 @@ end
 -- You gain 25 Energy from Relentless Strikes Effect.
 function DPSMate.Parser:SpellSelfBuff(msg)
 	t = {}
-	for a,b,c in string.gfind(msg, "Your (.+) critically heals (.+) for (%d+)%.") do 
+	for a,b,c in strgfind(msg, "Your (.+) critically heals (.+) for (%d+)%.") do 
 		if b=="you" then t[1]=player end
 		t[2] = tonumber(c)
 		overheal = DPSMate.Parser:GetOverhealByName(t[2], t[1] or b)
@@ -581,7 +581,7 @@ function DPSMate.Parser:SpellSelfBuff(msg)
 		DPSMate.DB:DeathHistory(t[1] or b, player, a, t[2], 0, 1, 1, 0)
 		return
 	end
-	for a,b,c in string.gfind(msg, "Your (.+) heals (.+) for (%d+)%.") do 
+	for a,b,c in strgfind(msg, "Your (.+) heals (.+) for (%d+)%.") do 
 		if b=="you" then t[1]=player end
 		t[2] = tonumber(c)
 		overheal = DPSMate.Parser:GetOverhealByName(t[2], t[1] or b)
