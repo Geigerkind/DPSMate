@@ -246,7 +246,8 @@ function DPSMate.Parser:SelfMisses(msg)
 	end
 end
 
--- /script for a,b,c,d in string.gfind("You hit Firetail Scorpid for 140. (445 blocked)", "You (%a%a?)\it (.+) for (%d+)\.%s?(%a?)") do if e ~= "" then DPSMate:SendMessage(d) else DPSMate:SendMessage("Test") end end
+-- /script for a,b,c,d in string.gfind("Your Fireball hits Firetail Scorpid for 140. (445 blocked)", "You (%a%a?)\it (.+) for (%d+)\.%s?(%a?)") do DPSMate:SendMessage(d) end
+-- /script for a,b,c,d,e in string.gfind("Your Fireball hits Firetail Scorpid for 140. (47 resisted)", "Your (.+) (%a%a?)\its (.+) for (%d+)(.*)\.%s?(.*)") do DPSMate:SendMessage(e) end
 -- (...) 149 (Fire damage). (50 resisted) -> Some potential?
 function DPSMate.Parser:SelfSpellDMG(msg)
 	-- Filter out immune message -> using them?
@@ -254,7 +255,7 @@ function DPSMate.Parser:SelfSpellDMG(msg)
 	for a,b,c,d,e in strgfind(msg, "Your (.+) (%a%a?)\its (.+) for (%d+)(.*)\.%s?(.*)") do 
 		t[1] = tonumber(d)
 		if b=="h" then t[2]=1;t[3]=0 end
-		if e ~= "" then t[4]=1;t[2]=0;t[3]=0 end
+		if strfind(e, "blocked") then t[4]=1;t[2]=0;t[3]=0 end
 		if DPSMate:TContains(DPSMate.Parser.Kicks, a) then DB:AssignPotentialKick(player, a, c, GetTime()) end
 		DB:EnemyDamage(DPSMateEDT, player, a,  t[2] or 0, t[3] or 1, 0, 0, 0, 0, t[1], c, t[4] or 0, 0)
 		DB:DamageDone(player, a, t[2] or 0, t[3] or 1, 0, 0, 0, 0, t[1], 0, t[4] or 0)
@@ -304,7 +305,7 @@ function DPSMate.Parser:FriendlyPlayerDamage(msg)
 	for f,a,b,c,d,e in strgfind(msg, "(.-)'s (.+) (%a%a?)\its (.+) for (%d+)(.*)\.%s?(.*)") do 
 		t[1] = tonumber(d)
 		if b=="h" then t[2]=1;t[3]=0 end
-		if e ~= "" then t[4]=1;t[2]=0;t[3]=0 end
+		if strfind(e, "blocked") then t[4]=1;t[2]=0;t[3]=0 end
 		if DPSMate:TContains(DPSMate.Parser.Kicks, a) then DB:AssignPotentialKick(f, a, c, GetTime()) end
 		DB:EnemyDamage(DPSMateEDT, f, a,  t[2] or 0, t[3] or 1, 0, 0, 0, 0, t[1], c, t[4] or 0, 0)
 		DB:DamageDone(f, a, t[2] or 0, t[3] or 1, 0, 0, 0, 0, t[1], 0, t[4] or 0)
