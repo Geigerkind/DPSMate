@@ -769,7 +769,7 @@ end
 
 -- Power Word: Shield fades from Senpie.
 function DPSMate.Parser:SpellAuraGoneParty(msg)
-	DPSMate:SendMessage(msg)
+	--DPSMate:SendMessage(msg)
 	for ab, ta in strgfind(msg, "(.+) fades from (.+)%.") do if DPSMate:TContains(DB.ShieldFlags, ab) then DB:UnregisterAbsorb(ab, ta) end; DB:DestroyBuffs(ta, ab); DB:UnregisterHotDispel(ta, ab) end
 end
 

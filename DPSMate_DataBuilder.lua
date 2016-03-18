@@ -1005,7 +1005,7 @@ function DPSMate.DB:UnregisterAbsorb(ability, abilityTarget)
 				path[2] = broken[2]
 				path[3] = broken[3]
 				path[4] = broken[4]
-				if broken[2]>0 then tinsert(DPSMateAbsorbs[cat][DPSMateUser[abilityTarget][1]][AbsorbingAbility[1]]["i"], {DPSMateCombatTime[val], broken[4], broken[3], broken[2]}) end
+				if (broken[2] or 0)>0 then tinsert(DPSMateAbsorbs[cat][DPSMateUser[abilityTarget][1]][AbsorbingAbility[1]]["i"], {DPSMateCombatTime[val], broken[4], broken[3], broken[2]}) end
 			end
 		end
 	end
