@@ -1240,21 +1240,21 @@ function DPSMate.Options:CreateWindow()
 			local fr=CreateFrame("Frame", "DPSMate_"..na, UIParent, "DPSMate_Statusframe")
 			fr.Key=TL
 		end
-		if not _G("DPSMate_ConfigMenu_Menu_Button"..(6+TL)) then
-			local f = CreateFrame("Button", "DPSMate_ConfigMenu_Menu_Button"..(6+TL), DPSMate_ConfigMenu_Menu, "DPSMate_Template_WindowButton")
+		if not _G("DPSMate_ConfigMenu_Menu_Button"..(7+TL)) then
+			local f = CreateFrame("Button", "DPSMate_ConfigMenu_Menu_Button"..(7+TL), DPSMate_ConfigMenu_Menu, "DPSMate_Template_WindowButton")
 			f.Key = TL
 		end
-		local frame = _G("DPSMate_ConfigMenu_Menu_Button"..(6+TL))
+		local frame = _G("DPSMate_ConfigMenu_Menu_Button"..(7+TL))
 		frame:Show()
-		_G("DPSMate_ConfigMenu_Menu_Button"..(6+TL).."Text"):SetText(na)
+		_G("DPSMate_ConfigMenu_Menu_Button"..(7+TL).."Text"):SetText(na)
 		if TL>1 then
-			frame:SetPoint("TOP", _G("DPSMate_ConfigMenu_Menu_Button"..(5+TL)), "BOTTOM")
-			_G("DPSMate_ConfigMenu_Menu_Button"..(5+TL)).after = frame
+			frame:SetPoint("TOP", _G("DPSMate_ConfigMenu_Menu_Button"..(6+TL)), "BOTTOM")
+			_G("DPSMate_ConfigMenu_Menu_Button"..(6+TL)).after = frame
 		else
 			frame:SetPoint("TOP", DPSMate_ConfigMenu_Menu_Button1, "BOTTOM")
 		end
 		frame.after = DPSMate_ConfigMenu_Menu_Button2
-		DPSMate_ConfigMenu.num = 6+TL
+		DPSMate_ConfigMenu.num = 7+TL
 		frame.func = function()
 			_G(this:GetParent():GetParent():GetName()..this:GetParent().selected):Hide()
 			_G(this:GetParent():GetParent():GetName().."_Tab_Window"):Show()
@@ -1274,20 +1274,20 @@ function DPSMate.Options:RemoveWindow()
 	local frame = _G("DPSMate_"..DPSMate_ConfigMenu.Selected)
 	if frame then
 		frame:Hide()
-		_G("DPSMate_ConfigMenu_Menu_Button"..(6+frame.Key)):Hide()
+		_G("DPSMate_ConfigMenu_Menu_Button"..(7+frame.Key)):Hide()
 		table.remove(DPSMateSettings["windows"], frame.Key)
 		local TL = DPSMate:TableLength(DPSMateSettings["windows"])
-		_G("DPSMate_ConfigMenu_Menu_Button"..(6+TL)).after = DPSMate_ConfigMenu_Menu_Button2
+		_G("DPSMate_ConfigMenu_Menu_Button"..(7+TL)).after = DPSMate_ConfigMenu_Menu_Button2
 		DPSMate_ConfigMenu_Menu_Button2:ClearAllPoints()
-		DPSMate_ConfigMenu_Menu_Button2:SetPoint("TOP", _G("DPSMate_ConfigMenu_Menu_Button"..(6+TL)), "BOTTOM")
+		DPSMate_ConfigMenu_Menu_Button2:SetPoint("TOP", _G("DPSMate_ConfigMenu_Menu_Button"..(7+TL)), "BOTTOM")
 		UIDropDownMenu_SetSelectedValue(DPSMate_ConfigMenu_Tab_Window_Remove, "None")
 		DPSMate_ConfigMenu_Menu_Button1.selected = true
-		_G("DPSMate_ConfigMenu_Menu_Button"..(6+frame.Key)).selected = false
-		_G("DPSMate_ConfigMenu_Menu_Button"..(6+frame.Key).."Texture"):Hide()
-		_G("DPSMate_ConfigMenu_Menu_Button"..(6+frame.Key).."Text"):SetTextColor(1,0.82,0,1)
-		_G("DPSMate_ConfigMenu_Menu_Button"..(6+frame.Key).."_Button1"):Hide()
-		_G("DPSMate_ConfigMenu_Menu_Button"..(6+frame.Key).."_Button2"):Hide()
-		_G("DPSMate_ConfigMenu_Menu_Button"..(6+frame.Key).."_Button3"):Hide()
+		_G("DPSMate_ConfigMenu_Menu_Button"..(7+frame.Key)).selected = false
+		_G("DPSMate_ConfigMenu_Menu_Button"..(7+frame.Key).."Texture"):Hide()
+		_G("DPSMate_ConfigMenu_Menu_Button"..(7+frame.Key).."Text"):SetTextColor(1,0.82,0,1)
+		_G("DPSMate_ConfigMenu_Menu_Button"..(7+frame.Key).."_Button1"):Hide()
+		_G("DPSMate_ConfigMenu_Menu_Button"..(7+frame.Key).."_Button2"):Hide()
+		_G("DPSMate_ConfigMenu_Menu_Button"..(7+frame.Key).."_Button3"):Hide()
 		DPSMate_ConfigMenu_Menu_Button1Texture:Show()
 	end
 end

@@ -331,6 +331,7 @@ function DPSMate.DB:OnEvent(event)
 		end
 		
 		DPSMate:OnLoad()
+		DPSMate.Sync:OnLoad()
 		DPSMate.Parser:OnLoad()
 		DPSMate.Options:InitializeSegments()
 		DPSMate.Options:InitializeHideShowWindow()
@@ -527,35 +528,41 @@ function DPSMate.DB:GetNumPartyMembers()
 	end
 end
 
+-- Performance
 function DPSMate.DB:BuildUser(Dname, Dclass)
+	if not Dname then return true end
 	if (not DPSMateUser[Dname] and Dname) then
-		if not self:CompareValidation(DPSMate.Sync.v1(DPSMate.Sync.v3),DPSMate.Sync.v2(DPSMate.Sync.v3)) then return end
+		if not self:CompareValidation(DPSMate.Sync.v1(DPSMate.Sync.v3),DPSMate.Sync.v2(DPSMate.Sync.v3)) then return true end
 		DPSMateUser[Dname] = {
 			[1] = DPSMate:TableLength(DPSMateUser)+1,
 			[2] = Dclass,
 		}
 	end
+	return false
 end
 
+-- Performance
 function DPSMate.DB:BuildAbility(name, school)
+	if not name then return true end
 	if not DPSMateAbility[name] then
-		if not self:CompareValidation(DPSMate.Sync.v1(DPSMate.Sync.v3),DPSMate.Sync.v2(DPSMate.Sync.v3)) then return end
+		if not self:CompareValidation(DPSMate.Sync.v1(DPSMate.Sync.v3),DPSMate.Sync.v2(DPSMate.Sync.v3)) then return true end
 		DPSMateAbility[name] = {
 			[1] = DPSMate:TableLength(DPSMateAbility)+1,
 			[2] = school,
 		}
 	end
+	return false
 end
 
 -- First crit/hit av value will be half if it is not the first hit actually. Didnt want to add an exception for it though. Maybe later :/
 function DPSMate.DB:DamageDone(Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, Ddodge, Dresist, Damount, Dglance, Dblock)
+	if self:BuildUser(Duser, nil) or self:BuildAbility(Dname, nil) then return end -- Attempt to fix this problem?
+	
 	if (not CombatState and cheatCombat+10<GetTime()) then
 		DPSMate.Options:NewSegment()
 	end
 	CombatState, CombatTime = true, 0
 	
-	self:BuildUser(Duser, nil)
-	self:BuildAbility(Dname, nil)
 	for cat, val in pairs({[1]="total", [2]="current"}) do 
 		if (not DPSMateDamageDone[cat][DPSMateUser[Duser][1]]) then
 			DPSMateDamageDone[cat][DPSMateUser[Duser][1]] = {
@@ -640,9 +647,7 @@ end
 
 -- Fall damage
 function DPSMate.DB:DamageTaken(Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, Ddodge, Dresist, Damount, cause, Dcrush)
-	self:BuildUser(Duser, nil)
-	self:BuildUser(cause, nil)
-	self:BuildAbility(Dname, nil)
+	if self:BuildUser(Duser, nil) or self:BuildUser(cause, nil) or self:BuildAbility(Dname, nil) then return end
 	for cat, val in pairs({[1]="total", [2]="current"}) do 
 		if not DPSMateDamageTaken[cat][DPSMateUser[Duser][1]] then
 			DPSMateDamageTaken[cat][DPSMateUser[Duser][1]] = {
@@ -707,14 +712,13 @@ function DPSMate.DB:DamageTaken(Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, Ddodge
 end
 
 function DPSMate.DB:EnemyDamage(arr, Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, Ddodge, Dresist, Damount, cause, Dblock, Dcrush)
+	if self:BuildUser(Duser, nil) or self:BuildUser(cause, nil) or self:BuildAbility(Dname, nil) then return end
+	
 	if (not CombatState and cheatCombat+10<GetTime()) then
 		DPSMate.Options:NewSegment()
 	end
 	CombatState, CombatTime = true, 0
 	
-	self:BuildUser(Duser, nil)
-	self:BuildUser(cause, nil)
-	self:BuildAbility(Dname, nil)
 	for cat, val in pairs({[1]="total", [2]="current"}) do 
 		if not arr[cat][DPSMateUser[cause][1]] then
 			arr[cat][DPSMateUser[cause][1]] = {}
@@ -786,8 +790,7 @@ function DPSMate.DB:EnemyDamage(arr, Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, D
 end
 
 function DPSMate.DB:Healing(arr, Duser, Dname, Dhit, Dcrit, Damount)
-	self:BuildUser(Duser, nil)
-	self:BuildAbility(Dname, nil)
+	if self:BuildUser(Duser, nil) or self:BuildAbility(Dname, nil) then return end
 	for cat, val in pairs({[1]="total", [2]="current"}) do 
 		if not arr[cat][DPSMateUser[Duser][1]] then
 			arr[cat][DPSMateUser[Duser][1]] = {
@@ -851,9 +854,7 @@ function DPSMate.DB:Healing(arr, Duser, Dname, Dhit, Dcrit, Damount)
 end
 
 function DPSMate.DB:HealingTaken(arr, Duser, Dname, Dhit, Dcrit, Damount, target)
-	self:BuildUser(Duser, nil)
-	self:BuildUser(target, nil)
-	self:BuildAbility(Dname, nil)
+	if self:BuildUser(Duser, nil) or self:BuildUser(target, nil) or self:BuildAbility(Dname, nil) then return end
 	for cat, val in pairs({[1]="total", [2]="current"}) do 
 		if not arr[cat][DPSMateUser[Duser][1]] then
 			arr[cat][DPSMateUser[Duser][1]] = {
@@ -957,9 +958,7 @@ function DPSMate.DB:ConfirmAbsorbApplication(ability, abilityTarget, time)
 end
 
 function DPSMate.DB:RegisterAbsorb(owner, ability, abilityTarget)
-	self:BuildUser(owner, nil)
-	self:BuildUser(abilityTarget, nil)
-	self:BuildAbility(ability, nil)
+	if self:BuildUser(owner, nil) or self:BuildUser(abilityTarget, nil) or self:BuildAbility(ability, nil) then return end
 	for cat, val in pairs({[1]="total", [2]="current"}) do 
 		if not DPSMateAbsorbs[cat][DPSMateUser[abilityTarget][1]] then
 			DPSMateAbsorbs[cat][DPSMateUser[abilityTarget][1]] = {}
@@ -1014,9 +1013,8 @@ function DPSMate.DB:UnregisterAbsorb(ability, abilityTarget)
 end
 
 function DPSMate.DB:GetActiveAbsorbAbilityByPlayer(ability, abilityTarget, cat)
+	if self:BuildAbility(ability, nil) or self:BuildUser(abilityTarget, nil) then return end
 	local ActiveShield = {}
-	self:BuildAbility(ability, nil)
-	self:BuildUser(abilityTarget, nil)
 	if DPSMateAbsorbs[cat][DPSMateUser[abilityTarget][1]] then
 		for cat, val in pairs(DPSMateAbsorbs[cat][DPSMateUser[abilityTarget][1]]) do
 			for ca, va in pairs(val) do
@@ -1100,9 +1098,7 @@ function DPSMate.DB:GetAbsorbingShield(ability, abilityTarget, cat)
 end
 
 function DPSMate.DB:Absorb(ability, abilityTarget, incTarget)
-	self:BuildUser(incTarget, nil)
-	self:BuildUser(abilityTarget, nil)
-	self:BuildAbility(ability, nil)
+	if self:BuildUser(incTarget, nil) or self:BuildUser(abilityTarget, nil) or self:BuildAbility(ability, nil) then return end
 	for cat, val in pairs({[1]="total", [2]="current"}) do 
 		local AbsorbingAbility = self:GetAbsorbingShield(ability, abilityTarget, cat)
 		if AbsorbingAbility[1] then
@@ -1224,11 +1220,7 @@ function DPSMate.DB:UnregisterHotDispel(target, ability)
 end
 
 function DPSMate.DB:Dispels(cause, Dname, target, ability)
-	if (cause=="" or not Dname or Dname=="") then return end
-	self:BuildUser(cause, nil)
-	self:BuildUser(target, nil)
-	self:BuildAbility(Dname, nil)
-	self:BuildAbility(ability, nil)
+	if self:BuildUser(cause, nil) or self:BuildUser(target, nil) or self:BuildAbility(Dname, nil) or self:BuildAbility(ability, nil) then return end
 	for cat, val in pairs({[1]="total", [2]="current"}) do 
 		if not DPSMateDispels[cat][DPSMateUser[cause][1]] then
 			DPSMateDispels[cat][DPSMateUser[cause][1]] = {
@@ -1251,7 +1243,7 @@ function DPSMate.DB:Dispels(cause, Dname, target, ability)
 end
 
 function DPSMate.DB:UnregisterDeath(target)
-	if not DPSMateUser[target] then return end
+	if self:BuildUser(target, nil) then return end
 	for cat, val in pairs({[1]="total", [2]="current"}) do 
 		if DPSMateDeaths[cat][DPSMateUser[target][1]] then
 			DPSMateDeaths[cat][DPSMateUser[target][1]][1]["i"][1]=1
@@ -1261,10 +1253,7 @@ function DPSMate.DB:UnregisterDeath(target)
 end
 
 function DPSMate.DB:DeathHistory(target, cause, ability, amount, hit, crit, type, crush)
-	if (not target or target=="" or not cause or cause=="" or amount==0) then return end
-	self:BuildUser(target, nil)
-	self:BuildUser(cause, nil)
-	self:BuildAbility(ability, nil)
+	if self:BuildUser(target, nil) or self:BuildUser(cause, nil) or self:BuildAbility(ability, nil) then return end
 	for cat, val in pairs({[1]="total", [2]="current"}) do 
 		if not DPSMateDeaths[cat][DPSMateUser[target][1]] then
 			DPSMateDeaths[cat][DPSMateUser[target][1]] = {}
@@ -1356,11 +1345,7 @@ function DPSMate.DB:UpdateKicks()
 end
 
 function DPSMate.DB:Kick(cause, target, causeAbility, targetAbility)
-	if (not target or target=="" or not cause or cause=="") then return end
-	self:BuildUser(target, nil)
-	self:BuildUser(cause, nil)
-	self:BuildAbility(causeAbility, nil)
-	self:BuildAbility(targetAbility, nil)
+	if self:BuildUser(target, nil) or self:BuildUser(cause, nil) or self:BuildAbility(causeAbility, nil) or self:BuildAbility(targetAbility, nil) then return end
 	for cat, val in pairs({[1]="total", [2]="current"}) do 
 		if not DPSMateInterrupts[cat][DPSMateUser[cause][1]] then
 			DPSMateInterrupts[cat][DPSMateUser[cause][1]] = {
@@ -1411,11 +1396,7 @@ function DPSMate.DB:ConfirmBuff(target, ability, time)
 end
 
 function DPSMate.DB:BuildBuffs(cause, target, ability, bool)
-	if (not target or target=="" or not cause or cause=="") then return end
-	--DPSMate:SendMessage("Build "..ability)
-	self:BuildUser(target, nil)
-	self:BuildUser(cause, nil)
-	self:BuildAbility(ability, nil)
+	if self:BuildUser(target, nil) or self:BuildUser(cause, nil) or self:BuildAbility(ability, nil) then return end
 	for cat, val in pairs({[1]="total", [2]="current"}) do 
 		if not DPSMateAurasGained[cat][DPSMateUser[target][1]] then
 			DPSMateAurasGained[cat][DPSMateUser[target][1]] = {}
@@ -1444,10 +1425,7 @@ end
 
 -- Lag machine!
 function DPSMate.DB:DestroyBuffs(target, ability)
-	if (not target or target=="" or ability=="") then return end
-	--DPSMate:SendMessage("Destroy "..ability)
-	self:BuildUser(target, nil)
-	self:BuildAbility(ability, nil)
+	if self:BuildUser(target, nil) or self:BuildAbility(ability, nil) then return end
 	for cat, val in pairs({[1]="total", [2]="current"}) do 
 		if not DPSMateAurasGained[cat][DPSMateUser[target][1]] then
 			self:BuildBuffs("Unknown", target, ability, false)

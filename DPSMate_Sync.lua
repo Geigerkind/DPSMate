@@ -2,10 +2,9 @@
 DPSMate.Sync.Async = false
 
 -- Local Variables
-local player = {}
-player["name"] = UnitName("player")
-local a,b = UnitClass("player")
-player["class"] = strlower(b)
+local player = UnitName("player")
+local _, playerclass = UnitClass("player")
+local pid = 0
 local time, iterator, voteStarter = 0, 1, false
 local t = {}
 local strgsub = string.gsub
@@ -15,6 +14,16 @@ local LastMouseover = nil
 local DB = DPSMate.DB
 
 -- Beginn Functions
+
+function DPSMate.Sync:OnLoad()
+	if (not DPSMateUser[player]) then
+		DPSMateUser[player] = {
+			[1] = DPSMate:TableLength(DPSMateUser)+1,
+			[2] = strlower(playerclass),
+		}
+	end
+	pid = DPSMateUser[player][1]
+end
 
 function DPSMate.Sync:OnUpdate(elapsed)
 	if DB.loaded and DPSMateSettings["sync"] then
@@ -223,7 +232,7 @@ function DPSMate.Sync:Participate()
 end
 
 function DPSMate.Sync:ReceiveStartVote() 
-	DPSMate.Sync:Participate()
+	self:Participate()
 	if DPSMateSettings["dataresetssync"] == 3 then
 		DPSMate_Vote:Show()
 	elseif DPSMateSettings["dataresetssync"] == 1 then
@@ -253,7 +262,7 @@ end
 function DPSMate.Sync:OnEvent(event)
 	if event == "CHAT_MSG_ADDON" then
 		if DPSMateSettings["sync"] and DB.loaded and self:CorrectVersion(self.v1(self.v3),self.v2(self.v3)) then
-			if arg4 == player.name then return end 
+			if arg4 == player then return end 
 			if arg1 == "DPSMate" then
 				t = {}
 				strgsub(arg2, "(.-),", func) -- name, aura, target, time
@@ -855,9 +864,9 @@ DPSMate.Parser.UseAction = function(slot, checkCursor, onSelf)
 		local target, time = UnitName("target"), GetTime()
 		if not target then target = LastMouseover end
 		if target and DPSMateSettings["sync"] then SendAddonMessage("DPSMate", aura..","..target..",", "RAID") end
-		if DPSMate:TContains(DPSMate.Parser.Kicks, ability) then DB:AwaitAfflictedStun(player.name, aura, target, time) end
-		DB:AwaitingBuff(player.name, aura, target, time)
-		DB:AwaitingAbsorbConfirmation(player.name, aura, target, time)
+		if DPSMate:TContains(DPSMate.Parser.Kicks, ability) then DB:AwaitAfflictedStun(player, aura, target, time) end
+		DB:AwaitingBuff(player, aura, target, time)
+		DB:AwaitingAbsorbConfirmation(player, aura, target, time)
 	end
 end
 UseAction = DPSMate.Parser.UseAction
@@ -869,9 +878,9 @@ DPSMate.Parser.CastSpellByName = function(spellName, onSelf)
 	local target, time = UnitName("target"), GetTime()
 	if not target then target = LastMouseover end
 	if target and DPSMateSettings["sync"] then SendAddonMessage("DPSMate", spellName..","..target..",", "RAID") end
-	if DPSMate:TContains(DPSMate.Parser.Kicks, ability) then DB:AwaitAfflictedStun(player.name, spellName, target, time) end
-	DB:AwaitingBuff(player.name, spellName, target, time)
-	DB:AwaitingAbsorbConfirmation(player.name, spellName, target, time)
+	if DPSMate:TContains(DPSMate.Parser.Kicks, ability) then DB:AwaitAfflictedStun(player, spellName, target, time) end
+	DB:AwaitingBuff(player, spellName, target, time)
+	DB:AwaitingAbsorbConfirmation(player, spellName, target, time)
 end
 CastSpellByName = DPSMate.Parser.CastSpellByName
 
@@ -883,9 +892,9 @@ DPSMate.Parser.CastSpell = function(spellID, spellbookType)
 	local target, time = UnitName("target"), GetTime()
 	if not target then target = LastMouseover end
 	if target and DPSMateSettings["sync"] then SendAddonMessage("DPSMate", spellName..","..target..",", "RAID") end
-	if DPSMate:TContains(DPSMate.Parser.Kicks, ability) then DB:AwaitAfflictedStun(player.name, spellName, target, time) end
-	DB:AwaitingBuff(player.name, spellName, target, time)
-	DB:AwaitingAbsorbConfirmation(player.name, spellName, target, time)
+	if DPSMate:TContains(DPSMate.Parser.Kicks, ability) then DB:AwaitAfflictedStun(player, spellName, target, time) end
+	DB:AwaitingBuff(player, spellName, target, time)
+	DB:AwaitingAbsorbConfirmation(player, spellName, target, time)
 end
 CastSpell = DPSMate.Parser.CastSpell
 
@@ -894,21 +903,21 @@ CastSpell = DPSMate.Parser.CastSpell
 ----------------------------------------------------------------------------------
 
 function DPSMate.Sync:DMGDoneAllOut()
-	if DPSMateDamageDone[1][DPSMateUser[player.name][1]] then
-		SendAddonMessage("DPSMate_DMGDoneAll", player.class..","..DPSMateDamageDone[1][DPSMateUser[player.name][1]]["i"][2]..",", "RAID")
+	if DPSMateDamageDone[1][pid] then
+		SendAddonMessage("DPSMate_DMGDoneAll", playerclass..","..DPSMateDamageDone[1][pid]["i"][2]..",", "RAID")
 	end
 end
 
 function DPSMate.Sync:DMGDoneStatOut()
-	if not DPSMateDamageDone[1][DPSMateUser[player.name][1]] then return end
-	for cat, val in self:GetSummarizedTable(DPSMateDamageDone[1][DPSMateUser[player.name][1]]["i"][1]) do
+	if not DPSMateDamageDone[1][pid] then return end
+	for cat, val in self:GetSummarizedTable(DPSMateDamageDone[1][pid]["i"][1]) do
 		SendAddonMessage("DPSMate_DMGDoneStat", val[1]..","..val[2]..",", "RAID")
 	end
 end
 
 function DPSMate.Sync:DMGDoneAbilityOut()
-	if not DPSMateDamageDone[1][DPSMateUser[player.name][1]] then return end
-	for cat, val in (DPSMateDamageDone[1][DPSMateUser[player.name][1]]) do
+	if not DPSMateDamageDone[1][pid] then return end
+	for cat, val in (DPSMateDamageDone[1][pid]) do
 		if cat~="i" then
 			SendAddonMessage("DPSMate_DMGDoneAbility", DPSMate:GetAbilityById(cat)..","..val[1]..","..val[2]..","..val[3]..","..ceil(val[4])..","..val[5]..","..val[6]..","..val[7]..","..ceil(val[8])..","..val[9]..","..val[10]..","..val[11]..","..val[12]..","..val[13]..","..val[14]..","..val[15]..","..val[16]..","..ceil(val[17])..","..val[18]..","..val[19]..","..val[20]..","..ceil(val[21])..",", "RAID")
 		end
@@ -920,21 +929,21 @@ end
 ----------------------------------------------------------------------------------
 
 function DPSMate.Sync:DMGTakenAllOut()
-	if DPSMateDamageTaken[1][DPSMateUser[player.name][1]] then
-		SendAddonMessage("DPSMate_DMGTakenAll", player.class..","..DPSMateDamageTaken[1][DPSMateUser[player.name][1]]["i"][2]..",", "RAID")
+	if DPSMateDamageTaken[1][pid] then
+		SendAddonMessage("DPSMate_DMGTakenAll", playerclass..","..DPSMateDamageTaken[1][pid]["i"][2]..",", "RAID")
 	end
 end
 
 function DPSMate.Sync:DMGTakenStatOut()
-	if not DPSMateDamageTaken[1][DPSMateUser[player.name][1]] then return end
-	for cat, val in self:GetSummarizedTable(DPSMateDamageTaken[1][DPSMateUser[player.name][1]]["i"][1]) do
+	if not DPSMateDamageTaken[1][pid] then return end
+	for cat, val in self:GetSummarizedTable(DPSMateDamageTaken[1][pid]["i"][1]) do
 		SendAddonMessage("DPSMate_DMGTakenStat", val[1]..","..val[2]..",", "RAID")
 	end
 end
 
 function DPSMate.Sync:DMGTakenAbilityOut()
-	if not DPSMateDamageTaken[1][DPSMateUser[player.name][1]] then return end
-	for cat, val in (DPSMateDamageTaken[1][DPSMateUser[player.name][1]]) do
+	if not DPSMateDamageTaken[1][pid] then return end
+	for cat, val in (DPSMateDamageTaken[1][pid]) do
 		if cat~="i" then
 			for ca, va in pairs(val) do
 				SendAddonMessage("DPSMate_DMGTakenAbility", DPSMate:GetUserById(cat)..","..DPSMate:GetAbilityById(ca)..","..va[1]..","..va[2]..","..va[3]..","..ceil(va[4])..","..va[5]..","..va[6]..","..va[7]..","..ceil(va[8])..","..va[9]..","..va[10]..","..va[11]..","..va[12]..","..va[13]..","..ceil(va[14])..","..va[15]..","..va[16]..","..va[17]..","..ceil(va[18])..",", "RAID")
@@ -949,16 +958,16 @@ end
 
 function DPSMate.Sync:EDAllOut(arr, prefix)
 	for cat, val in pairs(arr[1]) do
-		if val[DPSMateUser[player.name][1]] then
-			SendAddonMessage("DPSMate_ED"..prefix.."All", player.class..","..DPSMate:GetUserById(cat)..","..val[DPSMateUser[player.name][1]]["i"][2]..",", "RAID")
+		if val[pid] then
+			SendAddonMessage("DPSMate_ED"..prefix.."All", playerclass..","..DPSMate:GetUserById(cat)..","..val[pid]["i"][2]..",", "RAID")
 		end
 	end
 end
 
 function DPSMate.Sync:EDStatOut(arr, prefix)
 	for cat, val in arr[1] do
-		if val[DPSMateUser[player.name][1]] then
-			for ca, va in self:GetSummarizedTable(val[DPSMateUser[player.name][1]]["i"][1]) do
+		if val[pid] then
+			for ca, va in self:GetSummarizedTable(val[pid]["i"][1]) do
 				SendAddonMessage("DPSMate_ED"..prefix.."Stat", DPSMate:GetUserById(cat)..","..va[1]..","..va[2]..",", "RAID")
 			end
 		end
@@ -967,8 +976,8 @@ end
 
 function DPSMate.Sync:EDAbilityOut(arr, prefix)
 	for cat, val in (arr[1]) do
-		if val[DPSMateUser[player.name][1]] then
-			for ca, va in pairs(val[DPSMateUser[player.name][1]]) do
+		if val[pid] then
+			for ca, va in pairs(val[pid]) do
 				if ca~="i" then
 					SendAddonMessage("DPSMate_ED"..prefix.."Ability", DPSMate:GetUserById(cat)..","..DPSMate:GetAbilityById(ca)..","..va[1]..","..va[2]..","..va[3]..","..ceil(va[4])..","..va[5]..","..va[6]..","..va[7]..","..ceil(va[8])..","..va[9]..","..va[10]..","..va[11]..","..va[12]..","..va[13]..","..va[14]..","..va[15]..","..va[16]..","..ceil(va[17])..","..va[18]..","..va[19]..","..va[20]..","..ceil(va[21])..",", "RAID")
 				end
@@ -982,21 +991,21 @@ end
 ----------------------------------------------------------------------------------
 
 function DPSMate.Sync:HealingAllOut(arr, prefix)
-	if arr[1][DPSMateUser[player.name][1]] then
-		SendAddonMessage("DPSMate_"..prefix.."HealingAll", player.class..","..arr[1][DPSMateUser[player.name][1]]["i"][1]..",", "RAID")
+	if arr[1][pid] then
+		SendAddonMessage("DPSMate_"..prefix.."HealingAll", playerclass..","..arr[1][pid]["i"][1]..",", "RAID")
 	end
 end
 
 function DPSMate.Sync:HealingStatOut(arr, prefix)
-	if not arr[1][DPSMateUser[player.name][1]] then return end
-	for cat, val in self:GetSummarizedTable(arr[1][DPSMateUser[player.name][1]]["i"][2]) do
+	if not arr[1][pid] then return end
+	for cat, val in self:GetSummarizedTable(arr[1][pid]["i"][2]) do
 		SendAddonMessage("DPSMate_"..prefix.."HealingStat", val[1]..","..val[2]..",", "RAID")
 	end
 end
 
 function DPSMate.Sync:HealingAbilityOut(arr, prefix)
-	if not arr[1][DPSMateUser[player.name][1]] then return end
-	for cat, val in (arr[1][DPSMateUser[player.name][1]]) do
+	if not arr[1][pid] then return end
+	for cat, val in (arr[1][pid]) do
 		if cat~="i" then
 			SendAddonMessage("DPSMate_"..prefix.."HealingAbility", DPSMate:GetAbilityById(cat)..","..val[1]..","..val[2]..","..val[3]..","..ceil(val[4])..","..ceil(val[5])..","..val[6]..","..val[7]..","..val[8]..","..val[9]..",", "RAID")
 		end
@@ -1008,8 +1017,8 @@ end
 ----------------------------------------------------------------------------------
 
 function DPSMate.Sync:HealingTakenAbilityOut(arr, prefix)
-	if not arr[1][DPSMateUser[player.name][1]] then return end
-	for cat, val in arr[1][DPSMateUser[player.name][1]] do
+	if not arr[1][pid] then return end
+	for cat, val in arr[1][pid] do
 		if cat~="i" then
 			for ca, va in val do
 				SendAddonMessage("DPSMate_"..prefix.."HealingTakenAbility", DPSMate:GetUserById(cat)..","..DPSMate:GetAbilityById(ca)..","..va[1]..","..va[2]..","..va[3]..","..ceil(va[4])..","..ceil(va[5])..","..va[6]..","..va[7]..","..va[8]..","..va[9]..",", "RAID")
@@ -1023,8 +1032,8 @@ end
 ----------------------------------------------------------------------------------
 
 function DPSMate.Sync:AbsorbsOut() 
-	if not DPSMateAbsorbs[1][DPSMateUser[player.name][1]] then return end
-	for cat, val in pairs(DPSMateAbsorbs[1][DPSMateUser[player.name][1]]) do -- owner
+	if not DPSMateAbsorbs[1][pid] then return end
+	for cat, val in pairs(DPSMateAbsorbs[1][pid]) do -- owner
 		for ca, va in pairs(val) do -- ability
 			if ca~="i" then
 				for c, v in pairs(va) do -- each one
@@ -1042,8 +1051,8 @@ function DPSMate.Sync:AbsorbsOut()
 end
 
 function DPSMate.Sync:AbsorbsStatOut()
-	if not DPSMateAbsorbs[1][DPSMateUser[player.name][1]] then return end
-	for cat, val in DPSMateAbsorbs[1][DPSMateUser[player.name][1]] do -- owner
+	if not DPSMateAbsorbs[1][pid] then return end
+	for cat, val in DPSMateAbsorbs[1][pid] do -- owner
 		for ca, va in val["i"] do
 			if va[4] then
 				SendAddonMessage("DPSMate_AbsorbsStat", DPSMate:GetUserById(cat)..","..va[1]..","..va[2]..","..va[3]..","..va[4]..",", "RAID")
@@ -1059,15 +1068,15 @@ end
 ----------------------------------------------------------------------------------
 
 function DPSMate.Sync:DeathsAllOut()
-	if not DPSMateDeaths[1][DPSMateUser[player.name][1]] then return end
-	for cat, val in pairs(DPSMateDeaths[1][DPSMateUser[player.name][1]]) do -- death count
-		SendAddonMessage("DPSMate_DeathsAll", player.class..","..cat..","..val["i"][1]..","..val["i"][2]..",", "RAID")
+	if not DPSMateDeaths[1][pid] then return end
+	for cat, val in pairs(DPSMateDeaths[1][pid]) do -- death count
+		SendAddonMessage("DPSMate_DeathsAll", playerclass..","..cat..","..val["i"][1]..","..val["i"][2]..",", "RAID")
 	end
 end
 
 function DPSMate.Sync:DeathsOut()
-	if not DPSMateDeaths[1][DPSMateUser[player.name][1]] then return end
-	for cat, val in pairs(DPSMateDeaths[1][DPSMateUser[player.name][1]]) do -- death count
+	if not DPSMateDeaths[1][pid] then return end
+	for cat, val in pairs(DPSMateDeaths[1][pid]) do -- death count
 		for ca, va in pairs(val) do -- each part
 			if ca~="i" then -- Testing if this prevents the error
 				SendAddonMessage("DPSMate_Deaths", cat..","..ca..","..DPSMate:GetUserById(va[1])..","..DPSMate:GetAbilityById(va[2])..","..va[3]..","..va[4]..","..va[5]..","..va[6]..","..va[7]..",", "RAID")
@@ -1081,14 +1090,14 @@ end
 ----------------------------------------------------------------------------------
 
 function DPSMate.Sync:InterruptsAllOut()
-	if DPSMateInterrupts[1][DPSMateUser[player.name][1]] then
-		SendAddonMessage("DPSMate_InterruptsAll", player.class..","..DPSMateInterrupts[1][DPSMateUser[player.name][1]]["i"]..",", "RAID")
+	if DPSMateInterrupts[1][pid] then
+		SendAddonMessage("DPSMate_InterruptsAll", playerclass..","..DPSMateInterrupts[1][pid]["i"]..",", "RAID")
 	end
 end
 
 function DPSMate.Sync:InterruptsAbilityOut()
-	if not DPSMateInterrupts[1][DPSMateUser[player.name][1]] then return end
-	for cat, val in pairs(DPSMateInterrupts[1][DPSMateUser[player.name][1]]) do
+	if not DPSMateInterrupts[1][pid] then return end
+	for cat, val in pairs(DPSMateInterrupts[1][pid]) do
 		if cat~="i" then
 			for ca, va in pairs(val) do
 				for c, v in pairs(va) do
@@ -1104,8 +1113,8 @@ end
 ----------------------------------------------------------------------------------
 
 function DPSMate.Sync:DispelsOut()
-	if not DPSMateDispels[1][DPSMateUser[player.name][1]] then return end
-	for cat, val in pairs(DPSMateDispels[1][DPSMateUser[player.name][1]]) do -- Ability
+	if not DPSMateDispels[1][pid] then return end
+	for cat, val in pairs(DPSMateDispels[1][pid]) do -- Ability
 		if cat=="i" then
 			SendAddonMessage("DPSMate_iDispels", DPSMate:GetAbilityById(cat)..","..val..",", "RAID")
 		else
@@ -1123,9 +1132,9 @@ end
 ----------------------------------------------------------------------------------
 
 function DPSMate.Sync:AurasOut()
-	if not DPSMateAurasGained[1][DPSMateUser[player.name][1]] then return end
+	if not DPSMateAurasGained[1][pid] then return end
 	local p = 0
-	for cat, val in pairs(DPSMateAurasGained[1][DPSMateUser[player.name][1]]) do -- ability
+	for cat, val in pairs(DPSMateAurasGained[1][pid]) do -- ability
 		if val[4] then p = 1 end
 		local ability = DPSMate:GetAbilityById(cat)
 		SendAddonMessage("DPSMate_AurasAll", ability..","..p..",", "RAID")

@@ -2,6 +2,8 @@
 -- "Smbd reflects..." (Thorns etc.)
 -- (%s%(%a-%))
 -- /script local t = {}; for a,b,c,d in string.gfind("You hit Peter Hallow for 184.", "You (%a%a?)\it (.+) for (%d+)%.%s?(.*)") do t[1]=a;t[2]=b;t[3]=c;t[4]=d end; DPSMate:SendMessage(t[3]); DPSMate:SendMessage(t[4])
+-- CHAT_MSG_SPELL_FAILED_LOCALPLAYER -> Examples: You fail to cast Heal: Interrupted. You fail to perform Bear Form: Not enough mana
+-- SPELLCAST_INTERRUPTED
 
 -- Global Variables
 DPSMate.Parser.procs = {
@@ -49,7 +51,12 @@ local t = {}
 -- Begin Functions
 
 function DPSMate.Parser:OnLoad()
-	DB:BuildUser(playername, strlower(playerclass))
+	if (not DPSMateUser[player]) then
+		DPSMateUser[player] = {
+			[1] = DPSMate:TableLength(DPSMateUser)+1,
+			[2] = strlower(playerclass),
+		}
+	end
 end
 
 function DPSMate.Parser:OnEvent(event)
@@ -60,7 +67,7 @@ function DPSMate.Parser:OnEvent(event)
 		if arg1 then DPSMate.Parser:SelfMisses(arg1) end
 	elseif event == "CHAT_MSG_SPELL_SELF_DAMAGE" then
 		if arg1 then DPSMate.Parser:SelfSpellDMG(arg1) end
-	elseif event == "CHAT_MSG_SPELL_PERIODIC_HOSTILEPLAYER_DAMAGE" then
+	elseif event == "CHAT_MSG_SPELL_PERIODIC_HOSTILEPLAYER_DAMAGE" then -- To be tested
 		if arg1 then DPSMate.Parser:PeriodicDamage(arg1) end
 	elseif event == "CHAT_MSG_SPELL_HOSTILEPLAYER_DAMAGE" then
 		if arg1 then DPSMate.Parser:FriendlyPlayerDamage(arg1) end
@@ -76,7 +83,11 @@ function DPSMate.Parser:OnEvent(event)
 		if arg1 then DPSMate.Parser:FriendlyPlayerDamage(arg1) end
 	elseif event == "CHAT_MSG_COMBAT_FRIENDLYPLAYER_HITS" then
 		if arg1 then DPSMate.Parser:FriendlyPlayerHits(arg1) end
+	elseif event == "CHAT_MSG_COMBAT_HOSTILEPLAYER_HITS" then
+		if arg1 then DPSMate.Parser:FriendlyPlayerHits(arg1) end
 	elseif event == "CHAT_MSG_COMBAT_FRIENDLYPLAYER_MISSES" then
+		if arg1 then DPSMate.Parser:FriendlyPlayerMisses(arg1) end
+	elseif event == "CHAT_MSG_COMBAT_HOSTILEPLAYER_MISSES" then
 		if arg1 then DPSMate.Parser:FriendlyPlayerMisses(arg1) end
 	elseif event == "CHAT_MSG_SPELL_DAMAGESHIELDS_ON_SELF" then
 		if arg1 then DPSMate.Parser:SpellDamageShieldsOnSelf(arg1) end
@@ -306,6 +317,7 @@ function DPSMate.Parser:FriendlyPlayerDamage(msg)
 		t[1] = tonumber(d)
 		if b=="h" then t[2]=1;t[3]=0 end
 		if strfind(e, "blocked") then t[4]=1;t[2]=0;t[3]=0 end
+		if d=="you" then d=player end
 		if DPSMate:TContains(DPSMate.Parser.Kicks, a) then DB:AssignPotentialKick(f, a, c, GetTime()) end
 		DB:EnemyDamage(DPSMateEDT, f, a,  t[2] or 0, t[3] or 1, 0, 0, 0, 0, t[1], c, t[4] or 0, 0)
 		DB:DamageDone(f, a, t[2] or 0, t[3] or 1, 0, 0, 0, 0, t[1], 0, t[4] or 0)
@@ -327,6 +339,18 @@ function DPSMate.Parser:FriendlyPlayerDamage(msg)
 		DB:DamageDone(f, a, 0, 0, 1, 0, 0, 0, 0, 0, 0)
 		return
 	end
+	-- Hostile Player vs you
+	for f,a,b in strgfind(msg, "(.-)'s (.+) was (.-)%.") do 
+		if b=="dodged" then t[1]=1 elseif b=="blocked" then t[2]=1 elseif b=="parried" then t[4]=1 else t[3]=1 end
+		DB:EnemyDamage(DPSMateEDT, f, a, 0, 0, 0, t[4] or 0, t[1] or 0, t[3] or 0, 0, player, t[2] or 0, 0)
+		DB:DamageDone(f, a, 0, 0, 0, t[4] or 0, t[1] or 0, t[3] or 0, 0, 0, t[2] or 0)
+		return
+	end
+	for f,a in strgfind(msg, "(.-)'s (.+) misses you%.") do 
+		DB:EnemyDamage(DPSMateEDT, f, a, 0, 0, 1, 0, 0, 0, 0, player, 0, 0)
+		DB:DamageDone(f, a, 0, 0, 1, 0, 0, 0, 0, 0, 0)
+		return
+	end
 end
 
 function DPSMate.Parser:FriendlyPlayerHits(msg)
@@ -334,6 +358,7 @@ function DPSMate.Parser:FriendlyPlayerHits(msg)
 	for a,b,c,d,e in strgfind(msg, "(.-) (%a%a?)\its (.+) for (%d+)\.%s?(.*)") do
 		if b=="h" then t[3]=1;t[4]=0 end
 		if e=="(glancing)" then t[1]=1;t[3]=0;t[4]=0 elseif e~="" then t[2]=1;t[3]=0;t[4]=0 end
+		if c=="you" then c=player end
 		t[5] = tonumber(d)
 		DB:EnemyDamage(DPSMateEDT, a, "AutoAttack", t[3] or 0, t[4] or 1, 0, 0, 0, 0, t[5], c, t[2] or 0, t[1] or 0)
 		DB:DamageDone(a, "AutoAttack", t[3] or 0, t[4] or 1, 0, 0, 0, 0, t[5], t[1] or 0, t[2] or 0)
@@ -357,12 +382,14 @@ end
 function DPSMate.Parser:FriendlyPlayerMisses(msg)
 	t = {}
 	for a,b in strgfind(msg, "(.-) misses (.+)%.") do 
+		if b=="you" then b=player end
 		DB:EnemyDamage(DPSMateEDT, a, "AutoAttack", 0, 0, 1, 0, 0, 0, 0, b, 0, 0)
 		DB:DamageDone(a, "AutoAttack", 0, 0, 1, 0, 0, 0, 0, 0, 0)
 		return
 	end
 	for a,b,c in strgfind(msg, "(.-) attacks%. (.+) (%a-)%.") do 
-		if c=="parries" then t[1]=1 elseif c=="dodges" then t[2]=1 else t[3]=1 end 
+		if c=="parries" or c=="parry" then t[1]=1 elseif c=="dodges" or c=="dodge" then t[2]=1 else t[3]=1 end 
+		if b=="You" then b=player end
 		DB:EnemyDamage(DPSMateEDT, a, "AutoAttack", 0, 0, 0, t[1] or 0, t[2] or 0, 0, 0, b, t[3] or 0, 0)
 		DB:DamageDone(a, "AutoAttack", 0, 0, 0, t[1] or 0, t[2] or 0, 0, 0, 0, t[3] or 0)
 		return
