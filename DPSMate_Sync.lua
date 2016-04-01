@@ -23,6 +23,7 @@ function DPSMate.Sync:OnLoad()
 		}
 	end
 	pid = DPSMateUser[player][1]
+	DB:CreateUserDataUser(pid)
 end
 
 function DPSMate.Sync:OnUpdate(elapsed)
@@ -217,7 +218,7 @@ function DPSMate.Sync:DismissVote(elapsed)
 end
 
 function DPSMate.Sync:VoteSuccess()
-	DPSMate:SendMessage("Reset vote was successful! DPSMate has been resetted!")
+	DPSMate:SendMessage("Reset vote was successful! DPSMate has been reset!")
 	DPSMate.Options:PopUpAccept(true, true)
 end
 
@@ -255,6 +256,44 @@ function DPSMate.Sync:CorrectVersion(a,b)
 	return false
 end
 
+-- Realmplayers support
+function DPSMate.Sync:SendUserData()
+	if DPSMateSettings["sync"] then
+		SendAddonMessage("DPSMate_UserData", DB.UserData[pid]["Dmg"]..","..DB.UserData[pid]["DmgTaken"]..","..DB.UserData[pid]["Heal"]..","..DB.UserData[pid]["EffHeal"]..","..DB.UserData[pid]["OverHeal"]..","..DB.UserData[pid]["Deaths"]..",", "RAID")
+	end
+end
+
+-- Realmplayers support
+function DPSMate.Sync:ReceiveUserData(arg2, arg4)
+	t = {}
+	strgsub(arg2, "(.-),", func)
+	DB:BuildUser(arg4, nil)
+	DB.UserData[DPSMateUser[arg4][1]] = {
+		["Dmg"] = tonumber(t[1]),
+		["DmgTaken"] = tonumber(t[2]),
+		["Heal"] = tonumber(t[3]),
+		["EffHeal"] = tonumber(t[4]),
+		["OverHeal"] = tonumber(t[5]),
+		["Deaths"] = tonumber(t[6]),
+	}
+end
+
+local bc = false
+function DPSMate.Sync:HelloWorld()
+	bc = true
+	SendAddonMessage("DPSMate_HelloWorld", "NaN", "RAID")
+end
+
+function DPSMate.Sync:GreetBack()
+	SendAddonMessage("DPSMate_Greet", "NaN", "RAID")
+end
+
+function DPSMate.Sync:ReceiveGreet(arg4)
+	if bc then
+		DPSMate:SendMessage(arg4)
+	end
+end
+
 ----------------------------------------------------------------------------------
 --------------                       SYNC IN                        --------------                                  
 ----------------------------------------------------------------------------------
@@ -271,6 +310,12 @@ function DPSMate.Sync:OnEvent(event)
 				if DPSMate:TContains(DPSMate.Parser.HotDispels, ability) then DB:AwaitHotDispel(t[1], t[2], arg4, t[3]) end
 				DB:AwaitingBuff(arg4, t[1], t[2], t[3])
 				DB:AwaitingAbsorbConfirmation(arg4, t[1], t[2], t[3])
+			elseif arg1 == "DPSMate_UserData" then
+				self:ReceiveUserData(arg2, arg4)
+			elseif arg1 == "DPSMate_HelloWorld" then
+				self:GreetBack()
+			elseif arg1 == "DPSMate_Greet" then
+				self:ReceiveGreet(arg4)
 			elseif arg1 == "DPSMate_DMGDoneAll" then
 				self:DMGDoneAllIn(arg2, arg4)
 			elseif arg1 == "DPSMate_DMGDoneStat" then

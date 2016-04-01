@@ -459,6 +459,7 @@ end
 function DPSMate.Options:PopUpAccept(bool, bypass)
 	if not DPSMate.Options:CompareFrames(DPSMate.localization.rgb(DPSMate.localization.frame),DPSMate.localization.hex(DPSMate.localization.frame)) then return end
 	DPSMate_PopUp:Hide()
+	if (bool==true and bypass==false) or (bool==true and bypass==true) then DPSMate.Options:Reset() end -- Realmplayers hook
 	if DPSMate.DB:InPartyOrRaid() and not bypass and DPSMateSettings["sync"] and bool then
 		if IsPartyLeader() or DPSMate.DB:IsRaidAssistant() or IsRaidLeader() then
 			DPSMate.Sync:StartVote()
@@ -562,6 +563,8 @@ function DPSMate.Options:PopUpAccept(bool, bypass)
 		DPSMate:SetStatusBarValue()
 	end
 end
+
+function DPSMate.Options:Reset() end
 
 function DPSMate.Options:OpenMenu(b, obj)
 	if not DPSMate.Options:CompareFrames(DPSMate.localization.rgb(DPSMate.localization.frame),DPSMate.localization.hex(DPSMate.localization.frame)) then return end

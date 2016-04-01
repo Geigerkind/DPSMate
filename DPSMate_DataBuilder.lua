@@ -24,6 +24,7 @@ DPSMate.DB.AbilityFlags = {
 	["Smite"] = 7,
 }
 DPSMate.DB.NeedUpdate = false
+DPSMate.DB.UserData = {}
 
 -- Local Variables
 local CombatState = false
@@ -34,7 +35,8 @@ local MainLastUpdate = 0
 local MainUpdateTime = 1.5
 local MainLastUpdateMinute = 0
 local CombatTime = 0
-local CombatBuffer = 3
+local CombatBuffer = 1.5
+local FourSecUpdate = 0
 local InitialLoad, In1 = false, 0
 local tinsert = table.insert
 local tremove = table.remove
@@ -338,6 +340,51 @@ function DPSMate.DB:OnEvent(event)
 		
 		self:CombatTime()
 		
+		-- Realmplayers support
+		-- Damage done
+		for cat, val in DPSMateDamageDone[1] do
+			self:CreateUserDataUser(cat)
+			self.UserData[cat]["Dmg"] = DPSMateDamageDone[1][cat]["i"][2]
+		end
+		-- Damage done NPC
+		for cat, val in DPSMateEDD[1] do
+			self:CreateUserDataUser(cat)
+			local CV = 0
+			for ca, va in val do
+				CV = CV + va["i"][2]
+			end
+			self.UserData[cat]["Dmg"] = CV
+		end
+		-- Damage taken
+		for cat, val in DPSMateDamageTaken[1] do
+			self:CreateUserDataUser(cat)
+			self.UserData[cat]["DmgTaken"] = DPSMateDamageTaken[1][cat]["i"][2]
+		end
+		-- Damage taken NPC
+		for cat, val in DPSMateEDT[1] do
+			self:CreateUserDataUser(cat)
+			local CV = 0
+			for ca, va in val do
+				CV = CV + va["i"][2]
+			end
+			self.UserData[cat]["DmgTaken"] = CV
+		end
+		-- Heal
+		for cat, val in DPSMateTHealing[1] do
+			self:CreateUserDataUser(cat)
+			self.UserData[cat]["Heal"] = DPSMateTHealing[1][cat]["i"][1]
+		end
+		-- Effective Heal
+		for cat, val in DPSMateEHealing[1] do
+			self:CreateUserDataUser(cat)
+			self.UserData[cat]["EffHeal"] = DPSMateEHealing[1][cat]["i"][1]
+		end
+		-- Death
+		for cat, val in DPSMateDeaths[1] do
+			self:CreateUserDataUser(cat)
+			self.UserData[cat]["Deaths"] = DPSMate:TableLength(DPSMateDeaths[1][cat])
+		end
+		
 		self.loaded = true
 		InitialLoad = true
 	elseif event == "PLAYER_REGEN_DISABLED" then
@@ -362,6 +409,38 @@ function DPSMate.DB:OnEvent(event)
 		self:hasVanishedFeignDeath()
 	elseif event == "PLAYER_TARGET_CHANGED" then
 		self:PlayerTargetChanged()
+	end
+end
+
+-- Realmplayers support
+function DPSMate.DB:CreateUserDataUser(cat)
+	if not self.UserData[cat] then
+		self.UserData[cat] = {
+			["Dmg"] = 0,
+			["Heal"] = 0,
+			["EffHeal"] = 0,
+			["DmgTaken"] = 0,
+			["Deaths"] = 0,
+			["OverHeal"] = 0,
+		}
+	end
+end
+
+-- Realmplayers support
+function DPSMate:GetPetOwnerUnitID(name)
+	local user = DPSMateUser[name]
+	if user then 
+		if user[4] then
+			return user[6]
+		end
+	end
+end
+
+-- Realmplayers support
+function DPSMate:GetUnitIDForName(name)
+	local u = DPSMateUser[name]
+	if u then
+		return u[1]
 	end
 end
 
@@ -398,8 +477,8 @@ function DPSMate.DB:GetPets()
 			end
 		end
 	else
-		if UnitName(5) then
-			pets[UnitName("player")] = UnitName(5)
+		if UnitName("playerpet") then
+			pets[UnitName("player")] = UnitName("playerpet")
 		end
 	end
 	return pets
@@ -425,8 +504,10 @@ end
 function DPSMate.DB:AssignPet()
 	local pets = self:GetPets()
 	for cat, val in pairs(pets) do
+		self:BuildUser(val, nil)
+		self:BuildUser(cat, nil)
 		DPSMateUser[cat][5] = val
-		if not DPSMateUser[val] then self:BuildUser(val, nil) end
+		DPSMateUser[val][6] = DPSMateUser[cat][1]
 		DPSMateUser[val][4] = true
 	end
 end
@@ -627,6 +708,9 @@ function DPSMate.DB:DamageDone(Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, Ddodge,
 		DPSMateDamageDone[cat][DPSMateUser[Duser][1]]["i"][2] = DPSMateDamageDone[cat][DPSMateUser[Duser][1]]["i"][2] + Damount
 		if Damount > 0 then tinsert(DPSMateDamageDone[cat][DPSMateUser[Duser][1]]["i"][1], {DPSMateCombatTime[val], Damount}) end
 	end
+	-- Realmplayers support
+	self:CreateUserDataUser(DPSMateUser[Duser][1])
+	self.UserData[DPSMateUser[Duser][1]]["Dmg"] = self.UserData[DPSMateUser[Duser][1]]["Dmg"] + Damount
 	self.NeedUpdate = true
 end
 
@@ -708,10 +792,13 @@ function DPSMate.DB:DamageTaken(Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, Ddodge
 		DPSMateDamageTaken[cat][DPSMateUser[Duser][1]]["i"][2] = DPSMateDamageTaken[cat][DPSMateUser[Duser][1]]["i"][2] + Damount
 		if Damount > 0 then tinsert(DPSMateDamageTaken[cat][DPSMateUser[Duser][1]]["i"][1], {DPSMateCombatTime[val], Damount}) end
 	end
+	-- Realmplayers support
+	self:CreateUserDataUser(DPSMateUser[Duser][1])
+	self.UserData[DPSMateUser[Duser][1]]["DmgTaken"] = self.UserData[DPSMateUser[Duser][1]]["DmgTaken"] + Damount
 	self.NeedUpdate = true
 end
 
-function DPSMate.DB:EnemyDamage(arr, Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, Ddodge, Dresist, Damount, cause, Dblock, Dcrush)
+function DPSMate.DB:EnemyDamage(mode, arr, Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, Ddodge, Dresist, Damount, cause, Dblock, Dcrush)
 	if self:BuildUser(Duser, nil) or self:BuildUser(cause, nil) or self:BuildAbility(Dname, nil) then return end
 	
 	if (not CombatState and cheatCombat+10<GetTime()) then
@@ -786,10 +873,17 @@ function DPSMate.DB:EnemyDamage(arr, Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, D
 		arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser][1]]["i"][2] = arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser][1]]["i"][2] + Damount
 		if Damount > 0 then tinsert(arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser][1]]["i"][1], {DPSMateCombatTime[val], Damount}) end
 	end
+	-- Realmplayers support
+	self:CreateUserDataUser(DPSMateUser[cause][1])
+	if mode then
+		self.UserData[DPSMateUser[cause][1]]["DmgTaken"] = self.UserData[DPSMateUser[cause][1]]["DmgTaken"] + Damount
+	else
+		self.UserData[DPSMateUser[cause][1]]["Dmg"] = self.UserData[DPSMateUser[cause][1]]["Dmg"] + Damount
+	end
 	self.NeedUpdate = true
 end
 
-function DPSMate.DB:Healing(arr, Duser, Dname, Dhit, Dcrit, Damount)
+function DPSMate.DB:Healing(mode, arr, Duser, Dname, Dhit, Dcrit, Damount)
 	if self:BuildUser(Duser, nil) or self:BuildAbility(Dname, nil) then return end
 	for cat, val in pairs({[1]="total", [2]="current"}) do 
 		if not arr[cat][DPSMateUser[Duser][1]] then
@@ -849,6 +943,15 @@ function DPSMate.DB:Healing(arr, Duser, Dname, Dhit, Dcrit, Damount)
 			end
 		end
 		if Damount > 0 then tinsert(arr[cat][DPSMateUser[Duser][1]]["i"][2], {DPSMateCombatTime[val], Damount}) end
+	end
+	-- Realmplayers support
+	self:CreateUserDataUser(DPSMateUser[Duser][1])
+	if mode==0 then
+		self.UserData[DPSMateUser[Duser][1]]["EffHeal"] = self.UserData[DPSMateUser[Duser][1]]["EffHeal"] + Damount
+	elseif mode==1 then
+		self.UserData[DPSMateUser[Duser][1]]["Heal"] = self.UserData[DPSMateUser[Duser][1]]["Heal"] + Damount
+	else
+		self.UserData[DPSMateUser[Duser][1]]["OverHeal"] = self.UserData[DPSMateUser[Duser][1]]["OverHeal"] + Damount
 	end
 	self.NeedUpdate = true
 end
@@ -1250,6 +1353,9 @@ function DPSMate.DB:UnregisterDeath(target)
 			DPSMateDeaths[cat][DPSMateUser[target][1]][1]["i"][2]=GameTime_GetTime()
 		end
 	end
+	-- Realmplayers support
+	self:CreateUserDataUser(DPSMateUser[target][1])
+	self.UserData[DPSMateUser[target][1]]["Deaths"] = self.UserData[DPSMateUser[target][1]]["Deaths"] + 1
 end
 
 function DPSMate.DB:DeathHistory(target, cause, ability, amount, hit, crit, type, crush)
@@ -1482,6 +1588,11 @@ function DPSMate.DB:CombatTime()
 			DPSMate.DB:ClearAwaitHotDispel()
 			MainLastUpdateMinute = 0
 			DPSMate.Sync.Async = true
+		end
+		FourSecUpdate = FourSecUpdate + arg1
+		if FourSecUpdate >= 4 then
+			DPSMate.Sync:SendUserData()
+			FourSecUpdate = 0
 		end
 		if DPSMate.Sync.Async then
 			DPSMate.Sync:OnUpdate(arg1)
