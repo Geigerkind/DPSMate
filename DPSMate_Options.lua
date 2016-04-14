@@ -1445,14 +1445,14 @@ function DPSMate.Options:InitializeHideShowWindow()
 			type = 'execute',
 			name = val["name"],
 			desc = "Hide "..val["name"],
-			func = loadstring('_G("DPSMate_'..val["name"]..'"):Hide(); DPSMate.Options.Dewdrop:Close();'),
+			func = loadstring('getglobal("DPSMate_'..val["name"]..'"):Hide(); DPSMate.Options.Dewdrop:Close();'),
 		}
 		DPSMate.Options.Options[3]["args"]["showwindow"]["args"][val["name"]] = {
 			order = i*10,
 			type = 'execute',
 			name = val["name"],
 			desc = "Show "..val["name"],
-			func = loadstring('_G("DPSMate_'..val["name"]..'"):Show(); DPSMate.Options.Dewdrop:Close();'),
+			func = loadstring('getglobal("DPSMate_'..val["name"]..'"):Show(); DPSMate.Options.Dewdrop:Close();'),
 		}
 		i=i+1
 	end
