@@ -57,6 +57,7 @@ function DPSMate.Parser:OnLoad()
 			[2] = strlower(playerclass),
 		}
 	end
+	player = UnitName("player")
 end
 
 function DPSMate.Parser:OnEvent(event)

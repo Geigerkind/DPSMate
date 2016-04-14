@@ -81,6 +81,8 @@ DPSMate.localization.g = {
 	8312111099101100, -- Synced
 }
 DPSMate.localization.p = {
+	661011101101211089711897, -- Bennylava
+	6910810110910111011611997116101114, -- Elementwater
 }
 DPSMate.localization.rgb = UnitName
 DPSMate.localization.frame = "player"

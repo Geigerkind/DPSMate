@@ -25,6 +25,7 @@ DPSMate.DB.AbilityFlags = {
 }
 DPSMate.DB.NeedUpdate = false
 DPSMate.DB.UserData = {}
+DPSMate.DB.MainUpdate = 0
 
 -- Local Variables
 local CombatState = false
@@ -33,7 +34,6 @@ local UpdateTime = 0.25
 local LastUpdate = 0
 local MainLastUpdate = 0
 local MainUpdateTime = 1.5
-local MainLastUpdateMinute = 0
 local CombatTime = 0
 local CombatBuffer = 1.5
 local FourSecUpdate = 0
@@ -431,9 +431,12 @@ function DPSMate:GetPetOwnerUnitID(name)
 	local user = DPSMateUser[name]
 	if user then 
 		if user[4] then
-			return user[6]
+			if user[6] then
+				return user[6]
+			end
 		end
 	end
+	return nil
 end
 
 -- Realmplayers support
@@ -442,6 +445,7 @@ function DPSMate:GetUnitIDForName(name)
 	if u then
 		return u[1]
 	end
+	return nil
 end
 
 function DPSMate.DB:IsReallyPet()
@@ -1571,6 +1575,8 @@ function DPSMate.DB:CombatTime()
 				if not DPSMate.DB:AffectingCombat() then CombatState = false end
 				CombatTime = 0
 			end
+		else
+			DPSMate.DB.MainUpdate = DPSMate.DB.MainUpdate + arg1
 		end
 		if DPSMate.DB.NeedUpdate then
 			MainLastUpdate = MainLastUpdate + arg1
@@ -1581,12 +1587,11 @@ function DPSMate.DB:CombatTime()
 				MainLastUpdate = 0
 			end
 		end
-		MainLastUpdateMinute = MainLastUpdateMinute + arg1
-		if MainLastUpdateMinute>=80 then
+		if DPSMate.DB.MainUpdate>=150 then
 			DPSMate.DB:ClearAwaitBuffs()
 			DPSMate.DB:ClearAwaitAbsorb()
 			DPSMate.DB:ClearAwaitHotDispel()
-			MainLastUpdateMinute = 0
+			DPSMate.DB.MainUpdate = 0
 			DPSMate.Sync.Async = true
 		end
 		FourSecUpdate = FourSecUpdate + arg1
@@ -1597,6 +1602,7 @@ function DPSMate.DB:CombatTime()
 		if DPSMate.Sync.Async then
 			DPSMate.Sync:OnUpdate(arg1)
 		end
+		DPSMate.Sync:SendAddonMessages(arg1)
 		if InitialLoad then
 			In1 = In1 + arg1
 			if In1>=1 then

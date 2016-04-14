@@ -1196,7 +1196,7 @@ function DPSMate.Options:OnVerticalScroll(obj, arg1, pre, spec)
 end
 
 function DPSMate.Options:CreateWindow()
-	local na = DPSMate_ConfigMenu_Tab_Window_Editbox:GetText()
+	local na = string.gsub(DPSMate_ConfigMenu_Tab_Window_Editbox:GetText(), "%s", "")
 	if (na and not DPSMate:GetKeyByValInTT(DPSMateSettings["windows"], na, "name") and na~="") then
 		table.insert(DPSMateSettings["windows"], {
 			name = na,

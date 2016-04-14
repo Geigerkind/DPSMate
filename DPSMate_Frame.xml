@@ -144,6 +144,14 @@
 					</Layer>
 				</Layers>
 				<Scripts>
+					<OnEnter>
+						GameTooltip:SetOwner(this, "TOPLEFT")
+						GameTooltip:AddLine("RightClick to change the mode.")
+						GameTooltip:Show()
+					</OnEnter>
+					<OnLeave>
+						GameTooltip:Hide()
+					</OnLeave>
 					<OnMouseDown>
 						if arg1 == "LeftButton" and not DPSMateSettings.lock then
 							this:GetParent():StartMoving()
@@ -161,6 +169,14 @@
 					<Button name="$parent_Config">
 						<Size x="16" y="16" />
 						<Scripts>
+							<OnEnter>
+								GameTooltip:SetOwner(this, "TOPLEFT")
+								GameTooltip:AddLine("Config")
+								GameTooltip:Show()
+							</OnEnter>
+							<OnLeave>
+								GameTooltip:Hide()
+							</OnLeave>
 							<OnMouseUp>
 								DPSMate.Options:OpenMenu(3, this:GetParent():GetParent())
 							</OnMouseUp>
@@ -172,6 +188,14 @@
 					<Button name="$parent_Reset">
 						<Size x="14" y="14" />
 						<Scripts>
+							<OnEnter>
+								GameTooltip:SetOwner(this, "TOPLEFT")
+								GameTooltip:AddLine("Reset")
+								GameTooltip:Show()
+							</OnEnter>
+							<OnLeave>
+								GameTooltip:Hide()
+							</OnLeave>
 							<OnClick>
 								DPSMate_PopUp:Show()
 							</OnClick>
@@ -183,6 +207,14 @@
 					<Button name="$parent_Segments">
 						<Size x="14" y="14" />
 						<Scripts>
+							<OnEnter>
+								GameTooltip:SetOwner(this, "TOPLEFT")
+								GameTooltip:AddLine("Segment")
+								GameTooltip:Show()
+							</OnEnter>
+							<OnLeave>
+								GameTooltip:Hide()
+							</OnLeave>
 							<OnMouseUp>
 								DPSMate.Options:OpenMenu(2, this:GetParent():GetParent())
 							</OnMouseUp>
@@ -194,6 +226,14 @@
 					<Button name="$parent_Report">
 						<Size x="14" y="14" />
 						<Scripts>
+							<OnEnter>
+								GameTooltip:SetOwner(this, "TOPLEFT")
+								GameTooltip:AddLine("Report")
+								GameTooltip:Show()
+							</OnEnter>
+							<OnLeave>
+								GameTooltip:Hide()
+							</OnLeave>
 							<OnClick>
 								DPSMate_Report.PaKey=this:GetParent():GetParent().Key 
 								DPSMate_Report:Show()
@@ -206,6 +246,14 @@
 					<Button name="$parent_Sync">
 						<Size x="14" y="14" />
 						<Scripts>
+							<OnEnter>
+								GameTooltip:SetOwner(this, "TOPLEFT")
+								GameTooltip:AddLine("Synchronizing")
+								GameTooltip:Show()
+							</OnEnter>
+							<OnLeave>
+								GameTooltip:Hide()
+							</OnLeave>
 							<OnClick>
 								DPSMate.Options:ToggleSync()
 							</OnClick>
