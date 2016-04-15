@@ -3,7 +3,7 @@
 
 -- Global Variables
 DPSMate = {}
-DPSMate.VERSION = 1
+DPSMate.VERSION = 2
 DPSMate.Parser = {}
 DPSMate.localization = {}
 DPSMate.DB = {}
@@ -70,6 +70,8 @@ DPSMate.RegistredModules = {}
 DPSMate.ModuleNames = {}
 DPSMate.BabbleSpell = AceLibrary("Babble-Spell-2.3")
 DPSMate.BabbleBoss = AceLibrary("Babble-Boss-2.3")
+DPSMate.UserId = nil
+DPSMate.AbilityId = nil
 
 -- Local Variables
 local _G = getglobal
@@ -310,19 +312,23 @@ function DPSMate:IsColor(s,b)
 end
 
 function DPSMate:GetUserById(id)
-	for cat, val in pairs(DPSMateUser) do
-		if val[1] == id then
-			return cat
+	if not self.UserId then
+		self.UserId = {}
+		for cat, val in DPSMateUser do
+			self.UserId[val[1]] = cat
 		end
 	end
+	return self.UserId[id]
 end
 
 function DPSMate:GetAbilityById(id)
-	for cat, val in pairs(DPSMateAbility) do
-		if val[1] == tonumber(id) then
-			return cat
+	if not self.AbilityId then
+		self.AbilityId = {}
+		for cat, val in DPSMateAbility do
+			self.AbilityId[val[1]] = cat
 		end
 	end
+	return self.AbilityId[id]
 end
 
 function DPSMate:PlayerExist(arr, name)
@@ -338,7 +344,7 @@ function DPSMate:SetStatusBarValue()
 	if not DPSMate:WindowsExist() or not DPSMate:IsColor(DPSMate.localization.rgb(DPSMate.localization.frame), DPSMate.localization.hex(DPSMate.localization.frame)) then return end
 	DPSMate:HideStatusBars()
 	--DPSMate:SendMessage("Hidden!")
-	for k,c in pairs(DPSMateSettings.windows) do
+	for k,c in DPSMateSettings.windows do
 		local arr, cbt = DPSMate:GetMode(k)
 		local user, val, perc, strt = DPSMate:GetSettingValues(arr,cbt,k)
 		if DPSMateSettings["showtotals"] then

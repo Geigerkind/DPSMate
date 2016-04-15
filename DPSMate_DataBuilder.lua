@@ -448,44 +448,41 @@ function DPSMate:GetUnitIDForName(name)
 	return nil
 end
 
-function DPSMate.DB:IsReallyPet()
-	if self:PlayerInParty() then
-		for i=1, 4 do
-			local name = UnitName("party"..i)
-			if DPSMateUser[name] then
-				DPSMateUser[name][4] = false
-			end
-		end
-	elseif UnitInRaid("player") then
-		for i=1, 40 do
-			local name = UnitName("raid"..i)
-			if DPSMateUser[name] then
-				DPSMateUser[name][4] = false
-			end
-		end
+function DPSMate.DB:OnGroupUpdate()
+	local type = "raid"
+	local num = GetNumRaidMembers()
+	DPSMate.Parser.TargetParty = {}
+	if num<=0 then
+		type = "raid"
+		num = GetNumPartyMembers()
 	end
-end
-
-function DPSMate.DB:GetPets()
-	local pets = {}
-	if self:PlayerInParty() then
-		for i=1, 4 do
-			if UnitName("partypet"..i) and UnitName("party"..i) then
-				pets[UnitName("party"..i)] = UnitName("partypet"..i)
-			end
+	for i=1, num do
+		local name = UnitName(type..i)
+		local pet = UnitName(type.."pet"..i)
+		local _,classEng = UnitClass(type..i)
+		local fac = UnitFactionGroup(type..i)
+		self:BuildUser(name, tonumber(classEng))
+		self:BuildUser(pet)
+		DPSMateUser[name][4] = false
+		if pet then
+			DPSMateUser[pet][4] = true
+			DPSMateUser[name][5] = pet
+			DPSMateUser[pet][6] = DPSMateUser[name][1]
 		end
-	elseif UnitInRaid("player") then
-		for i=1, 40 do
-			if UnitName("raidpet"..i) and UnitName("raid"..i) then
-				pets[UnitName("raid"..i)] = UnitName("raidpet"..i)
-			end
+		if fac == "Alliance" then
+			DPSMateUser[name][3] = 1
+		elseif fac == "Horde" then
+			DPSMateUser[name][3] = 0
 		end
-	else
-		if UnitName("playerpet") then
-			pets[UnitName("player")] = UnitName("playerpet")
-		end
+		DPSMate.Parser.TargetParty[name] = type..i
 	end
-	return pets
+	local pet = UnitName("playerpet")
+	local name = UnitName("player")
+	if pet then
+		DPSMateUser[pet][4] = true
+		DPSMateUser[name][5] = pet
+		DPSMateUser[pet][6] = DPSMateUser[name][1]
+	end
 end
 
 function DPSMate.DB:AffectingCombat()
@@ -503,58 +500,6 @@ function DPSMate.DB:AffectingCombat()
 		end
 	end
 	if UnitAffectingCombat("player") then return true else return false end
-end
-
-function DPSMate.DB:AssignPet()
-	local pets = self:GetPets()
-	for cat, val in pairs(pets) do
-		self:BuildUser(val, nil)
-		self:BuildUser(cat, nil)
-		DPSMateUser[cat][5] = val
-		DPSMateUser[val][6] = DPSMateUser[cat][1]
-		DPSMateUser[val][4] = true
-	end
-end
-
--- Decrease load if the group has been scanned once
--- Error if people are offline? l.229
-function DPSMate.DB:AssignClass()
-	local classEng
-	if self:PlayerInParty() then
-		for i=1,4 do
-			local name = UnitName("party"..i)
-			if name then
-				local fac = UnitFactionGroup("party"..i) or ""
-				self:BuildUser(name, nil)
-				t,classEng = UnitClass("party"..i)
-				if (classEng) then
-					DPSMateUser[name][2] = strlower(classEng)
-				end
-				if fac == "Alliance" then
-					DPSMateUser[name][3] = 1
-				elseif fac == "Horde" then
-					DPSMateUser[name][3] = 0
-				end
-			end
-		end
-	elseif UnitInRaid("player") then
-		for i=1,40 do
-			local name = UnitName("raid"..i)
-			if name then
-				local fac = UnitFactionGroup("raid"..i) or ""
-				self:BuildUser(name, nil)
-				t,classEng = UnitClass("raid"..i)
-				if (classEng) then
-					DPSMateUser[name][2] = strlower(classEng)
-				end
-				if fac == "Alliance" then
-					DPSMateUser[name][3] = 1
-				elseif fac == "Horde" then
-					DPSMateUser[name][3] = 0
-				end
-			end
-		end
-	end
 end
 
 DPSMate.DB.one = DPSMate.localization.g
@@ -576,19 +521,6 @@ function DPSMate.DB:PlayerTargetChanged()
 			DPSMateUser[name][3] = 0
 		end
 	end
-end
-
-function DPSMate.DB:IsRaidAssistant()
-	local playerName = UnitName("player")
-	for i=1, 40 do
-		local name, rank = GetRaidRosterInfo(i)
-		if name and rank then
-			if rank==1 and name == playerName then
-				return true
-			end
-		end
-	end
-	return false
 end
 
 function DPSMate.DB:PlayerInParty()
@@ -622,6 +554,7 @@ function DPSMate.DB:BuildUser(Dname, Dclass)
 			[1] = DPSMate:TableLength(DPSMateUser)+1,
 			[2] = Dclass,
 		}
+		DPSMate.UserId = nil
 	end
 	return false
 end
@@ -635,6 +568,7 @@ function DPSMate.DB:BuildAbility(name, school)
 			[1] = DPSMate:TableLength(DPSMateAbility)+1,
 			[2] = school,
 		}
+		DPSMate.AbilityId = nil
 	end
 	return false
 end

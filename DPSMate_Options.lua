@@ -345,9 +345,7 @@ function DPSMate.Options:OnEvent(event)
 				elseif DPSMateSettings["dataresetsjoinparty"] == 1 then
 					DPSMate.Options:PopUpAccept()
 				end
-				DPSMate.DB:IsReallyPet()
-				DPSMate.DB:AssignClass()
-				DPSMate.DB:AssignPet()
+				DPSMate.DB:OnGroupUpdate()
 			elseif LastPartyNum ~= PartyNum	then
 				if DPSMateSettings["dataresetspartyamount"] == 3 then
 					if (GetTime()-LastPopUp) > TimeToNextPopUp and (DPSMate:TableLength(DPSMateUser) ~= 0 or DPSMate:TableLength(DPSMateUserCurrent) ~= 0) then
@@ -357,9 +355,7 @@ function DPSMate.Options:OnEvent(event)
 				elseif DPSMateSettings["dataresetspartyamount"] == 1 then
 					DPSMate.Options:PopUpAccept()
 				end
-				DPSMate.DB:IsReallyPet()
-				DPSMate.DB:AssignClass()
-				DPSMate.DB:AssignPet()
+				DPSMate.DB:OnGroupUpdate()
 			end
 		else
 			if LastPartyNum > PartyNum then
@@ -388,7 +384,7 @@ end
 
 function DPSMate.Options:ShowResetPopUp()
 	if DPSMateSettings["sync"] then
-		if IsPartyLeader() or DPSMate.DB:IsRaidAssistant() or IsRaidLeader() then
+		if IsPartyLeader() or IsRaidOfficer() or IsRaidLeader() then
 			DPSMate_PopUp:Show()
 		end
 	else
@@ -461,7 +457,7 @@ function DPSMate.Options:PopUpAccept(bool, bypass)
 	DPSMate_PopUp:Hide()
 	if (bool==true and bypass==false) or (bool==true and bypass==true) then DPSMate.Options:Reset() end -- Realmplayers hook
 	if DPSMate.DB:InPartyOrRaid() and not bypass and DPSMateSettings["sync"] and bool then
-		if IsPartyLeader() or DPSMate.DB:IsRaidAssistant() or IsRaidLeader() then
+		if IsPartyLeader() or IsRaidOfficer() or IsRaidLeader() then
 			DPSMate.Sync:StartVote()
 		else
 			DPSMate:SendMessage("You are not the leader of the group or an assist!")
