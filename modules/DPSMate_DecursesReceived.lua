@@ -14,15 +14,17 @@ DPSMate.Options.Options[1]["args"]["decursesreceived"] = {
 DPSMate:Register("decursesreceived", DPSMate.Modules.DecursesReceived, "Decurses received")
 
 
-function DPSMate.Modules.DecursesReceived:GetSortedTable(arr)
+function DPSMate.Modules.DecursesReceived:GetSortedTable(arr,k)
 	local b, a, temp, total = {}, {}, {}, 0
 	for cat, val in pairs(arr) do -- 3 Owner
 		for ca, va in pairs(val) do -- 42 Ability
 			if ca~="i" then
 				for c, v in pairs(va) do -- 3 Target
-					for ce, ve in pairs(v) do -- 10 Cured Ability
-						if DPSMateAbility[DPSMate:GetAbilityById(ce)][2]=="Curse" then
-							if temp[c] then temp[c]=temp[c]+ve else temp[c]=ve end
+					if DPSMate:ApplyFilter(k, DPSMate:GetUserById(c)) then
+						for ce, ve in pairs(v) do -- 10 Cured Ability
+							if DPSMateAbility[DPSMate:GetAbilityById(ce)][2]=="Curse" then
+								if temp[c] then temp[c]=temp[c]+ve else temp[c]=ve end
+							end
 						end
 					end
 				end
@@ -115,7 +117,7 @@ end
 function DPSMate.Modules.DecursesReceived:GetSettingValues(arr, cbt, k)
 	local name, value, perc, sortedTable, total, a, p, strt = {}, {}, {}, {}, 0, 0, "", {[1]="",[2]=""}
 	if DPSMateSettings["windows"][k]["numberformat"] == 2 then p = "K" end
-	sortedTable, total, a = DPSMate.Modules.DecursesReceived:GetSortedTable(arr)
+	sortedTable, total, a = DPSMate.Modules.DecursesReceived:GetSortedTable(arr,k)
 	for cat, val in pairs(sortedTable) do
 		local dmg, tot, sort = DPSMate:FormatNumbers(val, total, sortedTable[1], k)
 		if dmg==0 then break end

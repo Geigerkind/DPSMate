@@ -14,33 +14,35 @@ DPSMate.Options.Options[1]["args"]["dps"] = {
 DPSMate:Register("dps", DPSMate.Modules.DPS, "DPS")
 
 
-function DPSMate.Modules.DPS:GetSortedTable(arr)
+function DPSMate.Modules.DPS:GetSortedTable(arr,k)
 	local b, a, total = {}, {}, 0
 	if arr then
 		for cat, val in pairs(arr) do
 			local name = DPSMate:GetUserById(cat)
 			if (not DPSMateUser[name]["isPet"]) then
-				local CV = val["i"][2]
-				if DPSMate:PlayerExist(DPSMateUser, DPSMateUser[name]["pet"]) and arr[DPSMateUser[DPSMateUser[name]["pet"]][1]] then
-					CV=CV+arr[DPSMateUser[DPSMateUser[name]["pet"]][1]]["i"][2]
-				end
-				a[CV] = name
-				local i = 1
-				while true do
-					if (not b[i]) then
-						table.insert(b, i, CV)
-						table.insert(a, i, name)
-						break
-					else
-						if b[i] < CV then
+				if DPSMate:ApplyFilter(k, name) then
+					local CV = val["i"][2]
+					if DPSMate:PlayerExist(DPSMateUser, DPSMateUser[name]["pet"]) and arr[DPSMateUser[DPSMateUser[name]["pet"]][1]] then
+						CV=CV+arr[DPSMateUser[DPSMateUser[name]["pet"]][1]]["i"][2]
+					end
+					a[CV] = name
+					local i = 1
+					while true do
+						if (not b[i]) then
 							table.insert(b, i, CV)
 							table.insert(a, i, name)
 							break
+						else
+							if b[i] < CV then
+								table.insert(b, i, CV)
+								table.insert(a, i, name)
+								break
+							end
 						end
+						i=i+1
 					end
-					i=i+1
+					total = total + CV
 				end
-				total = total + CV
 			end
 		end
 	end
@@ -83,7 +85,7 @@ end
 function DPSMate.Modules.DPS:GetSettingValues(arr, cbt, k)
 	local name, value, perc, sortedTable, total, a, p, strt = {}, {}, {}, {}, 0, 0, "", {[1]="",[2]=""}
 	if DPSMateSettings["windows"][k]["numberformat"] == 2 then p = "K" end
-	sortedTable, total, a = DPSMate.Modules.DPS:GetSortedTable(arr)
+	sortedTable, total, a = DPSMate.Modules.DPS:GetSortedTable(arr,k)
 	for cat, val in pairs(sortedTable) do
 		local dmg, tot, sort = DPSMate:FormatNumbers(val, total, sortedTable[1], k)
 		if dmg==0 then break end

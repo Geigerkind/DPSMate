@@ -14,35 +14,37 @@ DPSMate.Options.Options[1]["args"]["aurasuptime"] = {
 DPSMate:Register("aurasuptime", DPSMate.Modules.AurasUptimers, "Aura uptime")
 
 
-function DPSMate.Modules.AurasUptimers:GetSortedTable(arr)
+function DPSMate.Modules.AurasUptimers:GetSortedTable(arr,k)
 	local b, a, total = {}, {}, 0
 	for cat, val in pairs(arr) do -- 2 Target
-		local CV = 0
-		for ca, va in pairs(val) do -- 3 Ability
-			for c, v in pairs(va) do -- each one
-				if c==1 then
-					for ce, ve in pairs(v) do
-						CV=CV+1
+		if DPSMate:ApplyFilter(k, DPSMate:GetUserById(cat)) then
+			local CV = 0
+			for ca, va in pairs(val) do -- 3 Ability
+				for c, v in pairs(va) do -- each one
+					if c==1 then
+						for ce, ve in pairs(v) do
+							CV=CV+1
+						end
 					end
 				end
 			end
-		end
-		local i = 1
-		while true do
-			if (not b[i]) then
-				table.insert(b, i, CV)
-				table.insert(a, i, cat)
-				break
-			else
-				if b[i] < CV then
+			local i = 1
+			while true do
+				if (not b[i]) then
 					table.insert(b, i, CV)
 					table.insert(a, i, cat)
 					break
+				else
+					if b[i] < CV then
+						table.insert(b, i, CV)
+						table.insert(a, i, cat)
+						break
+					end
 				end
+				i=i+1
 			end
-			i=i+1
+			total = total + CV
 		end
-		total = total + CV
 	end
 	return b, total, a
 end
@@ -87,7 +89,7 @@ end
 function DPSMate.Modules.AurasUptimers:GetSettingValues(arr, cbt, k)
 	local name, value, perc, sortedTable, total, a, p, strt = {}, {}, {}, {}, 0, 0, "", {[1]="",[2]=""}
 	if DPSMateSettings["windows"][k]["numberformat"] == 2 then p = "K" end
-	sortedTable, total, a = DPSMate.Modules.AurasUptimers:GetSortedTable(arr)
+	sortedTable, total, a = DPSMate.Modules.AurasUptimers:GetSortedTable(arr,k)
 	for cat, val in pairs(sortedTable) do
 		local dmg, tot, sort = DPSMate:FormatNumbers(val, total, sortedTable[1], k)
 		if dmg==0 then break end

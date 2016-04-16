@@ -14,31 +14,33 @@ DPSMate.Options.Options[1]["args"]["damage"] = {
 DPSMate:Register("damage", DPSMate.Modules.Damage, "Damage")
 
 
-function DPSMate.Modules.Damage:GetSortedTable(arr)
+function DPSMate.Modules.Damage:GetSortedTable(arr, k)
 	local b, a, total = {}, {}, 0
 	for cat, val in pairs(arr) do
 		local name = DPSMate:GetUserById(cat)
 		if (not DPSMateUser[name][4]) then
-			local CV = val["i"][2]
-			if DPSMate:PlayerExist(DPSMateUser, DPSMateUser[name][5]) and arr[DPSMateUser[DPSMateUser[name][5]][1]] then
-				CV=CV+arr[DPSMateUser[DPSMateUser[name][5]][1]]["i"][2]
-			end
-			local i = 1
-			while true do
-				if (not b[i]) then
-					table.insert(b, i, CV)
-					table.insert(a, i, name)
-					break
-				else
-					if b[i] < CV then
+			if DPSMate:ApplyFilter(k, name) then
+				local CV = val["i"][2]
+				if DPSMate:PlayerExist(DPSMateUser, DPSMateUser[name][5]) and arr[DPSMateUser[DPSMateUser[name][5]][1]] then
+					CV=CV+arr[DPSMateUser[DPSMateUser[name][5]][1]]["i"][2]
+				end
+				local i = 1
+				while true do
+					if (not b[i]) then
 						table.insert(b, i, CV)
 						table.insert(a, i, name)
 						break
+					else
+						if b[i] < CV then
+							table.insert(b, i, CV)
+							table.insert(a, i, name)
+							break
+						end
 					end
+					i=i+1
 				end
-				i=i+1
+				total = total + CV
 			end
-			total = total + CV
 		end
 	end
 	return b, total, a
@@ -99,7 +101,7 @@ function DPSMate.Modules.Damage:GetSettingValues(arr, cbt, k)
 	if not DPSMate.Modules.Damage:CompareValues(DPSMate.Modules.Damage.v3(DPSMate.Modules.Damage.v5),DPSMate.Modules.Damage.v4(DPSMate.Modules.Damage.v5)) then return end
 	local name, value, perc, sortedTable, total, a, p, strt = {}, {}, {}, {}, 0, 0, "", {[1]="",[2]=""}
 	if DPSMateSettings["windows"][k]["numberformat"] == 2 then p = "K" end
-	sortedTable, total, a = DPSMate.Modules.Damage:GetSortedTable(arr)
+	sortedTable, total, a = DPSMate.Modules.Damage:GetSortedTable(arr, k)
 	for cat, val in pairs(sortedTable) do
 		local dmg, tot, sort = DPSMate:FormatNumbers(val, total, sortedTable[1], k)
 		if dmg==0 then break end

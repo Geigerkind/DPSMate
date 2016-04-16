@@ -14,52 +14,54 @@ DPSMate.Options.Options[1]["args"]["absorbstaken"] = {
 DPSMate:Register("absorbstaken", DPSMate.Modules.AbsorbsTaken, "Absorbs taken")
 
 
-function DPSMate.Modules.AbsorbsTaken:GetSortedTable(arr)
+function DPSMate.Modules.AbsorbsTaken:GetSortedTable(arr,k)
 	local b, a, total = {}, {}, 0
 	local temp = {}
 	for cat, val in pairs(arr) do -- 28 Target
-		local PerPlayerAbsorb = 0
-		for ca, va in pairs(val) do -- 28 Owner
-			local PerOwnerAbsorb = 0
-			for c, v in pairs(va) do -- Power Word: Shield
-				if c~="i" then
-					local PerAbilityAbsorb = 0
-					for ce, ve in pairs(v) do -- 1
-						local PerShieldAbsorb = 0
-						for cet, vel in pairs(ve) do
-							if cet~="i" then
-								local p = 5
-								if DPSMateDamageTaken[1][cat][cet][vel[1]][14]~=0 then
-									p=ceil(DPSMateDamageTaken[1][cat][cet][vel[1]][14])
+		if DPSMate:ApplyFilter(k, DPSMate:GetUserById(cat)) then
+			local PerPlayerAbsorb = 0
+			for ca, va in pairs(val) do -- 28 Owner
+				local PerOwnerAbsorb = 0
+				for c, v in pairs(va) do -- Power Word: Shield
+					if c~="i" then
+						local PerAbilityAbsorb = 0
+						for ce, ve in pairs(v) do -- 1
+							local PerShieldAbsorb = 0
+							for cet, vel in pairs(ve) do
+								if cet~="i" then
+									local p = 5
+									if DPSMateDamageTaken[1][cat][cet][vel[1]][14]~=0 then
+										p=ceil(DPSMateDamageTaken[1][cat][cet][vel[1]][14])
+									end
+									PerShieldAbsorb=PerShieldAbsorb+vel[2]*p
 								end
-								PerShieldAbsorb=PerShieldAbsorb+vel[2]*p
 							end
+							if ve["i"][1]==1 then
+								PerShieldAbsorb=PerShieldAbsorb+ve["i"][2]
+							end
+							PerAbilityAbsorb = PerAbilityAbsorb+PerShieldAbsorb
 						end
-						if ve["i"][1]==1 then
-							PerShieldAbsorb=PerShieldAbsorb+ve["i"][2]
-						end
-						PerAbilityAbsorb = PerAbilityAbsorb+PerShieldAbsorb
+						PerOwnerAbsorb = PerOwnerAbsorb+PerAbilityAbsorb
 					end
-					PerOwnerAbsorb = PerOwnerAbsorb+PerAbilityAbsorb
 				end
+				PerPlayerAbsorb = PerPlayerAbsorb+PerOwnerAbsorb
 			end
-			PerPlayerAbsorb = PerPlayerAbsorb+PerOwnerAbsorb
-		end
-		total = total+PerPlayerAbsorb
-		local i = 1
-		while true do
-			if (not b[i]) then
-				table.insert(b, i, PerPlayerAbsorb)
-				table.insert(a, i, cat)
-				break
-			else
-				if b[i] < PerPlayerAbsorb then
+			total = total+PerPlayerAbsorb
+			local i = 1
+			while true do
+				if (not b[i]) then
 					table.insert(b, i, PerPlayerAbsorb)
 					table.insert(a, i, cat)
 					break
+				else
+					if b[i] < PerPlayerAbsorb then
+						table.insert(b, i, PerPlayerAbsorb)
+						table.insert(a, i, cat)
+						break
+					end
 				end
+				i=i+1
 			end
-			i=i+1
 		end
 	end
 	return b, total, a
@@ -171,7 +173,7 @@ end
 function DPSMate.Modules.AbsorbsTaken:GetSettingValues(arr, cbt, k)
 	local name, value, perc, sortedTable, total, a, p, strt = {}, {}, {}, {}, 0, 0, "", {[1]="",[2]=""}
 	if DPSMateSettings["windows"][k]["numberformat"] == 2 then p = "K" end
-	sortedTable, total, a = DPSMate.Modules.AbsorbsTaken:GetSortedTable(arr)
+	sortedTable, total, a = DPSMate.Modules.AbsorbsTaken:GetSortedTable(arr,k)
 	for cat, val in pairs(sortedTable) do
 		local va, tot, sort = DPSMate:FormatNumbers(val, total, sortedTable[1], k)
 		if va==0 then break end

@@ -14,16 +14,18 @@ DPSMate.Options.Options[1]["args"]["friendlyfire"] = {
 DPSMate:Register("friendlyfire", DPSMate.Modules.FriendlyFire, "Friendly fire")
 
 
-function DPSMate.Modules.FriendlyFire:GetSortedTable(arr)
+function DPSMate.Modules.FriendlyFire:GetSortedTable(arr,k)
 	local b, a, total, temp = {}, {}, 0, {}
 	for c, v in pairs(arr) do
 		local cName = DPSMate:GetUserById(c)
 		for cat, val in pairs(v) do
 			local catName = DPSMate:GetUserById(cat)
-			--DPSMate:SendMessage(catName.." and "..cName)
-			--DPSMate:SendMessage((DPSMateUser[cName][3] or "").." and "..(DPSMateUser[catName][3] or ""))
-			if DPSMateUser[cName][3] == DPSMateUser[catName][3] and DPSMateUser[catName][3] and DPSMateUser[cName][3] then
-				if temp[cat] then temp[cat]=temp[cat]+val["i"][2] else temp[cat] = val["i"][2] end
+			if DPSMate:ApplyFilter(k, catName) then
+				--DPSMate:SendMessage(catName.." and "..cName)
+				--DPSMate:SendMessage((DPSMateUser[cName][3] or "").." and "..(DPSMateUser[catName][3] or ""))
+				if DPSMateUser[cName][3] == DPSMateUser[catName][3] and DPSMateUser[catName][3] and DPSMateUser[cName][3] then
+					if temp[cat] then temp[cat]=temp[cat]+val["i"][2] else temp[cat] = val["i"][2] end
+				end
 			end
 		end
 	end
@@ -128,7 +130,7 @@ function DPSMate.Modules.FriendlyFire:GetSettingValues(arr, cbt, k)
 	if not DPSMate.Modules.FriendlyFire:CompareValues(DPSMate.Modules.FriendlyFire.v3(DPSMate.Modules.FriendlyFire.v5),DPSMate.Modules.FriendlyFire.v4(DPSMate.Modules.FriendlyFire.v5)) then return end
 	local name, value, perc, sortedTable, total, a, p, strt = {}, {}, {}, {}, 0, 0, "", {[1]="",[2]=""}
 	if DPSMateSettings["windows"][k]["numberformat"] == 2 then p = "K" end
-	sortedTable, total, a = DPSMate.Modules.FriendlyFire:GetSortedTable(arr)
+	sortedTable, total, a = DPSMate.Modules.FriendlyFire:GetSortedTable(arr,k)
 	for cat, val in pairs(sortedTable) do
 		local dmg, tot, sort = DPSMate:FormatNumbers(val, total, sortedTable[1], k)
 		if dmg==0 then break end

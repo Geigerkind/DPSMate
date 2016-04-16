@@ -223,6 +223,25 @@
 						<NormalTexture file="Interface\AddOns\DPSMate\images\UI-GuildButton-PublicNote-Up"/>
 						<PushedTexture file="Interface\AddOns\DPSMate\images\UI-GuildButton-PublicNote-Up"/>
 					</Button>
+					<Button name="$parent_Filter">
+						<Size x="14" y="14" />
+						<Scripts>
+							<OnEnter>
+								GameTooltip:SetOwner(this, "TOPLEFT")
+								GameTooltip:AddLine("Filter options")
+								GameTooltip:Show()
+							</OnEnter>
+							<OnLeave>
+								GameTooltip:Hide()
+							</OnLeave>
+							<OnMouseUp>
+								DPSMate.Options:OpenMenu(5, this:GetParent():GetParent())
+							</OnMouseUp>
+						</Scripts>
+						<HighlightTexture file="Interface\AddOns\DPSMate\images\UI-GuildButton-PublicNote-Up" alphaMode="ADD"/>
+						<NormalTexture file="Interface\AddOns\DPSMate\images\UI-GuildButton-PublicNote-Up"/>
+						<PushedTexture file="Interface\AddOns\DPSMate\images\UI-GuildButton-PublicNote-Up"/>
+					</Button>
 					<Button name="$parent_Report">
 						<Size x="14" y="14" />
 						<Scripts>
@@ -262,6 +281,22 @@
 						<NormalTexture file="Interface\AddOns\DPSMate\images\sync"/>
 						<PushedTexture file="Interface\AddOns\DPSMate\images\sync"/>
 					</Button>
+					<Checkbutton name="$parent_Enable" inherits="OptionsCheckButtonTemplate">
+						<Size x="18" y="18" />
+						<Scripts>
+							<OnEnter>
+								GameTooltip:SetOwner(this, "TOPLEFT")
+								GameTooltip:AddLine("Enable/Disable")
+								GameTooltip:Show()
+							</OnEnter>
+							<OnLeave>
+								GameTooltip:Hide()
+							</OnLeave>
+							<OnClick>
+								DPSMate.Options:ToggleState()
+							</OnClick>
+						</Scripts>
+					</Checkbutton>
 				</Frames>
 			</Frame>
 			<ScrollFrame name="$parent_ScrollFrame">

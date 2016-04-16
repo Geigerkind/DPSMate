@@ -38,7 +38,7 @@
 			<OnClick>
 				for cat, _ in pairs(DPSMateSettings["windows"]) do
 					for i=1, 3 do
-						getglobal("DPSMate_ConfigMenu_Menu_Button"..(7+cat).."_Button"..i.."Texture"):Hide()
+						getglobal("DPSMate_ConfigMenu_Menu_Button"..(8+cat).."_Button"..i.."Texture"):Hide()
 					end
 				end
 				for i=1, this:GetParent():GetParent().num do
@@ -78,7 +78,7 @@
 			<OnClick>
 				for cat, _ in pairs(DPSMateSettings["windows"]) do
 					for i=1, 3 do
-						getglobal("DPSMate_ConfigMenu_Menu_Button"..(7+cat).."_Button"..i.."Texture"):Hide()
+						getglobal("DPSMate_ConfigMenu_Menu_Button"..(8+cat).."_Button"..i.."Texture"):Hide()
 					end
 				end
 				for i=1, this:GetParent():GetParent():GetParent().num do
@@ -124,7 +124,7 @@
 			<OnClick>
 				for cat, _ in pairs(DPSMateSettings["windows"]) do
 					for i=1, 3 do
-						getglobal("DPSMate_ConfigMenu_Menu_Button"..(7+cat).."_Button"..i.."Texture"):Hide()
+						getglobal("DPSMate_ConfigMenu_Menu_Button"..(8+cat).."_Button"..i.."Texture"):Hide()
 					end
 				end
 				for i=1, this:GetParent():GetParent().num do
@@ -150,13 +150,13 @@
 				<Scripts>
 					<OnClick>
 						for cat, val in pairs(DPSMateSettings["windows"]) do
-							getglobal("DPSMate_ConfigMenu_Menu_Button"..(7+cat).."Expand"):Show()
-							getglobal("DPSMate_ConfigMenu_Menu_Button"..(7+cat).."Collapse"):Hide()
-							getglobal("DPSMate_ConfigMenu_Menu_Button"..(7+cat).."_Button1"):Hide()
-							getglobal("DPSMate_ConfigMenu_Menu_Button"..(7+cat).."_Button2"):Hide()
-							getglobal("DPSMate_ConfigMenu_Menu_Button"..(7+cat).."_Button3"):Hide()
-							getglobal("DPSMate_ConfigMenu_Menu_Button"..(7+cat)).after:ClearAllPoints()
-							getglobal("DPSMate_ConfigMenu_Menu_Button"..(7+cat)).after:SetPoint("TOP", getglobal("DPSMate_ConfigMenu_Menu_Button"..(7+cat)), "BOTTOM")
+							getglobal("DPSMate_ConfigMenu_Menu_Button"..(8+cat).."Expand"):Show()
+							getglobal("DPSMate_ConfigMenu_Menu_Button"..(8+cat).."Collapse"):Hide()
+							getglobal("DPSMate_ConfigMenu_Menu_Button"..(8+cat).."_Button1"):Hide()
+							getglobal("DPSMate_ConfigMenu_Menu_Button"..(8+cat).."_Button2"):Hide()
+							getglobal("DPSMate_ConfigMenu_Menu_Button"..(8+cat).."_Button3"):Hide()
+							getglobal("DPSMate_ConfigMenu_Menu_Button"..(8+cat)).after:ClearAllPoints()
+							getglobal("DPSMate_ConfigMenu_Menu_Button"..(8+cat)).after:SetPoint("TOP", getglobal("DPSMate_ConfigMenu_Menu_Button"..(8+cat)), "BOTTOM")
 						end
 						this:Hide()
 						getglobal(this:GetParent():GetName().."Collapse"):Show()
@@ -223,6 +223,10 @@
 							DPSMate_ConfigMenu_Tab_Bars_FontColor_SwatchBg.r = DPSMateSettings["windows"][this:GetParent().Key]["barfontcolor"][1]
 							DPSMate_ConfigMenu_Tab_Bars_FontColor_SwatchBg.g = DPSMateSettings["windows"][this:GetParent().Key]["barfontcolor"][2]
 							DPSMate_ConfigMenu_Tab_Bars_FontColor_SwatchBg.b = DPSMateSettings["windows"][this:GetParent().Key]["barfontcolor"][3]
+							DPSMate_ConfigMenu_Tab_Bars_BackgroundBarColorNormalTexture:SetVertexColor(DPSMateSettings["windows"][this:GetParent().Key]["bgbarcolor"][1], DPSMateSettings["windows"][this:GetParent().Key]["bgbarcolor"][2], DPSMateSettings["windows"][this:GetParent().Key]["bgbarcolor"][3])
+							DPSMate_ConfigMenu_Tab_Bars_BackgroundBarColor_SwatchBg.r = DPSMateSettings["windows"][this:GetParent().Key]["bgbarcolor"][1]
+							DPSMate_ConfigMenu_Tab_Bars_BackgroundBarColor_SwatchBg.g = DPSMateSettings["windows"][this:GetParent().Key]["bgbarcolor"][2]
+							DPSMate_ConfigMenu_Tab_Bars_BackgroundBarColor_SwatchBg.b = DPSMateSettings["windows"][this:GetParent().Key]["bgbarcolor"][3]
 						end
 					</OnLoad>
 				</Scripts>
@@ -247,6 +251,8 @@
 							DPSMate_ConfigMenu_Tab_TitleBar_Box1_Mode:SetChecked(DPSMateSettings["windows"][this:GetParent().Key]["titlebarsegments"])
 							DPSMate_ConfigMenu_Tab_TitleBar_Box1_Config:SetChecked(DPSMateSettings["windows"][this:GetParent().Key]["titlebarconfig"])
 							DPSMate_ConfigMenu_Tab_TitleBar_Box1_Sync:SetChecked(DPSMateSettings["windows"][this:GetParent().Key]["titlebarsync"])
+							DPSMate_ConfigMenu_Tab_TitleBar_Box1_Enable:SetChecked(DPSMateSettings["windows"][this:GetParent().Key]["titlebarenable"])
+							DPSMate_ConfigMenu_Tab_TitleBar_Box1_Filter:SetChecked(DPSMateSettings["windows"][this:GetParent().Key]["titlebarfilter"])
 							DPSMate_ConfigMenu_Tab_TitleBar_BGColorNormalTexture:SetVertexColor(DPSMateSettings["windows"][this:GetParent().Key]["titlebarbgcolor"][1], DPSMateSettings["windows"][this:GetParent().Key]["titlebarbgcolor"][2], DPSMateSettings["windows"][this:GetParent().Key]["titlebarbgcolor"][3])
 							DPSMate_ConfigMenu_Tab_TitleBar_BGColor_SwatchBg.r = DPSMateSettings["windows"][this:GetParent().Key]["titlebarbgcolor"][1]
 							DPSMate_ConfigMenu_Tab_TitleBar_BGColor_SwatchBg.g = DPSMateSettings["windows"][this:GetParent().Key]["titlebarbgcolor"][2]
@@ -985,6 +991,109 @@
 		</Frames>
 	</Frame>
 	
+	<Frame name="DPSMate_Logout" movable="true" hidden="true">
+		<Size x="250" y="80" />
+		<Anchors>
+			<Anchor point="CENTER" />
+		</Anchors>
+		<Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background" edgeFile="Interface\DialogFrame\UI-DialogBox-Border" tile="true">
+			<BackgroundInsets>
+				<AbsInset left="6" right="6" top="6" bottom="6" />
+			</BackgroundInsets>
+			<TileSize>
+				<AbsValue val="24" />
+			</TileSize>
+			<EdgeSize>
+				<AbsValue val="24" />
+			</EdgeSize>
+        </Backdrop>
+		<Layers>
+			<Layer level="ARTWORK">
+				<FontString name="$parent_Text" inherits="GameFontNormalSmall" justifyH="CENTER" alphaMode="ADD">
+					<Size x="230" y="58" />
+					<Anchors>
+						<Anchor point="TOP" />
+					</Anchors>
+					<Color r="1" g="1" b="1" a="1" />
+				</FontString>
+			</Layer>
+		</Layers>
+		<Scripts>
+			<OnMouseDown>
+				this:StartMoving()
+			</OnMouseDown>
+			<OnMouseUp>
+				this:StopMovingOrSizing()
+			</OnMouseUp>
+			<OnLoad>
+				DPSMate_Logout_Text:SetText(DPSMate.localization.memory)
+				DPSMate_Logout_AcceptText:SetText(DPSMate.localization.accept)
+				DPSMate_Logout_CancelText:SetText(DPSMate.localization.decline)
+				this:SetClampedToScreen()
+			</OnLoad>
+		</Scripts>
+		<Frames>
+			<Button name="$parent_Accept">
+				<Size x="80" y="24" />
+				<Anchors>
+					<Anchor point="TOP" relativeTo="$parent_Text" relativePoint="BOTTOM">
+						<Offset x="-50" y="7" />
+					</Anchor>
+				</Anchors>
+				<Layers>
+					<Layer level="ARTWORK">
+						<FontString name="$parentText" inherits="GameFontNormalSmall" text="Total">
+							<Size x="80" y="24" />
+							<Anchors>
+								<Anchor point="TOP">
+									<Offset x="0" y="4" />
+								</Anchor>
+							</Anchors>
+						</FontString>
+					</Layer>
+				</Layers>
+				<Scripts>
+					<OnClick>
+						DPSMate_Logout:Hide()
+						DPSMate.Options.Logout()
+					</OnClick>
+				</Scripts>
+				<NormalTexture file="Interface\Buttons\UI-DialogBox-Button-Up"/>
+				<PushedTexture file="Interface\Buttons\UI-DialogBox-Button-Down"/>
+				<HighlightTexture file="Interface\Buttons\UI-DialogBox-Button-Highlight" alphaMode="ADD"/>
+			</Button>
+			<Button name="$parent_Cancel">
+				<Size x="80" y="24" />
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="$parent_Accept" relativePoint="RIGHT">
+						<Offset x="20" y="0" />
+					</Anchor>
+				</Anchors>
+				<Layers>
+					<Layer level="ARTWORK">
+						<FontString name="$parentText" inherits="GameFontNormalSmall">
+							<Size x="80" y="24" />
+							<Anchors>
+								<Anchor point="TOP">
+									<Offset x="0" y="4" />
+								</Anchor>
+							</Anchors>
+						</FontString>
+					</Layer>
+				</Layers>
+				<Scripts>
+					<OnClick>
+						DPSMate_Logout:Hide()
+						DPSMate.Options.OldLogout()
+					</OnClick>
+				</Scripts>
+				<NormalTexture file="Interface\Buttons\UI-DialogBox-Button-Up"/>
+				<PushedTexture file="Interface\Buttons\UI-DialogBox-Button-Down"/>
+				<HighlightTexture file="Interface\Buttons\UI-DialogBox-Button-Highlight" alphaMode="ADD"/>
+			</Button>
+		</Frames>
+	</Frame>
+	
 	----------------------------------------------------------------------------------
 	--------------                   DPSMate Report                     --------------                                  
 	----------------------------------------------------------------------------------
@@ -1356,6 +1465,21 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
+								getglobal(this:GetName().."Text"):SetText(DPSMate.localization.config.raidleader)
+								this.func = function()
+									getglobal(this:GetParent():GetParent():GetName()..this:GetParent().selected):Hide()
+									getglobal(this:GetParent():GetParent():GetName().."_Tab_RaidLeader"):Show()
+									this:GetParent().selected = "_Tab_RaidLeader"
+								end
+							</OnLoad>
+						</Scripts>
+					</Button>
+					<Button name="$parent_Button8" inherits="DPSMate_Template_MenuButton">
+						<Anchors>
+							<Anchor point="TOP" relativeTo="$parent_Button7" relativePoint="BOTTOM" />
+						</Anchors>
+						<Scripts>
+							<OnLoad>
 								getglobal(this:GetName().."Text"):SetText(DPSMate.localization.config.about)
 								this.func = function()
 									getglobal(this:GetParent():GetParent():GetName()..this:GetParent().selected):Hide()
@@ -1506,6 +1630,21 @@
 									DPSMateSettings["lock"] = true
 									DPSMate.Options:Lock()
 								end
+							</OnClick>
+						</Scripts>
+					</CheckButton>
+					<CheckButton name="$parent_Testmode" inherits="DPSMate_Template_CheckButton">
+						<Anchors>
+							<Anchor point="TOP" relativeTo="$Parent_Lock" relativePoint="BOTTOM">
+								<Offset x="0" y="-5" />
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.testmode)
+							</OnLoad>
+							<OnClick>
+								DPSMate.Options:ActivateTestMode()
 							</OnClick>
 						</Scripts>
 					</CheckButton>
@@ -1682,6 +1821,28 @@
 									for i=1, 30 do
 										getglobal("DPSMate_"..DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["name"].."_ScrollFrame_Child_StatusBar"..i.."_Name"):SetTextColor(DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["barfontcolor"][1], DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["barfontcolor"][2], DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["barfontcolor"][3])
 										getglobal("DPSMate_"..DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["name"].."_ScrollFrame_Child_StatusBar"..i.."_Value"):SetTextColor(DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["barfontcolor"][1], DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["barfontcolor"][2], DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["barfontcolor"][3])
+									end
+								end
+							</OnLoad>
+						</Scripts>
+					</Button>
+					<Button name="$parent_BackgroundBarColor" inherits="DPSMate_Template_Colorpicker">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent_FontColor" relativePoint="BOTTOMLEFT">
+								<Offset x="0" y="-5" />
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								getglobal(this:GetName().."_Font"):SetText(DPSMate.localization.config.bgbarcolor)
+								getglobal(this:GetName().."_SwatchBg").r = 1
+								getglobal(this:GetName().."_SwatchBg").g = 1
+								getglobal(this:GetName().."_SwatchBg").b = 1
+								this.aide = DPSMate.localization.config.bgbarcolorTooltip
+								this.var = "bgbarcolor"
+								this.func = function()
+									for i=1, 30 do
+										getglobal("DPSMate_"..DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["name"].."_ScrollFrame_Child_StatusBar"..i.."_BG"):SetVertexColor(DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["bgbarcolor"][1], DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["bgbarcolor"][2], DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["bgbarcolor"][3], 0.5)
 									end
 								end
 							</OnLoad>
@@ -1913,7 +2074,7 @@
 						</Scripts>
 					</Button>
 					<Frame name="$parent_Box1" inherits="DPSMate_Template_Box">
-						<Size x="281" y="50" />
+						<Size x="281" y="70" />
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="$parent_BarHeight" relativePoint="BOTTOMLEFT">
 								<Offset x="0" y="-25" />
@@ -2025,6 +2186,44 @@
 											DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["titlebarsync"] = false
 										else
 											DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["titlebarsync"] = true
+										end
+										DPSMate.Options:ToggleTitleBarButtonState()
+									</OnClick>
+								</Scripts>
+							</CheckButton>
+							<CheckButton name="$parent_Enable" inherits="DPSMate_Template_CheckButton">
+								<Anchors>
+									<Anchor point="LEFT" relativeTo="$Parent_Config" relativePoint="RIGHT">
+										<Offset x="67" y="0" />
+									</Anchor>
+								</Anchors>
+								<Scripts>
+									<OnLoad>
+										getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.enabledisable)
+									</OnLoad>
+									<OnClick>
+										if DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["titlebarenable"] then
+											DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["titlebarenable"] = false
+										else
+											DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["titlebarenable"] = true
+										end
+										DPSMate.Options:ToggleTitleBarButtonState()
+									</OnClick>
+								</Scripts>
+							</CheckButton>
+							<CheckButton name="$parent_Filter" inherits="DPSMate_Template_CheckButton">
+								<Anchors>
+									<Anchor point="TOPLEFT" relativeTo="$Parent_Mode" relativePoint="BOTTOMLEFT" />
+								</Anchors>
+								<Scripts>
+									<OnLoad>
+										getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.filter)
+									</OnLoad>
+									<OnClick>
+										if DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["titlebarfilter"] then
+											DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["titlebarfilter"] = false
+										else
+											DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["titlebarfilter"] = true
 										end
 										DPSMate.Options:ToggleTitleBarButtonState()
 									</OnClick>
@@ -2233,6 +2432,23 @@
 								this.aide = DPSMate.localization.config.syncrequesttooltip
 								this.func = DPSMate.Options.DataResetsDropDown
 								this.title = DPSMate.localization.config.syncrequest
+								UIDropDownMenu_SetWidth(120)
+								getglobal(this:GetName().."_Text"):SetText(this.title)
+							</OnLoad>
+						</Scripts>
+					</Frame>
+					<Frame name="$parent_Logout" inherits="DPSMate_Template_DropDown">
+						<Size x="120" y="24" />
+						<Anchors>
+							<Anchor point="LEFT" relativeTo="$parent_Sync" relativePoint="RIGHT">
+								<Offset x="-20" y="0" />
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								this.aide = DPSMate.localization.config.dataresetslogouttooltip
+								this.func = DPSMate.Options.DataResetsDropDown
+								this.title = DPSMate.localization.config.dataresetslogout
 								UIDropDownMenu_SetWidth(120)
 								getglobal(this:GetName().."_Text"):SetText(this.title)
 							</OnLoad>
@@ -4284,6 +4500,31 @@
 										break
 									end
 								end
+							</OnClick>
+						</Scripts>
+					</Button>
+				</Frames>
+			</Frame>
+			
+			<Frame name="$parent_Tab_RaidLeader" inherits="DPSMate_Template_Box" hidden="true">
+				<Size x="301" y="250" />
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="$parent_Menu" relativePoint="RIGHT" />
+				</Anchors>
+				<Frames>
+					<Button name="$parent_HelloWorld" inherits="DPSMate_Template_Button">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset x="10" y="-10" />
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								this.aide = "Return a list of player being in the Synced-Channel."
+								getglobal(this:GetName().."Text"):SetText("Hello World!")
+							</OnLoad>
+							<OnClick>
+								DPSMate.Sync:HelloWorld()
 							</OnClick>
 						</Scripts>
 					</Button>

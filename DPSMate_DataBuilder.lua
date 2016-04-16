@@ -80,23 +80,40 @@ function DPSMate.DB:OnEvent(event)
 						titlebarsegments = true,
 						titlebarconfig = true,
 						titlebarsync = true,
+						titlebarenable = true,
+						titlebarfilter = true,
 						titlebartexture = "Healbot",
 						titlebarbgcolor = {0.01568627450980392,0,1},
 						titlebarfontcolor = {1.0,0.82,0.0},
 						barfontcolor = {1.0,1.0,1.0},
 						contentbgtexture = "UI-Tooltip-Background",
 						contentbgcolor = {0.01568627450980392,0,1},
+						bgbarcolor = {0,0,0},
 						numberformat = 1,
 						opacity = 1,
+						filterclasses = {
+							warrior = true,
+							rogue = true,
+							priest = true,
+							hunter = true,
+							mage = true,
+							warlock = true,
+							paladin = true,
+							shamen = true,
+							druid = true,
+						},
+						filterpeople = "",
 					}
 				},
 				lock = false,
 				sync = true,
+				enable = true,
 				dataresetsworld = 3,
 				dataresetsjoinparty = 3,
 				dataresetsleaveparty = 2,
 				dataresetspartyamount = 3,
 				dataresetssync = 3,
+				dataresetslogout = 3,
 				showminimapbutton = true,
 				showtotals = true,
 				hidewhensolo = false,
@@ -453,7 +470,7 @@ function DPSMate.DB:OnGroupUpdate()
 	local num = GetNumRaidMembers()
 	DPSMate.Parser.TargetParty = {}
 	if num<=0 then
-		type = "raid"
+		type = "party"
 		num = GetNumPartyMembers()
 	end
 	for i=1, num do

@@ -85,6 +85,14 @@ DPSMate.Options.Options = {
 	[3] = {
 		type = 'group',
 		args = {
+			test = {
+				order = 5,
+				type = 'toggle',
+				name = DPSMate.localization.config.testmode,
+				desc = DPSMate.localization.desc.testmode,
+				get = function() return DPSMate.Options.TestMode end,
+				set = function() DPSMate.Options:ActivateTestMode(); DPSMate.Options.Dewdrop:Close() end,
+			},
 			report = {
 				order = 10,
 				type = 'execute',
@@ -195,9 +203,105 @@ DPSMate.Options.Options = {
 		},
 		handler = DPSMate.Options,
 	},
+	[5] = {
+		type = 'group',
+		args = {
+			classes = {
+				order = 10,
+				type = 'group',
+				name = 'Classes',
+				desc = 'TO BE ADDED!',
+				args = {
+					warrior = {
+						order = 10,
+						type = 'toggle',
+						name = 'Warrior',
+						desc = 'Show warriors',
+						get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["filterclasses"]["warrior"] end,
+						set = function() DPSMate.Options:ToggleFilterClass(DPSMate.Options.Dewdrop:GetOpenedParent().Key, "warrior");DPSMate.Options.Dewdrop:Close() end,
+					},
+					rogue = {
+						order = 20,
+						type = 'toggle',
+						name = 'Rogue',
+						desc = 'Show rogues',
+						get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["filterclasses"]["rogue"] end,
+						set = function() DPSMate.Options:ToggleFilterClass(DPSMate.Options.Dewdrop:GetOpenedParent().Key, "rogue");DPSMate.Options.Dewdrop:Close() end,
+					},
+					priest = {
+						order = 30,
+						type = 'toggle',
+						name = 'Priest',
+						desc = 'Show priests',
+						get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["filterclasses"]["priest"] end,
+						set = function() DPSMate.Options:ToggleFilterClass(DPSMate.Options.Dewdrop:GetOpenedParent().Key, "priest");DPSMate.Options.Dewdrop:Close() end,
+					},
+					hunter = {
+						order = 40,
+						type = 'toggle',
+						name = 'Hunter',
+						desc = 'Show hunters',
+						get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["filterclasses"]["hunter"] end,
+						set = function() DPSMate.Options:ToggleFilterClass(DPSMate.Options.Dewdrop:GetOpenedParent().Key, "hunter");DPSMate.Options.Dewdrop:Close() end,
+					},
+					druid = {
+						order = 50,
+						type = 'toggle',
+						name = 'Druid',
+						desc = 'Show druids',
+						get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["filterclasses"]["druid"] end,
+						set = function() DPSMate.Options:ToggleFilterClass(DPSMate.Options.Dewdrop:GetOpenedParent().Key, "druid");DPSMate.Options.Dewdrop:Close() end,
+					},
+					mage = {
+						order = 60,
+						type = 'toggle',
+						name = 'Mage',
+						desc = 'Show mages',
+						get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["filterclasses"]["mage"] end,
+						set = function() DPSMate.Options:ToggleFilterClass(DPSMate.Options.Dewdrop:GetOpenedParent().Key, "mage");DPSMate.Options.Dewdrop:Close() end,
+					},
+					warlock = {
+						order = 70,
+						type = 'toggle',
+						name = 'Warlock',
+						desc = 'Show warlocks',
+						get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["filterclasses"]["warlock"] end,
+						set = function() DPSMate.Options:ToggleFilterClass(DPSMate.Options.Dewdrop:GetOpenedParent().Key, "warlock");DPSMate.Options.Dewdrop:Close() end,
+					},
+					paladin = {
+						order = 80,
+						type = 'toggle',
+						name = 'Paladin',
+						desc = 'Show paladins',
+						get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["filterclasses"]["paladin"] end,
+						set = function() DPSMate.Options:ToggleFilterClass(DPSMate.Options.Dewdrop:GetOpenedParent().Key, "paladin");DPSMate.Options.Dewdrop:Close() end,
+					},
+					shamen = {
+						order = 90,
+						type = 'toggle',
+						name = 'Shamen',
+						desc = 'Show shamens',
+						get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["filterclasses"]["shamen"] end,
+						set = function() DPSMate.Options:ToggleFilterClass(DPSMate.Options.Dewdrop:GetOpenedParent().Key, "shamen");DPSMate.Options.Dewdrop:Close() end,
+					},
+				},
+			},
+			people = {
+				order = 20,
+				type = 'text',
+				name = 'Certain names',
+				desc = 'Split them by "," Ex: Shino,',
+				get = function() if DPSMate.Options.Dewdrop:GetOpenedParent() then return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["filterpeople"] else return "" end end,
+				set = function(names) DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["filterpeople"] = names;DPSMate:SetStatusBarValue();DPSMate.Options.Dewdrop:Close() end,
+				usage = "<names>",
+			},
+		},
+		handler = DPSMate.Options,
+	},
 }
 DPSMate.Options.f1 = DPSMate.localization.g
 DPSMate.Options.f2 = DPSMate.localization.p
+DPSMate.Options.TestMode = false
 
 -- Local Variables
 local _G = getglobal
@@ -211,17 +315,17 @@ local SelectedChannel = "Raid"
 function DPSMate.Options:InitializeConfigMenu()
 	-- Inialize Extra Buttons
 	for cat, val in pairs(DPSMateSettings["windows"]) do
-		local f = CreateFrame("Button", "DPSMate_ConfigMenu_Menu_Button"..(7+cat), DPSMate_ConfigMenu_Menu, "DPSMate_Template_WindowButton")
+		local f = CreateFrame("Button", "DPSMate_ConfigMenu_Menu_Button"..(8+cat), DPSMate_ConfigMenu_Menu, "DPSMate_Template_WindowButton")
 		f.Key = cat
-		_G("DPSMate_ConfigMenu_Menu_Button"..(7+cat).."Text"):SetText(val["name"])
+		_G("DPSMate_ConfigMenu_Menu_Button"..(8+cat).."Text"):SetText(val["name"])
 		if cat>1 then
-			f:SetPoint("TOP", _G("DPSMate_ConfigMenu_Menu_Button"..(6+cat)), "BOTTOM")
-			_G("DPSMate_ConfigMenu_Menu_Button"..(6+cat)).after = f
+			f:SetPoint("TOP", _G("DPSMate_ConfigMenu_Menu_Button"..(7+cat)), "BOTTOM")
+			_G("DPSMate_ConfigMenu_Menu_Button"..(7+cat)).after = f
 		else
 			f:SetPoint("TOP", DPSMate_ConfigMenu_Menu_Button1, "BOTTOM")
 		end
 		f.after = DPSMate_ConfigMenu_Menu_Button2
-		DPSMate_ConfigMenu.num = 7+cat
+		DPSMate_ConfigMenu.num = 8+cat
 		f.func = function()
 			_G(this:GetParent():GetParent():GetName()..this:GetParent().selected):Hide()
 			_G(this:GetParent():GetParent():GetName().."_Tab_Window"):Show()
@@ -231,7 +335,7 @@ function DPSMate.Options:InitializeConfigMenu()
 	local TL = DPSMate:TableLength(DPSMateSettings["windows"])
 	if TL>=1 then
 		DPSMate_ConfigMenu_Menu_Button2:ClearAllPoints()
-		DPSMate_ConfigMenu_Menu_Button2:SetPoint("TOP", _G("DPSMate_ConfigMenu_Menu_Button"..(7+TL)), "BOTTOM")
+		DPSMate_ConfigMenu_Menu_Button2:SetPoint("TOP", _G("DPSMate_ConfigMenu_Menu_Button"..(8+TL)), "BOTTOM")
 	end
 		
 	-- Tab Window
@@ -322,6 +426,68 @@ function DPSMate.Options:IsFrame(s)
 		v = v..string.byte(s,i,i)
 	end
 	return tonumber(v)
+end
+
+DPSMate.Options.OldLogout = Logout
+function DPSMate.Options:Logout()
+	if DPSMateSettings["sync"] then
+		if UnitInRaid("player") then
+			DPSMate:SendMessage("DPSMate cant be reset while being in Sync-Mode in raids.")
+		else
+			DPSMate.Options:PopUpAccept(true, true)
+		end
+	else
+		DPSMate.Options:PopUpAccept(true, true)
+	end
+	DPSMate.Options.OldLogout()
+end
+Logout = function() 
+	if DPSMateSettings["dataresetslogout"] == 3 then
+		DPSMate_Logout:Show() 
+	elseif DPSMateSettings["dataresetslogout"] == 2 then
+		DPSMate.Options.OldLogout()
+	else
+		DPSMate.Options:Logout()
+	end
+end
+
+function DPSMate.Options:ActivateTestMode()
+	if self.TestMode then
+		self.TestMode = false
+		DPSMate:SetStatusBarValue()
+	else
+		self.TestMode = true
+		for k,c in DPSMateSettings.windows do
+			if DPSMateSettings["showtotals"] then
+				_G("DPSMate_"..c["name"].."_ScrollFrame_Child_Total_Name"):SetText("Total")
+				_G("DPSMate_"..c["name"].."_ScrollFrame_Child_Total_Value"):SetText("3000000")
+			end
+			for i=1, 30 do
+				local statusbar, name, value, texture, p = _G("DPSMate_"..c["name"].."_ScrollFrame_Child_StatusBar"..i), _G("DPSMate_"..c["name"].."_ScrollFrame_Child_StatusBar"..i.."_Name"), _G("DPSMate_"..c["name"].."_ScrollFrame_Child_StatusBar"..i.."_Value"), _G("DPSMate_"..c["name"].."_ScrollFrame_Child_StatusBar"..i.."_Icon"), ""
+				_G("DPSMate_"..c["name"].."_ScrollFrame_Child"):SetHeight((i+1)*(c["barheight"]+c["barspacing"]))
+				
+				statusbar:SetStatusBarColor(0.78,0.61,0.43, 1)
+				
+				if c["ranks"] then p=i..". " else p="" end
+				name:SetText(p.."Test "..i)
+				value:SetText("100000")
+				texture:SetTexture("Interface\\AddOns\\DPSMate\\images\\class\\warrior")
+				statusbar:SetValue(100)
+				
+				statusbar.user = nil
+				statusbar:Show()
+			end
+		end
+	end
+end
+
+function DPSMate.Options:ToggleFilterClass(key, class)
+	if DPSMateSettings["windows"][key]["filterclasses"][class] then
+		DPSMateSettings["windows"][key]["filterclasses"][class] = false
+	else
+		DPSMateSettings["windows"][key]["filterclasses"][class] = true
+	end
+	DPSMate:SetStatusBarValue()
 end
 
 function DPSMate.Options:CompareFrames(a,b)
@@ -928,7 +1094,7 @@ function DPSMate.Options:ContentBGTextureDropDown()
 end
 
 function DPSMate.Options:SelectDataResets(obj, case)
-	local vars = {["DPSMate_ConfigMenu_Tab_DataResets_EnteringWorld"] = "dataresetsworld", ["DPSMate_ConfigMenu_Tab_DataResets_PartyMemberChanged"] = "dataresetspartyamount", ["DPSMate_ConfigMenu_Tab_DataResets_JoinParty"] = "dataresetsjoinparty", ["DPSMate_ConfigMenu_Tab_DataResets_LeaveParty"] = "dataresetsleaveparty", ["DPSMate_ConfigMenu_Tab_DataResets_Sync"] = "dataresetssync"}
+	local vars = {["DPSMate_ConfigMenu_Tab_DataResets_EnteringWorld"] = "dataresetsworld", ["DPSMate_ConfigMenu_Tab_DataResets_PartyMemberChanged"] = "dataresetspartyamount", ["DPSMate_ConfigMenu_Tab_DataResets_JoinParty"] = "dataresetsjoinparty", ["DPSMate_ConfigMenu_Tab_DataResets_LeaveParty"] = "dataresetsleaveparty", ["DPSMate_ConfigMenu_Tab_DataResets_Sync"] = "dataresetssync", ["DPSMate_ConfigMenu_Tab_DataResets_Logout"] = "dataresetslogout"}
 	DPSMateSettings[vars[obj:GetName()]] = case
 	UIDropDownMenu_SetSelectedValue(obj, case)
 end
@@ -954,6 +1120,7 @@ function DPSMate.Options:DataResetsDropDown()
 		UIDropDownMenu_SetSelectedValue(DPSMate_ConfigMenu_Tab_DataResets_PartyMemberChanged, DPSMateSettings["dataresetspartyamount"])
 		UIDropDownMenu_SetSelectedValue(DPSMate_ConfigMenu_Tab_DataResets_LeaveParty, DPSMateSettings["dataresetsleaveparty"])
 		UIDropDownMenu_SetSelectedValue(DPSMate_ConfigMenu_Tab_DataResets_Sync, DPSMateSettings["dataresetssync"])
+		UIDropDownMenu_SetSelectedValue(DPSMate_ConfigMenu_Tab_DataResets_Logout, DPSMateSettings["dataresetslogout"])
 	end
 	DPSMate_ConfigMenu.visBars8 = true
 end
@@ -1224,36 +1391,52 @@ function DPSMate.Options:CreateWindow()
 			titlebarreset = true,
 			titlebarsegments = true,
 			titlebarconfig = true,
-			titlebarsync = true,
+			titlebarenable = true,
+			titlebarfilter = true,
+			titlebarsync = DPSMateSettings["sync"],
+			titlebarenable = DPSMateSettings["enable"],
 			titlebartexture = "Healbot",
 			titlebarbgcolor = {0.01568627450980392,0,1},
 			titlebarfontcolor = {1.0,0.82,0.0},
 			barfontcolor = {1.0,1.0,1.0},
 			contentbgtexture = "UI-Tooltip-Background",
 			contentbgcolor = {0.01568627450980392,0,1},
+			bgbarcolor = {0,0,0},
 			numberformat = 1,
 			opacity = 1,
+			filterclasses = {
+				warrior = true,
+				rogue = true,
+				priest = true,
+				hunter = true,
+				mage = true,
+				warlock = true,
+				paladin = true,
+				shamen = true,
+				druid = true,
+			},
+			filterpeople = "",
 		})
 		local TL = DPSMate:TableLength(DPSMateSettings["windows"])
 		if not _G("DPSMate_"..na) then
 			local fr=CreateFrame("Frame", "DPSMate_"..na, UIParent, "DPSMate_Statusframe")
 			fr.Key=TL
 		end
-		if not _G("DPSMate_ConfigMenu_Menu_Button"..(7+TL)) then
-			local f = CreateFrame("Button", "DPSMate_ConfigMenu_Menu_Button"..(7+TL), DPSMate_ConfigMenu_Menu, "DPSMate_Template_WindowButton")
+		if not _G("DPSMate_ConfigMenu_Menu_Button"..(8+TL)) then
+			local f = CreateFrame("Button", "DPSMate_ConfigMenu_Menu_Button"..(8+TL), DPSMate_ConfigMenu_Menu, "DPSMate_Template_WindowButton")
 			f.Key = TL
 		end
-		local frame = _G("DPSMate_ConfigMenu_Menu_Button"..(7+TL))
+		local frame = _G("DPSMate_ConfigMenu_Menu_Button"..(8+TL))
 		frame:Show()
-		_G("DPSMate_ConfigMenu_Menu_Button"..(7+TL).."Text"):SetText(na)
+		_G("DPSMate_ConfigMenu_Menu_Button"..(8+TL).."Text"):SetText(na)
 		if TL>1 then
-			frame:SetPoint("TOP", _G("DPSMate_ConfigMenu_Menu_Button"..(6+TL)), "BOTTOM")
-			_G("DPSMate_ConfigMenu_Menu_Button"..(6+TL)).after = frame
+			frame:SetPoint("TOP", _G("DPSMate_ConfigMenu_Menu_Button"..(7+TL)), "BOTTOM")
+			_G("DPSMate_ConfigMenu_Menu_Button"..(7+TL)).after = frame
 		else
 			frame:SetPoint("TOP", DPSMate_ConfigMenu_Menu_Button1, "BOTTOM")
 		end
 		frame.after = DPSMate_ConfigMenu_Menu_Button2
-		DPSMate_ConfigMenu.num = 7+TL
+		DPSMate_ConfigMenu.num = 8+TL
 		frame.func = function()
 			_G(this:GetParent():GetParent():GetName()..this:GetParent().selected):Hide()
 			_G(this:GetParent():GetParent():GetName().."_Tab_Window"):Show()
@@ -1339,7 +1522,7 @@ function DPSMate.Options:RemoveSegment(i)
 end
 
 function DPSMate.Options:ToggleTitleBarButtonState()
-	local buttons = {"Config", "Reset", "Segments", "Report", "Sync"}
+	local buttons = {"Config", "Reset", "Segments", "Filter", "Report", "Sync", "Enable"}
 	for _, val in pairs(DPSMateSettings["windows"]) do
 		local parent, i = _G("DPSMate_"..val["name"].."_Head"), 0
 		for _, name in pairs(buttons) do
@@ -1352,6 +1535,24 @@ function DPSMate.Options:ToggleTitleBarButtonState()
 			else
 				button:Hide()
 			end
+		end
+	end
+end
+
+function DPSMate.Options:ToggleState()
+	if DPSMateSettings["enable"] then
+		DPSMateSettings["sync"] = false
+		DPSMateSettings["enable"] = false
+		DPSMate:Disable()
+		for cat, val in DPSMateSettings["windows"] do
+			_G("DPSMate_"..val["name"].."_Head_Sync"):GetNormalTexture():SetVertexColor(1,0,0,1)
+			_G("DPSMate_"..val["name"].."_Head_Enable"):SetChecked(false)
+		end
+	else
+		DPSMateSettings["enable"] = true
+		DPSMate:Enable()
+		for cat, val in DPSMateSettings["windows"] do
+			_G("DPSMate_"..val["name"].."_Head_Enable"):SetChecked(true)
 		end
 	end
 end
@@ -1471,7 +1672,9 @@ function DPSMate.Options:ToggleSync()
 		end
 	else
 		DPSMateSettings["sync"] = true
+		DPSMateSettings["enable"] = true
 		for _, val in pairs(DPSMateSettings["windows"]) do
+			_G("DPSMate_"..val["name"].."_Head_Enable"):SetChecked(true)
 			_G("DPSMate_"..val["name"].."_Head_Sync"):GetNormalTexture():SetVertexColor(0.67,0.83,0.45,1)
 		end
 	end

@@ -22,31 +22,33 @@ function DPSMate.Modules.HealingAndAbsorbs:GetSortedTable(arr, k)
 		for cat, val in pairs(arr) do -- 28 Target
 			local PerPlayerAbsorb = 0
 			for ca, va in pairs(val) do -- 28 Owner
-				local PerOwnerAbsorb = 0
-				for c, v in pairs(va) do -- Power Word: Shield
-					if c~="i" then
-						local PerAbilityAbsorb = 0
-						for ce, ve in pairs(v) do -- 1
-							local PerShieldAbsorb = 0
-							for cet, vel in pairs(ve) do
-								if cet~="i" then
-									local p = 5
-									if DPSMateDamageTaken[1][cat][cet][vel[1]][14]~=0 then
-										p=ceil(DPSMateDamageTaken[1][cat][cet][vel[1]][14])
+				if DPSMate:ApplyFilter(k, DPSMate:GetUserById(ca)) then
+					local PerOwnerAbsorb = 0
+					for c, v in pairs(va) do -- Power Word: Shield
+						if c~="i" then
+							local PerAbilityAbsorb = 0
+							for ce, ve in pairs(v) do -- 1
+								local PerShieldAbsorb = 0
+								for cet, vel in pairs(ve) do
+									if cet~="i" then
+										local p = 5
+										if DPSMateDamageTaken[1][cat][cet][vel[1]][14]~=0 then
+											p=ceil(DPSMateDamageTaken[1][cat][cet][vel[1]][14])
+										end
+										PerShieldAbsorb=PerShieldAbsorb+vel[2]*p
 									end
-									PerShieldAbsorb=PerShieldAbsorb+vel[2]*p
 								end
+								if ve["i"][1]==1 then
+									PerShieldAbsorb=PerShieldAbsorb+ve["i"][2]
+								end
+								PerAbilityAbsorb = PerAbilityAbsorb+PerShieldAbsorb
 							end
-							if ve["i"][1]==1 then
-								PerShieldAbsorb=PerShieldAbsorb+ve["i"][2]
-							end
-							PerAbilityAbsorb = PerAbilityAbsorb+PerShieldAbsorb
+							PerOwnerAbsorb = PerOwnerAbsorb+PerAbilityAbsorb
 						end
-						PerOwnerAbsorb = PerOwnerAbsorb+PerAbilityAbsorb
 					end
+					PerPlayerAbsorb = PerPlayerAbsorb+PerOwnerAbsorb
+					b[ca] = PerOwnerAbsorb
 				end
-				PerPlayerAbsorb = PerPlayerAbsorb+PerOwnerAbsorb
-				b[ca] = PerOwnerAbsorb
 			end
 			total = total+PerPlayerAbsorb
 		end
@@ -55,8 +57,10 @@ function DPSMate.Modules.HealingAndAbsorbs:GetSortedTable(arr, k)
 		local d, total2 = {}, 0
 		local arr = DPSMate:GetModeByArr(DPSMateEHealing, k)
 		for c, v in pairs(arr) do
-			d[c] = v["i"][1]
-			total2 = total2 + v["i"][1]
+			if DPSMate:ApplyFilter(k, DPSMate:GetUserById(c)) then
+				d[c] = v["i"][1]
+				total2 = total2 + v["i"][1]
+			end
 		end
 		
 		-- Merge tables

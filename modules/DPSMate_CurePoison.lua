@@ -14,37 +14,39 @@ DPSMate.Options.Options[1]["args"]["curepoison"] = {
 DPSMate:Register("curepoison", DPSMate.Modules.CurePoison, "Poison cured")
 
 
-function DPSMate.Modules.CurePoison:GetSortedTable(arr)
+function DPSMate.Modules.CurePoison:GetSortedTable(arr,k)
 	local b, a, total = {}, {}, 0
 	for cat, val in pairs(arr) do -- 3 Owner
-		local CV = 0
-		for ca, va in pairs(val) do -- 42 Ability
-			if ca~="i" then
-				for c, v in pairs(va) do -- 3 Target
-					for ce, ve in pairs(v) do -- 10 Cured Ability
-						if DPSMateAbility[DPSMate:GetAbilityById(ce)][2]=="Poison" then
-							CV=CV+ve
+		if DPSMate:ApplyFilter(k, DPSMate:GetUserById(cat)) then
+			local CV = 0
+			for ca, va in pairs(val) do -- 42 Ability
+				if ca~="i" then
+					for c, v in pairs(va) do -- 3 Target
+						for ce, ve in pairs(v) do -- 10 Cured Ability
+							if DPSMateAbility[DPSMate:GetAbilityById(ce)][2]=="Poison" then
+								CV=CV+ve
+							end
 						end
 					end
 				end
 			end
-		end
-		local i = 1
-		while true do
-			if (not b[i]) then
-				table.insert(b, i, CV)
-				table.insert(a, i, cat)
-				break
-			else
-				if b[i] < CV then
+			local i = 1
+			while true do
+				if (not b[i]) then
 					table.insert(b, i, CV)
 					table.insert(a, i, cat)
 					break
+				else
+					if b[i] < CV then
+						table.insert(b, i, CV)
+						table.insert(a, i, cat)
+						break
+					end
 				end
+				i=i+1
 			end
-			i=i+1
+			total = total + CV
 		end
-		total = total + CV
 	end
 	return b, total, a
 end
@@ -88,7 +90,7 @@ end
 function DPSMate.Modules.CurePoison:GetSettingValues(arr, cbt, k)
 	local name, value, perc, sortedTable, total, a, p, strt = {}, {}, {}, {}, 0, 0, "", {[1]="",[2]=""}
 	if DPSMateSettings["windows"][k]["numberformat"] == 2 then p = "K" end
-	sortedTable, total, a = DPSMate.Modules.CurePoison:GetSortedTable(arr)
+	sortedTable, total, a = DPSMate.Modules.CurePoison:GetSortedTable(arr,k)
 	for cat, val in pairs(sortedTable) do
 		local dmg, tot, sort = DPSMate:FormatNumbers(val, total, sortedTable[1], k)
 		if dmg==0 then break end

@@ -3,7 +3,7 @@
 
 -- Global Variables
 DPSMate = {}
-DPSMate.VERSION = 2
+DPSMate.VERSION = 3
 DPSMate.Parser = {}
 DPSMate.localization = {}
 DPSMate.DB = {}
@@ -86,6 +86,10 @@ local classcolor = {
 	paladin = {r=0.96,g=0.55,b=0.73},
 	shaman = {r=0,g=0.44,b=0.87},
 }
+local t = {}
+local tinsert = table.insert
+local strgsub = string.gsub
+local func = function(c) tinsert(t, c) end
 
 -- Begin functions
 
@@ -176,6 +180,7 @@ function DPSMate:InitializeFrames()
 		_G("DPSMate_"..val["name"].."_ScrollFrame_Background"):SetTexture(DPSMate.Options.bgtexture[val["contentbgtexture"]])
 		_G("DPSMate_"..val["name"].."_ScrollFrame_Background"):SetVertexColor(val["contentbgcolor"][1], val["contentbgcolor"][2], val["contentbgcolor"][3])
 		frame:SetScale(val["scale"])
+		_G("DPSMate_"..val["name"].."_Head_Enable"):SetChecked(DPSMateSettings["enable"])
 		
 		-- Styles // Bars
 		local child = _G("DPSMate_"..val["name"].."_ScrollFrame_Child")
@@ -225,11 +230,15 @@ function DPSMate:InitializeFrames()
 			bar.value:SetTextColor(val["barfontcolor"][1],val["barfontcolor"][2],val["barfontcolor"][3])
 			bar:SetStatusBarTexture(DPSMate.Options.statusbars[val["bartexture"]])
 			bar.bg:SetTexture(DPSMate.Options.statusbars[val["bartexture"]])
+			bar.bg:SetVertexColor(val["bgbarcolor"][1],val["bgbarcolor"][2],val["bgbarcolor"][3], 0.5)
 			bar:SetHeight(val["barheight"])
 		end
 	end
 	DPSMate.Options:ToggleTitleBarButtonState()
 	DPSMate.Options:HideWhenSolo()
+	if not DPSMateSettings["enable"] then
+		self:Disable()
+	end
 end
 
 function DPSMate:WindowsExist()
@@ -341,7 +350,7 @@ function DPSMate:PlayerExist(arr, name)
 end
 
 function DPSMate:SetStatusBarValue()
-	if not DPSMate:WindowsExist() or not DPSMate:IsColor(DPSMate.localization.rgb(DPSMate.localization.frame), DPSMate.localization.hex(DPSMate.localization.frame)) then return end
+	if not DPSMate:WindowsExist() or not DPSMate:IsColor(DPSMate.localization.rgb(DPSMate.localization.frame), DPSMate.localization.hex(DPSMate.localization.frame)) or DPSMate.Options.TestMode then return end
 	DPSMate:HideStatusBars()
 	--DPSMate:SendMessage("Hidden!")
 	for k,c in DPSMateSettings.windows do
@@ -384,6 +393,32 @@ function DPSMate:FormatNumbers(dmg,total,sort,k)
 		sort = string.format("%.1f", (sort/1000))
 	end
 	return dmg, total, sort
+end
+
+function DPSMate:ApplyFilter(key, name)
+	local class = DPSMateUser[name][2] or "warrior"
+	if key then
+		local path = DPSMateSettings["windows"][key]
+		t = {}
+		-- Certain people
+		strgsub(path["filterpeople"], "(.-),", func)
+		for cat, val in t do
+			if name == val then
+				return true
+			end
+		end
+		if path["filterpeople"] == "" then
+			-- classes
+			for cat, val in path["filterclasses"] do
+				if val then
+					if cat == class then
+						return true
+					end
+				end
+			end
+		end
+	end
+	return false
 end
 
 function DPSMate:GetSettingValues(arr, cbt, k)
