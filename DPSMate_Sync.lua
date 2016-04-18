@@ -47,15 +47,17 @@ end
 
 local co, cou = 1, 1
 function DPSMate.Sync:SendAddonMessages(elapsed)
-	self.LU = self.LU + elapsed
-	if self.LU > 0.5 then
-		for i=1, 50 do
-			if not Buffer[1] then break end
-			SendAddonMessage(Buffer[co][1], Buffer[co][2], "RAID")
-			Buffer[co] = nil
-			co = co + 1
+	if DPSMateSettings["sync"] then
+		self.LU = self.LU + elapsed
+		if self.LU > 0.5 then
+			for i=1, 50 do
+				if not Buffer[1] then break end
+				SendAddonMessage(Buffer[co][1], Buffer[co][2], "RAID")
+				Buffer[co] = nil
+				co = co + 1
+			end
+			self.LU = 0
 		end
-		self.LU = 0
 	end
 end
 
@@ -308,8 +310,8 @@ function DPSMate.Sync:OnEvent(event)
 	if event == "CHAT_MSG_ADDON" then
 		if DPSMateSettings["sync"] and DB.loaded and self:CorrectVersion(self.v1(self.v3),self.v2(self.v3)) then
 			if arg4 == player then return end 
-			if DPSMate.Sync.Exec[arg1] then
-				DPSMate.Sync.Exec[arg1](arg2,arg4)
+			if self.Exec[arg1] then
+				self.Exec[arg1](arg2,arg4)
 			end
 		end
 	elseif event == "UPDATE_MOUSEOVER_UNIT" then
@@ -497,10 +499,11 @@ function DPSMate.Sync:EDStatIn(arr, arg2, arg4)
 	t = {}
 	strgsub(arg2, "(.-),", func)
 	DB:BuildUser(t[1], nil)
-	local userid = DPSMateUser[t[1]][1]
+	local userid, userid2 = DPSMateUser[t[1]][1], DPSMateUser[arg4][1]
 	if not Arrays[arr][userid] then return end
+	if not Arrays[arr][userid][userid2] then return end
 	t[2] = tonumber(t[2])
-	tinsert(Arrays[arr][userid][DPSMateUser[arg4][1]]["i"][1], {t[2], tonumber(t[3])})
+	tinsert(Arrays[arr][userid][userid2]["i"][1], {t[2], tonumber(t[3])}) -- attempt to index a nil value
 	if t[2]>DPSMateCombatTime["total"] then DPSMateCombatTime["total"]=t[2] end
 end
 
@@ -1028,7 +1031,7 @@ function DPSMate.Sync:AbsorbsOut()
 				for c, v in pairs(va) do -- each one
 					for ce, ve in pairs(v) do -- enemy
 						if ce=="i" then
-							Buffer[cou] = {"DPSMate_iAbsorbs", DPSMate:GetUserById(cat)..","..DPSMate:GetAbilityById(ca)..","..c..","..ve[1]..","..ve[2]..","..ve[3]..","..ve[4]..","}
+							Buffer[cou] = {"DPSMate_iAbsorbs", DPSMate:GetUserById(cat)..","..DPSMate:GetAbilityById(ca)..","..c..","..(ve[1] or 0)..","..(ve[2] or 0)..","..(ve[3] or 0)..","..(ve[4] or 0)..","}
 							cou = cou + 1
 							--SendAddonMessage("DPSMate_iAbsorbs", DPSMate:GetUserById(cat)..","..DPSMate:GetAbilityById(ca)..","..c..","..ve[1]..","..ve[2]..","..ve[3]..","..ve[4]..",", "RAID")
 						else

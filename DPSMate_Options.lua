@@ -1401,7 +1401,7 @@ function DPSMate.Options:CreateWindow()
 			barfontcolor = {1.0,1.0,1.0},
 			contentbgtexture = "UI-Tooltip-Background",
 			contentbgcolor = {0.01568627450980392,0,1},
-			bgbarcolor = {0,0,0},
+			bgbarcolor = {1,1,1},
 			numberformat = 1,
 			opacity = 1,
 			filterclasses = {

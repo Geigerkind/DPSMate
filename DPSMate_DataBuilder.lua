@@ -88,7 +88,7 @@ function DPSMate.DB:OnEvent(event)
 						barfontcolor = {1.0,1.0,1.0},
 						contentbgtexture = "UI-Tooltip-Background",
 						contentbgcolor = {0.01568627450980392,0,1},
-						bgbarcolor = {0,0,0},
+						bgbarcolor = {1,1,1},
 						numberformat = 1,
 						opacity = 1,
 						filterclasses = {
@@ -368,7 +368,7 @@ function DPSMate.DB:OnEvent(event)
 			self:CreateUserDataUser(cat)
 			local CV = 0
 			for ca, va in val do
-				CV = CV + va["i"][2]
+				CV = CV + (va["i"][2] or 0)
 			end
 			self.UserData[cat]["Dmg"] = CV
 		end
@@ -382,7 +382,7 @@ function DPSMate.DB:OnEvent(event)
 			self:CreateUserDataUser(cat)
 			local CV = 0
 			for ca, va in val do
-				CV = CV + va["i"][2]
+				CV = CV + (va["i"][2] or 0)
 			end
 			self.UserData[cat]["DmgTaken"] = CV
 		end
