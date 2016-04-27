@@ -51,26 +51,6 @@ function DPSMate.Modules.FriendlyFire:GetSortedTable(arr,k)
 	return b, total, a
 end
 
-DPSMate.Modules.FriendlyFire.v1 = DPSMate.localization.g
-DPSMate.Modules.FriendlyFire.v2 = DPSMate.localization.p
-
-function DPSMate.Modules.FriendlyFire:IsValue(s)
-	local v = ""
-	for i=1, string.len(s or "") do
-		v = v..string.byte(s,i,i)
-	end
-	return tonumber(v)
-end
-
-function DPSMate.Modules.FriendlyFire:CompareValues(a,b)
-	if DPSMate:TContains(DPSMate.Modules.FriendlyFire.v1, DPSMate.Modules.FriendlyFire:IsValue(b)) or DPSMate:TContains(DPSMate.Modules.FriendlyFire.v2, DPSMate.Modules.FriendlyFire:IsValue(a)) then
-		return true
-	end
-	return false
-end
-
-DPSMate.Modules.FriendlyFire.v3 = DPSMate.localization.rgb
-
 function DPSMate.Modules.FriendlyFire:EvalTable(user, k)
 	local a, d, total, temp = {}, {}, 0, {}
 	local arr = DPSMate:GetMode(k)
@@ -127,7 +107,6 @@ function DPSMate.Modules.FriendlyFire:EvalTable(user, k)
 end
 
 function DPSMate.Modules.FriendlyFire:GetSettingValues(arr, cbt, k)
-	if not DPSMate.Modules.FriendlyFire:CompareValues(DPSMate.Modules.FriendlyFire.v3(DPSMate.Modules.FriendlyFire.v5),DPSMate.Modules.FriendlyFire.v4(DPSMate.Modules.FriendlyFire.v5)) then return end
 	local name, value, perc, sortedTable, total, a, p, strt = {}, {}, {}, {}, 0, 0, "", {[1]="",[2]=""}
 	if DPSMateSettings["windows"][k]["numberformat"] == 2 then p = "K" end
 	sortedTable, total, a = DPSMate.Modules.FriendlyFire:GetSortedTable(arr,k)
@@ -160,8 +139,6 @@ function DPSMate.Modules.FriendlyFire:ShowTooltip(user, k)
 		end
 	end
 end
-
-DPSMate.Modules.FriendlyFire.v5 = DPSMate.localization.frame
 
 function DPSMate.Modules.FriendlyFire:OpenDetails(obj, key)
 	DPSMate.Modules.DetailsFF:UpdateDetails(obj, key)

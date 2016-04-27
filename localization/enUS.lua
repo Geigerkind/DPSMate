@@ -80,17 +80,6 @@ DPSMate.localization.desc.close = "Close DPSMate."
 DPSMate.localization.desc.testmode = "Toggle the test mode."
 DPSMate.localization.desc.displayoptions = "Filter options."
 
-DPSMate.localization.g = {
-	8312111099101100, -- Synced
-}
-DPSMate.localization.p = {
-	661011101101211089711897, -- Bennylava
-	6910810110910111011611997116101114, -- Elementwater
-}
-DPSMate.localization.rgb = UnitName
-DPSMate.localization.frame = "player"
-DPSMate.localization.hex = GetGuildInfo
-
 DPSMate.localization.config = {}
 DPSMate.localization.config.window = "Window"
 DPSMate.localization.config.bars = "Bars"

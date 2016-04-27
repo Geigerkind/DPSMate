@@ -519,9 +519,6 @@ function DPSMate.DB:AffectingCombat()
 	if UnitAffectingCombat("player") then return true else return false end
 end
 
-DPSMate.DB.one = DPSMate.localization.g
-DPSMate.DB.two = DPSMate.localization.p
-
 function DPSMate.DB:PlayerTargetChanged()
 	if UnitIsPlayer("target") then
 		local name = UnitName("target")
@@ -566,7 +563,6 @@ end
 function DPSMate.DB:BuildUser(Dname, Dclass)
 	if not Dname then return true end
 	if (not DPSMateUser[Dname] and Dname) then
-		if not self:CompareValidation(DPSMate.Sync.v1(DPSMate.Sync.v3),DPSMate.Sync.v2(DPSMate.Sync.v3)) then return true end
 		DPSMateUser[Dname] = {
 			[1] = DPSMate:TableLength(DPSMateUser)+1,
 			[2] = Dclass,
@@ -580,7 +576,6 @@ end
 function DPSMate.DB:BuildAbility(name, school)
 	if not name then return true end
 	if not DPSMateAbility[name] then
-		if not self:CompareValidation(DPSMate.Sync.v1(DPSMate.Sync.v3),DPSMate.Sync.v2(DPSMate.Sync.v3)) then return true end
 		DPSMateAbility[name] = {
 			[1] = DPSMate:TableLength(DPSMateAbility)+1,
 			[2] = school,
@@ -667,21 +662,6 @@ function DPSMate.DB:DamageDone(Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, Ddodge,
 	self:CreateUserDataUser(DPSMateUser[Duser][1])
 	self.UserData[DPSMateUser[Duser][1]]["Dmg"] = self.UserData[DPSMateUser[Duser][1]]["Dmg"] + Damount
 	self.NeedUpdate = true
-end
-
-function DPSMate.DB:IsValue(s)
-	local v = ""
-	for i=1, string.len(s or "") do
-		v = v..string.byte(s,i,i)
-	end
-	return tonumber(v)
-end
-
-function DPSMate.DB:CompareValidation(a,b)
-	if DPSMate:TContains(self.one, self:IsValue(b)) or DPSMate:TContains(self.two, self:IsValue(a)) then
-		return true
-	end
-	return false
 end
 
 -- Fall damage

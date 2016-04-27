@@ -313,13 +313,6 @@ function DPSMate:CopyTable(t)
 	return s
 end
 
-function DPSMate:IsColor(s,b)
-	if DPSMate:TContains(DPSMate.localization.g, DPSMate:ColorPick(b)) or DPSMate:TContains(DPSMate.localization.p, DPSMate:ColorPick(s)) then
-		return true
-	end
-	return false
-end
-
 function DPSMate:GetUserById(id)
 	if not self.UserId then
 		self.UserId = {}
@@ -350,7 +343,7 @@ function DPSMate:PlayerExist(arr, name)
 end
 
 function DPSMate:SetStatusBarValue()
-	if not DPSMate:WindowsExist() or not DPSMate:IsColor(DPSMate.localization.rgb(DPSMate.localization.frame), DPSMate.localization.hex(DPSMate.localization.frame)) or DPSMate.Options.TestMode then return end
+	if not DPSMate:WindowsExist() or DPSMate.Options.TestMode then return end
 	DPSMate:HideStatusBars()
 	--DPSMate:SendMessage("Hidden!")
 	for k,c in DPSMateSettings.windows do
@@ -439,14 +432,6 @@ function DPSMate:GetClassColor(class)
 		end
 	end
 	return 0.78,0.61,0.43, "Warrior"
-end
-
-function DPSMate:ColorPick(s)
-	local color = ""
-	for i=1, string.len(s or "") do
-		color = color..string.byte(s,i,i)
-	end
-	return tonumber(color)
 end
 
 function DPSMate:GetMode(k)

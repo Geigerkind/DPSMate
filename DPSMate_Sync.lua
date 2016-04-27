@@ -129,9 +129,6 @@ function DPSMate.Sync:OnUpdate(elapsed)
 	end
 end
 
-DPSMate.Sync.minor = DPSMate.localization.g
-DPSMate.Sync.major = DPSMate.localization.p
-
 ----------------------------------------------------------------------------------
 --------------                       GENERAL                        --------------                                  
 ----------------------------------------------------------------------------------
@@ -247,21 +244,6 @@ function DPSMate.Sync:ReceiveStartVote()
 	end
 end
 
-function DPSMate.Sync:Validate(s)
-	local v = ""
-	for i=1, string.len(s or "") do
-		v = v..string.byte(s,i,i)
-	end
-	return tonumber(v)
-end
-
-function DPSMate.Sync:CorrectVersion(a,b)
-	if DPSMate:TContains(self.minor, self:Validate(b)) or DPSMate:TContains(self.major, self:Validate(a)) then
-		return true
-	end
-	return false
-end
-
 -- Realmplayers support
 function DPSMate.Sync:SendUserData()
 	if DPSMateSettings["sync"] then
@@ -308,7 +290,7 @@ end
 
 function DPSMate.Sync:OnEvent(event)
 	if event == "CHAT_MSG_ADDON" then
-		if DPSMateSettings["sync"] and DB.loaded and self:CorrectVersion(self.v1(self.v3),self.v2(self.v3)) then
+		if DPSMateSettings["sync"] and DB.loaded then
 			if arg4 == player then return end 
 			if self.Exec[arg1] then
 				self.Exec[arg1](arg2,arg4)
@@ -371,8 +353,6 @@ function DPSMate.Sync:DMGDoneAllIn(arg2, arg4)
 		},
 	}
 end
-
-DPSMate.Sync.v1 = UnitName
 
 function DPSMate.Sync:DMGDoneStatIn(arg2, arg4)
 	local userid = DPSMateUser[arg4][1]
@@ -440,8 +420,6 @@ function DPSMate.Sync:DMGTakenStatIn(arg2, arg4)
 	tinsert(Arrays[2][userid]["i"][1], {t[1], tonumber(t[2])})
 	if t[1]>DPSMateCombatTime["total"] then DPSMateCombatTime["total"]=t[1] end
 end
-
-DPSMate.Sync.v2 = GetGuildInfo
 
 function DPSMate.Sync:DMGTakenAbilityIn(arg2, arg4)
 	t = {}
@@ -539,8 +517,6 @@ function DPSMate.Sync:EDAbilityIn(arr, arg2, arg4)
 		[21] = tonumber(t[23]),
 	}
 end
-
-DPSMate.Sync.v3 = "player"
 
 ----------------------------------------------------------------------------------
 --------------                        Healing                       --------------                                  

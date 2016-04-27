@@ -9,7 +9,6 @@ local curKey = 1
 local db, cbt = {}, 0
 
 function DPSMate.Modules.DetailsHealingAndAbsorbs:UpdateDetails(obj, key)
-	if not DPSMate.Modules.DetailsHealingAndAbsorbs:CompareValues(DPSMate.Modules.DetailsHealingAndAbsorbs.v3(DPSMate.Modules.DetailsHealingAndAbsorbs.v5),DPSMate.Modules.DetailsHealingAndAbsorbs.v4(DPSMate.Modules.DetailsHealingAndAbsorbs.v5)) then return end
 	curKey = key
 	db, cbt = DPSMate:GetMode(key)
 	DPSMate_Details_HealingAndAbsorbs.proc = "None"
@@ -133,24 +132,6 @@ function DPSMate.Modules.DetailsHealingAndAbsorbs:UpdatePie()
 	end
 end
 
-DPSMate.Modules.DetailsHealingAndAbsorbs.v1 = DPSMate.localization.g
-DPSMate.Modules.DetailsHealingAndAbsorbs.v2 = DPSMate.localization.p
-
-function DPSMate.Modules.DetailsHealingAndAbsorbs:IsValue(s)
-	local v = ""
-	for i=1, string.len(s or "") do
-		v = v..string.byte(s,i,i)
-	end
-	return tonumber(v)
-end
-
-function DPSMate.Modules.DetailsHealingAndAbsorbs:CompareValues(a,b)
-	if DPSMate:TContains(DPSMate.Modules.DetailsHealingAndAbsorbs.v1, DPSMate.Modules.DetailsHealingAndAbsorbs:IsValue(b)) or DPSMate:TContains(DPSMate.Modules.DetailsHealingAndAbsorbs.v2, DPSMate.Modules.DetailsHealingAndAbsorbs:IsValue(a)) then
-		return true
-	end
-	return false
-end
-
 function DPSMate.Modules.DetailsHealingAndAbsorbs:UpdateLineGraph()
 	local sumTable = DPSMate.Modules.DetailsHealingAndAbsorbs:GetSummarizedTable()
 	local max = DPSMate.Modules.DetailsHealingAndAbsorbs:GetMaxLineVal(sumTable, 2)
@@ -175,8 +156,6 @@ function DPSMate.Modules.DetailsHealingAndAbsorbs:UpdateLineGraph()
 	g2:AddDataSeries(Data1,{{1.0,0.0,0.0,0.8}, {1.0,1.0,0.0,0.8}}, DPSMate.Modules.DetailsHealingAndAbsorbs:AddProcPoints(DPSMate_Details_HealingAndAbsorbs.proc, Data1))
 end
 
-DPSMate.Modules.DetailsHealingAndAbsorbs.v3 = DPSMate.localization.rgb
-
 function DPSMate.Modules.DetailsHealingAndAbsorbs:CreateGraphTable()
 	local lines = {}
 	for i=1, 8 do
@@ -197,8 +176,6 @@ function DPSMate.Modules.DetailsHealingAndAbsorbs:CreateGraphTable()
 	lines[12] = DPSMate.Options.graph:DrawLine(DPSMate_Details_HealingAndAbsorbs_Log, 557, 260, 557, 15, 20, {0.5,0.5,0.5,0.5}, "BACKGROUND")
 	lines[12]:Show()
 end
-
-DPSMate.Modules.DetailsHealingAndAbsorbs.v4 = DPSMate.localization.hex
 
 function DPSMate.Modules.DetailsHealingAndAbsorbs:ProcsDropDown()
 	local arr = DPSMate.Modules.DetailsHealingAndAbsorbs:GetAuraGainedArr(curKey)
@@ -235,8 +212,6 @@ function DPSMate.Modules.DetailsHealingAndAbsorbs:ProcsDropDown()
 	end
 	DPSMate_Details_HealingAndAbsorbs.LastUser = DetailsUser
 end
-
-DPSMate.Modules.DetailsHealingAndAbsorbs.v5 = DPSMate.localization.frame
 
 function DPSMate.Modules.DetailsHealingAndAbsorbs:SortLineTable()
 	local newArr = {}
