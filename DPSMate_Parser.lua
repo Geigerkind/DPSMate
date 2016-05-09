@@ -781,6 +781,30 @@ function DPSMate.Parser:CreatureVsCreatureSpellDamageInterrupts(msg)
 	for c, ab in strgfind(msg, "(.+) begins to cast (.+)%.") do DB:RegisterPotentialKick(c, ab, GetTime()) end
 end
 
+-- Legacy Logs support
+-- You receive loot: [White Spider Meat] (Itemlink)
+-- Shino receives loot: [White Spider Meat] (Itemlink)
+-- Itemlink: \124cffffffff\124Hitem:8956:0:0:0:0:0:0:0:0\124h[Oil of Immolation]\124h\124r (White)
+-- Itemlink: \124cffa335ee\124Hitem:19352:0:0:0:0:0:0:0:0\124h[Chromatically Tempered Sword]\124h\124r (Epic)
+local linkQuality = {
+	["9d9d9d"] = 0,
+	["ffffff"] = 1,
+	["1eff00"] = 2,
+	["0070dd"] = 3,
+	["a335ee"] = 4,
+	["ff8000"] = 5
+}
+function DPSMate.Parser:Loot(msg)
+	for a,b,c,d,e in strgfind(msg, "(.-) receives loot: |cff(.-)|Hitem:(%d+)(.+)%[(.+)%]|h|r") do
+		DPSMate.DB:Loot(a, linkQuality[b], tonumber(c), e)
+		return
+	end
+	for a,b,c,d in strgfind(msg, "You receive loot: |cff(.-)|Hitem:(%d+)(.+)%[(.+)%]|h|r") do
+		DPSMate.DB:Loot(player, linkQuality[a], tonumber(b), d)
+		return
+	end
+end
+
 Execute = {
 	["CHAT_MSG_COMBAT_HOSTILE_DEATH"] = function(arg1) DPSMate.Parser:CombatHostileDeaths(arg1) end,
 	["CHAT_MSG_COMBAT_FRIENDLY_DEATH"] = function(arg1) DPSMate.Parser:CombatFriendlyDeath(arg1) end,
@@ -824,5 +848,6 @@ Execute = {
 	["CHAT_MSG_SPELL_PERIODIC_HOSTILEPLAYER_DAMAGE"] = function(arg1) DPSMate.Parser:PeriodicDamage(arg1) end, -- To be tested
 	["CHAT_MSG_SPELL_SELF_DAMAGE"] = function(arg1) DPSMate.Parser:SelfSpellDMG(arg1) end,
 	["CHAT_MSG_COMBAT_SELF_MISSES"] = function(arg1) DPSMate.Parser:SelfMisses(arg1) end,
-	["CHAT_MSG_COMBAT_SELF_HITS"] = function(arg1) DPSMate.Parser:SelfHits(arg1) end
+	["CHAT_MSG_COMBAT_SELF_HITS"] = function(arg1) DPSMate.Parser:SelfHits(arg1) end,
+	["CHAT_MSG_LOOT"] = function(arg1) DPSMate.Parser:Loot(arg1) end
 }

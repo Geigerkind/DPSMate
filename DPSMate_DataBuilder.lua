@@ -321,8 +321,11 @@ function DPSMate.DB:OnEvent(event)
 		if DPSMateDeaths == nil then DPSMateDeaths = {[1]={},[2]={}} end
 		if DPSMateInterrupts == nil then DPSMateInterrupts = {[1]={},[2]={}} end
 		if DPSMateAurasGained == nil then DPSMateAurasGained = {[1]={},[2]={}} end
+		-- Legacy Logs support
 		if DPSMateAttempts == nil then DPSMateAttempts = {} end
 		if DPSMatePlayer == nil then DPSMatePlayer = {} end
+		if DPSMateLoot == nil then DPSMateLoot = {} end
+		
 		DPSMate.Modules.DPS.DB = DPSMateDamageDone
 		DPSMate.Modules.Damage.DB = DPSMateDamageDone
 		DPSMate.Modules.DamageTaken.DB = DPSMateDamageTaken
@@ -1483,6 +1486,20 @@ function DPSMate.DB:Attempt(mode)
 				[1] = "Unknown",
 				[2] = DPSMateCombatTime["total"],
 				[3] = GameTime_GetTime()
+			})
+		end
+	end
+end
+
+function DPSMate.DB:Loot(user, quality, itemid)
+	if quality>3 then
+		local zone = GetRealZoneText()
+		if not DPSMateLoot[zone] then DPSMateLoot[zone] = {} end
+		if self.Zones[zone] then -- Need to find a solution for world bosses.
+			tinsert(DPSMateLoot[zone], {
+				[1] = DPSMateCombatTime["total"],
+				[2] = itemid,
+				[3] = quality
 			})
 		end
 	end
