@@ -42,20 +42,22 @@ function DPSMate.Sync:OnLoad()
 		}
 	end
 	pid = DPSMateUser[player][1]
-	DB:CreateUserDataUser(pid)
 end
 
 local co, cou = 1, 1
 function DPSMate.Sync:SendAddonMessages(elapsed)
 	if DPSMateSettings["sync"] then
 		self.LU = self.LU + elapsed
-		if self.LU > 0.5 then
-			for i=1, 50 do
+		if self.LU > 1.1 then
+			for i=1, 80 do
+				--SendAddonMessage("Test"..co, "Test"..co, "RAID")
 				if not Buffer[1] then break end
 				SendAddonMessage(Buffer[co][1], Buffer[co][2], "RAID")
 				Buffer[co] = nil
 				co = co + 1
 			end
+			--DPSMate:SendMessage(co)
+			--co = co + 1
 			self.LU = 0
 		end
 	end
@@ -242,28 +244,6 @@ function DPSMate.Sync:ReceiveStartVote()
 	elseif DPSMateSettings["dataresetssync"] == 1 then
 		self:Vote()
 	end
-end
-
--- Realmplayers support
-function DPSMate.Sync:SendUserData()
-	if DPSMateSettings["sync"] then
-		SendAddonMessage("DPSMate_UserData", DB.UserData[pid]["Dmg"]..","..DB.UserData[pid]["DmgTaken"]..","..DB.UserData[pid]["Heal"]..","..DB.UserData[pid]["EffHeal"]..","..DB.UserData[pid]["OverHeal"]..","..DB.UserData[pid]["Deaths"]..",", "RAID")
-	end
-end
-
--- Realmplayers support
-function DPSMate.Sync:ReceiveUserData(arg2, arg4)
-	t = {}
-	strgsub(arg2, "(.-),", func)
-	DB:BuildUser(arg4, nil)
-	DB.UserData[DPSMateUser[arg4][1]] = {
-		["Dmg"] = tonumber(t[1]),
-		["DmgTaken"] = tonumber(t[2]),
-		["Heal"] = tonumber(t[3]),
-		["EffHeal"] = tonumber(t[4]),
-		["OverHeal"] = tonumber(t[5]),
-		["Deaths"] = tonumber(t[6]),
-	}
 end
 
 local bc, am = false, 1
@@ -805,7 +785,7 @@ DPSMate.Parser.UseAction = function(slot, checkCursor, onSelf)
 	if aura then
 		local target, time = UnitName("target"), GetTime()
 		if not target then target = LastMouseover end
-		if target and DPSMateSettings["sync"] then SendAddonMessage("DPSMate", aura..","..target..",", "RAID") end
+		--if target and DPSMateSettings["sync"] then SendAddonMessage("DPSMate", aura..","..target..",", "RAID");DPSMate:SendMessage("Test") end
 		if DPSMate:TContains(DPSMate.Parser.Kicks, ability) then DB:AwaitAfflictedStun(player, aura, target, time) end
 		DB:AwaitingBuff(player, aura, target, time)
 		DB:AwaitingAbsorbConfirmation(player, aura, target, time)
@@ -819,7 +799,7 @@ DPSMate.Parser.CastSpellByName = function(spellName, onSelf)
 	oldCastSpellByName(spellName, onSelf)
 	local target, time = UnitName("target"), GetTime()
 	if not target then target = LastMouseover end
-	if target and DPSMateSettings["sync"] then SendAddonMessage("DPSMate", spellName..","..target..",", "RAID") end
+	--if target and DPSMateSettings["sync"] then SendAddonMessage("DPSMate", spellName..","..target..",", "RAID");DPSMate:SendMessage("Test") end
 	if DPSMate:TContains(DPSMate.Parser.Kicks, ability) then DB:AwaitAfflictedStun(player, spellName, target, time) end
 	DB:AwaitingBuff(player, spellName, target, time)
 	DB:AwaitingAbsorbConfirmation(player, spellName, target, time)
@@ -833,7 +813,7 @@ DPSMate.Parser.CastSpell = function(spellID, spellbookType)
 	local spellName, spellRank = GetSpellName(spellID, spellbookType)
 	local target, time = UnitName("target"), GetTime()
 	if not target then target = LastMouseover end
-	if target and DPSMateSettings["sync"] then SendAddonMessage("DPSMate", spellName..","..target..",", "RAID") end
+	--if target and DPSMateSettings["sync"] then SendAddonMessage("DPSMate", spellName..","..target..",", "RAID");DPSMate:SendMessage("Test") end
 	if DPSMate:TContains(DPSMate.Parser.Kicks, ability) then DB:AwaitAfflictedStun(player, spellName, target, time) end
 	DB:AwaitingBuff(player, spellName, target, time)
 	DB:AwaitingAbsorbConfirmation(player, spellName, target, time)

@@ -601,7 +601,6 @@ end
 
 function DPSMate.Options:PopUpAccept(bool, bypass)
 	DPSMate_PopUp:Hide()
-	if (bool==true and bypass==false) or (bool==true and bypass==true) then DPSMate.Options:Reset() end -- Realmplayers hook
 	if DPSMate.DB:InPartyOrRaid() and not bypass and DPSMateSettings["sync"] and bool then
 		if IsPartyLeader() or IsRaidOfficer() or IsRaidLeader() then
 			DPSMate.Sync:StartVote()
@@ -647,6 +646,7 @@ function DPSMate.Options:PopUpAccept(bool, bypass)
 				current = 1,
 				segments = {},
 			}
+			DPSMateAttempts = {}
 		else
 			DPSMateDamageDone[2] = {}
 			DPSMateDamageTaken[2] = {}
@@ -705,8 +705,6 @@ function DPSMate.Options:PopUpAccept(bool, bypass)
 		DPSMate:SetStatusBarValue()
 	end
 end
-
-function DPSMate.Options:Reset() end
 
 function DPSMate.Options:OpenMenu(b, obj)
 	for _, val in pairs(DPSMateSettings.windows) do
@@ -1230,6 +1228,7 @@ function DPSMate.Options:NewSegment()
 	-- Get name of this session
 	local _,_,a = DPSMate.Modules.EDT:GetSortedTable(DPSMateEDT[2])
 	local name = DPSMate:GetUserById(a[1]) or "Unknown"
+	DPSMate.DB:Attempt(false)
 	if DPSMateSettings["onlybossfights"] then
 		if DPSMate.BabbleBoss:Contains(name) then
 			DPSMate.Options:CreateSegment(name)
@@ -1434,20 +1433,20 @@ function DPSMate.Options:RemoveWindow()
 	local frame = _G("DPSMate_"..DPSMate_ConfigMenu.Selected)
 	if frame then
 		frame:Hide()
-		_G("DPSMate_ConfigMenu_Menu_Button"..(7+frame.Key)):Hide()
+		_G("DPSMate_ConfigMenu_Menu_Button"..(8+frame.Key)):Hide()
 		table.remove(DPSMateSettings["windows"], frame.Key)
 		local TL = DPSMate:TableLength(DPSMateSettings["windows"])
-		_G("DPSMate_ConfigMenu_Menu_Button"..(7+TL)).after = DPSMate_ConfigMenu_Menu_Button2
+		_G("DPSMate_ConfigMenu_Menu_Button"..(8+TL)).after = DPSMate_ConfigMenu_Menu_Button2
 		DPSMate_ConfigMenu_Menu_Button2:ClearAllPoints()
-		DPSMate_ConfigMenu_Menu_Button2:SetPoint("TOP", _G("DPSMate_ConfigMenu_Menu_Button"..(7+TL)), "BOTTOM")
+		DPSMate_ConfigMenu_Menu_Button2:SetPoint("TOP", _G("DPSMate_ConfigMenu_Menu_Button"..(8+TL)), "BOTTOM")
 		UIDropDownMenu_SetSelectedValue(DPSMate_ConfigMenu_Tab_Window_Remove, "None")
 		DPSMate_ConfigMenu_Menu_Button1.selected = true
-		_G("DPSMate_ConfigMenu_Menu_Button"..(7+frame.Key)).selected = false
-		_G("DPSMate_ConfigMenu_Menu_Button"..(7+frame.Key).."Texture"):Hide()
-		_G("DPSMate_ConfigMenu_Menu_Button"..(7+frame.Key).."Text"):SetTextColor(1,0.82,0,1)
-		_G("DPSMate_ConfigMenu_Menu_Button"..(7+frame.Key).."_Button1"):Hide()
-		_G("DPSMate_ConfigMenu_Menu_Button"..(7+frame.Key).."_Button2"):Hide()
-		_G("DPSMate_ConfigMenu_Menu_Button"..(7+frame.Key).."_Button3"):Hide()
+		_G("DPSMate_ConfigMenu_Menu_Button"..(8+frame.Key)).selected = false
+		_G("DPSMate_ConfigMenu_Menu_Button"..(8+frame.Key).."Texture"):Hide()
+		_G("DPSMate_ConfigMenu_Menu_Button"..(8+frame.Key).."Text"):SetTextColor(1,0.82,0,1)
+		_G("DPSMate_ConfigMenu_Menu_Button"..(8+frame.Key).."_Button1"):Hide()
+		_G("DPSMate_ConfigMenu_Menu_Button"..(8+frame.Key).."_Button2"):Hide()
+		_G("DPSMate_ConfigMenu_Menu_Button"..(8+frame.Key).."_Button3"):Hide()
 		DPSMate_ConfigMenu_Menu_Button1Texture:Show()
 	end
 end
@@ -1657,4 +1656,5 @@ function DPSMate.Options:ToggleSync()
 		end
 	end
 end
+
 

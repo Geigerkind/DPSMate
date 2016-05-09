@@ -379,7 +379,6 @@ function DPSMate:SetStatusBarValue()
 end
 
 function DPSMate:FormatNumbers(dmg,total,sort,k)
-	if not DPSMate:IsColor(DPSMate.localization.rgb(DPSMate.localization.frame), DPSMate.localization.hex(DPSMate.localization.frame)) then return end
 	if DPSMateSettings["windows"][k]["numberformat"] == 2 then
 		dmg = string.format("%.1f", (dmg/1000))
 		total = string.format("%.1f", (total/1000))
@@ -389,24 +388,23 @@ function DPSMate:FormatNumbers(dmg,total,sort,k)
 end
 
 function DPSMate:ApplyFilter(key, name)
+	if not key then return true end
 	local class = DPSMateUser[name][2] or "warrior"
-	if key then
-		local path = DPSMateSettings["windows"][key]
-		t = {}
-		-- Certain people
-		strgsub(path["filterpeople"], "(.-),", func)
-		for cat, val in t do
-			if name == val then
-				return true
-			end
+	local path = DPSMateSettings["windows"][key]
+	t = {}
+	-- Certain people
+	strgsub(path["filterpeople"], "(.-),", func)
+	for cat, val in t do
+		if name == val then
+			return true
 		end
-		if path["filterpeople"] == "" then
-			-- classes
-			for cat, val in path["filterclasses"] do
-				if val then
-					if cat == class then
-						return true
-					end
+	end
+	if path["filterpeople"] == "" then
+		-- classes
+		for cat, val in path["filterclasses"] do
+			if val then
+				if cat == class then
+					return true
 				end
 			end
 		end
@@ -435,7 +433,6 @@ function DPSMate:GetClassColor(class)
 end
 
 function DPSMate:GetMode(k)
-	if not DPSMate:IsColor(DPSMate.localization.rgb(DPSMate.localization.frame), DPSMate.localization.hex(DPSMate.localization.frame)) then return end
 	local Handler = DPSMate.RegistredModules[DPSMateSettings["windows"][k]["CurMode"]]
 	local result = {total={Handler.DB[1], DPSMateCombatTime["total"]}, currentfight={Handler.DB[2], DPSMateCombatTime["current"]}}
 	for cat, val in pairs(DPSMateSettings["windows"][k]["options"][2]) do

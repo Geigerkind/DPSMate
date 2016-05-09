@@ -124,8 +124,6 @@ function DPSMate.Modules.FriendlyFire:GetSettingValues(arr, cbt, k)
 	return name, value, perc, strt
 end
 
-DPSMate.Modules.FriendlyFire.v4 = DPSMate.localization.hex
-
 function DPSMate.Modules.FriendlyFire:ShowTooltip(user, k)
 	local a,b,c = DPSMate.Modules.FriendlyFire:EvalTable(DPSMateUser[user], k)
 	if DPSMateSettings["informativetooltips"] then

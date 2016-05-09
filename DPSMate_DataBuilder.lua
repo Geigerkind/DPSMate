@@ -26,6 +26,21 @@ DPSMate.DB.AbilityFlags = {
 DPSMate.DB.NeedUpdate = false
 DPSMate.DB.UserData = {}
 DPSMate.DB.MainUpdate = 0
+DPSMate.DB.Zones = {
+	["Molten Core"] = true,
+	["Blackwing Lair"] = true,
+	["Onyxia's Lair"] = true,
+	["Zul'Gurub"] = true,
+	["Ruins of Ahn'Quiraj"] = true,
+	["Temple of Ahn'Quiraj"] = true,
+	["Naxxramas"] = true,
+	["Azshara"] = true, -- Azuregos
+	["Blasted Lands"] = true, -- Kazzak
+	["Duskwood"] = true, -- Emerald dragons, not sure if those zone names are correct.
+	["Hinterlands"] = true,
+	["Ashenvale"] = true,
+	["Feralas"] = true
+}
 
 -- Local Variables
 local CombatState = false
@@ -36,7 +51,6 @@ local MainLastUpdate = 0
 local MainUpdateTime = 1.5
 local CombatTime = 0
 local CombatBuffer = 1.5
-local FourSecUpdate = 0
 local InitialLoad, In1 = false, 0
 local tinsert = table.insert
 local tremove = table.remove
@@ -307,6 +321,7 @@ function DPSMate.DB:OnEvent(event)
 		if DPSMateDeaths == nil then DPSMateDeaths = {[1]={},[2]={}} end
 		if DPSMateInterrupts == nil then DPSMateInterrupts = {[1]={},[2]={}} end
 		if DPSMateAurasGained == nil then DPSMateAurasGained = {[1]={},[2]={}} end
+		if DPSMateAttempts == nil then DPSMateAttempts = {} end
 		DPSMate.Modules.DPS.DB = DPSMateDamageDone
 		DPSMate.Modules.Damage.DB = DPSMateDamageDone
 		DPSMate.Modules.DamageTaken.DB = DPSMateDamageTaken
@@ -357,51 +372,6 @@ function DPSMate.DB:OnEvent(event)
 		
 		self:CombatTime()
 		
-		-- Realmplayers support
-		-- Damage done
-		for cat, val in DPSMateDamageDone[1] do
-			self:CreateUserDataUser(cat)
-			self.UserData[cat]["Dmg"] = DPSMateDamageDone[1][cat]["i"][2]
-		end
-		-- Damage done NPC
-		for cat, val in DPSMateEDD[1] do
-			self:CreateUserDataUser(cat)
-			local CV = 0
-			for ca, va in val do
-				CV = CV + (va["i"][2] or 0)
-			end
-			self.UserData[cat]["Dmg"] = CV
-		end
-		-- Damage taken
-		for cat, val in DPSMateDamageTaken[1] do
-			self:CreateUserDataUser(cat)
-			self.UserData[cat]["DmgTaken"] = DPSMateDamageTaken[1][cat]["i"][2]
-		end
-		-- Damage taken NPC
-		for cat, val in DPSMateEDT[1] do
-			self:CreateUserDataUser(cat)
-			local CV = 0
-			for ca, va in val do
-				CV = CV + (va["i"][2] or 0)
-			end
-			self.UserData[cat]["DmgTaken"] = CV
-		end
-		-- Heal
-		for cat, val in DPSMateTHealing[1] do
-			self:CreateUserDataUser(cat)
-			self.UserData[cat]["Heal"] = DPSMateTHealing[1][cat]["i"][1]
-		end
-		-- Effective Heal
-		for cat, val in DPSMateEHealing[1] do
-			self:CreateUserDataUser(cat)
-			self.UserData[cat]["EffHeal"] = DPSMateEHealing[1][cat]["i"][1]
-		end
-		-- Death
-		for cat, val in DPSMateDeaths[1] do
-			self:CreateUserDataUser(cat)
-			self.UserData[cat]["Deaths"] = DPSMate:TableLength(DPSMateDeaths[1][cat])
-		end
-		
 		self.loaded = true
 		InitialLoad = true
 	elseif event == "PLAYER_REGEN_DISABLED" then
@@ -427,42 +397,6 @@ function DPSMate.DB:OnEvent(event)
 	elseif event == "PLAYER_TARGET_CHANGED" then
 		self:PlayerTargetChanged()
 	end
-end
-
--- Realmplayers support
-function DPSMate.DB:CreateUserDataUser(cat)
-	if not self.UserData[cat] then
-		self.UserData[cat] = {
-			["Dmg"] = 0,
-			["Heal"] = 0,
-			["EffHeal"] = 0,
-			["DmgTaken"] = 0,
-			["Deaths"] = 0,
-			["OverHeal"] = 0,
-		}
-	end
-end
-
--- Realmplayers support
-function DPSMate:GetPetOwnerUnitID(name)
-	local user = DPSMateUser[name]
-	if user then 
-		if user[4] then
-			if user[6] then
-				return user[6]
-			end
-		end
-	end
-	return nil
-end
-
--- Realmplayers support
-function DPSMate:GetUnitIDForName(name)
-	local u = DPSMateUser[name]
-	if u then
-		return u[1]
-	end
-	return nil
 end
 
 function DPSMate.DB:OnGroupUpdate()
@@ -658,9 +592,6 @@ function DPSMate.DB:DamageDone(Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, Ddodge,
 		DPSMateDamageDone[cat][DPSMateUser[Duser][1]]["i"][2] = DPSMateDamageDone[cat][DPSMateUser[Duser][1]]["i"][2] + Damount
 		if Damount > 0 then tinsert(DPSMateDamageDone[cat][DPSMateUser[Duser][1]]["i"][1], {DPSMateCombatTime[val], Damount}) end
 	end
-	-- Realmplayers support
-	self:CreateUserDataUser(DPSMateUser[Duser][1])
-	self.UserData[DPSMateUser[Duser][1]]["Dmg"] = self.UserData[DPSMateUser[Duser][1]]["Dmg"] + Damount
 	self.NeedUpdate = true
 end
 
@@ -727,9 +658,6 @@ function DPSMate.DB:DamageTaken(Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, Ddodge
 		DPSMateDamageTaken[cat][DPSMateUser[Duser][1]]["i"][2] = DPSMateDamageTaken[cat][DPSMateUser[Duser][1]]["i"][2] + Damount
 		if Damount > 0 then tinsert(DPSMateDamageTaken[cat][DPSMateUser[Duser][1]]["i"][1], {DPSMateCombatTime[val], Damount}) end
 	end
-	-- Realmplayers support
-	self:CreateUserDataUser(DPSMateUser[Duser][1])
-	self.UserData[DPSMateUser[Duser][1]]["DmgTaken"] = self.UserData[DPSMateUser[Duser][1]]["DmgTaken"] + Damount
 	self.NeedUpdate = true
 end
 
@@ -808,13 +736,6 @@ function DPSMate.DB:EnemyDamage(mode, arr, Duser, Dname, Dhit, Dcrit, Dmiss, Dpa
 		arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser][1]]["i"][2] = arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser][1]]["i"][2] + Damount
 		if Damount > 0 then tinsert(arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser][1]]["i"][1], {DPSMateCombatTime[val], Damount}) end
 	end
-	-- Realmplayers support
-	self:CreateUserDataUser(DPSMateUser[cause][1])
-	if mode then
-		self.UserData[DPSMateUser[cause][1]]["DmgTaken"] = self.UserData[DPSMateUser[cause][1]]["DmgTaken"] + Damount
-	else
-		self.UserData[DPSMateUser[cause][1]]["Dmg"] = self.UserData[DPSMateUser[cause][1]]["Dmg"] + Damount
-	end
 	self.NeedUpdate = true
 end
 
@@ -878,15 +799,6 @@ function DPSMate.DB:Healing(mode, arr, Duser, Dname, Dhit, Dcrit, Damount)
 			end
 		end
 		if Damount > 0 then tinsert(arr[cat][DPSMateUser[Duser][1]]["i"][2], {DPSMateCombatTime[val], Damount}) end
-	end
-	-- Realmplayers support
-	self:CreateUserDataUser(DPSMateUser[Duser][1])
-	if mode==0 then
-		self.UserData[DPSMateUser[Duser][1]]["EffHeal"] = self.UserData[DPSMateUser[Duser][1]]["EffHeal"] + Damount
-	elseif mode==1 then
-		self.UserData[DPSMateUser[Duser][1]]["Heal"] = self.UserData[DPSMateUser[Duser][1]]["Heal"] + Damount
-	else
-		self.UserData[DPSMateUser[Duser][1]]["OverHeal"] = self.UserData[DPSMateUser[Duser][1]]["OverHeal"] + Damount
 	end
 	self.NeedUpdate = true
 end
@@ -1288,9 +1200,6 @@ function DPSMate.DB:UnregisterDeath(target)
 			DPSMateDeaths[cat][DPSMateUser[target][1]][1]["i"][2]=GameTime_GetTime()
 		end
 	end
-	-- Realmplayers support
-	self:CreateUserDataUser(DPSMateUser[target][1])
-	self.UserData[DPSMateUser[target][1]]["Deaths"] = self.UserData[DPSMateUser[target][1]]["Deaths"] + 1
 end
 
 function DPSMate.DB:DeathHistory(target, cause, ability, amount, hit, crit, type, crush)
@@ -1503,8 +1412,11 @@ function DPSMate.DB:CombatTime()
 				LastUpdate = 0
 			end
 			if CombatTime>=CombatBuffer then
-				if not DPSMate.DB:AffectingCombat() then CombatState = false end
-				CombatTime = 0
+				if not DPSMate.DB:AffectingCombat() then 
+					CombatState = false
+					CombatTime = 0
+					DPSMate.DB:Attempt(true)
+				end
 			end
 		else
 			DPSMate.DB.MainUpdate = DPSMate.DB.MainUpdate + arg1
@@ -1524,11 +1436,6 @@ function DPSMate.DB:CombatTime()
 			DPSMate.DB:ClearAwaitHotDispel()
 			DPSMate.DB.MainUpdate = 0
 			DPSMate.Sync.Async = true
-		end
-		FourSecUpdate = FourSecUpdate + arg1
-		if FourSecUpdate >= 4 then
-			DPSMate.Sync:SendUserData()
-			FourSecUpdate = 0
 		end
 		if DPSMate.Sync.Async then
 			DPSMate.Sync:OnUpdate(arg1)
@@ -1557,5 +1464,25 @@ function DPSMate.DB:hasVanishedFeignDeath()
 			return true
 		end
 		DPSMate_Tooltip:Hide()
+	end
+end
+
+function DPSMate.DB:Attempt(mode)
+	local zone = GetRealZoneText()
+	if not DPSMateAttempts[zone] then DPSMateAttempts[zone] = {} end
+	if self.Zones[zone] then -- Need to find a solution for world bosses.
+		if mode then
+			if DPSMateAttempts[zone][1] then
+				local _,_,a = DPSMate.Modules.EDT:GetSortedTable(DPSMateEDT[2])
+				DPSMateAttempts[zone][1][1] = DPSMate:GetUserById(a[1]) or "Unknown"
+				DPSMateAttempts[zone][1][4] = DPSMateCombatTime["total"]
+			end
+		else
+			tinsert(DPSMateAttempts[zone], 1, {
+				[1] = "Unknown",
+				[2] = DPSMateCombatTime["total"],
+				[3] = GameTime_GetTime()
+			})
+		end
 	end
 end

@@ -153,13 +153,13 @@ function DPSMate.Parser:PeriodicDamage(msg)
 	-- School can be used now but how and when?
 	for a,b,c,d,e in strgfind(msg, "(.+) suffers (%d+) (%a-) damage from (.+)'s (.+)%.") do
 		t[1] = tonumber(b)
-		DB:EnemyDamage(true, DPSMateEDT, a, e.."(Periodic)", 1, 0, 0, 0, 0, 0, t[1], d, 0, 0)
+		DB:EnemyDamage(true, DPSMateEDT, d, e.."(Periodic)", 1, 0, 0, 0, 0, 0, t[1], a, 0, 0)
 		DB:DamageDone(d, e.."(Periodic)", 1, 0, 0, 0, 0, 0, t[1], 0, 0)
 		return
 	end
 	for a,b,c,d in strgfind(msg, "(.+) suffers (%d+) (%a-) damage from your (.+)%.") do
 		t[1] = tonumber(b)
-		DB:EnemyDamage(true, DPSMateEDT, a, d.."(Periodic)", 1, 0, 0, 0, 0, 0, t[1], player, 0, 0)
+		DB:EnemyDamage(true, DPSMateEDT, player, d.."(Periodic)", 1, 0, 0, 0, 0, 0, t[1], a, 0, 0)
 		DB:DamageDone(player, d.."(Periodic)", 1, 0, 0, 0, 0, 0, t[1], 0, 0)
 		return
 	end
