@@ -45,6 +45,7 @@ DPSMate.Parser.TargetParty = {}
 -- Local Variables
 local player = UnitName("player")
 local _,playerclass = UnitClass("player")
+local fac = UnitFactionGroup("player")
 local strgfind = string.gfind
 local DB = DPSMate.DB
 local t = {}
@@ -60,6 +61,13 @@ function DPSMate.Parser:OnLoad()
 		}
 	end
 	player = UnitName("player")
+	DPSMatePlayer[1] = player
+	DPSMatePlayer[2] = playerclass
+	if fac == "Alliance" then
+		DPSMatePlayer[3] = 1
+	elseif fac == "Horde" then
+		DPSMatePlayer[3] = 0
+	end
 end
 
 function DPSMate.Parser:OnEvent(event)

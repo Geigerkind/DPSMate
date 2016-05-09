@@ -322,6 +322,7 @@ function DPSMate.DB:OnEvent(event)
 		if DPSMateInterrupts == nil then DPSMateInterrupts = {[1]={},[2]={}} end
 		if DPSMateAurasGained == nil then DPSMateAurasGained = {[1]={},[2]={}} end
 		if DPSMateAttempts == nil then DPSMateAttempts = {} end
+		if DPSMatePlayer == nil then DPSMatePlayer = {} end
 		DPSMate.Modules.DPS.DB = DPSMateDamageDone
 		DPSMate.Modules.Damage.DB = DPSMateDamageDone
 		DPSMate.Modules.DamageTaken.DB = DPSMateDamageTaken
@@ -412,7 +413,7 @@ function DPSMate.DB:OnGroupUpdate()
 		local pet = UnitName(type.."pet"..i)
 		local _,classEng = UnitClass(type..i)
 		local fac = UnitFactionGroup(type..i)
-		self:BuildUser(name, tonumber(classEng))
+		self:BuildUser(name, strlower(classEng))
 		self:BuildUser(pet)
 		DPSMateUser[name][4] = false
 		if pet then
