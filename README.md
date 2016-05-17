@@ -1,13 +1,13 @@
 # DPSMate #
-[color=#FFFFFF][size=200]DPSMate#
-[size=150]A combat analyzation tool#[/color]
+[size=200]DPSMate#
+[size=150]A combat analyzation tool#
 
-#[color=#FFFFFF]What is DPSMate?[/color]#
+#What is DPSMate?#
 DPSMate is not only a meter which shows numbers of the raid, such as damage done, damage taken, dispells etc., it is moreover an analyzing tool to review the raid or the previous fight as accurately as possible. This data can help to improve the gameplay or to judge better over someones performance.
 
-[img]http://i.imgur.com/UWEgLn9.png[/img]
+![img](http://i.imgur.com/UWEgLn9.png)
 
-#[color=#FFFFFF]Mentionable features of DPSMate[/color]#
+#Mentionable features of DPSMate#
 Frame:
 - Several frames, allowing to show different modes at the same time
 - Resizable, allowing to adjust it to the interface
@@ -30,39 +30,39 @@ Misc:
 - Cooperating with Realmplayers (Still in work)
 - And many more...
 
-#[color=#FFFFFF]But pictures tell more than words:[/color]#
+#But pictures tell more than words:#
 Segments (Total, Current and previous fights):
-[img]http://i.imgur.com/gG3fHSR.png[/img]
+![img](http://i.imgur.com/gG3fHSR.png)
 
 The configuration menu:
-[img]http://i.imgur.com/Ivtzr0p.gif[/img]
-[img]http://i.imgur.com/tcDikHh.png[/img]
+![img](http://i.imgur.com/Ivtzr0p.gif)
+![img](http://i.imgur.com/tcDikHh.png)
 
 The different modes:
-[img]http://i.imgur.com/F2OHs7R.png[/img]
-[img]http://i.imgur.com/kBjPwg9.gif[/img]
+![img](http://i.imgur.com/F2OHs7R.png)
+![img](http://i.imgur.com/kBjPwg9.gif)
 
 The different tooltips for the modes:
-[img]http://i.imgur.com/acsgyPb.gif[/img]
+![img](http://i.imgur.com/acsgyPb.gif)
 
 The report interfaces and its results:
-[img]http://i.imgur.com/R8yxnZX.png[/img]
-[img]http://i.imgur.com/7t340CH.png[/img]
-[img]http://i.imgur.com/wWZHbeu.png[/img]
-[img]http://i.imgur.com/Uezcowg.png[/img]
-[img]http://i.imgur.com/Ine09Kp.png[/img]
-[img]http://i.imgur.com/eEIL8i5.png[/img]
+![img](http://i.imgur.com/R8yxnZX.png)
+![img](http://i.imgur.com/7t340CH.png)
+![img](http://i.imgur.com/wWZHbeu.png)
+![img](http://i.imgur.com/Uezcowg.png)
+![img](http://i.imgur.com/Ine09Kp.png)
+![img](http://i.imgur.com/eEIL8i5.png)
 
 Reset window:
-[img]http://i.imgur.com/rIhZNxy.png[/img]
+![img](http://i.imgur.com/rIhZNxy.png)
 
 Evaluations: [url=http://i.imgur.com/tqQ8I7F.gif](Link)[/url]
-[img]http://i.imgur.com/tqQ8I7F.gif[/img]
+![img](http://i.imgur.com/tqQ8I7F.gif)
 
 Evaluations for a current fight (Ragnaros): [url=http://i.imgur.com/6TsZpkK.png](Link)[/url]
-[img]http://i.imgur.com/6TsZpkK.png[/img]
+![img](http://i.imgur.com/6TsZpkK.png)
 
-#[color=#FFFFFF]Future features:[/color]#
+#Future features:#
 Modes:
 - Blocked damage
 - Resisted damage
