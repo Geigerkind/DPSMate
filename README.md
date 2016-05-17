@@ -1,12 +1,13 @@
 # DPSMate #
-[size=150]A combat analyzation tool[/size][/color]
+[color=#FFFFFF][size=200]DPSMate#
+[size=150]A combat analyzation tool#[/color]
 
-[size=120][color=#FFFFFF]What is DPSMate?[/color][/size]
+#[color=#FFFFFF]What is DPSMate?[/color]#
 DPSMate is not only a meter which shows numbers of the raid, such as damage done, damage taken, dispells etc., it is moreover an analyzing tool to review the raid or the previous fight as accurately as possible. This data can help to improve the gameplay or to judge better over someones performance.
 
 [img]http://i.imgur.com/UWEgLn9.png[/img]
 
-[size=120][color=#FFFFFF]Mentionable features of DPSMate[/color][/size]
+#[color=#FFFFFF]Mentionable features of DPSMate[/color]#
 Frame:
 - Several frames, allowing to show different modes at the same time
 - Resizable, allowing to adjust it to the interface
@@ -29,7 +30,7 @@ Misc:
 - Cooperating with Realmplayers (Still in work)
 - And many more...
 
-[size=120][color=#FFFFFF]But pictures tell more than words:[/color][/size]
+#[color=#FFFFFF]But pictures tell more than words:[/color]#
 Segments (Total, Current and previous fights):
 [img]http://i.imgur.com/gG3fHSR.png[/img]
 
@@ -61,7 +62,7 @@ Evaluations: [url=http://i.imgur.com/tqQ8I7F.gif](Link)[/url]
 Evaluations for a current fight (Ragnaros): [url=http://i.imgur.com/6TsZpkK.png](Link)[/url]
 [img]http://i.imgur.com/6TsZpkK.png[/img]
 
-[size=120][color=#FFFFFF]Future features:[/color][/size]
+#[color=#FFFFFF]Future features:[/color]#
 Modes:
 - Blocked damage
 - Resisted damage
@@ -100,14 +101,14 @@ Misc:
 - Reset popup before logging out, because the logout might take a minute otherwise 
 - Polishing and performance improvements
 
-[size=120][b]Download and install:[/b][/size] (only english clients)
+#[b]Download and install:[/b]# (only english clients)
 1. Download the addon folder [url=https://bitbucket.org/tomdy/dpsmate/downloads]here.[/url]
 2. Rename the folder to "DPSMate"
 3. I recommend to increase the addon memory to 150 mb.
 4. Remove DPSMate.lua and DPSMate.lua.bak in your WTF/Account/YOUR ACC NAME/Kronos/YOUR CHAR NAME/SavedVariables/ (if you had DPSMate installed before)
 5. I recommend to disable SW_Stats.
 
-[size=120][b]Support me![/b][/size]
+#[b]Support me![/b]#
 1. [url=https://bitbucket.org/tomdy/dpsmate/issues?status=new&status=open]Report[/url] bugs that you found.
 2. Suggest improvements in this thread. 
 3. You can also [url=https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=57SWBZ3B7RTTQ]donate[/url] for my projects if you like.
