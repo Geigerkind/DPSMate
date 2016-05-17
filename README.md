@@ -1,5 +1,4 @@
 # DPSMate #
-[size=200]DPSMate#
 [size=150]A combat analyzation tool#
 
 #What is DPSMate?#
@@ -16,15 +15,15 @@ Frame:
 Modes:
 - 32 different modes and more are planed 
 Some of them are:
-- Healing and Absorbs (Effective healing and [b]Absorbs[/b])
+- Healing and Absorbs (Effective healing and **Absorbs**)
 - Deaths, recall your or someones death
-- Dispells, showing everyones dispells [b]including hot dispells[/b] such as Abolish Poison
+- Dispells, showing everyones dispells **including hot dispells** such as Abolish Poison
 - Interrupts, including stuns and silences
 - Auras (Gained, Lost and Uptime)
 - etc.
 
 Misc:
-- Several Segments (Total, [b]Current, and previous fights[/b])
+- Several Segments (Total, **Current, and previous fights**)
 - Synchronizing, to guarantee accurate data
 - Report function for every mode and everys player data
 - Cooperating with Realmplayers (Still in work)
@@ -101,14 +100,14 @@ Misc:
 - Reset popup before logging out, because the logout might take a minute otherwise 
 - Polishing and performance improvements
 
-#[b]Download and install:[/b]# (only english clients)
+#**Download and install:**# (only english clients)
 1. Download the addon folder [url=https://bitbucket.org/tomdy/dpsmate/downloads]here.[/url]
 2. Rename the folder to "DPSMate"
 3. I recommend to increase the addon memory to 150 mb.
 4. Remove DPSMate.lua and DPSMate.lua.bak in your WTF/Account/YOUR ACC NAME/Kronos/YOUR CHAR NAME/SavedVariables/ (if you had DPSMate installed before)
 5. I recommend to disable SW_Stats.
 
-#[b]Support me![/b]#
+#**Support me!**#
 1. [url=https://bitbucket.org/tomdy/dpsmate/issues?status=new&status=open]Report[/url] bugs that you found.
 2. Suggest improvements in this thread. 
 3. You can also [url=https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=57SWBZ3B7RTTQ]donate[/url] for my projects if you like.
