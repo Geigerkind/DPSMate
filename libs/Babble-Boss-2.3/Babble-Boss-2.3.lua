@@ -1765,10 +1765,8 @@ BabbleBoss:Debug()
 BabbleBoss:SetStrictness(true)
 
 function BabbleBoss:Contains(name)
-	for cat, _ in bosses do
-		if cat == name then
-			return true
-		end
+	if bosses[name] then
+		return true
 	end
 	return false
 end

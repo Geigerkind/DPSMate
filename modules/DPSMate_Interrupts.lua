@@ -21,19 +21,19 @@ function DPSMate.Modules.Interrupts:GetSortedTable(arr,k)
 			local i = 1
 			while true do
 				if (not b[i]) then
-					table.insert(b, i, val["i"])
+					table.insert(b, i, val["i"][1])
 					table.insert(a, i, cat)
 					break
 				else
-					if b[i] < val["i"] then
-						table.insert(b, i, val["i"])
+					if b[i] < val["i"][1] then
+						table.insert(b, i, val["i"][1])
 						table.insert(a, i, cat)
 						break
 					end
 				end
 				i=i+1
 			end
-			total = total + val["i"]
+			total = total + val["i"][1]
 		end
 	end
 	return b, total, a
@@ -68,7 +68,7 @@ function DPSMate.Modules.Interrupts:EvalTable(user, k)
 			end
 		end
 	end
-	return a, arr[user[1]]["i"], b
+	return a, arr[user[1]]["i"][1], b
 end
 
 function DPSMate.Modules.Interrupts:GetSettingValues(arr, cbt, k)

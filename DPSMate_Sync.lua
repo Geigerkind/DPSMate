@@ -1051,7 +1051,7 @@ end
 
 function DPSMate.Sync:InterruptsAllOut()
 	if DPSMateInterrupts[1][pid] then
-		Buffer[cou] = {"DPSMate_InterruptsAll", playerclass..","..DPSMateInterrupts[1][pid]["i"]..","}
+		Buffer[cou] = {"DPSMate_InterruptsAll", playerclass..","..DPSMateInterrupts[1][pid]["i"][1]..","}
 		cou = cou + 1
 		--SendAddonMessage("DPSMate_InterruptsAll", playerclass..","..DPSMateInterrupts[1][pid]["i"]..",", "RAID")
 	end

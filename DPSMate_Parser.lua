@@ -66,8 +66,10 @@ function DPSMate.Parser:OnLoad()
 	if fac == "Alliance" then
 		DPSMatePlayer[3] = 1
 	elseif fac == "Horde" then
-		DPSMatePlayer[3] = 0
+		DPSMatePlayer[3] = -1
 	end
+	DPSMatePlayer[4] = GetRealmName()
+	DPSMatePlayer[5] = GetGuildInfo("player")
 end
 
 function DPSMate.Parser:OnEvent(event)
@@ -743,7 +745,9 @@ function DPSMate.Parser:CombatFriendlyDeath(msg)
 end
 
 function DPSMate.Parser:CombatHostileDeaths(msg)
-	for ta in strgfind(msg, "(.-) dies%.") do DB:UnregisterDeath(ta) end
+	for ta in strgfind(msg, "(.+) dies%.") do 
+		DB:UnregisterDeath(ta)
+	end
 end
 
 ----------------------------------------------------------------------------------

@@ -416,7 +416,8 @@ function DPSMate.DB:OnGroupUpdate()
 		local pet = UnitName(type.."pet"..i)
 		local _,classEng = UnitClass(type..i)
 		local fac = UnitFactionGroup(type..i)
-		self:BuildUser(name, strlower(classEng))
+		local gname, _, _ = GetGuildInfo(type..i)
+		self:BuildUser(name, strlower(classEng or ""))
 		self:BuildUser(pet)
 		DPSMateUser[name][4] = false
 		if pet then
@@ -427,9 +428,10 @@ function DPSMate.DB:OnGroupUpdate()
 		if fac == "Alliance" then
 			DPSMateUser[name][3] = 1
 		elseif fac == "Horde" then
-			DPSMateUser[name][3] = 0
+			DPSMateUser[name][3] = -1
 		end
 		DPSMate.Parser.TargetParty[name] = type..i
+		DPSMateUser[name][7] = gname
 	end
 	local pet = UnitName("playerpet")
 	local name = UnitName("player")
@@ -470,7 +472,7 @@ function DPSMate.DB:PlayerTargetChanged()
 		if fac == "Alliance" then
 			DPSMateUser[name][3] = 1
 		elseif fac == "Horde" then
-			DPSMateUser[name][3] = 0
+			DPSMateUser[name][3] = -1
 		end
 	end
 end
@@ -1178,7 +1180,10 @@ function DPSMate.DB:Dispels(cause, Dname, target, ability)
 	for cat, val in pairs({[1]="total", [2]="current"}) do 
 		if not DPSMateDispels[cat][DPSMateUser[cause][1]] then
 			DPSMateDispels[cat][DPSMateUser[cause][1]] = {
-				i = 0,
+				i = {
+					[1] = 0,
+					[2] = {}
+				},
 			}
 		end
 		if not DPSMateDispels[cat][DPSMateUser[cause][1]][DPSMateAbility[Dname][1]] then
@@ -1191,17 +1196,22 @@ function DPSMate.DB:Dispels(cause, Dname, target, ability)
 			DPSMateDispels[cat][DPSMateUser[cause][1]][DPSMateAbility[Dname][1]][DPSMateUser[target][1]][DPSMateAbility[ability][1]] = 0
 		end
 		DPSMateDispels[cat][DPSMateUser[cause][1]][DPSMateAbility[Dname][1]][DPSMateUser[target][1]][DPSMateAbility[ability][1]] = DPSMateDispels[cat][DPSMateUser[cause][1]][DPSMateAbility[Dname][1]][DPSMateUser[target][1]][DPSMateAbility[ability][1]]+1
-		DPSMateDispels[cat][DPSMateUser[cause][1]]["i"] = DPSMateDispels[cat][DPSMateUser[cause][1]]["i"]+1
+		DPSMateDispels[cat][DPSMateUser[cause][1]]["i"][1] = DPSMateDispels[cat][DPSMateUser[cause][1]]["i"][1]+1
+		tinsert(DPSMateDispels[cat][DPSMateUser[cause][1]]["i"][2], {DPSMateCombatTime[val], DPSMateAbility[ability][1], DPSMateUser[target][1]})
 	end
 	self.NeedUpdate = true
 end
 
 function DPSMate.DB:UnregisterDeath(target)
-	if self:BuildUser(target, nil) then return end
-	for cat, val in pairs({[1]="total", [2]="current"}) do 
-		if DPSMateDeaths[cat][DPSMateUser[target][1]] then
-			DPSMateDeaths[cat][DPSMateUser[target][1]][1]["i"][1]=1
-			DPSMateDeaths[cat][DPSMateUser[target][1]][1]["i"][2]=GameTime_GetTime()
+	if DPSMate.BabbleBoss:Contains(target) then
+		DPSMate.DB:Attempt(true, true)
+	else
+		if self:BuildUser(target, nil) then return end
+		for cat, val in pairs({[1]="total", [2]="current"}) do 
+			if DPSMateDeaths[cat][DPSMateUser[target][1]] then
+				DPSMateDeaths[cat][DPSMateUser[target][1]][1]["i"][1]=1
+				DPSMateDeaths[cat][DPSMateUser[target][1]][1]["i"][2]=GameTime_GetTime()
+			end
 		end
 	end
 end
@@ -1303,7 +1313,10 @@ function DPSMate.DB:Kick(cause, target, causeAbility, targetAbility)
 	for cat, val in pairs({[1]="total", [2]="current"}) do 
 		if not DPSMateInterrupts[cat][DPSMateUser[cause][1]] then
 			DPSMateInterrupts[cat][DPSMateUser[cause][1]] = {
-				i = 0,
+				i = {
+					[1] = 0,
+					[2] = {}
+				},
 			}
 		end
 		if not DPSMateInterrupts[cat][DPSMateUser[cause][1]][DPSMateAbility[causeAbility][1]] then
@@ -1315,7 +1328,8 @@ function DPSMate.DB:Kick(cause, target, causeAbility, targetAbility)
 		if not DPSMateInterrupts[cat][DPSMateUser[cause][1]][DPSMateAbility[causeAbility][1]][DPSMateUser[target][1]][DPSMateAbility[targetAbility][1]] then
 			DPSMateInterrupts[cat][DPSMateUser[cause][1]][DPSMateAbility[causeAbility][1]][DPSMateUser[target][1]][DPSMateAbility[targetAbility][1]] = 0
 		end
-		DPSMateInterrupts[cat][DPSMateUser[cause][1]]["i"] = DPSMateInterrupts[cat][DPSMateUser[cause][1]]["i"] + 1
+		DPSMateInterrupts[cat][DPSMateUser[cause][1]]["i"][1] = DPSMateInterrupts[cat][DPSMateUser[cause][1]]["i"][1] + 1
+		tinsert(DPSMateInterrupts[cat][DPSMateUser[cause][1]]["i"][2], {DPSMateCombatTime[val], GameTime_GetTime(), DPSMateAbility[targetAbility][1], DPSMateUser[target][1]})
 		DPSMateInterrupts[cat][DPSMateUser[cause][1]][DPSMateAbility[causeAbility][1]][DPSMateUser[target][1]][DPSMateAbility[targetAbility][1]]=DPSMateInterrupts[cat][DPSMateUser[cause][1]][DPSMateAbility[causeAbility][1]][DPSMateUser[target][1]][DPSMateAbility[targetAbility][1]]+1
 	end
 end
@@ -1471,15 +1485,16 @@ function DPSMate.DB:hasVanishedFeignDeath()
 	end
 end
 
-function DPSMate.DB:Attempt(mode)
+function DPSMate.DB:Attempt(mode, check)
 	local zone = GetRealZoneText()
 	if not DPSMateAttempts[zone] then DPSMateAttempts[zone] = {} end
 	if self.Zones[zone] then -- Need to find a solution for world bosses.
 		if mode then
-			if DPSMateAttempts[zone][1] then
+			if DPSMateAttempts[zone][1] and not DPSMateAttempts[zone][1][4] then
 				local _,_,a = DPSMate.Modules.EDT:GetSortedTable(DPSMateEDT[2])
 				DPSMateAttempts[zone][1][1] = DPSMate:GetUserById(a[1]) or "Unknown"
 				DPSMateAttempts[zone][1][4] = DPSMateCombatTime["total"]
+				DPSMateAttempts[zone][1][5] = check
 			end
 		else
 			tinsert(DPSMateAttempts[zone], 1, {
