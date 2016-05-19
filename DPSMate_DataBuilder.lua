@@ -114,7 +114,7 @@ function DPSMate.DB:OnEvent(event)
 							mage = true,
 							warlock = true,
 							paladin = true,
-							shamen = true,
+							shaman = true,
 							druid = true,
 						},
 						filterpeople = "",
