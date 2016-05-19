@@ -126,8 +126,22 @@ DPSMate.Options.Options = {
 				args = {},
 			},
 			blank2 = {
-				order = 35,
+				order = 31,
 				type = 'header',
+			},
+			showAll  = {
+				order = 32,
+				type = 'execute',
+				name = 'Show all',
+				desc = 'Click to show all frames',
+				func = function() for _, val in DPSMateSettings["windows"] do DPSMate.Options:Show(getglobal("DPSMate_"..val["name"])) end; DPSMate.Options.Dewdrop:Close() end,
+			},
+			hideAll  = {
+				order = 33,
+				type = 'execute',
+				name = 'Hide all',
+				desc = 'Click to hide all frames',
+				func = function() for _, val in DPSMateSettings["windows"] do DPSMate.Options:Hide(getglobal("DPSMate_"..val["name"])) end; DPSMate.Options.Dewdrop:Close() end,
 			},
 			showwindow = {
 				order = 36,
@@ -279,9 +293,9 @@ DPSMate.Options.Options = {
 					shamen = {
 						order = 90,
 						type = 'toggle',
-						name = 'Shamen',
+						name = 'Shaman',
 						desc = 'Show shamens',
-						get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["filterclasses"]["shamen"] end,
+						get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["filterclasses"]["shaman"] end,
 						set = function() DPSMate.Options:ToggleFilterClass(DPSMate.Options.Dewdrop:GetOpenedParent().Key, "shamen");DPSMate.Options.Dewdrop:Close() end,
 					},
 				},
@@ -429,15 +443,70 @@ function DPSMate.Options:Logout()
 	else
 		DPSMate.Options:PopUpAccept(true, true)
 	end
+	self:SumGraphData()
 	DPSMate.Options.OldLogout()
 end
 Logout = function() 
 	if DPSMateSettings["dataresetslogout"] == 3 then
 		DPSMate_Logout:Show() 
 	elseif DPSMateSettings["dataresetslogout"] == 2 then
+		DPSMate.Options:SumGraphData()
 		DPSMate.Options.OldLogout()
 	else
 		DPSMate.Options:Logout()
+	end
+end
+
+function DPSMate.Options:SumGraphData()
+	for i=1,2 do
+		-- Damage done
+		for k,v in DPSMateDamageDone[i] do
+			DPSMateDamageDone[i][k]["i"][1] = DPSMate.Sync:GetSummarizedTable(v["i"][1])
+		end
+		
+		-- EDT
+		for k,v in DPSMateEDT[i] do
+			for key, var in v do 
+				DPSMateEDT[i][k][key]["i"][1] = DPSMate.Sync:GetSummarizedTable(var["i"][1])
+			end
+		end
+		
+		-- EDD
+		for k,v in DPSMateEDD[i] do
+			for key, var in v do 
+				DPSMateEDD[i][k][key]["i"][1] = DPSMate.Sync:GetSummarizedTable(var["i"][1])
+			end
+		end
+		
+		-- Damage taken
+		for k,v in DPSMateDamageTaken[i] do
+			DPSMateDamageTaken[i][k]["i"][1] = DPSMate.Sync:GetSummarizedTable(v["i"][1])
+		end
+		
+		-- Ehealing
+		for k,v in DPSMateEHealing[i] do
+			DPSMateEHealing[i][k]["i"][2] = DPSMate.Sync:GetSummarizedTable(v["i"][2])
+		end
+		
+		-- Thealing
+		for k,v in DPSMateTHealing[i] do
+			DPSMateTHealing[i][k]["i"][2] = DPSMate.Sync:GetSummarizedTable(v["i"][2])
+		end
+		
+		-- Overhealing
+		for k,v in DPSMateOverhealing[i] do
+			DPSMateOverhealing[i][k]["i"][2] = DPSMate.Sync:GetSummarizedTable(v["i"][2])
+		end
+		
+		-- Ehealing taken
+		for k,v in DPSMateEHealingTaken[i] do
+			DPSMateEHealingTaken[i][k]["i"][2] = DPSMate.Sync:GetSummarizedTable(v["i"][2])
+		end
+		
+		-- Thealing taken
+		for k,v in DPSMateHealingTaken[i] do
+			DPSMateHealingTaken[i][k]["i"][2] = DPSMate.Sync:GetSummarizedTable(v["i"][2])
+		end
 	end
 end
 
@@ -554,15 +623,13 @@ function DPSMate.Options:HideInPvP()
 	for _, val in pairs(DPSMateSettings["windows"]) do
 		local frame = _G("DPSMate_"..val["name"])
 		if DPSMate.Options:IsInBattleground() then
-			DPSMate.Options:Hide(frame)
+			frame:Hide()
 			if DPSMateSettings["disablewhilehidden"] then
 				DPSMate:Disable()
 			end
-		else
-			DPSMate.Options:Show(frame)
-			DPSMate:Enable()
 		end
 	end
+	DPSMate.Options:HideWhenSolo()
 end
 
 function DPSMate.Options:HideWhenSolo()
@@ -570,17 +637,16 @@ function DPSMate.Options:HideWhenSolo()
 		local frame = _G("DPSMate_"..val["name"])
 		if DPSMateSettings["hidewhensolo"] and not DPSMate.Options:IsInBattleground() then
 			if GetNumPartyMembers() == 0 then
-				DPSMate.Options:Hide(frame)
+				frame:Hide()
 				if DPSMateSettings["disablewhilehidden"] then
 					DPSMate:Disable()
 				end
 			else
-				DPSMate.Options:Show(frame)
+				if not val["hidden"] then
+					frame:Show()
+				end
 				DPSMate:Enable()
 			end
-		else
-			DPSMate.Options:Show(frame)
-			DPSMate:Enable()
 		end
 	end
 end
@@ -1381,6 +1447,7 @@ function DPSMate.Options:CreateWindow()
 			bgbarcolor = {1,1,1},
 			numberformat = 1,
 			opacity = 1,
+			bgopacity = 1,
 			filterclasses = {
 				warrior = true,
 				rogue = true,
@@ -1619,14 +1686,14 @@ function DPSMate.Options:InitializeHideShowWindow()
 			type = 'execute',
 			name = val["name"],
 			desc = "Hide "..val["name"],
-			func = loadstring('getglobal("DPSMate_'..val["name"]..'"):Hide(); DPSMate.Options.Dewdrop:Close();'),
+			func = loadstring('DPSMate.Options:Hide(getglobal("DPSMate_'..val["name"]..'")); DPSMate.Options.Dewdrop:Close();'),
 		}
 		DPSMate.Options.Options[3]["args"]["showwindow"]["args"][val["name"]] = {
 			order = i*10,
 			type = 'execute',
 			name = val["name"],
 			desc = "Show "..val["name"],
-			func = loadstring('getglobal("DPSMate_'..val["name"]..'"):Show(); DPSMate.Options.Dewdrop:Close();'),
+			func = loadstring('DPSMate.Options:Show(getglobal("DPSMate_'..val["name"]..'")); DPSMate.Options.Dewdrop:Close();'),
 		}
 		i=i+1
 	end

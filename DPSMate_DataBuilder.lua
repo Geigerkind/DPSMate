@@ -105,6 +105,7 @@ function DPSMate.DB:OnEvent(event)
 						bgbarcolor = {1,1,1},
 						numberformat = 1,
 						opacity = 1,
+						bgopacity = 1,
 						filterclasses = {
 							warrior = true,
 							rogue = true,
@@ -382,20 +383,24 @@ function DPSMate.DB:OnEvent(event)
 		if DPSMateSettings["hideincombat"] then
 			for _, val in pairs(DPSMateSettings["windows"]) do
 				if not val then break end
-				DPSMate.Options:Hide(_G("DPSMate_"..val["name"]))
+				_G("DPSMate_"..val["name"]):Hide()
 			end
 			if DPSMateSettings["disablewhilehidden"] then
 				DPSMate:Disable()
 			end
 		end
+		DPSMate.Options:HideWhenSolo()
 	elseif event == "PLAYER_REGEN_ENABLED" then
 		if DPSMateSettings["hideincombat"] then
 			for _, val in pairs(DPSMateSettings["windows"]) do
 				if not val then break end
-				DPSMate.Options:Show(_G("DPSMate_"..val["name"]))
+				if not val["hidden"] then
+					_G("DPSMate_"..val["name"]):Show()
+				end
 			end
 			DPSMate:Enable()
 		end
+		DPSMate.Options:HideWhenSolo()
 	elseif event == "PLAYER_AURAS_CHANGED" then
 		self:hasVanishedFeignDeath()
 	elseif event == "PLAYER_TARGET_CHANGED" then
@@ -1463,6 +1468,7 @@ function DPSMate.DB:CombatTime()
 			In1 = In1 + arg1
 			if In1>=1 then
 				DPSMate:SetStatusBarValue()
+				DPSMate.Parser:GetPlayerValues()
 				InitialLoad = false
 			end
 		end

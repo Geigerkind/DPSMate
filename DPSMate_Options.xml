@@ -291,6 +291,7 @@
 							})
 							DPSMate_ConfigMenu_Tab_Content_Scale:SetValue(DPSMateSettings["windows"][this:GetParent().Key]["scale"])
 							DPSMate_ConfigMenu_Tab_Content_Opacity:SetValue(DPSMateSettings["windows"][this:GetParent().Key]["opacity"])
+							DPSMate_ConfigMenu_Tab_Content_BGOpacity:SetValue(DPSMateSettings["windows"][this:GetParent().Key]["bgopacity"] or 1)
 							DPSMate_ConfigMenu_Tab_Content_BGDropDown_Texture:SetBackdropColor(DPSMateSettings["windows"][this:GetParent().Key]["contentbgcolor"][1], DPSMateSettings["windows"][this:GetParent().Key]["contentbgcolor"][2], DPSMateSettings["windows"][this:GetParent().Key]["contentbgcolor"][3])
 							DPSMate_ConfigMenu_Tab_Content_BGColorNormalTexture:SetVertexColor(DPSMateSettings["windows"][this:GetParent().Key]["contentbgcolor"][1], DPSMateSettings["windows"][this:GetParent().Key]["contentbgcolor"][2], DPSMateSettings["windows"][this:GetParent().Key]["contentbgcolor"][3])
 							DPSMate_ConfigMenu_Tab_Content_BGColor_SwatchBg.r = DPSMateSettings["windows"][this:GetParent().Key]["contentbgcolor"][1]
@@ -2305,6 +2306,27 @@
 							</OnLoad>
 						</Scripts>
 					</Slider>
+					<Slider name="$parent_BGOpacity" inherits="DPSMate_Template_Slider">
+						<Anchors>
+							<Anchor point="TOP" relativeTo="$parent_Opacity" relativePoint="BOTTOM">
+								<Offset x="0" y="-30" />
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								this.aide = DPSMate.localization.config.bgOpacityTooltip
+								this.func = function() 
+									DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["bgopacity"] = this:GetValue()
+									getglobal("DPSMate_"..DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["name"].."_ScrollFrame_Background"):SetAlpha(DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["bgopacity"])
+								end
+								this:SetMinMaxValues(0.0,1.0)
+								this:SetValueStep(0.1)
+								getglobal(this:GetName().."Text"):SetText(DPSMate.localization.config.bgOpacity)
+								getglobal(this:GetName().."Low"):SetText("0.0")
+								getglobal(this:GetName().."High"):SetText("1.0")
+							</OnLoad>
+						</Scripts>
+					</Slider>
 					<Button name="$parent_BGColor" inherits="DPSMate_Template_Colorpicker">
 						<Anchors>
 							<Anchor point="LEFT" relativeTo="$parent_Scale" relativePoint="RIGHT">
@@ -2520,9 +2542,16 @@
 							<OnClick>
 								if DPSMateSettings["hidewhensolo"] then
 									DPSMateSettings["hidewhensolo"] = false
+									for _, val in pairs(DPSMateSettings["windows"]) do
+										getglobal("DPSMate_"..val["name"]):Show()
+									end
 								else
 									DPSMateSettings["hidewhensolo"] = true
+									for _, val in pairs(DPSMateSettings["windows"]) do
+										getglobal("DPSMate_"..val["name"]):Hide()
+									end
 								end
+								DPSMate.Options:HideInPvP()
 								DPSMate.Options:HideWhenSolo()
 							</OnClick>
 						</Scripts>
@@ -2549,6 +2578,8 @@
 										end
 									end
 								end
+								DPSMate.Options:HideInPvP()
+								DPSMate.Options:HideWhenSolo()
 							</OnClick>
 						</Scripts>
 					</CheckButton>
@@ -2582,9 +2613,13 @@
 							<OnClick>
 								if DPSMateSettings["hideinpvp"] then
 									DPSMateSettings["hideinpvp"] = false
+									for _, val in pairs(DPSMateSettings["windows"]) do
+										getglobal("DPSMate_"..val["name"]):Show()
+									end
 								else
 									DPSMateSettings["hideinpvp"] = true
 								end
+								DPSMate.Options:HideWhenSolo()
 								DPSMate.Options:HideInPvP()
 							</OnClick>
 						</Scripts>

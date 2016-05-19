@@ -222,3 +222,5 @@ DPSMate.localization.config.bgbarcolorTooltip = "Click to choose a background ba
 DPSMate.localization.config.displayoptions = "Display options"
 DPSMate.localization.config.filter = "Filter options"
 DPSMate.localization.config.raidleader = "Raid leader options"
+DPSMate.localization.config.bgOpacityTooltip = "Adjust the opacity of the background."
+DPSMate.localization.config.bgOpacity = "Background opacity"

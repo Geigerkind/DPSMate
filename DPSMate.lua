@@ -110,6 +110,10 @@ function DPSMate:SlashCMDHandler(msg)
 			DPSMate.Options:Unlock()
 		elseif cmd == "config" then
 			DPSMate_ConfigMenu:Show()
+		elseif cmd == "showAll" then
+			for _, val in DPSMateSettings["windows"] do DPSMate.Options:Show(getglobal("DPSMate_"..val["name"])) end
+		elseif cmd == "hideAll" then
+			for _, val in DPSMateSettings["windows"] do DPSMate.Options:Hide(getglobal("DPSMate_"..val["name"])) end
 		elseif strsub(cmd, 1, 4) == "show" then
 			local frame = _G("DPSMate_"..strsub(cmd, 6))
 			if frame then
@@ -135,6 +139,8 @@ function DPSMate:SlashCMDHandler(msg)
 			DPSMate:SendMessage("|c3ffddd80Usage:|r /dps {lock|unlock|show|hide|config}")
 			DPSMate:SendMessage("|c3ffddd80- lock:|r Lock your windows.")
 			DPSMate:SendMessage("|c3ffddd80- unlock:|r Unlock your windows.")
+			DPSMate:SendMessage("|c3ffddd80- showAll:|r Show all windows.")
+			DPSMate:SendMessage("|c3ffddd80- hideAll:|r Hide all windows.")
 			DPSMate:SendMessage("|c3ffddd80- show {name}:|r Show the window with the name {name}.")
 			DPSMate:SendMessage("|c3ffddd80- hide {name}:|r Hide the window with the name {name}.")
 			DPSMate:SendMessage("|c3ffddd80- config:|r Opens the config menu.")
@@ -488,7 +494,7 @@ function DPSMate:Disable()
 		for _, event in pairs(DPSMate.Events) do
 			DPSMate_Options:UnregisterEvent(event)
 		end
-		DPSMate.Registered = false
+		self.Registered = false
 	end
 end
 

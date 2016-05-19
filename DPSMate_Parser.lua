@@ -20,6 +20,7 @@ DPSMate.Parser.procs = {
 	"Essence of Sapphiron",
 	"Hand of Justice",
 	"Sword Specialization",
+	"Bonereaver's Edge",
 	
 	-- Rogue
 	"Slice and Dice",
@@ -45,7 +46,6 @@ DPSMate.Parser.TargetParty = {}
 -- Local Variables
 local player = UnitName("player")
 local _,playerclass = UnitClass("player")
-local fac = UnitFactionGroup("player")
 local strgfind = string.gfind
 local DB = DPSMate.DB
 local t = {}
@@ -60,9 +60,13 @@ function DPSMate.Parser:OnLoad()
 			[2] = strlower(playerclass),
 		}
 	end
+end
+
+function DPSMate.Parser:GetPlayerValues()
 	player = UnitName("player")
 	DPSMatePlayer[1] = player
 	DPSMatePlayer[2] = playerclass
+	local _, fac = UnitFactionGroup("player")
 	if fac == "Alliance" then
 		DPSMatePlayer[3] = 1
 	elseif fac == "Horde" then
