@@ -51,7 +51,7 @@ function DPSMate.Sync:SendAddonMessages(elapsed)
 		if self.LU > 1.1 then
 			for i=1, 80 do
 				--SendAddonMessage("Test"..co, "Test"..co, "RAID")
-				if not Buffer[1] then break end
+				if not Buffer[co] then break end
 				SendAddonMessage(Buffer[co][1], Buffer[co][2], "RAID")
 				Buffer[co] = nil
 				co = co + 1
