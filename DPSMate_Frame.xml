@@ -15,8 +15,10 @@
 				</FontString>
 				<FontString name="$parent_Value" inherits="TextStatusBarText" justifyH="RIGHT">
 					<Anchors>
-						<Anchor point="TOPLEFT" />
-						<Anchor point="BOTTOMRIGHT" />
+						<Anchor point="TOPLEFT"/>
+						<Anchor point="BOTTOMRIGHT">
+							<Offset x="-3" y="0" />
+						</Anchor>
 					</Anchors>
 				</FontString>
 			</Layer>

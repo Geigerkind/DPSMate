@@ -4624,10 +4624,16 @@
 				this:RegisterEvent("ADDON_LOADED")
 				this:RegisterEvent("PLAYER_ENTERING_WORLD")
 				this:RegisterEvent("CHAT_MSG_LOOT")
+				this:RegisterEvent("PLAYER_PET_CHANGED")
 				
 				this:RegisterEvent("UPDATE_MOUSEOVER_UNIT")
 				this:RegisterEvent("PARTY_MEMBERS_CHANGED")
 				this:RegisterEvent("RAID_ROSTER_UPDATE")
+				
+				this:RegisterEvent("CHAT_MSG_COMBAT_PET_HITS")
+				this:RegisterEvent("CHAT_MSG_COMBAT_PET_MISSES")
+				this:RegisterEvent("CHAT_MSG_SPELL_PET_BUFF")
+				this:RegisterEvent("CHAT_MSG_SPELL_PET_DAMAGE")
 				
 				this:RegisterEvent("CHAT_MSG_COMBAT_SELF_HITS")
 				this:RegisterEvent("CHAT_MSG_COMBAT_SELF_MISSES")

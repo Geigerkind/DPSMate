@@ -443,14 +443,14 @@ function DPSMate.Options:Logout()
 	else
 		DPSMate.Options:PopUpAccept(true, true)
 	end
-	self:SumGraphData()
+	--self:SumGraphData()
 	DPSMate.Options.OldLogout()
 end
 Logout = function() 
 	if DPSMateSettings["dataresetslogout"] == 3 then
 		DPSMate_Logout:Show() 
 	elseif DPSMateSettings["dataresetslogout"] == 2 then
-		DPSMate.Options:SumGraphData()
+		--DPSMate.Options:SumGraphData()
 		DPSMate.Options.OldLogout()
 	else
 		DPSMate.Options:Logout()
@@ -589,13 +589,14 @@ function DPSMate.Options:OnEvent(event)
 	elseif event == "PLAYER_ENTERING_WORLD" then
 		if DPSMateSettings["dataresetsworld"] == 3 then
 			if (GetTime()-LastPopUp) > TimeToNextPopUp and (DPSMate:TableLength(DPSMateUser) ~= 0 or DPSMate:TableLength(DPSMateUserCurrent) ~= 0) then
-				DPSMate.Options:ShowResetPopUp()
+				self:ShowResetPopUp()
 				LastPopUp = GetTime()
 			end
 		elseif DPSMateSettings["dataresetsworld"] == 1 then
-			DPSMate.Options:PopUpAccept()
+			self:PopUpAccept()
 		end
-		DPSMate.Options:HideInPvP()
+		self:HideInPvP()
+		DPSMate.DB:OnGroupUpdate()
 	end
 end
 

@@ -405,6 +405,8 @@ function DPSMate.DB:OnEvent(event)
 		self:hasVanishedFeignDeath()
 	elseif event == "PLAYER_TARGET_CHANGED" then
 		self:PlayerTargetChanged()
+	elseif event == "PLAYER_PET_CHANGED" then
+		DPSMate.DB:OnGroupUpdate()
 	end
 end
 
@@ -438,7 +440,7 @@ function DPSMate.DB:OnGroupUpdate()
 		DPSMate.Parser.TargetParty[name] = type..i
 		DPSMateUser[name][7] = gname
 	end
-	local pet = UnitName("playerpet")
+	local pet = UnitName("pet")
 	local name = UnitName("player")
 	if pet then
 		DPSMateUser[pet][4] = true

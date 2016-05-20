@@ -813,6 +813,74 @@ function DPSMate.Parser:Loot(msg)
 	end
 end
 
+-- Pet section
+
+function DPSMate.Parser:PetHits(msg)
+	t = {}
+	for a,b,c,d,e in strgfind(msg, "(.-) (%a%a?)\its (.+) for (%d+)\.%s?(.*)") do
+		if b=="h" then t[3]=1;t[4]=0 end
+		if e=="(glancing)" then t[1]=1;t[3]=0;t[4]=0 elseif e~="" then t[2]=1;t[3]=0;t[4]=0 end
+		if c=="you" then c=player end
+		t[5] = tonumber(d)
+		DB:EnemyDamage(true, DPSMateEDT, a, "AutoAttack", t[3] or 0, t[4] or 1, 0, 0, 0, 0, t[5], c, t[2] or 0, t[1] or 0)
+		DB:DamageDone(a, "AutoAttack", t[3] or 0, t[4] or 1, 0, 0, 0, 0, t[5], t[1] or 0, t[2] or 0)
+		return
+	end
+end
+
+function DPSMate.Parser:PetMisses(msg)
+	t = {}
+	for a,b in strgfind(msg, "(.-) misses (.+)%.") do 
+		if b=="you" then b=player end
+		DB:EnemyDamage(true, DPSMateEDT, a, "AutoAttack", 0, 0, 1, 0, 0, 0, 0, b, 0, 0)
+		DB:DamageDone(a, "AutoAttack", 0, 0, 1, 0, 0, 0, 0, 0, 0)
+		return
+	end
+	for a,b,c in strgfind(msg, "(.-) attacks%. (.+) (%a-)%.") do 
+		if c=="parries" or c=="parry" then t[1]=1 elseif c=="dodges" or c=="dodge" then t[2]=1 else t[3]=1 end 
+		if b=="You" then b=player end
+		DB:EnemyDamage(true, DPSMateEDT, a, "AutoAttack", 0, 0, 0, t[1] or 0, t[2] or 0, 0, 0, b, t[3] or 0, 0)
+		DB:DamageDone(a, "AutoAttack", 0, 0, 0, t[1] or 0, t[2] or 0, 0, 0, 0, t[3] or 0)
+		return
+	end
+end
+
+-- Marktast casts bla on bla.
+function DPSMate.Parser:PetSpellDamage(msg)
+	t = {}
+	for f,a,b,c,d,e in strgfind(msg, "(.-)'s (.+) (%a%a?)\its (.+) for (%d+)(.*)\.%s?(.*)") do 
+		t[1] = tonumber(d)
+		if b=="h" then t[2]=1;t[3]=0 end
+		if strfind(e, "blocked") then t[4]=1;t[2]=0;t[3]=0 end
+		if d=="you" then d=player end
+		DB:EnemyDamage(true, DPSMateEDT, f, a,  t[2] or 0, t[3] or 1, 0, 0, 0, 0, t[1], c, t[4] or 0, 0)
+		DB:DamageDone(f, a, t[2] or 0, t[3] or 1, 0, 0, 0, 0, t[1], 0, t[4] or 0)
+		return
+	end
+	for a,b,c in strgfind(msg, "(.-)'s (.+) was resisted by (.+)%.") do 
+		if d=="you" then d=player end
+		DB:EnemyDamage(true, DPSMateEDT, a, b,  0, 0, 0, 0, 0, 1, 0, c, t[4] or 0, 0)
+		DB:DamageDone(a, c, 0, 0, 0, 0, 0, 1, 0, 0, 0)
+		return
+	end
+	for f,a,b,c in strgfind(msg, "(.-)'s (.+) was (.-) by (.+)%.") do 
+		if b=="dodged" then t[1]=1 elseif b=="blocked" then t[2]=1 else t[3]=1 end
+		DB:EnemyDamage(true, DPSMateEDT, f, a, 0, 0, 0, 0, t[1] or 0, t[3] or 0, 0, c, t[2] or 0, 0)
+		DB:DamageDone(f, a, 0, 0, 0, 0, t[1] or 0, t[3] or 0, 0, 0, t[2] or 0)
+		return
+	end
+	for f,a,b in strgfind(msg, "(.-)'s (.+) is parried by (.+)%.") do
+		DB:EnemyDamage(true, DPSMateEDT, f, a, 0, 0, 0, 1, 0, 0, 0, b, 0, 0)
+		DB:DamageDone(f, a, 0, 0, 0, 1, 0, 0, 0, 0, 0)
+		return
+	end
+	for f,a,b in strgfind(msg, "(.-)'s (.+) missed (.+)%.") do 
+		DB:EnemyDamage(true, DPSMateEDT, f, a, 0, 0, 1, 0, 0, 0, 0, b, 0, 0)
+		DB:DamageDone(f, a, 0, 0, 1, 0, 0, 0, 0, 0, 0)
+		return
+	end
+end
+
 Execute = {
 	["CHAT_MSG_COMBAT_HOSTILE_DEATH"] = function(arg1) DPSMate.Parser:CombatHostileDeaths(arg1) end,
 	["CHAT_MSG_COMBAT_FRIENDLY_DEATH"] = function(arg1) DPSMate.Parser:CombatFriendlyDeath(arg1) end,
@@ -857,5 +925,9 @@ Execute = {
 	["CHAT_MSG_SPELL_SELF_DAMAGE"] = function(arg1) DPSMate.Parser:SelfSpellDMG(arg1) end,
 	["CHAT_MSG_COMBAT_SELF_MISSES"] = function(arg1) DPSMate.Parser:SelfMisses(arg1) end,
 	["CHAT_MSG_COMBAT_SELF_HITS"] = function(arg1) DPSMate.Parser:SelfHits(arg1) end,
-	["CHAT_MSG_LOOT"] = function(arg1) DPSMate.Parser:Loot(arg1) end
+	["CHAT_MSG_LOOT"] = function(arg1) DPSMate.Parser:Loot(arg1) end,
+	["CHAT_MSG_COMBAT_PET_HITS"] = function(arg1) DPSMate.Parser:PetHits(arg1) end,
+	["CHAT_MSG_COMBAT_PET_MISSES"] = function(arg1) DPSMate.Parser:PetMisses(arg1) end,
+	--["CHAT_MSG_SPELL_PET_BUFF"] = function(arg1) DPSMate:SendMessage(arg1.."Test 3"); end,
+	["CHAT_MSG_SPELL_PET_DAMAGE"] = function(arg1) DPSMate.Parser:PetSpellDamage(arg1) end
 }
