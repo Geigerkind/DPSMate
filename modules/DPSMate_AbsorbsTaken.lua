@@ -30,8 +30,14 @@ function DPSMate.Modules.AbsorbsTaken:GetSortedTable(arr,k)
 							for cet, vel in pairs(ve) do
 								if cet~="i" then
 									local p = 5
-									if DPSMateDamageTaken[1][cat][cet][vel[1]][14]~=0 then
-										p=ceil(DPSMateDamageTaken[1][cat][cet][vel[1]][14])
+									if DPSMateDamageTaken[1][cat] then
+										if DPSMateDamageTaken[1][cat][cet] then
+											if DPSMateDamageTaken[1][cat][cet][vel[1]] then
+												if DPSMateDamageTaken[1][cat][cet][vel[1]][14]~=0 then
+													p=ceil(DPSMateDamageTaken[1][cat][cet][vel[1]][14])
+												end
+											end
+										end
 									end
 									PerShieldAbsorb=PerShieldAbsorb+vel[2]*p
 								end
@@ -81,8 +87,14 @@ function DPSMate.Modules.AbsorbsTaken:EvalTable(user, k)
 					for ce, ve in pairs(v) do
 						if ce~="i" then
 							local p = 5
-							if DPSMateDamageTaken[1][user[1]][ce][ve[1]][14]~=0 then
-								p=ceil(DPSMateDamageTaken[1][user[1]][ce][ve[1]][14])
+							if DPSMateDamageTaken[1][cat] then
+								if DPSMateDamageTaken[1][cat][cet] then
+									if DPSMateDamageTaken[1][cat][cet][vel[1]] then
+										if DPSMateDamageTaken[1][cat][cet][vel[1]][14]~=0 then
+											p=ceil(DPSMateDamageTaken[1][cat][cet][vel[1]][14])
+										end
+									end
+								end
 							end
 							PerShieldAbsorb=PerShieldAbsorb+ve[2]*p
 							if not temp[ce] then temp[ce] = {} end
