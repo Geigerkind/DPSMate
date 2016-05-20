@@ -272,6 +272,24 @@ function DPSMate.Parser:SpellDamageShieldsOnSelf(msg)
 		DB:EnemyDamage(true, DPSMateEDT, player, "Reflection", 1, 0, 0, 0, 0, 0, am, c, 0, 0)
 		DB:DamageDone(player, "Reflection", 1, 0, 0, 0, 0, 0, am, 0, 0)
 	end
+	
+	-- The rebirth support
+	for a,b,c in strgfind(msg, "Your (.+) was (.-) by (.+)%.") do 
+		if b=="dodged" then t[1]=1 elseif b=="blocked" then t[2]=1 else t[3]=1 end
+		DB:EnemyDamage(true, DPSMateEDT, player, a, 0, 0, 0, 0, t[1] or 0, t[3] or 0, 0, c, t[2] or 0, 0)
+		DB:DamageDone(player, a, 0, 0, 0, 0, t[1] or 0, t[3] or 0, 0, 0, t[2] or 0)
+		return
+	end
+	for a,b in strgfind(msg, "Your (.+) is parried by (.+)%.") do 
+		DB:EnemyDamage(true, DPSMateEDT, player, a, 0, 0, 0, 1, 0, 0, 0, b, 0, 0)
+		DB:DamageDone(player, a, 0, 0, 0, 1, 0, 0, 0, 0, 0)
+		return
+	end
+	for a,b in strgfind(msg, "Your (.+) missed (.+)%.") do 
+		DB:EnemyDamage(true, DPSMateEDT, player, a, 0, 0, 1, 0, 0, 0, 0, b, 0, 0)
+		DB:DamageDone(player, a, 0, 0, 1, 0, 0, 0, 0, 0, 0)
+		return
+	end
 end
 
 -- Helboar reflects 4 Fire damage to you.
@@ -281,6 +299,24 @@ function DPSMate.Parser:SpellDamageShieldsOnOthers(msg)
 		if d == "you" then ta=player end
 		DB:EnemyDamage(true, DPSMateEDT, a, "Reflection", 1, 0, 0, 0, 0, 0, am, ta or d, 0, 0)
 		DB:DamageDone(a, "Reflection", 1, 0, 0, 0, 0, 0, am, 0, 0)
+	end
+	
+	-- The rebirth support
+	for f,a,b,c in strgfind(msg, "(.-)'s (.+) was (.-) by (.+)%.") do 
+		if b=="dodged" then t[1]=1 elseif b=="blocked" then t[2]=1 else t[3]=1 end
+		DB:EnemyDamage(true, DPSMateEDT, f, a, 0, 0, 0, 0, t[1] or 0, t[3] or 0, 0, c, t[2] or 0, 0)
+		DB:DamageDone(f, a, 0, 0, 0, 0, t[1] or 0, t[3] or 0, 0, 0, t[2] or 0)
+		return
+	end
+	for f,a,b in strgfind(msg, "(.-)'s (.+) is parried by (.+)%.") do
+		DB:EnemyDamage(true, DPSMateEDT, f, a, 0, 0, 0, 1, 0, 0, 0, b, 0, 0)
+		DB:DamageDone(f, a, 0, 0, 0, 1, 0, 0, 0, 0, 0)
+		return
+	end
+	for f,a,b in strgfind(msg, "(.-)'s (.+) missed (.+)%.") do 
+		DB:EnemyDamage(true, DPSMateEDT, f, a, 0, 0, 1, 0, 0, 0, 0, b, 0, 0)
+		DB:DamageDone(f, a, 0, 0, 1, 0, 0, 0, 0, 0, 0)
+		return
 	end
 end
 
