@@ -711,9 +711,8 @@ end
 function DPSMate.Sync:iDispelsIn(arg2, arg4)
 	t = {}
 	strgsub(arg2, "(.-),", func)
-	Arrays[13][DPSMateUser[arg4][1]] = {
-		i = tonumber(arg2),
-	}
+	if not Arrays[13][DPSMateUser[arg4][1]] then Arrays[13][DPSMateUser[arg4][1]] = {i={[1]=0,[2]={}}} end
+	Arrays[13][DPSMateUser[arg4][1]]["i"][1] = tonumber(arg2);
 end
 
 function DPSMate.Sync:DispelsIn(arg2, arg4)
@@ -723,14 +722,14 @@ function DPSMate.Sync:DispelsIn(arg2, arg4)
 	DB:BuildAbility(t[1], nil)
 	DB:BuildAbility(t[3], nil)
 	local userid, userid2, userid3 = DPSMateUser[arg4][1], DPSMateAbility[t[1]][1], DPSMateUser[t[2]][1] -- not really userids
-	if not Arrays[13][userid] then return end
+	if not Arrays[13][userid] then Arrays[13][DPSMateUser[arg4][1]] = {i={[1]=0,[2]={}}} end
 	if not Arrays[13][userid][userid2] then
 		Arrays[13][userid][userid2] = {}
 	end
 	if not Arrays[13][userid][userid2][userid3] then
 		Arrays[13][userid][userid2][userid3] = {}
 	end
-	Arrays[13][userid][userid2][userid3][DPSMateAbility[t[3]][1]] = tonumber(v1)
+	Arrays[13][userid][userid2][userid3][DPSMateAbility[t[3]][1]] = tonumber(t[4])
 end
 
 ----------------------------------------------------------------------------------
