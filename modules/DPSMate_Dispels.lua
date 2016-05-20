@@ -68,7 +68,7 @@ function DPSMate.Modules.Dispels:EvalTable(user, k)
 			end
 		end
 	end
-	return a, arr[user[1]]["i"], b
+	return a, arr[user[1]]["i"][1], b
 end
 
 function DPSMate.Modules.Dispels:GetSettingValues(arr, cbt, k)
