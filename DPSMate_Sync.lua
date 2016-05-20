@@ -1086,7 +1086,7 @@ function DPSMate.Sync:DispelsOut()
 	if not DPSMateDispels[1][pid] then return end
 	for cat, val in pairs(DPSMateDispels[1][pid]) do -- Ability
 		if cat=="i" then
-			Buffer[cou] = {"DPSMate_iDispels", DPSMate:GetAbilityById(cat)..","..val[1]..","}
+			Buffer[cou] = {"DPSMate_iDispels", val[1]}
 			cou = cou + 1
 			--SendAddonMessage("DPSMate_iDispels", DPSMate:GetAbilityById(cat)..","..val..",", "RAID")
 		else
