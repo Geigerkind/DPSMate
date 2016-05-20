@@ -626,6 +626,8 @@ function DPSMate.Sync:AbsorbsIn(arg2, arg4)
 	local userid, userid2, userid3 = DPSMateUser[arg4][1], DPSMateUser[t[1]][1], DPSMateAbility[t[2]][1]
 	if not Arrays[10][userid] then return end
 	if not Arrays[10][userid][userid2] then return end
+	if not Arrays[10][userid][userid2][userid3] then Arrays[10][userid][userid2][userid3] = {} end
+	if not Arrays[10][userid][userid2][userid3][tonumber(t[3])] then Arrays[10][userid][userid2][userid3][tonumber(t[3])] = {} end
 	Arrays[10][userid][userid2][userid3][tonumber(t[3])][DPSMateUser[t[4]][1]] = {
 		[1] = tonumber(t[5]),
 		[2] = tonumber(t[6]),
@@ -758,6 +760,8 @@ function DPSMate.Sync:AurasStartEndIn(arg2, arg4, prefix)
 	t = {}
 	strgsub(arg2, "(.-),", func)
 	DB:BuildAbility(t[1], nil)
+	if not Arrays[14][DPSMateUser[arg4][1]] then return end
+	if not Arrays[14][DPSMateUser[arg4][1]][DPSMateAbility[t[1]][1]] then return end
 	Arrays[14][DPSMateUser[arg4][1]][DPSMateAbility[t[1]][1]][prefix][tonumber(t[2])] = tonumber(t[3])
 end
 
@@ -766,6 +770,8 @@ function DPSMate.Sync:AurasCauseIn(arg2, arg4)
 	strgsub(arg2, "(.-),", func)
 	DB:BuildUser(t[2], nil)
 	DB:BuildAbility(t[1], nil)
+	if not Arrays[14][DPSMateUser[arg4][1]] then return end
+	if not Arrays[14][DPSMateUser[arg4][1]][DPSMateAbility[t[1]][1]] then return end
 	Arrays[14][DPSMateUser[arg4][1]][DPSMateAbility[t[1]][1]][3][DPSMateUser[t[2]][1]] = tonumber(t[3])
 end
 
