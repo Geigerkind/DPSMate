@@ -1091,7 +1091,7 @@ function DPSMate.Sync:DispelsOut()
 			--SendAddonMessage("DPSMate_iDispels", DPSMate:GetAbilityById(cat)..","..val..",", "RAID")
 		else
 			for ca, va in pairs(val) do -- Target
-				for c, v in pairs(v) do -- Ability
+				for c, v in pairs(va) do -- Ability
 					Buffer[cou] = {"DPSMate_Dispels", DPSMate:GetAbilityById(cat)..","..DPSMate:GetUserById(ca)..","..DPSMate:GetAbilityById(c)..","..v..","}
 					cou = cou + 1
 					--SendAddonMessage("DPSMate_Dispels", DPSMate:GetAbilityById(cat)..","..DPSMate:GetUserById(ca)..","..DPSMate:GetAbilityById(c)..","..v..",", "RAID")
