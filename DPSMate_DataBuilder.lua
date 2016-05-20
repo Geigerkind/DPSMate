@@ -588,19 +588,19 @@ function DPSMate.DB:DamageDone(Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, Ddodge,
 		if Dhit == 1 then
 			if (Damount < path[2] or path[2] == 0) then path[2] = Damount end
 			if Damount > path[3] then path[3] = Damount end
-			path[4] = (path[4]+Damount)/2
+			if path[4] == 0 then path[4] = Damount else path[4] = (path[4]+Damount)/2 end
 		elseif Dcrit == 1 then
 			if (Damount < path[6] or path[6] == 0) then path[6] = Damount end
 			if Damount > path[7] then path[7] = Damount end
-			path[8] = (path[8]+Damount)/2
+			if path[8] == 0 then path[8] = Damount else path[8] = (path[8]+Damount)/2 end
 		elseif Dglance == 1 then
 			if (Damount < path[15] or path[15] == 0) then path[15] = Damount end
 			if Damount > path[16] then path[16] = Damount end
-			path[17] = (path[17]+Damount)/2
+			if path[17] == 0 then path[17] = Damount else path[17] = (path[17]+Damount)/2 end
 		elseif Dblock == 1 then
 			if (Damount < path[19] or path[19] == 0) then path[19] = Damount end
 			if Damount > path[20] then path[20] = Damount end
-			path[21] = (path[21]+Damount)/2
+			if path[21] == 0 then path[21] = Damount else path[21] = (path[21]+Damount)/2 end
 		end
 		DPSMateDamageDone[cat][DPSMateUser[Duser][1]]["i"][2] = DPSMateDamageDone[cat][DPSMateUser[Duser][1]]["i"][2] + Damount
 		if Damount > 0 then tinsert(DPSMateDamageDone[cat][DPSMateUser[Duser][1]]["i"][1], {DPSMateCombatTime[val], Damount}) end
@@ -658,15 +658,15 @@ function DPSMate.DB:DamageTaken(Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, Ddodge
 		if Dhit == 1 then
 			if (Damount < path[2] or path[2] == 0) then path[2] = Damount end
 			if Damount > path[3] then path[3] = Damount end
-			path[4] = (path[4]+Damount)/2
+			if path[4] == 0 then path[4] = Damount else path[4] = (path[4]+Damount)/2 end
 		elseif Dcrit == 1 then
 			if (Damount < path[6] or path[6] == 0) then path[6] = Damount end
 			if Damount > path[7] then path[7] = Damount end
-			path[8] = (path[8]+Damount)/2
+			if path[8] == 0 then path[8] = Damount else path[8] = (path[8]+Damount)/2 end
 		elseif Dcrush == 1 then
 			if (Damount < path[16] or path[16] == 0) then path[16] = Damount end
 			if Damount > path[17] then path[17] = Damount end
-			path[18] = (path[18]+Damount)/2
+			if path[18] == 0 then path[18] = Damount else path[18] = (path[18]+Damount)/2 end
 		end
 		DPSMateDamageTaken[cat][DPSMateUser[Duser][1]]["i"][2] = DPSMateDamageTaken[cat][DPSMateUser[Duser][1]]["i"][2] + Damount
 		if Damount > 0 then tinsert(DPSMateDamageTaken[cat][DPSMateUser[Duser][1]]["i"][1], {DPSMateCombatTime[val], Damount}) end
@@ -732,19 +732,19 @@ function DPSMate.DB:EnemyDamage(mode, arr, Duser, Dname, Dhit, Dcrit, Dmiss, Dpa
 		if Dhit == 1 then
 			if (Damount < path[2] or path[2] == 0) then path[2] = Damount end
 			if Damount > path[3] then path[3] = Damount end
-			path[4] = (path[4]+Damount)/2
+			if path[4] == 0 then path[4] = Damount else path[4] = (path[4]+Damount)/2 end
 		elseif Dcrit == 1 then
 			if (Damount < path[6] or path[6] == 0) then path[6] = Damount end
 			if Damount > path[7] then path[7] = Damount end
-			path[8] = (path[8]+Damount)/2
+			if path[8] == 0 then path[8] = Damount else path[8] = (path[8]+Damount)/2 end
 		elseif Dblock == 1 then
 			if (Damount < path[15] or path[15] == 0) then path[15] = Damount end
 			if Damount > path[16] then path[16] = Damount end
-			path[17] = (path[17]+Damount)/2
+			if path[17] == 0 then path[17] = Damount else path[17] = (path[17]+Damount)/2 end
 		elseif Dcrush == 1 then
 			if (Damount < path[19] or path[19] == 0) then path[19] = Damount end
 			if Damount > path[20] then path[20] = Damount end
-			path[21] = (path[21]+Damount)/2
+			if path[21] == 0 then path[21] = Damount else path[21] = (path[21]+Damount)/2 end
 		end
 		arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser][1]]["i"][2] = arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser][1]]["i"][2] + Damount
 		if Damount > 0 then tinsert(arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser][1]]["i"][1], {DPSMateCombatTime[val], Damount}) end
