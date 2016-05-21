@@ -1126,9 +1126,11 @@ function DPSMate.DB:ClearAwaitHotDispel()
 end
 
 local ConfirmedDispel = {}
+local lastDispel = nil;
 function DPSMate.DB:ConfirmRealDispel(ability, target, time)
 	if not ConfirmedDispel[target] then ConfirmedDispel[target] = {} end
 	tinsert(ConfirmedDispel[target], {ability, time})
+	lastDispel = target;
 	self:EvaluateDispel()
 	--self:Dispels("Unknown", "Unknown", target, ability)
 end
@@ -1149,6 +1151,24 @@ function DPSMate.DB:EvaluateDispel()
 					tremove(AwaitDispel[cat], ca)
 					--DPSMate:SendMessage("Direct Removed!")
 					return
+				end
+			end
+			if cat == "Unknown" and lastDispel then
+				if ConfirmedDispel[lastDispel] then
+					local check = nil
+					for q, t in ConfirmedDispel[lastDispel] do
+						if (va[3]-t[2])<=1 then
+							check = t[1]
+							tremove(ConfirmedDispel[lastDispel], q)
+						end
+					end
+					if check then
+						self:Dispels(va[1], va[2], lastDispel, check)
+						tremove(AwaitDispel[cat], ca)
+						lastDispel = nil;
+						--DPSMate:SendMessage("Direct Removed!")
+						return
+					end
 				end
 			end
 		end

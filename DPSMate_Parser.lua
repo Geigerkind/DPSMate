@@ -78,6 +78,7 @@ end
 
 function DPSMate.Parser:OnEvent(event)
 	if Execute[event] then
+		--DPSMate:SendMessage(event..": "..arg1)
 		Execute[event](arg1)
 	end
 end
@@ -766,6 +767,7 @@ end
 -- Avrora casts Remove Curse on Avrora.
 function DPSMate.Parser:SpellHostilePlayerBuffDispels(msg)
 	for c, ab, ta in strgfind(msg, "(.+) casts (.+) on (.+)%.") do if DPSMate:TContains(DPSMate.Parser.Dispels, ab) then if ta=="you" then DB:AwaitDispel(ab, player, c, GetTime()) else  DB:AwaitDispel(ab, ta, c, GetTime()) end end end
+	for c, ab in strgfind(msg, "(.+) casts (.+)%.") do if DPSMate:TContains(DPSMate.Parser.Dispels, ab) then DB:AwaitDispel(ab, "Unknown", c, GetTime()) end end
 end
 
 -- Avrora's  Curse of Agony is removed.
