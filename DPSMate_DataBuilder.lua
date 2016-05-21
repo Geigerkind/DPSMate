@@ -678,7 +678,7 @@ function DPSMate.DB:EnemyDamage(mode, arr, Duser, Dname, Dhit, Dcrit, Dmiss, Dpa
 	if self:BuildUser(Duser, nil) or self:BuildUser(cause, nil) or self:BuildAbility(Dname, nil) then return end	
 	if type(Dblock) == "string" then
 		local p = "1 :"
-		if not mode then p = "2" end
+		if not mode then p = "2 :" end
 		DPSMate:SendMessage("If you see this message, please report it to Shino. You have encountered a bug!")
 		DPSMate:SendMessage("Dump: "..p..Duser..","..Dname..","..Dhit..","..Dcrit..","..Dmiss..","..Dparry..","..Ddodge..","..Dresist..","..Damount..","..Dcause..","..Dblock..","..Dcrush)
 		return
