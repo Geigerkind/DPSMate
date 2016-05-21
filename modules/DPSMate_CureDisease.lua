@@ -16,36 +16,38 @@ DPSMate:Register("curedisease", DPSMate.Modules.CureDisease, "Cure disease")
 
 function DPSMate.Modules.CureDisease:GetSortedTable(arr,k)
 	local b, a, total = {}, {}, 0
-	for cat, val in pairs(arr) do -- 3 Owner
-		if DPSMate:ApplyFilter(k, DPSMate:GetUserById(cat)) then
-			local CV = 0
-			for ca, va in pairs(val) do -- 42 Ability
-				if ca~="i" then
-					for c, v in pairs(va) do -- 3 Target
-						for ce, ve in pairs(v) do -- 10 Cured Ability
-							if DPSMateAbility[DPSMate:GetAbilityById(ce)][2]=="Disease" then
-								CV=CV+ve
+	if arr then
+		for cat, val in pairs(arr) do -- 3 Owner
+			if DPSMate:ApplyFilter(k, DPSMate:GetUserById(cat)) then
+				local CV = 0
+				for ca, va in pairs(val) do -- 42 Ability
+					if ca~="i" then
+						for c, v in pairs(va) do -- 3 Target
+							for ce, ve in pairs(v) do -- 10 Cured Ability
+								if DPSMateAbility[DPSMate:GetAbilityById(ce)][2]=="Disease" then
+									CV=CV+ve
+								end
 							end
 						end
 					end
 				end
-			end
-			local i = 1
-			while true do
-				if (not b[i]) then
-					table.insert(b, i, CV)
-					table.insert(a, i, cat)
-					break
-				else
-					if b[i] < CV then
+				local i = 1
+				while true do
+					if (not b[i]) then
 						table.insert(b, i, CV)
 						table.insert(a, i, cat)
 						break
+					else
+						if b[i] < CV then
+							table.insert(b, i, CV)
+							table.insert(a, i, cat)
+							break
+						end
 					end
+					i=i+1
 				end
-				i=i+1
+				total = total + CV
 			end
-			total = total + CV
 		end
 	end
 	return b, total, a

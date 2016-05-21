@@ -1084,8 +1084,8 @@ local AwaitDispel = {}
 function DPSMate.DB:AwaitDispel(ability, target, cause, time)
 	if not AwaitDispel[target] then AwaitDispel[target] = {} end
 	tinsert(AwaitDispel[target], {cause, ability, time})
-	self:EvaluateDispel()
 	--DPSMate:SendMessage("Awaiting Dispel! - "..cause.." - "..target.." - "..ability.." - "..time)
+	self:EvaluateDispel()
 end
 
 local OverTimeDispels = {
@@ -1205,6 +1205,7 @@ end
 
 function DPSMate.DB:Dispels(cause, Dname, target, ability)
 	if self:BuildUser(cause, nil) or self:BuildUser(target, nil) or self:BuildAbility(Dname, nil) or self:BuildAbility(ability, nil) then return end
+	--DPSMate:SendMessage("Cause: "..cause.." Dname: "..Dname.." Target: "..target.." Ability: "..ability)
 	for cat, val in pairs({[1]="total", [2]="current"}) do 
 		if not DPSMateDispels[cat][DPSMateUser[cause][1]] then
 			DPSMateDispels[cat][DPSMateUser[cause][1]] = {
