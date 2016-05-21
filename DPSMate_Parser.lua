@@ -759,6 +759,7 @@ end
 -- Is it really "yourself"?
 function DPSMate.Parser:SpellSelfBuffDispels(msg)
 	for ab in strgfind(msg, "You cast (.+)%.") do if DPSMate:TContains(DPSMate.Parser.Dispels, ab) then DB:AwaitDispel(ab, player, player, GetTime()) end end
+	for ab, tar in strgfind(msg, "You cast (.+) on (.+)%.") do if DPSMate:TContains(DPSMate.Parser.Dispels, ab) then DB:AwaitDispel(ab, tar, player, GetTime()) end end
 end
 
 -- Avrora casts Remove Curse on you.
