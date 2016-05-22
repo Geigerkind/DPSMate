@@ -745,6 +745,8 @@ DPSMate.Parser.HotDispels = {
 -- Abolish Poison fades from you.
 -- Your Poison is removed.
 
+-- The totem aura just reports a removed event in the chat.
+-- Maybe we can guess here?
 function DPSMate.Parser:UnitAuraDispels(unit)
 	if unit=="player" or unit=="target" then
 		for i=1, 16 do
@@ -763,22 +765,22 @@ end
 
 -- Is it really "yourself"?
 function DPSMate.Parser:SpellSelfBuffDispels(msg)
-	for ab in strgfind(msg, "You cast (.+)%.") do if DPSMate:TContains(DPSMate.Parser.Dispels, ab) then DB:AwaitDispel(ab, player, player, GetTime()) end end -- HAve to check that later
-	for ab, tar in strgfind(msg, "You cast (.+) on (.+)%.") do if DPSMate:TContains(DPSMate.Parser.Dispels, ab) then DB:AwaitDispel(ab, tar, player, GetTime()) end end
+	for ab, tar in strgfind(msg, "You cast (.+) on (.+)%.") do if DPSMate:TContains(DPSMate.Parser.Dispels, ab) then DB:AwaitDispel(ab, tar, player, GetTime()) end; return end
+	for ab in strgfind(msg, "You cast (.+)%.") do if DPSMate:TContains(DPSMate.Parser.Dispels, ab) then DB:AwaitDispel(ab, "Unknown", player, GetTime()) end; return end
 end
 
 -- Avrora casts Remove Curse on you.
 -- Avrora casts Remove Curse on Avrora.
 function DPSMate.Parser:SpellHostilePlayerBuffDispels(msg)
-	for c, ab, ta in strgfind(msg, "(.+) casts (.+) on (.+)%.") do if DPSMate:TContains(DPSMate.Parser.Dispels, ab) then if ta=="you" then DB:AwaitDispel(ab, player, c, GetTime()) else  DB:AwaitDispel(ab, ta, c, GetTime()) end end end
-	for c, ab in strgfind(msg, "(.+) casts (.+)%.") do if DPSMate:TContains(DPSMate.Parser.Dispels, ab) then DB:AwaitDispel(ab, "Unknown", c, GetTime()) end end
+	for c, ab, ta in strgfind(msg, "(.+) casts (.+) on (.+)%.") do if DPSMate:TContains(DPSMate.Parser.Dispels, ab) then if ta=="you" then DB:AwaitDispel(ab, player, c, GetTime()) else  DB:AwaitDispel(ab, ta, c, GetTime()) end end; return end
+	for c, ab in strgfind(msg, "(.+) casts (.+)%.") do if DPSMate:TContains(DPSMate.Parser.Dispels, ab) then DB:AwaitDispel(ab, "Unknown", c, GetTime()) end; return end
 end
 
 -- Avrora's  Curse of Agony is removed.
 -- Your Curse of Agony is removed.
 function DPSMate.Parser:SpellBreakAura(msg) 
-	for ta, ab in strgfind(msg, "(.+)'s (.+) is removed.") do DB:ConfirmRealDispel(ab, ta, GetTime()) end
-	for ab in strgfind(msg, "Your (.+) is removed.") do DB:ConfirmRealDispel(ab, player, GetTime()) end
+	for ta, ab in strgfind(msg, "(.+)'s (.+) is removed.") do DB:ConfirmRealDispel(ab, ta, GetTime()); return end
+	for ab in strgfind(msg, "Your (.+) is removed.") do DB:ConfirmRealDispel(ab, player, GetTime()); return end
 end
 
 ----------------------------------------------------------------------------------
