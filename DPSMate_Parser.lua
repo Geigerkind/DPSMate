@@ -730,7 +730,8 @@ DPSMate.Parser.Dispels = {
 	["Cure Disease"] = true,
 	["Poison Cleansing Totem"] = true,
 	["Cure Poison"] = true,
-	["Disease Cleansing Totem"] = true
+	["Disease Cleansing Totem"] = true,
+	["Purge"] = true,
 }
 DPSMate.Parser.DeCurse = {
 	[1] = "Remove Curse",
@@ -740,6 +741,7 @@ DPSMate.Parser.DeMagic = {
 	[1] = "Cleanse",
 	[2] = "Dispel Magic",
 	[3] = "Devour Magic",
+	[4] = "Purge"
 }
 DPSMate.Parser.DeDisease = {
 	[1] = "Cleanse",
