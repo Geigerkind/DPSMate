@@ -179,7 +179,7 @@ function DPSMate.Modules.DetailsHealingAndAbsorbs:CreateGraphTable()
 end
 
 function DPSMate.Modules.DetailsHealingAndAbsorbs:ProcsDropDown()
-	local arr = self:GetAuraGainedArr(curKey)
+	local arr = DPSMate.Modules.DetailsHealingAndAbsorbs:GetAuraGainedArr(curKey)
 	DPSMate_Details_HealingAndAbsorbs.proc = "None"
 	
     local function on_click()

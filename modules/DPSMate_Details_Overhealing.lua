@@ -152,7 +152,7 @@ function DPSMate.Modules.DetailsOverhealing:CreateGraphTable()
 end
 
 function DPSMate.Modules.DetailsOverhealing:ProcsDropDown()
-	local arr = self:GetAuraGainedArr(curKey)
+	local arr = DPSMate.Modules.DetailsOverhealing:GetAuraGainedArr(curKey)
 	DPSMate_Details_Overhealing.proc = "None"
 	
     local function on_click()

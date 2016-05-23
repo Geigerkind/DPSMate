@@ -50,7 +50,7 @@ local LastUpdate = 0
 local MainLastUpdate = 0
 local MainUpdateTime = 1.5
 local CombatTime = 0
-local CombatBuffer = 0.5
+local CombatBuffer = 0.75
 local InitialLoad, In1 = false, 0
 local tinsert = table.insert
 local tremove = table.remove
@@ -1461,6 +1461,7 @@ function DPSMate.DB:CombatTime()
 				DPSMateCombatTime["total"] = DPSMateCombatTime["total"] + LastUpdate
 				DPSMateCombatTime["current"] = DPSMateCombatTime["current"] + LastUpdate
 				LastUpdate = 0
+				DPSMate.Parser.SendSpell = {}
 			end
 			if CombatTime>=CombatBuffer then
 				if not DPSMate.DB:AffectingCombat() then 
@@ -1468,7 +1469,6 @@ function DPSMate.DB:CombatTime()
 					CombatTime = 0
 					DPSMate.DB:Attempt(true)
 				end
-				DPSMate.Parser.SendSpell = {}
 			end
 		else
 			DPSMate.DB.MainUpdate = DPSMate.DB.MainUpdate + arg1

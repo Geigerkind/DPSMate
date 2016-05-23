@@ -8,38 +8,43 @@
 -- Global Variables
 DPSMate.Parser.procs = {
 	-- General
-	"Earthstrike",
-	"Juju Flurry",
-	"Holy Strength",
-	"Ephemeral Power",
-	"Chromatic Infusion",
-	"Brittle Armor",
-	"Unstable Power",
-	"Zandalarian Hero Medallion",
-	"Ascendance",
-	"Essence of Sapphiron",
-	"Hand of Justice",
-	"Sword Specialization",
-	"Bonereaver's Edge",
+	["Earthstrike"] = true,
+	["Juju Flurry"] = true,
+	["Holy Strength"] = true,
+	["Ephemeral Power"] = true,
+	["Chromatic Infusion"] = true,
+	["Brittle Armor"] = true,
+	["Unstable Power"] = true,
+	["Zandalarian Hero Medallion"] = true,
+	["Ascendance"] = true,
+	["Essence of Sapphiron"] = true,
+	["Hand of Justice"] = true,
+	["Sword Specialization"] = true,
+	["Bonereaver's Edge"] = true,
 	
 	-- Rogue
-	"Slice and Dice",
-	"Blade Flurry",
-	"Sprint",
-	"Adrenaline Rush",
-	"Vanish",
-	"Relentless Strikes Effect",
-	"Rogue Armor Energize Effect",
+	["Slice and Dice"] = true,
+	["Blade Flurry"] = true,
+	["Sprint"] = true,
+	["Adrenaline Rush"] = true,
+	["Vanish"] = true,
+	["Relentless Strikes Effect"] = true,
+	["Rogue Armor Energize Effect"] = true,
 	
 	-- Mage
-	"Arcane Power",
-	"Combustion",
-	"Mind Quickening",
+	["Arcane Power"] = true,
+	["Combustion"] = true,
+	["Mind Quickening"] = true,
 	
 	-- Priest
-	"Power Infusion",
+	["Power Infusion"] = true,
 	
 	-- Druid
+}
+DPSMate.Parser.DmgProcs = {
+	-- General
+	["Life Steal"] = true,
+	["Thunderfury"] = true
 }
 DPSMate.Parser.TargetParty = {}
 
@@ -142,7 +147,8 @@ function DPSMate.Parser:SelfSpellDMG(msg)
 		t[1] = tnbr(d)
 		if b=="h" then t[2]=1;t[3]=0 end
 		if strfind(e, "blocked") then t[4]=1;t[2]=0;t[3]=0 end
-		if DPSMate.Parser.Kicks[a] then DB:AssignPotentialKick(player, a, c, GetTime()) end
+		if DPSMate.Parser.Kicks[a] then DB:AssignPotentialKick(a, player, c, GetTime()) end
+		if DPSMate.Parser.DmgProcs[a] then DB:BuildBuffs(player, player, a, true) end
 		DB:EnemyDamage(true, DPSMateEDT, player, a,  t[2] or 0, t[3] or 1, 0, 0, 0, 0, t[1], c, t[4] or 0, 0)
 		DB:DamageDone(player, a, t[2] or 0, t[3] or 1, 0, 0, 0, 0, t[1], 0, t[4] or 0)
 		return
@@ -194,6 +200,7 @@ function DPSMate.Parser:FriendlyPlayerDamage(msg)
 		if strfind(e, "blocked") then t[4]=1;t[2]=0;t[3]=0 end
 		if d=="you" then d=player end
 		if DPSMate.Parser.Kicks[a] then DB:AssignPotentialKick(f, a, c, GetTime()) end
+		if DPSMate.Parser.DmgProcs[a] then DB:BuildBuffs(f, f, a, true) end
 		DB:EnemyDamage(true, DPSMateEDT, f, a,  t[2] or 0, t[3] or 1, 0, 0, 0, 0, t[1], c, t[4] or 0, 0)
 		DB:DamageDone(f, a, t[2] or 0, t[3] or 1, 0, 0, 0, 0, t[1], 0, t[4] or 0)
 		return
