@@ -50,7 +50,7 @@ local LastUpdate = 0
 local MainLastUpdate = 0
 local MainUpdateTime = 1.5
 local CombatTime = 0
-local CombatBuffer = 1.5
+local CombatBuffer = 0.5
 local InitialLoad, In1 = false, 0
 local tinsert = table.insert
 local tremove = table.remove
@@ -123,10 +123,10 @@ function DPSMate.DB:OnEvent(event)
 				lock = false,
 				sync = true,
 				enable = true,
-				dataresetsworld = 3,
-				dataresetsjoinparty = 3,
+				dataresetsworld = 2,
+				dataresetsjoinparty = 2,
 				dataresetsleaveparty = 2,
-				dataresetspartyamount = 3,
+				dataresetspartyamount = 2,
 				dataresetssync = 3,
 				dataresetslogout = 3,
 				showminimapbutton = true,
@@ -135,7 +135,7 @@ function DPSMate.DB:OnEvent(event)
 				hideincombat = false,
 				hideinpvp = false,
 				disablewhilehidden = false,
-				datasegments = 5,
+				datasegments = 8,
 				columnsdps = {
 					[1] = false,
 					[2] = true,
@@ -283,7 +283,7 @@ function DPSMate.DB:OnEvent(event)
 				informativetooltips = true,
 				subviewrows = 4,
 				tooltipanchor = 5,
-				onlybossfights = false,
+				onlybossfights = true,
 				hiddenmodes = {},
 			}
 		end
@@ -450,6 +450,7 @@ function DPSMate.DB:OnGroupUpdate()
 end
 
 function DPSMate.DB:AffectingCombat()
+	if UnitAffectingCombat("player") then return true end
 	if self:PlayerInParty() then
 		for i=1, 4 do
 			if UnitAffectingCombat("party"..i) then
@@ -463,7 +464,7 @@ function DPSMate.DB:AffectingCombat()
 			end
 		end
 	end
-	if UnitAffectingCombat("player") then return true else return false end
+	return false
 end
 
 function DPSMate.DB:PlayerTargetChanged()
@@ -1084,14 +1085,9 @@ local AwaitDispel = {}
 function DPSMate.DB:AwaitDispel(ability, target, cause, time)
 	if not AwaitDispel[target] then AwaitDispel[target] = {} end
 	tinsert(AwaitDispel[target], {cause, ability, time})
-	--DPSMate:SendMessage("Awaiting Dispel! - "..cause.." - "..target.." - "..ability.." - "..time)
+	DPSMate:SendMessage("Awaiting Dispel! - "..cause.." - "..target.." - "..ability.." - "..time)
 	self:EvaluateDispel()
 end
-
-local OverTimeDispels = {
-	[1] = "Abolish Poison",
-	[2] = "Abolish Disease",
-}
 
 -- /script DPSMate.Parser.DebuffTypes["Frostbolt"] = "Magic"
 -- /script DPSMate.DB:AwaitDispel("Cleanse", "Shino", "Shino", 1)
@@ -1105,7 +1101,7 @@ end
 
 local ActiveHotDispel = {}
 function DPSMate.DB:RegisterHotDispel(target, ability)
-	for cat, val in pairs(AwaitHotDispel) do
+	for cat, val in AwaitHotDispel do
 		--DPSMate:SendMessage(val[2].."="..target)
 		--DPSMate:SendMessage(val[3].."="..ability)
 		if val[2]==target and val[3]==ability then
@@ -1118,7 +1114,7 @@ function DPSMate.DB:RegisterHotDispel(target, ability)
 end
 
 function DPSMate.DB:ClearAwaitHotDispel()
-	for cat, val in pairs(AwaitHotDispel) do
+	for cat, val in AwaitHotDispel do
 		if (GetTime()-val[4])>=10 then
 			tremove(AwaitHotDispel, cat)
 		end
@@ -1132,6 +1128,7 @@ function DPSMate.DB:ConfirmRealDispel(ability, target, time)
 	tinsert(ConfirmedDispel[target], {ability, time})
 	lastDispel = target;
 	self:EvaluateDispel()
+	--DPSMate:SendMessage("Test 3")
 	--self:Dispels("Unknown", "Unknown", target, ability)
 end
 
@@ -1153,7 +1150,9 @@ function DPSMate.DB:EvaluateDispel()
 					return
 				end
 			end
+			--DPSMate:SendMessage("Test 1")
 			if cat == "Unknown" and lastDispel then
+				--DPSMate:SendMessage("Test 2")
 				if ConfirmedDispel[lastDispel] then
 					local check = nil
 					for q, t in ConfirmedDispel[lastDispel] do
@@ -1205,7 +1204,7 @@ end
 
 function DPSMate.DB:Dispels(cause, Dname, target, ability)
 	if self:BuildUser(cause, nil) or self:BuildUser(target, nil) or self:BuildAbility(Dname, nil) or self:BuildAbility(ability, nil) then return end
-	--DPSMate:SendMessage("Cause: "..cause.." Dname: "..Dname.." Target: "..target.." Ability: "..ability)
+	DPSMate:SendMessage("Cause: "..cause.." Dname: "..Dname.." Target: "..target.." Ability: "..ability)
 	for cat, val in pairs({[1]="total", [2]="current"}) do 
 		if not DPSMateDispels[cat][DPSMateUser[cause][1]] then
 			DPSMateDispels[cat][DPSMateUser[cause][1]] = {
@@ -1282,7 +1281,7 @@ end
 local AwaitKick = {}
 local AfflictedStun = {}
 function DPSMate.DB:AwaitAfflictedStun(cause, ability, target, time)
-	for cat, val in pairs(AfflictedStun) do
+	for cat, val in AfflictedStun do
 		if val[1]==cause and val[4]==time then
 			return
 		end
@@ -1291,7 +1290,7 @@ function DPSMate.DB:AwaitAfflictedStun(cause, ability, target, time)
 end
 
 function DPSMate.DB:ConfirmAfflictedStun(target, ability, time)
-	for cat, val in pairs(AfflictedStun) do
+	for cat, val in AfflictedStun do
 		if val[2]==ability and val[3]==target and val[4]<=time then
 			self:AssignPotentialKick(val[1], val[2], val[3], time)
 			tremove(AfflictedStun, cat)
@@ -1306,7 +1305,7 @@ function DPSMate.DB:RegisterPotentialKick(cause, ability, time)
 end
 
 function DPSMate.DB:UnregisterPotentialKick(cause, ability, time)
-	for cat, val in pairs(AwaitKick) do
+	for cat, val in AwaitKick do
 		if val[1]==cause and val[2]==ability and val[3]<=time then
 			tremove(AwaitKick, cat)
 			--DPSMate:SendMessage("Potential Kick has been unregistered!")
@@ -1316,7 +1315,7 @@ function DPSMate.DB:UnregisterPotentialKick(cause, ability, time)
 end
 
 function DPSMate.DB:AssignPotentialKick(cause, ability, target, time)
-	for cat, val in pairs(AwaitKick) do
+	for cat, val in AwaitKick do
 		if val[3]<=time then
 			if not val[4] and val[1]==target then
 				val[4] = {cause, ability}
@@ -1327,7 +1326,7 @@ function DPSMate.DB:AssignPotentialKick(cause, ability, target, time)
 end
 
 function DPSMate.DB:UpdateKicks()
-	for cat, val in pairs(AwaitKick) do
+	for cat, val in AwaitKick do
 		if (GetTime()-val[3])>=5 then
 			if val[4] then
 				self:Kick(val[4][1], val[1], val[4][2], val[2])
@@ -1371,7 +1370,7 @@ end
 
 -- deprecated function cause of gettime??
 function DPSMate.DB:ClearAwaitBuffs()
-	for cat, val in pairs(AwaitBuff) do
+	for cat, val in AwaitBuff do
 		if (GetTime()-(val[4] or 0))>=5 then
 			tremove(AwaitBuff, cat)
 		end
@@ -1380,7 +1379,7 @@ end
 
 -- deprecated function cause of gettime??
 function DPSMate.DB:ConfirmBuff(target, ability, time)
-	for cat, val in pairs(AwaitBuff) do
+	for cat, val in AwaitBuff do
 		if val[4]<=(time or 0) then
 			if val[2]==ability and val[3]==target then
 				self:BuildBuffs(val[1], target, ability, false)
@@ -1464,6 +1463,7 @@ function DPSMate.DB:CombatTime()
 					CombatTime = 0
 					DPSMate.DB:Attempt(true)
 				end
+				DPSMate.Parser.SendSpell = {}
 			end
 		else
 			DPSMate.DB.MainUpdate = DPSMate.DB.MainUpdate + arg1

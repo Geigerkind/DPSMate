@@ -349,6 +349,34 @@ function DPSMate:PlayerExist(arr, name)
 	return false
 end
 
+function DPSMate:GetMaxValue(arr, key)
+	local max = 0
+	for _, val in arr do
+		if val[key]>max then
+			max=val[key]
+		end
+	end
+	return max
+end
+
+function DPSMate:GetMinValue(arr, key)
+	local min
+	for _, val in arr do
+		if not min or val[key]<min then
+			min = val[key]
+		end
+	end
+	return min or 0
+end
+
+function DPSMate:ScaleDown(arr, start)
+	local t = {}
+	for cat, val in arr do
+		t[cat] = {(val[1]-start), val[2]}
+	end
+	return t
+end
+
 function DPSMate:SetStatusBarValue()
 	if not DPSMate:WindowsExist() or DPSMate.Options.TestMode then return end
 	DPSMate:HideStatusBars()

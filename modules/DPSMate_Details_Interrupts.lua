@@ -6,6 +6,8 @@ local DetailsArr, DetailsTotal, DmgArr, DetailUser, DetailsSelected  = {}, 0, {}
 local g, g2
 local curKey = 1
 local db, cbt = {}, 0
+local _G = getglobal
+local tinsert = table.insert
 
 function DPSMate.Modules.DetailsInterrupts:UpdateDetails(obj, key)
 	curKey = key
@@ -13,30 +15,30 @@ function DPSMate.Modules.DetailsInterrupts:UpdateDetails(obj, key)
 	DetailsUser = obj.user
 	DPSMate_Details_Interrupts_Title:SetText("Interrupts by "..obj.user)
 	DPSMate_Details_Interrupts:Show()
-	DPSMate.Modules.DetailsInterrupts:ScrollFrame_Update()
-	DPSMate.Modules.DetailsInterrupts:SelectCreatureButton(1)
-	DPSMate.Modules.DetailsInterrupts:SelectCreatureAbilityButton(1,1)
+	self:ScrollFrame_Update()
+	self:SelectCreatureButton(1)
+	self:SelectCreatureAbilityButton(1,1)
 end
 
 function DPSMate.Modules.DetailsInterrupts:EvalTable()
 	local a, b, total = {}, {}, 0
-	for cat, val in pairs(db[DPSMateUser[DetailsUser][1]]) do -- 41 Ability
+	for cat, val in db[DPSMateUser[DetailsUser][1]] do -- 41 Ability
 		if cat~="i" then
 			local CV, ta, tb = 0, {}, {}
-			for ca, va in pairs(val) do
+			for ca, va in val do
 				local taa, tbb = {}, {}
-				for c, v in pairs(va) do
+				for c, v in va do
 					CV = CV + v
 					local i = 1
 					while true do
 						if (not tbb[i]) then
-							table.insert(tbb, i, v)
-							table.insert(taa, i, c)
+							tinsert(tbb, i, v)
+							tinsert(taa, i, c)
 							break
 						else
 							if tbb[i] < v then
-								table.insert(tbb, i, v)
-								table.insert(taa, i, c)
+								tinsert(tbb, i, v)
+								tinsert(taa, i, c)
 								break
 							end
 						end
@@ -46,13 +48,13 @@ function DPSMate.Modules.DetailsInterrupts:EvalTable()
 				local i = 1
 				while true do
 					if (not tb[i]) then
-						table.insert(tb, i, {CV, taa, tbb})
-						table.insert(ta, i, ca)
+						tinsert(tb, i, {CV, taa, tbb})
+						tinsert(ta, i, ca)
 						break
 					else
 						if tb[i][1] < CV then
-							table.insert(tb, i, {CV, taa, tbb})
-							table.insert(ta, i, ca)
+							tinsert(tb, i, {CV, taa, tbb})
+							tinsert(ta, i, ca)
 							break
 						end
 					end
@@ -62,13 +64,13 @@ function DPSMate.Modules.DetailsInterrupts:EvalTable()
 			local i = 1
 			while true do
 				if (not b[i]) then
-					table.insert(b, i, {CV, ta, tb})
-					table.insert(a, i, cat)
+					tinsert(b, i, {CV, ta, tb})
+					tinsert(a, i, cat)
 					break
 				else
 					if b[i][1] < CV then
-						table.insert(b, i, {CV, ta, tb})
-						table.insert(a, i, cat)
+						tinsert(b, i, {CV, ta, tb})
+						tinsert(a, i, cat)
 						break
 					end
 				end
@@ -82,7 +84,7 @@ end
 
 function DPSMate.Modules.DetailsInterrupts:ScrollFrame_Update()
 	local line, lineplusoffset
-	local obj = getglobal("DPSMate_Details_Interrupts_Log_ScrollFrame")
+	local obj = _G("DPSMate_Details_Interrupts_Log_ScrollFrame")
 	local path = "DPSMate_Details_Interrupts_Log_ScrollButton"
 	DetailsArr, DetailsTotal, DmgArr = DPSMate.Modules.DetailsInterrupts:EvalTable()
 	local len = DPSMate:TableLength(DetailsArr)
@@ -91,30 +93,30 @@ function DPSMate.Modules.DetailsInterrupts:ScrollFrame_Update()
 		lineplusoffset = line + FauxScrollFrame_GetOffset(obj)
 		if DetailsArr[lineplusoffset] ~= nil then
 			local ability = DPSMate:GetAbilityById(DetailsArr[lineplusoffset])
-			getglobal(path..line.."_Name"):SetText(ability)
-			getglobal(path..line.."_Value"):SetText(DmgArr[lineplusoffset][1].." ("..(100*DmgArr[lineplusoffset][1]/DetailsTotal).."%)")
-			getglobal(path..line.."_Icon"):SetTexture(DPSMate.BabbleSpell:GetSpellIcon(strsub(ability, 1, (strfind(ability, "%(") or 0)-1) or ability))
+			_G(path..line.."_Name"):SetText(ability)
+			_G(path..line.."_Value"):SetText(DmgArr[lineplusoffset][1].." ("..(100*DmgArr[lineplusoffset][1]/DetailsTotal).."%)")
+			_G(path..line.."_Icon"):SetTexture(DPSMate.BabbleSpell:GetSpellIcon(strsub(ability, 1, (strfind(ability, "%(") or 0)-1) or ability))
 			if len < 14 then
-				getglobal(path..line):SetWidth(235)
-				getglobal(path..line.."_Name"):SetWidth(125)
+				_G(path..line):SetWidth(235)
+				_G(path..line.."_Name"):SetWidth(125)
 			else
-				getglobal(path..line):SetWidth(220)
-				getglobal(path..line.."_Name"):SetWidth(110)
+				_G(path..line):SetWidth(220)
+				_G(path..line.."_Name"):SetWidth(110)
 			end
-			getglobal(path..line):Show()
+			_G(path..line):Show()
 		else
-			getglobal(path..line):Hide()
+			_G(path..line):Hide()
 		end
-		getglobal(path..line.."_selected"):Hide()
+		_G(path..line.."_selected"):Hide()
 		if DetailsSelected == lineplusoffset then
-			getglobal(path..line.."_selected"):Show()
+			_G(path..line.."_selected"):Show()
 		end
 	end
 end
 
 function DPSMate.Modules.DetailsInterrupts:SelectCreatureButton(i)
 	local line, lineplusoffset
-	local obj = getglobal("DPSMate_Details_Interrupts_LogTwo_ScrollFrame")
+	local obj = _G("DPSMate_Details_Interrupts_LogTwo_ScrollFrame")
 	obj.index = i
 	local path = "DPSMate_Details_Interrupts_LogTwo_ScrollButton"
 	local len = DPSMate:TableLength(DmgArr[i][2])
@@ -122,33 +124,33 @@ function DPSMate.Modules.DetailsInterrupts:SelectCreatureButton(i)
 	for line=1,14 do
 		lineplusoffset = line + FauxScrollFrame_GetOffset(obj)
 		if DmgArr[i][2][lineplusoffset] ~= nil then
-			getglobal(path..line.."_Name"):SetText(DPSMate:GetUserById(DmgArr[i][2][lineplusoffset]))
-			getglobal(path..line.."_Value"):SetText(DmgArr[i][3][lineplusoffset][1].." ("..(100*DmgArr[i][3][lineplusoffset][1]/DmgArr[i][1]).."%)")
-			getglobal(path..line.."_Icon"):SetTexture("Interface\\AddOns\\DPSMate\\images\\dummy")
+			_G(path..line.."_Name"):SetText(DPSMate:GetUserById(DmgArr[i][2][lineplusoffset]))
+			_G(path..line.."_Value"):SetText(DmgArr[i][3][lineplusoffset][1].." ("..(100*DmgArr[i][3][lineplusoffset][1]/DmgArr[i][1]).."%)")
+			_G(path..line.."_Icon"):SetTexture("Interface\\AddOns\\DPSMate\\images\\dummy")
 			if len < 14 then
-				getglobal(path..line):SetWidth(235)
-				getglobal(path..line.."_Name"):SetWidth(125)
+				_G(path..line):SetWidth(235)
+				_G(path..line.."_Name"):SetWidth(125)
 			else
-				getglobal(path..line):SetWidth(220)
-				getglobal(path..line.."_Name"):SetWidth(110)
+				_G(path..line):SetWidth(220)
+				_G(path..line.."_Name"):SetWidth(110)
 			end
-			getglobal(path..line):Show()
+			_G(path..line):Show()
 		else
-			getglobal(path..line):Hide()
+			_G(path..line):Hide()
 		end
-		getglobal(path..line.."_selected"):Hide()
+		_G(path..line.."_selected"):Hide()
 	end
 	for p=1, 14 do
-		getglobal("DPSMate_Details_Interrupts_Log_ScrollButton"..p.."_selected"):Hide()
+		_G("DPSMate_Details_Interrupts_Log_ScrollButton"..p.."_selected"):Hide()
 	end
-	getglobal(path.."1_selected"):Show()
+	_G(path.."1_selected"):Show()
 	DPSMate.Modules.DetailsInterrupts:SelectCreatureAbilityButton(i, 1)
-	getglobal("DPSMate_Details_Interrupts_Log_ScrollButton"..i.."_selected"):Show()
+	_G("DPSMate_Details_Interrupts_Log_ScrollButton"..i.."_selected"):Show()
 end
 
 function DPSMate.Modules.DetailsInterrupts:SelectCreatureAbilityButton(i, p)
 	local line, lineplusoffset
-	local obj = getglobal("DPSMate_Details_Interrupts_LogThree_ScrollFrame")
+	local obj = _G("DPSMate_Details_Interrupts_LogThree_ScrollFrame")
 	obj.index = i
 	local path = "DPSMate_Details_Interrupts_LogThree_ScrollButton"
 	local len = DPSMate:TableLength(DmgArr[i][3][p][2])
@@ -157,24 +159,24 @@ function DPSMate.Modules.DetailsInterrupts:SelectCreatureAbilityButton(i, p)
 		lineplusoffset = line + FauxScrollFrame_GetOffset(obj)
 		if DmgArr[i][3][p][2][lineplusoffset] ~= nil then
 			local ability = DPSMate:GetAbilityById(DmgArr[i][3][p][2][lineplusoffset])
-			getglobal(path..line.."_Name"):SetText(ability)
-			getglobal(path..line.."_Value"):SetText(DmgArr[i][3][p][3][lineplusoffset].." ("..(100*DmgArr[i][3][p][3][lineplusoffset]/DmgArr[i][3][p][1]).."%)")
-			getglobal(path..line.."_Icon"):SetTexture(DPSMate.BabbleSpell:GetSpellIcon(strsub(ability, 1, (strfind(ability, "%(") or 0)-1) or ability))
+			_G(path..line.."_Name"):SetText(ability)
+			_G(path..line.."_Value"):SetText(DmgArr[i][3][p][3][lineplusoffset].." ("..(100*DmgArr[i][3][p][3][lineplusoffset]/DmgArr[i][3][p][1]).."%)")
+			_G(path..line.."_Icon"):SetTexture(DPSMate.BabbleSpell:GetSpellIcon(strsub(ability, 1, (strfind(ability, "%(") or 0)-1) or ability))
 			if len < 14 then
-				getglobal(path..line):SetWidth(235)
-				getglobal(path..line.."_Name"):SetWidth(125)
+				_G(path..line):SetWidth(235)
+				_G(path..line.."_Name"):SetWidth(125)
 			else
-				getglobal(path..line):SetWidth(220)
-				getglobal(path..line.."_Name"):SetWidth(110)
+				_G(path..line):SetWidth(220)
+				_G(path..line.."_Name"):SetWidth(110)
 			end
-			getglobal(path..line):Show()
+			_G(path..line):Show()
 		else
-			getglobal(path..line):Hide()
+			_G(path..line):Hide()
 		end
-		getglobal(path..line.."_selected"):Hide()
+		_G(path..line.."_selected"):Hide()
 	end
 	for i=1, 14 do
-		getglobal("DPSMate_Details_Interrupts_LogTwo_ScrollButton"..i.."_selected"):Hide()
+		_G("DPSMate_Details_Interrupts_LogTwo_ScrollButton"..i.."_selected"):Hide()
 	end
-	getglobal("DPSMate_Details_Interrupts_LogTwo_ScrollButton"..p.."_selected"):Show()
+	_G("DPSMate_Details_Interrupts_LogTwo_ScrollButton"..p.."_selected"):Show()
 end

@@ -7,6 +7,7 @@ local PieChart = true
 local g, g2
 local curKey = 1
 local db, cbt = {}, 0
+local _G = getglobal
 
 function DPSMate.Modules.DetailsEDT:UpdateDetails(obj, key)
 	curKey = key
@@ -18,16 +19,16 @@ function DPSMate.Modules.DetailsEDT:UpdateDetails(obj, key)
 	DetailsUser = obj.user
 	DPSMate_Details_EDT_Title:SetText("Damage taken by "..obj.user)
 	DPSMate_Details_EDT:Show()
-	DPSMate.Modules.DetailsEDT:ScrollFrame_Update()
-	DPSMate.Modules.DetailsEDT:SelectCreatureButton(1)
-	DPSMate.Modules.DetailsEDT:SelectDetailsButton(1,1)
-	DPSMate.Modules.DetailsEDT:UpdateLineGraph()
+	self:ScrollFrame_Update()
+	self:SelectCreatureButton(1)
+	self:SelectDetailsButton(1,1)
+	self:UpdateLineGraph()
 end
 
 function DPSMate.Modules.DetailsEDT:ScrollFrame_Update()
 	local line, lineplusoffset
 	local path = "DPSMate_Details_EDT_LogCreature"
-	local obj = getglobal(path.."_ScrollFrame")
+	local obj = _G(path.."_ScrollFrame")
 	local arr = db
 	DetailsArr, DetailsTotal, DmgArr = DPSMate.RegistredModules[DPSMateSettings["windows"][curKey]["CurMode"]]:EvalTable(DPSMateUser[DetailsUser], curKey)
 	local pet, len = "", DPSMate:TableLength(DetailsArr)
@@ -36,23 +37,23 @@ function DPSMate.Modules.DetailsEDT:ScrollFrame_Update()
 		lineplusoffset = line + FauxScrollFrame_GetOffset(obj)
 		if DetailsArr[lineplusoffset] ~= nil then
 			local user = DPSMate:GetUserById(DetailsArr[lineplusoffset])
-			getglobal(path.."_ScrollButton"..line.."_Name"):SetText(user)
-			getglobal(path.."_ScrollButton"..line.."_Value"):SetText(DmgArr[lineplusoffset][1].." ("..string.format("%.2f", (DmgArr[lineplusoffset][1]*100/DetailsTotal)).."%)")
-			getglobal(path.."_ScrollButton"..line.."_Icon"):SetTexture("Interface\\AddOns\\DPSMate\\images\\dummy")
+			_G(path.."_ScrollButton"..line.."_Name"):SetText(user)
+			_G(path.."_ScrollButton"..line.."_Value"):SetText(DmgArr[lineplusoffset][1].." ("..string.format("%.2f", (DmgArr[lineplusoffset][1]*100/DetailsTotal)).."%)")
+			_G(path.."_ScrollButton"..line.."_Icon"):SetTexture("Interface\\AddOns\\DPSMate\\images\\dummy")
 			if len < 10 then
-				getglobal(path.."_ScrollButton"..line):SetWidth(235)
-				getglobal(path.."_ScrollButton"..line.."_Name"):SetWidth(125)
+				_G(path.."_ScrollButton"..line):SetWidth(235)
+				_G(path.."_ScrollButton"..line.."_Name"):SetWidth(125)
 			else
-				getglobal(path.."_ScrollButton"..line):SetWidth(220)
-				getglobal(path.."_ScrollButton"..line.."_Name"):SetWidth(110)
+				_G(path.."_ScrollButton"..line):SetWidth(220)
+				_G(path.."_ScrollButton"..line.."_Name"):SetWidth(110)
 			end
-			getglobal(path.."_ScrollButton"..line):Show()
+			_G(path.."_ScrollButton"..line):Show()
 		else
-			getglobal(path.."_ScrollButton"..line):Hide()
+			_G(path.."_ScrollButton"..line):Hide()
 		end
-		getglobal(path.."_ScrollButton"..line.."_selected"):Hide()
+		_G(path.."_ScrollButton"..line.."_selected"):Hide()
 		if DetailsSelected == lineplusoffset then
-			getglobal(path.."_ScrollButton"..line.."_selected"):Show()
+			_G(path.."_ScrollButton"..line.."_selected"):Show()
 		end
 	end
 end
@@ -60,140 +61,139 @@ end
 function DPSMate.Modules.DetailsEDT:SelectCreatureButton(i)
 	local line, lineplusoffset
 	local path = "DPSMate_Details_EDT_Log"
-	local obj = getglobal(path.."_ScrollFrame")
-	if i then obj.index = i else i=obj.index end
-	local arr = db
+	local obj = _G(path.."_ScrollFrame")
 	local pet, len = "", DPSMate:TableLength(DmgArr[i][2])
-	DetailsSelected = i
+	DetailsSelected = i+FauxScrollFrame_GetOffset(_G("DPSMate_Details_EDT_LogCreature_ScrollFrame"))
+	obj.index = DetailsSelected
 	FauxScrollFrame_Update(obj,len,10,24)
 	for line=1,10 do
 		lineplusoffset = line + FauxScrollFrame_GetOffset(obj)
-		if DmgArr[i][2][lineplusoffset] ~= nil then
-			local ability = DPSMate:GetAbilityById(DmgArr[i][2][lineplusoffset])
-			getglobal(path.."_ScrollButton"..line.."_Name"):SetText(ability)
-			getglobal(path.."_ScrollButton"..line.."_Value"):SetText(DmgArr[i][3][lineplusoffset].." ("..string.format("%.2f", (DmgArr[i][3][lineplusoffset]*100/DmgArr[i][1])).."%)")
-			getglobal(path.."_ScrollButton"..line.."_Icon"):SetTexture(DPSMate.BabbleSpell:GetSpellIcon(strsub(ability, 1, (strfind(ability, "%(") or 0)-1) or ability))
+		if DmgArr[DetailsSelected][2][lineplusoffset] ~= nil then
+			local ability = DPSMate:GetAbilityById(DmgArr[DetailsSelected][2][lineplusoffset])
+			_G(path.."_ScrollButton"..line.."_Name"):SetText(ability)
+			_G(path.."_ScrollButton"..line.."_Value"):SetText(DmgArr[DetailsSelected][3][lineplusoffset].." ("..string.format("%.2f", (DmgArr[DetailsSelected][3][lineplusoffset]*100/DmgArr[DetailsSelected][1])).."%)")
+			_G(path.."_ScrollButton"..line.."_Icon"):SetTexture(DPSMate.BabbleSpell:GetSpellIcon(strsub(ability, 1, (strfind(ability, "%(") or 0)-1) or ability))
 			if len < 10 then
-				getglobal(path.."_ScrollButton"..line):SetWidth(235)
-				getglobal(path.."_ScrollButton"..line.."_Name"):SetWidth(125)
+				_G(path.."_ScrollButton"..line):SetWidth(235)
+				_G(path.."_ScrollButton"..line.."_Name"):SetWidth(125)
 			else
-				getglobal(path.."_ScrollButton"..line):SetWidth(220)
-				getglobal(path.."_ScrollButton"..line.."_Name"):SetWidth(110)
+				_G(path.."_ScrollButton"..line):SetWidth(220)
+				_G(path.."_ScrollButton"..line.."_Name"):SetWidth(110)
 			end
-			getglobal(path.."_ScrollButton"..line):Show()
+			_G(path.."_ScrollButton"..line):Show()
 		else
-			getglobal(path.."_ScrollButton"..line):Hide()
+			_G(path.."_ScrollButton"..line):Hide()
 		end
-		getglobal(path.."_ScrollButton"..line.."_selected"):Hide()
-		getglobal(path.."_ScrollButton1_selected"):Show()
+		_G(path.."_ScrollButton"..line.."_selected"):Hide()
+		_G(path.."_ScrollButton1_selected"):Show()
 	end
 	for p=1, 10 do
-		getglobal("DPSMate_Details_EDT_LogCreature_ScrollButton"..p.."_selected"):Hide()
+		_G("DPSMate_Details_EDT_LogCreature_ScrollButton"..p.."_selected"):Hide()
 	end
-	getglobal("DPSMate_Details_EDT_LogCreature_ScrollButton"..i.."_selected"):Show()
-	DPSMate.Modules.DetailsEDT:SelectDetailsButton(i,1)
+	_G("DPSMate_Details_EDT_LogCreature_ScrollButton"..i.."_selected"):Show()
+	self:SelectDetailsButton(DetailsSelected,1)
 end
 
 function DPSMate.Modules.DetailsEDT:SelectDetailsButton(p,i)
-	local obj = getglobal("DPSMate_Details_EDT_Log_ScrollFrame")
+	local obj = _G("DPSMate_Details_EDT_Log_ScrollFrame")
 	local lineplusoffset = i + FauxScrollFrame_GetOffset(obj)
 	local arr = db
 	
 	for p=1, 10 do
-		getglobal("DPSMate_Details_EDT_Log_ScrollButton"..p.."_selected"):Hide()
+		_G("DPSMate_Details_EDT_Log_ScrollButton"..p.."_selected"):Hide()
 	end
 	-- Performance?
 	local ability = tonumber(DmgArr[p][2][lineplusoffset])
 	local creature = tonumber(DetailsArr[p])
-	getglobal("DPSMate_Details_EDT_Log_ScrollButton"..i.."_selected"):Show()
+	_G("DPSMate_Details_EDT_Log_ScrollButton"..i.."_selected"):Show()
 	
 	local path = arr[DPSMateUser[DetailsUser][1]][creature][ability]
 	local hit, crit, miss, parry, dodge, resist, hitMin, hitMax, critMin, critMax, hitav, critav, block, blockMin, blockMax, blockav, glance, glanceMin, glanceMax, glanceav = path[1], path[5], path[9], path[10], path[11], path[12], path[2], path[3], path[6], path[7], path[4], path[8], path[14], path[15], path[16], path[17], path[18], path[19], path[20], path[21]
 	local total, max = hit+crit+miss+parry+dodge+resist+glance+block, DPSMate:TMax({hit, crit, miss, parry, dodge, resist, glance, block})
 	
 	-- Block
-	getglobal("DPSMate_Details_EDT_LogDetails_Amount0_Amount"):SetText(block)
-	getglobal("DPSMate_Details_EDT_LogDetails_Amount0_Percent"):SetText(ceil(100*block/total).."%")
-	getglobal("DPSMate_Details_EDT_LogDetails_Amount0_StatusBar"):SetValue(ceil(100*block/max))
-	getglobal("DPSMate_Details_EDT_LogDetails_Amount0_StatusBar"):SetStatusBarColor(0.3,0.7,1.0,1)
-	getglobal("DPSMate_Details_EDT_LogDetails_Average0"):SetText(ceil(blockav))
-	getglobal("DPSMate_Details_EDT_LogDetails_Min0"):SetText(blockMin)
-	getglobal("DPSMate_Details_EDT_LogDetails_Max0"):SetText(blockMax)
+	_G("DPSMate_Details_EDT_LogDetails_Amount0_Amount"):SetText(block)
+	_G("DPSMate_Details_EDT_LogDetails_Amount0_Percent"):SetText(ceil(100*block/total).."%")
+	_G("DPSMate_Details_EDT_LogDetails_Amount0_StatusBar"):SetValue(ceil(100*block/max))
+	_G("DPSMate_Details_EDT_LogDetails_Amount0_StatusBar"):SetStatusBarColor(0.3,0.7,1.0,1)
+	_G("DPSMate_Details_EDT_LogDetails_Average0"):SetText(ceil(blockav))
+	_G("DPSMate_Details_EDT_LogDetails_Min0"):SetText(blockMin)
+	_G("DPSMate_Details_EDT_LogDetails_Max0"):SetText(blockMax)
 	
 	-- Glance
-	getglobal("DPSMate_Details_EDT_LogDetails_Amount1_Amount"):SetText(glance)
-	getglobal("DPSMate_Details_EDT_LogDetails_Amount1_Percent"):SetText(ceil(100*glance/total).."%")
-	getglobal("DPSMate_Details_EDT_LogDetails_Amount1_StatusBar"):SetValue(ceil(100*glance/max))
-	getglobal("DPSMate_Details_EDT_LogDetails_Amount1_StatusBar"):SetStatusBarColor(1.0,0.7,0.3,1)
-	getglobal("DPSMate_Details_EDT_LogDetails_Average1"):SetText(ceil(glanceav))
-	getglobal("DPSMate_Details_EDT_LogDetails_Min1"):SetText(glanceMin)
-	getglobal("DPSMate_Details_EDT_LogDetails_Max1"):SetText(glanceMax)
+	_G("DPSMate_Details_EDT_LogDetails_Amount1_Amount"):SetText(glance)
+	_G("DPSMate_Details_EDT_LogDetails_Amount1_Percent"):SetText(ceil(100*glance/total).."%")
+	_G("DPSMate_Details_EDT_LogDetails_Amount1_StatusBar"):SetValue(ceil(100*glance/max))
+	_G("DPSMate_Details_EDT_LogDetails_Amount1_StatusBar"):SetStatusBarColor(1.0,0.7,0.3,1)
+	_G("DPSMate_Details_EDT_LogDetails_Average1"):SetText(ceil(glanceav))
+	_G("DPSMate_Details_EDT_LogDetails_Min1"):SetText(glanceMin)
+	_G("DPSMate_Details_EDT_LogDetails_Max1"):SetText(glanceMax)
 	
 	-- Hit
-	getglobal("DPSMate_Details_EDT_LogDetails_Amount2_Amount"):SetText(hit)
-	getglobal("DPSMate_Details_EDT_LogDetails_Amount2_Percent"):SetText(ceil(100*hit/total).."%")
-	getglobal("DPSMate_Details_EDT_LogDetails_Amount2_StatusBar"):SetValue(ceil(100*hit/max))
-	getglobal("DPSMate_Details_EDT_LogDetails_Amount2_StatusBar"):SetStatusBarColor(0.9,0.0,0.0,1)
-	getglobal("DPSMate_Details_EDT_LogDetails_Average2"):SetText(ceil(hitav))
-	getglobal("DPSMate_Details_EDT_LogDetails_Min2"):SetText(hitMin)
-	getglobal("DPSMate_Details_EDT_LogDetails_Max2"):SetText(hitMax)
+	_G("DPSMate_Details_EDT_LogDetails_Amount2_Amount"):SetText(hit)
+	_G("DPSMate_Details_EDT_LogDetails_Amount2_Percent"):SetText(ceil(100*hit/total).."%")
+	_G("DPSMate_Details_EDT_LogDetails_Amount2_StatusBar"):SetValue(ceil(100*hit/max))
+	_G("DPSMate_Details_EDT_LogDetails_Amount2_StatusBar"):SetStatusBarColor(0.9,0.0,0.0,1)
+	_G("DPSMate_Details_EDT_LogDetails_Average2"):SetText(ceil(hitav))
+	_G("DPSMate_Details_EDT_LogDetails_Min2"):SetText(hitMin)
+	_G("DPSMate_Details_EDT_LogDetails_Max2"):SetText(hitMax)
 	
 	-- Crit
-	getglobal("DPSMate_Details_EDT_LogDetails_Amount3_Amount"):SetText(crit)
-	getglobal("DPSMate_Details_EDT_LogDetails_Amount3_Percent"):SetText(ceil(100*crit/total).."%")
-	getglobal("DPSMate_Details_EDT_LogDetails_Amount3_StatusBar"):SetValue(ceil(100*crit/max))
-	getglobal("DPSMate_Details_EDT_LogDetails_Amount3_StatusBar"):SetStatusBarColor(0.0,0.9,0.0,1)
-	getglobal("DPSMate_Details_EDT_LogDetails_Average3"):SetText(ceil(critav))
-	getglobal("DPSMate_Details_EDT_LogDetails_Min3"):SetText(critMin)
-	getglobal("DPSMate_Details_EDT_LogDetails_Max3"):SetText(critMax)
+	_G("DPSMate_Details_EDT_LogDetails_Amount3_Amount"):SetText(crit)
+	_G("DPSMate_Details_EDT_LogDetails_Amount3_Percent"):SetText(ceil(100*crit/total).."%")
+	_G("DPSMate_Details_EDT_LogDetails_Amount3_StatusBar"):SetValue(ceil(100*crit/max))
+	_G("DPSMate_Details_EDT_LogDetails_Amount3_StatusBar"):SetStatusBarColor(0.0,0.9,0.0,1)
+	_G("DPSMate_Details_EDT_LogDetails_Average3"):SetText(ceil(critav))
+	_G("DPSMate_Details_EDT_LogDetails_Min3"):SetText(critMin)
+	_G("DPSMate_Details_EDT_LogDetails_Max3"):SetText(critMax)
 	
 	-- Miss
-	getglobal("DPSMate_Details_EDT_LogDetails_Amount4_Amount"):SetText(miss)
-	getglobal("DPSMate_Details_EDT_LogDetails_Amount4_Percent"):SetText(ceil(100*miss/total).."%")
-	getglobal("DPSMate_Details_EDT_LogDetails_Amount4_StatusBar"):SetValue(ceil(100*miss/max))
-	getglobal("DPSMate_Details_EDT_LogDetails_Amount4_StatusBar"):SetStatusBarColor(0.0,0.0,1.0,1)
-	getglobal("DPSMate_Details_EDT_LogDetails_Average4"):SetText("-")
-	getglobal("DPSMate_Details_EDT_LogDetails_Min4"):SetText("-")
-	getglobal("DPSMate_Details_EDT_LogDetails_Max4"):SetText("-")
+	_G("DPSMate_Details_EDT_LogDetails_Amount4_Amount"):SetText(miss)
+	_G("DPSMate_Details_EDT_LogDetails_Amount4_Percent"):SetText(ceil(100*miss/total).."%")
+	_G("DPSMate_Details_EDT_LogDetails_Amount4_StatusBar"):SetValue(ceil(100*miss/max))
+	_G("DPSMate_Details_EDT_LogDetails_Amount4_StatusBar"):SetStatusBarColor(0.0,0.0,1.0,1)
+	_G("DPSMate_Details_EDT_LogDetails_Average4"):SetText("-")
+	_G("DPSMate_Details_EDT_LogDetails_Min4"):SetText("-")
+	_G("DPSMate_Details_EDT_LogDetails_Max4"):SetText("-")
 	
 	-- Parry
-	getglobal("DPSMate_Details_EDT_LogDetails_Amount5_Amount"):SetText(parry)
-	getglobal("DPSMate_Details_EDT_LogDetails_Amount5_Percent"):SetText(ceil(100*parry/total).."%")
-	getglobal("DPSMate_Details_EDT_LogDetails_Amount5_StatusBar"):SetValue(ceil(100*parry/max))
-	getglobal("DPSMate_Details_EDT_LogDetails_Amount5_StatusBar"):SetStatusBarColor(1.0,1.0,0.0,1)
-	getglobal("DPSMate_Details_EDT_LogDetails_Average5"):SetText("-")
-	getglobal("DPSMate_Details_EDT_LogDetails_Min5"):SetText("-")
-	getglobal("DPSMate_Details_EDT_LogDetails_Max5"):SetText("-")
+	_G("DPSMate_Details_EDT_LogDetails_Amount5_Amount"):SetText(parry)
+	_G("DPSMate_Details_EDT_LogDetails_Amount5_Percent"):SetText(ceil(100*parry/total).."%")
+	_G("DPSMate_Details_EDT_LogDetails_Amount5_StatusBar"):SetValue(ceil(100*parry/max))
+	_G("DPSMate_Details_EDT_LogDetails_Amount5_StatusBar"):SetStatusBarColor(1.0,1.0,0.0,1)
+	_G("DPSMate_Details_EDT_LogDetails_Average5"):SetText("-")
+	_G("DPSMate_Details_EDT_LogDetails_Min5"):SetText("-")
+	_G("DPSMate_Details_EDT_LogDetails_Max5"):SetText("-")
 	
 	-- Dodge
-	getglobal("DPSMate_Details_EDT_LogDetails_Amount6_Amount"):SetText(dodge)
-	getglobal("DPSMate_Details_EDT_LogDetails_Amount6_Percent"):SetText(ceil(100*dodge/total).."%")
-	getglobal("DPSMate_Details_EDT_LogDetails_Amount6_StatusBar"):SetValue(ceil(100*dodge/max))
-	getglobal("DPSMate_Details_EDT_LogDetails_Amount6_StatusBar"):SetStatusBarColor(1.0,0.0,1.0,1)
-	getglobal("DPSMate_Details_EDT_LogDetails_Average6"):SetText("-")
-	getglobal("DPSMate_Details_EDT_LogDetails_Min6"):SetText("-")
-	getglobal("DPSMate_Details_EDT_LogDetails_Max6"):SetText("-")
+	_G("DPSMate_Details_EDT_LogDetails_Amount6_Amount"):SetText(dodge)
+	_G("DPSMate_Details_EDT_LogDetails_Amount6_Percent"):SetText(ceil(100*dodge/total).."%")
+	_G("DPSMate_Details_EDT_LogDetails_Amount6_StatusBar"):SetValue(ceil(100*dodge/max))
+	_G("DPSMate_Details_EDT_LogDetails_Amount6_StatusBar"):SetStatusBarColor(1.0,0.0,1.0,1)
+	_G("DPSMate_Details_EDT_LogDetails_Average6"):SetText("-")
+	_G("DPSMate_Details_EDT_LogDetails_Min6"):SetText("-")
+	_G("DPSMate_Details_EDT_LogDetails_Max6"):SetText("-")
 	
 	-- Resist
-	getglobal("DPSMate_Details_EDT_LogDetails_Amount7_Amount"):SetText(resist)
-	getglobal("DPSMate_Details_EDT_LogDetails_Amount7_Percent"):SetText(ceil(100*resist/total).."%")
-	getglobal("DPSMate_Details_EDT_LogDetails_Amount7_StatusBar"):SetValue(ceil(100*resist/max))
-	getglobal("DPSMate_Details_EDT_LogDetails_Amount7_StatusBar"):SetStatusBarColor(0.0,1.0,1.0,1)
-	getglobal("DPSMate_Details_EDT_LogDetails_Average7"):SetText("-")
-	getglobal("DPSMate_Details_EDT_LogDetails_Min7"):SetText("-")
-	getglobal("DPSMate_Details_EDT_LogDetails_Max7"):SetText("-")
+	_G("DPSMate_Details_EDT_LogDetails_Amount7_Amount"):SetText(resist)
+	_G("DPSMate_Details_EDT_LogDetails_Amount7_Percent"):SetText(ceil(100*resist/total).."%")
+	_G("DPSMate_Details_EDT_LogDetails_Amount7_StatusBar"):SetValue(ceil(100*resist/max))
+	_G("DPSMate_Details_EDT_LogDetails_Amount7_StatusBar"):SetStatusBarColor(0.0,1.0,1.0,1)
+	_G("DPSMate_Details_EDT_LogDetails_Average7"):SetText("-")
+	_G("DPSMate_Details_EDT_LogDetails_Min7"):SetText("-")
+	_G("DPSMate_Details_EDT_LogDetails_Max7"):SetText("-")
 end
 
 function DPSMate.Modules.DetailsEDT:UpdateLineGraph()
-	local arr = db
-	local sumTable = DPSMate.Modules.DetailsEDT:GetSummarizedTable(arr)
-	local max = DPSMate.Modules.DetailsEDT:GetMaxLineVal(sumTable, 2)
-	local time = DPSMate.Modules.DetailsEDT:GetMaxLineVal(sumTable, 1)
+	local sumTable = DPSMate.Modules.DetailsEDT:GetSummarizedTable(db)
+	local max = DPSMate:GetMaxValue(sumTable, 2)
+	local time = DPSMate:GetMaxValue(sumTable, 1)
+	local min = DPSMate:GetMinValue(sumTable, 1)
 	
 	g2:ResetData()
-	g2:SetXAxis(0,time)
+	g2:SetXAxis(0,time-min)
 	g2:SetYAxis(0,max+200)
-	g2:SetGridSpacing(time/10,max/7)
+	g2:SetGridSpacing((time-min)/10,max/7)
 	g2:SetGridColor({0.5,0.5,0.5,0.5})
 	g2:SetAxisDrawing(true,true)
 	g2:SetAxisColor({1.0,1.0,1.0,1.0})
@@ -202,7 +202,7 @@ function DPSMate.Modules.DetailsEDT:UpdateLineGraph()
 	g2:SetXLabels(true)
 
 	local Data1={{0,0}}
-	for cat, val in pairs(sumTable) do
+	for cat, val in DPSMate:ScaleDown(sumTable, min) do
 		table.insert(Data1, {val[1],val[2], {}})
 	end
 
@@ -254,15 +254,5 @@ end
 
 function DPSMate.Modules.DetailsEDT:GetSummarizedTable(arr)
 	return DPSMate.Sync:GetSummarizedTable(DPSMate.Modules.DetailsEDT:SortLineTable(arr))
-end
-
-function DPSMate.Modules.DetailsEDT:GetMaxLineVal(t, p)
-	local max = 0
-	for cat, val in pairs(t) do
-		if val[p]>max then
-			max=val[p]
-		end
-	end
-	return max
 end
 

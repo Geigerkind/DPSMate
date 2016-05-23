@@ -5,6 +5,9 @@ local curKey = 1
 local db, cbt = {}, 0
 local buttons = {}
 local ColorTable={}
+local _G = getglobal
+local tinsert = table.insert
+local tremove = tremove
 
 function DPSMate.Modules.DetailsDamageTakenTotal:UpdateDetails(obj, key)
 	curKey = key
@@ -48,14 +51,14 @@ function DPSMate.Modules.DetailsDamageTakenTotal:UpdateDetails(obj, key)
 	}
 	if not g then
 		g=DPSMate.Options.graph:CreateGraphLine("LineGraph",DPSMate_Details_DamageTakenTotal_DiagramLine,"CENTER","CENTER",0,0,750,230)
-		DPSMate.Modules.DetailsDamageTakenTotal:CreateGraphTable()
+		self:CreateGraphTable()
 	end
-	getglobal("DPSMate_Details_DamageTakenTotal_PlayerList_CB"):SetChecked(false)
-	getglobal("DPSMate_Details_DamageTakenTotal_PlayerList_CB").act = false
+	_G("DPSMate_Details_DamageTakenTotal_PlayerList_CB"):SetChecked(false)
+	_G("DPSMate_Details_DamageTakenTotal_PlayerList_CB").act = false
 	DPSMate_Details_DamageTakenTotal_Title:SetText("Damage taken summary")
-	DPSMate.Modules.DetailsDamageTakenTotal:UpdateLineGraph()
-	DPSMate.Modules.DetailsDamageTakenTotal:LoadTable()
-	DPSMate.Modules.DetailsDamageTakenTotal:LoadLegendButtons()
+	self:UpdateLineGraph()
+	self:LoadTable()
+	self:LoadLegendButtons()
 	DPSMate_Details_DamageTakenTotal:Show()
 end
 
@@ -67,21 +70,11 @@ function DPSMate.Modules.DetailsDamageTakenTotal:UpdateLineGraph()
 	g:SetAutoScale(true)
 	g:SetYLabels(true, false)
 	g:SetXLabels(true)
-	DPSMate.Modules.DetailsDamageTakenTotal:AddTotalDataSeries()
+	self:AddTotalDataSeries()
 end
 
 function DPSMate.Modules.DetailsDamageTakenTotal:GetSummarizedTable(arr)
 	return DPSMate.Sync:GetSummarizedTable(arr)
-end
-
-function DPSMate.Modules.DetailsDamageTakenTotal:GetMaxLineVal(t, p)
-	local max = 0
-	for cat, val in pairs(t) do
-		if val[p]>max then
-			max=val[p]
-		end
-	end
-	return max
 end
 
 function DPSMate.Modules.DetailsDamageTakenTotal:CreateGraphTable()
@@ -117,8 +110,10 @@ end
 local totSumTable = {}
 function DPSMate.Modules.DetailsDamageTakenTotal:AddTotalDataSeries()
 	local sumTable, newArr = {[0]=0}, {}
+	local tl = DPSMate:TableLength(db)
+	tl = floor(tl-0.5*tl)
 	
-	for cat, val in pairs(db) do
+	for cat, val in db do
 		for ca, va in pairs(db[cat]["i"][1]) do
 			if sumTable[va[1]] then
 				sumTable[va[1]] = sumTable[va[1]] + va[2]
@@ -127,27 +122,27 @@ function DPSMate.Modules.DetailsDamageTakenTotal:AddTotalDataSeries()
 			end
 		end
 	end
-	for cat, val in pairs(sumTable) do
+	for cat, val in sumTable do
 		local i=1
 		while true do
 			if (not newArr[i]) then 
-				table.insert(newArr, i, {cat, val})
+				tinsert(newArr, i, {cat, val/tl})
 				break
 			end
 			if cat<newArr[i][1] then
-				table.insert(newArr, i, {cat, val})
+				tinsert(newArr, i, {cat, val/tl})
 				break
 			end
 			i=i+1
 		end
 	end
 	
-	totSumTable = DPSMate.Modules.DetailsDamageTakenTotal:GetSummarizedTable(newArr)
-	local totMax = DPSMate.Modules.DetailsDamageTakenTotal:GetMaxLineVal(totSumTable, 2)
-	local time = DPSMate.Modules.DetailsDamageTakenTotal:GetMaxLineVal(totSumTable, 1)
+	totSumTable = self:GetSummarizedTable(newArr)
+	local totMax = DPSMate:GetMaxValue(totSumTable, 2)
+	local time = DPSMate:GetMaxValue(totSumTable, 1)
 	g:SetXAxis(0,time)
 	g:SetYAxis(0,totMax+20)
-	g:SetGridSpacing(time/10,(totMax+20)/7)
+	g:SetGridSpacing(time/10,(totMax+20)/2)
 	
 	g:AddDataSeries(totSumTable,{{1.0,0.0,0.0,0.8}, {1.0,1.0,0.0,0.8}}, {})
 end
@@ -155,7 +150,7 @@ end
 -- crushes?
 function DPSMate.Modules.DetailsDamageTakenTotal:GetTableValues()
 	local arr, total = {}, 0
-	for cat, val in pairs(db) do
+	for cat, val in db do
 		local CV, crit, totCrit, miss, totMiss, hit, totHit, crush = 0, 0, 0.000001, 0, 0.000001, 0, 0.000001, 0
 		local name = DPSMate:GetUserById(cat)
 		for ca, va in pairs(val) do
@@ -180,19 +175,19 @@ function DPSMate.Modules.DetailsDamageTakenTotal:GetTableValues()
 				end
 			end
 		end
-		table.insert(arr, {name, CV, crit, miss, totCrit, totMiss, cat, hit, totHit, crush, totCrush})
+		tinsert(arr, {name, CV, crit, miss, totCrit, totMiss, cat, hit, totHit, crush, totCrush})
 		total = total + CV
 	end
 	local newArr = {}
-	for cat, val in pairs(arr) do
+	for cat, val in arr do
 		local i = 1
 		while true do
 			if (not newArr[i]) then
-				table.insert(newArr, i, val)
+				tinsert(newArr, i, val)
 				break
 			else
 				if newArr[i][2] < val[2] then
-					table.insert(newArr, i, val)
+					tinsert(newArr, i, val)
 					break
 				end
 			end
@@ -206,19 +201,19 @@ function DPSMate.Modules.DetailsDamageTakenTotal:CheckButtonCheckAll(obj)
 	if obj.act then
 		obj.act = false
 		for i=1, 30 do 
-			local ob = getglobal("DPSMate_Details_DamageTakenTotal_PlayerList_Child_R"..i)
+			local ob = _G("DPSMate_Details_DamageTakenTotal_PlayerList_Child_R"..i)
 			if ob.user then
 				DPSMate.Modules.DetailsDamageTakenTotal:RemoveLinesButton(ob.user, ob)
-				getglobal("DPSMate_Details_DamageTakenTotal_PlayerList_Child_R"..i.."_CB"):SetChecked(obj.act)
+				_G("DPSMate_Details_DamageTakenTotal_PlayerList_Child_R"..i.."_CB"):SetChecked(obj.act)
 			end
 		end
 	else
 		obj.act = true
 		for i=1, 30 do 
-			local ob = getglobal("DPSMate_Details_DamageTakenTotal_PlayerList_Child_R"..i)
+			local ob = _G("DPSMate_Details_DamageTakenTotal_PlayerList_Child_R"..i)
 			if ob.user then
 				DPSMate.Modules.DetailsDamageTakenTotal:AddLinesButton(ob.user, ob)
-				getglobal("DPSMate_Details_DamageTakenTotal_PlayerList_Child_R"..i.."_CB"):SetChecked(obj.act)
+				_G("DPSMate_Details_DamageTakenTotal_PlayerList_Child_R"..i.."_CB"):SetChecked(obj.act)
 			end
 		end
 	end
@@ -228,22 +223,22 @@ function DPSMate.Modules.DetailsDamageTakenTotal:AddLinesButton(uid, obj)
 	local sumTable = db[uid]["i"][1]
 	local user = DPSMate:GetUserById(uid)
 	
-	sumTable = DPSMate.Modules.DetailsDamageTakenTotal:GetSummarizedTable(sumTable, cbt)
+	sumTable = self:GetSummarizedTable(sumTable, cbt)
 	
 	g:AddDataSeries(sumTable, {ColorTable[1], {}}, {})
-	table.insert(buttons, {ColorTable[1], uid, sumTable})
-	table.remove(ColorTable, 1)
+	tinsert(buttons, {ColorTable[1], uid, sumTable})
+	tremove(ColorTable, 1)
 	obj.act = true
-	DPSMate.Modules.DetailsDamageTakenTotal:LoadLegendButtons()
+	self:LoadLegendButtons()
 end
 
 function DPSMate.Modules.DetailsDamageTakenTotal:RemoveLinesButton(uid, obj)
 	obj.act = false
 	g:ResetData()
-	for cat, val in pairs(buttons) do
+	for cat, val in buttons do
 		if val[2]==uid then
-			table.insert(ColorTable, 1, val[1])
-			table.remove(buttons, cat)
+			tinsert(ColorTable, 1, val[1])
+			tremove(buttons, cat)
 			break
 		end
 	end
@@ -252,47 +247,47 @@ function DPSMate.Modules.DetailsDamageTakenTotal:RemoveLinesButton(uid, obj)
 	for cat, val in pairs(buttons) do		
 		g:AddDataSeries(val[3], {val[1], {}}, {})
 	end
-	DPSMate.Modules.DetailsDamageTakenTotal:LoadLegendButtons()
+	self:LoadLegendButtons()
 end
 
 function DPSMate.Modules.DetailsDamageTakenTotal:LoadLegendButtons()
 	for i=1, 30 do
-		getglobal("DPSMate_Details_DamageTakenTotal_DiagramLegend_Child_C"..i):Hide()
+		_G("DPSMate_Details_DamageTakenTotal_DiagramLegend_Child_C"..i):Hide()
 	end
 	for cat, val in pairs(buttons) do
 		local name = DPSMate:GetUserById(val[2])
-		local font = getglobal("DPSMate_Details_DamageTakenTotal_DiagramLegend_Child_C"..cat.."_Font")
+		local font = _G("DPSMate_Details_DamageTakenTotal_DiagramLegend_Child_C"..cat.."_Font")
 		font:SetText(name)
 		font:SetTextColor(DPSMate:GetClassColor(DPSMateUser[name][2]))
-		getglobal("DPSMate_Details_DamageTakenTotal_DiagramLegend_Child_C"..cat.."_SwatchBg"):SetTexture(val[1][1],val[1][2],val[1][3],1)
-		getglobal("DPSMate_Details_DamageTakenTotal_DiagramLegend_Child_C"..cat):Show()
+		_G("DPSMate_Details_DamageTakenTotal_DiagramLegend_Child_C"..cat.."_SwatchBg"):SetTexture(val[1][1],val[1][2],val[1][3],1)
+		_G("DPSMate_Details_DamageTakenTotal_DiagramLegend_Child_C"..cat):Show()
 	end
 end
 
 function DPSMate.Modules.DetailsDamageTakenTotal:LoadTable()
 	local arr, total = DPSMate.Modules.DetailsDamageTakenTotal:GetTableValues()
 	for i=1, 30 do
-		getglobal("DPSMate_Details_DamageTakenTotal_PlayerList_Child_R"..i):Hide()
-		getglobal("DPSMate_Details_DamageTakenTotal_PlayerList_Child_R"..i.."_CB"):SetChecked(false)
-		getglobal("DPSMate_Details_DamageTakenTotal_PlayerList_Child_R"..i.."_CB").act = false
+		_G("DPSMate_Details_DamageTakenTotal_PlayerList_Child_R"..i):Hide()
+		_G("DPSMate_Details_DamageTakenTotal_PlayerList_Child_R"..i.."_CB"):SetChecked(false)
+		_G("DPSMate_Details_DamageTakenTotal_PlayerList_Child_R"..i.."_CB").act = false
 	end
 	for cat, val in pairs(arr) do
 		if cat>30 then break end
 		local r,g,b = DPSMate:GetClassColor(DPSMateUser[val[1]][2])
-		getglobal("DPSMate_Details_DamageTakenTotal_PlayerList_Child"):SetHeight(cat*30-210)
-		getglobal("DPSMate_Details_DamageTakenTotal_PlayerList_Child_R"..cat.."_Name"):SetText(val[1])
-		getglobal("DPSMate_Details_DamageTakenTotal_PlayerList_Child_R"..cat.."_Name"):SetTextColor(r,g,b)
-		getglobal("DPSMate_Details_DamageTakenTotal_PlayerList_Child_R"..cat.."_Amount"):SetText(val[2])
-		getglobal("DPSMate_Details_DamageTakenTotal_PlayerList_Child_R"..cat.."_StatusBar"):SetValue(100*val[2]/arr[1][2])
-		getglobal("DPSMate_Details_DamageTakenTotal_PlayerList_Child_R"..cat.."_StatusBar"):SetStatusBarColor(r,g,b, 1)
-		getglobal("DPSMate_Details_DamageTakenTotal_PlayerList_Child_R"..cat.."_AmountPerc"):SetText(string.format("%.1f", 100*val[2]/total).."%")
-		getglobal("DPSMate_Details_DamageTakenTotal_PlayerList_Child_R"..cat.."_Crush"):SetText(string.format("%.1f", 100*val[10]/val[9]).."%")
-		getglobal("DPSMate_Details_DamageTakenTotal_PlayerList_Child_R"..cat.."_Hit"):SetText(string.format("%.1f", 100*val[8]/val[9]).."%")
-		getglobal("DPSMate_Details_DamageTakenTotal_PlayerList_Child_R"..cat.."_Crit"):SetText(string.format("%.1f", 100*val[3]/val[5]).."%")
-		getglobal("DPSMate_Details_DamageTakenTotal_PlayerList_Child_R"..cat.."_Miss"):SetText(string.format("%.1f", 100*val[4]/val[6]).."%")
-		getglobal("DPSMate_Details_DamageTakenTotal_PlayerList_Child_R"..cat.."_DTPS"):SetText(string.format("%.1f", val[2]/cbt))
-		getglobal("DPSMate_Details_DamageTakenTotal_PlayerList_Child_R"..cat).user = val[7]
-		getglobal("DPSMate_Details_DamageTakenTotal_PlayerList_Child_R"..cat):Show()
+		_G("DPSMate_Details_DamageTakenTotal_PlayerList_Child"):SetHeight(cat*30-210)
+		_G("DPSMate_Details_DamageTakenTotal_PlayerList_Child_R"..cat.."_Name"):SetText(val[1])
+		_G("DPSMate_Details_DamageTakenTotal_PlayerList_Child_R"..cat.."_Name"):SetTextColor(r,g,b)
+		_G("DPSMate_Details_DamageTakenTotal_PlayerList_Child_R"..cat.."_Amount"):SetText(val[2])
+		_G("DPSMate_Details_DamageTakenTotal_PlayerList_Child_R"..cat.."_StatusBar"):SetValue(100*val[2]/arr[1][2])
+		_G("DPSMate_Details_DamageTakenTotal_PlayerList_Child_R"..cat.."_StatusBar"):SetStatusBarColor(r,g,b, 1)
+		_G("DPSMate_Details_DamageTakenTotal_PlayerList_Child_R"..cat.."_AmountPerc"):SetText(string.format("%.1f", 100*val[2]/total).."%")
+		_G("DPSMate_Details_DamageTakenTotal_PlayerList_Child_R"..cat.."_Crush"):SetText(string.format("%.1f", 100*val[10]/val[9]).."%")
+		_G("DPSMate_Details_DamageTakenTotal_PlayerList_Child_R"..cat.."_Hit"):SetText(string.format("%.1f", 100*val[8]/val[9]).."%")
+		_G("DPSMate_Details_DamageTakenTotal_PlayerList_Child_R"..cat.."_Crit"):SetText(string.format("%.1f", 100*val[3]/val[5]).."%")
+		_G("DPSMate_Details_DamageTakenTotal_PlayerList_Child_R"..cat.."_Miss"):SetText(string.format("%.1f", 100*val[4]/val[6]).."%")
+		_G("DPSMate_Details_DamageTakenTotal_PlayerList_Child_R"..cat.."_DTPS"):SetText(string.format("%.1f", val[2]/cbt))
+		_G("DPSMate_Details_DamageTakenTotal_PlayerList_Child_R"..cat).user = val[7]
+		_G("DPSMate_Details_DamageTakenTotal_PlayerList_Child_R"..cat):Show()
 	end
 end
 

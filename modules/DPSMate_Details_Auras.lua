@@ -8,7 +8,8 @@ local db, cbt = {}, 0
 local Buffpos, Debuffpos = 0, 0
 local t1, t2
 local t1TL, t2TL = 0, 0
-
+local _G = getglobal
+local tinsert = table.insert
 local Debuffs = {
 	"Rend",
 	"Net",
@@ -139,9 +140,9 @@ function DPSMate.Modules.Auras:UpdateDetails(obj, key)
 	t1TL = DPSMate:TableLength(t1)-6
 	t2TL = DPSMate:TableLength(t2)-6
 	Buffpos, Debuffpos = 0, 0
-	DPSMate.Modules.Auras:CleanTables()
-	DPSMate.Modules.Auras:UpdateBuffs()
-	DPSMate.Modules.Auras:UpdateDebuffs()
+	self:CleanTables()
+	self:UpdateBuffs()
+	self:UpdateDebuffs()
 	DPSMate_Details_Auras:Show()
 end
 
@@ -164,10 +165,10 @@ function DPSMate.Modules.Auras:SortTable()
 		local name = DPSMate:GetAbilityById(val)
 		local obj = {name, b[cat], c[cat]}
 		if DPSMate:TContains(Debuffs, name) then
-			table.insert(t, p1, obj)
+			tinsert(t, p1, obj)
 			p1 = p1 + 1
 		else
-			table.insert(u, p2, obj)
+			tinsert(u, p2, obj)
 			p2 = p2 + 1
 		end
 	end	
@@ -178,12 +179,12 @@ function DPSMate.Modules.Auras:CleanTables()
 	for _, val in {"Buffs", "Debuffs"} do
 		local path = "DPSMate_Details_Auras_"..val.."_Row"
 		for i=1, 6 do
-			getglobal(path..i.."_Icon"):SetTexture()
-			getglobal(path..i.."_Name"):SetText()
-			getglobal(path..i.."_Count"):SetText()
-			getglobal(path..i.."_CBT"):SetText()
-			getglobal(path..i.."_CBTPerc"):SetText()
-			getglobal(path..i.."_StatusBar"):SetValue(0)
+			_G(path..i.."_Icon"):SetTexture()
+			_G(path..i.."_Name"):SetText()
+			_G(path..i.."_Count"):SetText()
+			_G(path..i.."_CBT"):SetText()
+			_G(path..i.."_CBTPerc"):SetText()
+			_G(path..i.."_StatusBar"):SetValue(0)
 		end
 	end
 end
@@ -197,13 +198,13 @@ function DPSMate.Modules.Auras:UpdateBuffs(arg1)
 	for i=1, 6 do
 		local pos = Buffpos + i
 		if not t1[pos] then break end
-		getglobal(path..i).id = t1[pos][1]
-		getglobal(path..i.."_Icon"):SetTexture(DPSMate.BabbleSpell:GetSpellIcon(t1[pos][1]))
-		getglobal(path..i.."_Name"):SetText(t1[pos][1])
-		getglobal(path..i.."_Count"):SetText(t1[pos][3])
-		getglobal(path..i.."_CBT"):SetText(string.format("%.2f", t1[pos][2]*DPSMateCombatTime["total"]/100).."s")
-		getglobal(path..i.."_CBTPerc"):SetText(t1[pos][2].."%")
-		getglobal(path..i.."_StatusBar"):SetValue(t1[pos][2])
+		_G(path..i).id = t1[pos][1]
+		_G(path..i.."_Icon"):SetTexture(DPSMate.BabbleSpell:GetSpellIcon(t1[pos][1]))
+		_G(path..i.."_Name"):SetText(t1[pos][1])
+		_G(path..i.."_Count"):SetText(t1[pos][3])
+		_G(path..i.."_CBT"):SetText(string.format("%.2f", t1[pos][2]*DPSMateCombatTime["total"]/100).."s")
+		_G(path..i.."_CBTPerc"):SetText(t1[pos][2].."%")
+		_G(path..i.."_StatusBar"):SetValue(t1[pos][2])
 	end
 end
 
@@ -216,18 +217,18 @@ function DPSMate.Modules.Auras:UpdateDebuffs(arg1)
 	for i=1, 6 do
 		local pos = Debuffpos + i
 		if not t2[pos] then break end
-		getglobal(path..i).id = t2[pos][1]
-		getglobal(path..i.."_Icon"):SetTexture(DPSMate.BabbleSpell:GetSpellIcon(t2[pos][1]))
-		getglobal(path..i.."_Name"):SetText(t2[pos][1])
-		getglobal(path..i.."_Count"):SetText(t2[pos][3])
-		getglobal(path..i.."_CBT"):SetText(string.format("%.2f", t2[pos][2]*DPSMateCombatTime["total"]/100).."s")
-		getglobal(path..i.."_CBTPerc"):SetText(t2[pos][2].."%")
-		getglobal(path..i.."_StatusBar"):SetValue(t2[pos][2])
+		_G(path..i).id = t2[pos][1]
+		_G(path..i.."_Icon"):SetTexture(DPSMate.BabbleSpell:GetSpellIcon(t2[pos][1]))
+		_G(path..i.."_Name"):SetText(t2[pos][1])
+		_G(path..i.."_Count"):SetText(t2[pos][3])
+		_G(path..i.."_CBT"):SetText(string.format("%.2f", t2[pos][2]*DPSMateCombatTime["total"]/100).."s")
+		_G(path..i.."_CBTPerc"):SetText(t2[pos][2].."%")
+		_G(path..i.."_StatusBar"):SetValue(t2[pos][2])
 	end
 end
 
 function DPSMate.Modules.Auras:ShowTooltip(obj)
-	if obj.id then
+	if obj.id and db[DPSMateUser[DetailsUser][1]][DPSMateAbility[obj.id][1]] then
 		GameTooltip:SetOwner(obj)
 		GameTooltip:AddLine(obj.id)
 		for cat, val in db[DPSMateUser[DetailsUser][1]][DPSMateAbility[obj.id][1]][3] do

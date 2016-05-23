@@ -6,6 +6,7 @@ local DetailsArr, DetailsTotal, DmgArr, DetailUser, DetailsSelected  = {}, 0, {}
 local g, g2
 local curKey = 1
 local db, cbt = {}, 0
+local _G = getglobal
 
 function DPSMate.Modules.DetailsCurePoisonReceived:UpdateDetails(obj, key)
 	curKey = key
@@ -13,9 +14,9 @@ function DPSMate.Modules.DetailsCurePoisonReceived:UpdateDetails(obj, key)
 	DetailsUser = obj.user
 	DPSMate_Details_CurePoisonReceived_Title:SetText("Poison cured of "..obj.user)
 	DPSMate_Details_CurePoisonReceived:Show()
-	DPSMate.Modules.DetailsCurePoisonReceived:ScrollFrame_Update()
-	DPSMate.Modules.DetailsCurePoisonReceived:SelectCreatureButton(1)
-	DPSMate.Modules.DetailsCurePoisonReceived:SelectCreatureAbilityButton(1,1)
+	self:ScrollFrame_Update()
+	self:SelectCreatureButton(1)
+	self:SelectCreatureAbilityButton(1,1)
 end
 
 function DPSMate.Modules.DetailsCurePoisonReceived:EvalTable()
@@ -100,7 +101,7 @@ end
 
 function DPSMate.Modules.DetailsCurePoisonReceived:ScrollFrame_Update()
 	local line, lineplusoffset
-	local obj = getglobal("DPSMate_Details_CurePoisonReceived_Log_ScrollFrame")
+	local obj = _G("DPSMate_Details_CurePoisonReceived_Log_ScrollFrame")
 	local path = "DPSMate_Details_CurePoisonReceived_Log_ScrollButton"
 	DetailsArr, DetailsTotal, DmgArr = DPSMate.Modules.DetailsCurePoisonReceived:EvalTable()
 	local len = DPSMate:TableLength(DetailsArr)
@@ -108,27 +109,27 @@ function DPSMate.Modules.DetailsCurePoisonReceived:ScrollFrame_Update()
 	for line=1,14 do
 		lineplusoffset = line + FauxScrollFrame_GetOffset(obj)
 		if DetailsArr[lineplusoffset] ~= nil then
-			getglobal(path..line.."_Name"):SetText(DPSMate:GetUserById(DetailsArr[lineplusoffset]))
-			getglobal(path..line.."_Value"):SetText(DmgArr[lineplusoffset][1].." ("..string.format("%.2f", 100*DmgArr[lineplusoffset][1]/DetailsTotal).."%)")
-			getglobal(path..line.."_Icon"):SetTexture("Interface\\AddOns\\DPSMate\\images\\dummy")
+			_G(path..line.."_Name"):SetText(DPSMate:GetUserById(DetailsArr[lineplusoffset]))
+			_G(path..line.."_Value"):SetText(DmgArr[lineplusoffset][1].." ("..string.format("%.2f", 100*DmgArr[lineplusoffset][1]/DetailsTotal).."%)")
+			_G(path..line.."_Icon"):SetTexture("Interface\\AddOns\\DPSMate\\images\\dummy")
 			if len < 14 then
-				getglobal(path..line):SetWidth(235)
-				getglobal(path..line.."_Name"):SetWidth(125)
+				_G(path..line):SetWidth(235)
+				_G(path..line.."_Name"):SetWidth(125)
 			else
-				getglobal(path..line):SetWidth(220)
-				getglobal(path..line.."_Name"):SetWidth(110)
+				_G(path..line):SetWidth(220)
+				_G(path..line.."_Name"):SetWidth(110)
 			end
-			getglobal(path..line):Show()
+			_G(path..line):Show()
 		else
-			getglobal(path..line):Hide()
+			_G(path..line):Hide()
 		end
-		getglobal(path..line.."_selected"):Hide()
+		_G(path..line.."_selected"):Hide()
 	end
 end
 
 function DPSMate.Modules.DetailsCurePoisonReceived:SelectCreatureButton(i)
 	local line, lineplusoffset
-	local obj = getglobal("DPSMate_Details_CurePoisonReceived_LogTwo_ScrollFrame")
+	local obj = _G("DPSMate_Details_CurePoisonReceived_LogTwo_ScrollFrame")
 	obj.index = i
 	local path = "DPSMate_Details_CurePoisonReceived_LogTwo_ScrollButton"
 	local len = DPSMate:TableLength(DmgArr[i][2])
@@ -137,33 +138,33 @@ function DPSMate.Modules.DetailsCurePoisonReceived:SelectCreatureButton(i)
 		lineplusoffset = line + FauxScrollFrame_GetOffset(obj)
 		if DmgArr[i][2][lineplusoffset] ~= nil then
 			local ability = DPSMate:GetAbilityById(DmgArr[i][2][lineplusoffset])
-			getglobal(path..line.."_Name"):SetText(ability)
-			getglobal(path..line.."_Value"):SetText(DmgArr[i][3][lineplusoffset][1].." ("..string.format("%.2f", 100*DmgArr[i][3][lineplusoffset][1]/DmgArr[i][1]).."%)")
-			getglobal(path..line.."_Icon"):SetTexture(DPSMate.BabbleSpell:GetSpellIcon(strsub(ability, 1, (strfind(ability, "%(") or 0)-1) or ability))
+			_G(path..line.."_Name"):SetText(ability)
+			_G(path..line.."_Value"):SetText(DmgArr[i][3][lineplusoffset][1].." ("..string.format("%.2f", 100*DmgArr[i][3][lineplusoffset][1]/DmgArr[i][1]).."%)")
+			_G(path..line.."_Icon"):SetTexture(DPSMate.BabbleSpell:GetSpellIcon(strsub(ability, 1, (strfind(ability, "%(") or 0)-1) or ability))
 			if len < 14 then
-				getglobal(path..line):SetWidth(235)
-				getglobal(path..line.."_Name"):SetWidth(125)
+				_G(path..line):SetWidth(235)
+				_G(path..line.."_Name"):SetWidth(125)
 			else
-				getglobal(path..line):SetWidth(220)
-				getglobal(path..line.."_Name"):SetWidth(110)
+				_G(path..line):SetWidth(220)
+				_G(path..line.."_Name"):SetWidth(110)
 			end
-			getglobal(path..line):Show()
+			_G(path..line):Show()
 		else
-			getglobal(path..line):Hide()
+			_G(path..line):Hide()
 		end
-		getglobal(path..line.."_selected"):Hide()
+		_G(path..line.."_selected"):Hide()
 	end
 	for p=1, 14 do
-		getglobal("DPSMate_Details_CurePoisonReceived_Log_ScrollButton"..p.."_selected"):Hide()
+		_G("DPSMate_Details_CurePoisonReceived_Log_ScrollButton"..p.."_selected"):Hide()
 	end
-	getglobal(path.."1_selected"):Show()
-	DPSMate.Modules.DetailsCurePoisonReceived:SelectCreatureAbilityButton(i, 1)
-	getglobal("DPSMate_Details_CurePoisonReceived_Log_ScrollButton"..i.."_selected"):Show()
+	_G(path.."1_selected"):Show()
+	self:SelectCreatureAbilityButton(i, 1)
+	_G("DPSMate_Details_CurePoisonReceived_Log_ScrollButton"..i.."_selected"):Show()
 end
 
 function DPSMate.Modules.DetailsCurePoisonReceived:SelectCreatureAbilityButton(i, p)
 	local line, lineplusoffset
-	local obj = getglobal("DPSMate_Details_CurePoisonReceived_LogThree_ScrollFrame")
+	local obj = _G("DPSMate_Details_CurePoisonReceived_LogThree_ScrollFrame")
 	obj.index = i
 	local path = "DPSMate_Details_CurePoisonReceived_LogThree_ScrollButton"
 	local len = DPSMate:TableLength(DmgArr[i][3][p][2])
@@ -172,24 +173,24 @@ function DPSMate.Modules.DetailsCurePoisonReceived:SelectCreatureAbilityButton(i
 		lineplusoffset = line + FauxScrollFrame_GetOffset(obj)
 		if DmgArr[i][3][p][2][lineplusoffset] ~= nil then
 			local ability = DPSMate:GetAbilityById(DmgArr[i][3][p][2][lineplusoffset])
-			getglobal(path..line.."_Name"):SetText(ability)
-			getglobal(path..line.."_Value"):SetText(DmgArr[i][3][p][3][lineplusoffset].." ("..string.format("%.2f", 100*DmgArr[i][3][p][3][lineplusoffset]/DmgArr[i][3][p][1]).."%)")
-			getglobal(path..line.."_Icon"):SetTexture(DPSMate.BabbleSpell:GetSpellIcon(strsub(ability, 1, (strfind(ability, "%(") or 0)-1) or ability))
+			_G(path..line.."_Name"):SetText(ability)
+			_G(path..line.."_Value"):SetText(DmgArr[i][3][p][3][lineplusoffset].." ("..string.format("%.2f", 100*DmgArr[i][3][p][3][lineplusoffset]/DmgArr[i][3][p][1]).."%)")
+			_G(path..line.."_Icon"):SetTexture(DPSMate.BabbleSpell:GetSpellIcon(strsub(ability, 1, (strfind(ability, "%(") or 0)-1) or ability))
 			if len < 14 then
-				getglobal(path..line):SetWidth(235)
-				getglobal(path..line.."_Name"):SetWidth(125)
+				_G(path..line):SetWidth(235)
+				_G(path..line.."_Name"):SetWidth(125)
 			else
-				getglobal(path..line):SetWidth(220)
-				getglobal(path..line.."_Name"):SetWidth(110)
+				_G(path..line):SetWidth(220)
+				_G(path..line.."_Name"):SetWidth(110)
 			end
-			getglobal(path..line):Show()
+			_G(path..line):Show()
 		else
-			getglobal(path..line):Hide()
+			_G(path..line):Hide()
 		end
-		getglobal(path..line.."_selected"):Hide()
+		_G(path..line.."_selected"):Hide()
 	end
 	for i=1, 14 do
-		getglobal("DPSMate_Details_CurePoisonReceived_LogTwo_ScrollButton"..i.."_selected"):Hide()
+		_G("DPSMate_Details_CurePoisonReceived_LogTwo_ScrollButton"..i.."_selected"):Hide()
 	end
-	getglobal("DPSMate_Details_CurePoisonReceived_LogTwo_ScrollButton"..p.."_selected"):Show()
+	_G("DPSMate_Details_CurePoisonReceived_LogTwo_ScrollButton"..p.."_selected"):Show()
 end
