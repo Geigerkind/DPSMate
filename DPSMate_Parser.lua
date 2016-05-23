@@ -613,7 +613,7 @@ function DPSMate.Parser:SpellPeriodicFriendlyPlayerBuffs(msg)
 		DB:ConfirmBuff(f, a, GetTime())
 		if DPSMate.Parser.Dispels[a] then
 			DB:RegisterHotDispel(f, a)
-			DB:AwaitDispel(a, f, "Unknown", GetTime());
+			--DB:AwaitDispel(a, f, "Unknown", GetTime());
 		end
 		return 
 	end

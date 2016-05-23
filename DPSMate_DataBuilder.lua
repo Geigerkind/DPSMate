@@ -1085,7 +1085,7 @@ local AwaitDispel = {}
 function DPSMate.DB:AwaitDispel(ability, target, cause, time)
 	if not AwaitDispel[target] then AwaitDispel[target] = {} end
 	tinsert(AwaitDispel[target], {cause, ability, time})
-	DPSMate:SendMessage("Awaiting Dispel! - "..cause.." - "..target.." - "..ability.." - "..time)
+	--DPSMate:SendMessage("Awaiting Dispel! - "..cause.." - "..target.." - "..ability.." - "..time)
 	self:EvaluateDispel()
 end
 
@@ -1100,13 +1100,16 @@ function DPSMate.DB:AwaitHotDispel(ability, target, cause, time)
 end
 
 local ActiveHotDispel = {}
+local lastDispel = nil;
 function DPSMate.DB:RegisterHotDispel(target, ability)
 	for cat, val in AwaitHotDispel do
 		--DPSMate:SendMessage(val[2].."="..target)
 		--DPSMate:SendMessage(val[3].."="..ability)
 		if val[2]==target and val[3]==ability then
 			if not ActiveHotDispel[val[2]] then ActiveHotDispel[val[2]] = {} end
+			lastDispel = target;
 			tinsert(ActiveHotDispel[val[2]], {val[1], val[3]})
+			self:EvaluateDispel()
 			--DPSMate:SendMessage("Confirmed")
 			break
 		end
@@ -1122,7 +1125,6 @@ function DPSMate.DB:ClearAwaitHotDispel()
 end
 
 local ConfirmedDispel = {}
-local lastDispel = nil;
 function DPSMate.DB:ConfirmRealDispel(ability, target, time)
 	if not ConfirmedDispel[target] then ConfirmedDispel[target] = {} end
 	tinsert(ConfirmedDispel[target], {ability, time})
@@ -1133,6 +1135,24 @@ function DPSMate.DB:ConfirmRealDispel(ability, target, time)
 end
 
 function DPSMate.DB:EvaluateDispel()
+	--DPSMate:SendMessage("Test 1")
+	for cat, val in ActiveHotDispel do
+		for ca, va in val do
+			if ConfirmedDispel[cat] then
+				local check = nil
+				for q, t in ConfirmedDispel[cat] do
+					if DPSMate:TContains(DPSMate.Parser["De"..DPSMateAbility[t[1]][2]], va[2]) then
+						check = t[1]
+						tremove(ConfirmedDispel[cat], q)
+					end
+				end
+				if check then
+					self:Dispels(va[1], va[2], cat, check)
+					return
+				end
+			end
+		end
+	end
 	for cat, val in AwaitDispel do
 		for ca, va in val do
 			if ConfirmedDispel[cat] then
@@ -1168,23 +1188,6 @@ function DPSMate.DB:EvaluateDispel()
 						--DPSMate:SendMessage("Direct Removed!")
 						return
 					end
-				end
-			end
-		end
-	end
-	for cat, val in ActiveHotDispel do
-		for ca, va in val do
-			if ConfirmedDispel[cat] then
-				local check = nil
-				for q, t in ConfirmedDispel[cat] do
-					if DPSMate:TContains(DPSMate.Parser["De"..DPSMateAbility[t[1]][2]], va[2]) then
-						check = t[1]
-						tremove(ConfirmedDispel[cat], q)
-					end
-				end
-				if check then
-					self:Dispels(va[1], va[2], cat, check)
-					return
 				end
 			end
 		end

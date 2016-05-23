@@ -813,13 +813,14 @@ DPSMate.Parser.UseAction = function(slot, checkCursor, onSelf)
 		SDM("DPSMate", aura..","..target..",", "RAID")
 		DPSMate.Parser.SendSpell[aura] = true
 	end
-	oldUseAction(slot, checkCursor, onSelf)
 	if aura then
 		local time = GetTime()
-		if DPSMate:TContains(DPSMate.Parser.Kicks, ability) then DB:AwaitAfflictedStun(player, aura, target, time) end
+		if DPSMate.Parser.Kicks[aura] then DB:AwaitAfflictedStun(player, aura, target, time) end
+		if DPSMate.Parser.Dispels[aura] then DB:AwaitHotDispel(aura, target, player, time) end
 		DB:AwaitingBuff(player, aura, target, time)
 		DB:AwaitingAbsorbConfirmation(player, aura, target, time)
 	end
+	oldUseAction(slot, checkCursor, onSelf)
 end
 UseAction = DPSMate.Parser.UseAction
 
@@ -838,13 +839,12 @@ DPSMate.Parser.CastSpellByName = function(spellName, onSelf)
 		SDM("DPSMate", spellName..","..target..",", "RAID")
 		DPSMate.Parser.SendSpell[spellName] = true
 	end
-	oldCastSpellByName(spellName, onSelf)
 	local time = GetTime()
-	if DPSMate:TContains(DPSMate.Parser.Kicks, ability) then 
-		DB:AwaitAfflictedStun(player, spellName, target, time) 
-	end
+	if DPSMate.Parser.Kicks[spellName] then DB:AwaitAfflictedStun(player, spellName, target, time) end
+	if DPSMate.Parser.Dispels[spellName] then DB:AwaitHotDispel(spellName, target, player, time) end
 	DB:AwaitingBuff(player, spellName, target, time)
 	DB:AwaitingAbsorbConfirmation(player, spellName, target, time)
+	oldCastSpellByName(spellName, onSelf)
 end
 CastSpellByName = DPSMate.Parser.CastSpellByName
 
@@ -864,11 +864,12 @@ DPSMate.Parser.CastSpell = function(spellID, spellbookType)
 		SDM("DPSMate", spellName..","..target..",", "RAID")
 		DPSMate.Parser.SendSpell[spellName] = true
 	end
-	oldCastSpell(spellID, spellbookType)
 	local time = GetTime()
-	if DPSMate:TContains(DPSMate.Parser.Kicks, ability) then DB:AwaitAfflictedStun(player, spellName, target, time) end
+	if DPSMate.Parser.Kicks[spellName] then DB:AwaitAfflictedStun(player, spellName, target, time) end
+	if DPSMate.Parser.Dispels[spellName] then DB:AwaitHotDispel(spellName, target, player, time) end
 	DB:AwaitingBuff(player, spellName, target, time)
 	DB:AwaitingAbsorbConfirmation(player, spellName, target, time)
+	oldCastSpell(spellID, spellbookType)
 end
 CastSpell = DPSMate.Parser.CastSpell
 
@@ -1187,7 +1188,7 @@ DPSMate.Sync.Exec = {
 		if DPSMate.Parser.HotDispels[t[1]] then DB:AwaitHotDispel(t[1], t[2], arg4, t[3]) end
 		DB:AwaitingBuff(arg4, t[1], t[2], t[3])
 		DB:AwaitingAbsorbConfirmation(arg4, t[1], t[2], t[3])
-		DPSMate:SendMessage(arg2)
+		--DPSMate:SendMessage(arg2)
 	end,
 	["DPSMate_UserData"] = function(arg2,arg4) DPSMate.Sync:ReceiveUserData(arg2, arg4) end,
 	["DPSMate_HelloWorld"] = function() DPSMate.Sync:GreetBack() end,
