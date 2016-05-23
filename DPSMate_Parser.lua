@@ -572,7 +572,7 @@ function DPSMate.Parser:SpellPeriodicSelfBuff(msg) -- Maybe some loss here?
 		DB:ConfirmBuff(player, a, GetTime())
 		if DPSMate.Parser.Dispels[a] then 
 			DB:RegisterHotDispel(player, a)
-			DB:AwaitDispel(a, player, "Unknown", GetTime());
+			--DB:AwaitDispel(a, player, "Unknown", GetTime());
 		end
 		return 
 	end

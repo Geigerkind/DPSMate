@@ -780,6 +780,16 @@ end
 --------------                       SYNC OUT                       --------------                                  
 ----------------------------------------------------------------------------------
 
+local LastDecursive = nil
+if Dcr_Cast_CureSpell then
+	local OldDCR_CAST = Dcr_Cast_CureSpell
+	DPSMate.Parser.DCR_CAST = function(spellID, Unit, AfflictionType, ClearCurrentTarget)
+		LastDecursive = UnitName(Unit)
+		OldDCR_CAST(spellID, Unit, AfflictionType, ClearCurrentTarget)
+	end
+	Dcr_Cast_CureSpell = DPSMate.Parser.DCR_CAST
+end
+
 -- Hooking useaction function in order to get the owner of the spell.
 local OverTimeDispels = {
 	["Abolish Poison"] = true,
@@ -791,7 +801,7 @@ DPSMate.Parser.UseAction = function(slot, checkCursor, onSelf)
 	DPSMate_Tooltip:ClearLines()
 	DPSMate_Tooltip:SetAction(slot)
 	local aura = DPSMate_TooltipTextLeft1:GetText()
-	local target = UnitName("target") or LastMouseover
+	local target = UnitName("target") or LastDecursive or LastMouseover
 	if aura and target and DPSMateSettings["sync"] and OverTimeDispels[aura] and not DPSMate.Parser.SendSpell[aura] then
 		SDM("DPSMate", aura..","..target..",", "RAID")
 		DPSMate.Parser.SendSpell[aura] = true
@@ -809,7 +819,7 @@ UseAction = DPSMate.Parser.UseAction
 -- Hooking CastSpellByName function in order to get the owner of the spell.
 local oldCastSpellByName = CastSpellByName
 DPSMate.Parser.CastSpellByName = function(spellName, onSelf)
-	local target = UnitName("target") or LastMouseover
+	local target = UnitName("target") or LastDecursive or LastMouseover
 	if target and DPSMateSettings["sync"] and OverTimeDispels[spellName] and not DPSMate.Parser.SendSpell[spellName] then 
 		SDM("DPSMate", spellName..","..target..",", "RAID")
 		DPSMate.Parser.SendSpell[spellName] = true
@@ -828,7 +838,7 @@ CastSpellByName = DPSMate.Parser.CastSpellByName
 local oldCastSpell = CastSpell
 DPSMate.Parser.CastSpell = function(spellID, spellbookType)
 	local spellName, spellRank = GetSpellName(spellID, spellbookType)
-	local target = UnitName("target") or LastMouseover
+	local target = UnitName("target") or LastDecursive or LastMouseover
 	if target and DPSMateSettings["sync"] and OverTimeDispels[spellName] and not DPSMate.Parser.SendSpell[spellName] then 
 		SDM("DPSMate", spellName..","..target..",", "RAID")
 		DPSMate.Parser.SendSpell[spellName] = true
@@ -1152,8 +1162,8 @@ DPSMate.Sync.Exec = {
 		t = {}
 		strgsub(arg2, "(.-),", func) -- name, aura, target, time
 		t[3] = GetTime()
-		if DPSMate.Parser.Kicks[ability] then DB:AwaitAfflictedStun(arg4, t[1], t[2], t[3]) end
-		if DPSMate.Parser.HotDispels[ability] then DB:AwaitHotDispel(t[1], t[2], arg4, t[3]) end
+		if DPSMate.Parser.Kicks[t[1]] then DB:AwaitAfflictedStun(arg4, t[1], t[2], t[3]) end
+		if DPSMate.Parser.HotDispels[t[1]] then DB:AwaitHotDispel(t[1], t[2], arg4, t[3]) end
 		DB:AwaitingBuff(arg4, t[1], t[2], t[3])
 		DB:AwaitingAbsorbConfirmation(arg4, t[1], t[2], t[3])
 		DPSMate:SendMessage(arg2)
