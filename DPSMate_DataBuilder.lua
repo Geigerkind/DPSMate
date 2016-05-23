@@ -1148,6 +1148,7 @@ function DPSMate.DB:EvaluateDispel()
 				end
 				if check then
 					self:Dispels(va[1], va[2], cat, check)
+					lastDispel = nil;
 					return
 				end
 			end
@@ -1166,6 +1167,7 @@ function DPSMate.DB:EvaluateDispel()
 				if check then
 					self:Dispels(va[1], va[2], cat, check)
 					tremove(AwaitDispel[cat], ca)
+					lastDispel = nil;
 					--DPSMate:SendMessage("Direct Removed!")
 					return
 				end
@@ -1207,7 +1209,7 @@ end
 
 function DPSMate.DB:Dispels(cause, Dname, target, ability)
 	if self:BuildUser(cause, nil) or self:BuildUser(target, nil) or self:BuildAbility(Dname, nil) or self:BuildAbility(ability, nil) then return end
-	DPSMate:SendMessage("Cause: "..cause.." Dname: "..Dname.." Target: "..target.." Ability: "..ability)
+	--DPSMate:SendMessage("Cause: "..cause.." Dname: "..Dname.." Target: "..target.." Ability: "..ability)
 	for cat, val in pairs({[1]="total", [2]="current"}) do 
 		if not DPSMateDispels[cat][DPSMateUser[cause][1]] then
 			DPSMateDispels[cat][DPSMateUser[cause][1]] = {
