@@ -792,9 +792,9 @@ DPSMate.Parser.UseAction = function(slot, checkCursor, onSelf)
 	DPSMate_Tooltip:SetAction(slot)
 	local aura = DPSMate_TooltipTextLeft1:GetText()
 	local target = UnitName("target") or LastMouseover
-	if aura and target and DPSMateSettings["sync"] and OverTimeDispels[spellName] and not self.SendSpell[spellName] then
+	if aura and target and DPSMateSettings["sync"] and OverTimeDispels[aura] and not DPSMate.Parser.SendSpell[aura] then
 		SDM("DPSMate", aura..","..target..",", "RAID")
-		self.SendSpell[aura] = true
+		DPSMate.Parser.SendSpell[aura] = true
 	end
 	oldUseAction(slot, checkCursor, onSelf)
 	if aura then
@@ -810,9 +810,9 @@ UseAction = DPSMate.Parser.UseAction
 local oldCastSpellByName = CastSpellByName
 DPSMate.Parser.CastSpellByName = function(spellName, onSelf)
 	local target = UnitName("target") or LastMouseover
-	if target and DPSMateSettings["sync"] and OverTimeDispels[spellName] and not self.SendSpell[spellName] then 
+	if target and DPSMateSettings["sync"] and OverTimeDispels[spellName] and not DPSMate.Parser.SendSpell[spellName] then 
 		SDM("DPSMate", spellName..","..target..",", "RAID")
-		self.SendSpell[spellName] = true
+		DPSMate.Parser.SendSpell[spellName] = true
 	end
 	oldCastSpellByName(spellName, onSelf)
 	local time = GetTime()
@@ -829,9 +829,9 @@ local oldCastSpell = CastSpell
 DPSMate.Parser.CastSpell = function(spellID, spellbookType)
 	local spellName, spellRank = GetSpellName(spellID, spellbookType)
 	local target = UnitName("target") or LastMouseover
-	if target and DPSMateSettings["sync"] and OverTimeDispels[spellName] and not self.SendSpell[spellName] then 
+	if target and DPSMateSettings["sync"] and OverTimeDispels[spellName] and not DPSMate.Parser.SendSpell[spellName] then 
 		SDM("DPSMate", spellName..","..target..",", "RAID")
-		self.SendSpell[spellName] = true
+		DPSMate.Parser.SendSpell[spellName] = true
 	end
 	oldCastSpell(spellID, spellbookType)
 	local time = GetTime()
@@ -1156,6 +1156,7 @@ DPSMate.Sync.Exec = {
 		if DPSMate.Parser.HotDispels[ability] then DB:AwaitHotDispel(t[1], t[2], arg4, t[3]) end
 		DB:AwaitingBuff(arg4, t[1], t[2], t[3])
 		DB:AwaitingAbsorbConfirmation(arg4, t[1], t[2], t[3])
+		DPSMate:SendMessage(arg2)
 	end,
 	["DPSMate_UserData"] = function(arg2,arg4) DPSMate.Sync:ReceiveUserData(arg2, arg4) end,
 	["DPSMate_HelloWorld"] = function() DPSMate.Sync:GreetBack() end,

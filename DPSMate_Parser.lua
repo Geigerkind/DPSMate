@@ -570,7 +570,7 @@ function DPSMate.Parser:SpellPeriodicSelfBuff(msg) -- Maybe some loss here?
 		if strfind(a, "from") then return end
 		if strfind(a, "%(") then a=strsub(a, 1, strfind(a, "%(")-2) end -- Unstable Power (12)
 		DB:ConfirmBuff(player, a, GetTime())
-		if DPSMate.Parser.Dispels[ab] then 
+		if DPSMate.Parser.Dispels[a] then 
 			DB:RegisterHotDispel(player, a)
 			DB:AwaitDispel(a, player, "Unknown", GetTime());
 		end
@@ -611,7 +611,7 @@ function DPSMate.Parser:SpellPeriodicFriendlyPlayerBuffs(msg)
 		if strfind(a, "from") then return end
 		if strfind(a, "%(") then a=strsub(a, 1, strfind(a, "%(")-2) end -- Unstable Power (12)
 		DB:ConfirmBuff(f, a, GetTime())
-		if DPSMate.Parser.Dispels[ab] then 
+		if DPSMate.Parser.Dispels[a] then
 			DB:RegisterHotDispel(f, a)
 			DB:AwaitDispel(a, f, "Unknown", GetTime());
 		end
