@@ -3,7 +3,7 @@
 
 -- Global Variables
 DPSMate = {}
-DPSMate.VERSION = 8
+DPSMate.VERSION = 9
 DPSMate.Parser = {}
 DPSMate.localization = {}
 DPSMate.DB = {}
