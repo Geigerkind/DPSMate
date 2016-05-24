@@ -309,6 +309,14 @@ DPSMate.Options.Options = {
 				set = function(names) DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["filterpeople"] = names;DPSMate:SetStatusBarValue();DPSMate.Options.Dewdrop:Close() end,
 				usage = "<names>",
 			},
+			group = {
+				order = 30,
+				type = "toggle",
+				name = "Group only",
+				desc = "Only show your group",
+				get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["grouponly"] end,
+				set = function() DPSMate.Options:SimpleToggle(DPSMate.Options.Dewdrop:GetOpenedParent().Key, "grouponly");DPSMate.Options.Dewdrop:Close() end,
+			}
 		},
 		handler = DPSMate.Options,
 	},
@@ -549,6 +557,15 @@ function DPSMate.Options:ToggleFilterClass(key, class)
 	DPSMate:SetStatusBarValue()
 end
 
+function DPSMate.Options:SimpleToggle(key, opt)
+	if DPSMateSettings["windows"][key][opt] then
+		DPSMateSettings["windows"][key][opt] = false
+	else
+		DPSMateSettings["windows"][key][opt] = true
+	end
+	DPSMate:SetStatusBarValue()
+end
+
 function DPSMate.Options:OnEvent(event)
 	if event == "PARTY_MEMBERS_CHANGED" or event == "RAID_ROSTER_UPDATE" then
 		DPSMate.Options:HideWhenSolo()
@@ -584,6 +601,7 @@ function DPSMate.Options:OnEvent(event)
 				elseif DPSMateSettings["dataresetsleaveparty"] == 1 then
 					DPSMate.Options:PopUpAccept()
 				end
+				DPSMate.DB:OnGroupUpdate()
 			end
 		end
 	elseif event == "PLAYER_ENTERING_WORLD" then
@@ -1461,6 +1479,7 @@ function DPSMate.Options:CreateWindow()
 				druid = true,
 			},
 			filterpeople = "",
+			grouponly = false,
 		})
 		local TL = DPSMate:TableLength(DPSMateSettings["windows"])
 		if not _G("DPSMate_"..na) then

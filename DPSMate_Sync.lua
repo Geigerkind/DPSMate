@@ -820,7 +820,7 @@ DPSMate.Parser.UseAction = function(slot, checkCursor, onSelf)
 	end
 	if aura then
 		local time = GetTime()
-		if DPSMate.Parser.Kicks[aura] then DB:AwaitAfflictedStun(player, aura, target, time) end
+		if DPSMate.Parser.Kicks[aura] then DB:AwaitAfflictedStun(player, aura, UnitName("target"), time) end
 		if DPSMate.Parser.Dispels[aura] then DB:AwaitHotDispel(aura, target, player, time) end
 		DB:AwaitingBuff(player, aura, target, time)
 		DB:AwaitingAbsorbConfirmation(player, aura, target, time)
@@ -838,7 +838,7 @@ DPSMate.Parser.CastSpellByName = function(spellName, onSelf)
 		DPSMate.Parser.SendSpell[spellName] = true
 	end
 	local time = GetTime()
-	if DPSMate.Parser.Kicks[spellName] then DB:AwaitAfflictedStun(player, spellName, target, time) end
+	if DPSMate.Parser.Kicks[spellName] then DB:AwaitAfflictedStun(player, spellName, UnitName("target"), time) end
 	if DPSMate.Parser.Dispels[spellName] then DB:AwaitHotDispel(spellName, target, player, time) end
 	DB:AwaitingBuff(player, spellName, target, time)
 	DB:AwaitingAbsorbConfirmation(player, spellName, target, time)
@@ -856,7 +856,7 @@ DPSMate.Parser.CastSpell = function(spellID, spellbookType)
 		DPSMate.Parser.SendSpell[spellName] = true
 	end
 	local time = GetTime()
-	if DPSMate.Parser.Kicks[spellName] then DB:AwaitAfflictedStun(player, spellName, target, time) end
+	if DPSMate.Parser.Kicks[spellName] then DB:AwaitAfflictedStun(player, spellName, UnitName("target"), time) end
 	if DPSMate.Parser.Dispels[spellName] then DB:AwaitHotDispel(spellName, target, player, time) end
 	DB:AwaitingBuff(player, spellName, target, time)
 	DB:AwaitingAbsorbConfirmation(player, spellName, target, time)

@@ -229,7 +229,7 @@ function DPSMate.Modules.DetailsDamage:ProcsDropDown()
 	if arr[DPSMateUser[DetailsUser][1]] then
 		for cat, val in pairs(arr[DPSMateUser[DetailsUser][1]]) do
 			local ability = DPSMate:GetAbilityById(cat)
-			if DPSMate:TContains(DPSMate.Parser.procs, ability) then
+			if DPSMate.Parser.procs[ability] or DPSMate.Parser.DmgProcs[ability] then
 				UIDropDownMenu_AddButton{
 					text = ability,
 					value = cat,

@@ -147,7 +147,7 @@ function DPSMate.Parser:SelfSpellDMG(msg)
 		t[1] = tnbr(d)
 		if b=="h" then t[2]=1;t[3]=0 end
 		if strfind(e, "blocked") then t[4]=1;t[2]=0;t[3]=0 end
-		if DPSMate.Parser.Kicks[a] then DB:AssignPotentialKick(a, player, c, GetTime()) end
+		if DPSMate.Parser.Kicks[a] then DB:AssignPotentialKick(player, a, c, GetTime()) end
 		if DPSMate.Parser.DmgProcs[a] then DB:BuildBuffs(player, player, a, true) end
 		DB:EnemyDamage(true, DPSMateEDT, player, a,  t[2] or 0, t[3] or 1, 0, 0, 0, 0, t[1], c, t[4] or 0, 0)
 		DB:DamageDone(player, a, t[2] or 0, t[3] or 1, 0, 0, 0, 0, t[1], 0, t[4] or 0)
@@ -378,7 +378,7 @@ function DPSMate.Parser:CreatureVsSelfSpellDamage(msg)
 	for a,b,c,d,e in strgfind(msg, "(.+)'s (.+) (%a%a?)\its you for (%d+)(.*)") do -- Potential here to track school and resisted damage
 		if c=="h" then t[1]=1;t[2]=0 end
 		t[3] = tnbr(d)
-		DB:UnregisterPotentialKick(a, b, GetTime())
+		DB:UnregisterPotentialKick(player, b, GetTime())
 		DB:EnemyDamage(false, DPSMateEDD, player, b, t[1] or 0, t[2] or 1, 0, 0, 0, 0, t[3], a, 0, 0)
 		DB:DamageTaken(player, b, t[1] or 0, t[2] or 1, 0, 0, 0, 0, t[3], a, 0)
 		DB:DeathHistory(player, a, b, t[3], t[1] or 0, t[2] or 1, 0, 0)
@@ -466,7 +466,7 @@ function DPSMate.Parser:CreatureVsCreatureSpellDamage(msg)
 	for a,b,c,d,e,f in strgfind(msg, "(.+)'s (.+) (%a%a?)\its (.+) for (%d+)(.*)") do
 		if c=="h" then t[1]=1;t[2]=0 end
 		t[3] = tnbr(e)
-		DB:UnregisterPotentialKick(a, b, GetTime())
+		DB:UnregisterPotentialKick(d, b, GetTime())
 		DB:EnemyDamage(false, DPSMateEDD, d, b, t[1] or 0, t[2] or 1, 0, 0, 0, 0, t[3], a, 0, 0)
 		DB:DamageTaken(d, b, t[1] or 0, t[2] or 1, 0, 0, 0, 0, t[3], a, 0)
 		DB:DeathHistory(d, a, b, t[3], t[1] or 0, t[2] or 1, 0, 0)

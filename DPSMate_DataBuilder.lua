@@ -118,6 +118,7 @@ function DPSMate.DB:OnEvent(event)
 							druid = true,
 						},
 						filterpeople = "",
+						grouponly = false,
 					}
 				},
 				lock = false,
@@ -377,6 +378,7 @@ function DPSMate.DB:OnEvent(event)
 		
 		self:CombatTime()
 		
+		DPSMate:SendMessage("DPSMate has build "..DPSMate.VERSION.." has been loaded!")
 		self.loaded = true
 		InitialLoad = true
 	elseif event == "PLAYER_REGEN_DISABLED" then
@@ -446,6 +448,9 @@ function DPSMate.DB:OnGroupUpdate()
 		DPSMateUser[pet][4] = true
 		DPSMateUser[name][5] = pet
 		DPSMateUser[pet][6] = DPSMateUser[name][1]
+	end
+	if num<=0 then
+		DPSMate.Parser.TargetParty[name] = "player"
 	end
 end
 
@@ -1288,16 +1293,22 @@ local AfflictedStun = {}
 function DPSMate.DB:AwaitAfflictedStun(cause, ability, target, time)
 	for cat, val in AfflictedStun do
 		if val[1]==cause and val[4]==time then
+			--DPSMate:SendMessage("That happened!")
 			return
 		end
 	end
+	--DPSMate:SendMessage("Afflicted Stun: "..ability)
+	--DPSMate:SendMessage(cause..","..ability..","..target..","..time)
 	tinsert(AfflictedStun, {cause,ability,target,time})
 end
 
 function DPSMate.DB:ConfirmAfflictedStun(target, ability, time)
-	for cat, val in AfflictedStun do
+--	DPSMate:SendMessage("Try to confirm: "..ability)
+	for cat, val in AfflictedStun do	
+		--DPSMate:SendMessage(val[2].."=="..(ability or "").." and "..val[3].."=="..(target or "").." AND "..val[4].."<="..(time or ""))
 		if val[2]==ability and val[3]==target and val[4]<=time then
 			self:AssignPotentialKick(val[1], val[2], val[3], time)
+			--DPSMate:SendMessage("Confirmed afflicted Stun: "..ability)
 			tremove(AfflictedStun, cat)
 			break
 		end
@@ -1313,7 +1324,7 @@ function DPSMate.DB:UnregisterPotentialKick(cause, ability, time)
 	for cat, val in AwaitKick do
 		if val[1]==cause and val[2]==ability and val[3]<=time then
 			tremove(AwaitKick, cat)
-			--DPSMate:SendMessage("Potential Kick has been unregistered!")
+			--DPSMate:SendMessage("Potential Kick has been unregistered! "..ability)
 			break
 		end
 	end
@@ -1324,7 +1335,7 @@ function DPSMate.DB:AssignPotentialKick(cause, ability, target, time)
 		if val[3]<=time then
 			if not val[4] and val[1]==target then
 				val[4] = {cause, ability}
-				--DPSMate:SendMessage("Kick assigned!")
+			--	DPSMate:SendMessage("Kick assigned! "..ability)
 			end
 		end
 	end
@@ -1332,7 +1343,7 @@ end
 
 function DPSMate.DB:UpdateKicks()
 	for cat, val in AwaitKick do
-		if (GetTime()-val[3])>=5 then
+		if (GetTime()-val[3])>=2.5 then
 			if val[4] then
 				self:Kick(val[4][1], val[1], val[4][2], val[2])
 			end

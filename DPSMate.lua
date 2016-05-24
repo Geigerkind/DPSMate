@@ -3,7 +3,7 @@
 
 -- Global Variables
 DPSMate = {}
-DPSMate.VERSION = 9
+DPSMate.VERSION = 10
 DPSMate.Parser = {}
 DPSMate.localization = {}
 DPSMate.DB = {}
@@ -427,6 +427,12 @@ function DPSMate:ApplyFilter(key, name)
 	local class = DPSMateUser[name][2] or "warrior"
 	local path = DPSMateSettings["windows"][key]
 	t = {}
+	if path["grouponly"] then
+		if DPSMate.Parser.TargetParty[name] then
+			return true
+		end
+		return false;
+	end
 	-- Certain people
 	strgsub(path["filterpeople"], "(.-),", func)
 	for cat, val in t do
