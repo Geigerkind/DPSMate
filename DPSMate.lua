@@ -428,10 +428,9 @@ function DPSMate:ApplyFilter(key, name)
 	local path = DPSMateSettings["windows"][key]
 	t = {}
 	if path["grouponly"] then
-		if DPSMate.Parser.TargetParty[name] then
-			return true
+		if not DPSMate.Parser.TargetParty[name] then
+			return false
 		end
-		return false;
 	end
 	-- Certain people
 	strgsub(path["filterpeople"], "(.-),", func)
