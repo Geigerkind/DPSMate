@@ -98,7 +98,6 @@ local bosses = {
 	["General Rajaxx"] = true,
 	["Lieutenant General Andorov"] = true,
 	["Moam"] = true,
-	["Anubisath Guardian"] = true,
 	["Ossirian the Unscarred"] = true,
 	["Lord Kri"] = true,
 	["Princess Yauj"] = true,

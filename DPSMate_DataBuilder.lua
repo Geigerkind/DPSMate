@@ -1560,7 +1560,8 @@ function DPSMate.DB:Loot(user, quality, itemid)
 			tinsert(DPSMateLoot[zone], {
 				[1] = DPSMateCombatTime["total"],
 				[2] = itemid,
-				[3] = quality
+				[3] = quality,
+				[4] = user
 			})
 		end
 	end
