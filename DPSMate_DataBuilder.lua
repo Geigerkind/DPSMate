@@ -31,8 +31,9 @@ DPSMate.DB.Zones = {
 	["Blackwing Lair"] = true,
 	["Onyxia's Lair"] = true,
 	["Zul'Gurub"] = true,
-	["Ruins of Ahn'Quiraj"] = true,
-	["Temple of Ahn'Quiraj"] = true,
+	["Ruins of Ahn'Qiraj"] = true,
+	["Temple of Ahn'Qiraj"] = true,
+	["Ahn'Qiraj"] = true,
 	["Naxxramas"] = true,
 	["Azshara"] = true, -- Azuregos
 	["Blasted Lands"] = true, -- Kazzak
@@ -440,7 +441,9 @@ function DPSMate.DB:OnGroupUpdate()
 			DPSMateUser[name][3] = -1
 		end
 		DPSMate.Parser.TargetParty[name] = type..i
-		DPSMateUser[name][7] = gname
+		if (gname and gname ~= "") then
+			DPSMateUser[name][7] = gname
+		end
 	end
 	local pet = UnitName("pet")
 	local name = UnitName("player")
@@ -1553,7 +1556,7 @@ function DPSMate.DB:Attempt(mode, check)
 end
 
 function DPSMate.DB:Loot(user, quality, itemid)
-	if quality>3 then
+	if quality>3 and itemid ~= 20725 then
 		local zone = GetRealZoneText()
 		if not DPSMateLoot[zone] then DPSMateLoot[zone] = {} end
 		if self.Zones[zone] then -- Need to find a solution for world bosses.
