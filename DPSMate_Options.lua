@@ -827,12 +827,20 @@ end
 
 function DPSMate.Options:UpdateDetails(obj)
 	local key = obj:GetParent():GetParent():GetParent().Key
-	DPSMate.RegistredModules[DPSMateSettings["windows"][key]["CurMode"]]:OpenDetails(obj, key)
+	if obj.user then
+		DPSMate.RegistredModules[DPSMateSettings["windows"][key]["CurMode"]]:OpenDetails(obj, key)
+	else
+		DPSMate:SendMessage("Could not find this user!")
+	end
 end
 
 function DPSMate.Options:UpdateTotalDetails(obj)
 	local key = obj:GetParent():GetParent():GetParent().Key
-	DPSMate.RegistredModules[DPSMateSettings["windows"][key]["CurMode"]]:OpenTotalDetails(obj, key)
+	if obj.user then
+		DPSMate.RegistredModules[DPSMateSettings["windows"][key]["CurMode"]]:OpenTotalDetails(obj, key)
+	else
+		DPSMate:SendMessage("Could not find this user!")
+	end
 end
 
 function DPSMate.Options:DropDownStyleReset()
