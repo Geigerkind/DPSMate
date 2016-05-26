@@ -85,7 +85,7 @@ end
 
 function DPSMate.Parser:OnEvent(event)
 	if Execute[event] then
-		--DPSMate:SendMessage(event..": "..arg1)
+		DPSMate:SendMessage(event..": "..arg1)
 		Execute[event](arg1)
 	end
 end
@@ -824,6 +824,7 @@ end
 function DPSMate.Parser:CombatHostileDeaths(msg)
 	for ta in strgfind(msg, "(.+) dies%.") do 
 		DB:UnregisterDeath(ta)
+		DB:Attempts(false, true, ta)
 	end
 end
 

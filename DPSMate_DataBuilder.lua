@@ -51,7 +51,7 @@ local LastUpdate = 0
 local MainLastUpdate = 0
 local MainUpdateTime = 1.5
 local CombatTime = 0
-local CombatBuffer = 0.75
+local CombatBuffer = 1
 local InitialLoad, In1 = false, 0
 local tinsert = table.insert
 local tremove = table.remove
@@ -379,7 +379,7 @@ function DPSMate.DB:OnEvent(event)
 		
 		self:CombatTime()
 		
-		DPSMate:SendMessage("DPSMate has build "..DPSMate.VERSION.." has been loaded!")
+		DPSMate:SendMessage("DPSMate build "..DPSMate.VERSION.." has been loaded!")
 		self.loaded = true
 		InitialLoad = true
 	elseif event == "PLAYER_REGEN_DISABLED" then
@@ -1244,15 +1244,11 @@ function DPSMate.DB:Dispels(cause, Dname, target, ability)
 end
 
 function DPSMate.DB:UnregisterDeath(target)
-	if DPSMate.BabbleBoss:Contains(target) then
-		DPSMate.DB:Attempt(true, true)
-	else
-		if self:BuildUser(target, nil) then return end
-		for cat, val in pairs({[1]="total", [2]="current"}) do 
-			if DPSMateDeaths[cat][DPSMateUser[target][1]] then
-				DPSMateDeaths[cat][DPSMateUser[target][1]][1]["i"][1]=1
-				DPSMateDeaths[cat][DPSMateUser[target][1]][1]["i"][2]=GameTime_GetTime()
-			end
+	if self:BuildUser(target, nil) then return end
+	for cat, val in pairs({[1]="total", [2]="current"}) do 
+		if DPSMateDeaths[cat][DPSMateUser[target][1]] then
+			DPSMateDeaths[cat][DPSMateUser[target][1]][1]["i"][1]=1
+			DPSMateDeaths[cat][DPSMateUser[target][1]][1]["i"][2]=GameTime_GetTime()
 		end
 	end
 end
@@ -1465,6 +1461,31 @@ function DPSMate.DB:GetOptionsTrue(i,k)
 	end
 end
 
+function DPSMate.DB:UnitIsSaved(unit)
+	for i=1, 32 do
+		DPSMate_Tooltip:ClearLines()
+		DPSMate_Tooltip:SetUnitBuff(unit, i)
+		local buff = DPSMate_TooltipTextLeft1:GetText()
+		if (not buff) then break end
+		if (strfind(buff, DPSMate.localization.vanish) or strfind(buff, DPSMate.localization.feigndeath)) or strfind(buff, "Divine Intervention") then
+			return true
+		end
+	end
+	return false
+end
+
+function DPSMate.DB:IsWipe()
+	for i=1, GetNumRaidMembers() do
+		if not UnitIsDead("raid"..i) then
+			-- People who are saved with pala bubble or feight death or vanish
+			if not DPSMate.DB:UnitIsSaved("raid"..i) then
+				return false
+			end
+		end
+	end
+	return true
+end
+
 function DPSMate.DB:CombatTime()
 	local f = CreateFrame("Frame", "CombatFrame", UIParent)
 	f:SetScript("OnUpdate", function(self, elapsed)
@@ -1481,7 +1502,7 @@ function DPSMate.DB:CombatTime()
 				if not DPSMate.DB:AffectingCombat() then 
 					CombatState = false
 					CombatTime = 0
-					DPSMate.DB:Attempt(true)
+					DPSMate.DB:Attempt(true, DPSMate.DB:IsWipe(), nil)
 				end
 			end
 		else
@@ -1534,7 +1555,7 @@ function DPSMate.DB:hasVanishedFeignDeath()
 	end
 end
 
-function DPSMate.DB:Attempt(mode, check)
+function DPSMate.DB:Attempt(mode, check, tar)
 	local zone = GetRealZoneText()
 	if not DPSMateAttempts[zone] then DPSMateAttempts[zone] = {} end
 	if self.Zones[zone] then -- Need to find a solution for world bosses.
@@ -1546,11 +1567,16 @@ function DPSMate.DB:Attempt(mode, check)
 				DPSMateAttempts[zone][1][5] = check
 			end
 		else
-			tinsert(DPSMateAttempts[zone], 1, {
-				[1] = "Unknown",
-				[2] = DPSMateCombatTime["total"],
-				[3] = GameTime_GetTime()
-			})
+			if check then
+				tinsert(DPSMateAttempts[zone][1][6], {DPSMateCombatTime["total"], tar})
+			else
+				tinsert(DPSMateAttempts[zone], 1, {
+					[1] = "Unknown",
+					[2] = DPSMateCombatTime["total"],
+					[3] = GameTime_GetTime(),
+					[6] = {}
+				})
+			end
 		end
 	end
 end
