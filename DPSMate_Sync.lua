@@ -50,8 +50,8 @@ local co, cou = 1, 1
 function DPSMate.Sync:SendAddonMessages(elapsed)
 	if DPSMateSettings["sync"] then
 		self.LU = self.LU + elapsed
-		if self.LU > 1.5 then
-			for i=1, 80 do
+		if self.LU > 2.6 then
+			for i=1, 60 do
 				--SDM("Test"..co, "Test"..co, "RAID")
 				if not Buffer[co] then break end
 				SDM(Buffer[co][1], Buffer[co][2], "RAID")
@@ -685,7 +685,10 @@ function DPSMate.Sync:InterruptsAllIn(arg2, arg4)
 	t = {}
 	strgsub(arg2, "(.-),", func)
 	Arrays[12][DPSMateUser[arg4][1]] = {
-		i = tnbr(t[2]),
+		i = {
+			[1] = tnbr(t[2]),
+			[2] = {}
+		},
 	}
 end
 
