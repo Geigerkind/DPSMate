@@ -50,7 +50,7 @@ local co, cou = 1, 1
 function DPSMate.Sync:SendAddonMessages(elapsed)
 	if DPSMateSettings["sync"] then
 		self.LU = self.LU + elapsed
-		if self.LU > 1.1 then
+		if self.LU > 1.5 then
 			for i=1, 80 do
 				--SDM("Test"..co, "Test"..co, "RAID")
 				if not Buffer[co] then break end
