@@ -860,7 +860,12 @@ DPSMate.Parser.Kicks = {
 
 -- Scalding Broodling begins to cast Fireball.
 function DPSMate.Parser:CreatureVsCreatureSpellDamageInterrupts(msg)
-	for c, ab in strgfind(msg, "(.+) begins to cast (.+)%.") do DB:RegisterPotentialKick(c, ab, GetTime()) end
+	for c, ab in strgfind(msg, "(.+) begins to cast (.+)%.") do DB:RegisterPotentialKick(c, ab, GetTime()); return end
+	for c, ab in strgfind(msg, "(.+) begins to perform (.+)%.") do DB:RegisterPotentialKick(c, ab, GetTime()) end
+end
+function DPSMate.Parser:HostilePlayerSpellDamageInterrupts(msg)
+	for c, ab in strgfind(msg, "(.-) begins to cast (.+)%.") do DB:RegisterPotentialKick(c, ab, GetTime()); return end
+	for c, ab in strgfind(msg, "(.-) begins to perform (.+)%.") do DB:RegisterPotentialKick(c, ab, GetTime()) end
 end
 
 -- Legacy Logs support
@@ -966,7 +971,7 @@ Execute = {
 	["CHAT_MSG_SPELL_PERIODIC_PARTY_BUFFS"] = function(arg1) DPSMate.Parser:SpellPeriodicFriendlyPlayerBuffs(arg1);DPSMate.Parser:SpellPeriodicFriendlyPlayerBuffsAbsorb(arg1) end,
 	["CHAT_MSG_SPELL_PARTY_BUFF"] = function(arg1) DPSMate.Parser:SpellHostilePlayerBuff(arg1);DPSMate.Parser:SpellHostilePlayerBuffDispels(arg1) end,
 	["CHAT_MSG_SPELL_PERIODIC_HOSTILEPLAYER_BUFFS"] = function(arg1) DPSMate.Parser:SpellPeriodicFriendlyPlayerBuffs(arg1);DPSMate.Parser:SpellPeriodicFriendlyPlayerBuffsAbsorb(arg1) end,
-	["CHAT_MSG_SPELL_HOSTILEPLAYER_BUFF"] = function(arg1) DPSMate.Parser:SpellHostilePlayerBuff(arg1);DPSMate.Parser:SpellHostilePlayerBuffDispels(arg1) end,
+	["CHAT_MSG_SPELL_HOSTILEPLAYER_BUFF"] = function(arg1) DPSMate.Parser:SpellHostilePlayerBuff(arg1);DPSMate.Parser:SpellHostilePlayerBuffDispels(arg1);DPSMate.Parser:HostilePlayerSpellDamageInterrupts(arg1) end,
 	["CHAT_MSG_SPELL_PERIODIC_FRIENDLYPLAYER_BUFFS"] = function(arg1) DPSMate.Parser:SpellPeriodicFriendlyPlayerBuffs(arg1);DPSMate.Parser:SpellPeriodicFriendlyPlayerBuffsAbsorb(arg1) end,
 	["CHAT_MSG_SPELL_FRIENDLYPLAYER_BUFF"] = function(arg1) DPSMate.Parser:SpellHostilePlayerBuff(arg1);DPSMate.Parser:SpellHostilePlayerBuffDispels(arg1) end,
 	["CHAT_MSG_SPELL_PERIODIC_SELF_BUFFS"] = function(arg1) DPSMate.Parser:SpellPeriodicSelfBuff(arg1);DPSMate.Parser:SpellPeriodicSelfBuffAbsorb(arg1) end,
