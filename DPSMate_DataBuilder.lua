@@ -430,7 +430,7 @@ function DPSMate.DB:OnGroupUpdate()
 		self:BuildUser(name, strlower(classEng or ""))
 		self:BuildUser(pet)
 		DPSMateUser[name][4] = false
-		if pet then
+		if pet and pet ~= "Unknown" then
 			DPSMateUser[pet][4] = true
 			DPSMateUser[name][5] = pet
 			DPSMateUser[pet][6] = DPSMateUser[name][1]
@@ -447,7 +447,7 @@ function DPSMate.DB:OnGroupUpdate()
 	end
 	local pet = UnitName("pet")
 	local name = UnitName("player")
-	if pet then
+	if pet and pet ~= "Unknown" then
 		DPSMateUser[pet][4] = true
 		DPSMateUser[name][5] = pet
 		DPSMateUser[pet][6] = DPSMateUser[name][1]
@@ -1581,8 +1581,12 @@ function DPSMate.DB:Attempt(mode, check, tar)
 	end
 end
 
+local banedItems = {
+	[20725] = true,
+	[18562] = true
+}
 function DPSMate.DB:Loot(user, quality, itemid)
-	if quality>3 and itemid ~= 20725 then
+	if quality>3 and not banedItems[itemid] then
 		local zone = GetRealZoneText()
 		if not DPSMateLoot[zone] then DPSMateLoot[zone] = {} end
 		if self.Zones[zone] then -- Need to find a solution for world bosses.

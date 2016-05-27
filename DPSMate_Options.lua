@@ -732,6 +732,7 @@ function DPSMate.Options:PopUpAccept(bool, bypass)
 				segments = {},
 			}
 			DPSMateAttempts = {}
+			DPSMateLoot = {}
 		else
 			DPSMateDamageDone[2] = {}
 			DPSMateDamageTaken[2] = {}
