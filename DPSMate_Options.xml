@@ -4625,6 +4625,7 @@
 				this:RegisterEvent("PLAYER_ENTERING_WORLD")
 				this:RegisterEvent("CHAT_MSG_LOOT")
 				this:RegisterEvent("PLAYER_PET_CHANGED")
+				this:RegisterEvent("ZONE_CHANGED_NEW_AREA")
 				
 				this:RegisterEvent("UPDATE_MOUSEOVER_UNIT")
 				this:RegisterEvent("PARTY_MEMBERS_CHANGED")

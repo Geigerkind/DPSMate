@@ -452,9 +452,7 @@ function DPSMate.DB:OnGroupUpdate()
 		DPSMateUser[name][5] = pet
 		DPSMateUser[pet][6] = DPSMateUser[name][1]
 	end
-	if num<=0 then
-		DPSMate.Parser.TargetParty[name] = "player"
-	end
+	DPSMate.Parser.TargetParty[name] = "player"
 end
 
 function DPSMate.DB:AffectingCombat()

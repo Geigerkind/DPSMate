@@ -615,6 +615,8 @@ function DPSMate.Options:OnEvent(event)
 		end
 		self:HideInPvP()
 		DPSMate.DB:OnGroupUpdate()
+	elseif event == "ZONE_CHANGED_NEW_AREA" then
+		DPSMate.DB:OnGroupUpdate()
 	end
 end
 
