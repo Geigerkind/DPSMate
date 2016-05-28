@@ -428,7 +428,7 @@ function DPSMate:ApplyFilter(key, name)
 	local path = DPSMateSettings["windows"][key]
 	t = {}
 	if path["grouponly"] then
-		if not DPSMate.Parser.TargetParty[name] then
+		if not DPSMate.Parser.TargetParty[name] and DPSMate.Parser.TargetParty ~= {} then
 			return false
 		end
 	end
@@ -453,10 +453,12 @@ function DPSMate:ApplyFilter(key, name)
 end
 
 function DPSMate:GetSettingValues(arr, cbt, k)
+	k = k or 1
 	return DPSMate.RegistredModules[DPSMateSettings["windows"][k]["CurMode"]]:GetSettingValues(arr, cbt, k)
 end
 
 function DPSMate:EvalTable(k)
+	k = k or 1
 	return DPSMate.RegistredModules[DPSMateSettings["windows"][k]["CurMode"]]:EvalTable(DPSMateUser[UnitName("player")], k)
 end
 
@@ -473,6 +475,7 @@ function DPSMate:GetClassColor(class)
 end
 
 function DPSMate:GetMode(k)
+	k = k or 1
 	local Handler = DPSMate.RegistredModules[DPSMateSettings["windows"][k]["CurMode"]]
 	local result = {total={Handler.DB[1], DPSMateCombatTime["total"]}, currentfight={Handler.DB[2], DPSMateCombatTime["current"]}}
 	for cat, val in pairs(DPSMateSettings["windows"][k]["options"][2]) do
@@ -502,6 +505,7 @@ function DPSMate:GetModeByArr(arr, k)
 end
 
 function DPSMate:GetModeName(k)
+	k = k or 1
 	local result = {total="Total", currentfight="Current fight"}
 	for cat, val in pairs(DPSMateSettings["windows"][k]["options"][2]) do
 		if val then 
