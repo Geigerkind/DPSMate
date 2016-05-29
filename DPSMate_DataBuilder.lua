@@ -1553,6 +1553,7 @@ function DPSMate.DB:hasVanishedFeignDeath()
 	end
 end
 
+-- No idea how this error occours.
 function DPSMate.DB:Attempt(mode, check, tar)
 	local zone = GetRealZoneText()
 	if not DPSMateAttempts[zone] then DPSMateAttempts[zone] = {} end

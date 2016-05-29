@@ -1184,7 +1184,6 @@ DPSMate.Sync.Exec = {
 		DB:AwaitingAbsorbConfirmation(arg4, t[1], t[2], t[3])
 		--DPSMate:SendMessage(arg2)
 	end,
-	["DPSMate_UserData"] = function(arg2,arg4) DPSMate.Sync:ReceiveUserData(arg2, arg4) end,
 	["DPSMate_HelloWorld"] = function() DPSMate.Sync:GreetBack() end,
 	["DPSMate_Greet"] = function(arg2,arg4) DPSMate.Sync:ReceiveGreet(arg2, arg4) end,
 	["DPSMate_DMGDoneAll"] = function(arg2,arg4) DPSMate.Sync:DMGDoneAllIn(arg2, arg4) end,
