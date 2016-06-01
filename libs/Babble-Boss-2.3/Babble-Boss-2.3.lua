@@ -105,7 +105,6 @@ local bosses = {
 	["The Bug Family"] = true,
 	["Eye of C'Thun"] = true,
 	["C'Thun"] = true,
-	["Anubisath Defender"] = true,
 	["Fankriss the Unyielding"] = true,
 	["Princess Huhuran"] = true,
 	["Ouro"] = true,

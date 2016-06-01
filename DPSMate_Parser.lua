@@ -603,6 +603,17 @@ function DPSMate.Parser:SpellPeriodicFriendlyPlayerBuffs(msg)
 		DB:DeathHistory(f, b, c.."(Periodic)", t[1], 1, 0, 1, 0)
 		return
 	end
+	for f,a,b in strgfind(msg, "(.+) gains (%d+) health from your (.+)%.") do 
+		t[1] = tnbr(a)
+		overheal = self:GetOverhealByName(t[1], f)
+		DB:HealingTaken(DPSMateHealingTaken, f, b.."(Periodic)", 1, 0, t[1], player)
+		DB:HealingTaken(DPSMateEHealingTaken, f, b.."(Periodic)", 1, 0, t[1]-overheal, player)
+		DB:Healing(0, DPSMateEHealing, player, b.."(Periodic)", 1, 0, t[1]-overheal)
+		if overheal>0 then DB:Healing(2, DPSMateOverhealing, player, b.."(Periodic)", 1, 0, overheal) end
+		DB:Healing(1, DPSMateTHealing, player, b.."(Periodic)", 1, 0, t[1])
+		DB:DeathHistory(f, player, b.."(Periodic)", t[1], 1, 0, 1, 0)
+		return
+	end
 	for f,a,b in strgfind(msg, "(.+) gains (%d+) health from (.+)%.") do 
 		t[1] = tnbr(a)
 		overheal = self:GetOverhealByName(t[1], f)
