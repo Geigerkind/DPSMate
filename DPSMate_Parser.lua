@@ -377,11 +377,27 @@ function DPSMate.Parser:CreatureVsSelfSpellDamage(msg)
 	t = {}
 	for a,b,c,d,e in strgfind(msg, "(.+)'s (.+) (%a%a?)\its you for (%d+)(.*)") do -- Potential here to track school and resisted damage
 		if c=="h" then t[1]=1;t[2]=0 end
+		if strfind(e, "blocked") then t[4]=1 end
 		t[3] = tnbr(d)
 		DB:UnregisterPotentialKick(player, b, GetTime())
-		DB:EnemyDamage(false, DPSMateEDD, player, b, t[1] or 0, t[2] or 1, 0, 0, 0, 0, t[3], a, 0, 0)
+		DB:EnemyDamage(false, DPSMateEDD, player, b, t[1] or 0, t[2] or 1, 0, 0, 0, 0, t[3], a, t[4] or 0, 0)
 		DB:DamageTaken(player, b, t[1] or 0, t[2] or 1, 0, 0, 0, 0, t[3], a, 0)
 		DB:DeathHistory(player, a, b, t[3], t[1] or 0, t[2] or 1, 0, 0)
+		return
+	end
+	for a,b in strgfind(msg, "(.+)'s (.+) misses you.") do
+		DB:EnemyDamage(false, DPSMateEDD, player, b, 0, 0, 1, 0, 0, 0, 0, a, 0, 0)
+		DB:DamageTaken(player, b, 0, 0, 1, 0, 0, 0, 0, a, 0)
+		return
+	end
+	for a,b in strgfind(msg, "(.+)'s (.+) was parried.") do
+		DB:EnemyDamage(false, DPSMateEDD, player, b, 0, 0, 0, 1, 0, 0, 0, a, 0, 0)
+		DB:DamageTaken(player, b, 0, 0, 0, 1, 0, 0, 0, a, 0)
+		return
+	end
+	for a,b in strgfind(msg, "(.+)'s (.+) was dodged.") do
+		DB:EnemyDamage(false, DPSMateEDD, player, b, 0, 0, 0, 0, 1, 0, 0, a, 0, 0)
+		DB:DamageTaken(player, b, 0, 0, 0, 0, 1, 0, 0, a, 0)
 		return
 	end
 	for a,b in strgfind(msg, "(.+)'s (.+) was resisted.") do
@@ -465,11 +481,27 @@ function DPSMate.Parser:CreatureVsCreatureSpellDamage(msg)
 	t = {}
 	for a,b,c,d,e,f in strgfind(msg, "(.+)'s (.+) (%a%a?)\its (.+) for (%d+)(.*)") do
 		if c=="h" then t[1]=1;t[2]=0 end
+		if strfind(f, "blocked") then t[4]=1 end
 		t[3] = tnbr(e)
 		DB:UnregisterPotentialKick(d, b, GetTime())
-		DB:EnemyDamage(false, DPSMateEDD, d, b, t[1] or 0, t[2] or 1, 0, 0, 0, 0, t[3], a, 0, 0)
+		DB:EnemyDamage(false, DPSMateEDD, d, b, t[1] or 0, t[2] or 1, 0, 0, 0, 0, t[3], a, t[4] or 0, 0)
 		DB:DamageTaken(d, b, t[1] or 0, t[2] or 1, 0, 0, 0, 0, t[3], a, 0)
 		DB:DeathHistory(d, a, b, t[3], t[1] or 0, t[2] or 1, 0, 0)
+		return
+	end
+	for a,b,c in strgfind(msg, "(.+)'s (.+) was dodged by (.+)%.") do
+		DB:EnemyDamage(false, DPSMateEDD, c, b, 0, 0, 0, 0, 1, 0, 0, a, 0, 0)
+		DB:DamageTaken(c, b, 0, 0, 0, 0, 1, 0, 0, a, 0)
+		return
+	end
+	for a,b,c in strgfind(msg, "(.+)'s (.+) was parried by (.+)%.") do
+		DB:EnemyDamage(false, DPSMateEDD, c, b, 0, 0, 0, 1, 0, 0, 0, a, 0, 0)
+		DB:DamageTaken(c, b, 0, 0, 0, 1, 0, 0, 0, a, 0)
+		return
+	end
+	for a,b,c in strgfind(msg, "(.+)'s (.+) missed (.+)%.") do
+		DB:EnemyDamage(false, DPSMateEDD, c, b, 0, 0, 1, 0, 0, 0, 0, a, 0, 0)
+		DB:DamageTaken(c, b, 0, 0, 1, 0, 0, 0, 0, a, 0)
 		return
 	end
 	for a,b,c in strgfind(msg, "(.+)'s (.+) was resisted by (.+)%.") do
