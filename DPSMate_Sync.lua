@@ -517,6 +517,7 @@ end
 ----------------------------------------------------------------------------------
 
 function DPSMate.Sync:HealingAllIn(arg2, arg4, arr)
+	DB:BuildUser(arg4, nil)
 	local userid = DPSMateUser[arg4][1]
 	t = {}
 	strgsub(arg2, "(.-),", func)
@@ -529,6 +530,7 @@ function DPSMate.Sync:HealingAllIn(arg2, arg4, arr)
 end
 
 function DPSMate.Sync:HealingStatIn(arg2, arg4, arr)
+	DB:BuildUser(arg4, nil)
 	local userid = DPSMateUser[arg4][1]
 	t = {}
 	strgsub(arg2, "(.-),", func)
@@ -539,6 +541,7 @@ function DPSMate.Sync:HealingStatIn(arg2, arg4, arr)
 end
 
 function DPSMate.Sync:HealingAbilityIn(arg2, arg4, arr)
+	DB:BuildUser(arg4, nil)
 	local userid = DPSMateUser[arg4][1]
 	t = {}
 	strgsub(arg2, "(.-),", func)
@@ -564,6 +567,7 @@ end
 function DPSMate.Sync:HealingTakenAbilityIn(arg2, arg4, arr)
 	t = {}
 	strgsub(arg2, "(.-),", func)
+	DB:BuildUser(arg4, nil)
 	DB:BuildUser(t[1], nil)
 	DB:BuildAbility(t[2], nil)
 	local userid, userid2 = DPSMateUser[arg4][1], DPSMateUser[t[1]][1]
