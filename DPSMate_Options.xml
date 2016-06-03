@@ -751,9 +751,13 @@
 			<OnLeave>
 				GameTooltip:Hide()
 			</OnLeave>
-			<OnClick>
-				DPSMate.Options:OpenMenu(3, this)
-			</OnClick>
+			<OnMouseUp>
+				if arg1 == "LeftButton" then
+					DPSMate.Options:ToggleVisibility()
+				else
+					DPSMate.Options:OpenMenu(3, this)
+				end
+			</OnMouseUp>
 		</Scripts>
 	</Button>
 	

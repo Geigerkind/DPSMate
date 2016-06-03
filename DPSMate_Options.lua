@@ -518,6 +518,18 @@ function DPSMate.Options:SumGraphData()
 	end
 end
 
+function DPSMate.Options:ToggleVisibility()
+	for _, val in DPSMateSettings["windows"] do
+		if val["hidden"] then
+			getglobal("DPSMate_"..val["name"]):Show()
+			val["hidden"] = false
+		else
+			getglobal("DPSMate_"..val["name"]):Hide()
+			val["hidden"] = true
+		end
+	end
+end
+
 function DPSMate.Options:ActivateTestMode()
 	if self.TestMode then
 		self.TestMode = false
