@@ -47,13 +47,13 @@ function DPSMate.Sync:OnLoad()
 end
 
 local lastRefresh = 6;
-local delay = 2.6
+local delay = 3.1
 function DPSMate.Sync:GetSyncDelay(elapsed)
 	lastRefresh = lastRefresh + elapsed
 	if lastRefresh>=5 then
 		local _,_,ping = GetNetStats();
 		lastRefresh = 0;
-		delay = 2.1 + 2*ping/1000
+		delay = 3.1 + 2*ping/1000
 	end
 	return delay
 end
@@ -63,7 +63,7 @@ function DPSMate.Sync:SendAddonMessages(elapsed)
 	if DPSMateSettings["sync"] then
 		self.LU = self.LU + elapsed
 		if self.LU > self:GetSyncDelay(elapsed) then
-			for i=1, 60 do
+			for i=1, 50 do
 				--SDM("Test"..co, "Test"..co, "RAID")
 				if not Buffer[co] then break end
 				SDM(Buffer[co][1], Buffer[co][2], "RAID")
