@@ -1525,7 +1525,9 @@ function DPSMate.DB:CombatTime()
 		if DPSMate.Sync.Async then
 			DPSMate.Sync:OnUpdate(arg1)
 		end
-		DPSMate.Sync:SendAddonMessages(arg1)
+		if not CombatState then
+			DPSMate.Sync:SendAddonMessages(arg1)
+		end
 		if InitialLoad then
 			In1 = In1 + arg1
 			if In1>=1 then
