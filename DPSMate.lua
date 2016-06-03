@@ -3,7 +3,7 @@
 
 -- Global Variables
 DPSMate = {}
-DPSMate.VERSION = 13
+DPSMate.VERSION = 14
 DPSMate.Parser = {}
 DPSMate.localization = {}
 DPSMate.DB = {}
@@ -202,7 +202,7 @@ function DPSMate:InitializeFrames()
 		_G("DPSMate_"..val["name"].."_ScrollFrame_Child_Total_BG"):SetTexture(DPSMate.Options.statusbars[val["bartexture"]])
 		_G("DPSMate_"..val["name"].."_ScrollFrame_Child_Total_Name"):SetFont(DPSMate.Options.fonts[val["barfont"]], val["barfontsize"], DPSMate.Options.fontflags[val["barfontflag"]])
 		_G("DPSMate_"..val["name"].."_ScrollFrame_Child_Total_Value"):SetFont(DPSMate.Options.fonts[val["barfont"]], val["barfontsize"], DPSMate.Options.fontflags[val["barfontflag"]])
-		for i=1, 30 do
+		for i=1, 40 do
 			local bar = _G("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar"..i)
 			bar.name = _G("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar"..i.."_Name")
 			bar.value = _G("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar"..i.."_Value")
@@ -390,7 +390,7 @@ function DPSMate:SetStatusBarValue()
 		end
 		--DPSMate:SendMessage(c["name"])
 		if (user[1]) then
-			for i=1, 30 do
+			for i=1, 40 do
 				--DPSMate:SendMessage("Test 1")
 				if (not user[i]) then break end -- To prevent visual issues
 				--DPSMate:SendMessage("Test 2")
@@ -521,7 +521,7 @@ end
 
 function DPSMate:HideStatusBars()
 	for _,val in pairs(DPSMateSettings.windows) do
-		for i=1, 30 do
+		for i=1, 40 do
 			_G("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar"..i):Hide()
 		end
 	end

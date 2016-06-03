@@ -362,7 +362,16 @@
 							<StatusBar name="$parent_StatusBar27" inherits="DPSMate_StatusBar" />
 							<StatusBar name="$parent_StatusBar28" inherits="DPSMate_StatusBar" />
 							<StatusBar name="$parent_StatusBar29" inherits="DPSMate_StatusBar" />
-							<StatusBar name="$parent_StatusBar30" inherits="DPSMate_StatusBar" />
+							<StatusBar name="$parent_StatusBar31" inherits="DPSMate_StatusBar" />
+							<StatusBar name="$parent_StatusBar32" inherits="DPSMate_StatusBar" />
+							<StatusBar name="$parent_StatusBar33" inherits="DPSMate_StatusBar" />
+							<StatusBar name="$parent_StatusBar34" inherits="DPSMate_StatusBar" />
+							<StatusBar name="$parent_StatusBar35" inherits="DPSMate_StatusBar" />
+							<StatusBar name="$parent_StatusBar36" inherits="DPSMate_StatusBar" />
+							<StatusBar name="$parent_StatusBar37" inherits="DPSMate_StatusBar" />
+							<StatusBar name="$parent_StatusBar38" inherits="DPSMate_StatusBar" />
+							<StatusBar name="$parent_StatusBar39" inherits="DPSMate_StatusBar" />
+							<StatusBar name="$parent_StatusBar40" inherits="DPSMate_StatusBar" />
 						</Frames>
 					</Frame>
 				</ScrollChild>

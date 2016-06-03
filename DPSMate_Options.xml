@@ -1688,7 +1688,7 @@
 									DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["barfontsize"] = this:GetValue()
 									getglobal("DPSMate_"..DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["name"].."_ScrollFrame_Child_Total_Name"):SetFont(DPSMate.Options.fonts[DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["barfont"]], DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["barfontsize"], DPSMate.Options.fontflags[DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["barfontflag"]])
 									getglobal("DPSMate_"..DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["name"].."_ScrollFrame_Child_Total_Value"):SetFont(DPSMate.Options.fonts[DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["barfont"]], DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["barfontsize"], DPSMate.Options.fontflags[DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["barfontflag"]])
-									for i=1, 30 do
+									for i=1, 40 do
 										getglobal("DPSMate_"..DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["name"].."_ScrollFrame_Child_StatusBar"..i.."_Name"):SetFont(DPSMate.Options.fonts[DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["barfont"]], DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["barfontsize"], DPSMate.Options.fontflags[DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["barfontflag"]])
 										getglobal("DPSMate_"..DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["name"].."_ScrollFrame_Child_StatusBar"..i.."_Value"):SetFont(DPSMate.Options.fonts[DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["barfont"]], DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["barfontsize"], DPSMate.Options.fontflags[DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["barfontflag"]])
 									end
@@ -1746,7 +1746,7 @@
 								this.aide = DPSMate.localization.config.barspacingTooltip
 								this.func = function()
 									DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["barspacing"] = this:GetValue() 
-									for i=1, 30 do
+									for i=1, 40 do
 										local bar = getglobal("DPSMate_"..DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["name"].."_ScrollFrame_Child_StatusBar"..i)
 										bar:ClearAllPoints()
 										bar:SetPoint("TOPLEFT", getglobal("DPSMate_"..DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["name"].."_ScrollFrame_Child"), "TOPLEFT")
@@ -1782,7 +1782,7 @@
 								this.func = function()
 									DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["barheight"] = this:GetValue() 
 									if DPSMateSettings["showtotals"] then getglobal("DPSMate_"..DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["name"].."_ScrollFrame_Child_Total"):SetHeight(DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["barheight"]) end
-									for i=1, 30 do
+									for i=1, 40 do
 										local bar = getglobal("DPSMate_"..DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["name"].."_ScrollFrame_Child_StatusBar"..i)
 										bar:SetHeight(DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["barheight"])
 										local icon = getglobal("DPSMate_"..DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["name"].."_ScrollFrame_Child_StatusBar"..i.."_Icon")
@@ -1819,7 +1819,7 @@
 								this.aide = DPSMate.localization.config.fontcolorTooltip
 								this.var = "barfontcolor"
 								this.func = function()
-									for i=1, 30 do
+									for i=1, 40 do
 										getglobal("DPSMate_"..DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["name"].."_ScrollFrame_Child_StatusBar"..i.."_Name"):SetTextColor(DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["barfontcolor"][1], DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["barfontcolor"][2], DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["barfontcolor"][3])
 										getglobal("DPSMate_"..DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["name"].."_ScrollFrame_Child_StatusBar"..i.."_Value"):SetTextColor(DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["barfontcolor"][1], DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["barfontcolor"][2], DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["barfontcolor"][3])
 									end
@@ -1842,7 +1842,7 @@
 								this.aide = DPSMate.localization.config.bgbarcolorTooltip
 								this.var = "bgbarcolor"
 								this.func = function()
-									for i=1, 30 do
+									for i=1, 40 do
 										getglobal("DPSMate_"..DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["name"].."_ScrollFrame_Child_StatusBar"..i.."_BG"):SetVertexColor(DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["bgbarcolor"][1], DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["bgbarcolor"][2], DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["bgbarcolor"][3], 0.5)
 									end
 								end
@@ -1862,7 +1862,7 @@
 							<OnClick>
 								if DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["classicons"] then
 									DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["classicons"] = false
-									for i=1, 30 do
+									for i=1, 40 do
 										local bar = getglobal("DPSMate_"..DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["name"].."_ScrollFrame_Child_StatusBar"..i)
 										bar.name = getglobal("DPSMate_"..DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["name"].."_ScrollFrame_Child_StatusBar"..i.."_Name")
 										bar.icon = getglobal("DPSMate_"..DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["name"].."_ScrollFrame_Child_StatusBar"..i.."_Icon")
@@ -1873,7 +1873,7 @@
 									end
 								else
 									DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["classicons"] = true
-									for i=1, 30 do
+									for i=1, 40 do
 										local bar = getglobal("DPSMate_"..DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["name"].."_ScrollFrame_Child_StatusBar"..i)
 										bar.name = getglobal("DPSMate_"..DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["name"].."_ScrollFrame_Child_StatusBar"..i.."_Name")
 										bar.icon = getglobal("DPSMate_"..DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["name"].."_ScrollFrame_Child_StatusBar"..i.."_Icon")
