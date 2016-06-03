@@ -268,6 +268,7 @@
 							UIDropDownMenu_SetSelectedValue(DPSMate_ConfigMenu_Tab_TitleBar_BarFontFlag, DPSMateSettings["windows"][this:GetParent().Key]["titlebarfontflag"])
 							DPSMate_ConfigMenu_Tab_TitleBar_BarFontFlagText:SetFont(DPSMate.Options.fonts["FRIZQT"], 12, DPSMate.Options.fontflags[DPSMateSettings["windows"][this:GetParent().Key]["titlebarfontflag"]])
 							DPSMate_ConfigMenu_Tab_TitleBar_BarFontFlagText:SetText(DPSMateSettings["windows"][this:GetParent().Key]["titlebarfontflag"])
+							DPSMate_ConfigMenu_Tab_TitleBar_BGOpacity:SetValue(DPSMateSettings["windows"][this:GetParent().Key]["titlebaropacity"] or 1)
 						end
 					</OnLoad>
 				</Scripts>
@@ -2038,10 +2039,31 @@
 							</OnLoad>
 						</Scripts>
 					</Slider>
+					<Slider name="$parent_BGOpacity" inherits="DPSMate_Template_Slider">
+						<Anchors>
+							<Anchor point="LEFT" relativeTo="$parent_BarHeight" relativePoint="RIGHT">
+								<Offset x="30" y="0" />
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								this.aide = DPSMate.localization.config.bgOpacityTooltip
+								this.func = function()
+									DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["titlebaropacity"] = this:GetValue()
+									getglobal("DPSMate_"..DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["name"].."_Head_Background"):SetAlpha(DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["titlebaropacity"])
+								end
+								this:SetMinMaxValues(0,1)
+								this:SetValueStep(0.1)
+								getglobal(this:GetName().."Text"):SetText(DPSMate.localization.config.bgOpacity)
+								getglobal(this:GetName().."Low"):SetText("0")
+								getglobal(this:GetName().."High"):SetText("1")
+							</OnLoad>
+						</Scripts>
+					</Slider>
 					<Button name="$parent_BGColor" inherits="DPSMate_Template_Colorpicker">
 						<Anchors>
-							<Anchor point="TOPLEFT" relativeTo="$parent_BarTexture" relativePoint="BOTTOMLEFT">
-								<Offset x="20" y="-5" />
+							<Anchor point="LEFT" relativeTo="$parent_Enable" relativePoint="RIGHT">
+								<Offset x="50" y="0" />
 							</Anchor>
 						</Anchors>
 						<Scripts>
@@ -2060,8 +2082,8 @@
 					</Button>
 					<Button name="$parent_FontColor" inherits="DPSMate_Template_Colorpicker">
 						<Anchors>
-							<Anchor point="TOP" relativeTo="$parent_BGColor" relativePoint="BOTTOM">
-								<Offset x="0" y="-5" />
+							<Anchor point="LEFT" relativeTo="$parent_BGColor" relativePoint="RIGHT">
+								<Offset x="110" y="0" />
 							</Anchor>
 						</Anchors>
 						<Scripts>

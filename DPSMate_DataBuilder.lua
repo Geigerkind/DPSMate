@@ -107,6 +107,7 @@ function DPSMate.DB:OnEvent(event)
 						numberformat = 1,
 						opacity = 1,
 						bgopacity = 1,
+						titlebaropacity = 1,
 						filterclasses = {
 							warrior = true,
 							rogue = true,
