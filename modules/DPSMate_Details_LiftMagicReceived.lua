@@ -106,13 +106,16 @@ function DPSMate.Modules.DetailsLiftMagicReceived:ScrollFrame_Update()
 	local path = "DPSMate_Details_LiftMagicReceived_Log_ScrollButton"
 	DetailsArr, DetailsTotal, DmgArr = DPSMate.Modules.DetailsLiftMagicReceived:EvalTable()
 	local len = DPSMate:TableLength(DetailsArr)
-	FauxScrollFrame_Update(obj,len,10,24)
+	FauxScrollFrame_Update(obj,len,14,24)
 	for line=1,14 do
 		lineplusoffset = line + FauxScrollFrame_GetOffset(obj)
 		if DetailsArr[lineplusoffset] ~= nil then
-			_G(path..line.."_Name"):SetText(DPSMate:GetUserById(DetailsArr[lineplusoffset]))
+			local user = DPSMate:GetUserById(DetailsArr[lineplusoffset])
+			local r,g,b,img = DPSMate:GetClassColor(DPSMateUser[user][2])
+			_G(path..line.."_Name"):SetText(user)
+			_G(path..line.."_Name"):SetTextColor(r,g,b)
 			_G(path..line.."_Value"):SetText(DmgArr[lineplusoffset][1].." ("..string.format("%.2f", 100*DmgArr[lineplusoffset][1]/DetailsTotal).."%)")
-			_G(path..line.."_Icon"):SetTexture("Interface\\AddOns\\DPSMate\\images\\dummy")
+			_G(path..line.."_Icon"):SetTexture("Interface\\AddOns\\DPSMate\\images\\class\\"..img)
 			if len < 14 then
 				_G(path..line):SetWidth(235)
 				_G(path..line.."_Name"):SetWidth(125)
@@ -135,7 +138,7 @@ function DPSMate.Modules.DetailsLiftMagicReceived:SelectCreatureButton(i)
 	obj.index = i
 	local path = "DPSMate_Details_LiftMagicReceived_LogTwo_ScrollButton"
 	local len = DPSMate:TableLength(DmgArr[i][2])
-	FauxScrollFrame_Update(obj,len,10,24)
+	FauxScrollFrame_Update(obj,len,14,24)
 	for line=1,14 do
 		lineplusoffset = line + FauxScrollFrame_GetOffset(obj)
 		if DmgArr[i][2][lineplusoffset] ~= nil then
@@ -172,7 +175,7 @@ function DPSMate.Modules.DetailsLiftMagicReceived:SelectCreatureAbilityButton(i,
 	obj.index = p
 	local path = "DPSMate_Details_LiftMagicReceived_LogThree_ScrollButton"
 	local len = DPSMate:TableLength(DmgArr[i][3][p][2])
-	FauxScrollFrame_Update(obj,len,10,24)
+	FauxScrollFrame_Update(obj,len,14,24)
 	for line=1,14 do
 		lineplusoffset = line + FauxScrollFrame_GetOffset(obj)
 		if DmgArr[i][3][p][2][lineplusoffset] ~= nil then

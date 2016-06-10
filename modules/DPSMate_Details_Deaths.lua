@@ -41,7 +41,7 @@ function DPSMate.Modules.DetailsDeaths:ScrollFrame_Update()
 		if DetailsArr[lineplusoffset] ~= nil then
 			_G("DPSMate_Details_Deaths_Log_ScrollButton"..line.."_Name"):SetText(DPSMate:GetUserById(DetailsArr[lineplusoffset][1]))
 			_G("DPSMate_Details_Deaths_Log_ScrollButton"..line.."_Value"):SetText(DetailsArr[lineplusoffset][2])
-			_G("DPSMate_Details_Deaths_Log_ScrollButton"..line.."_Icon"):SetTexture("Interface\\AddOns\\DPSMate\\images\\dummy")
+			_G("DPSMate_Details_Deaths_Log_ScrollButton"..line.."_Icon"):SetTexture("Interface\\AddOns\\DPSMate\\images\\npc")
 			if len < 14 then
 				_G("DPSMate_Details_Deaths_Log_ScrollButton"..line):SetWidth(265)
 				_G("DPSMate_Details_Deaths_Log_ScrollButton"..line.."_Name"):SetWidth(155)

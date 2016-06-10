@@ -277,6 +277,10 @@ function DPSMate.DB:OnEvent(event)
 					[1] = true,
 					[2] = true,
 				},
+				columnsprocs = {
+					[1] = true,
+					[2] = true,
+				},
 				columnsfriendlyfire = {
 					[1] = true,
 					[2] = false,
@@ -363,6 +367,14 @@ function DPSMate.DB:OnEvent(event)
 		DPSMate.Modules.AurasLost.DB = DPSMateAurasGained
 		DPSMate.Modules.AurasLost.DB = DPSMateAurasGained
 		DPSMate.Modules.AurasUptimers.DB = DPSMateAurasGained
+		DPSMate.Modules.Procs.DB = DPSMateAurasGained
+		
+		if not DPSMateSettings["columnsprocs"] then
+			DPSMateSettings["columnsprocs"] = {
+				[1] = true,
+				[2] = true,
+			}
+		end
 		
 		if DPSMateCombatTime == nil then
 			DPSMateCombatTime = {
@@ -687,8 +699,8 @@ function DPSMate.DB:EnemyDamage(mode, arr, Duser, Dname, Dhit, Dcrit, Dmiss, Dpa
 	if type(Dblock) == "string" then
 		local p = "1 :"
 		if not mode then p = "2 :" end
-		DPSMate:SendMessage("If you see this message, please report it to Shino. You have encountered a bug!")
-		DPSMate:SendMessage("Dump: "..p..Duser..","..Dname..","..Dhit..","..Dcrit..","..Dmiss..","..Dparry..","..Ddodge..","..Dresist..","..Damount..","..Dcause..","..Dblock..","..Dcrush)
+		DPSMate:SendMessage("If you see this message, please report it to Shino. You have encountered a bug! Also make a screenshot of your combatlog in this timeframe please.")
+		DPSMate:SendMessage("Dump: "..p..Duser..","..Dname..","..Dhit..","..Dcrit..","..Dmiss..","..Dparry..","..Ddodge..","..Dresist..","..Damount..","..(Dcause or "")..","..Dblock..","..Dcrush)
 		return
 	end
 	for cat, val in pairs({[1]="total", [2]="current"}) do 
@@ -1466,7 +1478,7 @@ function DPSMate.DB:UnitIsSaved(unit)
 		DPSMate_Tooltip:SetUnitBuff(unit, i)
 		local buff = DPSMate_TooltipTextLeft1:GetText()
 		if (not buff) then break end
-		if (strfind(buff, DPSMate.localization.vanish) or strfind(buff, DPSMate.localization.feigndeath)) or strfind(buff, "Divine Intervention") then
+		if (strfind(buff, DPSMate.localization.vanish) or strfind(buff, DPSMate.localization.feigndeath)) or strfind(buff, "Divine Intervention") or strfind(buff, "Stealth") then
 			return true
 		end
 	end
@@ -1534,6 +1546,7 @@ function DPSMate.DB:CombatTime()
 			if In1>=1 then
 				DPSMate:SetStatusBarValue()
 				DPSMate.Parser:GetPlayerValues()
+				DPSMate.DB:OnGroupUpdate()
 				InitialLoad = false
 			end
 		end

@@ -144,7 +144,7 @@
 						</Anchors>
 						<Scripts>
 							<OnVerticalScroll>
-								FauxScrollFrame_OnVerticalScroll(24, DPSMate.Modules.DetailsDamage.ScrollFrame_Update) 
+								FauxScrollFrame_OnVerticalScroll(24, DPSMate.Modules.DetailsCurePoisonReceived.ScrollFrame_Update) 
 							</OnVerticalScroll>
 					   </Scripts>
 					</ScrollFrame>
@@ -218,28 +218,28 @@
 							</Anchor>
 						</Anchors>
 					</Button>
-					<Button name="$parent_ScrollButton11" inherits="DPSMate_Details_CurePoisonReceived_ScrollButton"  id="10">
+					<Button name="$parent_ScrollButton11" inherits="DPSMate_Details_CurePoisonReceived_ScrollButton"  id="11">
 						<Anchors>
 							<Anchor point="TOP" relativeTo="$parent_ScrollButton10" relativePoint="BOTTOM">
 								<Offset x="0" y="-2" />
 							</Anchor>
 						</Anchors>
 					</Button>
-					<Button name="$parent_ScrollButton12" inherits="DPSMate_Details_CurePoisonReceived_ScrollButton"  id="10">
+					<Button name="$parent_ScrollButton12" inherits="DPSMate_Details_CurePoisonReceived_ScrollButton"  id="12">
 						<Anchors>
 							<Anchor point="TOP" relativeTo="$parent_ScrollButton11" relativePoint="BOTTOM">
 								<Offset x="0" y="-2" />
 							</Anchor>
 						</Anchors>
 					</Button>
-					<Button name="$parent_ScrollButton13" inherits="DPSMate_Details_CurePoisonReceived_ScrollButton"  id="10">
+					<Button name="$parent_ScrollButton13" inherits="DPSMate_Details_CurePoisonReceived_ScrollButton"  id="13">
 						<Anchors>
 							<Anchor point="TOP" relativeTo="$parent_ScrollButton12" relativePoint="BOTTOM">
 								<Offset x="0" y="-2" />
 							</Anchor>
 						</Anchors>
 					</Button>
-					<Button name="$parent_ScrollButton14" inherits="DPSMate_Details_CurePoisonReceived_ScrollButton"  id="10">
+					<Button name="$parent_ScrollButton14" inherits="DPSMate_Details_CurePoisonReceived_ScrollButton"  id="14">
 						<Anchors>
 							<Anchor point="TOP" relativeTo="$parent_ScrollButton13" relativePoint="BOTTOM">
 								<Offset x="0" y="-2" />
@@ -275,7 +275,7 @@
 						</Anchors>
 						<Scripts>
 							<OnVerticalScroll>
-								FauxScrollFrame_OnVerticalScroll(24, DPSMate.Modules.DetailsDamage.ScrollFrame_Update) 
+								FauxScrollFrame_OnVerticalScroll(24, DPSMate.Modules.DetailsCurePoisonReceived.SelectCreatureButton) 
 							</OnVerticalScroll>
 					   </Scripts>
 					</ScrollFrame>
@@ -349,28 +349,28 @@
 							</Anchor>
 						</Anchors>
 					</Button>
-					<Button name="$parent_ScrollButton11" inherits="DPSMate_Details_CurePoisonReceived_ScrollButton"  id="10">
+					<Button name="$parent_ScrollButton11" inherits="DPSMate_Details_CurePoisonReceived_ScrollButton"  id="11">
 						<Anchors>
 							<Anchor point="TOP" relativeTo="$parent_ScrollButton10" relativePoint="BOTTOM">
 								<Offset x="0" y="-2" />
 							</Anchor>
 						</Anchors>
 					</Button>
-					<Button name="$parent_ScrollButton12" inherits="DPSMate_Details_CurePoisonReceived_ScrollButton"  id="10">
+					<Button name="$parent_ScrollButton12" inherits="DPSMate_Details_CurePoisonReceived_ScrollButton"  id="12">
 						<Anchors>
 							<Anchor point="TOP" relativeTo="$parent_ScrollButton11" relativePoint="BOTTOM">
 								<Offset x="0" y="-2" />
 							</Anchor>
 						</Anchors>
 					</Button>
-					<Button name="$parent_ScrollButton13" inherits="DPSMate_Details_CurePoisonReceived_ScrollButton"  id="10">
+					<Button name="$parent_ScrollButton13" inherits="DPSMate_Details_CurePoisonReceived_ScrollButton"  id="13">
 						<Anchors>
 							<Anchor point="TOP" relativeTo="$parent_ScrollButton12" relativePoint="BOTTOM">
 								<Offset x="0" y="-2" />
 							</Anchor>
 						</Anchors>
 					</Button>
-					<Button name="$parent_ScrollButton14" inherits="DPSMate_Details_CurePoisonReceived_ScrollButton"  id="10">
+					<Button name="$parent_ScrollButton14" inherits="DPSMate_Details_CurePoisonReceived_ScrollButton"  id="14">
 						<Anchors>
 							<Anchor point="TOP" relativeTo="$parent_ScrollButton13" relativePoint="BOTTOM">
 								<Offset x="0" y="-2" />
@@ -406,7 +406,7 @@
 						</Anchors>
 						<Scripts>
 							<OnVerticalScroll>
-								FauxScrollFrame_OnVerticalScroll(24, DPSMate.Modules.DetailsDamage.ScrollFrame_Update) 
+								FauxScrollFrame_OnVerticalScroll(24, DPSMate.Modules.DetailsCurePoisonReceived.SelectCreatureAbilityButton) 
 							</OnVerticalScroll>
 					   </Scripts>
 					</ScrollFrame>
@@ -480,28 +480,28 @@
 							</Anchor>
 						</Anchors>
 					</Button>
-					<Button name="$parent_ScrollButton11" inherits="DPSMate_Details_CurePoisonReceived_ScrollButton"  id="10">
+					<Button name="$parent_ScrollButton11" inherits="DPSMate_Details_CurePoisonReceived_ScrollButton"  id="11">
 						<Anchors>
 							<Anchor point="TOP" relativeTo="$parent_ScrollButton10" relativePoint="BOTTOM">
 								<Offset x="0" y="-2" />
 							</Anchor>
 						</Anchors>
 					</Button>
-					<Button name="$parent_ScrollButton12" inherits="DPSMate_Details_CurePoisonReceived_ScrollButton"  id="10">
+					<Button name="$parent_ScrollButton12" inherits="DPSMate_Details_CurePoisonReceived_ScrollButton"  id="12">
 						<Anchors>
 							<Anchor point="TOP" relativeTo="$parent_ScrollButton11" relativePoint="BOTTOM">
 								<Offset x="0" y="-2" />
 							</Anchor>
 						</Anchors>
 					</Button>
-					<Button name="$parent_ScrollButton13" inherits="DPSMate_Details_CurePoisonReceived_ScrollButton"  id="10">
+					<Button name="$parent_ScrollButton13" inherits="DPSMate_Details_CurePoisonReceived_ScrollButton"  id="13">
 						<Anchors>
 							<Anchor point="TOP" relativeTo="$parent_ScrollButton12" relativePoint="BOTTOM">
 								<Offset x="0" y="-2" />
 							</Anchor>
 						</Anchors>
 					</Button>
-					<Button name="$parent_ScrollButton14" inherits="DPSMate_Details_CurePoisonReceived_ScrollButton"  id="10">
+					<Button name="$parent_ScrollButton14" inherits="DPSMate_Details_CurePoisonReceived_ScrollButton"  id="14">
 						<Anchors>
 							<Anchor point="TOP" relativeTo="$parent_ScrollButton13" relativePoint="BOTTOM">
 								<Offset x="0" y="-2" />

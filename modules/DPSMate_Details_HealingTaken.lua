@@ -37,9 +37,11 @@ function DPSMate.Modules.DetailsHealingTaken:ScrollFrame_Update()
 		lineplusoffset = line + FauxScrollFrame_GetOffset(obj)
 		if DetailsArr[lineplusoffset] ~= nil then
 			local user = DPSMate:GetUserById(DetailsArr[lineplusoffset])
+			local r,g,b,img = DPSMate:GetClassColor(DPSMateUser[user][2])
 			_G(path.."_ScrollButton"..line.."_Name"):SetText(user)
+			_G(path.."_ScrollButton"..line.."_Name"):SetTextColor(r,g,b)
 			_G(path.."_ScrollButton"..line.."_Value"):SetText(DmgArr[lineplusoffset][1].." ("..string.format("%.2f", (DmgArr[lineplusoffset][1]*100/DetailsTotal)).."%)")
-			_G(path.."_ScrollButton"..line.."_Icon"):SetTexture("Interface\\AddOns\\DPSMate\\images\\dummy")
+			_G(path.."_ScrollButton"..line.."_Icon"):SetTexture("Interface\\AddOns\\DPSMate\\images\\class\\"..img)
 			if len < 10 then
 				_G(path.."_ScrollButton"..line):SetWidth(235)
 				_G(path.."_ScrollButton"..line.."_Name"):SetWidth(125)

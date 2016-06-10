@@ -356,6 +356,7 @@ end
 -- Firetail Scorpid misses you.
 function DPSMate.Parser:CreatureVsSelfMisses(msg)
 	t = {}
+	for c in strgfind(msg, "(.+) attacks%. You absorb all the damage%.") do DB:Absorb("AutoAttack", player, c); return end
 	for a in strgfind(msg, "(.+) misses you%.") do 
 		DB:EnemyDamage(false, DPSMateEDD, player, "AutoAttack", 0, 0, 1, 0, 0, 0, 0, a, 0, 0)
 		DB:DamageTaken(player, "AutoAttack", 0, 0, 1, 0, 0, 0, 0, a, 0)
@@ -423,6 +424,13 @@ function DPSMate.Parser:PeriodicSelfDamage(msg)
 		DPSMate.DB:BuildBuffs("Unknown", player, a, false)
 		return
 	end
+	for a,b,d,e in strgfind(msg, "You suffer (%d+) (%a+) damage from your (.+)%.(.*)") do -- Potential to track school and resisted damage
+		t[1] = tnbr(a)
+		DB:EnemyDamage(false, DPSMateEDD, player, d.."(Periodic)", 1, 0, 0, 0, 0, 0, t[1], player, 0, 0)
+		DB:DamageTaken(player, d.."(Periodic)", 1, 0, 0, 0, 0, 0, t[1], player, 0)
+		DB:DeathHistory(player, player, d.."(Periodic)", t[1], 1, 0, 0, 0)
+		return
+	end
 end
 
 -- Ember Worg hits/crits Ikaa for 58 (Fire damage). (41 resisted/blocked)
@@ -445,6 +453,7 @@ end
 -- Young Wolf attacks. Senpie absorbs all the damage.
 function DPSMate.Parser:CreatureVsCreatureMisses(msg)
 	t = {}
+	for c, ta in strgfind(msg, "(.+) attacks%. (.+) absorbs all the damage%.") do DB:Absorb("AutoAttack", ta, c); return end
 	for a,b,c in strgfind(msg, "(.+) attacks%. (.-) (.+)%.") do 
 		if c=="parries" then t[1]=1 elseif c=="dodges" then t[2]=1 else t[3]=1 end 
 		DB:EnemyDamage(false, DPSMateEDD, b, "AutoAttack", 0, 0, 0, t[1] or 0, t[2] or 0, 0, 0, a, t[3] or 0, 0)
@@ -721,15 +730,6 @@ end
 
 function DPSMate.Parser:CreatureVsCreatureHitsAbsorb(msg)
 	for c, b, a, absorbed in strgfind(msg, "(.+) (%a%a?)\its (.+) for (.+)%. %((%d+) absorbed%)") do DB:SetUnregisterVariables(tnbr(absorbed), "AutoAttack", c) end
-end
-
--- Heavy War Golem attacks. You absorb all the damage.
-function DPSMate.Parser:CreatureVsSelfMissesAbsorb(msg)
-	for c in strgfind(msg, "(.+) attacks%. You absorb all the damage%.") do DB:Absorb("AutoAttack", player, c) end
-end
-
-function DPSMate.Parser:CreatureVsCreatureMissesAbsorb(msg)
-	for c, ta in strgfind(msg, "(.+) attacks%. (.+) absorbs all the damage%.") do DB:Absorb("AutoAttack", ta, c) end
 end
 
 -- Heavy War Golem's Trample hits/crits you for 51 (Fire damage). (48 absorbed)
@@ -1021,15 +1021,15 @@ Execute = {
 	["CHAT_MSG_SPELL_SELF_BUFF"] = function(arg1) DPSMate.Parser:SpellSelfBuff(arg1);DPSMate.Parser:SpellSelfBuffDispels(arg1) end,
 	["CHAT_MSG_SPELL_PERIODIC_FRIENDLYPLAYER_DAMAGE"] = function(arg1) DPSMate.Parser:SpellPeriodicDamageTaken(arg1) end,
 	["CHAT_MSG_SPELL_CREATURE_VS_CREATURE_DAMAGE"] = function(arg1) DPSMate.Parser:CreatureVsCreatureSpellDamage(arg1);DPSMate.Parser:CreatureVsCreatureSpellDamageAbsorb(arg1);DPSMate.Parser:CreatureVsCreatureSpellDamageInterrupts(arg1) end,
-	["CHAT_MSG_COMBAT_CREATURE_VS_CREATURE_MISSES"] = function(arg1) DPSMate.Parser:CreatureVsCreatureMisses(arg1);DPSMate.Parser:CreatureVsCreatureMissesAbsorb(arg1) end,
+	["CHAT_MSG_COMBAT_CREATURE_VS_CREATURE_MISSES"] = function(arg1) DPSMate.Parser:CreatureVsCreatureMisses(arg1) end,
 	["CHAT_MSG_COMBAT_CREATURE_VS_CREATURE_HITS"] = function(arg1) DPSMate.Parser:CreatureVsCreatureHits(arg1);DPSMate.Parser:CreatureVsCreatureHitsAbsorb(arg1) end,
 	["CHAT_MSG_SPELL_CREATURE_VS_PARTY_DAMAGE"] = function(arg1) DPSMate.Parser:CreatureVsCreatureSpellDamage(arg1);DPSMate.Parser:CreatureVsCreatureSpellDamageAbsorb(arg1) end,
 	["CHAT_MSG_SPELL_PERIODIC_PARTY_DAMAGE"] = function(arg1) DPSMate.Parser:SpellPeriodicDamageTaken(arg1) end,
-	["CHAT_MSG_COMBAT_CREATURE_VS_PARTY_MISSES"] = function(arg1) DPSMate.Parser:CreatureVsCreatureMisses(arg1);DPSMate.Parser:CreatureVsCreatureMissesAbsorb(arg1) end,
+	["CHAT_MSG_COMBAT_CREATURE_VS_PARTY_MISSES"] = function(arg1) DPSMate.Parser:CreatureVsCreatureMisses(arg1) end,
 	["CHAT_MSG_COMBAT_CREATURE_VS_PARTY_HITS"] = function(arg1) DPSMate.Parser:CreatureVsCreatureHits(arg1);DPSMate.Parser:CreatureVsCreatureHitsAbsorb(arg1) end,
 	["CHAT_MSG_SPELL_PERIODIC_SELF_DAMAGE"] = function(arg1) DPSMate.Parser:PeriodicSelfDamage(arg1) end,
 	["CHAT_MSG_SPELL_CREATURE_VS_SELF_DAMAGE"] = function(arg1) DPSMate.Parser:CreatureVsSelfSpellDamage(arg1);DPSMate.Parser:CreatureVsSelfSpellDamageAbsorb(arg1) end,
-	["CHAT_MSG_COMBAT_CREATURE_VS_SELF_MISSES"] = function(arg1) DPSMate.Parser:CreatureVsSelfMisses(arg1);DPSMate.Parser:CreatureVsSelfMissesAbsorb(arg1) end,
+	["CHAT_MSG_COMBAT_CREATURE_VS_SELF_MISSES"] = function(arg1) DPSMate.Parser:CreatureVsSelfMisses(arg1) end,
 	["CHAT_MSG_COMBAT_CREATURE_VS_SELF_HITS"] = function(arg1) DPSMate.Parser:CreatureVsSelfHits(arg1);DPSMate.Parser:CreatureVsSelfHitsAbsorb(arg1) end,
 	["CHAT_MSG_SPELL_DAMAGESHIELDS_ON_OTHERS"] = function(arg1) DPSMate.Parser:SpellDamageShieldsOnOthers(arg1) end,
 	["CHAT_MSG_SPELL_DAMAGESHIELDS_ON_SELF"] = function(arg1) DPSMate.Parser:SpellDamageShieldsOnSelf(arg1) end,

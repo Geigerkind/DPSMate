@@ -283,7 +283,7 @@
 						<NormalTexture file="Interface\AddOns\DPSMate\images\sync"/>
 						<PushedTexture file="Interface\AddOns\DPSMate\images\sync"/>
 					</Button>
-					<Checkbutton name="$parent_Enable" inherits="OptionsCheckButtonTemplate">
+					<Checkbutton name="$parent_Enable" inherits="UICheckButtonTemplate">
 						<Size x="18" y="18" />
 						<Scripts>
 							<OnEnter>

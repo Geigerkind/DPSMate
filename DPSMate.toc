@@ -61,6 +61,7 @@ modules\DPSMate_ManaEfficiency.lua
 modules\DPSMate_ManaGained.lua
 modules\DPSMate_ManaLost.lua
 modules\DPSMate_Overhealing.lua
+modules\DPSMate_Procs.lua
 
 modules\DPSMate_Details_Damage.lua
 modules\DPSMate_Details_Damage.xml
@@ -116,6 +117,8 @@ modules\DPSMate_Details_LiftMagicReceived.lua
 modules\DPSMate_Details_LiftMagicReceived.xml
 modules\DPSMate_Details_Auras.lua
 modules\DPSMate_Details_Auras.xml
+modules\DPSMate_Details_Procs.lua
+modules\DPSMate_Details_Procs.xml
 modules\DPSMate_Details_FriendlyFire.lua
 modules\DPSMate_Details_FriendlyFire.xml
 

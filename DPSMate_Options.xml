@@ -363,7 +363,7 @@
 			</Layer>
 		</Layers>
 	</EditBox>
-	<CheckButton name="DPSMate_Template_CheckButton" inherits="OptionsCheckButtonTemplate" virtual="true">
+	<CheckButton name="DPSMate_Template_CheckButton" inherits="UICheckButtonTemplate" virtual="true">
 		<Size x="20" y="20" />
 		<Layers>
 			<Layer level="ARTWORK">
@@ -2738,7 +2738,7 @@
 				<HitRectInsets left="0" right="0" top="10" bottom="10"/> 
 				<ScrollChild>
 					<Frame name="$parent_Child">
-						<Size x="300" y="1300" />
+						<Size x="300" y="1680" />
 						<Frames>
 							<Frame name="$parent_DPS" inherits="DPSMate_Template_BoxColumns">
 								<Anchors>
@@ -4368,6 +4368,50 @@
 											</OnLoad>
 											<OnClick>
 												DPSMate.Options:CheckButton("columnsfriendlyfire", 3)
+											</OnClick>
+										</Scripts>
+									</CheckButton>
+								</Frames>
+							</Frame>
+							<Frame name="$parent_Procs" inherits="DPSMate_Template_BoxColumns">
+								<Anchors>
+									<Anchor point="TOP" relativeTo="$parent_FriendlyFire" relativePoint="BOTTOM">
+										<Offset x="0" y="-20" />
+									</Anchor>
+								</Anchors>
+								<Scripts>
+									<OnLoad>
+										getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.procs)
+									</OnLoad>
+								</Scripts>
+								<Frames>
+									<CheckButton name="$parent_Check1" inherits="DPSMate_Template_CheckButton">
+										<Anchors>
+											<Anchor point="TOPLEFT">
+												<Offset x="10" y="-8" />
+											</Anchor>
+										</Anchors>
+										<Scripts>
+											<OnLoad>
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.amount)
+											</OnLoad>
+											<OnClick>
+												DPSMate.Options:CheckButton("columnsprocs", 1)
+											</OnClick>
+										</Scripts>
+									</CheckButton>
+									<CheckButton name="$parent_Check2" inherits="DPSMate_Template_CheckButton">
+										<Anchors>
+											<Anchor point="LEFT" relativeTo="$parent_Check1" relativePoint="RIGHT">
+												<Offset x="65" y="0" />
+											</Anchor>
+										</Anchors>
+										<Scripts>
+											<OnLoad>
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.percent)
+											</OnLoad>
+											<OnClick>
+												DPSMate.Options:CheckButton("columnsprocs", 2)
 											</OnClick>
 										</Scripts>
 									</CheckButton>

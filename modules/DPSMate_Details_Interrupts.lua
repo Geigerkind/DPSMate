@@ -88,7 +88,7 @@ function DPSMate.Modules.DetailsInterrupts:ScrollFrame_Update()
 	local path = "DPSMate_Details_Interrupts_Log_ScrollButton"
 	DetailsArr, DetailsTotal, DmgArr = DPSMate.Modules.DetailsInterrupts:EvalTable()
 	local len = DPSMate:TableLength(DetailsArr)
-	FauxScrollFrame_Update(obj,len,10,24)
+	FauxScrollFrame_Update(obj,len,14,24)
 	for line=1,14 do
 		lineplusoffset = line + FauxScrollFrame_GetOffset(obj)
 		if DetailsArr[lineplusoffset] ~= nil then
@@ -120,13 +120,13 @@ function DPSMate.Modules.DetailsInterrupts:SelectCreatureButton(i)
 	obj.index = i
 	local path = "DPSMate_Details_Interrupts_LogTwo_ScrollButton"
 	local len = DPSMate:TableLength(DmgArr[i][2])
-	FauxScrollFrame_Update(obj,len,10,24)
+	FauxScrollFrame_Update(obj,len,14,24)
 	for line=1,14 do
 		lineplusoffset = line + FauxScrollFrame_GetOffset(obj)
 		if DmgArr[i][2][lineplusoffset] ~= nil then
 			_G(path..line.."_Name"):SetText(DPSMate:GetUserById(DmgArr[i][2][lineplusoffset]))
 			_G(path..line.."_Value"):SetText(DmgArr[i][3][lineplusoffset][1].." ("..(100*DmgArr[i][3][lineplusoffset][1]/DmgArr[i][1]).."%)")
-			_G(path..line.."_Icon"):SetTexture("Interface\\AddOns\\DPSMate\\images\\dummy")
+			_G(path..line.."_Icon"):SetTexture("Interface\\AddOns\\DPSMate\\images\\npc")
 			if len < 14 then
 				_G(path..line):SetWidth(235)
 				_G(path..line.."_Name"):SetWidth(125)
@@ -154,7 +154,7 @@ function DPSMate.Modules.DetailsInterrupts:SelectCreatureAbilityButton(i, p)
 	obj.index = i
 	local path = "DPSMate_Details_Interrupts_LogThree_ScrollButton"
 	local len = DPSMate:TableLength(DmgArr[i][3][p][2])
-	FauxScrollFrame_Update(obj,len,10,24)
+	FauxScrollFrame_Update(obj,len,14,24)
 	for line=1,14 do
 		lineplusoffset = line + FauxScrollFrame_GetOffset(obj)
 		if DmgArr[i][3][p][2][lineplusoffset] ~= nil then

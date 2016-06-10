@@ -427,6 +427,7 @@ function DPSMate.Options:InitializeConfigMenu()
 		_G("DPSMate_ConfigMenu_Tab_Columns_Child_AurasGained_Check"..i):SetChecked(DPSMateSettings["columnsaurasgained"][i])
 		_G("DPSMate_ConfigMenu_Tab_Columns_Child_AurasLost_Check"..i):SetChecked(DPSMateSettings["columnsauraslost"][i])
 		_G("DPSMate_ConfigMenu_Tab_Columns_Child_AuraUptime_Check"..i):SetChecked(DPSMateSettings["columnsaurauptime"][i])
+		_G("DPSMate_ConfigMenu_Tab_Columns_Child_Procs_Check"..i):SetChecked(DPSMateSettings["columnsprocs"][i])
 	end
 	
 	-- Tab Tooltips
@@ -626,7 +627,6 @@ function DPSMate.Options:OnEvent(event)
 			self:PopUpAccept()
 		end
 		self:HideInPvP()
-		DPSMate.DB:OnGroupUpdate()
 	elseif event == "ZONE_CHANGED_NEW_AREA" then
 		DPSMate.DB:OnGroupUpdate()
 	end
@@ -796,6 +796,7 @@ function DPSMate.Options:PopUpAccept(bool, bypass)
 		DPSMate.Modules.AurasGained.DB = DPSMateAurasGained
 		DPSMate.Modules.AurasLost.DB = DPSMateAurasGained
 		DPSMate.Modules.AurasUptimers.DB = DPSMateAurasGained
+		DPSMate.Modules.Procs.DB = DPSMateAurasGained
 		for _, val in pairs(DPSMateSettings["windows"]) do
 			if not val["options"][2]["total"] and not val["options"][2]["currentfight"] then
 				val["options"][2]["total"] = true

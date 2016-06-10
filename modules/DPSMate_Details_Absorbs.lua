@@ -37,9 +37,11 @@ function DPSMate.Modules.DetailsAbsorbs:ScrollFrame_Update()
 		lineplusoffset = line + FauxScrollFrame_GetOffset(obj)
 		if DetailsArr[lineplusoffset] ~= nil then
 			local user = DPSMate:GetUserById(DetailsArr[lineplusoffset])
+			local r,g,b,img = DPSMate:GetClassColor(DPSMateUser[user][2])
 			_G(path.."_ScrollButton"..line.."_Name"):SetText(user)
+			_G(path.."_ScrollButton"..line.."_Name"):SetTextColor(r,g,b)
 			_G(path.."_ScrollButton"..line.."_Value"):SetText(DmgArr[lineplusoffset][1].." ("..string.format("%.2f", (DmgArr[lineplusoffset][1]*100/DetailsTotal)).."%)")
-			_G(path.."_ScrollButton"..line.."_Icon"):SetTexture("Interface\\AddOns\\DPSMate\\images\\dummy")
+			_G(path.."_ScrollButton"..line.."_Icon"):SetTexture("Interface\\AddOns\\DPSMate\\images\\class\\"..img)
 			if len < 10 then
 				_G(path.."_ScrollButton"..line):SetWidth(235)
 				_G(path.."_ScrollButton"..line.."_Name"):SetWidth(125)
@@ -107,7 +109,7 @@ function DPSMate.Modules.DetailsAbsorbs:SelectCauseButton(i,p)
 			local user = DPSMate:GetUserById(DmgArr[i][3][p][2][lineplusoffset])
 			_G(path.."_ScrollButton"..line.."_Name"):SetText(user)
 			_G(path.."_ScrollButton"..line.."_Value"):SetText(DmgArr[i][3][p][3][lineplusoffset][1].." ("..string.format("%.2f", (DmgArr[i][3][p][3][lineplusoffset][1]*100/DmgArr[i][3][p][1])).."%)")
-			_G(path.."_ScrollButton"..line.."_Icon"):SetTexture("Interface\\AddOns\\DPSMate\\images\\dummy")
+			_G(path.."_ScrollButton"..line.."_Icon"):SetTexture("Interface\\AddOns\\DPSMate\\images\\npc")
 			if len < 10 then
 				_G(path.."_ScrollButton"..line):SetWidth(235)
 				_G(path.."_ScrollButton"..line.."_Name"):SetWidth(125)
@@ -196,9 +198,11 @@ function DPSMate.Modules.DetailsAbsorbs:SortLineTable(arr)
 				if va[4] then
 					dmg = va[4]
 				end
-				if DPSMateDamageTaken[1][DPSMateUser[DetailsUser][1]][va[2]] then
-					if DPSMateDamageTaken[1][DPSMateUser[DetailsUser][1]][va[2]][va[3]] then
-						dmg = DPSMateDamageTaken[1][DPSMateUser[DetailsUser][1]][va[2]][va[3]][14]
+				if DPSMateDamageTaken[1][DPSMateUser[DetailsUser][1]] then
+					if DPSMateDamageTaken[1][DPSMateUser[DetailsUser][1]][va[2]] then
+						if DPSMateDamageTaken[1][DPSMateUser[DetailsUser][1]][va[2]][va[3]] then
+							dmg = DPSMateDamageTaken[1][DPSMateUser[DetailsUser][1]][va[2]][va[3]][14]
+						end
 					end
 				end
 				if dmg>0 then
