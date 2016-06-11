@@ -32,10 +32,9 @@ end
 function DPSMate.Modules.DetailsDeaths:ScrollFrame_Update()
 	local line, lineplusoffset
 	local obj = _G("DPSMate_Details_Deaths_Log_ScrollFrame")
-	local arr = db
 	DetailsArr = DPSMate.Modules.DetailsDeaths:EvalTable()
 	local len = DPSMate:TableLength(DetailsArr)
-	FauxScrollFrame_Update(obj,len,10,24)
+	FauxScrollFrame_Update(obj,len,14,24)
 	for line=1,14 do
 		lineplusoffset = line + FauxScrollFrame_GetOffset(obj)
 		if DetailsArr[lineplusoffset] ~= nil then
@@ -63,7 +62,6 @@ end
 function DPSMate.Modules.DetailsDeaths:SelectDetailsButton(i)
 	local obj = _G("DPSMate_Details_Deaths_Log_ScrollFrame")
 	local lineplusoffset = i + FauxScrollFrame_GetOffset(obj)
-	local arr = db
 	local user, pet = "", 0
 	
 	DetailsSelected = lineplusoffset
@@ -72,33 +70,33 @@ function DPSMate.Modules.DetailsDeaths:SelectDetailsButton(i)
 	end
 	_G("DPSMate_Details_Deaths_Log_ScrollButton"..i.."_selected"):Show()
 	
-	for i=1, 10 do
-		_G("DPSMate_Details_Deaths_LogDetails_Row"..i.."_GameTime"):SetText()
-		_G("DPSMate_Details_Deaths_LogDetails_Row"..i.."_CombatTime"):SetText()
-		_G("DPSMate_Details_Deaths_LogDetails_Row"..i.."_Cause"):SetText()
-		_G("DPSMate_Details_Deaths_LogDetails_Row"..i.."_Cause"):SetTextColor()
-		_G("DPSMate_Details_Deaths_LogDetails_Row"..i.."_Ability"):SetText()
-		_G("DPSMate_Details_Deaths_LogDetails_Row"..i.."_Type"):SetText()
-		_G("DPSMate_Details_Deaths_LogDetails_Row"..i.."_HealIn"):SetText()
-		_G("DPSMate_Details_Deaths_LogDetails_Row"..i.."_DamageIn"):SetText()
+	for i=1, 20 do
+		_G("DPSMate_Details_Deaths_LogDetails_Child_Row"..i.."_GameTime"):SetText()
+		_G("DPSMate_Details_Deaths_LogDetails_Child_Row"..i.."_CombatTime"):SetText()
+		_G("DPSMate_Details_Deaths_LogDetails_Child_Row"..i.."_Cause"):SetText()
+		_G("DPSMate_Details_Deaths_LogDetails_Child_Row"..i.."_Cause"):SetTextColor()
+		_G("DPSMate_Details_Deaths_LogDetails_Child_Row"..i.."_Ability"):SetText()
+		_G("DPSMate_Details_Deaths_LogDetails_Child_Row"..i.."_Type"):SetText()
+		_G("DPSMate_Details_Deaths_LogDetails_Child_Row"..i.."_HealIn"):SetText()
+		_G("DPSMate_Details_Deaths_LogDetails_Child_Row"..i.."_DamageIn"):SetText()
 	end
 	for cat, val in DetailsArr[i][3] do
 		if cat~="i" then
 			local name = DPSMate:GetUserById(val[1])
 			local type,r,g,b = "HIT", DPSMate:GetClassColor(DPSMateUser[name][2])
 			if val[4]==1 then type="CRIT" elseif val[4]==2 then type="CRUSH" end
-			_G("DPSMate_Details_Deaths_LogDetails_Row"..cat.."_GameTime"):SetText(val[7])
-			_G("DPSMate_Details_Deaths_LogDetails_Row"..cat.."_CombatTime"):SetText(ceil(val[6]).."s")
-			_G("DPSMate_Details_Deaths_LogDetails_Row"..cat.."_Cause"):SetText(name)
-			_G("DPSMate_Details_Deaths_LogDetails_Row"..cat.."_Cause"):SetTextColor(r,g,b,1)
-			_G("DPSMate_Details_Deaths_LogDetails_Row"..cat.."_Ability"):SetText(DPSMate:GetAbilityById(val[2]))
-			_G("DPSMate_Details_Deaths_LogDetails_Row"..cat.."_Type"):SetText(type)
+			_G("DPSMate_Details_Deaths_LogDetails_Child_Row"..cat.."_GameTime"):SetText(val[7])
+			_G("DPSMate_Details_Deaths_LogDetails_Child_Row"..cat.."_CombatTime"):SetText(ceil(val[6]).."s")
+			_G("DPSMate_Details_Deaths_LogDetails_Child_Row"..cat.."_Cause"):SetText(name)
+			_G("DPSMate_Details_Deaths_LogDetails_Child_Row"..cat.."_Cause"):SetTextColor(r,g,b,1)
+			_G("DPSMate_Details_Deaths_LogDetails_Child_Row"..cat.."_Ability"):SetText(DPSMate:GetAbilityById(val[2]))
+			_G("DPSMate_Details_Deaths_LogDetails_Child_Row"..cat.."_Type"):SetText(type)
 			if val[5]==1 then
-				_G("DPSMate_Details_Deaths_LogDetails_Row"..cat.."_HealIn"):SetText("+"..val[3])
-				_G("DPSMate_Details_Deaths_LogDetails_Row"..cat.."_DamageIn"):SetText("")
+				_G("DPSMate_Details_Deaths_LogDetails_Child_Row"..cat.."_HealIn"):SetText("+"..val[3])
+				_G("DPSMate_Details_Deaths_LogDetails_Child_Row"..cat.."_DamageIn"):SetText("")
 			else
-				_G("DPSMate_Details_Deaths_LogDetails_Row"..cat.."_HealIn"):SetText("")
-				_G("DPSMate_Details_Deaths_LogDetails_Row"..cat.."_DamageIn"):SetText("-"..val[3])
+				_G("DPSMate_Details_Deaths_LogDetails_Child_Row"..cat.."_HealIn"):SetText("")
+				_G("DPSMate_Details_Deaths_LogDetails_Child_Row"..cat.."_DamageIn"):SetText("-"..val[3])
 			end
 		end
 	end

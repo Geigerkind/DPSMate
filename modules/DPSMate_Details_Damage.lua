@@ -6,13 +6,16 @@ local DetailsArr, DetailsTotal, DmgArr, DetailsUser, DetailsSelected  = {}, 0, {
 local PieChart = true
 local g, g2
 local curKey = 1
-local db, cbt = {}, 0
+local db, cbt, db2 = {}, 0, {}
 local _G = getglobal
 local tinsert = table.insert
+local toggle = false
+local t1, t2, TTotal = {}, {}, 0
 
 function DPSMate.Modules.DetailsDamage:UpdateDetails(obj, key)
 	curKey = key
 	db, cbt = DPSMate:GetMode(key)
+	db2 = DPSMate:GetModeByArr(DPSMateEDT, key, "EDTaken")
 	DPSMate_Details.proc = "None"
 	UIDropDownMenu_SetSelectedValue(DPSMate_Details_DiagramLegend_Procs, "None")
 	if (PieChart) then
@@ -24,17 +27,71 @@ function DPSMate.Modules.DetailsDamage:UpdateDetails(obj, key)
 	DPSMate_Details_Title:SetText("Damage done by "..obj.user)
 	DPSMate_Details:Show()
 	UIDropDownMenu_Initialize(DPSMate_Details_DiagramLegend_Procs, DPSMate.Modules.DetailsDamage.ProcsDropDown)
-	self:ScrollFrame_Update()
-	self:SelectDetailsButton(1)
+	DetailsArr, DetailsTotal, DmgArr = DPSMate.RegistredModules[DPSMateSettings["windows"][curKey]["CurMode"]]:EvalTable(DPSMateUser[DetailsUser], curKey)
+	t1, t2, TTotal = self:EvalToggleTable()
+	if toggle then
+		self:Player_Update()
+		self:PlayerSpells_Update(1)
+		self:SelectDetailsButton(1)
+	else
+		self:ScrollFrame_Update()
+		self:SelectDetailsButton(1)
+	end
 	self:UpdatePie()
 	self:UpdateLineGraph()
+end
+
+function DPSMate.Modules.DetailsDamage:EvalToggleTable()
+	local a,b = {},{}
+	local d = 0
+	for cat, val in db2 do
+		if val[DPSMateUser[DetailsUser][1]] then
+			local c = {[1] = 0,[2] = {},[3] = {}}
+			for p, v in val[DPSMateUser[DetailsUser][1]] do
+				if p ~= "i" then
+					local i = 1
+					while true do
+						if (not c[2][i]) then
+							tinsert(c[3], i, v)
+							tinsert(c[2], i, p)
+							break
+						else
+							if c[3][i][13] < v[13] then
+								tinsert(c[3], i, v)
+								tinsert(c[2], i, p)
+								break
+							end
+						end
+						i=i+1
+					end
+				end
+			end
+			c[1] = val[DPSMateUser[DetailsUser][1]]["i"][2]
+			local i = 1
+			while true do
+				if (not a[i]) then
+					tinsert(b, i, c)
+					tinsert(a, i, cat)
+					break
+				else
+					if b[i][1] < c[1] then
+						tinsert(b, i, c)
+						tinsert(a, i, cat)
+						break
+					end
+				end
+				i=i+1
+			end
+			d = d + c[1]
+		end
+	end
+	return a,b,d
 end
 
 function DPSMate.Modules.DetailsDamage:ScrollFrame_Update()
 	local line, lineplusoffset
 	local obj = _G("DPSMate_Details_Log_ScrollFrame")
 	local path = "DPSMate_Details_Log"
-	DetailsArr, DetailsTotal, DmgArr = DPSMate.RegistredModules[DPSMateSettings["windows"][curKey]["CurMode"]]:EvalTable(DPSMateUser[DetailsUser], curKey)
 	local pet, len = "", DPSMate:TableLength(DetailsArr)
 	FauxScrollFrame_Update(obj,len,10,24)
 	for line=1,10 do
@@ -63,22 +120,98 @@ function DPSMate.Modules.DetailsDamage:ScrollFrame_Update()
 	end
 end
 
+local PSelected = 1
+function DPSMate.Modules.DetailsDamage:Player_Update()
+	local line, lineplusoffset
+	local path = "DPSMate_Details_player"
+	local obj = _G(path.."_ScrollFrame")
+	local len = DPSMate:TableLength(t1)
+	FauxScrollFrame_Update(obj,len,8,24)
+	for line=1,8 do
+		lineplusoffset = line + FauxScrollFrame_GetOffset(obj)
+		if t1[lineplusoffset] ~= nil then
+			local user = DPSMate:GetUserById(t1[lineplusoffset])
+			_G(path.."_ScrollButton"..line.."_Name"):SetText(user)
+			_G(path.."_ScrollButton"..line.."_Value"):SetText(t2[lineplusoffset][1].." ("..string.format("%.2f", (t2[lineplusoffset][1]*100/TTotal)).."%)")
+			_G(path.."_ScrollButton"..line.."_Icon"):SetTexture("Interface\\AddOns\\DPSMate\\images\\npc")
+			if len < 8 then
+				_G(path.."_ScrollButton"..line):SetWidth(235)
+				_G(path.."_ScrollButton"..line.."_Name"):SetWidth(125)
+			else
+				_G(path.."_ScrollButton"..line):SetWidth(220)
+				_G(path.."_ScrollButton"..line.."_Name"):SetWidth(110)
+			end
+			_G(path.."_ScrollButton"..line):Show()
+		else
+			_G(path.."_ScrollButton"..line):Hide()
+		end
+		_G(path.."_ScrollButton"..line.."_selected"):Hide()
+		if PSelected == lineplusoffset then
+			_G(path.."_ScrollButton"..line.."_selected"):Show()
+		end
+	end
+end
+
+function DPSMate.Modules.DetailsDamage:PlayerSpells_Update(i)
+	local line, lineplusoffset
+	local path = "DPSMate_Details_playerSpells"
+	local obj = _G(path.."_ScrollFrame")
+	obj.id = (i + FauxScrollFrame_GetOffset(DPSMate_Details_player_ScrollFrame)) or obj.id
+	local len = DPSMate:TableLength(t2[i][2])
+	FauxScrollFrame_Update(obj,len,10,24)
+	for line=1,10 do
+		lineplusoffset = line + FauxScrollFrame_GetOffset(obj)
+		if t2[obj.id][2][lineplusoffset] ~= nil then
+			local ability = DPSMate:GetAbilityById(t2[obj.id][2][lineplusoffset])
+			_G(path.."_ScrollButton"..line.."_Name"):SetText(ability)
+			_G(path.."_ScrollButton"..line.."_Value"):SetText(t2[obj.id][3][lineplusoffset][13].." ("..string.format("%.2f", (t2[obj.id][3][lineplusoffset][13]*100/t2[obj.id][1])).."%)")
+			_G(path.."_ScrollButton"..line.."_Icon"):SetTexture(DPSMate.BabbleSpell:GetSpellIcon(strsub(ability, 1, (strfind(ability, "%(") or 0)-1) or ability))
+			if len < 10 then
+				_G(path.."_ScrollButton"..line):SetWidth(235)
+				_G(path.."_ScrollButton"..line.."_Name"):SetWidth(125)
+			else
+				_G(path.."_ScrollButton"..line):SetWidth(220)
+				_G(path.."_ScrollButton"..line.."_Name"):SetWidth(110)
+			end
+			_G(path.."_ScrollButton"..line):Show()
+		else
+			_G(path.."_ScrollButton"..line):Hide()
+		end
+		_G(path.."_ScrollButton"..line.."_selected"):Hide()
+		if DetailsSelected == lineplusoffset then
+			_G(path.."_ScrollButton"..line.."_selected"):Show()
+		end
+	end
+	PSelected = obj.id
+	for p=1, 8 do
+		_G("DPSMate_Details_player_ScrollButton"..p.."_selected"):Hide()
+	end
+	_G("DPSMate_Details_player_ScrollButton"..i.."_selected"):Show()
+end
+
 function DPSMate.Modules.DetailsDamage:SelectDetailsButton(i)
-	local obj = _G("DPSMate_Details_Log_ScrollFrame")
-	local lineplusoffset = i + FauxScrollFrame_GetOffset(obj)
-	local arr = db
-	local user, pet = "", 0
-	
+	local pathh = ""
+	local path,obj,lineplusoffset
+	local user, pet = DPSMateUser[DetailsUser][1], ""
+	if toggle then
+		pathh = "DPSMate_Details_playerSpells"
+		obj = _G(pathh.."_ScrollFrame")
+		lineplusoffset = i + FauxScrollFrame_GetOffset(obj)
+		path = t2[obj.id][3][lineplusoffset]
+	else
+		pathh = "DPSMate_Details_Log"
+		obj = _G(pathh.."_ScrollFrame")
+		lineplusoffset = i + FauxScrollFrame_GetOffset(obj)
+		local ability = tonumber(DetailsArr[lineplusoffset])
+		if (db[DPSMateUser[DetailsUser][1]][ability]) then user=DPSMateUser[DetailsUser][1]; pet=0; else if DPSMateUser[DetailsUser][5] then user=DPSMateUser[DPSMateUser[DetailsUser][5]][1]; pet=5; else user=DPSMateUser[DetailsUser][1]; pet=0; end end
+		path = db[user][tonumber(DetailsArr[lineplusoffset])]
+	end
 	DetailsSelected = lineplusoffset
 	for p=1, 10 do
-		_G("DPSMate_Details_Log_ScrollButton"..p.."_selected"):Hide()
+		_G(pathh.."_ScrollButton"..p.."_selected"):Hide()
 	end
-	-- Performance?
-	local ability = tonumber(DetailsArr[lineplusoffset])
-	if (arr[DPSMateUser[DetailsUser][1]][ability]) then user=DPSMateUser[DetailsUser][1]; pet=0; else if DPSMateUser[DetailsUser][5] then user=DPSMateUser[DPSMateUser[DetailsUser][5]][1]; pet=5; else user=DPSMateUser[DetailsUser][1]; pet=0; end end
-	_G("DPSMate_Details_Log_ScrollButton"..i.."_selected"):Show()
-	
-	local hit, crit, miss, parry, dodge, resist, hitMin, hitMax, critMin, critMax, hitav, critav, glance, glanceMin, glanceMax, glanceav, block, blockMin, blockMax, blockav = arr[user][ability][1], arr[user][ability][5], arr[user][ability][9], arr[user][ability][10], arr[user][ability][11], arr[user][ability][12], arr[user][ability][2], arr[user][ability][3], arr[user][ability][6], arr[user][ability][7], arr[user][ability][4], arr[user][ability][8], arr[user][ability][14], arr[user][ability][15], arr[user][ability][16], arr[user][ability][17], arr[user][ability][18], arr[user][ability][19], arr[user][ability][20], arr[user][ability][21]
+	_G(pathh.."_ScrollButton"..i.."_selected"):Show()
+	local hit, crit, miss, parry, dodge, resist, hitMin, hitMax, critMin, critMax, hitav, critav, glance, glanceMin, glanceMax, glanceav, block, blockMin, blockMax, blockav = path[1], path[5], path[9], path[10], path[11], path[12], path[2], path[3], path[5], path[6], path[4], path[8], path[14], path[15], path[16], path[17], path[18], path[19], path[20], path[21]
 	local total, max = hit+crit+miss+parry+dodge+resist+glance+block, DPSMate:TMax({hit, crit, miss, parry, dodge, resist, glance, block})
 	
 	-- Block
@@ -192,20 +325,20 @@ function DPSMate.Modules.DetailsDamage:CreateGraphTable()
 	local lines = {}
 	for i=1, 8 do
 		-- Horizontal
-		lines[i] = DPSMate.Options.graph:DrawLine(DPSMate_Details_Log, 252, 270-i*30, 617, 270-i*30, 20, {0.5,0.5,0.5,0.5}, "BACKGROUND")
+		lines[i] = DPSMate.Options.graph:DrawLine(DPSMate_Details_LogDetails, 10, 270-i*30, 370, 270-i*30, 20, {0.5,0.5,0.5,0.5}, "BACKGROUND")
 		lines[i]:Show()
 	end
 	-- Vertical
-	lines[9] = DPSMate.Options.graph:DrawLine(DPSMate_Details_Log, 302, 260, 302, 15, 20, {0.5,0.5,0.5,0.5}, "BACKGROUND")
+	lines[9] = DPSMate.Options.graph:DrawLine(DPSMate_Details_LogDetails, 57, 260, 57, 15, 20, {0.5,0.5,0.5,0.5}, "BACKGROUND")
 	lines[9]:Show()
 	
-	lines[10] = DPSMate.Options.graph:DrawLine(DPSMate_Details_Log, 437, 260, 437, 15, 20, {0.5,0.5,0.5,0.5}, "BACKGROUND")
+	lines[10] = DPSMate.Options.graph:DrawLine(DPSMate_Details_LogDetails, 192, 260, 192, 15, 20, {0.5,0.5,0.5,0.5}, "BACKGROUND")
 	lines[10]:Show()
 	
-	lines[11] = DPSMate.Options.graph:DrawLine(DPSMate_Details_Log, 497, 260, 497, 15, 20, {0.5,0.5,0.5,0.5}, "BACKGROUND")
+	lines[11] = DPSMate.Options.graph:DrawLine(DPSMate_Details_LogDetails, 252, 260, 252, 15, 20, {0.5,0.5,0.5,0.5}, "BACKGROUND")
 	lines[11]:Show()
 	
-	lines[12] = DPSMate.Options.graph:DrawLine(DPSMate_Details_Log, 557, 260, 557, 15, 20, {0.5,0.5,0.5,0.5}, "BACKGROUND")
+	lines[12] = DPSMate.Options.graph:DrawLine(DPSMate_Details_LogDetails, 312, 260, 312, 15, 20, {0.5,0.5,0.5,0.5}, "BACKGROUND")
 	lines[12]:Show()
 end
 
@@ -331,4 +464,24 @@ function DPSMate.Modules.DetailsDamage:AddProcPoints(name, dat)
 	return {bool, data}
 end
 
+function DPSMate.Modules.DetailsDamage:ToggleMode()
+	if toggle then
+		toggle = false
+		self:ScrollFrame_Update()
+		self:SelectDetailsButton(1)
+		DPSMate_Details_playerSpells:Hide()
+		DPSMate_Details_player:Hide()
+		DPSMate_Details_Diagram:Show()
+		DPSMate_Details_Log:Show()
+	else
+		toggle = true
+		self:Player_Update()
+		self:PlayerSpells_Update(1)
+		self:SelectDetailsButton(1)
+		DPSMate_Details_playerSpells:Show()
+		DPSMate_Details_player:Show()
+		DPSMate_Details_Diagram:Hide()
+		DPSMate_Details_Log:Hide()
+	end
+end
 

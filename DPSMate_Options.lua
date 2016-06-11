@@ -105,7 +105,7 @@ DPSMate.Options.Options = {
 				type = 'execute',
 				name = DPSMate.localization.config.reset,
 				desc = DPSMate.localization.desc.reset,
-				func = "PopUpAccept",
+				func = function() DPSMate_PopUp:Show(); DPSMate.Options.Dewdrop:Close() end,
 			},
 			blank1 = {
 				order = 20,
@@ -852,11 +852,7 @@ end
 
 function DPSMate.Options:UpdateTotalDetails(obj)
 	local key = obj:GetParent():GetParent():GetParent().Key
-	if obj.user then
-		DPSMate.RegistredModules[DPSMateSettings["windows"][key]["CurMode"]]:OpenTotalDetails(obj, key)
-	else
-		DPSMate:SendMessage("Could not find this user!")
-	end
+	DPSMate.RegistredModules[DPSMateSettings["windows"][key]["CurMode"]]:OpenTotalDetails(obj, key)
 end
 
 function DPSMate.Options:DropDownStyleReset()

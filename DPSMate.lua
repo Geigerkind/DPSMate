@@ -3,7 +3,7 @@
 
 -- Global Variables
 DPSMate = {}
-DPSMate.VERSION = 16
+DPSMate.VERSION = 17
 DPSMate.Parser = {}
 DPSMate.localization = {}
 DPSMate.DB = {}
@@ -491,13 +491,13 @@ function DPSMate:GetMode(k)
 	end
 end
 
-function DPSMate:GetModeByArr(arr, k)
+function DPSMate:GetModeByArr(arr, k, Hist)
 	local result = {total={arr[1], DPSMateCombatTime["total"]}, currentfight={arr[2], DPSMateCombatTime["current"]}}
 	for cat, val in pairs(DPSMateSettings["windows"][k]["options"][2]) do
 		if val then
 			if strfind(cat, "segment") then
 				local num = tonumber(strsub(cat, 8))
-				return DPSMateHistory[arr.Hist][num], DPSMateCombatTime["segments"][num]
+				return DPSMateHistory[Hist or arr.Hist][num], DPSMateCombatTime["segments"][num]
 			else
 				return result[cat][1], result[cat][2]
 			end

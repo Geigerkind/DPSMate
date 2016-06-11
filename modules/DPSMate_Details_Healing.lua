@@ -6,13 +6,16 @@ local DetailsArr, DetailsTotal, DmgArr, DetailsUser, DetailsSelected  = {}, 0, {
 local PieChart = true
 local g, g2
 local curKey = 1
-local db, cbt = {}, 0
+local db, cbt, db2 = {}, 0, {}
 local tinsert = table.insert
 local _G = getglobal
+local toggle = false
+local t1, t2, TTotal = {}, {}, 0
 
 function DPSMate.Modules.DetailsHealing:UpdateDetails(obj, key)
 	curKey = key
 	db, cbt = DPSMate:GetMode(key)
+	db2 = DPSMate:GetModeByArr(DPSMateHealingTaken, key, "THealingTaken")
 	DPSMate_Details_Healing.proc = "None"
 	UIDropDownMenu_SetSelectedValue(DPSMate_Details_Healing_DiagramLegend_Procs, "None")
 	if (PieChart) then
@@ -24,18 +27,71 @@ function DPSMate.Modules.DetailsHealing:UpdateDetails(obj, key)
 	DPSMate_Details_Healing_Title:SetText("Healing done by "..obj.user)
 	DPSMate_Details_Healing:Show()
 	UIDropDownMenu_Initialize(DPSMate_Details_Healing_DiagramLegend_Procs, DPSMate.Modules.DetailsHealing.ProcsDropDown)
-	self:ScrollFrame_Update()
-	self:SelectDetails_HealingButton(1)
+	DetailsArr, DetailsTotal, DmgArr = DPSMate.RegistredModules[DPSMateSettings["windows"][curKey]["CurMode"]]:EvalTable(DPSMateUser[DetailsUser], curKey)
+	t1, t2, TTotal = self:EvalToggleTable()
+	if toggle then
+		self:Player_Update()
+		self:PlayerSpells_Update(1)
+		self:SelectDetails_HealingButton(1)
+	else
+		self:ScrollFrame_Update()
+		self:SelectDetails_HealingButton(1)
+	end
 	self:UpdatePie()
 	self:UpdateLineGraph()
+end
+
+function DPSMate.Modules.DetailsHealing:EvalToggleTable()
+	local a,b = {},{}
+	local d = 0
+	for cat, val in db2 do
+		if val[DPSMateUser[DetailsUser][1]] then
+			local CV = 0
+			local c = {[1] = 0,[2] = {},[3] = {}}
+			for p, v in val[DPSMateUser[DetailsUser][1]] do
+				CV = CV + v[1]
+				local i = 1
+				while true do
+					if (not c[2][i]) then
+						tinsert(c[3], i, v)
+						tinsert(c[2], i, p)
+						break
+					else
+						if c[3][i][1] < v[1] then
+							tinsert(c[3], i, v)
+							tinsert(c[2], i, p)
+							break
+						end
+					end
+					i=i+1
+				end
+			end
+			c[1] = CV
+			local i = 1
+			while true do
+				if (not a[i]) then
+					tinsert(b, i, c)
+					tinsert(a, i, cat)
+					break
+				else
+					if b[i][1] < CV then
+						tinsert(b, i, c)
+						tinsert(a, i, cat)
+						break
+					end
+				end
+				i=i+1
+			end
+			d = d + CV
+		end
+	end
+	return a,b,d
 end
 
 function DPSMate.Modules.DetailsHealing:ScrollFrame_Update()
 	local line, lineplusoffset
 	local path = "DPSMate_Details_Healing_Log"
 	local obj = _G(path.."_ScrollFrame")
-	local path = path..""
-	DetailsArr, DetailsTotal, DmgArr = DPSMate.RegistredModules[DPSMateSettings["windows"][curKey]["CurMode"]]:EvalTable(DPSMateUser[DetailsUser], curKey)
 	local len = DPSMate:TableLength(DetailsArr)
 	FauxScrollFrame_Update(obj,len,10,24)
 	for line=1,10 do
@@ -63,41 +119,117 @@ function DPSMate.Modules.DetailsHealing:ScrollFrame_Update()
 	end
 end
 
+local PSelected = 1
+function DPSMate.Modules.DetailsHealing:Player_Update()
+	local line, lineplusoffset
+	local path = "DPSMate_Details_Healing_player"
+	local obj = _G(path.."_ScrollFrame")
+	local len = DPSMate:TableLength(t1)
+	FauxScrollFrame_Update(obj,len,8,24)
+	for line=1,8 do
+		lineplusoffset = line + FauxScrollFrame_GetOffset(obj)
+		if t1[lineplusoffset] ~= nil then
+			local user = DPSMate:GetUserById(t1[lineplusoffset])
+			local r,g,b,img = DPSMate:GetClassColor(DPSMateUser[user][2])
+			_G(path.."_ScrollButton"..line.."_Name"):SetText(user)
+			_G(path.."_ScrollButton"..line.."_Name"):SetTextColor(r,g,b)
+			_G(path.."_ScrollButton"..line.."_Value"):SetText(t2[lineplusoffset][1].." ("..string.format("%.2f", (t2[lineplusoffset][1]*100/TTotal)).."%)")
+			_G(path.."_ScrollButton"..line.."_Icon"):SetTexture("Interface\\AddOns\\DPSMate\\images\\class\\"..img)
+			if len < 8 then
+				_G(path.."_ScrollButton"..line):SetWidth(235)
+				_G(path.."_ScrollButton"..line.."_Name"):SetWidth(125)
+			else
+				_G(path.."_ScrollButton"..line):SetWidth(220)
+				_G(path.."_ScrollButton"..line.."_Name"):SetWidth(110)
+			end
+			_G(path.."_ScrollButton"..line):Show()
+		else
+			_G(path.."_ScrollButton"..line):Hide()
+		end
+		_G(path.."_ScrollButton"..line.."_selected"):Hide()
+		if PSelected == lineplusoffset then
+			_G(path.."_ScrollButton"..line.."_selected"):Show()
+		end
+	end
+end
+
+function DPSMate.Modules.DetailsHealing:PlayerSpells_Update(i)
+	local line, lineplusoffset
+	local path = "DPSMate_Details_Healing_playerSpells"
+	local obj = _G(path.."_ScrollFrame")
+	obj.id = (i + FauxScrollFrame_GetOffset(DPSMate_Details_Healing_player_ScrollFrame)) or obj.id
+	local len = DPSMate:TableLength(t2[i][2])
+	FauxScrollFrame_Update(obj,len,10,24)
+	for line=1,10 do
+		lineplusoffset = line + FauxScrollFrame_GetOffset(obj)
+		if t2[obj.id][2][lineplusoffset] ~= nil then
+			local ability = DPSMate:GetAbilityById(t2[obj.id][2][lineplusoffset])
+			_G(path.."_ScrollButton"..line.."_Name"):SetText(ability)
+			_G(path.."_ScrollButton"..line.."_Value"):SetText(t2[obj.id][3][lineplusoffset][1].." ("..string.format("%.2f", (t2[obj.id][3][lineplusoffset][1]*100/t2[obj.id][1])).."%)")
+			_G(path.."_ScrollButton"..line.."_Icon"):SetTexture(DPSMate.BabbleSpell:GetSpellIcon(strsub(ability, 1, (strfind(ability, "%(") or 0)-1) or ability))
+			if len < 10 then
+				_G(path.."_ScrollButton"..line):SetWidth(235)
+				_G(path.."_ScrollButton"..line.."_Name"):SetWidth(125)
+			else
+				_G(path.."_ScrollButton"..line):SetWidth(220)
+				_G(path.."_ScrollButton"..line.."_Name"):SetWidth(110)
+			end
+			_G(path.."_ScrollButton"..line):Show()
+		else
+			_G(path.."_ScrollButton"..line):Hide()
+		end
+		_G(path.."_ScrollButton"..line.."_selected"):Hide()
+		if DetailsSelected == lineplusoffset then
+			_G(path.."_ScrollButton"..line.."_selected"):Show()
+		end
+	end
+	PSelected = obj.id
+	for p=1, 8 do
+		_G("DPSMate_Details_Healing_player_ScrollButton"..p.."_selected"):Hide()
+	end
+	_G("DPSMate_Details_Healing_player_ScrollButton"..i.."_selected"):Show()
+end
+
 function DPSMate.Modules.DetailsHealing:SelectDetails_HealingButton(i)
-	local pathh = "DPSMate_Details_Healing_Log"
-	local obj = _G(pathh.."_ScrollFrame")
-	local lineplusoffset = i + FauxScrollFrame_GetOffset(obj)
+	local pathh = ""
+	local path,obj,lineplusoffset
 	local user = DPSMateUser[DetailsUser][1]
-	
+	if toggle then
+		pathh = "DPSMate_Details_Healing_playerSpells"
+		obj = _G(pathh.."_ScrollFrame")
+		lineplusoffset = i + FauxScrollFrame_GetOffset(obj)
+		path = t2[obj.id][3][lineplusoffset]
+	else
+		pathh = "DPSMate_Details_Healing_Log"
+		obj = _G(pathh.."_ScrollFrame")
+		lineplusoffset = i + FauxScrollFrame_GetOffset(obj)
+		path = db[user][tonumber(DetailsArr[lineplusoffset])]
+	end
 	DetailsSelected = lineplusoffset
 	for p=1, 10 do
 		_G(pathh.."_ScrollButton"..p.."_selected"):Hide()
 	end
-	-- Performance?
-	local ability = tonumber(DetailsArr[lineplusoffset])
 	_G(pathh.."_ScrollButton"..i.."_selected"):Show()
-	
-	local path = db[user][ability]
 	local hit, crit, hitav, critav, hitMin, hitMax, critMin, critMax = path[2], path[3], path[4], path[5], path[6], path[7], path[8], path[9]
 	local total, max = hit+crit, DPSMate:TMax({hit, crit})
 	
 	-- Hit
-	_G(pathh.."Details_Healing_Amount0_Amount"):SetText(hit)
-	_G(pathh.."Details_Healing_Amount0_Percent"):SetText(ceil(100*hit/total).."%")
-	_G(pathh.."Details_Healing_Amount0_StatusBar"):SetValue(ceil(100*hit/max))
-	_G(pathh.."Details_Healing_Amount0_StatusBar"):SetStatusBarColor(0.3,0.7,1.0,1)
-	_G(pathh.."Details_Healing_Average0"):SetText(ceil(hitav))
-	_G(pathh.."Details_Healing_Min0"):SetText(hitMin)
-	_G(pathh.."Details_Healing_Max0"):SetText(hitMax)
+	_G("DPSMate_Details_Healing_LogDetails_Healing_Amount0_Amount"):SetText(hit)
+	_G("DPSMate_Details_Healing_LogDetails_Healing_Amount0_Percent"):SetText(ceil(100*hit/total).."%")
+	_G("DPSMate_Details_Healing_LogDetails_Healing_Amount0_StatusBar"):SetValue(ceil(100*hit/max))
+	_G("DPSMate_Details_Healing_LogDetails_Healing_Amount0_StatusBar"):SetStatusBarColor(0.3,0.7,1.0,1)
+	_G("DPSMate_Details_Healing_LogDetails_Healing_Average0"):SetText(ceil(hitav))
+	_G("DPSMate_Details_Healing_LogDetails_Healing_Min0"):SetText(hitMin)
+	_G("DPSMate_Details_Healing_LogDetails_Healing_Max0"):SetText(hitMax)
 	
 	-- Crit
-	_G(pathh.."Details_Healing_Amount1_Amount"):SetText(crit)
-	_G(pathh.."Details_Healing_Amount1_Percent"):SetText(ceil(100*crit/total).."%")
-	_G(pathh.."Details_Healing_Amount1_StatusBar"):SetValue(ceil(100*crit/max))
-	_G(pathh.."Details_Healing_Amount1_StatusBar"):SetStatusBarColor(1.0,0.7,0.3,1)
-	_G(pathh.."Details_Healing_Average1"):SetText(ceil(critav))
-	_G(pathh.."Details_Healing_Min1"):SetText(critMin)
-	_G(pathh.."Details_Healing_Max1"):SetText(critMax)
+	_G("DPSMate_Details_Healing_LogDetails_Healing_Amount1_Amount"):SetText(crit)
+	_G("DPSMate_Details_Healing_LogDetails_Healing_Amount1_Percent"):SetText(ceil(100*crit/total).."%")
+	_G("DPSMate_Details_Healing_LogDetails_Healing_Amount1_StatusBar"):SetValue(ceil(100*crit/max))
+	_G("DPSMate_Details_Healing_LogDetails_Healing_Amount1_StatusBar"):SetStatusBarColor(1.0,0.7,0.3,1)
+	_G("DPSMate_Details_Healing_LogDetails_Healing_Average1"):SetText(ceil(critav))
+	_G("DPSMate_Details_Healing_LogDetails_Healing_Min1"):SetText(critMin)
+	_G("DPSMate_Details_Healing_LogDetails_Healing_Max1"):SetText(critMax)
 end
 
 function DPSMate.Modules.DetailsHealing:UpdatePie()
@@ -137,20 +269,20 @@ function DPSMate.Modules.DetailsHealing:CreateGraphTable()
 	local lines = {}
 	for i=1, 8 do
 		-- Horizontal
-		lines[i] = DPSMate.Options.graph:DrawLine(DPSMate_Details_Healing_Log, 252, 270-i*30, 617, 270-i*30, 20, {0.5,0.5,0.5,0.5}, "BACKGROUND")
+		lines[i] = DPSMate.Options.graph:DrawLine(DPSMate_Details_Healing_LogDetails_Healing, 10, 270-i*30, 370, 270-i*30, 20, {0.5,0.5,0.5,0.5}, "BACKGROUND")
 		lines[i]:Show()
 	end
 	-- Vertical
-	lines[9] = DPSMate.Options.graph:DrawLine(DPSMate_Details_Healing_Log, 302, 260, 302, 15, 20, {0.5,0.5,0.5,0.5}, "BACKGROUND")
+	lines[9] = DPSMate.Options.graph:DrawLine(DPSMate_Details_Healing_LogDetails_Healing, 57, 260, 57, 15, 20, {0.5,0.5,0.5,0.5}, "BACKGROUND")
 	lines[9]:Show()
 	
-	lines[10] = DPSMate.Options.graph:DrawLine(DPSMate_Details_Healing_Log, 437, 260, 437, 15, 20, {0.5,0.5,0.5,0.5}, "BACKGROUND")
+	lines[10] = DPSMate.Options.graph:DrawLine(DPSMate_Details_Healing_LogDetails_Healing, 192, 260, 192, 15, 20, {0.5,0.5,0.5,0.5}, "BACKGROUND")
 	lines[10]:Show()
 	
-	lines[11] = DPSMate.Options.graph:DrawLine(DPSMate_Details_Healing_Log, 497, 260, 497, 15, 20, {0.5,0.5,0.5,0.5}, "BACKGROUND")
+	lines[11] = DPSMate.Options.graph:DrawLine(DPSMate_Details_Healing_LogDetails_Healing, 252, 260, 252, 15, 20, {0.5,0.5,0.5,0.5}, "BACKGROUND")
 	lines[11]:Show()
 	
-	lines[12] = DPSMate.Options.graph:DrawLine(DPSMate_Details_Healing_Log, 557, 260, 557, 15, 20, {0.5,0.5,0.5,0.5}, "BACKGROUND")
+	lines[12] = DPSMate.Options.graph:DrawLine(DPSMate_Details_Healing_LogDetails_Healing, 312, 260, 312, 15, 20, {0.5,0.5,0.5,0.5}, "BACKGROUND")
 	lines[12]:Show()
 end
 
@@ -251,6 +383,27 @@ function DPSMate.Modules.DetailsHealing:AddProcPoints(name, dat)
 		end
 	end
 	return {bool, data}
+end
+
+function DPSMate.Modules.DetailsHealing:ToggleMode()
+	if toggle then
+		toggle = false
+		self:ScrollFrame_Update()
+		self:SelectDetails_HealingButton(1)
+		DPSMate_Details_Healing_playerSpells:Hide()
+		DPSMate_Details_Healing_player:Hide()
+		DPSMate_Details_Healing_Diagram:Show()
+		DPSMate_Details_Healing_Log:Show()
+	else
+		toggle = true
+		self:Player_Update()
+		self:PlayerSpells_Update(1)
+		self:SelectDetails_HealingButton(1)
+		DPSMate_Details_Healing_playerSpells:Show()
+		DPSMate_Details_Healing_player:Show()
+		DPSMate_Details_Healing_Diagram:Hide()
+		DPSMate_Details_Healing_Log:Hide()
+	end
 end
 
 

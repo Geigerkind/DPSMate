@@ -1292,8 +1292,8 @@ function DPSMate.DB:DeathHistory(target, cause, ability, amount, hit, crit, type
 			[6] = DPSMateCombatTime[val],
 			[7] = GameTime_GetTime(),
 		})
-		if DPSMateDeaths[cat][DPSMateUser[target][1]][1][11] then
-			tremove(DPSMateDeaths[cat][DPSMateUser[target][1]][1], 11)
+		if DPSMateDeaths[cat][DPSMateUser[target][1]][1][21] then
+			tremove(DPSMateDeaths[cat][DPSMateUser[target][1]][1], 21)
 		end
 	end
 end
