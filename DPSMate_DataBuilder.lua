@@ -139,6 +139,7 @@ function DPSMate.DB:OnEvent(event)
 				hideinpvp = false,
 				disablewhilehidden = false,
 				datasegments = 8,
+				mergepets = true,
 				columnsdps = {
 					[1] = false,
 					[2] = true,
@@ -374,6 +375,9 @@ function DPSMate.DB:OnEvent(event)
 				[1] = true,
 				[2] = true,
 			}
+		end
+		if not DPSMateSettings["mergepets"] then
+			DPSMateSettings["mergepets"] = true
 		end
 		
 		if DPSMateCombatTime == nil then

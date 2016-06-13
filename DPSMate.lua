@@ -3,7 +3,7 @@
 
 -- Global Variables
 DPSMate = {}
-DPSMate.VERSION = 17
+DPSMate.VERSION = 18
 DPSMate.Parser = {}
 DPSMate.localization = {}
 DPSMate.DB = {}
@@ -342,9 +342,11 @@ function DPSMate:GetAbilityById(id)
 end
 
 function DPSMate:PlayerExist(arr, name)
-	for cat, val in pairs(arr) do
-		if (cat == name) then
-			return true
+	if DPSMateSettings["mergepets"] then
+		for cat, val in pairs(arr) do
+			if (cat == name) then
+				return true
+			end
 		end
 	end
 	return false

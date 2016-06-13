@@ -2668,6 +2668,24 @@
 							</OnClick>
 						</Scripts>
 					</CheckButton>
+					<CheckButton name="$parent_MergePets" inherits="DPSMate_Template_CheckButton">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent_Disable" relativePoint="BOTTOMLEFT" />
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.mergepets)
+							</OnLoad>
+							<OnClick>
+								if DPSMateSettings["mergepets"] then
+									DPSMateSettings["mergepets"] = false
+									DPSMate:Enable()
+								else
+									DPSMateSettings["mergepets"] = true
+								end
+							</OnClick>
+						</Scripts>
+					</CheckButton>
 					<Slider name="$parent_Segments" inherits="DPSMate_Template_Slider">
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="$parent_Combat" relativePoint="BOTTOMLEFT">

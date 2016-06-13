@@ -13,13 +13,15 @@ DPSMate.Options.Options[1]["args"]["dps"] = {
 -- Register the moodule
 DPSMate:Register("dps", DPSMate.Modules.DPS, "DPS")
 
+local tinsert = table.insert
+
 
 function DPSMate.Modules.DPS:GetSortedTable(arr,k)
 	local b, a, total = {}, {}, 0
 	if arr then
 		for cat, val in pairs(arr) do
 			local name = DPSMate:GetUserById(cat)
-			if (not DPSMateUser[name]["isPet"]) then
+			if (not DPSMateUser[name][4] or (DPSMateUser[name][4] and not DPSMateSettings["mergepets"])) then
 				if DPSMate:ApplyFilter(k, name) then
 					local CV = val["i"][2]
 					if DPSMate:PlayerExist(DPSMateUser, DPSMateUser[name]["pet"]) and arr[DPSMateUser[DPSMateUser[name]["pet"]][1]] then
@@ -29,13 +31,13 @@ function DPSMate.Modules.DPS:GetSortedTable(arr,k)
 					local i = 1
 					while true do
 						if (not b[i]) then
-							table.insert(b, i, CV)
-							table.insert(a, i, name)
+							tinsert(b, i, CV)
+							tinsert(a, i, name)
 							break
 						else
 							if b[i] < CV then
-								table.insert(b, i, CV)
-								table.insert(a, i, name)
+								tinsert(b, i, CV)
+								tinsert(a, i, name)
 								break
 							end
 						end
@@ -53,7 +55,7 @@ function DPSMate.Modules.DPS:EvalTable(user, k)
 	local a, u, p, d, total, pet = {}, {}, {}, {}, 0, false
 	local arr = DPSMate:GetMode(k)
 	if not arr[user[1]] then return end
-	if (user[5] and user[5] ~= "Unknown" and arr[DPSMateUser[user[5]][1]]) then u={user[1],DPSMateUser[user[5]][1]} else u={user[1]} end
+	if (user[5] and user[5] ~= "Unknown" and arr[DPSMateUser[user[5]][1]]) and DPSMateSettings["mergepets"] then u={user[1],DPSMateUser[user[5]][1]} else u={user[1]} end
 	for _, v in pairs(u) do
 		for cat, val in pairs(arr[v]) do
 			if (type(val) == "table" and cat~="i") then
@@ -62,13 +64,13 @@ function DPSMate.Modules.DPS:EvalTable(user, k)
 					local i = 1
 					while true do
 						if (not d[i]) then
-							table.insert(a, i, cat)
-							table.insert(d, i, {val[13], pet})
+							tinsert(a, i, cat)
+							tinsert(d, i, {val[13], pet})
 							break
 						else
 							if (d[i][1] < val[13]) then
-								table.insert(a, i, cat)
-								table.insert(d, i, {val[13], pet})
+								tinsert(a, i, cat)
+								tinsert(d, i, {val[13], pet})
 								break
 							end
 						end
@@ -93,9 +95,9 @@ function DPSMate.Modules.DPS:GetSettingValues(arr, cbt, k)
 		if DPSMateSettings["columnsdps"][1] then str[1] = "("..dmg..p..")"; strt[1] = "("..tot..p..")" end
 		if DPSMateSettings["columnsdps"][2] then str[2] = " "..string.format("%.1f", (dmg/cbt))..p; strt[2] = " "..string.format("%.1f", (tot/cbt))..p end
 		if DPSMateSettings["columnsdps"][3] then str[3] = " ("..string.format("%.1f", 100*dmg/tot).."%)" end
-		table.insert(name, a[cat])
-		table.insert(value, str[1]..str[2]..str[3])
-		table.insert(perc, 100*(dmg/sort))
+		tinsert(name, a[cat])
+		tinsert(value, str[1]..str[2]..str[3])
+		tinsert(perc, 100*(dmg/sort))
 	end
 	return name, value, perc, strt
 end
