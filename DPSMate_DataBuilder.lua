@@ -56,6 +56,7 @@ local InitialLoad, In1 = false, 0
 local tinsert = table.insert
 local tremove = table.remove
 local _G = getglobal
+local player = ""
 
 -- Begin Functions
 
@@ -121,6 +122,7 @@ function DPSMate.DB:OnEvent(event)
 						},
 						filterpeople = "",
 						grouponly = false,
+						realtime = false
 					}
 				},
 				lock = false,
@@ -282,6 +284,20 @@ function DPSMate.DB:OnEvent(event)
 					[1] = true,
 					[2] = true,
 				},
+				columnscasts = {
+					[1] = true,
+					[2] = true,
+				},
+				columnsthreat = {
+					[1] = true,
+					[2] = false,
+					[3] = true,
+				},
+				columnstps = {
+					[1] = false,
+					[2] = true,
+					[3] = true,
+				},
 				columnsfriendlyfire = {
 					[1] = true,
 					[2] = false,
@@ -311,7 +327,8 @@ function DPSMate.DB:OnEvent(event)
 				Deaths = {},
 				Interrupts = {},
 				Dispels = {},
-				Auras = {}
+				Auras = {},
+				Threat = {}
 			}
 		end
 		if DPSMateUser == nil then DPSMateUser = {} end
@@ -330,6 +347,7 @@ function DPSMate.DB:OnEvent(event)
 		if DPSMateDeaths == nil then DPSMateDeaths = {[1]={},[2]={}} end
 		if DPSMateInterrupts == nil then DPSMateInterrupts = {[1]={},[2]={}} end
 		if DPSMateAurasGained == nil then DPSMateAurasGained = {[1]={},[2]={}} end
+		if DPSMateThreat == nil then DPSMateThreat = {[1]={},[2]={}} end
 		-- Legacy Logs support
 		if DPSMateAttempts == nil then DPSMateAttempts = {} end
 		if DPSMatePlayer == nil then DPSMatePlayer = {} end
@@ -369,11 +387,34 @@ function DPSMate.DB:OnEvent(event)
 		DPSMate.Modules.AurasLost.DB = DPSMateAurasGained
 		DPSMate.Modules.AurasUptimers.DB = DPSMateAurasGained
 		DPSMate.Modules.Procs.DB = DPSMateAurasGained
+		DPSMate.Modules.Casts.DB = DPSMateEDT
+		DPSMate.Modules.Threat.DB = DPSMateThreat
+		DPSMate.Modules.TPS.DB = DPSMateThreat
 		
 		if not DPSMateSettings["columnsprocs"] then
 			DPSMateSettings["columnsprocs"] = {
 				[1] = true,
 				[2] = true,
+			}
+		end
+		if not DPSMateSettings["columnscasts"] then
+			DPSMateSettings["columnscasts"] = {
+				[1] = true,
+				[2] = true,
+			}
+		end
+		if not DPSMateSettings["columnsthreat"] then
+			DPSMateSettings["columnsthreat"] = {
+				[1] = true,
+				[2] = false,
+				[3] = true
+			}
+		end
+		if not DPSMateSettings["columnstps"] then
+			DPSMateSettings["columnstps"] = {
+				[1] = false,
+				[2] = true,
+				[3] = true
 			}
 		end
 		if not DPSMateSettings["mergepets"] then
@@ -396,6 +437,7 @@ function DPSMate.DB:OnEvent(event)
 		
 		self:CombatTime()
 		
+		player = UnitName("player")
 		DPSMate:SendMessage("DPSMate build "..DPSMate.VERSION.." has been loaded!")
 		self.loaded = true
 		InitialLoad = true
@@ -556,6 +598,34 @@ function DPSMate.DB:BuildAbility(name, school)
 	return false
 end
 
+function DPSMate.DB:Threat(value, name)
+	if self:BuildUser(name, nil) or value==0 then return end
+	for cat, val in pairs({[1]="total", [2]="current"}) do
+		if not DPSMateThreat[cat][DPSMateUser[name][1]] then
+			DPSMateThreat[cat][DPSMateUser[name][1]] = 0
+		end
+	end
+	if DPSMateThreat[2][DPSMateUser[name][1]] < value then
+		DPSMateThreat[1][DPSMateUser[name][1]] = DPSMateThreat[1][DPSMateUser[name][1]] + value - DPSMateThreat[2][DPSMateUser[name][1]]
+	end
+	DPSMateThreat[2][DPSMateUser[name][1]] = value
+	self.NeedUpdate = true
+end
+
+local savedValue = {
+	["damage"] = 0,
+	["dmgt"] = 0,
+	["heal"] = 0,
+	["eheal"] = 0
+}
+function DPSMate.DB:GetAlpha(k)
+	if DPSMateSettings["windows"][k]["realtime"] then
+		local p = savedValue[DPSMateSettings["windows"][k]["realtime"]] or 0
+		savedValue[DPSMateSettings["windows"][k]["realtime"]] = 0
+		return p
+	end
+end
+
 -- First crit/hit av value will be half if it is not the first hit actually. Didnt want to add an exception for it though. Maybe later :/
 function DPSMate.DB:DamageDone(Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, Ddodge, Dresist, Damount, Dglance, Dblock)
 	if self:BuildUser(Duser, nil) or self:BuildAbility(Dname, nil) then return end -- Attempt to fix this problem?
@@ -629,6 +699,7 @@ function DPSMate.DB:DamageDone(Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, Ddodge,
 		DPSMateDamageDone[cat][DPSMateUser[Duser][1]]["i"][2] = DPSMateDamageDone[cat][DPSMateUser[Duser][1]]["i"][2] + Damount
 		if Damount > 0 then tinsert(DPSMateDamageDone[cat][DPSMateUser[Duser][1]]["i"][1], {DPSMateCombatTime[val], Damount}) end
 	end
+	savedValue["damage"] = savedValue["damage"] + Damount
 	self.NeedUpdate = true
 end
 
@@ -695,6 +766,7 @@ function DPSMate.DB:DamageTaken(Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, Ddodge
 		DPSMateDamageTaken[cat][DPSMateUser[Duser][1]]["i"][2] = DPSMateDamageTaken[cat][DPSMateUser[Duser][1]]["i"][2] + Damount
 		if Damount > 0 then tinsert(DPSMateDamageTaken[cat][DPSMateUser[Duser][1]]["i"][1], {DPSMateCombatTime[val], Damount}) end
 	end
+	savedValue["dmgt"] = savedValue["dmgt"] + Damount
 	self.NeedUpdate = true
 end
 
@@ -837,6 +909,11 @@ function DPSMate.DB:Healing(mode, arr, Duser, Dname, Dhit, Dcrit, Damount)
 			end
 		end
 		if Damount > 0 then tinsert(arr[cat][DPSMateUser[Duser][1]]["i"][2], {DPSMateCombatTime[val], Damount}) end
+	end
+	if mode == 0 then
+		savedValue["eheal"] = savedValue["eheal"] + Damount
+	elseif mode == 1 then
+		savedValue["heal"] = savedValue["heal"] + Damount
 	end
 	self.NeedUpdate = true
 end
@@ -1304,24 +1381,26 @@ end
 
 local AwaitKick = {}
 local AfflictedStun = {}
-function DPSMate.DB:AwaitAfflictedStun(cause, ability, target, time)
+function DPSMate.DB:AwaitAfflicted(cause, ability, target, time)
 	for cat, val in AfflictedStun do
-		if val[1]==cause and val[4]==time then
+		if val[1]==cause and ((val[4]+0.5)<=time or (val[4]-0.5)>=time) then
 			--DPSMate:SendMessage("That happened!")
 			return
 		end
 	end
-	--DPSMate:SendMessage("Afflicted Stun: "..ability)
+	--DPSMate:SendMessage("Await Afflicted Stun: "..ability)
 	--DPSMate:SendMessage(cause..","..ability..","..target..","..time)
 	tinsert(AfflictedStun, {cause,ability,target,time})
 end
 
-function DPSMate.DB:ConfirmAfflictedStun(target, ability, time)
---	DPSMate:SendMessage("Try to confirm: "..ability)
+function DPSMate.DB:ConfirmAfflicted(target, ability, time)
+	--DPSMate:SendMessage("Try to confirm: "..ability)
 	for cat, val in AfflictedStun do	
 		--DPSMate:SendMessage(val[2].."=="..(ability or "").." and "..val[3].."=="..(target or "").." AND "..val[4].."<="..(time or ""))
 		if val[2]==ability and val[3]==target and val[4]<=time then
-			self:AssignPotentialKick(val[1], val[2], val[3], time)
+			if DPSMate.Parser.Kicks[ability] then self:AssignPotentialKick(val[1], val[2], val[3], time) end
+			--self:DamageDone(player, ability, 1,0,0,0,0,0,0,0,0)
+			self:EnemyDamage(true, DPSMateEDT, target, ability, 1, 0, 0, 0, 0, 0, 0, player, 0, 0)
 			--DPSMate:SendMessage("Confirmed afflicted Stun: "..ability)
 			tremove(AfflictedStun, cat)
 			break

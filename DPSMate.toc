@@ -6,7 +6,8 @@
 ## Author: Shino <Synced> - Kronos
 ## SavedVariables: DPSMateSettings
 ## SavedVariablesPerCharacter: DPSMateUser, DPSMateAbility, DPSMateDamageDone, DPSMateEDT, DPSMateEDD, DPSMateDamageTaken, DPSMateDispels, DPSMateInterrupts, DPSMateDeaths, DPSMateEHealing, DPSMateTHealing, DPSMateHealingTaken, DPSMateEHealingTaken, DPSMateOverhealing, DPSMateAbsorbs, DPSMateThreat, DPSMateAurasGained, DPSMateCombatTime, DPSMateHistory, DPSMateAttempts, DPSMatePlayer, DPSMateLoot
-## Version: 0.1
+## OptionalDeps: KLHThreatMeter
+## Version: 19
 
 libs\AceLibrary\AceLibrary.lua
 libs\Dewdrop-2.0\Dewdrop-2.0.lua
@@ -62,6 +63,9 @@ modules\DPSMate_ManaGained.lua
 modules\DPSMate_ManaLost.lua
 modules\DPSMate_Overhealing.lua
 modules\DPSMate_Procs.lua
+modules\DPSMate_Casts.lua
+modules\DPSMate_Threat.lua
+modules\DPSMate_TPS.lua
 
 modules\DPSMate_Details_Damage.lua
 modules\DPSMate_Details_Damage.xml
@@ -119,6 +123,8 @@ modules\DPSMate_Details_Auras.lua
 modules\DPSMate_Details_Auras.xml
 modules\DPSMate_Details_Procs.lua
 modules\DPSMate_Details_Procs.xml
+modules\DPSMate_Details_Casts.lua
+modules\DPSMate_Details_Casts.xml
 modules\DPSMate_Details_FriendlyFire.lua
 modules\DPSMate_Details_FriendlyFire.xml
 

@@ -175,7 +175,7 @@ end
 function DPSMate.Parser:PeriodicDamage(msg)
 	t = {}
 	-- (NAME) is afflicted by (ABILITY). => Filtered out for now.
-	for a,b in strgfind(msg, "(.+) is afflicted by (.+)%.") do if DPSMate.Parser.Kicks[b] then DB:ConfirmAfflictedStun(a, b, GetTime()) end; return end
+	for a,b in strgfind(msg, "(.+) is afflicted by (.+)%.") do DB:ConfirmAfflicted(a, b, GetTime()); return end
 	-- School can be used now but how and when?
 	for a,b,c,d,e in strgfind(msg, "(.+) suffers (%d+) (%a-) damage from (.+)'s (.+)%.") do
 		t[1] = tnbr(b)

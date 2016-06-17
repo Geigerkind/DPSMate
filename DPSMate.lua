@@ -3,7 +3,7 @@
 
 -- Global Variables
 DPSMate = {}
-DPSMate.VERSION = 18
+DPSMate.VERSION = 19
 DPSMate.Parser = {}
 DPSMate.localization = {}
 DPSMate.DB = {}
@@ -57,6 +57,11 @@ DPSMate.Events = {
 	
 	"CHAT_MSG_COMBAT_FRIENDLY_DEATH",
 	"CHAT_MSG_COMBAT_HOSTILE_DEATH",
+	
+	"CHAT_MSG_COMBAT_PET_HITS",
+	"CHAT_MSG_COMBAT_PET_MISSES",
+	"CHAT_MSG_SPELL_PET_BUFF",
+	"CHAT_MSG_SPELL_PET_DAMAGE",
 	
 	--"SPELLCAST_CHANNEL_START", --
 	--"SPELLCAST_STOP", --
@@ -241,6 +246,7 @@ function DPSMate:InitializeFrames()
 			bar.bg:SetVertexColor(val["bgbarcolor"][1],val["bgbarcolor"][2],val["bgbarcolor"][3], 0.5)
 			bar:SetHeight(val["barheight"])
 		end
+		DPSMate.Options:SelectRealtime(frame, val["realtime"])
 	end
 	DPSMate.Options:ToggleTitleBarButtonState()
 	DPSMate.Options:HideWhenSolo()

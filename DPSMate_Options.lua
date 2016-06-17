@@ -107,6 +107,42 @@ DPSMate.Options.Options = {
 				desc = DPSMate.localization.desc.reset,
 				func = function() DPSMate_PopUp:Show(); DPSMate.Options.Dewdrop:Close() end,
 			},
+			realtime = {
+				order = 12,
+				type = 'group',
+				name = 'Create realtime graph',
+				desc = 'Create a realtime graph. Be aware it takes a lot of ressources.',
+				args = {
+					damage = {
+						order = 1,
+						type = 'execute',
+						name = 'Damage done',
+						desc = 'Select damage done for this frame.',
+						func = function() DPSMate.Options:SelectRealtime(DPSMate.Options.Dewdrop:GetOpenedParent(), "damage") end
+					},
+					dmgt = {
+						order = 2,
+						type = 'execute',
+						name = 'Damage taken',
+						desc = 'Select damage taken for this frame.',
+						func = function() DPSMate.Options:SelectRealtime(DPSMate.Options.Dewdrop:GetOpenedParent(), "dmgt") end
+					},
+					heal = {
+						order = 3,
+						type = 'execute',
+						name = 'Healing',
+						desc = 'Select raw healing for this frame.',
+						func = function() DPSMate.Options:SelectRealtime(DPSMate.Options.Dewdrop:GetOpenedParent(), "heal") end
+					},
+					eheal = {
+						order = 4,
+						type = 'execute',
+						name = 'Effective Healing',
+						desc = 'Select effective healing for this frame.',
+						func = function() DPSMate.Options:SelectRealtime(DPSMate.Options.Dewdrop:GetOpenedParent(), "eheal") end
+					}
+				}
+			},
 			blank1 = {
 				order = 20,
 				type = 'header',
@@ -332,6 +368,34 @@ local SelectedChannel = "Raid"
 
 -- Begin Functions
 
+function DPSMate.Options:SelectRealtime(obj, kind)
+	if kind then
+		local key = obj.Key
+		DPSMateSettings["windows"][key]["realtime"] = kind
+		if not _G(obj:GetName().."_RealTime") then
+			local f = CreateFrame("Frame", obj:GetName().."_RealTime", obj, "DPSMate_RealTime")
+			local g = DPSMate.Options.graph:CreateGraphRealtime(f:GetName().."_Graph",f,"BOTTOMRIGHT","BOTTOMRIGHT",-5,5,190,150)
+			g:SetAutoScale(true)
+			g:SetGridSpacing(1.0,10.0)
+			g:SetYMax(120)
+			g:SetXAxis(-11,-1)
+			g:SetFilterRadius(1)
+			g:SetBarColors({0.2,0.0,0.0,0.4},{1.0,0.0,0.0,1.0})
+			g:SetScript("OnUpdate",function() 
+				if DPSMate.DB.loaded and DPSMateSettings["windows"][key]["realtime"] then
+					g:OnUpdate(g)
+					g:AddTimeData(DPSMate.DB:GetAlpha(key)) 
+				end
+			end)
+			f:Show()
+			g:Show()
+		else
+			 _G(obj:GetName().."_RealTime"):Show()
+		end
+		DPSMate.Options.Dewdrop:Close()
+	end
+end
+
 function DPSMate.Options:InitializeConfigMenu()
 	-- Inialize Extra Buttons
 	for cat, val in pairs(DPSMateSettings["windows"]) do
@@ -409,6 +473,8 @@ function DPSMate.Options:InitializeConfigMenu()
 		_G("DPSMate_ConfigMenu_Tab_Columns_Child_EffectiveHPS_Check"..i):SetChecked(DPSMateSettings["columnsehps"][i])
 		_G("DPSMate_ConfigMenu_Tab_Columns_Child_HAB_Check"..i):SetChecked(DPSMateSettings["columnshab"][i])
 		_G("DPSMate_ConfigMenu_Tab_Columns_Child_FriendlyFire_Check"..i):SetChecked(DPSMateSettings["columnsfriendlyfire"][i])
+		_G("DPSMate_ConfigMenu_Tab_Columns_Child_Threat_Check"..i):SetChecked(DPSMateSettings["columnsthreat"][i])
+		_G("DPSMate_ConfigMenu_Tab_Columns_Child_TPS_Check"..i):SetChecked(DPSMateSettings["columnstps"][i])
 	end
 	for i=1, 2 do
 		_G("DPSMate_ConfigMenu_Tab_Columns_Child_Absorbs_Check"..i):SetChecked(DPSMateSettings["columnsabsorbs"][i])
@@ -429,6 +495,7 @@ function DPSMate.Options:InitializeConfigMenu()
 		_G("DPSMate_ConfigMenu_Tab_Columns_Child_AurasLost_Check"..i):SetChecked(DPSMateSettings["columnsauraslost"][i])
 		_G("DPSMate_ConfigMenu_Tab_Columns_Child_AuraUptime_Check"..i):SetChecked(DPSMateSettings["columnsaurauptime"][i])
 		_G("DPSMate_ConfigMenu_Tab_Columns_Child_Procs_Check"..i):SetChecked(DPSMateSettings["columnsprocs"][i])
+		_G("DPSMate_ConfigMenu_Tab_Columns_Child_Casts_Check"..i):SetChecked(DPSMateSettings["columnscasts"][i])
 	end
 	
 	-- Tab Tooltips
@@ -724,6 +791,7 @@ function DPSMate.Options:PopUpAccept(bool, bypass)
 			DPSMateDeaths = {[1]={},[2]={}}
 			DPSMateInterrupts = {[1]={},[2]={}}
 			DPSMateAurasGained = {[1]={},[2]={}}
+			DPSMateThreat = {[1]={},[2]={}}
 			DPSMateHistory = {
 				names = {},
 				DMGDone = {},
@@ -739,7 +807,8 @@ function DPSMate.Options:PopUpAccept(bool, bypass)
 				Deaths = {},
 				Interrupts = {},
 				Dispels = {},
-				Auras = {}
+				Auras = {},
+				Threat = {}
 			}
 			DPSMateCombatTime = {
 				total = 1,
@@ -798,6 +867,9 @@ function DPSMate.Options:PopUpAccept(bool, bypass)
 		DPSMate.Modules.AurasLost.DB = DPSMateAurasGained
 		DPSMate.Modules.AurasUptimers.DB = DPSMateAurasGained
 		DPSMate.Modules.Procs.DB = DPSMateAurasGained
+		DPSMate.Modules.Casts.DB = DPSMateCasts
+		DPSMate.Modules.Threat.DB = DPSMateThreat
+		DPSMate.Modules.TPS.DB = DPSMateThreat
 		for _, val in pairs(DPSMateSettings["windows"]) do
 			if not val["options"][2]["total"] and not val["options"][2]["currentfight"] then
 				val["options"][2]["total"] = true
@@ -1502,6 +1574,7 @@ function DPSMate.Options:CreateWindow()
 			},
 			filterpeople = "",
 			grouponly = false,
+			realtime = false
 		})
 		local TL = DPSMate:TableLength(DPSMateSettings["windows"])
 		if not _G("DPSMate_"..na) then

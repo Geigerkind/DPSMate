@@ -65,7 +65,7 @@ function lib:CreateGraphRealtime(name,parent,relative,relativeTo,offsetX,offsetY
 	graph.SetXAxis=GraphFunctions.SetXAxis
 	graph.SetYMax=GraphFunctions.SetYMax
 	graph.AddTimeData=GraphFunctions.AddTimeData
-	--graph.OnUpdate=GraphFunctions.OnUpdateGraphRealtime
+	graph.OnUpdate=GraphFunctions.OnUpdateGraphRealtime
 	graph.CreateGridlines=GraphFunctions.CreateGridlines
 	graph.RefreshGraph=GraphFunctions.RefreshRealtimeGraph
 	graph.SetAxisDrawing=GraphFunctions.SetAxisDrawing
@@ -73,17 +73,17 @@ function lib:CreateGraphRealtime(name,parent,relative,relativeTo,offsetX,offsetY
 	graph.SetAxisColor=GraphFunctions.SetAxisColor
 	graph.SetGridColor=GraphFunctions.SetGridColor
 	graph.SetFilterRadius=GraphFunctions.SetFilterRadius
-	--graph.SetAutoscaleYAxis=GraphFunctions.SetAutoscaleYAxis
+	graph.SetAutoscaleYAxis=GraphFunctions.SetAutoscaleYAxis
 	graph.SetBarColors=GraphFunctions.SetBarColors
 	graph.SetMode=GraphFunctions.SetMode
 	graph.SetAutoScale=GraphFunctions.SetAutoScale
 
 	graph.DrawLine=self.DrawLine
 	graph.HideLines=self.HideLines
+	graph.HideFontStrings=GraphFunctions.HideFontStrings
 
 
 	--Set the update function
-	--graph:SetScript("OnUpdate", graph.OnUpdate)
 
 	--Initialize Data
 	graph.GraphType="REALTIME"
@@ -988,10 +988,10 @@ function GraphFunctions:OnUpdateGraph()
 end
 
 --Performs a convolution in realtime allowing to graph Framerate, DPS, or any other data you want graphed in realtime
-function GraphFunctions:OnUpdateGraphRealtime()
+function GraphFunctions:OnUpdateGraphRealtime(obj)
 	local i,j
 	local CurTime=GetTime()
-	local MaxBarHeight=self:GetHeight()
+	local MaxBarHeight=obj:GetHeight()
 	
 	--Slow Mode performs an entire convolution every frame
 	if self.Mode=="SLOW" then
@@ -1124,14 +1124,14 @@ function GraphFunctions:RefreshLineGraph()
 
 		local XBorder, YBorder
 
-		XBorder=0.1*(MaxX-MinX)
+		XBorder=0.05*(MaxX-MinX)
 		YBorder=0.1*(MaxY-MinY)
 		
 		if not self.LockOnXMin then
 			self.XMin=MinX-XBorder
 		end
 		if not self.LockOnXMax then
-			self.XMax=MaxX+XBorder
+			self.XMax=MaxX
 		end
 		if not self.LockOnYMin then
 			self.YMin=MinY-YBorder
@@ -1430,7 +1430,7 @@ function TestRealtimeGraph()
 	g:SetBarColors({0.2,0.0,0.0,0.4},{1.0,0.0,0.0,1.0})
 
 	local f = CreateFrame("Frame",name,parent)
-	f:SetScript("OnUpdate",function() g:AddTimeData(1) end)
+	f:SetScript("OnUpdate",function() g:AddTimeData(DPSMate.DB:GetAlpha()) end)
 	f:Show()
 end
 

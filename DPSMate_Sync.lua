@@ -9,6 +9,7 @@ local pid = 0
 local time, iterator, voteStarter = 0, 1, false
 local t = {}
 local strgsub = string.gsub
+local strgfind = string.gfind
 local tinsert = table.insert
 local tremove = table.remove
 local tnbr = tonumber
@@ -17,6 +18,8 @@ local func = function(c) tinsert(t,c) end
 local LastMouseover = nil
 local DB = DPSMate.DB
 local Buffer = {}
+local sname = GetRealmName()
+local GT = GetTime
 local Arrays = {
 	[1] = {}, -- Damage
 	[2] = {}, -- Damage Taken
@@ -36,6 +39,20 @@ local Arrays = {
 
 -- Beginn Functions
 
+-- Function to avoid disconnects on Kronos
+local ccount = 0;
+local cctime = 0;
+function NewSDM(prefix, message, type)
+	--DPSMate:SendMessage(ccount)
+	if (GT()-cctime)>=1.1 then
+		ccount = 0
+	end
+	ccount = ccount + 1
+	cctime = GT()
+	SDM(prefix, message, type)
+end
+SendAddonMessage = NewSDM
+
 function DPSMate.Sync:OnLoad()
 	if (not DPSMateUser[player]) then
 		DPSMateUser[player] = {
@@ -53,9 +70,17 @@ function DPSMate.Sync:GetSyncDelay(elapsed)
 	if lastRefresh>=5 then
 		local _,_,ping = GetNetStats();
 		lastRefresh = 0;
-		delay = 3.1 + 2*ping/1000
+		delay = 2.1 + 2*ping/1000
 	end
 	return delay
+end
+
+function DPSMate.Sync:GetMessageState()
+	if sname ~= "Kronos" and sname ~= "Kronos II" then return true end 
+	if (GT()-cctime)>=1.1 and ccount<=800 then
+		return true
+	end
+	return false
 end
 
 local co, cou = 1, 1
@@ -63,12 +88,14 @@ function DPSMate.Sync:SendAddonMessages(elapsed)
 	if DPSMateSettings["sync"] then
 		self.LU = self.LU + elapsed
 		if self.LU > self:GetSyncDelay(elapsed) then
-			for i=1, 50 do
-				--SDM("Test"..co, "Test"..co, "RAID")
-				if not Buffer[co] then break end
-				SDM(Buffer[co][1], Buffer[co][2], "RAID")
-				Buffer[co] = nil
-				co = co + 1
+			if self:GetMessageState() then
+				for i=1, 50 do
+					--SDM("Test"..co, "Test"..co, "RAID")
+					if not Buffer[co] then break end
+					SDM(Buffer[co][1]..DPSMate.VERSION, Buffer[co][2], "RAID")
+					Buffer[co] = nil
+					co = co + 1
+				end
 			end
 			--DPSMate:SendMessage(co)
 			--co = co + 1
@@ -284,10 +311,15 @@ end
 
 function DPSMate.Sync:OnEvent(event)
 	if event == "CHAT_MSG_ADDON" then
-		if DPSMateSettings["sync"] and DB.loaded then
-			if arg4 == player then return end 
-			if self.Exec[arg1] then
-				self.Exec[arg1](arg2,arg4)
+		if DB.loaded then
+			if arg1 == "KLHTM" then
+				self:Threat(arg2,arg4)
+			end
+			if DPSMateSettings["sync"] then
+				if arg4 == player then return end 
+				if self.Exec[arg1] then
+					self.Exec[arg1](arg2,arg4)
+				end
 			end
 		end
 	elseif event == "UPDATE_MOUSEOVER_UNIT" then
@@ -834,12 +866,12 @@ DPSMate.Parser.UseAction = function(slot, checkCursor, onSelf)
 	local aura = DPSMate_TooltipTextLeft1:GetText()
 	local target = DPSMate.Parser:GetTarget()
 	if aura and target and DPSMateSettings["sync"] and OverTimeDispels[aura] and not DPSMate.Parser.SendSpell[aura] then
-		SDM("DPSMate", aura..","..target..",", "RAID")
+		SDM("DPSMate"..DPSMate.VERSION, aura..","..target..",", "RAID")
 		DPSMate.Parser.SendSpell[aura] = true
 	end
 	if aura then
 		local time = GetTime()
-		if DPSMate.Parser.Kicks[aura] then DB:AwaitAfflictedStun(player, aura, UnitName("target"), time) end
+		DB:AwaitAfflicted(player, aura, UnitName("target"), time)
 		if DPSMate.Parser.Dispels[aura] then DB:AwaitHotDispel(aura, target, player, time) end
 		DB:AwaitingBuff(player, aura, target, time)
 		DB:AwaitingAbsorbConfirmation(player, aura, target, time)
@@ -853,11 +885,11 @@ local oldCastSpellByName = CastSpellByName
 DPSMate.Parser.CastSpellByName = function(spellName, onSelf)
 	local target = DPSMate.Parser:GetTarget()
 	if target and DPSMateSettings["sync"] and OverTimeDispels[spellName] and not DPSMate.Parser.SendSpell[spellName] then 
-		SDM("DPSMate", spellName..","..target..",", "RAID")
+		SDM("DPSMate"..DPSMate.VERSION, spellName..","..target..",", "RAID")
 		DPSMate.Parser.SendSpell[spellName] = true
 	end
 	local time = GetTime()
-	if DPSMate.Parser.Kicks[spellName] then DB:AwaitAfflictedStun(player, spellName, UnitName("target"), time) end
+	DB:AwaitAfflicted(player, spellName, UnitName("target"), time)
 	if DPSMate.Parser.Dispels[spellName] then DB:AwaitHotDispel(spellName, target, player, time) end
 	DB:AwaitingBuff(player, spellName, target, time)
 	DB:AwaitingAbsorbConfirmation(player, spellName, target, time)
@@ -871,11 +903,11 @@ DPSMate.Parser.CastSpell = function(spellID, spellbookType)
 	local spellName, spellRank = GetSpellName(spellID, spellbookType)
 	local target = DPSMate.Parser:GetTarget()
 	if target and DPSMateSettings["sync"] and OverTimeDispels[spellName] and not DPSMate.Parser.SendSpell[spellName] then 
-		SDM("DPSMate", spellName..","..target..",", "RAID")
+		SDM("DPSMate"..DPSMate.VERSION, spellName..","..target..",", "RAID")
 		DPSMate.Parser.SendSpell[spellName] = true
 	end
 	local time = GetTime()
-	if DPSMate.Parser.Kicks[spellName] then DB:AwaitAfflictedStun(player, spellName, UnitName("target"), time) end
+	DB:AwaitAfflicted(player, spellName, UnitName("target"), time)
 	if DPSMate.Parser.Dispels[spellName] then DB:AwaitHotDispel(spellName, target, player, time) end
 	DB:AwaitingBuff(player, spellName, target, time)
 	DB:AwaitingAbsorbConfirmation(player, spellName, target, time)
@@ -1189,8 +1221,14 @@ function DPSMate.Sync:AurasOut()
 	end
 end
 
+function DPSMate.Sync:Threat(arg2, arg4)
+	for a in strgfind(arg2, "t (%d+)") do
+		DB:Threat(tnbr(a), arg4)
+	end
+end
+
 DPSMate.Sync.Exec = {
-	["DPSMate"] = function(arg2,arg4) 
+	["DPSMate"..DPSMate.VERSION] = function(arg2,arg4) 
 		t = {}
 		strgsub(arg2, "(.-),", func) -- name, aura, target, time
 		t[3] = GetTime()
@@ -1200,52 +1238,52 @@ DPSMate.Sync.Exec = {
 		DB:AwaitingAbsorbConfirmation(arg4, t[1], t[2], t[3])
 		--DPSMate:SendMessage(arg2)
 	end,
-	["DPSMate_HelloWorld"] = function() DPSMate.Sync:GreetBack() end,
-	["DPSMate_Greet"] = function(arg2,arg4) DPSMate.Sync:ReceiveGreet(arg2, arg4) end,
-	["DPSMate_DMGDoneAll"] = function(arg2,arg4) DPSMate.Sync:DMGDoneAllIn(arg2, arg4) end,
-	["DPSMate_DMGDoneStat"] = function(arg2,arg4) DPSMate.Sync:DMGDoneStatIn(arg2, arg4) end,
-	["DPSMate_DMGDoneAbility"] = function(arg2,arg4) DPSMate.Sync:DMGDoneAbilityIn(arg2, arg4) end,
-	["DPSMate_EHealingAll"] = function(arg2,arg4) DPSMate.Sync:HealingAllIn(arg2, arg4, 6) end,
-	["DPSMate_EHealingStat"] = function(arg2,arg4) DPSMate.Sync:HealingStatIn(arg2, arg4, 6) end,
-	["DPSMate_EHealingAbility"] = function(arg2,arg4) DPSMate.Sync:HealingAbilityIn(arg2, arg4, 6) end,
-	["DPSMate_THealingAll"] = function(arg2,arg4) DPSMate.Sync:HealingAllIn(arg2, arg4, 5) end,
-	["DPSMate_THealingStat"] = function(arg2,arg4) DPSMate.Sync:HealingStatIn(arg2, arg4, 5) end,
-	["DPSMate_THealingAbility"] = function(arg2,arg4) DPSMate.Sync:HealingAbilityIn(arg2, arg4, 5) end,
-	["DPSMate_OHealingAll"] = function(arg2,arg4) DPSMate.Sync:HealingAllIn(arg2, arg4, 9) end,
-	["DPSMate_OHealingStat"] = function(arg2,arg4) DPSMate.Sync:HealingStatIn(arg2, arg4, 9) end,
-	["DPSMate_OHealingAbility"] = function(arg2,arg4) DPSMate.Sync:HealingAbilityIn(arg2, arg4, 9) end,
-	["DPSMate_TTakenHealingAll"] = function(arg2,arg4) DPSMate.Sync:HealingAllIn(arg2, arg4, 7) end,
-	["DPSMate_TTakenHealingStat"] = function(arg2,arg4) DPSMate.Sync:HealingStatIn(arg2, arg4, 7) end,
-	["DPSMate_THealingTakenAbility"] = function(arg2,arg4) DPSMate.Sync:HealingTakenAbilityIn(arg2, arg4, 7) end,
-	["DPSMate_ETakenHealingAll"] = function(arg2,arg4) DPSMate.Sync:HealingAllIn(arg2, arg4, 8) end,
-	["DPSMate_ETakenHealingStat"] = function(arg2,arg4) DPSMate.Sync:HealingStatIn(arg2, arg4, 8) end,
-	["DPSMate_EHealingTakenAbility"] = function(arg2,arg4) DPSMate.Sync:HealingTakenAbilityIn(arg2, arg4, 8) end,
-	["DPSMate_Absorbs"] = function(arg2,arg4) DPSMate.Sync:AbsorbsIn(arg2, arg4) end,
-	["DPSMate_iAbsorbs"] = function(arg2,arg4) DPSMate.Sync:iAbsorbsIn(arg2, arg4) end,
-	["DPSMate_Dispels"] = function(arg2,arg4) DPSMate.Sync:DispelsIn(arg2, arg4) end,
-	["DPSMate_iDispels"] = function(arg2,arg4) DPSMate.Sync:iDispelsIn(arg2, arg4) end,
-	["DPSMate_DMGTakenAll"] = function(arg2,arg4) DPSMate.Sync:DMGTakenAllIn(arg2, arg4) end,
-	["DPSMate_DMGTakenStat"] = function(arg2,arg4) DPSMate.Sync:DMGTakenStatIn(arg2, arg4) end,
-	["DPSMate_DMGTakenAbility"] = function(arg2,arg4) DPSMate.Sync:DMGTakenAbilityIn(arg2, arg4) end,
-	["DPSMate_EDTAll"] = function(arg2,arg4) DPSMate.Sync:EDAllIn(4, arg2, arg4) end,
-	["DPSMate_EDTAbility"] = function(arg2,arg4) DPSMate.Sync:EDAbilityIn(4, arg2, arg4) end,
-	["DPSMate_EDTStat"] = function(arg2,arg4) DPSMate.Sync:EDStatIn(4, arg2, arg4) end,
-	["DPSMate_EDDAll"] = function(arg2,arg4) DPSMate.Sync:EDAllIn(3, arg2, arg4) end,
-	["DPSMate_EDDAbility"] = function(arg2,arg4) DPSMate.Sync:EDAbilityIn(3, arg2, arg4) end,
-	["DPSMate_EDDStat"] = function(arg2,arg4) DPSMate.Sync:EDStatIn(3, arg2, arg4) end,
-	["DPSMate_DeathsAll"] = function(arg2,arg4) DPSMate.Sync:DeathsAllIn(arg2, arg4) end,
-	["DPSMate_Deaths"] = function(arg2,arg4) DPSMate.Sync:DeathsIn(arg2, arg4) end,
-	["DPSMate_InterruptsAll"] = function(arg2,arg4) DPSMate.Sync:InterruptsAllIn(arg2, arg4) end,
-	["DPSMate_InterruptsAbility"] = function(arg2,arg4) DPSMate.Sync:InterruptsAbilityIn(arg2, arg4) end,
-	["DPSMate_AurasAll"] = function(arg2,arg4) DPSMate.Sync:AurasAllIn(arg2, arg4) end,
-	["DPSMate_AurasStart"] = function(arg2,arg4) DPSMate.Sync:AurasStartEndIn(arg2, arg4, 1) end,
-	["DPSMate_AurasEnd"] = function(arg2,arg4) DPSMate.Sync:AurasStartEndIn(arg2, arg4, 2) end,
-	["DPSMate_AurasCause"] = function(arg2,arg4) DPSMate.Sync:AurasCauseIn(arg2, arg4) end,
-	["DPSMate_Vote"] = function() DPSMate.Sync:CountVote() end,
-	["DPSMate_StartVote"] = function() DPSMate.Sync:ReceiveStartVote() end,
-	["DPSMate_VoteSuccess"] = function() DPSMate.Sync:VoteSuccess() end,
-	["DPSMate_VoteFail"] = function() DPSMate:SendMessage("Reset voting has failed!") end,
-	["DPSMate_Participate"] = function() DPSMate.Sync:CountParticipants() end,
-	["DPSMate_SyncTimer"] = function(arg2) DPSMate.Sync:SetTimer(arg2) end,
-	["DPSMate_SyncStatus"] = function(arg2,arg4) DPSMate.Sync:SyncStatus(arg2, arg4) end,
+	["DPSMate_HelloWorld"..DPSMate.VERSION] = function() DPSMate.Sync:GreetBack() end,
+	["DPSMate_Greet"..DPSMate.VERSION] = function(arg2,arg4) DPSMate.Sync:ReceiveGreet(arg2, arg4) end,
+	["DPSMate_DMGDoneAll"..DPSMate.VERSION] = function(arg2,arg4) DPSMate.Sync:DMGDoneAllIn(arg2, arg4) end,
+	["DPSMate_DMGDoneStat"..DPSMate.VERSION] = function(arg2,arg4) DPSMate.Sync:DMGDoneStatIn(arg2, arg4) end,
+	["DPSMate_DMGDoneAbility"..DPSMate.VERSION] = function(arg2,arg4) DPSMate.Sync:DMGDoneAbilityIn(arg2, arg4) end,
+	["DPSMate_EHealingAll"..DPSMate.VERSION] = function(arg2,arg4) DPSMate.Sync:HealingAllIn(arg2, arg4, 6) end,
+	["DPSMate_EHealingStat"..DPSMate.VERSION] = function(arg2,arg4) DPSMate.Sync:HealingStatIn(arg2, arg4, 6) end,
+	["DPSMate_EHealingAbility"..DPSMate.VERSION] = function(arg2,arg4) DPSMate.Sync:HealingAbilityIn(arg2, arg4, 6) end,
+	["DPSMate_THealingAll"..DPSMate.VERSION] = function(arg2,arg4) DPSMate.Sync:HealingAllIn(arg2, arg4, 5) end,
+	["DPSMate_THealingStat"..DPSMate.VERSION] = function(arg2,arg4) DPSMate.Sync:HealingStatIn(arg2, arg4, 5) end,
+	["DPSMate_THealingAbility"..DPSMate.VERSION] = function(arg2,arg4) DPSMate.Sync:HealingAbilityIn(arg2, arg4, 5) end,
+	["DPSMate_OHealingAll"..DPSMate.VERSION] = function(arg2,arg4) DPSMate.Sync:HealingAllIn(arg2, arg4, 9) end,
+	["DPSMate_OHealingStat"..DPSMate.VERSION] = function(arg2,arg4) DPSMate.Sync:HealingStatIn(arg2, arg4, 9) end,
+	["DPSMate_OHealingAbility"..DPSMate.VERSION] = function(arg2,arg4) DPSMate.Sync:HealingAbilityIn(arg2, arg4, 9) end,
+	["DPSMate_TTakenHealingAll"..DPSMate.VERSION] = function(arg2,arg4) DPSMate.Sync:HealingAllIn(arg2, arg4, 7) end,
+	["DPSMate_TTakenHealingStat"..DPSMate.VERSION] = function(arg2,arg4) DPSMate.Sync:HealingStatIn(arg2, arg4, 7) end,
+	["DPSMate_THealingTakenAbility"..DPSMate.VERSION] = function(arg2,arg4) DPSMate.Sync:HealingTakenAbilityIn(arg2, arg4, 7) end,
+	["DPSMate_ETakenHealingAll"..DPSMate.VERSION] = function(arg2,arg4) DPSMate.Sync:HealingAllIn(arg2, arg4, 8) end,
+	["DPSMate_ETakenHealingStat"..DPSMate.VERSION] = function(arg2,arg4) DPSMate.Sync:HealingStatIn(arg2, arg4, 8) end,
+	["DPSMate_EHealingTakenAbility"..DPSMate.VERSION] = function(arg2,arg4) DPSMate.Sync:HealingTakenAbilityIn(arg2, arg4, 8) end,
+	["DPSMate_Absorbs"..DPSMate.VERSION] = function(arg2,arg4) DPSMate.Sync:AbsorbsIn(arg2, arg4) end,
+	["DPSMate_iAbsorbs"..DPSMate.VERSION] = function(arg2,arg4) DPSMate.Sync:iAbsorbsIn(arg2, arg4) end,
+	["DPSMate_Dispels"..DPSMate.VERSION] = function(arg2,arg4) DPSMate.Sync:DispelsIn(arg2, arg4) end,
+	["DPSMate_iDispels"..DPSMate.VERSION] = function(arg2,arg4) DPSMate.Sync:iDispelsIn(arg2, arg4) end,
+	["DPSMate_DMGTakenAll"..DPSMate.VERSION] = function(arg2,arg4) DPSMate.Sync:DMGTakenAllIn(arg2, arg4) end,
+	["DPSMate_DMGTakenStat"..DPSMate.VERSION] = function(arg2,arg4) DPSMate.Sync:DMGTakenStatIn(arg2, arg4) end,
+	["DPSMate_DMGTakenAbility"..DPSMate.VERSION] = function(arg2,arg4) DPSMate.Sync:DMGTakenAbilityIn(arg2, arg4) end,
+	["DPSMate_EDTAll"..DPSMate.VERSION] = function(arg2,arg4) DPSMate.Sync:EDAllIn(4, arg2, arg4) end,
+	["DPSMate_EDTAbility"..DPSMate.VERSION] = function(arg2,arg4) DPSMate.Sync:EDAbilityIn(4, arg2, arg4) end,
+	["DPSMate_EDTStat"..DPSMate.VERSION] = function(arg2,arg4) DPSMate.Sync:EDStatIn(4, arg2, arg4) end,
+	["DPSMate_EDDAll"..DPSMate.VERSION] = function(arg2,arg4) DPSMate.Sync:EDAllIn(3, arg2, arg4) end,
+	["DPSMate_EDDAbility"..DPSMate.VERSION] = function(arg2,arg4) DPSMate.Sync:EDAbilityIn(3, arg2, arg4) end,
+	["DPSMate_EDDStat"..DPSMate.VERSION] = function(arg2,arg4) DPSMate.Sync:EDStatIn(3, arg2, arg4) end,
+	["DPSMate_DeathsAll"..DPSMate.VERSION] = function(arg2,arg4) DPSMate.Sync:DeathsAllIn(arg2, arg4) end,
+	["DPSMate_Deaths"..DPSMate.VERSION] = function(arg2,arg4) DPSMate.Sync:DeathsIn(arg2, arg4) end,
+	["DPSMate_InterruptsAll"..DPSMate.VERSION] = function(arg2,arg4) DPSMate.Sync:InterruptsAllIn(arg2, arg4) end,
+	["DPSMate_InterruptsAbility"..DPSMate.VERSION] = function(arg2,arg4) DPSMate.Sync:InterruptsAbilityIn(arg2, arg4) end,
+	["DPSMate_AurasAll"..DPSMate.VERSION] = function(arg2,arg4) DPSMate.Sync:AurasAllIn(arg2, arg4) end,
+	["DPSMate_AurasStart"..DPSMate.VERSION] = function(arg2,arg4) DPSMate.Sync:AurasStartEndIn(arg2, arg4, 1) end,
+	["DPSMate_AurasEnd"..DPSMate.VERSION] = function(arg2,arg4) DPSMate.Sync:AurasStartEndIn(arg2, arg4, 2) end,
+	["DPSMate_AurasCause"..DPSMate.VERSION] = function(arg2,arg4) DPSMate.Sync:AurasCauseIn(arg2, arg4) end,
+	["DPSMate_Vote"..DPSMate.VERSION] = function() DPSMate.Sync:CountVote() end,
+	["DPSMate_StartVote"..DPSMate.VERSION] = function() DPSMate.Sync:ReceiveStartVote() end,
+	["DPSMate_VoteSuccess"..DPSMate.VERSION] = function() DPSMate.Sync:VoteSuccess() end,
+	["DPSMate_VoteFail"..DPSMate.VERSION] = function() DPSMate:SendMessage("Reset voting has failed!") end,
+	["DPSMate_Participate"..DPSMate.VERSION] = function() DPSMate.Sync:CountParticipants() end,
+	["DPSMate_SyncTimer"..DPSMate.VERSION] = function(arg2) DPSMate.Sync:SetTimer(arg2) end,
+	["DPSMate_SyncStatus"..DPSMate.VERSION] = function(arg2,arg4) DPSMate.Sync:SyncStatus(arg2, arg4) end
 }
