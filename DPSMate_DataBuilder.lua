@@ -657,6 +657,9 @@ function DPSMate.DB:GetAlpha(k)
 	if DPSMateSettings["windows"][k]["realtime"] then
 		local p = savedValue[DPSMateSettings["windows"][k]["realtime"]] or 0
 		savedValue[DPSMateSettings["windows"][k]["realtime"]] = 0
+		if p > 50000 then -- That may solve the freeze issue
+			p = 50000
+		end
 		return p
 	end
 end
