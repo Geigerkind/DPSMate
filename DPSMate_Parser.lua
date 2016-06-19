@@ -72,6 +72,7 @@ DPSMate.Parser.FailDT = {
 	["Earthquake"] = true,
 	["Hand of Ragnaros"] = true,
 	["Wrath of Ragnaros"] = true,
+	["Conflagration"] = true,
 	
 	-- Blackwing Lair
 	["War Stomp"] = true,

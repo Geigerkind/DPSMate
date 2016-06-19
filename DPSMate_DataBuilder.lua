@@ -1744,8 +1744,8 @@ function DPSMate.DB:BuildFail(type, user, cause, ability, amount)
 	self:BuildUser(cause)
 	self:BuildAbility(ability)
 	for cat, val in {[1] = "total", [2] = "current"} do
-		if not DPSMateFails[cat][DPSMateUser[user]] then
-			DPSMateFails[cat][DPSMateUser[user]] = {}
+		if not DPSMateFails[cat][DPSMateUser[cause][1]] then
+			DPSMateFails[cat][DPSMateUser[cause][1]] = {}
 		end
 		tinsert(DPSMateFails[cat][DPSMateUser[cause][1]], 1, {
 			[1] = type,
