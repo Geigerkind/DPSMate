@@ -47,6 +47,69 @@ DPSMate.Parser.DmgProcs = {
 	["Thunderfury"] = true
 }
 DPSMate.Parser.TargetParty = {}
+DPSMate.Parser.RCD = {
+	["Shield Wall"] = true,
+	["Recklessness"] = true,
+	["Retaliation"] = true,
+	["Last Stand"] = true,
+	["Innervate"] = true,
+	["Divine Shield"] = true,
+	["Blessing of Protection"] = true,
+	["Gift of Life"] = true,
+	["Redemption"] = true,
+	["Rebirth"] = true,
+	["Ressurection"] = true,
+	["Reincarnation"] = true,
+	["Ancestral Spirit"] = true,
+	["Soulstone Ressurection"] = true,
+}
+DPSMate.Parser.FailDT = {
+	-- Molten Core
+	["Rain of Fire"] = true,
+	["Cone of Fire"] = true,
+	["Lava Bomb"] = true,
+	["Eruption"] = true,
+	["Earthquake"] = true,
+	["Hand of Ragnaros"] = true,
+	["Wrath of Ragnaros"] = true,
+	
+	-- Blackwing Lair
+	["War Stomp"] = true,
+	["Incinerate"] = true,
+	["Corrosive Acid"] = true,
+	["Frost Burn"] = true,
+	["Ignite Flesh"] = true,
+	["Time Lapse"] = true,
+}
+DPSMate.Parser.FailDB = {
+	-- Molten Core
+	
+	-- Blackwing Lair
+	["Suppression Aura"] = true,
+	["Bellowing Roar"] = true,
+}
+DPSMate.Parser.CC = {
+	["Sap"] = true,
+	["Gouge"] = true,
+	["Sleep"] = true,
+	["Polymorph"] = true,
+	["Greater Polymorph"] = true,
+	["Polymorph: Chicken"] = true,
+	["Polymorph: Cow"] = true,
+	["Polymorph: Pig"] = true,
+	["Polymorph: Sheep"] = true,
+	["Polymorph: Turtle"] = true,
+	["Blind"] = true,
+	["Freezing Trap Effect"] = true,
+	["Intimidating Shout"] = true,
+	["Magic Dust"] = true,
+	["Scatter Shot"] = true,
+	["Wyvern Sting"] = true,
+	["Seduction"] = true,
+	["Repentance"] = true,
+	["Shackle Undead"] = true,
+	["Reckless Charge"] = true,
+}
 
 -- Local Variables
 local player = UnitName("player")
@@ -103,6 +166,7 @@ function DPSMate.Parser:SelfHits(msg)
 		if d == "(glancing)" then t[3]=1;t[1]=0;t[2]=0 elseif d ~= "" then t[4]=1;t[1]=0;t[2]=0 end
 		DB:EnemyDamage(true, DPSMateEDT, player, "AutoAttack", t[1] or 0, t[2] or 1, 0, 0, 0, 0, tnbr(c), b, t[4] or 0, t[3] or 0)
 		DB:DamageDone(player, "AutoAttack", t[1] or 0, t[2] or 1, 0, 0, 0, 0, tnbr(c), t[3] or 0, t[4] or 0)
+		if self.TargetParty[b] then DB:BuildFail(1, b, player, "AutoAttack", tnbr(c)) end
 		return
 	end
 	for a in strgfind(msg, "You fall and lose (%d+) health%.") do
@@ -151,6 +215,7 @@ function DPSMate.Parser:SelfSpellDMG(msg)
 		if DPSMate.Parser.DmgProcs[a] then DB:BuildBuffs(player, player, a, true) end
 		DB:EnemyDamage(true, DPSMateEDT, player, a,  t[2] or 0, t[3] or 1, 0, 0, 0, 0, t[1], c, t[4] or 0, 0)
 		DB:DamageDone(player, a, t[2] or 0, t[3] or 1, 0, 0, 0, 0, t[1], 0, t[4] or 0)
+		if self.TargetParty[c] then DB:BuildFail(1, c, player, a, t[1]) end
 		return
 	end
 	for a,b,c in strgfind(msg, "Your (.+) was (.-) by (.+)%.") do 
@@ -175,18 +240,20 @@ end
 function DPSMate.Parser:PeriodicDamage(msg)
 	t = {}
 	-- (NAME) is afflicted by (ABILITY). => Filtered out for now.
-	for a,b in strgfind(msg, "(.+) is afflicted by (.+)%.") do DB:ConfirmAfflicted(a, b, GetTime()); return end
+	for a,b in strgfind(msg, "(.+) is afflicted by (.+)%.") do DB:ConfirmAfflicted(a, b, GetTime()); if self.CC[b] then  DB:BuildActiveCC(a, b) end; return end
 	-- School can be used now but how and when?
 	for a,b,c,d,e in strgfind(msg, "(.+) suffers (%d+) (%a-) damage from (.+)'s (.+)%.") do
 		t[1] = tnbr(b)
 		DB:EnemyDamage(true, DPSMateEDT, d, e.."(Periodic)", 1, 0, 0, 0, 0, 0, t[1], a, 0, 0)
 		DB:DamageDone(d, e.."(Periodic)", 1, 0, 0, 0, 0, 0, t[1], 0, 0)
+		if self.TargetParty[a] and self.TargetParty[d] then DB:BuildFail(1, a, d, e.."(Periodic)", t[1]) end
 		return
 	end
 	for a,b,c,d in strgfind(msg, "(.+) suffers (%d+) (%a-) damage from your (.+)%.") do
 		t[1] = tnbr(b)
 		DB:EnemyDamage(true, DPSMateEDT, player, d.."(Periodic)", 1, 0, 0, 0, 0, 0, t[1], a, 0, 0)
 		DB:DamageDone(player, d.."(Periodic)", 1, 0, 0, 0, 0, 0, t[1], 0, 0)
+		if self.TargetParty[a] then DB:BuildFail(1, a, player, d.."(Periodic)", t[1]) end
 		return
 	end
 end
@@ -203,6 +270,7 @@ function DPSMate.Parser:FriendlyPlayerDamage(msg)
 		if DPSMate.Parser.DmgProcs[a] then DB:BuildBuffs(f, f, a, true) end
 		DB:EnemyDamage(true, DPSMateEDT, f, a,  t[2] or 0, t[3] or 1, 0, 0, 0, 0, t[1], c, t[4] or 0, 0)
 		DB:DamageDone(f, a, t[2] or 0, t[3] or 1, 0, 0, 0, 0, t[1], 0, t[4] or 0)
+		if self.TargetParty[f] and self.TargetParty[c] then DB:BuildFail(1, c, f, a, t[1]) end
 		return
 	end
 	for f,a,b,c in strgfind(msg, "(.-)'s (.+) was (.-) by (.+)%.") do 
@@ -244,6 +312,7 @@ function DPSMate.Parser:FriendlyPlayerHits(msg)
 		t[5] = tnbr(d)
 		DB:EnemyDamage(true, DPSMateEDT, a, "AutoAttack", t[3] or 0, t[4] or 1, 0, 0, 0, 0, t[5], c, t[2] or 0, t[1] or 0)
 		DB:DamageDone(a, "AutoAttack", t[3] or 0, t[4] or 1, 0, 0, 0, 0, t[5], t[1] or 0, t[2] or 0)
+		if self.TargetParty[a] and self.TargetParty[c] then DB:BuildFail(1, c, a, "AutoAttack", t[5]) end
 		return
 	end
 	-- (...). (608 absorbed/resisted) -> Therefore here some loss
@@ -384,6 +453,7 @@ function DPSMate.Parser:CreatureVsSelfSpellDamage(msg)
 		DB:EnemyDamage(false, DPSMateEDD, player, b, t[1] or 0, t[2] or 1, 0, 0, 0, 0, t[3], a, t[4] or 0, 0)
 		DB:DamageTaken(player, b, t[1] or 0, t[2] or 1, 0, 0, 0, 0, t[3], a, 0)
 		DB:DeathHistory(player, a, b, t[3], t[1] or 0, t[2] or 1, 0, 0)
+		if self.FailDT[b] then DB:BuildFail(2, a, player, b, t[3]) end
 		return
 	end
 	for a,b in strgfind(msg, "(.+)'s (.+) misses you.") do
@@ -418,10 +488,12 @@ function DPSMate.Parser:PeriodicSelfDamage(msg)
 		DB:EnemyDamage(false, DPSMateEDD, player, d.."(Periodic)", 1, 0, 0, 0, 0, 0, t[1], c, 0, 0)
 		DB:DamageTaken(player, d.."(Periodic)", 1, 0, 0, 0, 0, 0, t[1], c, 0)
 		DB:DeathHistory(player, c, d.."(Periodic)", t[1], 1, 0, 0, 0)
+		if self.FailDT[d] then DB:BuildFail(2, c, player, d, t[1]) end
 		return
 	end
 	for a in strgfind(msg, "You are afflicted by (.+)%.") do
-		DPSMate.DB:BuildBuffs("Unknown", player, a, false)
+		DB:BuildBuffs("Unknown", player, a, false)
+		if self.CC[a] then DB:BuildActiveCC(player, a) end
 		return
 	end
 	for a,b,d,e in strgfind(msg, "You suffer (%d+) (%a+) damage from your (.+)%.(.*)") do -- Potential to track school and resisted damage
@@ -476,10 +548,12 @@ function DPSMate.Parser:SpellPeriodicDamageTaken(msg)
 		DB:EnemyDamage(false, DPSMateEDD, a, e.."(Periodic)", 1, 0, 0, 0, 0, 0, t[1], d, 0, 0)
 		DB:DamageTaken(a, e.."(Periodic)", 1, 0, 0, 0, 0, 0, t[1], d, 0)
 		DB:DeathHistory(a, d, e.."(Periodic)", t[1], 1, 0, 0, 0)
+		if self.FailDT[e] then DB:BuildFail(2, d, a, e, t[1]) end
 		return
 	end
 	for a, b in strgfind(msg, "(.+) is afflicted by (.+)%.") do
-		DPSMate.DB:BuildBuffs("Unknown", a, b, false)
+		DB:BuildBuffs("Unknown", a, b, false)
+		if self.CC[b] then DB:BuildActiveCC(a, b) end
 		return
 	end
 end
@@ -496,6 +570,7 @@ function DPSMate.Parser:CreatureVsCreatureSpellDamage(msg)
 		DB:EnemyDamage(false, DPSMateEDD, d, b, t[1] or 0, t[2] or 1, 0, 0, 0, 0, t[3], a, t[4] or 0, 0)
 		DB:DamageTaken(d, b, t[1] or 0, t[2] or 1, 0, 0, 0, 0, t[3], a, 0)
 		DB:DeathHistory(d, a, b, t[3], t[1] or 0, t[2] or 1, 0, 0)
+		if self.FailDT[b] then DB:BuildFail(2, a, d, b, t[3]) end
 		return
 	end
 	for a,b,c in strgfind(msg, "(.+)'s (.+) was dodged by (.+)%.") do
@@ -622,6 +697,8 @@ function DPSMate.Parser:SpellPeriodicSelfBuff(msg) -- Maybe some loss here?
 			DB:RegisterHotDispel(player, a)
 			--DB:AwaitDispel(a, player, "Unknown", GetTime());
 		end
+		if self.RCD[a] then DPSMate:Broadcast(1, player, a) end
+		if self.FailDB[a] then DB:BuildFail(3, "Environment", player, a, 0) end
 		return 
 	end
 end
@@ -674,6 +751,8 @@ function DPSMate.Parser:SpellPeriodicFriendlyPlayerBuffs(msg)
 			DB:RegisterHotDispel(f, a)
 			--DB:AwaitDispel(a, f, "Unknown", GetTime());
 		end
+		if self.RCD[a] then DPSMate:Broadcast(1, f, a) end
+		if self.FailDB[a] then DB:BuildFail(3, "Environment", f, a, 0) end
 		return 
 	end
 end
@@ -751,17 +830,17 @@ end
 
 -- Power Word: Shield fades from you.
 function DPSMate.Parser:SpellAuraGoneSelf(msg)
-	for ab in strgfind(msg, "(.+) fades from you%.") do if DB.ShieldFlags[ab] then DB:UnregisterAbsorb(ab, player) end; DB:DestroyBuffs(player, ab); DB:UnregisterHotDispel(player, ab) end
+	for ab in strgfind(msg, "(.+) fades from you%.") do if DB.ShieldFlags[ab] then DB:UnregisterAbsorb(ab, player) end; if self.RCD[ab] then DPSMate:Broadcast(6, player, ab) end; DB:DestroyBuffs(player, ab); DB:UnregisterHotDispel(player, ab); DB:RemoveActiveCC(player, ab) end
 end
 
 -- Power Word: Shield fades from Senpie.
 function DPSMate.Parser:SpellAuraGoneParty(msg)
 	--DPSMate:SendMessage(msg)
-	for ab, ta in strgfind(msg, "(.+) fades from (.+)%.") do if DB.ShieldFlags[ab] then DB:UnregisterAbsorb(ab, ta) end; DB:DestroyBuffs(ta, ab); DB:UnregisterHotDispel(ta, ab) end
+	for ab, ta in strgfind(msg, "(.+) fades from (.+)%.") do if DB.ShieldFlags[ab] then DB:UnregisterAbsorb(ab, ta) end; if self.RCD[ab] then DPSMate:Broadcast(6, ta, ab) end; DB:DestroyBuffs(ta, ab); DB:UnregisterHotDispel(ta, ab); DB:RemoveActiveCC(ta, ab) end
 end
 
 function DPSMate.Parser:SpellAuraGoneOther(msg)
-	for ab, ta in strgfind(msg, "(.+) fades from (.+)%.") do if DB.ShieldFlags[ab] then DB:UnregisterAbsorb(ab, ta) end; DB:DestroyBuffs(ta, ab); DB:UnregisterHotDispel(ta, ab) end
+	for ab, ta in strgfind(msg, "(.+) fades from (.+)%.") do if DB.ShieldFlags[ab] then DB:UnregisterAbsorb(ab, ta) end; if self.RCD[ab] then DPSMate:Broadcast(6, ta, ab) end; DB:DestroyBuffs(ta, ab); DB:UnregisterHotDispel(ta, ab); DB:RemoveActiveCC(ta, ab) end
 end
 
 ----------------------------------------------------------------------------------
@@ -784,28 +863,25 @@ DPSMate.Parser.Dispels = {
 	["Purge"] = true,
 }
 DPSMate.Parser.DeCurse = {
-	[1] = "Remove Curse",
-	[2] = "Remove Lesser Curse",
+	["Remove Curse"] = true,
+	["Remove Lesser Curse"] = true,
 }
 DPSMate.Parser.DeMagic = {
-	[1] = "Cleanse",
-	[2] = "Dispel Magic",
-	[3] = "Devour Magic",
-	[4] = "Purge"
+	["Dispel Magic"] = true,
+	["Devour Magic"] = true,
+	["Purge"] = true,
 }
 DPSMate.Parser.DeDisease = {
-	[1] = "Cleanse",
-	[2] = "Purify",
-	[3] = "Abolish Disease",
-	[4] = "Cure Disease",
-	[5] = "Disease Cleansing Totem"
+	["Purify"] = true,
+	["Abolish Disease"] = true,
+	["Cure Disease"] = true,
+	["Disease Cleansing Totem"] = true,
 }
 DPSMate.Parser.DePoison = {
-	[1] = "Cleanse",
-	[2] = "Abolish Poison",
-	[3] = "Purify",
-	[4] = "Poison Cleansing Totem",
-	[5] = "Cure Poison"
+	["Abolish Poison"] = true,
+	["Purify"] = true,
+	["Poison Cleansing Totem"] = true,
+	["Cure Poison"] = true,
 }
 DPSMate.Parser.DebuffTypes = {}
 DPSMate.Parser.HotDispels = {
@@ -836,14 +912,14 @@ end
 
 -- Is it really "yourself"?
 function DPSMate.Parser:SpellSelfBuffDispels(msg)
-	for ab, tar in strgfind(msg, "You cast (.+) on (.+)%.") do if DPSMate.Parser.Dispels[ab] then DB:AwaitDispel(ab, tar, player, GetTime()) end; return end
+	for ab, tar in strgfind(msg, "You cast (.+) on (.+)%.") do if DPSMate.Parser.Dispels[ab] then DB:AwaitDispel(ab, tar, player, GetTime()) end; if self.RCD[ab] then DPSMate:Broadcast(2, player, tar, ab) end; return end
 	for ab in strgfind(msg, "You cast (.+)%.") do if DPSMate.Parser.Dispels[ab] then DB:AwaitDispel(ab, "Unknown", player, GetTime()) end; return end
 end
 
 -- Avrora casts Remove Curse on you.
 -- Avrora casts Remove Curse on Avrora.
 function DPSMate.Parser:SpellHostilePlayerBuffDispels(msg)
-	for c, ab, ta in strgfind(msg, "(.+) casts (.+) on (.+)%.") do if DPSMate.Parser.Dispels[ab] then if ta=="you" then DB:AwaitDispel(ab, player, c, GetTime()) else  DB:AwaitDispel(ab, ta, c, GetTime()) end end; return end
+	for c, ab, ta in strgfind(msg, "(.+) casts (.+) on (.+)%.") do if ta=="you" then ta = player end; if DPSMate.Parser.Dispels[ab] then DB:AwaitDispel(ab, ta, c, GetTime()) end; if self.RCD[ab] then DPSMate:Broadcast(2, c, ta, ab) end; return end
 	for c, ab in strgfind(msg, "(.+) casts (.+)%.") do if DPSMate.Parser.Dispels[ab] then DB:AwaitDispel(ab, "Unknown", c, GetTime()) end; return end
 end
 

@@ -13,6 +13,15 @@ DPSMate.Options.Options[1]["args"]["poisoncurereceived"] = {
 -- Register the moodule
 DPSMate:Register("poisoncurereceived", DPSMate.Modules.CurePoisonReceived, "Poison cure received")
 
+local tinsert = table.insert
+
+
+function DPSMate.Modules.CurePoisonReceived:IsValid(ab, cast)
+	if DPSMateAbility[ab][2]=="Poison" or DPSMate.Parser.DePoison[cast] then
+		return true
+	end
+	return false
+end
 
 function DPSMate.Modules.CurePoisonReceived:GetSortedTable(arr,k)
 	local b, a, temp, total = {}, {}, {}, 0
@@ -22,7 +31,7 @@ function DPSMate.Modules.CurePoisonReceived:GetSortedTable(arr,k)
 				for c, v in pairs(va) do -- 3 Target
 					if DPSMate:ApplyFilter(k, DPSMate:GetUserById(c)) then
 						for ce, ve in pairs(v) do -- 10 Cured Ability
-							if DPSMateAbility[DPSMate:GetAbilityById(ce)][2]=="Poison" then
+							if self:IsValid(DPSMate:GetAbilityById(ce), DPSMate:GetAbilityById(ca)) then
 								if temp[c] then temp[c]=temp[c]+ve else temp[c]=ve end
 							end
 						end
@@ -35,13 +44,13 @@ function DPSMate.Modules.CurePoisonReceived:GetSortedTable(arr,k)
 		local i = 1
 		while true do
 			if (not b[i]) then
-				table.insert(b, i, val)
-				table.insert(a, i, cat)
+				tinsert(b, i, val)
+				tinsert(a, i, cat)
 				break
 			else
 				if b[i] < val then
-					table.insert(b, i, val)
-					table.insert(a, i, cat)
+					tinsert(b, i, val)
+					tinsert(a, i, cat)
 					break
 				end
 			end
@@ -66,18 +75,18 @@ function DPSMate.Modules.CurePoisonReceived:EvalTable(user, k)
 				for c, v in pairs(va) do -- 3 Target
 					if c==user[1] then
 						for ce, ve in pairs(v) do -- 10 Cured Ability
-							if DPSMateAbility[DPSMate:GetAbilityById(ce)][2]=="Poison" then
+							if self:IsValid(DPSMate:GetAbilityById(ce), DPSMate:GetAbilityById(ca)) then
 								temp[cat][1]=temp[cat][1]+ve
 								local i = 1
 								while true do
 									if (not temp[cat][3][i]) then
-										table.insert(temp[cat][3], i, ve)
-										table.insert(temp[cat][2], i, ce)
+										tinsert(temp[cat][3], i, ve)
+										tinsert(temp[cat][2], i, ce)
 										break
 									else
 										if temp[cat][3][i] < ve then
-											table.insert(temp[cat][3], i, ve)
-											table.insert(temp[cat][2], i, ce)
+											tinsert(temp[cat][3], i, ve)
+											tinsert(temp[cat][2], i, ce)
 											break
 										end
 									end
@@ -96,13 +105,13 @@ function DPSMate.Modules.CurePoisonReceived:EvalTable(user, k)
 			local i = 1
 			while true do
 				if (not b[i]) then
-					table.insert(b, i, val)
-					table.insert(a, i, cat)
+					tinsert(b, i, val)
+					tinsert(a, i, cat)
 					break
 				else
 					if b[i][1] < val[1] then
-						table.insert(b, i, val)
-						table.insert(a, i, cat)
+						tinsert(b, i, val)
+						tinsert(a, i, cat)
 						break
 					end
 				end
@@ -124,9 +133,9 @@ function DPSMate.Modules.CurePoisonReceived:GetSettingValues(arr, cbt, k)
 		local str = {[1]="",[2]="",[3]=""}
 		if DPSMateSettings["columnspoisonreceived"][1] then str[1] = " "..dmg..p; strt[2] = " "..tot..p end
 		if DPSMateSettings["columnspoisonreceived"][2] then str[3] = " ("..string.format("%.1f", 100*dmg/tot).."%)" end
-		table.insert(name, DPSMate:GetUserById(a[cat]))
-		table.insert(value, str[1]..str[3])
-		table.insert(perc, 100*(dmg/sort))
+		tinsert(name, DPSMate:GetUserById(a[cat]))
+		tinsert(value, str[1]..str[3])
+		tinsert(perc, 100*(dmg/sort))
 	end
 	return name, value, perc, strt
 end

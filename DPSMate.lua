@@ -554,6 +554,39 @@ function DPSMate:Enable()
 	end
 end
 
+function DPSMate:Broadcast(type, who, what, with, value, failtype)
+	if DPSMateSettings["broadcasting"] then
+		if IsRaidLeader() or IsRaidOfficer() then
+			ch = "RAID"
+			if DPSMateSettings["bcrw"] then
+				ch = "RAID_WARNING"
+			end
+			if DPSMateSettings["bccd"] and type == 1 then
+				SendChatMessage(who.." gained "..what, ch, nil, nil)
+				return
+			elseif DPSMateSettings["bccd"] and type == 6 then
+				SendChatMessage(who.."'s "..what.." faded", ch, nil, nil)
+				return
+			elseif DPSMateSettings["bcress"] and type == 2 then
+				SendChatMessage(what.." has been resurrected by "..who, ch, nil, nil)
+				return
+			elseif DPSMateSettings["bckb"] and type == 4 then
+				SendChatMessage(who.." has been killed by "..what.."'s "..with.." ("..value.." damage)", ch, nil, nil)
+				return
+			elseif DPSMateSettings["bcfail"] and type == 3 then
+				if failtype == 1 then
+					SendChatMessage("Fail: "..what.." friendly fired "..who.." "..value.." damage with "..with, ch, nil, nil)
+				elseif failtype == 3 then
+					SendChatMessage("Fail: "..who.." is afflicted by "..with, ch, nil, nil)
+				else
+					SendChatMessage("Fail: "..who.." suffered "..value.." damage from "..with.." by "..what, ch, nil, nil)
+				end
+				return
+			end
+		end
+	end
+end
+
 function DPSMate:SendMessage(msg)
 	DEFAULT_CHAT_FRAME:AddMessage("|cFFFF8080"..DPSMate.localization.name.."|r: "..msg)
 end

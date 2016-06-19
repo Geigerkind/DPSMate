@@ -5,7 +5,7 @@
 ## Notes-deDE: [TO BE EDITED]
 ## Author: Shino <Synced> - Kronos
 ## SavedVariables: DPSMateSettings
-## SavedVariablesPerCharacter: DPSMateUser, DPSMateAbility, DPSMateDamageDone, DPSMateEDT, DPSMateEDD, DPSMateDamageTaken, DPSMateDispels, DPSMateInterrupts, DPSMateDeaths, DPSMateEHealing, DPSMateTHealing, DPSMateHealingTaken, DPSMateEHealingTaken, DPSMateOverhealing, DPSMateAbsorbs, DPSMateThreat, DPSMateAurasGained, DPSMateCombatTime, DPSMateHistory, DPSMateAttempts, DPSMatePlayer, DPSMateLoot
+## SavedVariablesPerCharacter: DPSMateUser, DPSMateAbility, DPSMateDamageDone, DPSMateEDT, DPSMateEDD, DPSMateDamageTaken, DPSMateDispels, DPSMateInterrupts, DPSMateDeaths, DPSMateEHealing, DPSMateTHealing, DPSMateHealingTaken, DPSMateEHealingTaken, DPSMateOverhealing, DPSMateAbsorbs, DPSMateThreat, DPSMateAurasGained, DPSMateCombatTime, DPSMateHistory, DPSMateAttempts, DPSMatePlayer, DPSMateLoot, DPSMateFails, DPSMateCCBreaker
 ## OptionalDeps: KLHThreatMeter
 ## Version: 19
 
@@ -66,6 +66,8 @@ modules\DPSMate_Procs.lua
 modules\DPSMate_Casts.lua
 modules\DPSMate_Threat.lua
 modules\DPSMate_TPS.lua
+modules\DPSMate_Fails.lua
+modules\DPSMate_CCBreaker.lua
 
 modules\DPSMate_Details_Damage.lua
 modules\DPSMate_Details_Damage.xml
@@ -125,6 +127,10 @@ modules\DPSMate_Details_Procs.lua
 modules\DPSMate_Details_Procs.xml
 modules\DPSMate_Details_Casts.lua
 modules\DPSMate_Details_Casts.xml
+modules\DPSMate_Details_Fails.lua
+modules\DPSMate_Details_Fails.xml
+modules\DPSMate_Details_CCBreaker.lua
+modules\DPSMate_Details_CCBreaker.xml
 modules\DPSMate_Details_FriendlyFire.lua
 modules\DPSMate_Details_FriendlyFire.xml
 

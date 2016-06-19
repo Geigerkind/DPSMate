@@ -1,3 +1,11 @@
+-- Notes
+-- Following datas are not being syncronized.
+-- Player
+-- Loot
+-- Attempts
+-- Threat
+-- Fails
+
 -- Global Variables
 DPSMate.Sync.Async = false
 DPSMate.Sync.LU = 0
@@ -44,7 +52,7 @@ local ccount = 0;
 local cctime = 0;
 function NewSDM(prefix, message, type)
 	--DPSMate:SendMessage(ccount)
-	if (GT()-cctime)>=1.1 then
+	if (GT()-cctime)>=1.6 then
 		ccount = 0
 	end
 	ccount = ccount + 1
@@ -70,14 +78,14 @@ function DPSMate.Sync:GetSyncDelay(elapsed)
 	if lastRefresh>=5 then
 		local _,_,ping = GetNetStats();
 		lastRefresh = 0;
-		delay = 2.1 + 2*ping/1000
+		delay = 3.1 + 2*ping/1000
 	end
 	return delay
 end
 
 function DPSMate.Sync:GetMessageState()
 	if sname ~= "Kronos" and sname ~= "Kronos II" then return true end 
-	if (GT()-cctime)>=1.1 and ccount<=800 then
+	if (GT()-cctime)>=1.6 and ccount<=800 then
 		return true
 	end
 	return false
@@ -257,6 +265,10 @@ end
 
 function DPSMate.Sync:VoteSuccess()
 	DPSMate:SendMessage("Reset vote was successful! DPSMate has been reset!")
+	DPSMate.DB.MainUpdate = 75
+	self.Async, iterator, time = false, 1, 0
+	Buffer = {}
+	co, cou = 1, 1
 	DPSMate.Options:PopUpAccept(true, true)
 end
 

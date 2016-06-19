@@ -298,6 +298,14 @@ function DPSMate.DB:OnEvent(event)
 					[2] = true,
 					[3] = true,
 				},
+				columnsfails = {
+					[1] = true,
+					[2] = true,
+				},
+				columnsccbreaker = {
+					[1] = true,
+					[2] = true,
+				},
 				columnsfriendlyfire = {
 					[1] = true,
 					[2] = false,
@@ -309,6 +317,12 @@ function DPSMate.DB:OnEvent(event)
 				tooltipanchor = 5,
 				onlybossfights = true,
 				hiddenmodes = {},
+				broadcasting = false,
+				bccd = false,
+				bcress = false,
+				bckb = false,
+				bcfail = false,
+				bcrw = false,
 			}
 		end
 		if DPSMateHistory == nil then 
@@ -328,7 +342,9 @@ function DPSMate.DB:OnEvent(event)
 				Interrupts = {},
 				Dispels = {},
 				Auras = {},
-				Threat = {}
+				Threat = {},
+				Fail = {},
+				CCBreaker = {}
 			}
 		end
 		if DPSMateUser == nil then DPSMateUser = {} end
@@ -348,6 +364,8 @@ function DPSMate.DB:OnEvent(event)
 		if DPSMateInterrupts == nil then DPSMateInterrupts = {[1]={},[2]={}} end
 		if DPSMateAurasGained == nil then DPSMateAurasGained = {[1]={},[2]={}} end
 		if DPSMateThreat == nil then DPSMateThreat = {[1]={},[2]={}} end
+		if DPSMateFails == nil then DPSMateFails = {[1]={},[2]={}} end
+		if DPSMateCCBreaker == nil then DPSMateCCBreaker = {[1]={},[2]={}} end
 		-- Legacy Logs support
 		if DPSMateAttempts == nil then DPSMateAttempts = {} end
 		if DPSMatePlayer == nil then DPSMatePlayer = {} end
@@ -390,6 +408,8 @@ function DPSMate.DB:OnEvent(event)
 		DPSMate.Modules.Casts.DB = DPSMateEDT
 		DPSMate.Modules.Threat.DB = DPSMateThreat
 		DPSMate.Modules.TPS.DB = DPSMateThreat
+		DPSMate.Modules.Fails.DB = DPSMateFails
+		DPSMate.Modules.CCBreaker.DB = DPSMateCCBreaker
 		
 		if not DPSMateSettings["columnsprocs"] then
 			DPSMateSettings["columnsprocs"] = {
@@ -399,6 +419,12 @@ function DPSMate.DB:OnEvent(event)
 		end
 		if not DPSMateSettings["columnscasts"] then
 			DPSMateSettings["columnscasts"] = {
+				[1] = true,
+				[2] = true,
+			}
+		end
+		if not DPSMateSettings["columnsfails"] then
+			DPSMateSettings["columnsfails"] = {
 				[1] = true,
 				[2] = true,
 			}
@@ -415,6 +441,12 @@ function DPSMate.DB:OnEvent(event)
 				[1] = false,
 				[2] = true,
 				[3] = true
+			}
+		end
+		if not DPSMateSettings["columnsccbreaker"] then
+			DPSMateSettings["columnsccbreaker"] = {
+				[1] = true,
+				[2] = true
 			}
 		end
 		if not DPSMateSettings["mergepets"] then
@@ -488,6 +520,9 @@ function DPSMate.DB:OnGroupUpdate()
 		local gname, _, _ = GetGuildInfo(type..i)
 		self:BuildUser(name, strlower(classEng or ""))
 		self:BuildUser(pet)
+		if classEng then
+			DPSMateUser[name][2] = strlower(classEng)
+		end
 		DPSMateUser[name][4] = false
 		if pet and pet ~= "Unknown" then
 			DPSMateUser[pet][4] = true
@@ -846,6 +881,7 @@ function DPSMate.DB:EnemyDamage(mode, arr, Duser, Dname, Dhit, Dcrit, Dmiss, Dpa
 		arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser][1]]["i"][2] = arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser][1]]["i"][2] + Damount
 		if Damount > 0 then tinsert(arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser][1]]["i"][1], {DPSMateCombatTime[val], Damount}) end
 	end
+	if Damount>0 then self:CheckActiveCC(Duser, cause) end
 	self.NeedUpdate = true
 end
 
@@ -1341,6 +1377,10 @@ function DPSMate.DB:UnregisterDeath(target)
 		if DPSMateDeaths[cat][DPSMateUser[target][1]] then
 			DPSMateDeaths[cat][DPSMateUser[target][1]][1]["i"][1]=1
 			DPSMateDeaths[cat][DPSMateUser[target][1]][1]["i"][2]=GameTime_GetTime()
+			if cat==1 and DPSMate.Parser.TargetParty[target] then 
+				local p = DPSMateDeaths[cat][DPSMateUser[target][1]][1][1]
+				DPSMate:Broadcast(4, target, DPSMate:GetUserById(p[1]), DPSMate:GetAbilityById(p[2]), p[3]) 
+			end
 		end
 	end
 end
@@ -1695,5 +1735,74 @@ function DPSMate.DB:Loot(user, quality, itemid)
 				[4] = user
 			})
 		end
+	end
+end
+
+-- Type: 1 => FriendlyFire, 2 => Damage taken, 3 => Debuff taken
+function DPSMate.DB:BuildFail(type, user, cause, ability, amount)
+	self:BuildUser(user)
+	self:BuildUser(cause)
+	self:BuildAbility(ability)
+	for cat, val in {[1] = "total", [2] = "current"} do
+		if not DPSMateFails[cat][DPSMateUser[user]] then
+			DPSMateFails[cat][DPSMateUser[user]] = {}
+		end
+		tinsert(DPSMateFails[cat][DPSMateUser[cause][1]], 1, {
+			[1] = type,
+			[2] = DPSMateUser[user][1],
+			[3] = DPSMateAbility[ability][1],
+			[4] = amount,
+			[5] = DPSMateCombatTime[val],
+			[6] = GameTime_GetTime(),
+		})
+	end
+	DPSMate:Broadcast(3, user, cause, ability, amount, type)
+	self.NeedUpdate = true
+end
+
+local ActiveCC = {}
+function DPSMate.DB:BuildActiveCC(target, ability)
+	if not ActiveCC[target] then
+		ActiveCC[target] = {}
+	end
+	ActiveCC[target][ability] = true
+end
+
+function DPSMate.DB:RemoveActiveCC(target, ability)
+	if not ActiveCC[target] then
+		ActiveCC[target] = {}
+	end
+	if ActiveCC[target][ability] then
+		ActiveCC[target][ability] = false;
+	end
+end
+
+function DPSMate.DB:CheckActiveCC(cause, target)
+	if ActiveCC[target] then
+		for cat, val in ActiveCC[target] do
+			if val then
+				for c, v in ActiveCC[target] do
+					ActiveCC[target][c] = false
+				end
+				self:CCBreaker(target, cat, cause)
+				return true
+			end
+		end
+	end
+	return false
+end
+
+function DPSMate.DB:CCBreaker(target, ability, cause)
+	self:BuildAbility(ability)
+	for cat, val in {[1]="total",[2]="current"} do
+		if not DPSMateCCBreaker[cat][DPSMateUser[cause][1]] then
+			DPSMateCCBreaker[cat][DPSMateUser[cause][1]] = {}
+		end
+		tinsert(DPSMateCCBreaker[cat][DPSMateUser[cause][1]], 1, {
+			[1] = DPSMateAbility[ability][1],
+			[2] = DPSMateUser[target][1],
+			[3] = DPSMateCombatTime[val],
+			[4] = GameTime_GetTime()
+		})
 	end
 end

@@ -38,7 +38,7 @@
 			<OnClick>
 				for cat, _ in pairs(DPSMateSettings["windows"]) do
 					for i=1, 3 do
-						getglobal("DPSMate_ConfigMenu_Menu_Button"..(8+cat).."_Button"..i.."Texture"):Hide()
+						getglobal("DPSMate_ConfigMenu_Menu_Button"..(9+cat).."_Button"..i.."Texture"):Hide()
 					end
 				end
 				for i=1, this:GetParent():GetParent().num do
@@ -78,7 +78,7 @@
 			<OnClick>
 				for cat, _ in pairs(DPSMateSettings["windows"]) do
 					for i=1, 3 do
-						getglobal("DPSMate_ConfigMenu_Menu_Button"..(8+cat).."_Button"..i.."Texture"):Hide()
+						getglobal("DPSMate_ConfigMenu_Menu_Button"..(9+cat).."_Button"..i.."Texture"):Hide()
 					end
 				end
 				for i=1, this:GetParent():GetParent():GetParent().num do
@@ -124,7 +124,7 @@
 			<OnClick>
 				for cat, _ in pairs(DPSMateSettings["windows"]) do
 					for i=1, 3 do
-						getglobal("DPSMate_ConfigMenu_Menu_Button"..(8+cat).."_Button"..i.."Texture"):Hide()
+						getglobal("DPSMate_ConfigMenu_Menu_Button"..(9+cat).."_Button"..i.."Texture"):Hide()
 					end
 				end
 				for i=1, this:GetParent():GetParent().num do
@@ -150,13 +150,13 @@
 				<Scripts>
 					<OnClick>
 						for cat, val in pairs(DPSMateSettings["windows"]) do
-							getglobal("DPSMate_ConfigMenu_Menu_Button"..(8+cat).."Expand"):Show()
-							getglobal("DPSMate_ConfigMenu_Menu_Button"..(8+cat).."Collapse"):Hide()
-							getglobal("DPSMate_ConfigMenu_Menu_Button"..(8+cat).."_Button1"):Hide()
-							getglobal("DPSMate_ConfigMenu_Menu_Button"..(8+cat).."_Button2"):Hide()
-							getglobal("DPSMate_ConfigMenu_Menu_Button"..(8+cat).."_Button3"):Hide()
-							getglobal("DPSMate_ConfigMenu_Menu_Button"..(8+cat)).after:ClearAllPoints()
-							getglobal("DPSMate_ConfigMenu_Menu_Button"..(8+cat)).after:SetPoint("TOP", getglobal("DPSMate_ConfigMenu_Menu_Button"..(8+cat)), "BOTTOM")
+							getglobal("DPSMate_ConfigMenu_Menu_Button"..(9+cat).."Expand"):Show()
+							getglobal("DPSMate_ConfigMenu_Menu_Button"..(9+cat).."Collapse"):Hide()
+							getglobal("DPSMate_ConfigMenu_Menu_Button"..(9+cat).."_Button1"):Hide()
+							getglobal("DPSMate_ConfigMenu_Menu_Button"..(9+cat).."_Button2"):Hide()
+							getglobal("DPSMate_ConfigMenu_Menu_Button"..(9+cat).."_Button3"):Hide()
+							getglobal("DPSMate_ConfigMenu_Menu_Button"..(9+cat)).after:ClearAllPoints()
+							getglobal("DPSMate_ConfigMenu_Menu_Button"..(9+cat)).after:SetPoint("TOP", getglobal("DPSMate_ConfigMenu_Menu_Button"..(9+cat)), "BOTTOM")
 						end
 						this:Hide()
 						getglobal(this:GetParent():GetName().."Collapse"):Show()
@@ -1547,6 +1547,21 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
+								getglobal(this:GetName().."Text"):SetText(DPSMate.localization.config.broadcasting)
+								this.func = function()
+									getglobal(this:GetParent():GetParent():GetName()..this:GetParent().selected):Hide()
+									getglobal(this:GetParent():GetParent():GetName().."_Tab_Broadcasting"):Show()
+									this:GetParent().selected = "_Tab_Broadcasting"
+								end
+							</OnLoad>
+						</Scripts>
+					</Button>
+					<Button name="$parent_Button9" inherits="DPSMate_Template_MenuButton">
+						<Anchors>
+							<Anchor point="TOP" relativeTo="$parent_Button8" relativePoint="BOTTOM" />
+						</Anchors>
+						<Scripts>
+							<OnLoad>
 								getglobal(this:GetName().."Text"):SetText(DPSMate.localization.config.about)
 								this.func = function()
 									getglobal(this:GetParent():GetParent():GetName()..this:GetParent().selected):Hide()
@@ -2817,7 +2832,7 @@
 				<HitRectInsets left="0" right="0" top="10" bottom="10"/> 
 				<ScrollChild>
 					<Frame name="$parent_Child">
-						<Size x="300" y="1850" />
+						<Size x="300" y="1950" />
 						<Frames>
 							<Frame name="$parent_DPS" inherits="DPSMate_Template_BoxColumns">
 								<Anchors>
@@ -4560,10 +4575,10 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
-												getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.damage)
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.amount)
 											</OnLoad>
 											<OnClick>
-												DPSMate.Options:CheckButton("columnsdmgtaken", 1)
+												DPSMate.Options:CheckButton("columnsthreat", 1)
 											</OnClick>
 										</Scripts>
 									</CheckButton>
@@ -4575,10 +4590,10 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
-												getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.dtps)
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.tps)
 											</OnLoad>
 											<OnClick>
-												DPSMate.Options:CheckButton("columnsdmgtaken", 2)
+												DPSMate.Options:CheckButton("columnsthreat", 2)
 											</OnClick>
 										</Scripts>
 									</CheckButton>
@@ -4593,7 +4608,7 @@
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.percent)
 											</OnLoad>
 											<OnClick>
-												DPSMate.Options:CheckButton("columnsdmgtaken", 3)
+												DPSMate.Options:CheckButton("columnsthreat", 3)
 											</OnClick>
 										</Scripts>
 									</CheckButton>
@@ -4619,10 +4634,10 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
-												getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.damage)
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.amount)
 											</OnLoad>
 											<OnClick>
-												DPSMate.Options:CheckButton("columnsdtps", 1)
+												DPSMate.Options:CheckButton("columnstps", 1)
 											</OnClick>
 										</Scripts>
 									</CheckButton>
@@ -4634,10 +4649,10 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
-												getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.dtps)
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.tps)
 											</OnLoad>
 											<OnClick>
-												DPSMate.Options:CheckButton("columnsdtps", 2)
+												DPSMate.Options:CheckButton("columnstps", 2)
 											</OnClick>
 										</Scripts>
 									</CheckButton>
@@ -4652,7 +4667,95 @@
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.percent)
 											</OnLoad>
 											<OnClick>
-												DPSMate.Options:CheckButton("columnsdtps", 3)
+												DPSMate.Options:CheckButton("columnstps", 3)
+											</OnClick>
+										</Scripts>
+									</CheckButton>
+								</Frames>
+							</Frame>
+							<Frame name="$parent_Fails" inherits="DPSMate_Template_BoxColumns">
+								<Anchors>
+									<Anchor point="TOP" relativeTo="$parent_TPS" relativePoint="BOTTOM">
+										<Offset x="0" y="-20" />
+									</Anchor>
+								</Anchors>
+								<Scripts>
+									<OnLoad>
+										getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.fails)
+									</OnLoad>
+								</Scripts>
+								<Frames>
+									<CheckButton name="$parent_Check1" inherits="DPSMate_Template_CheckButton">
+										<Anchors>
+											<Anchor point="TOPLEFT">
+												<Offset x="10" y="-8" />
+											</Anchor>
+										</Anchors>
+										<Scripts>
+											<OnLoad>
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.amount)
+											</OnLoad>
+											<OnClick>
+												DPSMate.Options:CheckButton("columnsfails", 1)
+											</OnClick>
+										</Scripts>
+									</CheckButton>
+									<CheckButton name="$parent_Check2" inherits="DPSMate_Template_CheckButton">
+										<Anchors>
+											<Anchor point="LEFT" relativeTo="$parent_Check1" relativePoint="RIGHT">
+												<Offset x="65" y="0" />
+											</Anchor>
+										</Anchors>
+										<Scripts>
+											<OnLoad>
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.percent)
+											</OnLoad>
+											<OnClick>
+												DPSMate.Options:CheckButton("columnsfails", 2)
+											</OnClick>
+										</Scripts>
+									</CheckButton>
+								</Frames>
+							</Frame>
+							<Frame name="$parent_CCBreaker" inherits="DPSMate_Template_BoxColumns">
+								<Anchors>
+									<Anchor point="TOP" relativeTo="$parent_Fails" relativePoint="BOTTOM">
+										<Offset x="0" y="-20" />
+									</Anchor>
+								</Anchors>
+								<Scripts>
+									<OnLoad>
+										getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.ccbreaker)
+									</OnLoad>
+								</Scripts>
+								<Frames>
+									<CheckButton name="$parent_Check1" inherits="DPSMate_Template_CheckButton">
+										<Anchors>
+											<Anchor point="TOPLEFT">
+												<Offset x="10" y="-8" />
+											</Anchor>
+										</Anchors>
+										<Scripts>
+											<OnLoad>
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.amount)
+											</OnLoad>
+											<OnClick>
+												DPSMate.Options:CheckButton("columnsccbreaker", 1)
+											</OnClick>
+										</Scripts>
+									</CheckButton>
+									<CheckButton name="$parent_Check2" inherits="DPSMate_Template_CheckButton">
+										<Anchors>
+											<Anchor point="LEFT" relativeTo="$parent_Check1" relativePoint="RIGHT">
+												<Offset x="65" y="0" />
+											</Anchor>
+										</Anchors>
+										<Scripts>
+											<OnLoad>
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.percent)
+											</OnLoad>
+											<OnClick>
+												DPSMate.Options:CheckButton("columnsccbreaker", 2)
 											</OnClick>
 										</Scripts>
 									</CheckButton>
@@ -4874,6 +4977,121 @@
 							</OnClick>
 						</Scripts>
 					</Button>
+				</Frames>
+			</Frame>
+			
+			<Frame name="$parent_Tab_Broadcasting" inherits="DPSMate_Template_Box" hidden="true">
+				<Size x="301" y="250" />
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="$parent_Menu" relativePoint="RIGHT" />
+				</Anchors>
+				<Frames>
+					<CheckButton name="$parent_Enable" inherits="DPSMate_Template_CheckButton">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT">
+								<Offset x="5" y="-5" />
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								getglobal(this:GetName().."_Title"):SetText("Enable")
+							</OnLoad>
+							<OnClick>
+								if DPSMateSettings["broadcasting"] then
+									DPSMateSettings["broadcasting"] = false
+								else
+									DPSMateSettings["broadcasting"] = true
+								end
+							</OnClick>
+						</Scripts>
+					</CheckButton>
+					<CheckButton name="$parent_RaidWarning" inherits="DPSMate_Template_CheckButton">
+						<Anchors>
+							<Anchor point="LEFT" relativeTo="$parent_Enable" relativePoint="RIGHT">
+								<Offset x="130" y="0" />
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								getglobal(this:GetName().."_Title"):SetText("Use Raidwarning")
+							</OnLoad>
+							<OnClick>
+								if DPSMateSettings["bcrw"] then
+									DPSMateSettings["bcrw"] = false
+								else
+									DPSMateSettings["bcrw"] = true
+								end
+							</OnClick>
+						</Scripts>
+					</CheckButton>
+					<CheckButton name="$parent_Cooldowns" inherits="DPSMate_Template_CheckButton">
+						<Anchors>
+							<Anchor point="TOP" relativeTo="$parent_Enable" relativePoint="BOTTOM" />
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								getglobal(this:GetName().."_Title"):SetText("Relevant cooldowns")
+							</OnLoad>
+							<OnClick>
+								if DPSMateSettings["bccd"] then
+									DPSMateSettings["bccd"] = false
+								else
+									DPSMateSettings["bccd"] = true
+								end
+							</OnClick>
+						</Scripts>
+					</CheckButton>
+					<CheckButton name="$parent_Ress" inherits="DPSMate_Template_CheckButton">
+						<Anchors>
+							<Anchor point="TOP" relativeTo="$parent_Cooldowns" relativePoint="BOTTOM" />
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								getglobal(this:GetName().."_Title"):SetText("Ressurections")
+							</OnLoad>
+							<OnClick>
+								if DPSMateSettings["bcress"] then
+									DPSMateSettings["bcress"] = false
+								else
+									DPSMateSettings["bcress"] = true
+								end
+							</OnClick>
+						</Scripts>
+					</CheckButton>
+					<CheckButton name="$parent_KillingBlows" inherits="DPSMate_Template_CheckButton">
+						<Anchors>
+							<Anchor point="TOP" relativeTo="$parent_Ress" relativePoint="BOTTOM" />
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								getglobal(this:GetName().."_Title"):SetText("Killingblows")
+							</OnLoad>
+							<OnClick>
+								if DPSMateSettings["bckb"] then
+									DPSMateSettings["bckb"] = false
+								else
+									DPSMateSettings["bckb"] = true
+								end
+							</OnClick>
+						</Scripts>
+					</CheckButton>
+					<CheckButton name="$parent_Fails" inherits="DPSMate_Template_CheckButton">
+						<Anchors>
+							<Anchor point="TOP" relativeTo="$parent_KillingBlows" relativePoint="BOTTOM" />
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								getglobal(this:GetName().."_Title"):SetText("Fails")
+							</OnLoad>
+							<OnClick>
+								if DPSMateSettings["bcfail"] then
+									DPSMateSettings["bcfail"] = false
+								else
+									DPSMateSettings["bcfail"] = true
+								end
+							</OnClick>
+						</Scripts>
+					</CheckButton>
 				</Frames>
 			</Frame>
 			

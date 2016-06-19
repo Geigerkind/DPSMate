@@ -399,17 +399,17 @@ end
 function DPSMate.Options:InitializeConfigMenu()
 	-- Inialize Extra Buttons
 	for cat, val in pairs(DPSMateSettings["windows"]) do
-		local f = CreateFrame("Button", "DPSMate_ConfigMenu_Menu_Button"..(8+cat), DPSMate_ConfigMenu_Menu, "DPSMate_Template_WindowButton")
+		local f = CreateFrame("Button", "DPSMate_ConfigMenu_Menu_Button"..(9+cat), DPSMate_ConfigMenu_Menu, "DPSMate_Template_WindowButton")
 		f.Key = cat
-		_G("DPSMate_ConfigMenu_Menu_Button"..(8+cat).."Text"):SetText(val["name"])
+		_G("DPSMate_ConfigMenu_Menu_Button"..(9+cat).."Text"):SetText(val["name"])
 		if cat>1 then
-			f:SetPoint("TOP", _G("DPSMate_ConfigMenu_Menu_Button"..(7+cat)), "BOTTOM")
-			_G("DPSMate_ConfigMenu_Menu_Button"..(7+cat)).after = f
+			f:SetPoint("TOP", _G("DPSMate_ConfigMenu_Menu_Button"..(8+cat)), "BOTTOM")
+			_G("DPSMate_ConfigMenu_Menu_Button"..(8+cat)).after = f
 		else
 			f:SetPoint("TOP", DPSMate_ConfigMenu_Menu_Button1, "BOTTOM")
 		end
 		f.after = DPSMate_ConfigMenu_Menu_Button2
-		DPSMate_ConfigMenu.num = 8+cat
+		DPSMate_ConfigMenu.num = 9+cat
 		f.func = function()
 			_G(this:GetParent():GetParent():GetName()..this:GetParent().selected):Hide()
 			_G(this:GetParent():GetParent():GetName().."_Tab_Window"):Show()
@@ -419,7 +419,7 @@ function DPSMate.Options:InitializeConfigMenu()
 	local TL = DPSMate:TableLength(DPSMateSettings["windows"])
 	if TL>=1 then
 		DPSMate_ConfigMenu_Menu_Button2:ClearAllPoints()
-		DPSMate_ConfigMenu_Menu_Button2:SetPoint("TOP", _G("DPSMate_ConfigMenu_Menu_Button"..(8+TL)), "BOTTOM")
+		DPSMate_ConfigMenu_Menu_Button2:SetPoint("TOP", _G("DPSMate_ConfigMenu_Menu_Button"..(9+TL)), "BOTTOM")
 	end
 		
 	-- Tab Window
@@ -496,12 +496,22 @@ function DPSMate.Options:InitializeConfigMenu()
 		_G("DPSMate_ConfigMenu_Tab_Columns_Child_AuraUptime_Check"..i):SetChecked(DPSMateSettings["columnsaurauptime"][i])
 		_G("DPSMate_ConfigMenu_Tab_Columns_Child_Procs_Check"..i):SetChecked(DPSMateSettings["columnsprocs"][i])
 		_G("DPSMate_ConfigMenu_Tab_Columns_Child_Casts_Check"..i):SetChecked(DPSMateSettings["columnscasts"][i])
+		_G("DPSMate_ConfigMenu_Tab_Columns_Child_Fails_Check"..i):SetChecked(DPSMateSettings["columnsfails"][i])
+		_G("DPSMate_ConfigMenu_Tab_Columns_Child_CCBreaker_Check"..i):SetChecked(DPSMateSettings["columnsccbreaker"][i])
 	end
 	
 	-- Tab Tooltips
 	DPSMate_ConfigMenu_Tab_Tooltips_Tooltips:SetChecked(DPSMateSettings["showtooltips"])
 	DPSMate_ConfigMenu_Tab_Tooltips_InformativeTooltips:SetChecked(DPSMateSettings["informativetooltips"])
 	DPSMate_ConfigMenu_Tab_Tooltips_Rows:SetValue(DPSMateSettings["subviewrows"])
+	
+	-- Tab Broadcasting
+	DPSMate_ConfigMenu_Tab_Broadcasting_Enable:SetChecked(DPSMateSettings["broadcasting"])
+	DPSMate_ConfigMenu_Tab_Broadcasting_Cooldowns:SetChecked(DPSMateSettings["bccd"])
+	DPSMate_ConfigMenu_Tab_Broadcasting_Ress:SetChecked(DPSMateSettings["bcress"])
+	DPSMate_ConfigMenu_Tab_Broadcasting_KillingBlows:SetChecked(DPSMateSettings["bckb"])
+	DPSMate_ConfigMenu_Tab_Broadcasting_Fails:SetChecked(DPSMateSettings["bcfail"])
+	DPSMate_ConfigMenu_Tab_Broadcasting_RaidWarning:SetChecked(DPSMateSettings["bcrw"])
 	
 	-- Mode menu
 	for cat, _ in DPSMateSettings["hiddenmodes"] do
@@ -792,6 +802,8 @@ function DPSMate.Options:PopUpAccept(bool, bypass)
 			DPSMateInterrupts = {[1]={},[2]={}}
 			DPSMateAurasGained = {[1]={},[2]={}}
 			DPSMateThreat = {[1]={},[2]={}}
+			DPSMateFails = {[1]={},[2]={}}
+			DPSMateCCBreaker = {[1]={},[2]={}}
 			DPSMateHistory = {
 				names = {},
 				DMGDone = {},
@@ -808,7 +820,9 @@ function DPSMate.Options:PopUpAccept(bool, bypass)
 				Interrupts = {},
 				Dispels = {},
 				Auras = {},
-				Threat = {}
+				Threat = {},
+				Fails = {},
+				CCBreaker = {}
 			}
 			DPSMateCombatTime = {
 				total = 1,
@@ -832,6 +846,9 @@ function DPSMate.Options:PopUpAccept(bool, bypass)
 			DPSMateDeaths[2] = {}
 			DPSMateInterrupts[2] = {}
 			DPSMateAurasGained[2] = {}
+			DPSMateAurasThreat[2] = {}
+			DPSMateAurasFails[2] = {}
+			DPSMateAurasCCBreaker[2] = {}
 			DPSMateCombatTime["current"] = 1
 		end
 		DPSMate.Modules.DPS.DB = DPSMateDamageDone
@@ -870,6 +887,8 @@ function DPSMate.Options:PopUpAccept(bool, bypass)
 		DPSMate.Modules.Casts.DB = DPSMateCasts
 		DPSMate.Modules.Threat.DB = DPSMateThreat
 		DPSMate.Modules.TPS.DB = DPSMateThreat
+		DPSMate.Modules.Fails.DB = DPSMateFails
+		DPSMate.Modules.CCBreaker.DB = DPSMateCCBreaker
 		for _, val in pairs(DPSMateSettings["windows"]) do
 			if not val["options"][2]["total"] and not val["options"][2]["currentfight"] then
 				val["options"][2]["total"] = true
@@ -1581,21 +1600,21 @@ function DPSMate.Options:CreateWindow()
 			local fr=CreateFrame("Frame", "DPSMate_"..na, UIParent, "DPSMate_Statusframe")
 			fr.Key=TL
 		end
-		if not _G("DPSMate_ConfigMenu_Menu_Button"..(8+TL)) then
-			local f = CreateFrame("Button", "DPSMate_ConfigMenu_Menu_Button"..(8+TL), DPSMate_ConfigMenu_Menu, "DPSMate_Template_WindowButton")
+		if not _G("DPSMate_ConfigMenu_Menu_Button"..(9+TL)) then
+			local f = CreateFrame("Button", "DPSMate_ConfigMenu_Menu_Button"..(9+TL), DPSMate_ConfigMenu_Menu, "DPSMate_Template_WindowButton")
 			f.Key = TL
 		end
-		local frame = _G("DPSMate_ConfigMenu_Menu_Button"..(8+TL))
+		local frame = _G("DPSMate_ConfigMenu_Menu_Button"..(9+TL))
 		frame:Show()
-		_G("DPSMate_ConfigMenu_Menu_Button"..(8+TL).."Text"):SetText(na)
+		_G("DPSMate_ConfigMenu_Menu_Button"..(9+TL).."Text"):SetText(na)
 		if TL>1 then
-			frame:SetPoint("TOP", _G("DPSMate_ConfigMenu_Menu_Button"..(7+TL)), "BOTTOM")
-			_G("DPSMate_ConfigMenu_Menu_Button"..(7+TL)).after = frame
+			frame:SetPoint("TOP", _G("DPSMate_ConfigMenu_Menu_Button"..(8+TL)), "BOTTOM")
+			_G("DPSMate_ConfigMenu_Menu_Button"..(8+TL)).after = frame
 		else
 			frame:SetPoint("TOP", DPSMate_ConfigMenu_Menu_Button1, "BOTTOM")
 		end
 		frame.after = DPSMate_ConfigMenu_Menu_Button2
-		DPSMate_ConfigMenu.num = 8+TL
+		DPSMate_ConfigMenu.num = 9+TL
 		frame.func = function()
 			_G(this:GetParent():GetParent():GetName()..this:GetParent().selected):Hide()
 			_G(this:GetParent():GetParent():GetName().."_Tab_Window"):Show()
@@ -1615,20 +1634,20 @@ function DPSMate.Options:RemoveWindow()
 	local frame = _G("DPSMate_"..DPSMate_ConfigMenu.Selected)
 	if frame then
 		frame:Hide()
-		_G("DPSMate_ConfigMenu_Menu_Button"..(8+frame.Key)):Hide()
+		_G("DPSMate_ConfigMenu_Menu_Button"..(9+frame.Key)):Hide()
 		table.remove(DPSMateSettings["windows"], frame.Key)
 		local TL = DPSMate:TableLength(DPSMateSettings["windows"])
-		_G("DPSMate_ConfigMenu_Menu_Button"..(8+TL)).after = DPSMate_ConfigMenu_Menu_Button2
+		_G("DPSMate_ConfigMenu_Menu_Button"..(9+TL)).after = DPSMate_ConfigMenu_Menu_Button2
 		DPSMate_ConfigMenu_Menu_Button2:ClearAllPoints()
-		DPSMate_ConfigMenu_Menu_Button2:SetPoint("TOP", _G("DPSMate_ConfigMenu_Menu_Button"..(8+TL)), "BOTTOM")
+		DPSMate_ConfigMenu_Menu_Button2:SetPoint("TOP", _G("DPSMate_ConfigMenu_Menu_Button"..(9+TL)), "BOTTOM")
 		UIDropDownMenu_SetSelectedValue(DPSMate_ConfigMenu_Tab_Window_Remove, "None")
 		DPSMate_ConfigMenu_Menu_Button1.selected = true
-		_G("DPSMate_ConfigMenu_Menu_Button"..(8+frame.Key)).selected = false
-		_G("DPSMate_ConfigMenu_Menu_Button"..(8+frame.Key).."Texture"):Hide()
-		_G("DPSMate_ConfigMenu_Menu_Button"..(8+frame.Key).."Text"):SetTextColor(1,0.82,0,1)
-		_G("DPSMate_ConfigMenu_Menu_Button"..(8+frame.Key).."_Button1"):Hide()
-		_G("DPSMate_ConfigMenu_Menu_Button"..(8+frame.Key).."_Button2"):Hide()
-		_G("DPSMate_ConfigMenu_Menu_Button"..(8+frame.Key).."_Button3"):Hide()
+		_G("DPSMate_ConfigMenu_Menu_Button"..(9+frame.Key)).selected = false
+		_G("DPSMate_ConfigMenu_Menu_Button"..(9+frame.Key).."Texture"):Hide()
+		_G("DPSMate_ConfigMenu_Menu_Button"..(9+frame.Key).."Text"):SetTextColor(1,0.82,0,1)
+		_G("DPSMate_ConfigMenu_Menu_Button"..(9+frame.Key).."_Button1"):Hide()
+		_G("DPSMate_ConfigMenu_Menu_Button"..(9+frame.Key).."_Button2"):Hide()
+		_G("DPSMate_ConfigMenu_Menu_Button"..(9+frame.Key).."_Button3"):Hide()
 		DPSMate_ConfigMenu_Menu_Button1Texture:Show()
 	end
 end
