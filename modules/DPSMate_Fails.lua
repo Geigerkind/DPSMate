@@ -4,17 +4,17 @@ DPSMate.Modules.Fails.Hist = "Fails"
 DPSMate.Options.Options[1]["args"]["fails"] = {
 	order = 300,
 	type = 'toggle',
-	name = "Fails",
-	desc = "Show fails.",
+	name = DPSMate.L["fails"],
+	desc = DPSMate.L["show"].." "..DPSMate.L["fails"]..".",
 	get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["options"][1]["fails"] end,
 	set = function() DPSMate.Options:ToggleDrewDrop(1, "fails", DPSMate.Options.Dewdrop:GetOpenedParent()) end,
 }
 
 -- Register the moodule
-DPSMate:Register("fails", DPSMate.Modules.Fails, "Fails")
+DPSMate:Register("fails", DPSMate.Modules.Fails, DPSMate.L["fails"])
 
 local tinsert = table.insert
-
+local strformat = string.format
 
 function DPSMate.Modules.Fails:GetSortedTable(arr, k)
 	local b, a, total = {}, {}, 0
@@ -79,7 +79,7 @@ function DPSMate.Modules.Fails:GetSettingValues(arr, cbt, k)
 		if dmg==0 then break end
 		local str = {[1]="",[2]="",[3]=""}
 		if DPSMateSettings["columnsfails"][1] then str[1] = " "..dmg..p; strt[2] = tot..p end
-		if DPSMateSettings["columnsfails"][2] then str[3] = " ("..string.format("%.1f", 100*dmg/tot).."%)" end
+		if DPSMateSettings["columnsfails"][2] then str[3] = " ("..strformat("%.1f", 100*dmg/tot).."%)" end
 		tinsert(name, a[cat])
 		tinsert(value, str[2]..str[1]..str[3])
 		tinsert(perc, 100*(dmg/sort))
@@ -89,11 +89,11 @@ end
 
 function DPSMate.Modules.Fails:Type(id)
 	if id == 1 then
-		return "Friendly Fire"
+		return DPSMate.L["friendlyfire"]
 	elseif id == 2 then
-		return "Damage taken"
+		return DPSMate.L["damagetaken"]
 	end
-	return "Debuff taken"
+	return DPSMate.L["debufftaken"]
 end
 
 function DPSMate.Modules.Fails:ShowTooltip(user,k)
@@ -101,7 +101,7 @@ function DPSMate.Modules.Fails:ShowTooltip(user,k)
 	if DPSMateSettings["informativetooltips"] then
 		for i=1, DPSMateSettings["subviewrows"] do
 			if not a[i] then break end
-			GameTooltip:AddDoubleLine(i..". "..self:Type(a[i]),c[i].." ("..string.format("%.2f", 100*c[i]/b).."%)",1,1,1,1,1,1)
+			GameTooltip:AddDoubleLine(i..". "..self:Type(a[i]),c[i].." ("..strformat("%.2f", 100*c[i]/b).."%)",1,1,1,1,1,1)
 		end
 	end
 end

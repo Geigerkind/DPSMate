@@ -15,7 +15,7 @@
 						</Anchor>
 					</Anchors>
 				</Texture>
-				<FontString name="$parent_Name" inherits="GameFontNormalSmall" text="Test Buff of Testing of the Doom" justifyH="LEFT">
+				<FontString name="$parent_Name" inherits="GameFontNormalSmall" justifyH="LEFT">
 					<Size x="200" y="30" />
 					<Anchors>
 						<Anchor point="LEFT" relativeTo="$parent_Icon" relativePoint="RIGHT">
@@ -24,7 +24,7 @@
 					</Anchors>
 					<Color r="1" g="1" b="1" />
 				</FontString>
-				<FontString name="$parent_Count" inherits="GameFontNormalSmall" text="9999">
+				<FontString name="$parent_Count" inherits="GameFontNormalSmall">
 					<Size x="75" y="30" />
 					<Anchors>
 						<Anchor point="LEFT" relativeTo="$parent_Name" relativePoint="RIGHT">
@@ -33,7 +33,7 @@
 					</Anchors>
 					<Color r="1" g="1" b="1" />
 				</FontString>
-				<FontString name="$parent_Chance" inherits="GameFontNormalSmall" text="999009s">
+				<FontString name="$parent_Chance" inherits="GameFontNormalSmall">
 					<Size x="75" y="30" />
 					<Anchors>
 						<Anchor point="LEFT" relativeTo="$parent_Count" relativePoint="RIGHT">
@@ -56,7 +56,7 @@
 		</Backdrop>
 		<Layers>
 			<Layer level="ARTWORK">
-				<FontString name="$parent_Title" inherits="GameFontNormalHuge" text="Buffs" justifyH="LEFT">
+				<FontString name="$parent_Title" inherits="GameFontNormalHuge" justifyH="LEFT">
 					<Size x="870" y="30" />
 					<Anchors>
 						<Anchor point="TOPLEFT">
@@ -65,7 +65,7 @@
 					</Anchors>
 					<Color r="1" g="1" b="1" />
 				</FontString>
-				<FontString name="$parent_Name" inherits="GameFontNormal" text="Name">
+				<FontString name="$parent_Name" inherits="GameFontNormal">
 					<Size x="230" y="30" />
 					<Anchors>
 						<Anchor point="TOPLEFT">
@@ -73,7 +73,7 @@
 						</Anchor>
 					</Anchors>
 				</FontString>
-				<FontString name="$parent_Count" inherits="GameFontNormal" text="Count">
+				<FontString name="$parent_Count" inherits="GameFontNormal">
 					<Size x="75" y="30" />
 					<Anchors>
 						<Anchor point="LEFT" relativeTo="$parent_Name" relativePoint="RIGHT">
@@ -81,7 +81,7 @@
 						</Anchor>
 					</Anchors>
 				</FontString>
-				<FontString name="$parent_Chance" inherits="GameFontNormal" text="Uptime">
+				<FontString name="$parent_Chance" inherits="GameFontNormal">
 					<Size x="375" y="30" />
 					<Anchors>
 						<Anchor point="LEFT" relativeTo="$parent_Count" relativePoint="RIGHT">
@@ -175,7 +175,7 @@
 				<Scripts>
 					<OnEnter>
 						GameTooltip:SetOwner(this, "ANCHOR_RIGHT")
-						GameTooltip:SetText(DPSMate.localization.details.close, nil, nil, nil, nil, 1)
+						GameTooltip:SetText(DPSMate.L["close"], nil, nil, nil, nil, 1)
 						GameTooltip:Show()
 					</OnEnter>
 					<OnLeave>
@@ -198,7 +198,10 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."_Title"):SetText("Casts")
+						getglobal(this:GetName().."_Title"):SetText(DPSMate.L["casts"])
+						getglobal(this:GetName().."_Name"):SetText(DPSMate.L["bname"])
+						getglobal(this:GetName().."_Count"):SetText(DPSMate.L["count"])
+						getglobal(this:GetName().."_Chance"):SetText(DPSMate.L["chance"])
 						DPSMate.Modules.DetailsCasts:CreateGraphTable(this)
 						this:SetVerticalScroll(0)
 					</OnLoad>

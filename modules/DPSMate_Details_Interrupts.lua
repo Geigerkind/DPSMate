@@ -13,7 +13,8 @@ function DPSMate.Modules.DetailsInterrupts:UpdateDetails(obj, key)
 	curKey = key
 	db, cbt = DPSMate:GetMode(key)
 	DetailsUser = obj.user
-	DPSMate_Details_Interrupts_Title:SetText("Interrupts by "..obj.user)
+	DPSMate_Details_Interrupts_Title:SetText(DPSMate.L["interruptsby"]..obj.user)
+	DetailsArr, DetailsTotal, DmgArr = DPSMate.Modules.DetailsInterrupts:EvalTable()
 	DPSMate_Details_Interrupts:Show()
 	self:ScrollFrame_Update()
 	self:SelectCreatureButton(1)
@@ -84,9 +85,8 @@ end
 
 function DPSMate.Modules.DetailsInterrupts:ScrollFrame_Update()
 	local line, lineplusoffset
-	local obj = _G("DPSMate_Details_Interrupts_Log_ScrollFrame")
+	local obj = DPSMate_Details_Interrupts_Log_ScrollFrame
 	local path = "DPSMate_Details_Interrupts_Log_ScrollButton"
-	DetailsArr, DetailsTotal, DmgArr = DPSMate.Modules.DetailsInterrupts:EvalTable()
 	local len = DPSMate:TableLength(DetailsArr)
 	FauxScrollFrame_Update(obj,len,14,24)
 	for line=1,14 do
@@ -116,7 +116,7 @@ end
 
 function DPSMate.Modules.DetailsInterrupts:SelectCreatureButton(i)
 	local line, lineplusoffset
-	local obj = _G("DPSMate_Details_Interrupts_LogTwo_ScrollFrame")
+	local obj = DPSMate_Details_Interrupts_LogTwo_ScrollFrame
 	obj.index = i
 	local path = "DPSMate_Details_Interrupts_LogTwo_ScrollButton"
 	local len = DPSMate:TableLength(DmgArr[i][2])
@@ -150,7 +150,7 @@ end
 
 function DPSMate.Modules.DetailsInterrupts:SelectCreatureAbilityButton(i, p)
 	local line, lineplusoffset
-	local obj = _G("DPSMate_Details_Interrupts_LogThree_ScrollFrame")
+	local obj = DPSMate_Details_Interrupts_LogThree_ScrollFrame
 	obj.index = i
 	local path = "DPSMate_Details_Interrupts_LogThree_ScrollButton"
 	local len = DPSMate:TableLength(DmgArr[i][3][p][2])

@@ -183,7 +183,7 @@
 				<Scripts>
 					<OnEnter>
 						GameTooltip:SetOwner(this, "ANCHOR_RIGHT")
-						GameTooltip:SetText(DPSMate.localization.details.close, nil, nil, nil, nil, 1)
+						GameTooltip:SetText(DPSMate.L["close"], nil, nil, nil, nil, 1)
 						GameTooltip:Show()
 					</OnEnter>
 					<OnLeave>
@@ -206,7 +206,10 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."_Title"):SetText("Procs")
+						getglobal(this:GetName().."_Title"):SetText(DPSMate.L["procs"])
+						getglobal(this:GetName().."_Name"):SetText(DPSMate.L["bname"])
+						getglobal(this:GetName().."_Count"):SetText(DPSMate.L["count"])
+						getglobal(this:GetName().."_Chance"):SetText(DPSMate.L["chance"])
 						DPSMate.Modules.DetailsProcs:CreateGraphTable(this)
 						this:SetVerticalScroll(0)
 					</OnLoad>

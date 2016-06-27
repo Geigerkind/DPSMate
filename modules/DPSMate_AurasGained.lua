@@ -4,15 +4,17 @@ DPSMate.Modules.AurasGained.Hist = "Auras"
 DPSMate.Options.Options[1]["args"]["aurasgained"] = {
 	order = 230,
 	type = 'toggle',
-	name = 'Auras gained',
-	desc = "Show Auras gained.",
+	name = DPSMate.L["aurasgained"],
+	desc = DPSMate.L["show"].." "..DPSMate.L["aurasgained"]..".",
 	get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["options"][1]["aurasgained"] end,
 	set = function() DPSMate.Options:ToggleDrewDrop(1, "aurasgained", DPSMate.Options.Dewdrop:GetOpenedParent()) end,
 }
 
 -- Register the moodule
-DPSMate:Register("aurasgained", DPSMate.Modules.AurasGained, "Auras gained")
+DPSMate:Register("aurasgained", DPSMate.Modules.AurasGained, DPSMate.L["aurasgained"])
 
+local tinsert = table.insert
+local strformat = string.format
 
 function DPSMate.Modules.AurasGained:GetSortedTable(arr,k)
 	local b, a, total = {}, {}, 0
@@ -31,13 +33,13 @@ function DPSMate.Modules.AurasGained:GetSortedTable(arr,k)
 			local i = 1
 			while true do
 				if (not b[i]) then
-					table.insert(b, i, CV)
-					table.insert(a, i, cat)
+					tinsert(b, i, CV)
+					tinsert(a, i, cat)
 					break
 				else
 					if b[i] < CV then
-						table.insert(b, i, CV)
-						table.insert(a, i, cat)
+						tinsert(b, i, CV)
+						tinsert(a, i, cat)
 						break
 					end
 				end
@@ -67,13 +69,13 @@ function DPSMate.Modules.AurasGained:EvalTable(user, k)
 		local i = 1
 		while true do
 			if (not b[i]) then
-				table.insert(b, i, val)
-				table.insert(a, i, cat)
+				tinsert(b, i, val)
+				tinsert(a, i, cat)
 				break
 			else
 				if b[i] < val then
-					table.insert(b, i, val)
-					table.insert(a, i, cat)
+					tinsert(b, i, val)
+					tinsert(a, i, cat)
 					break
 				end
 			end
@@ -93,10 +95,10 @@ function DPSMate.Modules.AurasGained:GetSettingValues(arr, cbt, k)
 		if dmg==0 then break end
 		local str = {[1]="",[2]="",[3]=""}
 		if DPSMateSettings["columnsaurasgained"][1] then str[1] = " "..dmg..p; strt[2] = tot..p end
-		if DPSMateSettings["columnsaurasgained"][2] then str[3] = " ("..string.format("%.1f", 100*dmg/tot).."%)" end
-		table.insert(name, DPSMate:GetUserById(a[cat]))
-		table.insert(value, str[1]..str[3])
-		table.insert(perc, 100*(dmg/sort))
+		if DPSMateSettings["columnsaurasgained"][2] then str[3] = " ("..strformat("%.1f", 100*dmg/tot).."%)" end
+		tinsert(name, DPSMate:GetUserById(a[cat]))
+		tinsert(value, str[1]..str[3])
+		tinsert(perc, 100*(dmg/sort))
 	end
 	return name, value, perc, strt
 end
@@ -106,7 +108,7 @@ function DPSMate.Modules.AurasGained:ShowTooltip(user,k)
 	if DPSMateSettings["informativetooltips"] then
 		for i=1, DPSMateSettings["subviewrows"] do
 			if not a[i] then break end
-			GameTooltip:AddDoubleLine(i..". "..DPSMate:GetAbilityById(a[i]),c[i].." ("..string.format("%.2f", 100*c[i]/b).."%)",1,1,1,1,1,1)
+			GameTooltip:AddDoubleLine(i..". "..DPSMate:GetAbilityById(a[i]),c[i].." ("..strformat("%.2f", 100*c[i]/b).."%)",1,1,1,1,1,1)
 		end
 	end
 end

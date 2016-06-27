@@ -9,6 +9,7 @@ local curKey = 1
 local db, cbt = {}, 0
 local _G = getglobal
 local tinsert = table.insert
+local strformat = string.format
 
 function DPSMate.Modules.DetailsOverhealing:UpdateDetails(obj, key)
 	curKey = key
@@ -21,9 +22,10 @@ function DPSMate.Modules.DetailsOverhealing:UpdateDetails(obj, key)
 		PieChart = false
 	end
 	DetailsUser = obj.user
-	DPSMate_Details_Overhealing_Title:SetText("Overhealing done by "..obj.user)
+	DPSMate_Details_Overhealing_Title:SetText(DPSMate.L["overhealby"]..obj.user)
 	DPSMate_Details_Overhealing:Show()
 	UIDropDownMenu_Initialize(DPSMate_Details_Overhealing_DiagramLegend_Procs, DPSMate.Modules.DetailsOverhealing.ProcsDropDown)
+	DetailsArr, DetailsTotal, DmgArr = DPSMate.RegistredModules[DPSMateSettings["windows"][curKey]["CurMode"]]:EvalTable(DPSMateUser[DetailsUser], curKey)
 	self:ScrollFrame_Update()
 	self:SelectDetails_OverhealingButton(1)
 	self:UpdatePie()
@@ -32,8 +34,7 @@ end
 
 function DPSMate.Modules.DetailsOverhealing:ScrollFrame_Update()
 	local line, lineplusoffset
-	local obj = _G("DPSMate_Details_Overhealing_Log_ScrollFrame")
-	DetailsArr, DetailsTotal, DmgArr = DPSMate.RegistredModules[DPSMateSettings["windows"][curKey]["CurMode"]]:EvalTable(DPSMateUser[DetailsUser], curKey)
+	local obj = DPSMate_Details_Overhealing_Log_ScrollFrame
 	local len = DPSMate:TableLength(DetailsArr)
 	FauxScrollFrame_Update(obj,len,10,24)
 	for line=1,10 do
@@ -41,7 +42,7 @@ function DPSMate.Modules.DetailsOverhealing:ScrollFrame_Update()
 		if DetailsArr[lineplusoffset] ~= nil then
 			local ability = DPSMate:GetAbilityById(DetailsArr[lineplusoffset])
 			_G("DPSMate_Details_Overhealing_Log_ScrollButton"..line.."_Name"):SetText(ability)
-			_G("DPSMate_Details_Overhealing_Log_ScrollButton"..line.."_Value"):SetText(DmgArr[lineplusoffset].." ("..string.format("%.2f", (DmgArr[lineplusoffset]*100/DetailsTotal)).."%)")
+			_G("DPSMate_Details_Overhealing_Log_ScrollButton"..line.."_Value"):SetText(DmgArr[lineplusoffset].." ("..strformat("%.2f", (DmgArr[lineplusoffset]*100/DetailsTotal)).."%)")
 			_G("DPSMate_Details_Overhealing_Log_ScrollButton"..line.."_Icon"):SetTexture(DPSMate.BabbleSpell:GetSpellIcon(strsub(ability, 1, (strfind(ability, "%(") or 0)-1) or ability))
 			if len < 10 then
 				_G("DPSMate_Details_Overhealing_Log_ScrollButton"..line):SetWidth(235)
@@ -62,7 +63,7 @@ function DPSMate.Modules.DetailsOverhealing:ScrollFrame_Update()
 end
 
 function DPSMate.Modules.DetailsOverhealing:SelectDetails_OverhealingButton(i)
-	local obj = _G("DPSMate_Details_Overhealing_Log_ScrollFrame")
+	local obj = DPSMate_Details_Overhealing_Log_ScrollFrame
 	local lineplusoffset = i + FauxScrollFrame_GetOffset(obj)
 	local user = DPSMateUser[DetailsUser][1]
 	

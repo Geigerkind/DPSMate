@@ -4,15 +4,17 @@ DPSMate.Modules.HealingAndAbsorbs.Hist = "Absorbs"
 DPSMate.Options.Options[1]["args"]["healingandabsorbs"] = {
 	order = 130,
 	type = 'toggle',
-	name = 'Healing and Absorbs',
-	desc = "Show Healing and Absorbs.",
+	name = DPSMate.L["healingandabsorbs"],
+	desc = DPSMate.L["show"].." "..DPSMate.L["healingandabsorbs"]..".",
 	get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["options"][1]["healingandabsorbs"] end,
 	set = function() DPSMate.Options:ToggleDrewDrop(1, "healingandabsorbs", DPSMate.Options.Dewdrop:GetOpenedParent()) end,
 }
 
 -- Register the moodule
-DPSMate:Register("healingandabsorbs", DPSMate.Modules.HealingAndAbsorbs, "Healing and Absorbs")
+DPSMate:Register("healingandabsorbs", DPSMate.Modules.HealingAndAbsorbs, DPSMate.L["healingandabsorbs"])
 
+local tinsert = table.insert
+local strformat = string.format
 
 function DPSMate.Modules.HealingAndAbsorbs:GetSortedTable(arr, k)
 	local b, a, total = {}, {}, 0
@@ -83,13 +85,13 @@ function DPSMate.Modules.HealingAndAbsorbs:GetSortedTable(arr, k)
 			local i = 1
 			while true do
 				if (not f[i]) then
-					table.insert(f, i, val)
-					table.insert(h, i, cat)
+					tinsert(f, i, val)
+					tinsert(h, i, cat)
 					break
 				else
 					if f[i] < val then
-						table.insert(f, i, val)
-						table.insert(h, i, cat)
+						tinsert(f, i, val)
+						tinsert(h, i, cat)
 						break
 					end
 				end
@@ -149,13 +151,13 @@ function DPSMate.Modules.HealingAndAbsorbs:EvalTable(user, k)
 		local i = 1
 		while true do
 			if (not f[i]) then
-				table.insert(f, i, {val, false})
-				table.insert(h, i, cat)
+				tinsert(f, i, {val, false})
+				tinsert(h, i, cat)
 				break
 			else
 				if f[i][1] < val then
-					table.insert(f, i, {val, false})
-					table.insert(h, i, cat)
+					tinsert(f, i, {val, false})
+					tinsert(h, i, cat)
 					break
 				end
 			end
@@ -168,13 +170,13 @@ function DPSMate.Modules.HealingAndAbsorbs:EvalTable(user, k)
 		local i = 1
 		while true do
 			if (not f[i]) then
-				table.insert(f, i, {val, true})
-				table.insert(h, i, cat)
+				tinsert(f, i, {val, true})
+				tinsert(h, i, cat)
 				break
 			else
 				if f[i][1] < val then
-					table.insert(f, i, {val, true})
-					table.insert(h, i, cat)
+					tinsert(f, i, {val, true})
+					tinsert(h, i, cat)
 					break
 				end
 			end
@@ -185,20 +187,22 @@ function DPSMate.Modules.HealingAndAbsorbs:EvalTable(user, k)
 	return h, total, f
 end
 
-function DPSMate.Modules.HealingAndAbsorbs:GetSettingValues(arr, cbt, k)
+function DPSMate.Modules.HealingAndAbsorbs:GetSettingValues(arr, cbt, k,ecbt)
 	local name, value, perc, sortedTable, total, a, p, strt = {}, {}, {}, {}, 0, 0, "", {[1]="",[2]=""}
 	if DPSMateSettings["windows"][k]["numberformat"] == 2 then p = "K" end
 	sortedTable, total, a = DPSMate.Modules.HealingAndAbsorbs:GetSortedTable(arr, k)
 	for cat, val in pairs(sortedTable) do
 		local va, tot, sort = DPSMate:FormatNumbers(val, total, sortedTable[1], k)
 		if va==0 then break end
-		local str = {[1]="",[2]="",[3]=""}
+		local str = {[1]="",[2]="",[3]="",[4]=""}
+		local pname = DPSMate:GetUserById(a[cat])
 		if DPSMateSettings["columnshab"][1] then str[1] = " "..va..p; strt[2] = " "..tot..p end
-		if DPSMateSettings["columnshab"][3] then str[2] = " ("..string.format("%.1f", 100*va/tot).."%)" end
-		if DPSMateSettings["columnshab"][2] then str[3] = "("..string.format("%.1f", va/cbt)..")"; strt[1] = "("..string.format("%.1f", tot/cbt)..")" end
-		table.insert(name, DPSMate:GetUserById(a[cat]))
-		table.insert(value, str[3]..str[1]..str[2])
-		table.insert(perc, 100*(va/sort))
+		if DPSMateSettings["columnshab"][3] then str[2] = " ("..strformat("%.1f", 100*va/tot).."%)" end
+		if DPSMateSettings["columnshab"][2] then str[3] = "("..strformat("%.1f", va/cbt)..")"; strt[1] = "("..strformat("%.1f", tot/cbt)..")" end
+		if DPSMateSettings["columnshab"][4] then str[4] = " ("..strformat("%.1f", va/(ecbt[pname] or cbt))..p..")" end
+		tinsert(name, pname)
+		tinsert(value, str[3]..str[1]..str[4]..str[2])
+		tinsert(perc, 100*(va/sort))
 	end
 	return name, value, perc, strt
 end
@@ -208,7 +212,7 @@ function DPSMate.Modules.HealingAndAbsorbs:ShowTooltip(user, k)
 	if DPSMateSettings["informativetooltips"] then
 		for i=1, DPSMateSettings["subviewrows"] do
 			if not a[i] then break end
-			GameTooltip:AddDoubleLine(i..". "..DPSMate:GetAbilityById(a[i]),c[i][1].." ("..string.format("%.2f", 100*c[i][1]/b).."%)",1,1,1,1,1,1)
+			GameTooltip:AddDoubleLine(i..". "..DPSMate:GetAbilityById(a[i]),c[i][1].." ("..strformat("%.2f", 100*c[i][1]/b).."%)",1,1,1,1,1,1)
 		end
 	end
 end

@@ -66,16 +66,16 @@ DPSMate.Options.Options = {
 			total = {
 				order = 10,
 				type = 'toggle',
-				name = DPSMate.localization.config.total,
-				desc = DPSMate.localization.desc.total,
+				name = DPSMate.L["total"],
+				desc = DPSMate.L["totalmode"],
 				get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["options"][2]["total"] end,
 				set = function() DPSMate.Options:ToggleDrewDrop(2, "total", DPSMate.Options.Dewdrop:GetOpenedParent()) end,
 			},
 			currentFight = {
 				order = 20,
 				type = 'toggle',
-				name = DPSMate.localization.config.current,
-				desc = DPSMate.localization.desc.current,
+				name = DPSMate.L["mcurrent"],
+				desc = DPSMate.L["currentmode"],
 				get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["options"][2]["currentfight"] end,
 				set = function() DPSMate.Options:ToggleDrewDrop(2, "currentfight", DPSMate.Options.Dewdrop:GetOpenedParent()) end,
 			},
@@ -88,57 +88,57 @@ DPSMate.Options.Options = {
 			test = {
 				order = 5,
 				type = 'toggle',
-				name = DPSMate.localization.config.testmode,
-				desc = DPSMate.localization.desc.testmode,
+				name = DPSMate.L["testmode"],
+				desc = DPSMate.L["testmodedesc"],
 				get = function() return DPSMate.Options.TestMode end,
 				set = function() DPSMate.Options:ActivateTestMode(); DPSMate.Options.Dewdrop:Close() end,
 			},
 			report = {
 				order = 10,
 				type = 'execute',
-				name = DPSMate.localization.config.report,
-				desc = DPSMate.localization.desc.report,
+				name = DPSMate.L["report"],
+				desc = DPSMate.L["reportsegment"],
 				func = function() DPSMate_Report:Show(); DPSMate.Options.Dewdrop:Close() end,
 			},
 			reset = {
 				order = 11,
 				type = 'execute',
-				name = DPSMate.localization.config.reset,
-				desc = DPSMate.localization.desc.reset,
+				name = DPSMate.L["reset"],
+				desc = DPSMate.L["resetdesc"],
 				func = function() DPSMate_PopUp:Show(); DPSMate.Options.Dewdrop:Close() end,
 			},
 			realtime = {
 				order = 12,
 				type = 'group',
-				name = 'Create realtime graph',
-				desc = 'Create a realtime graph. Be aware it takes a lot of ressources.',
+				name = DPSMate.L["mrealtime"],
+				desc = DPSMate.L["mrealtimedesc"],
 				args = {
 					damage = {
 						order = 1,
 						type = 'execute',
-						name = 'Damage done',
-						desc = 'Select damage done for this frame.',
+						name = DPSMate.L["damagedone"],
+						desc = DPSMate.L["realtimedmgdone"],
 						func = function() DPSMate.Options:SelectRealtime(DPSMate.Options.Dewdrop:GetOpenedParent(), "damage") end
 					},
 					dmgt = {
 						order = 2,
 						type = 'execute',
-						name = 'Damage taken',
-						desc = 'Select damage taken for this frame.',
+						name = DPSMate.L["damagetaken"],
+						desc = DPSMate.L["realtimedmgtaken"],
 						func = function() DPSMate.Options:SelectRealtime(DPSMate.Options.Dewdrop:GetOpenedParent(), "dmgt") end
 					},
 					heal = {
 						order = 3,
 						type = 'execute',
-						name = 'Healing',
-						desc = 'Select raw healing for this frame.',
+						name = DPSMate.L["healing"],
+						desc = DPSMate.L["realtimehealing"],
 						func = function() DPSMate.Options:SelectRealtime(DPSMate.Options.Dewdrop:GetOpenedParent(), "heal") end
 					},
 					eheal = {
 						order = 4,
 						type = 'execute',
-						name = 'Effective Healing',
-						desc = 'Select effective healing for this frame.',
+						name = DPSMate.L["effectivehealing"],
+						desc = DPSMate.L["realtimeehealing"],
 						func = function() DPSMate.Options:SelectRealtime(DPSMate.Options.Dewdrop:GetOpenedParent(), "eheal") end
 					}
 				}
@@ -150,15 +150,15 @@ DPSMate.Options.Options = {
 			startnewsegment = {
 				order = 25,
 				type = 'execute',
-				name = DPSMate.localization.config.newsegment,
-				desc = DPSMate.localization.desc.newsegment,
+				name = DPSMate.L["newsegment"],
+				desc = DPSMate.L["newsegmentdesc"],
 				func = function() DPSMate.Options:NewSegment(); DPSMate.Options.Dewdrop:Close() end,
 			},
 			deletesegment = {
 				order = 30,
 				type = 'group',
-				name = DPSMate.localization.config.removesegment,
-				desc = DPSMate.localization.desc.removesegment,
+				name = DPSMate.L["removesegment"],
+				desc = DPSMate.L["removesegmentdesc"],
 				args = {},
 			},
 			blank2 = {
@@ -168,29 +168,29 @@ DPSMate.Options.Options = {
 			showAll  = {
 				order = 32,
 				type = 'execute',
-				name = 'Show all',
-				desc = 'Click to show all frames',
+				name = DPSMate.L["showAll"],
+				desc = DPSMate.L["showAllDesc"],
 				func = function() for _, val in DPSMateSettings["windows"] do DPSMate.Options:Show(getglobal("DPSMate_"..val["name"])) end; DPSMate.Options.Dewdrop:Close() end,
 			},
 			hideAll  = {
 				order = 33,
 				type = 'execute',
-				name = 'Hide all',
-				desc = 'Click to hide all frames',
+				name = DPSMate.L["hideAll"],
+				desc = DPSMate.L["hideAllDesc"],
 				func = function() for _, val in DPSMateSettings["windows"] do DPSMate.Options:Hide(getglobal("DPSMate_"..val["name"])) end; DPSMate.Options.Dewdrop:Close() end,
 			},
 			showwindow = {
 				order = 36,
 				type = 'group',
-				name = DPSMate.localization.config.showwindow,
-				desc = DPSMate.localization.desc.showwindow,
+				name = DPSMate.L["showwindow"],
+				desc = DPSMate.L["showwindowdesc"],
 				args = {},
 			},
 			hidewindow = {
 				order = 37,
 				type = 'group',
-				name = DPSMate.localization.config.hidewindow,
-				desc = DPSMate.localization.desc.hidewindow,
+				name = DPSMate.L["hidewindow"],
+				desc = DPSMate.L["hidewindowdesc"],
 				args = {},
 			},
 			blank3 = {
@@ -200,31 +200,31 @@ DPSMate.Options.Options = {
 			lock = {
 				order = 40,
 				type = 'toggle',
-				name = DPSMate.localization.config.lock,
-				desc = DPSMate.localization.desc.lock,
+				name = DPSMate.L["lock"],
+				desc = DPSMate.L["lockdesc"],
 				get = function() return DPSMateSettings["lock"] end,
 				set = function() DPSMate.Options:Lock(); DPSMate.Options.Dewdrop:Close() end,
 			},
 			unlock = {
 				order = 50,
 				type = 'toggle',
-				name = DPSMate.localization.config.unlock,
-				desc = DPSMate.localization.desc.lock,
+				name = DPSMate.L["unlock"],
+				desc = DPSMate.L["unlock"],
 				get = function() return not DPSMateSettings["lock"] end,
 				set = function() DPSMate.Options:Unlock(); DPSMate.Options.Dewdrop:Close() end,
 			},
 			configure = {
 				order = 80,
 				type = 'execute',
-				name = DPSMate.localization.config.config,
-				desc = DPSMate.localization.desc.config,
+				name = DPSMate.L["config"],
+				desc = DPSMate.L["config"],
 				func = function() DPSMate_ConfigMenu:Show(); DPSMate.Options.Dewdrop:Close() end,
 			},
 			close = {
 				order = 90,
 				type = 'execute',
-				name = DPSMate.localization.close,
-				desc = DPSMate.localization.desc.close,
+				name = DPSMate.L["close"],
+				desc = DPSMate.L["close"],
 				func = function() DPSMate.Options.Dewdrop:Close() end,
 			},
 		},
@@ -236,14 +236,14 @@ DPSMate.Options.Options = {
 			report = {
 				order = 10,
 				type = 'group',
-				name = "Report details",
-				desc = "TO BE ADDED!",
+				name = DPSMate.L["report"],
+				desc = DPSMate.L["reportdesc"],
 				args = {
 					whisper = {
 						order = 10,
 						type = "text",
-						name = "Whisper",
-						desc = "TO BE ADDED!",
+						name = DPSMate.L["whisper"],
+						desc = DPSMate.L["whisperdesc"],
 						get = function() return "" end,
 						set = function(name) DPSMate.Options:ReportUserDetails(DPSMate.Options.Dewdrop:GetOpenedParent(), "Whisper", name); DPSMate.Options.Dewdrop:Close() end,
 						usage = "<name>",
@@ -259,88 +259,88 @@ DPSMate.Options.Options = {
 			classes = {
 				order = 10,
 				type = 'group',
-				name = 'Classes',
-				desc = 'TO BE ADDED!',
+				name = DPSMate.L["classes"],
+				desc = DPSMate.L["classesdesc"],
 				args = {
 					warrior = {
 						order = 10,
 						type = 'toggle',
-						name = 'Warrior',
-						desc = 'Show warriors',
+						name = DPSMate.L["warrior"],
+						desc = DPSMate.L["warriordesc"],
 						get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["filterclasses"]["warrior"] end,
-						set = function() DPSMate.Options:ToggleFilterClass(DPSMate.Options.Dewdrop:GetOpenedParent().Key, "warrior");DPSMate.Options.Dewdrop:Close() end,
+						set = function() DPSMate.Options:ToggleFilterClass(DPSMate.Options.Dewdrop:GetOpenedParent().Key, "warrior") end,
 					},
 					rogue = {
 						order = 20,
 						type = 'toggle',
-						name = 'Rogue',
-						desc = 'Show rogues',
+						name = DPSMate.L["rogue"],
+						desc = DPSMate.L["roguedesc"],
 						get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["filterclasses"]["rogue"] end,
-						set = function() DPSMate.Options:ToggleFilterClass(DPSMate.Options.Dewdrop:GetOpenedParent().Key, "rogue");DPSMate.Options.Dewdrop:Close() end,
+						set = function() DPSMate.Options:ToggleFilterClass(DPSMate.Options.Dewdrop:GetOpenedParent().Key, "rogue") end,
 					},
 					priest = {
 						order = 30,
 						type = 'toggle',
-						name = 'Priest',
-						desc = 'Show priests',
+						name = DPSMate.L["priest"],
+						desc = DPSMate.L["priestdesc"],
 						get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["filterclasses"]["priest"] end,
-						set = function() DPSMate.Options:ToggleFilterClass(DPSMate.Options.Dewdrop:GetOpenedParent().Key, "priest");DPSMate.Options.Dewdrop:Close() end,
+						set = function() DPSMate.Options:ToggleFilterClass(DPSMate.Options.Dewdrop:GetOpenedParent().Key, "priest") end,
 					},
 					hunter = {
 						order = 40,
 						type = 'toggle',
-						name = 'Hunter',
-						desc = 'Show hunters',
+						name = DPSMate.L["hunter"],
+						desc = DPSMate.L["hunterdesc"],
 						get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["filterclasses"]["hunter"] end,
-						set = function() DPSMate.Options:ToggleFilterClass(DPSMate.Options.Dewdrop:GetOpenedParent().Key, "hunter");DPSMate.Options.Dewdrop:Close() end,
+						set = function() DPSMate.Options:ToggleFilterClass(DPSMate.Options.Dewdrop:GetOpenedParent().Key, "hunter") end,
 					},
 					druid = {
 						order = 50,
 						type = 'toggle',
-						name = 'Druid',
-						desc = 'Show druids',
+						name = DPSMate.L["druid"],
+						desc = DPSMate.L["druiddesc"],
 						get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["filterclasses"]["druid"] end,
-						set = function() DPSMate.Options:ToggleFilterClass(DPSMate.Options.Dewdrop:GetOpenedParent().Key, "druid");DPSMate.Options.Dewdrop:Close() end,
+						set = function() DPSMate.Options:ToggleFilterClass(DPSMate.Options.Dewdrop:GetOpenedParent().Key, "druid") end,
 					},
 					mage = {
 						order = 60,
 						type = 'toggle',
-						name = 'Mage',
-						desc = 'Show mages',
+						name = DPSMate.L["mage"],
+						desc = DPSMate.L["magedesc"],
 						get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["filterclasses"]["mage"] end,
-						set = function() DPSMate.Options:ToggleFilterClass(DPSMate.Options.Dewdrop:GetOpenedParent().Key, "mage");DPSMate.Options.Dewdrop:Close() end,
+						set = function() DPSMate.Options:ToggleFilterClass(DPSMate.Options.Dewdrop:GetOpenedParent().Key, "mage") end,
 					},
 					warlock = {
 						order = 70,
 						type = 'toggle',
-						name = 'Warlock',
-						desc = 'Show warlocks',
+						name = DPSMate.L["warlock"],
+						desc = DPSMate.L["warlockdesc"],
 						get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["filterclasses"]["warlock"] end,
-						set = function() DPSMate.Options:ToggleFilterClass(DPSMate.Options.Dewdrop:GetOpenedParent().Key, "warlock");DPSMate.Options.Dewdrop:Close() end,
+						set = function() DPSMate.Options:ToggleFilterClass(DPSMate.Options.Dewdrop:GetOpenedParent().Key, "warlock") end,
 					},
 					paladin = {
 						order = 80,
 						type = 'toggle',
-						name = 'Paladin',
-						desc = 'Show paladins',
+						name = DPSMate.L["paladin"],
+						desc = DPSMate.L["paladindesc"],
 						get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["filterclasses"]["paladin"] end,
-						set = function() DPSMate.Options:ToggleFilterClass(DPSMate.Options.Dewdrop:GetOpenedParent().Key, "paladin");DPSMate.Options.Dewdrop:Close() end,
+						set = function() DPSMate.Options:ToggleFilterClass(DPSMate.Options.Dewdrop:GetOpenedParent().Key, "paladin") end,
 					},
 					shamen = {
 						order = 90,
 						type = 'toggle',
-						name = 'Shaman',
-						desc = 'Show shamens',
+						name = DPSMate.L["shaman"],
+						desc = DPSMate.L["shamandesc"],
 						get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["filterclasses"]["shaman"] end,
-						set = function() DPSMate.Options:ToggleFilterClass(DPSMate.Options.Dewdrop:GetOpenedParent().Key, "shaman");DPSMate.Options.Dewdrop:Close() end,
+						set = function() DPSMate.Options:ToggleFilterClass(DPSMate.Options.Dewdrop:GetOpenedParent().Key, "shaman") end,
 					},
 				},
 			},
 			people = {
 				order = 20,
 				type = 'text',
-				name = 'Certain names',
-				desc = 'Split them by "," Ex: Shino,',
+				name = DPSMate.L["certainnames"],
+				desc = DPSMate.L["certainnamesdesc"],
 				get = function() if DPSMate.Options.Dewdrop:GetOpenedParent() then return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["filterpeople"] else return "" end end,
 				set = function(names) DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["filterpeople"] = names;DPSMate:SetStatusBarValue();DPSMate.Options.Dewdrop:Close() end,
 				usage = "<names>",
@@ -348,8 +348,8 @@ DPSMate.Options.Options = {
 			group = {
 				order = 30,
 				type = "toggle",
-				name = "Group only",
-				desc = "Only show your group",
+				name = DPSMate.L["grouponly"],
+				desc = DPSMate.L["grouponlydesc"],
 				get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["grouponly"] end,
 				set = function() DPSMate.DB:OnGroupUpdate();DPSMate.Options:SimpleToggle(DPSMate.Options.Dewdrop:GetOpenedParent().Key, "grouponly");DPSMate.Options.Dewdrop:Close() end,
 			}
@@ -360,17 +360,20 @@ DPSMate.Options.Options = {
 DPSMate.Options.TestMode = false
 
 -- Local Variables
-local _G = getglobal
 local LastPopUp = 0
 local TimeToNextPopUp = 1
 local PartyNum, LastPartyNum = 0, 0
 local SelectedChannel = "Raid"
 
+local _G = getglobal
+local tinsert = table.insert
+local tremove = tremove
+
 -- Begin Functions
 
 function DPSMate.Options:SelectRealtime(obj, kind)
 	if kind then
-		local key = obj.Key
+		local key = obj.Key or 1
 		DPSMateSettings["windows"][key]["realtime"] = kind
 		if not _G(obj:GetName().."_RealTime") then
 			local f = CreateFrame("Frame", obj:GetName().."_RealTime", obj, "DPSMate_RealTime")
@@ -456,7 +459,7 @@ function DPSMate.Options:InitializeConfigMenu()
 	DPSMate_ConfigMenu_Tab_GeneralOptions_Segments:SetValue(DPSMateSettings["datasegments"])
 	
 	-- Tab Columns
-	for i=1, 3 do
+	for i=1, 4 do
 		_G("DPSMate_ConfigMenu_Tab_Columns_Child_DPS_Check"..i):SetChecked(DPSMateSettings["columnsdps"][i])
 		_G("DPSMate_ConfigMenu_Tab_Columns_Child_Damage_Check"..i):SetChecked(DPSMateSettings["columnsdmg"][i])
 		_G("DPSMate_ConfigMenu_Tab_Columns_Child_DamageTaken_Check"..i):SetChecked(DPSMateSettings["columnsdmgtaken"][i])
@@ -475,10 +478,10 @@ function DPSMate.Options:InitializeConfigMenu()
 		_G("DPSMate_ConfigMenu_Tab_Columns_Child_FriendlyFire_Check"..i):SetChecked(DPSMateSettings["columnsfriendlyfire"][i])
 		_G("DPSMate_ConfigMenu_Tab_Columns_Child_Threat_Check"..i):SetChecked(DPSMateSettings["columnsthreat"][i])
 		_G("DPSMate_ConfigMenu_Tab_Columns_Child_TPS_Check"..i):SetChecked(DPSMateSettings["columnstps"][i])
-	end
-	for i=1, 2 do
 		_G("DPSMate_ConfigMenu_Tab_Columns_Child_Absorbs_Check"..i):SetChecked(DPSMateSettings["columnsabsorbs"][i])
 		_G("DPSMate_ConfigMenu_Tab_Columns_Child_AbsorbsTaken_Check"..i):SetChecked(DPSMateSettings["columnsabsorbstaken"][i])
+	end
+	for i=1, 2 do
 		_G("DPSMate_ConfigMenu_Tab_Columns_Child_Deaths_Check"..i):SetChecked(DPSMateSettings["columnsdeaths"][i])
 		_G("DPSMate_ConfigMenu_Tab_Columns_Child_Interrupts_Check"..i):SetChecked(DPSMateSettings["columnsinterrupts"][i])
 		_G("DPSMate_ConfigMenu_Tab_Columns_Child_Dispels_Check"..i):SetChecked(DPSMateSettings["columnsdispels"][i])
@@ -523,7 +526,7 @@ DPSMate.Options.OldLogout = Logout
 function DPSMate.Options:Logout()
 	if DPSMateSettings["sync"] then
 		if UnitInRaid("player") then
-			DPSMate:SendMessage("DPSMate cant be reset while being in Sync-Mode in raids.")
+			DPSMate:SendMessage(DPSMate.L["syncreseterror"])
 		else
 			DPSMate.Options:PopUpAccept(true, true)
 		end
@@ -544,6 +547,7 @@ Logout = function()
 	end
 end
 
+-- Deprecated
 function DPSMate.Options:SumGraphData()
 	for i=1,2 do
 		-- Damage done
@@ -782,7 +786,7 @@ function DPSMate.Options:PopUpAccept(bool, bypass)
 		if IsPartyLeader() or IsRaidOfficer() or IsRaidLeader() then
 			DPSMate.Sync:StartVote()
 		else
-			DPSMate:SendMessage("You are not the leader of the group or an assist!")
+			DPSMate:SendMessage(DPSMate.L["resetnotofficererror"])
 			return
 		end
 	else
@@ -828,6 +832,10 @@ function DPSMate.Options:PopUpAccept(bool, bypass)
 				total = 1,
 				current = 1,
 				segments = {},
+				effective = {
+					[1] = {},
+					[2] = {}
+				},
 			}
 			DPSMateAttempts = {}
 			DPSMateLoot = {}
@@ -845,9 +853,9 @@ function DPSMate.Options:PopUpAccept(bool, bypass)
 			DPSMateDispels[2] = {}
 			DPSMateDeaths[2] = {}
 			DPSMateInterrupts[2] = {}
-			DPSMateAurasGained[2] = {}
-			DPSMateAurasThreat[2] = {}
-			DPSMateAurasFails[2] = {}
+			DPSMateGained[2] = {}
+			DPSMateThreat[2] = {}
+			DPSMateFails[2] = {}
 			DPSMateAurasCCBreaker[2] = {}
 			DPSMateCombatTime["current"] = 1
 		end
@@ -938,7 +946,7 @@ function DPSMate.Options:UpdateDetails(obj)
 	if obj.user then
 		DPSMate.RegistredModules[DPSMateSettings["windows"][key]["CurMode"]]:OpenDetails(obj, key)
 	else
-		DPSMate:SendMessage("Could not find this user!")
+		DPSMate:SendMessage(DPSMate.L["findusererror"])
 	end
 end
 
@@ -972,13 +980,13 @@ function DPSMate.Options:UpdateConfigModes(obj, o, p)
 	if p then
 		for cat, val in DPSMate.ModuleNames do
 			if not DPSMate:TContains(DPSMateSettings["hiddenmodes"], val) then
-				table.insert(t, 1, cat)
+				tinsert(t, 1, cat)
 			end
 		end
 	else
 		for cat, val in DPSMate.ModuleNames do
 			if DPSMate:TContains(DPSMateSettings["hiddenmodes"], val) then
-				table.insert(t, 1, cat)
+				tinsert(t, 1, cat)
 			end
 		end
 	end
@@ -1023,7 +1031,7 @@ function DPSMate.Options:ChannelDropDown()
 	while true do
 		local id, name = GetChannelName(i);
 		if (not name) then break end
-		table.insert(channel, name)
+		tinsert(channel, name)
 		i=i+1
 	end
 	
@@ -1274,7 +1282,7 @@ function DPSMate.Options:SelectDataResets(obj, case)
 end
 
 function DPSMate.Options:DataResetsDropDown()
-	local btns = {"Yes", "No", "Ask"}
+	local btns = {DPSMate.L["yes"], DPSMate.L["no"], DPSMate.L["ask"]}
 	
 	local function on_click()
 		DPSMate.Options:SelectDataResets(_G(UIDROPDOWNMENU_OPEN_MENU), this.value)
@@ -1300,7 +1308,7 @@ function DPSMate.Options:DataResetsDropDown()
 end
 
 function DPSMate.Options:NumberFormatDropDown()
-	local btns = {"Normal", "Condensed"}
+	local btns = {DPSMate.L["normal"], DPSMate.L["condensed"]}
 	
 	local function on_click()
 		DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["numberformat"] = this.value
@@ -1318,7 +1326,7 @@ function DPSMate.Options:NumberFormatDropDown()
 end
 
 function DPSMate.Options:TooltipPositionDropDown()
-	local btns = {"Default", "Top Right", "Top Left", "Left", "Top"}
+	local btns = {DPSMate.L["default"], DPSMate.L["topright"], DPSMate.L["topleft"], DPSMate.L["left"], DPSMate.L["top"]}
 	
 	local function on_click()
 		DPSMateSettings["tooltipanchor"] = this.value
@@ -1344,15 +1352,15 @@ function DPSMate.Options:Report()
 	SelectedChannel = channel
 	local arr, cbt = DPSMate:GetMode(DPSMate_Report.PaKey)
 	local chn, index, name, value, perc = nil, nil, nil, nil, nil
-	name, value, perc = DPSMate:GetSettingValues(arr, cbt, DPSMate_Report.PaKey)
-	if (channel == "Whisper") then
+	name, value, perc, b = DPSMate:GetSettingValues(arr, cbt, DPSMate_Report.PaKey)
+	if (channel == DPSMate.L["whisper"]) then
 		chn = "WHISPER"; index = DPSMate_Report_Editbox:GetText();
-	elseif DPSMate:TContains({"Raid","Party","Say","Officer","Guild"}, channel) then
+	elseif DPSMate:TContains(DPSMate.L["gchannel"], channel) then
 		chn = channel
 	else
 		chn = "CHANNEL"; index = GetChannelName(channel)
 	end
-	SendChatMessage("DPSMate - "..DPSMate.localization.reportfor..DPSMate:GetModeName(DPSMate_Report.PaKey or 1).." - ".._G("DPSMate_"..DPSMateSettings["windows"][DPSMate_Report.PaKey or 1]["name"].."_Head_Font"):GetText(), chn, nil, index)
+	SendChatMessage(DPSMate.L["name"].." - "..DPSMate.L["reportfor"]..DPSMate:GetModeName(DPSMate_Report.PaKey or 1).." - ".._G("DPSMate_"..DPSMateSettings["windows"][DPSMate_Report.PaKey or 1]["name"].."_Head_Font"):GetText().." - "..b[1]..b[2], chn, nil, index)
 	for i=1, DPSMate_Report_Lines:GetValue() do
 		if (not value[i] or value[i] == 0) then break end
 		SendChatMessage(i..". "..name[i].." -"..value[i], chn, nil, index)
@@ -1360,33 +1368,42 @@ function DPSMate.Options:Report()
 	DPSMate_Report:Hide()
 end
 
-local AbilityModes = {"damage", "dps", "healing", "hps", "overhealing", "effectivehealing", "effectivehps", "deaths", "interrupts", "dispels", "aurasgained", "auraslost", "aurasuptime"}
+local AbilityModes = {"damage", "dps", "healing", "hps", "overhealing", "effectivehealing", "effectivehps", "deaths", "interrupts", "dispels", "decurses", "curedisease", "curepoison", "liftmagic", "aurasgained", "auraslost", "aurasuptime", "procs", "casts", "ccbreaker"}
 function DPSMate.Options:ReportUserDetails(obj, channel, name)
 	local Key, user = obj:GetParent():GetParent():GetParent().Key, obj.user
-	local a,b,c = DPSMate.RegistredModules[DPSMateSettings["windows"][Key]["CurMode"]]:EvalTable(DPSMateUser[user], Key)
+	local _, cbt = DPSMate:GetMode(Key)
+	local a,b,c = DPSMate.RegistredModules[DPSMateSettings["windows"][Key]["CurMode"]]:EvalTable(DPSMateUser[user], Key, cbt)
+	if DPSMateSettings["windows"][Key]["CurMode"] == "threat" or DPSMateSettings["windows"][Key]["CurMode"] == "tps" then
+		DPSMate:SendMessage(DPSMate.L["nodetailserror"])
+		return
+	end
 	local chn, index
-	if (channel == "Whisper") then
+	if (channel == DPSMate.L["whisper"]) then
 		chn = "WHISPER"; index = name;
-	elseif DPSMate:TContains({"Raid","Party","Say","Officer","Guild"}, channel) then
+	elseif DPSMate:TContains(DPSMate.L["gchannel"], channel) then
 		chn = channel
 	else
 		chn = "CHANNEL"; index = GetChannelName(channel)
 	end
-	SendChatMessage("DPSMate - Report of "..user.."'s ".._G("DPSMate_"..DPSMateSettings["windows"][Key]["name"].."_Head_Font"):GetText().." - "..DPSMate:GetModeName(Key), chn, nil, index)
+	SendChatMessage(DPSMate.L["name"].." - "..DPSMate.L["reportof"].." "..user.."'s ".._G("DPSMate_"..DPSMateSettings["windows"][Key]["name"].."_Head_Font"):GetText().." - "..DPSMate:GetModeName(Key).." - "..b, chn, nil, index)
 	for i=1, 5 do
 		if (not a[i]) then break end
 		local p
 		if type(c[i])=="table" then p = c[i][1] else p = c[i] end
-		if DPSMate:TContains(AbilityModes, DPSMateSettings["windows"][Key]["CurMode"]) then
-			SendChatMessage(i..". "..DPSMate:GetAbilityById(a[i]).." - "..p, chn, nil, index)
+		if DPSMateSettings["windows"][Key]["CurMode"] == "fails" then
+			SendChatMessage(i..". "..DPSMate.Modules.Fails:Type(a[i]).." - "..p, chn, nil, index)
 		else
-			SendChatMessage(i..". "..DPSMate:GetUserById(a[i]).." - "..p, chn, nil, index)
+			if DPSMate:TContains(AbilityModes, DPSMateSettings["windows"][Key]["CurMode"]) then
+				SendChatMessage(i..". "..DPSMate:GetAbilityById(a[i]).." - "..p, chn, nil, index)
+			else
+				SendChatMessage(i..". "..DPSMate:GetUserById(a[i]).." - "..p, chn, nil, index)
+			end
 		end
 	end
 end
 
 function DPSMate.Options:InializePlayerDewDrop(obj)
-	local channel, i = {[1]="Raid",[2]="Party",[3]="Say",[4]="Officer",[5]="Guild"}, 1
+	local channel, i = DPSMate.L["gchannel"], 1
 	local path = DPSMate.Options.Options[4]["args"]["report"]["args"]
 	-- Name
 	DPSMate.Options.Options[4]["args"]["player"] = {
@@ -1397,8 +1414,8 @@ function DPSMate.Options:InializePlayerDewDrop(obj)
 	DPSMate.Options.Options[4]["args"]["details"] = {
 		order = 2,
 		type = "execute",
-		name = "Open details",
-		desc = "TO BE ADDED!",
+		name = DPSMate.L["opendetails"],
+		desc = DPSMate.L["opendetails"],
 		func = function() DPSMate.Options:UpdateDetails(obj); DPSMate.Options.Dewdrop:Close() end,
 	}
 	
@@ -1406,7 +1423,7 @@ function DPSMate.Options:InializePlayerDewDrop(obj)
 	while true do
 		local id, name = GetChannelName(i);
 		if (not name) then break end
-		table.insert(channel, name)
+		tinsert(channel, name)
 		i=i+1
 	end
 	
@@ -1415,7 +1432,7 @@ function DPSMate.Options:InializePlayerDewDrop(obj)
 			order = 10*cat+10,
 			type = "execute",
 			name = val,
-			desc = "TO BE ADDED!",
+			desc = DPSMate.L["reportdetails"],
 			func = loadstring('DPSMate.Options:ReportUserDetails(DPSMate.Options.Dewdrop:GetOpenedParent(), "'..val..'"); DPSMate.Options.Dewdrop:Close()'),
 		}
 	end
@@ -1448,7 +1465,11 @@ function DPSMate.Options:NewSegment()
 	DPSMateInterrupts[2] = {}
 	DPSMateDispels[2] = {}
 	DPSMateAurasGained[2] = {}
+	DPSMateThreat[2] = {}
+	DPSMateFails[2] = {}
+	DPSMateCCBreaker[2] = {}
 	DPSMateCombatTime["current"] = 1
+	DPSMateCombatTime["effective"][2] = {}
 	DPSMate:SetStatusBarValue()
 end
 
@@ -1456,22 +1477,22 @@ function DPSMate.Options:CreateSegment(name)
 	-- Need to add a new check
 	local modes = {["DMGDone"] = DPSMateDamageDone[2], ["DMGTaken"] = DPSMateDamageTaken[2], ["EDDone"] = DPSMateEDD[2], ["EDTaken"] = DPSMateEDT[2], ["THealing"] = DPSMateTHealing[2], ["EHealing"] = DPSMateEHealing[2], ["OHealing"] = DPSMateOverhealing[2], ["EHealingTaken"] = DPSMateEHealingTaken[2], ["THealingTaken"] = DPSMateHealingTaken[2], ["Absorbs"] = DPSMateAbsorbs[2], ["Deaths"] = DPSMateDeaths[2], ["Interrupts"] = DPSMateInterrupts[2], ["Dispels"] = DPSMateDispels[2], ["Auras"] = DPSMateAurasGained[2]}
 	
-	table.insert(DPSMateHistory["names"], 1, name.." - "..GameTime_GetTime())
+	tinsert(DPSMateHistory["names"], 1, name.." - "..GameTime_GetTime())
 	for cat, val in pairs(modes) do
-		table.insert(DPSMateHistory[cat], 1, DPSMate:CopyTable(val))
+		tinsert(DPSMateHistory[cat], 1, DPSMate:CopyTable(val))
 		if DPSMate:TableLength(DPSMateHistory[cat])>DPSMateSettings["datasegments"] then
 			for i=DPSMateSettings["datasegments"]+1, DPSMate:TableLength(DPSMateHistory[cat]) do
-				table.remove(DPSMateHistory[cat], i)
+				tremove(DPSMateHistory[cat], i)
 			end
-			table.remove(DPSMateHistory[cat], DPSMateSettings["datasegments"]+1)
+			tremove(DPSMateHistory[cat], DPSMateSettings["datasegments"]+1)
 		end
 		if DPSMate:TableLength(DPSMateCombatTime["segments"])>DPSMateSettings["datasegments"] then
 			for i=DPSMateSettings["datasegments"]+1, DPSMate:TableLength(DPSMateCombatTime["segments"]) do
-				table.remove(DPSMateCombatTime["segments"], i)
+				tremove(DPSMateCombatTime["segments"], i)
 			end
 		end
 	end
-	table.insert(DPSMateCombatTime["segments"], 1, DPSMateCombatTime["current"])
+	tinsert(DPSMateCombatTime["segments"], 1, {[1]=DPSMateCombatTime["current"], [2]=DPSMateCombatTime["effective"][2]})
 	DPSMate.Options:InitializeSegments()
 end
 
@@ -1481,16 +1502,16 @@ function DPSMate.Options:InitializeSegments()
 		total = {
 			order = 10,
 			type = 'toggle',
-			name = DPSMate.localization.config.total,
-			desc = DPSMate.localization.desc.total,
+			name = DPSMate.L["total"],
+			desc = DPSMate.L["totalmode"],
 			get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["options"][2]["total"] end,
 			set = function() DPSMate.Options:ToggleDrewDrop(2, "total", DPSMate.Options.Dewdrop:GetOpenedParent()) end,
 		},
 		currentFight = {
 			order = 20,
 			type = 'toggle',
-			name = DPSMate.localization.config.current,
-			desc = DPSMate.localization.desc.current,
+			name = DPSMate.L["mcurrent"],
+			desc = DPSMate.L["currentmode"],
 			get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["options"][2]["currentfight"] end,
 			set = function() DPSMate.Options:ToggleDrewDrop(2, "currentfight", DPSMate.Options.Dewdrop:GetOpenedParent()) end,
 		},
@@ -1502,7 +1523,7 @@ function DPSMate.Options:InitializeSegments()
 			order = 20+i*10,
 			type = 'toggle',
 			name = i..". "..DPSMateHistory["names"][i],
-			desc = "Fight deatails for segment "..i,
+			desc = DPSMate.L["fdetailsfor"]..DPSMateHistory["names"][i],
 			get = loadstring('return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["options"][2]["segment'..i..'"];'),
 			set = loadstring('DPSMate.Options:ToggleDrewDrop(2, "segment'..i..'", DPSMate.Options.Dewdrop:GetOpenedParent());'),
 		}
@@ -1510,7 +1531,7 @@ function DPSMate.Options:InitializeSegments()
 			order = i*10,
 			type = 'execute',
 			name = i..". "..DPSMateHistory["names"][i],
-			desc = "Remove segment "..i,
+			desc = DPSMate.L["removesegmentof"]..DPSMateHistory["names"][i],
 			func = loadstring('DPSMate.Options:RemoveSegment('..i..');'),
 		}
 		i=i+1
@@ -1535,7 +1556,7 @@ end
 function DPSMate.Options:CreateWindow()
 	local na = string.gsub(DPSMate_ConfigMenu_Tab_Window_Editbox:GetText(), "%s", "")
 	if (na and not DPSMate:GetKeyByValInTT(DPSMateSettings["windows"], na, "name") and na~="") then
-		table.insert(DPSMateSettings["windows"], {
+		tinsert(DPSMateSettings["windows"], {
 			name = na,
 			options = {
 				[1] = {
@@ -1623,7 +1644,7 @@ function DPSMate.Options:CreateWindow()
 		DPSMate_ConfigMenu_Menu_Button2:ClearAllPoints()
 		DPSMate_ConfigMenu_Menu_Button2:SetPoint("TOP", frame, "BOTTOM")
 		DPSMate:InitializeFrames()
-		_G("DPSMate_"..na.."_Head_Font"):SetText("Damage")
+		_G("DPSMate_"..na.."_Head_Font"):SetText(DPSMate.L["damage"])
 		_G("DPSMate_"..na.."_ScrollFrame_Child"):SetWidth(150)
 		_G("DPSMate_"..na.."_ScrollFrame"):SetHeight(84)
 		DPSMate:SetStatusBarValue()
@@ -1635,7 +1656,7 @@ function DPSMate.Options:RemoveWindow()
 	if frame then
 		frame:Hide()
 		_G("DPSMate_ConfigMenu_Menu_Button"..(9+frame.Key)):Hide()
-		table.remove(DPSMateSettings["windows"], frame.Key)
+		tremove(DPSMateSettings["windows"], frame.Key)
 		local TL = DPSMate:TableLength(DPSMateSettings["windows"])
 		_G("DPSMate_ConfigMenu_Menu_Button"..(9+TL)).after = DPSMate_ConfigMenu_Menu_Button2
 		DPSMate_ConfigMenu_Menu_Button2:ClearAllPoints()
@@ -1672,7 +1693,7 @@ function DPSMate.Options:Lock()
 	for _,val in pairs(DPSMateSettings["windows"]) do
 		_G("DPSMate_"..val["name"].."_Resize"):Hide()
 	end
-	DPSMate:SendMessage("Locked all windows.")
+	DPSMate:SendMessage(DPSMate.L["lockedallw"])
 end
 
 function DPSMate.Options:Unlock()
@@ -1680,7 +1701,7 @@ function DPSMate.Options:Unlock()
 	for _,val in pairs(DPSMateSettings["windows"]) do
 		_G("DPSMate_"..val["name"].."_Resize"):Show()
 	end
-	DPSMate:SendMessage("Unlocked all windows.")
+	DPSMate:SendMessage(DPSMate.L["unlockedallw"])
 end
 
 function DPSMate.Options:Hide(frame)
@@ -1694,7 +1715,7 @@ function DPSMate.Options:Show(frame)
 end
 
 function DPSMate.Options:RemoveSegment(i)
-	table.remove(DPSMateHistory, i)
+	tremove(DPSMateHistory, i)
 	DPSMate.Options:InitializeSegments()
 	DPSMate.Options.Dewdrop:Close()
 end
@@ -1804,8 +1825,8 @@ function DPSMate.Options:ShowTooltip()
 		GameTooltip:AddLine(this.user.."'s ".._G(this:GetParent():GetParent():GetParent():GetName().."_Head_Font"):GetText(), 1,1,1)
 		DPSMate.RegistredModules[DPSMateSettings["windows"][DPSMate_Details.PaKey]["CurMode"]]:ShowTooltip(this.user, DPSMate_Details.PaKey)
 		GameTooltip:AddLine(" ")
-		GameTooltip:AddLine("LeftClick to open the details.")
-		GameTooltip:AddLine("RightClick to open the menu.")
+		GameTooltip:AddLine(DPSMate.L["leftclickopend"])
+		GameTooltip:AddLine(DPSMate.L["rightclickopenm"])
 		GameTooltip:Show()
 	end
 end
@@ -1819,14 +1840,14 @@ function DPSMate.Options:InitializeHideShowWindow()
 			order = i*10,
 			type = 'execute',
 			name = val["name"],
-			desc = "Hide "..val["name"],
+			desc = DPSMate.L["hide"].." "..val["name"],
 			func = loadstring('DPSMate.Options:Hide(getglobal("DPSMate_'..val["name"]..'")); DPSMate.Options.Dewdrop:Close();'),
 		}
 		DPSMate.Options.Options[3]["args"]["showwindow"]["args"][val["name"]] = {
 			order = i*10,
 			type = 'execute',
 			name = val["name"],
-			desc = "Show "..val["name"],
+			desc = DPSMate.L["show"].." "..val["name"],
 			func = loadstring('DPSMate.Options:Show(getglobal("DPSMate_'..val["name"]..'")); DPSMate.Options.Dewdrop:Close();'),
 		}
 		i=i+1

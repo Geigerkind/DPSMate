@@ -4,20 +4,20 @@ DPSMate.Modules.CurePoison.Hist = "Dispels"
 DPSMate.Options.Options[1]["args"]["curepoison"] = {
 	order = 210,
 	type = 'toggle',
-	name = 'Poison cured',
-	desc = "Show Poison cured.",
+	name = DPSMate.L["curepoison"],
+	desc = DPSMate.L["show"].." "..DPSMate.L["curepoison"]..".",
 	get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["options"][1]["curepoison"] end,
 	set = function() DPSMate.Options:ToggleDrewDrop(1, "curepoison", DPSMate.Options.Dewdrop:GetOpenedParent()) end,
 }
 
 -- Register the moodule
-DPSMate:Register("curepoison", DPSMate.Modules.CurePoison, "Poison cured")
+DPSMate:Register("curepoison", DPSMate.Modules.CurePoison, DPSMate.L["curepoison"])
 
 local tinsert = table.insert
-
+local strformat = string.format
 
 function DPSMate.Modules.CurePoison:IsValid(ab, cast)
-	if DPSMateAbility[ab][2]=="Poison" or DPSMate.Parser.DePoison[cast] then
+	if DPSMateAbility[ab][2]==DPSMate.L["poison"] or DPSMate.Parser.DePoison[cast] then
 		return true
 	end
 	return false
@@ -105,7 +105,7 @@ function DPSMate.Modules.CurePoison:GetSettingValues(arr, cbt, k)
 		if dmg==0 then break end
 		local str = {[1]="",[2]="",[3]=""}
 		if DPSMateSettings["columnspoison"][1] then str[1] = " "..dmg..p; strt[2] = " "..tot..p end
-		if DPSMateSettings["columnspoison"][2] then str[3] = " ("..string.format("%.1f", 100*dmg/tot).."%)" end
+		if DPSMateSettings["columnspoison"][2] then str[3] = " ("..strformat("%.1f", 100*dmg/tot).."%)" end
 		tinsert(name, DPSMate:GetUserById(a[cat]))
 		tinsert(value, str[1]..str[3])
 		tinsert(perc, 100*(dmg/sort))
@@ -118,7 +118,7 @@ function DPSMate.Modules.CurePoison:ShowTooltip(user,k)
 	if DPSMateSettings["informativetooltips"] then
 		for i=1, DPSMateSettings["subviewrows"] do
 			if not a[i] then break end
-			GameTooltip:AddDoubleLine(i..". "..DPSMate:GetAbilityById(a[i]),c[i].." ("..string.format("%.2f", 100*c[i]/b).."%)",1,1,1,1,1,1)
+			GameTooltip:AddDoubleLine(i..". "..DPSMate:GetAbilityById(a[i]),c[i].." ("..strformat("%.2f", 100*c[i]/b).."%)",1,1,1,1,1,1)
 		end
 	end
 end

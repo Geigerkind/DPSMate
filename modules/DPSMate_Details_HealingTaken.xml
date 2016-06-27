@@ -45,7 +45,7 @@
 				if this:GetParent():GetName()=="DPSMate_Details_HealingTaken_LogCreature" then
 					DPSMate.Modules.DetailsHealingTaken:SelectCreatureButton(this:GetID())
 				else
-					DPSMate.Modules.DetailsHealingTaken:SelectDetailsButton(getglobal("DPSMate_Details_HealingTaken_Log_ScrollFrame").index, this:GetID())
+					DPSMate.Modules.DetailsHealingTaken:SelectDetailsButton(DPSMate_Details_HealingTaken_Log_ScrollFrame.index, this:GetID())
 				end
 			</OnClick>
 		</Scripts>
@@ -138,7 +138,7 @@
 				<Scripts>
 					<OnEnter>
 						GameTooltip:SetOwner(this, "ANCHOR_RIGHT")
-						GameTooltip:SetText(DPSMate.localization.details.close, nil, nil, nil, nil, 1)
+						GameTooltip:SetText(DPSMate.L["close"], nil, nil, nil, nil, 1)
 						GameTooltip:Show()
 					</OnEnter>
 					<OnLeave>
@@ -483,6 +483,16 @@
 						</FontString>
 					</Layer>
 				</Layers>
+				<Scripts>
+					<OnLoad>
+						getglobal(this:GetName().."_Hit"):SetText(DPSMate.L["hit"])
+						getglobal(this:GetName().."_Amount"):SetText(DPSMate.L["amount"])
+						getglobal(this:GetName().."_Average"):SetText(DPSMate.L["average"])
+						getglobal(this:GetName().."_Min"):SetText(DPSMate.L["min"])
+						getglobal(this:GetName().."_Max"):SetText(DPSMate.L["max"])
+						getglobal(this:GetName().."_Crit"):SetText(DPSMate.L["crit"])
+					</OnLoad>
+				</Scripts>
 				<Frames>
 					<Frame name="$parent_Amount1" inherits="DPSMateTableAmountTemplate">
 						<Anchors>

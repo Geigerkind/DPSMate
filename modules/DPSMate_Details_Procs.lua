@@ -8,15 +8,16 @@ local db, cbt = {}, 0
 local Buffpos = 0
 local _G = getglobal
 local tinsert = table.insert
+local strformat = string.format
 local hits = 1
-local mab = {["AutoAttack"] = true, ["Sinister Strike"] = true, ["Eviscerate"] = true, ["Execute"] = true, ["Overpower"] = true, ["Bloodthirst"] = true, ["Mortal Strike"] = true, ["Heoric Strike"] = true, ["Cleave"] = true, ["Whirlwind"] = true, ["Backstab"] = true, ["Shield Slam"] = true, ["Revenge"] = true, ["Sunder Armor"] = true}
+local mab = {[DPSMate.BabbleSpell:GetTranslation("AutoAttack")] = true, [DPSMate.BabbleSpell:GetTranslation("Sinister Strike")] = true, [DPSMate.BabbleSpell:GetTranslation("Eviscerate")] = true, [DPSMate.BabbleSpell:GetTranslation("Execute")] = true, [DPSMate.BabbleSpell:GetTranslation("Overpower")] = true, [DPSMate.BabbleSpell:GetTranslation("Bloodthirst")] = true, [DPSMate.BabbleSpell:GetTranslation("Mortal Strike")] = true, [DPSMate.BabbleSpell:GetTranslation("Heroic Strike")] = true, [DPSMate.BabbleSpell:GetTranslation("Cleave")] = true, [DPSMate.BabbleSpell:GetTranslation("Whirlwind")] = true, [DPSMate.BabbleSpell:GetTranslation("Backstab")] = true, [DPSMate.BabbleSpell:GetTranslation("Shield Slam")] = true, [DPSMate.BabbleSpell:GetTranslation("Revenge")] = true, [DPSMate.BabbleSpell:GetTranslation("Sunder Armor")] = true}
 		
 
 function DPSMate.Modules.DetailsProcs:UpdateDetails(obj, key)
 	curKey = key
 	db, cbt = DPSMate:GetMode(key)
 	DetailsUser = obj.user
-	DPSMate_Details_Procs_Title:SetText("Procs of "..obj.user)
+	DPSMate_Details_Procs_Title:SetText(DPSMate.L[DPSMate.BabbleSpell:GetTranslation("procsof")]..obj.user)
 	Buffpos = 0
 	self:CleanTables()
 	hits = self:GetTotalHits()
@@ -73,7 +74,7 @@ function DPSMate.Modules.DetailsProcs:UpdateBuffs(arg1)
 		_G(path..i.."_Icon"):SetTexture(DPSMate.BabbleSpell:GetSpellIcon(ab))
 		_G(path..i.."_Name"):SetText(ab)
 		_G(path..i.."_Count"):SetText(c[pos])
-		_G(path..i.."_Chance"):SetText(string.format("%.2f", 100*c[pos]/hits).."%")
+		_G(path..i.."_Chance"):SetText(strformat("%.2f", 100*c[pos]/hits).."%")
 	end
 end
 

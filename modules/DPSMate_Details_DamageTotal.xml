@@ -42,7 +42,7 @@
 					</Anchors>
 					<Color r="0.95" g="0.9" b="0.5" a="0.5"/>
 				</Texture>
-				<FontString name="$parent_Name" inherits="GameFontNormal" justifyH="LEFT" justifyV="CENTER" text="VeryLongNameOf">
+				<FontString name="$parent_Name" inherits="GameFontNormal" justifyH="LEFT" justifyV="CENTER">
 					<Size x="130" y="40" />
 					<Anchors>
 						<Anchor point="TOPLEFT">
@@ -50,7 +50,7 @@
 						</Anchor>
 					</Anchors>
 				</FontString>
-				<FontString name="$parent_Amount" inherits="GameFontNormal" justifyH="LEFT" justifyV="CENTER" text="10000000">
+				<FontString name="$parent_Amount" inherits="GameFontNormal" justifyH="LEFT" justifyV="CENTER">
 					<Size x="100" y="40" />
 					<Anchors>
 						<Anchor point="TOPLEFT">
@@ -59,7 +59,7 @@
 					</Anchors>
 					<Color r="1" g="1" b="1" />
 				</FontString>
-				<FontString name="$parent_AmountPerc" inherits="GameFontNormal" justifyH="LEFT" justifyV="CENTER" text="100%">
+				<FontString name="$parent_AmountPerc" inherits="GameFontNormal" justifyH="LEFT" justifyV="CENTER">
 					<Size x="100" y="40" />
 					<Anchors>
 						<Anchor point="TOPLEFT">
@@ -68,7 +68,7 @@
 					</Anchors>
 					<Color r="1" g="1" b="1" />
 				</FontString>
-				<FontString name="$parent_Crit" inherits="GameFontNormal" justifyH="LEFT" justifyV="CENTER" text="100%">
+				<FontString name="$parent_Crit" inherits="GameFontNormal" justifyH="LEFT" justifyV="CENTER">
 					<Size x="100" y="40" />
 					<Anchors>
 						<Anchor point="TOPLEFT">
@@ -77,7 +77,7 @@
 					</Anchors>
 					<Color r="1" g="1" b="1" />
 				</FontString>
-				<FontString name="$parent_Miss" inherits="GameFontNormal" justifyH="LEFT" justifyV="CENTER" text="100%">
+				<FontString name="$parent_Miss" inherits="GameFontNormal" justifyH="LEFT" justifyV="CENTER">
 					<Size x="100" y="40" />
 					<Anchors>
 						<Anchor point="TOPLEFT">
@@ -86,7 +86,7 @@
 					</Anchors>
 					<Color r="1" g="1" b="1" />
 				</FontString>
-				<FontString name="$parent_DPS" inherits="GameFontNormal" justifyH="LEFT" justifyV="CENTER" text="300000">
+				<FontString name="$parent_DPS" inherits="GameFontNormal" justifyH="LEFT" justifyV="CENTER">
 					<Size x="100" y="40" />
 					<Anchors>
 						<Anchor point="TOPLEFT">
@@ -95,7 +95,7 @@
 					</Anchors>
 					<Color r="1" g="1" b="1" />
 				</FontString>
-				<FontString name="$parent_ActiveTime" inherits="GameFontNormal" justifyH="LEFT" justifyV="CENTER" text="3400s | 100%">
+				<FontString name="$parent_ActiveTime" inherits="GameFontNormal" justifyH="LEFT" justifyV="CENTER">
 					<Size x="100" y="40" />
 					<Anchors>
 						<Anchor point="TOPLEFT">
@@ -207,7 +207,7 @@
 				<Scripts>
 					<OnEnter>
 						GameTooltip:SetOwner(this, "ANCHOR_RIGHT")
-						GameTooltip:SetText(DPSMate.localization.details.close, nil, nil, nil, nil, 1)
+						GameTooltip:SetText(DPSMate.L["close"], nil, nil, nil, nil, 1)
 						GameTooltip:Show()
 					</OnEnter>
 					<OnLeave>

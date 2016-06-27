@@ -13,7 +13,8 @@ function DPSMate.Modules.DetailsDeaths:UpdateDetails(obj, key)
 	curKey = key
 	db, cbt = DPSMate:GetMode(key)
 	DetailsUser = obj.user
-	DPSMate_Details_Deaths_Title:SetText("Deaths of "..obj.user)
+	DPSMate_Details_Deaths_Title:SetText(DPSMate.L["deathsof"]..obj.user)
+	DetailsArr = DPSMate.Modules.DetailsDeaths:EvalTable()
 	DPSMate_Details_Deaths:Show()
 	self:ScrollFrame_Update()
 	self:SelectDetailsButton(1)
@@ -31,8 +32,7 @@ end
 
 function DPSMate.Modules.DetailsDeaths:ScrollFrame_Update()
 	local line, lineplusoffset
-	local obj = _G("DPSMate_Details_Deaths_Log_ScrollFrame")
-	DetailsArr = DPSMate.Modules.DetailsDeaths:EvalTable()
+	local obj = DPSMate_Details_Deaths_Log_ScrollFrame
 	local len = DPSMate:TableLength(DetailsArr)
 	FauxScrollFrame_Update(obj,len,14,24)
 	for line=1,14 do
@@ -60,7 +60,7 @@ function DPSMate.Modules.DetailsDeaths:ScrollFrame_Update()
 end
 
 function DPSMate.Modules.DetailsDeaths:SelectDetailsButton(i)
-	local obj = _G("DPSMate_Details_Deaths_Log_ScrollFrame")
+	local obj = DPSMate_Details_Deaths_Log_ScrollFrame
 	local lineplusoffset = i + FauxScrollFrame_GetOffset(obj)
 	local user, pet = "", 0
 	

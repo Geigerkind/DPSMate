@@ -15,7 +15,7 @@
 						</Anchor>
 					</Anchors>
 				</Texture>
-				<FontString name="$parent_Ability" inherits="GameFontNormalSmall" text="Test Buff of Testing of the Doom" justifyH="LEFT">
+				<FontString name="$parent_Ability" inherits="GameFontNormalSmall" justifyH="LEFT">
 					<Size x="200" y="30" />
 					<Anchors>
 						<Anchor point="LEFT" relativeTo="$parent_Icon" relativePoint="RIGHT">
@@ -24,7 +24,7 @@
 					</Anchors>
 					<Color r="1" g="1" b="1" />
 				</FontString>
-				<FontString name="$parent_Victim" inherits="GameFontNormalSmall" text="9999">
+				<FontString name="$parent_Victim" inherits="GameFontNormalSmall">
 					<Size x="250" y="30" />
 					<Anchors>
 						<Anchor point="LEFT" relativeTo="$parent_Ability" relativePoint="RIGHT">
@@ -33,7 +33,7 @@
 					</Anchors>
 					<Color r="1" g="1" b="1" />
 				</FontString>
-				<FontString name="$parent_Type" inherits="GameFontNormalSmall" text="999009s">
+				<FontString name="$parent_Type" inherits="GameFontNormalSmall">
 					<Size x="75" y="30" />
 					<Anchors>
 						<Anchor point="LEFT" relativeTo="$parent_Victim" relativePoint="RIGHT">
@@ -42,7 +42,7 @@
 					</Anchors>
 					<Color r="1" g="1" b="1" />
 				</FontString>
-				<FontString name="$parent_Amount" inherits="GameFontNormalSmall" text="999009s">
+				<FontString name="$parent_Amount" inherits="GameFontNormalSmall">
 					<Size x="105" y="30" />
 					<Anchors>
 						<Anchor point="LEFT" relativeTo="$parent_Type" relativePoint="RIGHT">
@@ -192,7 +192,7 @@
 				<Scripts>
 					<OnEnter>
 						GameTooltip:SetOwner(this, "ANCHOR_RIGHT")
-						GameTooltip:SetText(DPSMate.localization.details.close, nil, nil, nil, nil, 1)
+						GameTooltip:SetText(DPSMate.L["close"], nil, nil, nil, nil, 1)
 						GameTooltip:Show()
 					</OnEnter>
 					<OnLeave>
@@ -215,7 +215,11 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."_Title"):SetText("Fails")
+						getglobal(this:GetName().."_Title"):SetText(DPSMate.L["fails"])
+						getglobal(this:GetName().."_Ability"):SetText(DPSMate.L["ability"])
+						getglobal(this:GetName().."_Victim"):SetText(DPSMate.L["victim"])
+						getglobal(this:GetName().."_Type"):SetText(DPSMate.L["type"])
+						getglobal(this:GetName().."_Amount"):SetText(DPSMate.L["amount"])
 						DPSMate.Modules.DetailsFails:CreateGraphTable(this)
 						this:SetVerticalScroll(0)
 					</OnLoad>

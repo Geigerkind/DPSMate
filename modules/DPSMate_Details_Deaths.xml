@@ -13,7 +13,7 @@
 						<Anchor point="TOPLEFT" />
 					</Anchors>
 				</Texture>
-				<FontString name="$parent_Name" inherits="GameFontNormalSmall" text="Killed by Firy Elemental of Molten Core" justifyH="LEFT">
+				<FontString name="$parent_Name" inherits="GameFontNormalSmall" justifyH="LEFT">
 					<Size x="160" y="24" />
 					<Anchors>
 						<Anchor point="LEFT" relativeTo="$parent_Icon" relativePoint="RIGHT">
@@ -21,7 +21,7 @@
 						</Anchor>
 					</Anchors>
 				</FontString>
-				<FontString name="$parent_Value" inherits="GameFontNormalSmall" text="12:25 PM">
+				<FontString name="$parent_Value" inherits="GameFontNormalSmall">
 					<Size x="70" y="24" />
 					<Anchors>
 						<Anchor point="RIGHT">
@@ -51,14 +51,14 @@
 		<Size x="595" y="30" />
 		<Layers>
 			<Layer level="ARTWORK">
-				<FontString name="$parent_GameTime" inherits="GameFontNormalSmall" text="12:25 PM" justifyH="CENTER">
+				<FontString name="$parentgetglobalameTime" inherits="GameFontNormalSmall" justifyH="CENTER">
 					<Size x="80" y="30" />
 					<Anchors>
 						<Anchor point="TOPLEFT" />
 					</Anchors>
 					<Color r="0.8" g="0.8" b="0.8" a="1" />
 				</FontString>
-				<FontString name="$parent_CombatTime" inherits="GameFontNormalSmall" text="99999s" justifyH="CENTER">
+				<FontString name="$parent_CombatTime" inherits="GameFontNormalSmall" justifyH="CENTER">
 					<Size x="80" y="30" />
 					<Anchors>
 						<Anchor point="TOPLEFT">
@@ -67,7 +67,7 @@
 					</Anchors>
 					<Color r="0.8" g="0.8" b="0.8" a="1" />
 				</FontString>
-				<FontString name="$parent_Cause" inherits="GameFontNormalSmall" text="Firy Elemental of Molten core" justifyH="CENTER">
+				<FontString name="$parent_Cause" inherits="GameFontNormalSmall" justifyH="CENTER">
 					<Size x="95" y="30" />
 					<Anchors>
 						<Anchor point="TOPLEFT">
@@ -76,7 +76,7 @@
 					</Anchors>
 					<Color r="0.8" g="0.8" b="0.8" a="1" />
 				</FontString>
-				<FontString name="$parent_Ability" inherits="GameFontNormalSmall" text="Shadow Wrath of Molten Core" justifyH="CENTER">
+				<FontString name="$parent_Ability" inherits="GameFontNormalSmall" justifyH="CENTER">
 					<Size x="95" y="30" />
 					<Anchors>
 						<Anchor point="TOPLEFT">
@@ -85,7 +85,7 @@
 					</Anchors>
 					<Color r="0.8" g="0.8" b="0.8" a="1" />
 				</FontString>
-				<FontString name="$parent_Type" inherits="GameFontNormalSmall" text="CRUSH" justifyH="CENTER">
+				<FontString name="$parent_Type" inherits="GameFontNormalSmall" justifyH="CENTER">
 					<Size x="50" y="30" />
 					<Anchors>
 						<Anchor point="TOPLEFT">
@@ -94,7 +94,7 @@
 					</Anchors>
 					<Color r="1" g="0.6" b="0" a="1" />
 				</FontString>
-				<FontString name="$parent_HealIn" inherits="GameFontNormalSmall" text="+20000" justifyH="CENTER">
+				<FontString name="$parent_HealIn" inherits="GameFontNormalSmall" justifyH="CENTER">
 					<Size x="90" y="30" />
 					<Anchors>
 						<Anchor point="TOPLEFT">
@@ -103,7 +103,7 @@
 					</Anchors>
 					<Color r="0" g="1" b="0" a="1" />
 				</FontString>
-				<FontString name="$parent_DamageIn" inherits="GameFontNormalSmall" text="-20000" justifyH="CENTER">
+				<FontString name="$parent_DamageIn" inherits="GameFontNormalSmall" justifyH="CENTER">
 					<Size x="90" y="30" />
 					<Anchors>
 						<Anchor point="TOPLEFT">
@@ -129,7 +129,7 @@
 		</Backdrop>
 		<Layers>
 			<Layer level="ARTWORK">
-				<FontString name="$parent_Title" inherits="GameFontNormalHuge" justifyH="LEFT" justifyV="CENTER" text="Deaths of Shino">
+				<FontString name="$parent_Title" inherits="GameFontNormalHuge" justifyH="LEFT" justifyV="CENTER">
 					<Size x="900" y="40" />
 					<Anchors>
 						<Anchor point="TOPLEFT">
@@ -164,7 +164,7 @@
 				<Scripts>
 					<OnEnter>
 						GameTooltip:SetOwner(this, "ANCHOR_RIGHT")
-						GameTooltip:SetText(DPSMate.localization.details.close, nil, nil, nil, nil, 1)
+						GameTooltip:SetText(DPSMate.L["close"], nil, nil, nil, nil, 1)
 						GameTooltip:Show()
 					</OnEnter>
 					<OnLeave>
@@ -208,7 +208,7 @@
 						</Anchors>
 						<Scripts>
 							<OnVerticalScroll>
-								FauxScrollFrame_OnVerticalScroll(24, DPSMate.Modules.DetailsDamage.ScrollFrame_Update) 
+								FauxScrollFrame_OnVerticalScroll(24, DPSMate.Modules.DetailsDeaths.ScrollFrame_Update) 
 							</OnVerticalScroll>
 					   </Scripts>
 					</ScrollFrame>
@@ -326,6 +326,13 @@
 				<Scripts>
 					<OnLoad>
 						DPSMate.Modules.DetailsDeaths:CreateGraphTable()
+						getglobal(this:GetName().."getglobalameTime"):SetText(DPSMate.L["time"])
+						getglobal(this:GetName().."_CombatTime"):SetText(DPSMate.L["cbt"])
+						getglobal(this:GetName().."_Cause"):SetText(DPSMate.L["cause"])
+						getglobal(this:GetName().."_Ability"):SetText(DPSMate.L["ability"])
+						getglobal(this:GetName().."_Type"):SetText(DPSMate.L["type"])
+						getglobal(this:GetName().."_HealIn"):SetText(DPSMate.L["healin"])
+						getglobal(this:GetName().."_DamageIn"):SetText(DPSMate.L["damagein"])
 						this:SetVerticalScroll(0)
 					</OnLoad>
 					<OnMouseWheel>
@@ -335,7 +342,7 @@
 				<HitRectInsets left="0" right="0" top="35" bottom="15"/>
 				<Layers>
 					<Layer level="ARTWORK">
-						<FontString name="$parent_GameTime" inherits="GameFontNormal" text="Time" justifyH="LEFT">
+						<FontString name="$parentgetglobalameTime" inherits="GameFontNormal" justifyH="LEFT">
 							<Size x="70" y="24" />
 							<Anchors>
 								<Anchor point="TOPLEFT">
@@ -343,50 +350,50 @@
 								</Anchor>
 							</Anchors>
 						</FontString>
-						<FontString name="$parent_CombatTime" inherits="GameFontNormal" text="CBT-Time" justifyH="LEFT">
+						<FontString name="$parent_CombatTime" inherits="GameFontNormal" justifyH="LEFT">
 							<Size x="80" y="24" />
 							<Anchors>
-								<Anchor point="LEFT" relativeTo="$parent_GameTime" relativePoint="RIGHT">
+								<Anchor point="LEFT" relativeTo="$parentgetglobalameTime" relativePoint="RIGHT">
 									<Offset x="-5" y="0" />
 								</Anchor>
 							</Anchors>
 						</FontString>
-						<FontString name="$parent_Cause" inherits="GameFontNormal" text="Cause" justifyH="LEFT">
+						<FontString name="$parent_Cause" inherits="GameFontNormal" justifyH="LEFT">
 							<Size x="80" y="24" />
 							<Anchors>
-								<Anchor point="LEFT" relativeTo="$parent_GameTime" relativePoint="RIGHT">
+								<Anchor point="LEFT" relativeTo="$parentgetglobalameTime" relativePoint="RIGHT">
 									<Offset x="95" y="0" />
 								</Anchor>
 							</Anchors>
 						</FontString>
-						<FontString name="$parent_Ability" inherits="GameFontNormal" text="Ability" justifyH="LEFT">
+						<FontString name="$parent_Ability" inherits="GameFontNormal" justifyH="LEFT">
 							<Size x="80" y="24" />
 							<Anchors>
-								<Anchor point="LEFT" relativeTo="$parent_GameTime" relativePoint="RIGHT">
+								<Anchor point="LEFT" relativeTo="$parentgetglobalameTime" relativePoint="RIGHT">
 									<Offset x="195" y="0" />
 								</Anchor>
 							</Anchors>
 						</FontString>
-						<FontString name="$parent_Type" inherits="GameFontNormal" text="Type" justifyH="LEFT">
+						<FontString name="$parent_Type" inherits="GameFontNormal" justifyH="LEFT">
 							<Size x="80" y="24" />
 							<Anchors>
-								<Anchor point="LEFT" relativeTo="$parent_GameTime" relativePoint="RIGHT">
+								<Anchor point="LEFT" relativeTo="$parentgetglobalameTime" relativePoint="RIGHT">
 									<Offset x="275" y="0" />
 								</Anchor>
 							</Anchors>
 						</FontString>
-						<FontString name="$parent_HealIn" inherits="GameFontNormal" text="Heal In" justifyH="LEFT">
+						<FontString name="$parent_HealIn" inherits="GameFontNormal" justifyH="LEFT">
 							<Size x="80" y="24" />
 							<Anchors>
-								<Anchor point="LEFT" relativeTo="$parent_GameTime" relativePoint="RIGHT">
+								<Anchor point="LEFT" relativeTo="$parentgetglobalameTime" relativePoint="RIGHT">
 									<Offset x="336" y="0" />
 								</Anchor>
 							</Anchors>
 						</FontString>
-						<FontString name="$parent_DamageIn" inherits="GameFontNormal" text="Damage In" justifyH="LEFT">
+						<FontString name="$parent_DamageIn" inherits="GameFontNormal" justifyH="LEFT">
 							<Size x="80" y="24" />
 							<Anchors>
-								<Anchor point="LEFT" relativeTo="$parent_GameTime" relativePoint="RIGHT">
+								<Anchor point="LEFT" relativeTo="$parentgetglobalameTime" relativePoint="RIGHT">
 									<Offset x="420" y="0" />
 								</Anchor>
 							</Anchors>

@@ -9,6 +9,7 @@ local curKey = 1
 local db, cbt, db2 = {}, 0, {}
 local _G = getglobal
 local tinsert = table.insert
+local strformat = string.format
 local toggle = false
 local t1, t2, TTotal = {}, {}, 0
 
@@ -24,7 +25,7 @@ function DPSMate.Modules.DetailsDamage:UpdateDetails(obj, key)
 		PieChart = false
 	end
 	DetailsUser = obj.user
-	DPSMate_Details_Title:SetText("Damage done by "..obj.user)
+	DPSMate_Details_Title:SetText(DPSMate.L["dmgdoneby"]..obj.user)
 	DPSMate_Details:Show()
 	UIDropDownMenu_Initialize(DPSMate_Details_DiagramLegend_Procs, DPSMate.Modules.DetailsDamage.ProcsDropDown)
 	DetailsArr, DetailsTotal, DmgArr = DPSMate.RegistredModules[DPSMateSettings["windows"][curKey]["CurMode"]]:EvalTable(DPSMateUser[DetailsUser], curKey)
@@ -90,7 +91,7 @@ end
 
 function DPSMate.Modules.DetailsDamage:ScrollFrame_Update()
 	local line, lineplusoffset
-	local obj = _G("DPSMate_Details_Log_ScrollFrame")
+	local obj = DPSMate_Details_Log_ScrollFrame
 	local path = "DPSMate_Details_Log"
 	local pet, len = "", DPSMate:TableLength(DetailsArr)
 	FauxScrollFrame_Update(obj,len,10,24)
@@ -100,7 +101,7 @@ function DPSMate.Modules.DetailsDamage:ScrollFrame_Update()
 			if DmgArr[lineplusoffset][2] then pet="(Pet)" else pet="" end
 			local ability = DPSMate:GetAbilityById(DetailsArr[lineplusoffset])
 			_G(path.."_ScrollButton"..line.."_Name"):SetText(ability..pet)
-			_G(path.."_ScrollButton"..line.."_Value"):SetText(DmgArr[lineplusoffset][1].." ("..string.format("%.2f", (DmgArr[lineplusoffset][1]*100/DetailsTotal)).."%)")
+			_G(path.."_ScrollButton"..line.."_Value"):SetText(DmgArr[lineplusoffset][1].." ("..strformat("%.2f", (DmgArr[lineplusoffset][1]*100/DetailsTotal)).."%)")
 			_G(path.."_ScrollButton"..line.."_Icon"):SetTexture(DPSMate.BabbleSpell:GetSpellIcon(strsub(ability, 1, (strfind(ability, "%(") or 0)-1) or ability))
 			if len < 10 then
 				_G(path.."_ScrollButton"..line):SetWidth(235)
@@ -132,7 +133,7 @@ function DPSMate.Modules.DetailsDamage:Player_Update()
 		if t1[lineplusoffset] ~= nil then
 			local user = DPSMate:GetUserById(t1[lineplusoffset])
 			_G(path.."_ScrollButton"..line.."_Name"):SetText(user)
-			_G(path.."_ScrollButton"..line.."_Value"):SetText(t2[lineplusoffset][1].." ("..string.format("%.2f", (t2[lineplusoffset][1]*100/TTotal)).."%)")
+			_G(path.."_ScrollButton"..line.."_Value"):SetText(t2[lineplusoffset][1].." ("..strformat("%.2f", (t2[lineplusoffset][1]*100/TTotal)).."%)")
 			_G(path.."_ScrollButton"..line.."_Icon"):SetTexture("Interface\\AddOns\\DPSMate\\images\\npc")
 			if len < 8 then
 				_G(path.."_ScrollButton"..line):SetWidth(235)
@@ -164,7 +165,7 @@ function DPSMate.Modules.DetailsDamage:PlayerSpells_Update(i)
 		if t2[obj.id][2][lineplusoffset] ~= nil then
 			local ability = DPSMate:GetAbilityById(t2[obj.id][2][lineplusoffset])
 			_G(path.."_ScrollButton"..line.."_Name"):SetText(ability)
-			_G(path.."_ScrollButton"..line.."_Value"):SetText(t2[obj.id][3][lineplusoffset][13].." ("..string.format("%.2f", (t2[obj.id][3][lineplusoffset][13]*100/t2[obj.id][1])).."%)")
+			_G(path.."_ScrollButton"..line.."_Value"):SetText(t2[obj.id][3][lineplusoffset][13].." ("..strformat("%.2f", (t2[obj.id][3][lineplusoffset][13]*100/t2[obj.id][1])).."%)")
 			_G(path.."_ScrollButton"..line.."_Icon"):SetTexture(DPSMate.BabbleSpell:GetSpellIcon(strsub(ability, 1, (strfind(ability, "%(") or 0)-1) or ability))
 			if len < 10 then
 				_G(path.."_ScrollButton"..line):SetWidth(235)

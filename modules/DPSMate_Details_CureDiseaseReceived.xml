@@ -42,7 +42,7 @@
 		</Layers>
 		<Scripts>
 			<OnClick>
-				local pa = getglobal("DPSMate_Details_CureDiseaseReceived_LogTwo_ScrollFrame")
+				local pa = DPSMate_Details_CureDiseaseReceived_LogTwo_ScrollFrame
 				if this:GetParent():GetName()=="DPSMate_Details_CureDiseaseReceived_Log" then
 					DPSMate.Modules.DetailsCureDiseaseReceived:SelectCreatureButton(this:GetID())
 				elseif this:GetParent():GetName()=="DPSMate_Details_CureDiseaseReceived_LogTwo" then
@@ -100,7 +100,7 @@
 				<Scripts>
 					<OnEnter>
 						GameTooltip:SetOwner(this, "ANCHOR_RIGHT")
-						GameTooltip:SetText(DPSMate.localization.details.close, nil, nil, nil, nil, 1)
+						GameTooltip:SetText(DPSMate.L["close"], nil, nil, nil, nil, 1)
 						GameTooltip:Show()
 					</OnEnter>
 					<OnLeave>

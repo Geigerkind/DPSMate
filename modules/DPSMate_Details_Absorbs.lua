@@ -8,6 +8,8 @@ local g, g2
 local curKey = 1
 local db, cbt = {}, 0
 local _G = getglobal
+local tinsert = table.insert
+local strformat = string.format
 
 function DPSMate.Modules.DetailsAbsorbs:UpdateDetails(obj, key)
 	curKey = key
@@ -17,7 +19,8 @@ function DPSMate.Modules.DetailsAbsorbs:UpdateDetails(obj, key)
 		PieChart = false
 	end
 	DetailsUser = obj.user
-	DPSMate_Details_Absorbs_Title:SetText("Absorbs by "..obj.user)
+	DPSMate_Details_Absorbs_Title:SetText(DPSMate.L["absorbsby"]..obj.user)
+	DetailsArr, DetailsTotal, DmgArr = DPSMate.RegistredModules[DPSMateSettings["windows"][curKey]["CurMode"]]:EvalTable(DPSMateUser[DetailsUser], curKey)
 	DPSMate_Details_Absorbs:Show()
 	self:ScrollFrame_Update()
 	self:SelectCreatureButton(1)
@@ -30,8 +33,7 @@ function DPSMate.Modules.DetailsAbsorbs:ScrollFrame_Update()
 	local line, lineplusoffset
 	local path = "DPSMate_Details_Absorbs_LogCreature"
 	local obj = _G(path.."_ScrollFrame")
-	DetailsArr, DetailsTotal, DmgArr = DPSMate.RegistredModules[DPSMateSettings["windows"][curKey]["CurMode"]]:EvalTable(DPSMateUser[DetailsUser], curKey)
-	local pet, len = "", DPSMate:TableLength(DetailsArr)
+	local len = DPSMate:TableLength(DetailsArr)
 	FauxScrollFrame_Update(obj,len,10,24)
 	for line=1,10 do
 		lineplusoffset = line + FauxScrollFrame_GetOffset(obj)
@@ -40,7 +42,7 @@ function DPSMate.Modules.DetailsAbsorbs:ScrollFrame_Update()
 			local r,g,b,img = DPSMate:GetClassColor(DPSMateUser[user][2])
 			_G(path.."_ScrollButton"..line.."_Name"):SetText(user)
 			_G(path.."_ScrollButton"..line.."_Name"):SetTextColor(r,g,b)
-			_G(path.."_ScrollButton"..line.."_Value"):SetText(DmgArr[lineplusoffset][1].." ("..string.format("%.2f", (DmgArr[lineplusoffset][1]*100/DetailsTotal)).."%)")
+			_G(path.."_ScrollButton"..line.."_Value"):SetText(DmgArr[lineplusoffset][1].." ("..strformat("%.2f", (DmgArr[lineplusoffset][1]*100/DetailsTotal)).."%)")
 			_G(path.."_ScrollButton"..line.."_Icon"):SetTexture("Interface\\AddOns\\DPSMate\\images\\class\\"..img)
 			if len < 10 then
 				_G(path.."_ScrollButton"..line):SetWidth(235)
@@ -65,7 +67,7 @@ function DPSMate.Modules.DetailsAbsorbs:SelectCreatureButton(i)
 	local path = "DPSMate_Details_Absorbs_Log"
 	local obj = _G(path.."_ScrollFrame")
 	obj.index = i
-	local pet, len = "", DPSMate:TableLength(DmgArr[i][2])
+	local len = DPSMate:TableLength(DmgArr[i][2])
 	FauxScrollFrame_Update(obj,len,10,24)
 	DetailsSelected = i
 	for line=1,10 do
@@ -73,7 +75,7 @@ function DPSMate.Modules.DetailsAbsorbs:SelectCreatureButton(i)
 		if DmgArr[i][2][lineplusoffset] ~= nil then
 			local ability = DPSMate:GetAbilityById(DmgArr[i][2][lineplusoffset])
 			_G(path.."_ScrollButton"..line.."_Name"):SetText(ability)
-			_G(path.."_ScrollButton"..line.."_Value"):SetText(DmgArr[i][3][lineplusoffset][1].." ("..string.format("%.2f", (DmgArr[i][3][lineplusoffset][1]*100/DetailsTotal)).."%)")
+			_G(path.."_ScrollButton"..line.."_Value"):SetText(DmgArr[i][3][lineplusoffset][1].." ("..strformat("%.2f", (DmgArr[i][3][lineplusoffset][1]*100/DetailsTotal)).."%)")
 			_G(path.."_ScrollButton"..line.."_Icon"):SetTexture(DPSMate.BabbleSpell:GetSpellIcon(strsub(ability, 1, (strfind(ability, "%(") or 0)-1) or ability))
 			if len < 10 then
 				_G(path.."_ScrollButton"..line):SetWidth(235)
@@ -101,14 +103,14 @@ function DPSMate.Modules.DetailsAbsorbs:SelectCauseButton(i,p)
 	local obj = _G(path.."_ScrollFrame")
 	obj.index = i
 	obj.indextwo = p
-	local pet, len = "", DPSMate:TableLength(DmgArr[i][3][p][2])
+	local len = DPSMate:TableLength(DmgArr[i][3][p][2])
 	FauxScrollFrame_Update(obj,len,10,24)
 	for line=1,10 do
 		lineplusoffset = line + FauxScrollFrame_GetOffset(obj)
 		if DmgArr[i][3][p][2][lineplusoffset] ~= nil then
 			local user = DPSMate:GetUserById(DmgArr[i][3][p][2][lineplusoffset])
 			_G(path.."_ScrollButton"..line.."_Name"):SetText(user)
-			_G(path.."_ScrollButton"..line.."_Value"):SetText(DmgArr[i][3][p][3][lineplusoffset][1].." ("..string.format("%.2f", (DmgArr[i][3][p][3][lineplusoffset][1]*100/DmgArr[i][3][p][1])).."%)")
+			_G(path.."_ScrollButton"..line.."_Value"):SetText(DmgArr[i][3][p][3][lineplusoffset][1].." ("..strformat("%.2f", (DmgArr[i][3][p][3][lineplusoffset][1]*100/DmgArr[i][3][p][1])).."%)")
 			_G(path.."_ScrollButton"..line.."_Icon"):SetTexture("Interface\\AddOns\\DPSMate\\images\\npc")
 			if len < 10 then
 				_G(path.."_ScrollButton"..line):SetWidth(235)
@@ -137,14 +139,14 @@ function DPSMate.Modules.DetailsAbsorbs:SelectCauseABButton(i,p,q)
 	obj.index = i
 	obj.indextwo = p
 	obj.indexthree = q
-	local pet, len = "", DPSMate:TableLength(DmgArr[i][3][p][3][q][2])
+	local len = DPSMate:TableLength(DmgArr[i][3][p][3][q][2])
 	FauxScrollFrame_Update(obj,len,10,24)
 	for line=1,10 do
 		lineplusoffset = line + FauxScrollFrame_GetOffset(obj)
 		if DmgArr[i][3][p][3][q][2][lineplusoffset] ~= nil then
 			local ability = DPSMate:GetAbilityById(DmgArr[i][3][p][3][q][2][lineplusoffset])
 			_G(path.."_ScrollButton"..line.."_Name"):SetText(ability)
-			_G(path.."_ScrollButton"..line.."_Value"):SetText(DmgArr[i][3][p][3][q][3][lineplusoffset].." ("..string.format("%.2f", (DmgArr[i][3][p][3][q][3][lineplusoffset]*100/DmgArr[i][3][p][3][q][1])).."%)")
+			_G(path.."_ScrollButton"..line.."_Value"):SetText(DmgArr[i][3][p][3][q][3][lineplusoffset].." ("..strformat("%.2f", (DmgArr[i][3][p][3][q][3][lineplusoffset]*100/DmgArr[i][3][p][3][q][1])).."%)")
 			_G(path.."_ScrollButton"..line.."_Icon"):SetTexture(DPSMate.BabbleSpell:GetSpellIcon(strsub(ability, 1, (strfind(ability, "%(") or 0)-1) or ability))
 			if len < 10 then
 				_G(path.."_ScrollButton"..line):SetWidth(235)
@@ -183,7 +185,7 @@ function DPSMate.Modules.DetailsAbsorbs:UpdateLineGraph()
 
 	local Data1={{0,0}}
 	for cat, val in sumTable do
-		table.insert(Data1, {val[1],val[2], {}})
+		tinsert(Data1, {val[1],val[2], {}})
 	end
 
 	g2:AddDataSeries(Data1,{{1.0,0.0,0.0,0.8}, {1.0,0.0,0.0,0.8}}, {})
@@ -208,11 +210,11 @@ function DPSMate.Modules.DetailsAbsorbs:SortLineTable(arr)
 				if dmg>0 then
 					while true do
 						if (not newArr[i]) then
-							table.insert(newArr, i, {va[1], dmg})
+							tinsert(newArr, i, {va[1], dmg})
 							break
 						else
 							if newArr[i][1] > va[1] then
-								table.insert(newArr, i, {va[1], dmg})
+								tinsert(newArr, i, {va[1], dmg})
 								break
 							end
 						end

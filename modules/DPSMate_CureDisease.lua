@@ -4,20 +4,20 @@ DPSMate.Modules.CureDisease.Hist = "Dispels"
 DPSMate.Options.Options[1]["args"]["curedisease"] = {
 	order = 200,
 	type = 'toggle',
-	name = 'Diseases cured',
-	desc = "Show Diseases cured.",
+	name = DPSMate.L["curedisease"],
+	desc = DPSMate.L["show"].." "..DPSMate.L["curedisease"]..".",
 	get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["options"][1]["curedisease"] end,
 	set = function() DPSMate.Options:ToggleDrewDrop(1, "curedisease", DPSMate.Options.Dewdrop:GetOpenedParent()) end,
 }
 
 -- Register the moodule
-DPSMate:Register("curedisease", DPSMate.Modules.CureDisease, "Cure disease")
+DPSMate:Register("curedisease", DPSMate.Modules.CureDisease, DPSMate.L["curedisease"])
 
 local tinsert = table.insert
-
+local strformat = string.format
 
 function DPSMate.Modules.CureDisease:IsValid(ab, cast)
-	if DPSMateAbility[ab][2]=="Disease" or DPSMate.Parser.DeDisease[cast] then
+	if DPSMateAbility[ab][2]==DPSMate.L["disease"] or DPSMate.Parser.DeDisease[cast] then
 		return true
 	end
 	return false
@@ -107,7 +107,7 @@ function DPSMate.Modules.CureDisease:GetSettingValues(arr, cbt, k)
 		if dmg==0 then break end
 		local str = {[1]="",[2]="",[3]=""}
 		if DPSMateSettings["columnsdisease"][1] then str[1] = " "..dmg..p; strt[2] = " "..tot..p end
-		if DPSMateSettings["columnsdisease"][2] then str[3] = " ("..string.format("%.1f", 100*dmg/tot).."%)" end
+		if DPSMateSettings["columnsdisease"][2] then str[3] = " ("..strformat("%.1f", 100*dmg/tot).."%)" end
 		tinsert(name, DPSMate:GetUserById(a[cat]))
 		tinsert(value, str[1]..str[3])
 		tinsert(perc, 100*(dmg/sort))
@@ -120,7 +120,7 @@ function DPSMate.Modules.CureDisease:ShowTooltip(user,k)
 	if DPSMateSettings["informativetooltips"] then
 		for i=1, DPSMateSettings["subviewrows"] do
 			if not a[i] then break end
-			GameTooltip:AddDoubleLine(i..". "..DPSMate:GetAbilityById(a[i]),c[i].." ("..string.format("%.2f", 100*c[i]/b).."%)",1,1,1,1,1,1)
+			GameTooltip:AddDoubleLine(i..". "..DPSMate:GetAbilityById(a[i]),c[i].." ("..strformat("%.2f", 100*c[i]/b).."%)",1,1,1,1,1,1)
 		end
 	end
 end

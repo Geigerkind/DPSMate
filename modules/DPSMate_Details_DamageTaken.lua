@@ -9,6 +9,7 @@ local curKey = 1
 local db, cbt = {}, 0
 local tinsert = table.insert
 local _G = getglobal
+local strformat = string.format
 
 function DPSMate.Modules.DetailsDamageTaken:UpdateDetails(obj, key)
 	curKey = key
@@ -18,7 +19,7 @@ function DPSMate.Modules.DetailsDamageTaken:UpdateDetails(obj, key)
 		PieChart = false
 	end
 	DetailsUser = obj.user
-	DPSMate_Details_DamageTaken_Title:SetText("Damage taken by "..obj.user)
+	DPSMate_Details_DamageTaken_Title:SetText(DPSMate.L["dmgtakenby"]..obj.user)
 	DPSMate_Details_DamageTaken:Show()
 	DetailsArr, DetailsTotal, DmgArr = DPSMate.RegistredModules[DPSMateSettings["windows"][curKey]["CurMode"]]:EvalTable(DPSMateUser[DetailsUser], curKey)
 	self:ScrollFrame_Update()
@@ -38,7 +39,7 @@ function DPSMate.Modules.DetailsDamageTaken:ScrollFrame_Update()
 		if DetailsArr[lineplusoffset] ~= nil then
 			local user = DPSMate:GetUserById(DetailsArr[lineplusoffset])
 			_G(path.."_ScrollButton"..line.."_Name"):SetText(user)
-			_G(path.."_ScrollButton"..line.."_Value"):SetText(DmgArr[lineplusoffset][1].." ("..string.format("%.2f", (DmgArr[lineplusoffset][1]*100/DetailsTotal)).."%)")
+			_G(path.."_ScrollButton"..line.."_Value"):SetText(DmgArr[lineplusoffset][1].." ("..strformat("%.2f", (DmgArr[lineplusoffset][1]*100/DetailsTotal)).."%)")
 			_G(path.."_ScrollButton"..line.."_Icon"):SetTexture("Interface\\AddOns\\DPSMate\\images\\npc")
 			if len < 10 then
 				_G(path.."_ScrollButton"..line):SetWidth(235)
@@ -72,7 +73,7 @@ function DPSMate.Modules.DetailsDamageTaken:SelectCreatureButton(i)
 		if DmgArr[i][2][lineplusoffset] ~= nil then
 			local ability = DPSMate:GetAbilityById(DmgArr[i][2][lineplusoffset])
 			_G(path.."_ScrollButton"..line.."_Name"):SetText(ability)
-			_G(path.."_ScrollButton"..line.."_Value"):SetText(DmgArr[i][3][lineplusoffset].." ("..string.format("%.2f", (DmgArr[i][3][lineplusoffset]*100/DetailsTotal)).."%)")
+			_G(path.."_ScrollButton"..line.."_Value"):SetText(DmgArr[i][3][lineplusoffset].." ("..strformat("%.2f", (DmgArr[i][3][lineplusoffset]*100/DetailsTotal)).."%)")
 			_G(path.."_ScrollButton"..line.."_Icon"):SetTexture(DPSMate.BabbleSpell:GetSpellIcon(strsub(ability, 1, (strfind(ability, "%(") or 0)-1) or ability))
 			if len < 10 then
 				_G(path.."_ScrollButton"..line):SetWidth(235)

@@ -4,20 +4,20 @@ DPSMate.Modules.DecursesReceived.Hist = "Dispels"
 DPSMate.Options.Options[1]["args"]["decursesreceived"] = {
 	order = 197,
 	type = 'toggle',
-	name = 'Decurses received',
-	desc = "Show Decurses received.",
+	name = DPSMate.L["decursesreceived"],
+	desc = DPSMate.L["show"].." "..DPSMate.L["decursesreceived"]..".",
 	get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["options"][1]["decursesreceived"] end,
 	set = function() DPSMate.Options:ToggleDrewDrop(1, "decursesreceived", DPSMate.Options.Dewdrop:GetOpenedParent()) end,
 }
 
 -- Register the moodule
-DPSMate:Register("decursesreceived", DPSMate.Modules.DecursesReceived, "Decurses received")
+DPSMate:Register("decursesreceived", DPSMate.Modules.DecursesReceived, DPSMate.L["decursesreceived"])
 
 local tinsert = table.insert
-
+local strformat = string.format
 
 function DPSMate.Modules.DecursesReceived:IsValid(ab, cast, user)
-	if DPSMateAbility[ab][2]=="Curse" or user[2] == "Mage" or DPSMate.Parser.DeCurse[cast] then
+	if DPSMateAbility[ab][2]==DPSMate.L["curse"] or user[2] == "mage" or DPSMate.Parser.DeCurse[cast] then
 		return true
 	end
 	return false
@@ -133,7 +133,7 @@ function DPSMate.Modules.DecursesReceived:GetSettingValues(arr, cbt, k)
 		if dmg==0 then break end
 		local str = {[1]="",[2]="",[3]=""}
 		if DPSMateSettings["columnsdecursesreceived"][1] then str[1] = " "..dmg..p; strt[2] = tot..p end
-		if DPSMateSettings["columnsdecursesreceived"][2] then str[3] = " ("..string.format("%.1f", 100*dmg/tot).."%)" end
+		if DPSMateSettings["columnsdecursesreceived"][2] then str[3] = " ("..strformat("%.1f", 100*dmg/tot).."%)" end
 		tinsert(name, DPSMate:GetUserById(a[cat]))
 		tinsert(value, str[1]..str[3])
 		tinsert(perc, 100*(dmg/sort))
@@ -146,10 +146,10 @@ function DPSMate.Modules.DecursesReceived:ShowTooltip(user,k)
 	if DPSMateSettings["informativetooltips"] then
 		for i=1, DPSMateSettings["subviewrows"] do
 			if not a[i] then break end
-			GameTooltip:AddDoubleLine(i..". "..DPSMate:GetUserById(a[i]),c[i][1].." ("..string.format("%.2f", 100*c[i][1]/b).."%)",1,1,1,1,1,1)
+			GameTooltip:AddDoubleLine(i..". "..DPSMate:GetUserById(a[i]),c[i][1].." ("..strformat("%.2f", 100*c[i][1]/b).."%)",1,1,1,1,1,1)
 			for p=1, 3 do 
 				if not c[i][2][p] or c[i][3][p]==0 then break end
-				GameTooltip:AddDoubleLine("       "..p..". "..DPSMate:GetAbilityById(c[i][2][p]),c[i][3][p].." ("..string.format("%.2f", 100*c[i][3][p]/c[i][1]).."%)",0.5,0.5,0.5,0.5,0.5,0.5)
+				GameTooltip:AddDoubleLine("       "..p..". "..DPSMate:GetAbilityById(c[i][2][p]),c[i][3][p].." ("..strformat("%.2f", 100*c[i][3][p]/c[i][1]).."%)",0.5,0.5,0.5,0.5,0.5,0.5)
 			end
 		end
 	end

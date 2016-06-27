@@ -8,6 +8,7 @@ local ColorTable={}
 local _G = getglobal
 local tinsert = table.insert
 local tremove = table.remove
+local strformat = string.format
 
 
 function DPSMate.Modules.DetailsDamageTotal:UpdateDetails(obj, key)
@@ -54,9 +55,9 @@ function DPSMate.Modules.DetailsDamageTotal:UpdateDetails(obj, key)
 		g=DPSMate.Options.graph:CreateGraphLine("LineGraph",DPSMate_Details_DamageTotal_DiagramLine,"CENTER","CENTER",0,0,750,230)
 		DPSMate.Modules.DetailsDamageTotal:CreateGraphTable()
 	end
-	_G("DPSMate_Details_DamageTotal_PlayerList_CB"):SetChecked(false)
-	_G("DPSMate_Details_DamageTotal_PlayerList_CB").act = false
-	DPSMate_Details_DamageTotal_Title:SetText("Damage done summary")
+	DPSMate_Details_DamageTotal_PlayerList_CB:SetChecked(false)
+	DPSMate_Details_DamageTotal_PlayerList_CB.act = false
+	DPSMate_Details_DamageTotal_Title:SetText(DPSMate.L["dmgdonesum"])
 	self:UpdateLineGraph()
 	self:LoadTable()
 	self:LoadLegendButtons()
@@ -226,8 +227,8 @@ function DPSMate.Modules.DetailsDamageTotal:AddLinesButton(uid, obj)
 	local sumTable = db[uid]["i"][1]
 	local user = DPSMate:GetUserById(uid)
 	if DPSMateUser[user]["pet"] then
-		if db[DPSMateUser[DPSMateUser[user]["pet"]][1]] then
-			for cat, val in pairs(db[DPSMateUser[DPSMateUser[user]["pet"]][1]]["i"][1]) do
+		if db[DPSMateUser[DPSMateUser[user][5]][1]] then
+			for cat, val in pairs(db[DPSMateUser[DPSMateUser[user][5]][1]]["i"][1]) do
 				if sumTable[cat] then
 					sumTable[cat] = sumTable[cat]+val
 				else
@@ -287,7 +288,7 @@ function DPSMate.Modules.DetailsDamageTotal:LoadTable()
 		_G("DPSMate_Details_DamageTotal_PlayerList_Child_R"..i.."_CB").act = false
 	end
 	for cat, val in arr do
-		if DPSMateUser[val[1]]["isPet"] then
+		if DPSMateUser[val[1]][4] then
 			i=i+1
 		else
 			if (cat-i)>30 then break end
@@ -298,11 +299,11 @@ function DPSMate.Modules.DetailsDamageTotal:LoadTable()
 			_G("DPSMate_Details_DamageTotal_PlayerList_Child_R"..(cat-i).."_Amount"):SetText(val[2])
 			_G("DPSMate_Details_DamageTotal_PlayerList_Child_R"..(cat-i).."_StatusBar"):SetValue(100*val[2]/arr[1][2])
 			_G("DPSMate_Details_DamageTotal_PlayerList_Child_R"..(cat-i).."_StatusBar"):SetStatusBarColor(r,g,b, 1)
-			_G("DPSMate_Details_DamageTotal_PlayerList_Child_R"..(cat-i).."_AmountPerc"):SetText(string.format("%.1f", 100*val[2]/total).."%")
-			_G("DPSMate_Details_DamageTotal_PlayerList_Child_R"..(cat-i).."_Crit"):SetText(string.format("%.1f", 100*val[3]/val[6]).."%")
-			_G("DPSMate_Details_DamageTotal_PlayerList_Child_R"..(cat-i).."_Miss"):SetText(string.format("%.1f", 100*val[4]/val[7]).."%")
-			_G("DPSMate_Details_DamageTotal_PlayerList_Child_R"..(cat-i).."_DPS"):SetText(string.format("%.1f", val[2]/cbt))
-			_G("DPSMate_Details_DamageTotal_PlayerList_Child_R"..(cat-i).."_ActiveTime"):SetText(ceil(val[5]).."s | "..string.format("%.1f", 100*val[5]/cbt).."%")
+			_G("DPSMate_Details_DamageTotal_PlayerList_Child_R"..(cat-i).."_AmountPerc"):SetText(strformat("%.1f", 100*val[2]/total).."%")
+			_G("DPSMate_Details_DamageTotal_PlayerList_Child_R"..(cat-i).."_Crit"):SetText(strformat("%.1f", 100*val[3]/val[6]).."%")
+			_G("DPSMate_Details_DamageTotal_PlayerList_Child_R"..(cat-i).."_Miss"):SetText(strformat("%.1f", 100*val[4]/val[7]).."%")
+			_G("DPSMate_Details_DamageTotal_PlayerList_Child_R"..(cat-i).."_DPS"):SetText(strformat("%.1f", val[2]/cbt))
+			_G("DPSMate_Details_DamageTotal_PlayerList_Child_R"..(cat-i).."_ActiveTime"):SetText(ceil(val[5]).."s | "..strformat("%.1f", 100*val[5]/cbt).."%")
 			_G("DPSMate_Details_DamageTotal_PlayerList_Child_R"..(cat-i)).user = val[8]
 			_G("DPSMate_Details_DamageTotal_PlayerList_Child_R"..(cat-i)):Show()
 		end
@@ -314,11 +315,11 @@ function DPSMate.Modules.DetailsDamageTotal:ShowTooltip(user, obj)
 	local a,b,c = DPSMate.Modules.Damage:EvalTable(DPSMateUser[name], curKey)
 	local pet = ""
 	GameTooltip:SetOwner(obj, "TOPLEFT")
-	GameTooltip:AddLine(name.."'s damage done", 1,1,1)
+	GameTooltip:AddLine(name.."'s "..string.lower(DPSMate.L["dmgdone"]), 1,1,1)
 	for i=1, DPSMateSettings["subviewrows"] do
 		if not a[i] then break end
 		if c[i][2] then pet="(Pet)" else pet="" end
-		GameTooltip:AddDoubleLine(i..". "..DPSMate:GetAbilityById(a[i])..pet,c[i][1].." ("..string.format("%.2f", 100*c[i][1]/b).."%)",1,1,1,1,1,1)
+		GameTooltip:AddDoubleLine(i..". "..DPSMate:GetAbilityById(a[i])..pet,c[i][1].." ("..strformat("%.2f", 100*c[i][1]/b).."%)",1,1,1,1,1,1)
 	end
 	GameTooltip:Show()
 end

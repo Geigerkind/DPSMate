@@ -9,6 +9,7 @@ local curKey = 1
 local db, cbt = {}, 0
 local tinsert = table.insert
 local _G = getglobal
+local strformat = string.format
 
 function DPSMate.Modules.DetailsHealingTaken:UpdateDetails(obj, key)
 	curKey = key
@@ -18,7 +19,8 @@ function DPSMate.Modules.DetailsHealingTaken:UpdateDetails(obj, key)
 		PieChart = false
 	end
 	DetailsUser = obj.user
-	DPSMate_Details_HealingTaken_Title:SetText("Healing taken by "..obj.user)
+	DPSMate_Details_HealingTaken_Title:SetText(DPSMate.L["healtakenby"]..obj.user)
+	DetailsArr, DetailsTotal, DmgArr = DPSMate.RegistredModules[DPSMateSettings["windows"][curKey]["CurMode"]]:EvalTable(DPSMateUser[DetailsUser], curKey)
 	DPSMate_Details_HealingTaken:Show()
 	self:ScrollFrame_Update()
 	self:SelectCreatureButton(1)
@@ -30,7 +32,6 @@ function DPSMate.Modules.DetailsHealingTaken:ScrollFrame_Update()
 	local line, lineplusoffset
 	local path = "DPSMate_Details_HealingTaken_LogCreature"
 	local obj = _G(path.."_ScrollFrame")
-	DetailsArr, DetailsTotal, DmgArr = DPSMate.RegistredModules[DPSMateSettings["windows"][curKey]["CurMode"]]:EvalTable(DPSMateUser[DetailsUser], curKey)
 	local pet, len = "", DPSMate:TableLength(DetailsArr)
 	FauxScrollFrame_Update(obj,len,10,24)
 	for line=1,10 do
@@ -40,7 +41,7 @@ function DPSMate.Modules.DetailsHealingTaken:ScrollFrame_Update()
 			local r,g,b,img = DPSMate:GetClassColor(DPSMateUser[user][2])
 			_G(path.."_ScrollButton"..line.."_Name"):SetText(user)
 			_G(path.."_ScrollButton"..line.."_Name"):SetTextColor(r,g,b)
-			_G(path.."_ScrollButton"..line.."_Value"):SetText(DmgArr[lineplusoffset][1].." ("..string.format("%.2f", (DmgArr[lineplusoffset][1]*100/DetailsTotal)).."%)")
+			_G(path.."_ScrollButton"..line.."_Value"):SetText(DmgArr[lineplusoffset][1].." ("..strformat("%.2f", (DmgArr[lineplusoffset][1]*100/DetailsTotal)).."%)")
 			_G(path.."_ScrollButton"..line.."_Icon"):SetTexture("Interface\\AddOns\\DPSMate\\images\\class\\"..img)
 			if len < 10 then
 				_G(path.."_ScrollButton"..line):SetWidth(235)
@@ -73,7 +74,7 @@ function DPSMate.Modules.DetailsHealingTaken:SelectCreatureButton(i)
 		if DmgArr[i][2][lineplusoffset] ~= nil then
 			local ability = DPSMate:GetAbilityById(DmgArr[i][2][lineplusoffset])
 			_G(path.."_ScrollButton"..line.."_Name"):SetText(ability)
-			_G(path.."_ScrollButton"..line.."_Value"):SetText(DmgArr[i][3][lineplusoffset].." ("..string.format("%.2f", (DmgArr[i][3][lineplusoffset]*100/DmgArr[i][1])).."%)")
+			_G(path.."_ScrollButton"..line.."_Value"):SetText(DmgArr[i][3][lineplusoffset].." ("..strformat("%.2f", (DmgArr[i][3][lineplusoffset]*100/DmgArr[i][1])).."%)")
 			_G(path.."_ScrollButton"..line.."_Icon"):SetTexture(DPSMate.BabbleSpell:GetSpellIcon(strsub(ability, 1, (strfind(ability, "%(") or 0)-1) or ability))
 			if len < 10 then
 				_G(path.."_ScrollButton"..line):SetWidth(235)
@@ -97,7 +98,7 @@ function DPSMate.Modules.DetailsHealingTaken:SelectCreatureButton(i)
 end
 
 function DPSMate.Modules.DetailsHealingTaken:SelectDetailsButton(p,i)
-	local obj = _G("DPSMate_Details_HealingTaken_Log_ScrollFrame")
+	local obj = DPSMate_Details_HealingTaken_Log_ScrollFrame
 	local lineplusoffset = i + FauxScrollFrame_GetOffset(obj)
 	
 	for p=1, 10 do

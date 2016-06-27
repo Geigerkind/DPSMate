@@ -9,6 +9,7 @@ local curKey = 1
 local db, cbt = {}, 0
 local _G = getglobal
 local tinsert = table.insert
+local strformat = string.format
 
 function DPSMate.Modules.DetailsFF:UpdateDetails(obj, key)
 	curKey = key
@@ -18,7 +19,8 @@ function DPSMate.Modules.DetailsFF:UpdateDetails(obj, key)
 		PieChart = false
 	end
 	DetailsUser = obj.user
-	DPSMate_Details_FF_Title:SetText("Friendly fire by "..obj.user)
+	DPSMate_Details_FF_Title:SetText(DPSMate.L["ffby"]..obj.user)
+	DetailsArr, DetailsTotal, DmgArr = DPSMate.RegistredModules[DPSMateSettings["windows"][curKey]["CurMode"]]:EvalTable(DPSMateUser[DetailsUser], curKey)
 	DPSMate_Details_FF:Show()
 	self:ScrollFrame_Update()
 	self:SelectCreatureButton(1)
@@ -31,7 +33,6 @@ function DPSMate.Modules.DetailsFF:ScrollFrame_Update()
 	local path = "DPSMate_Details_FF_LogCreature"
 	local obj = _G(path.."_ScrollFrame")
 	local pet, len = "", DPSMate:TableLength(DetailsArr)
-	DetailsArr, DetailsTotal, DmgArr = DPSMate.RegistredModules[DPSMateSettings["windows"][curKey]["CurMode"]]:EvalTable(DPSMateUser[DetailsUser], curKey)
 	FauxScrollFrame_Update(obj,len,10,24)
 	for line=1,10 do
 		lineplusoffset = line + FauxScrollFrame_GetOffset(obj)
@@ -40,7 +41,7 @@ function DPSMate.Modules.DetailsFF:ScrollFrame_Update()
 			local r,g,b,img = DPSMate:GetClassColor(DPSMateUser[user][2])
 			_G(path.."_ScrollButton"..line.."_Name"):SetText(user)
 			_G(path.."_ScrollButton"..line.."_Name"):SetTextColor(r,g,b)
-			_G(path.."_ScrollButton"..line.."_Value"):SetText(DmgArr[lineplusoffset][1].." ("..string.format("%.2f", (DmgArr[lineplusoffset][1]*100/DetailsTotal)).."%)")
+			_G(path.."_ScrollButton"..line.."_Value"):SetText(DmgArr[lineplusoffset][1].." ("..strformat("%.2f", (DmgArr[lineplusoffset][1]*100/DetailsTotal)).."%)")
 			_G(path.."_ScrollButton"..line.."_Icon"):SetTexture("Interface\\AddOns\\DPSMate\\images\\class\\"..img)
 			if len < 10 then
 				_G(path.."_ScrollButton"..line):SetWidth(235)
@@ -65,14 +66,14 @@ function DPSMate.Modules.DetailsFF:SelectCreatureButton(i)
 	local path = "DPSMate_Details_FF_Log"
 	local obj = _G(path.."_ScrollFrame")
 	obj.index = i
-	local pet, len = "", DPSMate:TableLength(DmgArr[i][2])
+	local len = DPSMate:TableLength(DmgArr[i][2])
 	FauxScrollFrame_Update(obj,len,10,24)
 	for line=1,10 do
 		lineplusoffset = line + FauxScrollFrame_GetOffset(obj)
 		if DmgArr[i][2][lineplusoffset] ~= nil then
 			local ability = DPSMate:GetAbilityById(DmgArr[i][2][lineplusoffset])
 			_G(path.."_ScrollButton"..line.."_Name"):SetText(ability)
-			_G(path.."_ScrollButton"..line.."_Value"):SetText(DmgArr[i][3][lineplusoffset].." ("..string.format("%.2f", (DmgArr[i][3][lineplusoffset]*100/DetailsTotal)).."%)")
+			_G(path.."_ScrollButton"..line.."_Value"):SetText(DmgArr[i][3][lineplusoffset].." ("..strformat("%.2f", (DmgArr[i][3][lineplusoffset]*100/DetailsTotal)).."%)")
 			_G(path.."_ScrollButton"..line.."_Icon"):SetTexture(DPSMate.BabbleSpell:GetSpellIcon(strsub(ability, 1, (strfind(ability, "%(") or 0)-1) or ability))
 			if len < 10 then
 				_G(path.."_ScrollButton"..line):SetWidth(235)
@@ -96,7 +97,7 @@ function DPSMate.Modules.DetailsFF:SelectCreatureButton(i)
 end
 
 function DPSMate.Modules.DetailsFF:SelectDetailsButton(p,i)
-	local obj = _G("DPSMate_Details_FF_Log_ScrollFrame")
+	local obj = DPSMate_Details_FF_Log_ScrollFrame
 	local lineplusoffset = i + FauxScrollFrame_GetOffset(obj)
 	
 	DetailsSelected = lineplusoffset

@@ -8,12 +8,14 @@ local curKey = 1
 local db, cbt = {}, 0
 local tinsert = table.insert
 local _G = getglobal
+local strformat = string.format
 
 function DPSMate.Modules.DetailsDispels:UpdateDetails(obj, key)
 	curKey = key
 	db, cbt = DPSMate:GetMode(key)
 	DetailsUser = obj.user
-	DPSMate_Details_Dispels_Title:SetText("Dispels by "..obj.user)
+	DPSMate_Details_Dispels_Title:SetText(DPSMate.L["dispelsby"]..obj.user)
+	DetailsArr, DetailsTotal, DmgArr = DPSMate.Modules.DetailsDispels:EvalTable()
 	DPSMate_Details_Dispels:Show()
 	self:ScrollFrame_Update()
 	self:SelectCreatureButton(1)
@@ -85,9 +87,8 @@ end
 
 function DPSMate.Modules.DetailsDispels:ScrollFrame_Update()
 	local line, lineplusoffset
-	local obj = _G("DPSMate_Details_Dispels_Log_ScrollFrame")
+	local obj = DPSMate_Details_Dispels_Log_ScrollFrame
 	local path = "DPSMate_Details_Dispels_Log_ScrollButton"
-	DetailsArr, DetailsTotal, DmgArr = DPSMate.Modules.DetailsDispels:EvalTable()
 	local len = DPSMate:TableLength(DetailsArr)
 	FauxScrollFrame_Update(obj,len,14,24)
 	for line=1,14 do
@@ -95,7 +96,7 @@ function DPSMate.Modules.DetailsDispels:ScrollFrame_Update()
 		if DetailsArr[lineplusoffset] ~= nil then
 			local ability = DPSMate:GetAbilityById(DetailsArr[lineplusoffset])
 			_G(path..line.."_Name"):SetText(ability)
-			_G(path..line.."_Value"):SetText(DmgArr[lineplusoffset][1].." ("..string.format("%.2f", 100*DmgArr[lineplusoffset][1]/DetailsTotal).."%)")
+			_G(path..line.."_Value"):SetText(DmgArr[lineplusoffset][1].." ("..strformat("%.2f", 100*DmgArr[lineplusoffset][1]/DetailsTotal).."%)")
 			_G(path..line.."_Icon"):SetTexture(DPSMate.BabbleSpell:GetSpellIcon(strsub(ability, 1, (strfind(ability, "%(") or 0)-1) or ability))
 			if len < 14 then
 				_G(path..line):SetWidth(235)
@@ -114,7 +115,7 @@ end
 
 function DPSMate.Modules.DetailsDispels:SelectCreatureButton(i)
 	local line, lineplusoffset
-	local obj = _G("DPSMate_Details_Dispels_LogTwo_ScrollFrame")
+	local obj = DPSMate_Details_Dispels_LogTwo_ScrollFrame
 	i = i or obj.index
 	obj.index = i
 	local path = "DPSMate_Details_Dispels_LogTwo_ScrollButton"
@@ -127,7 +128,7 @@ function DPSMate.Modules.DetailsDispels:SelectCreatureButton(i)
 			local r,g,b,img = DPSMate:GetClassColor(DPSMateUser[user][2])
 			_G(path..line.."_Name"):SetText(user)
 			_G(path..line.."_Name"):SetTextColor(r,g,b)
-			_G(path..line.."_Value"):SetText(DmgArr[i][3][lineplusoffset][1].." ("..string.format("%.2f", 100*DmgArr[i][3][lineplusoffset][1]/DmgArr[i][1]).."%)")
+			_G(path..line.."_Value"):SetText(DmgArr[i][3][lineplusoffset][1].." ("..strformat("%.2f", 100*DmgArr[i][3][lineplusoffset][1]/DmgArr[i][1]).."%)")
 			_G(path..line.."_Icon"):SetTexture("Interface\\AddOns\\DPSMate\\images\\class\\"..img)
 			if len < 14 then
 				_G(path..line):SetWidth(235)
@@ -152,8 +153,8 @@ end
 
 function DPSMate.Modules.DetailsDispels:SelectCreatureAbilityButton(i, p)
 	local line, lineplusoffset
-	local obj = _G("DPSMate_Details_Dispels_LogThree_ScrollFrame")
-	i = i or _G("DPSMate_Details_Dispels_LogTwo_ScrollFrame").index
+	local obj = DPSMate_Details_Dispels_LogThree_ScrollFrame
+	i = i or DPSMate_Details_Dispels_LogTwo_ScrollFrame.index
 	p = p or obj.index
 	obj.index = p
 	local path = "DPSMate_Details_Dispels_LogThree_ScrollButton"
@@ -164,7 +165,7 @@ function DPSMate.Modules.DetailsDispels:SelectCreatureAbilityButton(i, p)
 		if DmgArr[i][3][p][2][lineplusoffset] ~= nil then
 			local ability = DPSMate:GetAbilityById(DmgArr[i][3][p][2][lineplusoffset])
 			_G(path..line.."_Name"):SetText(ability)
-			_G(path..line.."_Value"):SetText(DmgArr[i][3][p][3][lineplusoffset].." ("..string.format("%.2f", 100*DmgArr[i][3][p][3][lineplusoffset]/DmgArr[i][3][p][1]).."%)")
+			_G(path..line.."_Value"):SetText(DmgArr[i][3][p][3][lineplusoffset].." ("..strformat("%.2f", 100*DmgArr[i][3][p][3][lineplusoffset]/DmgArr[i][3][p][1]).."%)")
 			_G(path..line.."_Icon"):SetTexture(DPSMate.BabbleSpell:GetSpellIcon(strsub(ability, 1, (strfind(ability, "%(") or 0)-1) or ability))
 			if len < 14 then
 				_G(path..line):SetWidth(235)

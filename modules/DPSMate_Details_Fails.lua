@@ -13,7 +13,7 @@ function DPSMate.Modules.DetailsFails:UpdateDetails(obj, key)
 	curKey = key
 	db, cbt = DPSMate:GetMode(key)
 	DetailsUser = obj.user
-	DPSMate_Details_Fails_Title:SetText("Fails of "..obj.user)
+	DPSMate_Details_Fails_Title:SetText(DPSMate.L["failsof"]..obj.user)
 	Buffpos = 0
 	self:CleanTables()
 	self:UpdateBuffs()
@@ -53,11 +53,11 @@ end
 
 function DPSMate.Modules.DetailsFails:Type(id)
 	if id == 1 then
-		return "Friendly Fire"
+		return DPSMate.L["friendlyfire"]
 	elseif id == 2 then
-		return "Damage taken"
+		return DPSMate.L["damagetaken"]
 	else
-		return "Debuff taken"
+		return DPSMate.L["debufftaken"]
 	end
 end
 

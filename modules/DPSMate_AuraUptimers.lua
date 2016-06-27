@@ -4,15 +4,17 @@ DPSMate.Modules.AurasUptimers.Hist = "Auras"
 DPSMate.Options.Options[1]["args"]["aurasuptime"] = {
 	order = 250,
 	type = 'toggle',
-	name = 'Aura uptime',
-	desc = "Show Aura uptime.",
+	name = DPSMate.L["aurauptime"],
+	desc = DPSMate.L["show"].." "..DPSMate.L["aurauptime"]..".",
 	get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["options"][1]["aurasuptime"] end,
 	set = function() DPSMate.Options:ToggleDrewDrop(1, "aurasuptime", DPSMate.Options.Dewdrop:GetOpenedParent()) end,
 }
 
 -- Register the moodule
-DPSMate:Register("aurasuptime", DPSMate.Modules.AurasUptimers, "Aura uptime")
+DPSMate:Register("aurasuptime", DPSMate.Modules.AurasUptimers, DPSMate.L["aurauptime"])
 
+local tinsert = table.insert
+local strformat = string.format
 
 function DPSMate.Modules.AurasUptimers:GetSortedTable(arr,k)
 	local b, a, total = {}, {}, 0
@@ -31,13 +33,13 @@ function DPSMate.Modules.AurasUptimers:GetSortedTable(arr,k)
 			local i = 1
 			while true do
 				if (not b[i]) then
-					table.insert(b, i, CV)
-					table.insert(a, i, cat)
+					tinsert(b, i, CV)
+					tinsert(a, i, cat)
 					break
 				else
 					if b[i] < CV then
-						table.insert(b, i, CV)
-						table.insert(a, i, cat)
+						tinsert(b, i, CV)
+						tinsert(a, i, cat)
 						break
 					end
 				end
@@ -52,31 +54,30 @@ end
 function DPSMate.Modules.AurasUptimers:EvalTable(user, k)
 	local a, b, c, total = {}, {}, {}, 0
 	local arr, cbt = DPSMate:GetMode(k)
+	if cbt>1 then
+		cbt = cbt - 1;
+	end
 	for cat, val in pairs(arr[user[1]]) do -- 3 Ability
 		local CV, CVV = 0, 0
 		for ca, va in pairs(val[1]) do -- each one
 			if arr[user[1]][cat][2][ca] then
 				CV=CV+(arr[user[1]][cat][2][ca]-va)
-				--DPSMate:SendMessage((arr[user[1]][cat][2][ca]-va))
 			end
 			CVV=CVV+1
 		end
-		--DPSMate:SendMessage(DPSMate:GetAbilityById(cat).." - "..CV)
-		--DPSMate:SendMessage(DPSMateCombatTime["total"])
-		--DPSMate:SendMessage("---------------------------------------")
 		local i = 1
-		CV = tonumber(string.format("%.2f", (100*CV)/cbt))
+		CV = tonumber(strformat("%.2f", (100*CV)/cbt))
 		while true do
 			if (not b[i]) then
-				table.insert(c, i, CVV)
-				table.insert(b, i, CV)
-				table.insert(a, i, cat)
+				tinsert(c, i, CVV)
+				tinsert(b, i, CV)
+				tinsert(a, i, cat)
 				break
 			else
 				if b[i] < CV then
-					table.insert(c, i, CVV)
-					table.insert(b, i, CV)
-					table.insert(a, i, cat)
+					tinsert(c, i, CVV)
+					tinsert(b, i, CV)
+					tinsert(a, i, cat)
 					break
 				end
 			end
@@ -95,10 +96,10 @@ function DPSMate.Modules.AurasUptimers:GetSettingValues(arr, cbt, k)
 		if dmg==0 then break end
 		local str = {[1]="",[2]="",[3]=""}
 		if DPSMateSettings["columnsaurauptime"][1] then str[1] = " "..dmg..p; strt[2] = " "..tot..p end
-		if DPSMateSettings["columnsaurauptime"][2] then str[3] = " ("..string.format("%.1f", 100*dmg/tot).."%)" end
-		table.insert(name, DPSMate:GetUserById(a[cat]))
-		table.insert(value, str[1]..str[3])
-		table.insert(perc, 100*(dmg/sort))
+		if DPSMateSettings["columnsaurauptime"][2] then str[3] = " ("..strformat("%.1f", 100*dmg/tot).."%)" end
+		tinsert(name, DPSMate:GetUserById(a[cat]))
+		tinsert(value, str[1]..str[3])
+		tinsert(perc, 100*(dmg/sort))
 	end
 	return name, value, perc, strt
 end

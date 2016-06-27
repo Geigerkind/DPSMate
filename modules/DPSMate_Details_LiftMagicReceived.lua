@@ -8,12 +8,14 @@ local curKey = 1
 local db, cbt = {}, 0
 local _G = getglobal
 local tinsert = table.insert
+local strformat = string.format
 
 function DPSMate.Modules.DetailsLiftMagicReceived:UpdateDetails(obj, key)
 	curKey = key
 	db, cbt = DPSMate:GetMode(key)
 	DetailsUser = obj.user
-	DPSMate_Details_LiftMagicReceived_Title:SetText("Magic lifted of "..obj.user)
+	DPSMate_Details_LiftMagicReceived_Title:SetText(DPSMate.L["magicliftof"]..obj.user)
+	DetailsArr, DetailsTotal, DmgArr = DPSMate.Modules.DetailsLiftMagicReceived:EvalTable()
 	DPSMate_Details_LiftMagicReceived:Show()
 	self:ScrollFrame_Update()
 	self:SelectCreatureButton(1)
@@ -34,7 +36,7 @@ function DPSMate.Modules.DetailsLiftMagicReceived:EvalTable()
 				for c, v in pairs(va) do -- 3 Target
 					if c==DPSMateUser[DetailsUser][1] then
 						for ce, ve in pairs(v) do
-							if DPSMateAbility[DPSMate:GetAbilityById(ce)][2]=="Magic" then
+							if DPSMate.Modules.LiftMagic:IsValid(DPSMate:GetAbilityById(ce), DPSMate:GetAbilityById(ca)) then
 								temp[cat][1]=temp[cat][1]+ve
 								CV = CV + ve
 								local i = 1
@@ -102,9 +104,8 @@ end
 
 function DPSMate.Modules.DetailsLiftMagicReceived:ScrollFrame_Update()
 	local line, lineplusoffset
-	local obj = _G("DPSMate_Details_LiftMagicReceived_Log_ScrollFrame")
+	local obj = DPSMate_Details_LiftMagicReceived_Log_ScrollFrame
 	local path = "DPSMate_Details_LiftMagicReceived_Log_ScrollButton"
-	DetailsArr, DetailsTotal, DmgArr = DPSMate.Modules.DetailsLiftMagicReceived:EvalTable()
 	local len = DPSMate:TableLength(DetailsArr)
 	FauxScrollFrame_Update(obj,len,14,24)
 	for line=1,14 do
@@ -114,7 +115,7 @@ function DPSMate.Modules.DetailsLiftMagicReceived:ScrollFrame_Update()
 			local r,g,b,img = DPSMate:GetClassColor(DPSMateUser[user][2])
 			_G(path..line.."_Name"):SetText(user)
 			_G(path..line.."_Name"):SetTextColor(r,g,b)
-			_G(path..line.."_Value"):SetText(DmgArr[lineplusoffset][1].." ("..string.format("%.2f", 100*DmgArr[lineplusoffset][1]/DetailsTotal).."%)")
+			_G(path..line.."_Value"):SetText(DmgArr[lineplusoffset][1].." ("..strformat("%.2f", 100*DmgArr[lineplusoffset][1]/DetailsTotal).."%)")
 			_G(path..line.."_Icon"):SetTexture("Interface\\AddOns\\DPSMate\\images\\class\\"..img)
 			if len < 14 then
 				_G(path..line):SetWidth(235)
@@ -133,7 +134,7 @@ end
 
 function DPSMate.Modules.DetailsLiftMagicReceived:SelectCreatureButton(i)
 	local line, lineplusoffset
-	local obj = _G("DPSMate_Details_LiftMagicReceived_LogTwo_ScrollFrame")
+	local obj = DPSMate_Details_LiftMagicReceived_LogTwo_ScrollFrame
 	i = i or obj.index
 	obj.index = i
 	local path = "DPSMate_Details_LiftMagicReceived_LogTwo_ScrollButton"
@@ -144,7 +145,7 @@ function DPSMate.Modules.DetailsLiftMagicReceived:SelectCreatureButton(i)
 		if DmgArr[i][2][lineplusoffset] ~= nil then
 			local ability = DPSMate:GetAbilityById(DmgArr[i][2][lineplusoffset])
 			_G(path..line.."_Name"):SetText(ability)
-			_G(path..line.."_Value"):SetText(DmgArr[i][3][lineplusoffset][1].." ("..string.format("%.2f", 100*DmgArr[i][3][lineplusoffset][1]/DmgArr[i][1]).."%)")
+			_G(path..line.."_Value"):SetText(DmgArr[i][3][lineplusoffset][1].." ("..strformat("%.2f", 100*DmgArr[i][3][lineplusoffset][1]/DmgArr[i][1]).."%)")
 			_G(path..line.."_Icon"):SetTexture(DPSMate.BabbleSpell:GetSpellIcon(strsub(ability, 1, (strfind(ability, "%(") or 0)-1) or ability))
 			if len < 14 then
 				_G(path..line):SetWidth(235)
@@ -169,8 +170,8 @@ end
 
 function DPSMate.Modules.DetailsLiftMagicReceived:SelectCreatureAbilityButton(i, p)
 	local line, lineplusoffset
-	local obj = _G("DPSMate_Details_LiftMagicReceived_LogThree_ScrollFrame")
-	i = i or _G("DPSMate_Details_LiftMagicReceived_LogTwo_ScrollFrame").index
+	local obj = DPSMate_Details_LiftMagicReceived_LogThree_ScrollFrame
+	i = i or DPSMate_Details_LiftMagicReceived_LogTwo_ScrollFrame.index
 	p = p or obj.index
 	obj.index = p
 	local path = "DPSMate_Details_LiftMagicReceived_LogThree_ScrollButton"
@@ -181,7 +182,7 @@ function DPSMate.Modules.DetailsLiftMagicReceived:SelectCreatureAbilityButton(i,
 		if DmgArr[i][3][p][2][lineplusoffset] ~= nil then
 			local ability = DPSMate:GetAbilityById(DmgArr[i][3][p][2][lineplusoffset])
 			_G(path..line.."_Name"):SetText(ability)
-			_G(path..line.."_Value"):SetText(DmgArr[i][3][p][3][lineplusoffset].." ("..string.format("%.2f", 100*DmgArr[i][3][p][3][lineplusoffset]/DmgArr[i][3][p][1]).."%)")
+			_G(path..line.."_Value"):SetText(DmgArr[i][3][p][3][lineplusoffset].." ("..strformat("%.2f", 100*DmgArr[i][3][p][3][lineplusoffset]/DmgArr[i][3][p][1]).."%)")
 			_G(path..line.."_Icon"):SetTexture(DPSMate.BabbleSpell:GetSpellIcon(strsub(ability, 1, (strfind(ability, "%(") or 0)-1) or ability))
 			if len < 14 then
 				_G(path..line):SetWidth(235)

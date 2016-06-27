@@ -4,20 +4,20 @@ DPSMate.Modules.Decurses.Hist = "Dispels"
 DPSMate.Options.Options[1]["args"]["decurses"] = {
 	order = 195,
 	type = 'toggle',
-	name = 'Decurses',
-	desc = "Show Decurses.",
+	name = DPSMate.L["decurses"],
+	desc = DPSMate.L["show"].." "..DPSMate.L["decurses"]..".",
 	get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["options"][1]["decurses"] end,
 	set = function() DPSMate.Options:ToggleDrewDrop(1, "decurses", DPSMate.Options.Dewdrop:GetOpenedParent()) end,
 }
 
 -- Register the moodule
-DPSMate:Register("decurses", DPSMate.Modules.Decurses, "Decurses")
+DPSMate:Register("decurses", DPSMate.Modules.Decurses, DPSMate.L["decurses"])
 
 local tinsert = table.insert
-
+local strformat = string.format
 
 function DPSMate.Modules.Decurses:IsValid(ab, cast, user)
-	if DPSMateAbility[ab][2]=="Curse" or user[2] == "Mage" or DPSMate.Parser.DeCurse[cast] then
+	if DPSMateAbility[ab][2]==DPSMate.L["curse"] or user[2] == "mage" or DPSMate.Parser.DeCurse[cast] then
 		return true
 	end
 	return false
@@ -106,7 +106,7 @@ function DPSMate.Modules.Decurses:GetSettingValues(arr, cbt, k)
 		if dmg==0 then break end
 		local str = {[1]="",[2]="",[3]=""}
 		if DPSMateSettings["columnsdecurses"][1] then str[1] = " "..dmg..p; strt[2] = tot..p end
-		if DPSMateSettings["columnsdecurses"][2] then str[3] = " ("..string.format("%.1f", 100*dmg/tot).."%)" end
+		if DPSMateSettings["columnsdecurses"][2] then str[3] = " ("..strformat("%.1f", 100*dmg/tot).."%)" end
 		tinsert(name, DPSMate:GetUserById(a[cat]))
 		tinsert(value, str[1]..str[3])
 		tinsert(perc, 100*(dmg/sort))
@@ -119,7 +119,7 @@ function DPSMate.Modules.Decurses:ShowTooltip(user,k)
 	if DPSMateSettings["informativetooltips"] then
 		for i=1, DPSMateSettings["subviewrows"] do
 			if not a[i] then break end
-			GameTooltip:AddDoubleLine(i..". "..DPSMate:GetAbilityById(a[i]),c[i].." ("..string.format("%.2f", 100*c[i]/b).."%)",1,1,1,1,1,1)
+			GameTooltip:AddDoubleLine(i..". "..DPSMate:GetAbilityById(a[i]),c[i].." ("..strformat("%.2f", 100*c[i]/b).."%)",1,1,1,1,1,1)
 		end
 	end
 end

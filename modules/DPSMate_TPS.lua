@@ -4,19 +4,19 @@ DPSMate.Modules.TPS.Hist = "Threat"
 DPSMate.Options.Options[1]["args"]["tps"] = {
 	order = 290,
 	type = 'toggle',
-	name = "TPS",
-	desc = "Show tps.",
+	name = DPSMate.L["tps"],
+	desc = DPSMate.L["show"].." "..DPSMate.L["tps"]..".",
 	get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["options"][1]["tps"] end,
 	set = function() DPSMate.Options:ToggleDrewDrop(1, "tps", DPSMate.Options.Dewdrop:GetOpenedParent()) end,
 }
 
 -- Register the moodule
-DPSMate:Register("tps", DPSMate.Modules.TPS, "TPS")
+DPSMate:Register("tps", DPSMate.Modules.TPS, DPSMate.L["tps"])
 
 local tinsert = table.insert
+local strformat = string.format
 
-
-function DPSMate.Modules.TPS:GetSortedTable(arr, k)
+function DPSMate.Modules.TPS:GetSortedTable(arr, k, cbt)
 	local b, a, total = {}, {}, 0
 	local temp = {}
 	for cat, val in arr do
@@ -38,22 +38,23 @@ function DPSMate.Modules.TPS:GetSortedTable(arr, k)
 		end
 		total = total + val
 	end
-	return b, total, a
+	return b, strformat("%.1f", total/(cbt or 1)), a
 end
 
-function DPSMate.Modules.TPS:GetSettingValues(arr, cbt, k)
+function DPSMate.Modules.TPS:GetSettingValues(arr, cbt, k,ecbt)
 	local name, value, perc, sortedTable, total, a, p, strt = {}, {}, {}, {}, 0, 0, "", {[1]="",[2]=""}
 	if DPSMateSettings["windows"][k]["numberformat"] == 2 then p = "K" end
 	sortedTable, total, a = DPSMate.Modules.TPS:GetSortedTable(arr, k)
 	for cat, val in sortedTable do
 		local dmg, tot, sort = DPSMate:FormatNumbers(val, total, sortedTable[1], k)
 		if dmg==0 then break end
-		local str = {[1]="",[2]="",[3]=""}
+		local str = {[1]="",[2]="",[3]="",[4]=""}
 		if DPSMateSettings["columnstps"][1] then str[1] = "("..dmg..p..")"; strt[1] = "("..tot..p..")" end
-		if DPSMateSettings["columnstps"][2] then str[2] = " "..string.format("%.1f", (dmg/cbt))..p; strt[2] = " "..string.format("%.1f", (tot/cbt))..p end
-		if DPSMateSettings["columnstps"][3] then str[3] = " ("..string.format("%.1f", 100*dmg/tot).."%)" end
+		if DPSMateSettings["columnstps"][2] then str[2] = " "..strformat("%.1f", (dmg/cbt))..p; strt[2] = " "..strformat("%.1f", (tot/cbt))..p end
+		if DPSMateSettings["columnstps"][3] then str[3] = " ("..strformat("%.1f", 100*dmg/tot).."%)" end
+		if DPSMateSettings["columnstps"][4] then str[4] = " ("..strformat("%.1f", dmg/(ecbt[a[cat]] or cbt))..p..")" end
 		tinsert(name, a[cat])
-		tinsert(value, str[2]..str[1]..str[3])
+		tinsert(value, str[2]..str[1]..str[4]..str[3])
 		tinsert(perc, 100*(dmg/sort))
 	end
 	return name, value, perc, strt

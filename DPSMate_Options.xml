@@ -378,6 +378,18 @@
 				</FontString>
 			</Layer>
 		</Layers>
+		<Scripts>
+			<OnEnter>
+				if this.aide then
+					GameTooltip:SetOwner(this, "ANCHOR_RIGHT")
+					GameTooltip:SetText(this.aide, nil, nil, nil, nil, 1)
+					GameTooltip:Show()
+				end
+			</OnEnter>
+			<OnLeave>
+				GameTooltip:Hide()
+			</OnLeave>
+		</Scripts>
 	</CheckButton>
 	<Frame name="DPSMate_Template_DropDown" inherits="UIDropDownMenuTemplate" virtual="true">
 		<Size x="148" y="24" />
@@ -744,9 +756,9 @@
 			</OnDragStop>
 			<OnEnter>
 				GameTooltip:SetOwner(this, "ANCHOR_LEFT")
-				GameTooltip:AddLine("DPSMate")
-				GameTooltip:AddLine(DPSMate.localization.MiniMapLeft, 0.5, 0.5, 0.5)
-				GameTooltip:AddLine(DPSMate.localization.MiniMapRight, 0.5, 0.5, 0.5)
+				GameTooltip:AddLine(DPSMate.L["name"])
+				GameTooltip:AddLine(DPSMate.L["minimapleft"], 0.5, 0.5, 0.5)
+				GameTooltip:AddLine(DPSMate.L["minimapright"], 0.5, 0.5, 0.5)
 				GameTooltip:Show()
 			</OnEnter>
 			<OnLeave>
@@ -801,10 +813,10 @@
 				this:StopMovingOrSizing()
 			</OnMouseUp>
 			<OnLoad>
-				DPSMate_PopUp_Text:SetText(DPSMate.localization.popup)
-				DPSMate_PopUp_TotalText:SetText(DPSMate.localization.total)
-				DPSMate_PopUp_CurrentText:SetText(DPSMate.localization.current)
-				DPSMate_PopUp_CancelText:SetText(DPSMate.localization.cancel)
+				DPSMate_PopUp_Text:SetText(DPSMate.L["popup"])
+				DPSMate_PopUp_TotalText:SetText(DPSMate.L["total"])
+				DPSMate_PopUp_CurrentText:SetText(DPSMate.L["current"])
+				DPSMate_PopUp_CancelText:SetText(DPSMate.L["cancel"])
 				this:SetClampedToScreen()
 			</OnLoad>
 		</Scripts>
@@ -931,9 +943,9 @@
 				this:StopMovingOrSizing()
 			</OnMouseUp>
 			<OnLoad>
-				DPSMate_Vote_Text:SetText(DPSMate.localization.popup)
-				DPSMate_Vote_AcceptText:SetText(DPSMate.localization.accept)
-				DPSMate_Vote_CancelText:SetText(DPSMate.localization.decline)
+				DPSMate_Vote_Text:SetText(DPSMate.L["popup"])
+				DPSMate_Vote_AcceptText:SetText(DPSMate.L["accept"])
+				DPSMate_Vote_CancelText:SetText(DPSMate.L["decline"])
 				this:SetClampedToScreen()
 			</OnLoad>
 		</Scripts>
@@ -1032,9 +1044,9 @@
 				this:StopMovingOrSizing()
 			</OnMouseUp>
 			<OnLoad>
-				DPSMate_Logout_Text:SetText(DPSMate.localization.memory)
-				DPSMate_Logout_AcceptText:SetText(DPSMate.localization.accept)
-				DPSMate_Logout_CancelText:SetText(DPSMate.localization.decline)
+				DPSMate_Logout_Text:SetText(DPSMate.L["memory"])
+				DPSMate_Logout_AcceptText:SetText(DPSMate.L["accept"])
+				DPSMate_Logout_CancelText:SetText(DPSMate.L["decline"])
 				this:SetClampedToScreen()
 			</OnLoad>
 		</Scripts>
@@ -1048,7 +1060,7 @@
 				</Anchors>
 				<Layers>
 					<Layer level="ARTWORK">
-						<FontString name="$parentText" inherits="GameFontNormalSmall" text="Total">
+						<FontString name="$parentText" inherits="GameFontNormalSmall">
 							<Size x="80" y="24" />
 							<Anchors>
 								<Anchor point="TOP">
@@ -1139,7 +1151,7 @@
 				this:StopMovingOrSizing()
 			</OnMouseUp>
 			<OnLoad>
-				DPSMate_Report_Text:SetText(DPSMate.localization.report.." - DPSMate")
+				DPSMate_Report_Text:SetText(DPSMate.L["report"].." - "..DPSMate.L["name"])
 			</OnLoad>
 		</Scripts>
 		<Frames>
@@ -1151,7 +1163,7 @@
 				<Scripts>
 					<OnEnter>
 						GameTooltip:SetOwner(this, "ANCHOR_RIGHT")
-						GameTooltip:SetText(DPSMate.localization.close, nil, nil, nil, nil, 1)
+						GameTooltip:SetText(DPSMate.L["close"], nil, nil, nil, nil, 1)
 					</OnEnter>
 					<OnLeave>
 						GameTooltip:Hide()
@@ -1174,7 +1186,7 @@
 				<Scripts>
 					<OnEnter>
 						GameTooltip:SetOwner(this, "ANCHOR_RIGHT")
-						GameTooltip:SetText(DPSMate.localization.channelTooltip, nil, nil, nil, nil, 1)
+						GameTooltip:SetText(DPSMate.L["channeltooltip"], nil, nil, nil, nil, 1)
 					</OnEnter>
 					<OnLeave>
 						GameTooltip:Hide()
@@ -1182,7 +1194,7 @@
 					<OnLoad>
 						UIDropDownMenu_SetWidth(100)
 						UIDropDownMenu_Initialize(this, DPSMate.Options.ChannelDropDown)
-						getglobal(this:GetName().."_Text"):SetText(DPSMate.localization.channel)
+						getglobal(this:GetName().."_Text"):SetText(DPSMate.L["channel"])
 					</OnLoad>
 					<OnShow>
 						UIDropDownMenu_Initialize(this, DPSMate.Options.ChannelDropDown)
@@ -1213,19 +1225,19 @@
 				<Scripts>
 					<OnEnter>
 						GameTooltip:SetOwner(this, "ANCHOR_RIGHT")
-						GameTooltip:SetText(DPSMate.localization.SliderTooltip, nil, nil, nil, nil, 1)
+						GameTooltip:SetText(DPSMate.L["slidertooltip"], nil, nil, nil, nil, 1)
 					</OnEnter>
 					<OnLeave>
 						GameTooltip:Hide()
 					</OnLeave>
 					<OnValueChanged>
-						getglobal(this:GetName().."Text"):SetText(DPSMate.localization.Slider..": "..this:GetValue())
+						getglobal(this:GetName().."Text"):SetText(DPSMate.L["slider"]..": "..this:GetValue())
 					</OnValueChanged>
 					<OnLoad>
 						this:SetMinMaxValues(1,25)
 						this:SetValue(6)
 						this:SetValueStep(1)
-						getglobal(this:GetName().."Text"):SetText(DPSMate.localization.Slider..": 6")
+						getglobal(this:GetName().."Text"):SetText(DPSMate.L["slider"]..": 6")
 						getglobal(this:GetName().."Low"):SetText("1")
 						getglobal(this:GetName().."High"):SetText("25")
 					</OnLoad>
@@ -1242,14 +1254,14 @@
 				<Scripts>
 					<OnLoad>
 						this:SetMaxLetters(32)
-						getglobal(this:GetName().."_Text"):SetText(DPSMate.localization.EditboxTitle)
+						getglobal(this:GetName().."_Text"):SetText(DPSMate.L["editboxtitle"])
 					</OnLoad>
 					<OnEnterPressed>
 						this:ClearFocus()
 					</OnEnterPressed>
 					<OnEnter>
 						GameTooltip:SetOwner(this, "ANCHOR_RIGHT")
-						GameTooltip:SetText(DPSMate.localization.EditboxTooltip, nil, nil, nil, nil, 1)
+						GameTooltip:SetText(DPSMate.L["editboxtooltip"], nil, nil, nil, nil, 1)
 					</OnEnter>
 					<OnLeave>
 						GameTooltip:Hide()
@@ -1292,7 +1304,7 @@
 						DPSMate.Options:Report()
 					</OnClick>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText(DPSMate.localization.report)
+						getglobal(this:GetName().."Text"):SetText(DPSMate.L["report"])
 					</OnLoad>
 				</Scripts>
 				<NormalTexture file="Interface\Buttons\UI-DialogBox-Button-Up"/>
@@ -1346,14 +1358,14 @@
 				<Scripts>
 					<OnEnter>
 						GameTooltip:SetOwner(this, "ANCHOR_RIGHT")
-						GameTooltip:SetText(DPSMate.localization.close, nil, nil, nil, nil, 1)
+						GameTooltip:SetText(DPSMate.L["close"], nil, nil, nil, nil, 1)
 					</OnEnter>
 					<OnLeave>
 						GameTooltip:Hide()
 					</OnLeave>
 					<OnClick>
 						this:GetParent():Hide()
-						DPSMateSettings["windows"][this:GetParent():GetParent().Key]["realtime"] = false
+						DPSMateSettings["windows"][this:GetParent():GetParent().Key or 1]["realtime"] = false
 					</OnClick>
 				</Scripts>
 				<NormalTexture file="Interface\Buttons\UI-Panel-MinimizeButton-Up"/>
@@ -1410,7 +1422,7 @@
 				<Scripts>
 					<OnEnter>
 						GameTooltip:SetOwner(this, "ANCHOR_RIGHT")
-						GameTooltip:SetText(DPSMate.localization.close, nil, nil, nil, nil, 1)
+						GameTooltip:SetText(DPSMate.L["close"], nil, nil, nil, nil, 1)
 					</OnEnter>
 					<OnLeave>
 						GameTooltip:Hide()
@@ -1441,7 +1453,7 @@
 								this.selected=true
 								this:GetParent().selected = "_Tab_Window"
 								getglobal(this:GetName().."Texture"):Show()
-								getglobal(this:GetName().."Text"):SetText(DPSMate.localization.config.window)
+								getglobal(this:GetName().."Text"):SetText(DPSMate.L["window"])
 								getglobal(this:GetName().."Text"):SetTextColor(1,1,1,1)
 								this.func = function()
 									getglobal(this:GetParent():GetParent():GetName()..this:GetParent().selected):Hide()
@@ -1457,7 +1469,7 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								getglobal(this:GetName().."Text"):SetText(DPSMate.localization.config.dataresets)
+								getglobal(this:GetName().."Text"):SetText(DPSMate.L["dataresets"])
 								this.func = function()
 									getglobal(this:GetParent():GetParent():GetName()..this:GetParent().selected):Hide()
 									getglobal(this:GetParent():GetParent():GetName().."_Tab_DataResets"):Show()
@@ -1472,7 +1484,7 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								getglobal(this:GetName().."Text"):SetText(DPSMate.localization.config.generaloptions)
+								getglobal(this:GetName().."Text"):SetText(DPSMate.L["generaloptions"])
 								this.func = function()
 									getglobal(this:GetParent():GetParent():GetName()..this:GetParent().selected):Hide()
 									getglobal(this:GetParent():GetParent():GetName().."_Tab_GeneralOptions"):Show()
@@ -1487,7 +1499,7 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								getglobal(this:GetName().."Text"):SetText(DPSMate.localization.config.columns)
+								getglobal(this:GetName().."Text"):SetText(DPSMate.L["columns"])
 								this.func = function()
 									getglobal(this:GetParent():GetParent():GetName()..this:GetParent().selected):Hide()
 									getglobal(this:GetParent():GetParent():GetName().."_Tab_Columns"):Show()
@@ -1502,7 +1514,7 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								getglobal(this:GetName().."Text"):SetText(DPSMate.localization.config.tooltips)
+								getglobal(this:GetName().."Text"):SetText(DPSMate.L["tooltips"])
 								this.func = function()
 									getglobal(this:GetParent():GetParent():GetName()..this:GetParent().selected):Hide()
 									getglobal(this:GetParent():GetParent():GetName().."_Tab_Tooltips"):Show()
@@ -1517,7 +1529,7 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								getglobal(this:GetName().."Text"):SetText(DPSMate.localization.config.modes)
+								getglobal(this:GetName().."Text"):SetText(DPSMate.L["modes"])
 								this.func = function()
 									getglobal(this:GetParent():GetParent():GetName()..this:GetParent().selected):Hide()
 									getglobal(this:GetParent():GetParent():GetName().."_Tab_Modes"):Show()
@@ -1532,7 +1544,7 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								getglobal(this:GetName().."Text"):SetText(DPSMate.localization.config.raidleader)
+								getglobal(this:GetName().."Text"):SetText(DPSMate.L["raidleader"])
 								this.func = function()
 									getglobal(this:GetParent():GetParent():GetName()..this:GetParent().selected):Hide()
 									getglobal(this:GetParent():GetParent():GetName().."_Tab_RaidLeader"):Show()
@@ -1547,7 +1559,7 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								getglobal(this:GetName().."Text"):SetText(DPSMate.localization.config.broadcasting)
+								getglobal(this:GetName().."Text"):SetText(DPSMate.L["broadcasting"])
 								this.func = function()
 									getglobal(this:GetParent():GetParent():GetName()..this:GetParent().selected):Hide()
 									getglobal(this:GetParent():GetParent():GetName().."_Tab_Broadcasting"):Show()
@@ -1562,7 +1574,7 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								getglobal(this:GetName().."Text"):SetText(DPSMate.localization.config.about)
+								getglobal(this:GetName().."Text"):SetText(DPSMate.L["about"])
 								this.func = function()
 									getglobal(this:GetParent():GetParent():GetName()..this:GetParent().selected):Hide()
 									getglobal(this:GetParent():GetParent():GetName().."_Tab_About"):Show()
@@ -1591,8 +1603,8 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								this.aide = DPSMate.localization.config.createwindowTooltip
-								getglobal(this:GetName().."Text"):SetText(DPSMate.localization.config.createwindow)
+								this.aide = DPSMate.L["createwindowtooltip"]
+								getglobal(this:GetName().."Text"):SetText(DPSMate.L["createwindow"])
 							</OnLoad>
 						</Scripts>
 					</EditBox>
@@ -1604,8 +1616,8 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								this.aide = DPSMate.localization.config.submitTooltip
-								getglobal(this:GetName().."Text"):SetText(DPSMate.localization.config.submit)
+								this.aide = DPSMate.L["submitTooltip"]
+								getglobal(this:GetName().."Text"):SetText(DPSMate.L["submit"])
 							</OnLoad>
 							<OnClick>
 								DPSMate.Options:CreateWindow()
@@ -1621,9 +1633,9 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								this.aide = DPSMate.localization.config.availwindowsTooltip
+								this.aide = DPSMate.L["availwindowsTooltip"]
 								this.func = DPSMate.Options.WindowDropDown
-								this.title = DPSMate.localization.config.availwindows
+								this.title = DPSMate.L["availwindows"]
 								UIDropDownMenu_SetWidth(148)
 								getglobal(this:GetName().."_Text"):SetText(this.title)
 							</OnLoad>
@@ -1637,8 +1649,8 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								this.aide = DPSMate.localization.config.removeTooltip
-								getglobal(this:GetName().."Text"):SetText(DPSMate.localization.config.remove)
+								this.aide = DPSMate.L["removeTooltip"]
+								getglobal(this:GetName().."Text"):SetText(DPSMate.L["remove"])
 							</OnLoad>
 							<OnClick>
 								DPSMate.Options:RemoveWindow()
@@ -1654,9 +1666,9 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								this.aide = DPSMate.localization.config.configfromTooltip
+								this.aide = DPSMate.L["configfromTooltip"]
 								this.func = DPSMate.Options.WindowDropDown
-								this.title = DPSMate.localization.config.configfrom
+								this.title = DPSMate.L["configfrom"]
 								UIDropDownMenu_SetWidth(148)
 								getglobal(this:GetName().."_Text"):SetText(this.title)
 							</OnLoad>
@@ -1670,9 +1682,9 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								this.aide = DPSMate.localization.config.configtoTooltip
+								this.aide = DPSMate.L["configtoTooltip"]
 								this.func = DPSMate.Options.WindowDropDown
-								this.title = DPSMate.localization.config.configto
+								this.title = DPSMate.L["configto"]
 								UIDropDownMenu_SetWidth(148)
 								getglobal(this:GetName().."_Text"):SetText(this.title)
 							</OnLoad>
@@ -1686,8 +1698,8 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								this.aide = DPSMate.localization.config.copyTooltip
-								getglobal(this:GetName().."Text"):SetText(DPSMate.localization.config.copy)
+								this.aide = DPSMate.L["copyTooltip"]
+								getglobal(this:GetName().."Text"):SetText(DPSMate.L["copy"])
 							</OnLoad>
 							<OnClick>
 								DPSMate.Options:CopyConfiguration()
@@ -1702,7 +1714,8 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.lock)
+								this.aide = DPSMate.L["locktooltip"]
+								getglobal(this:GetName().."_Title"):SetText(DPSMate.L["lock"])
 							</OnLoad>
 							<OnClick>
 								if DPSMateSettings["lock"] then
@@ -1723,7 +1736,8 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.testmode)
+								this.aide = DPSMate.L["testmodetooltip"]
+								getglobal(this:GetName().."_Title"):SetText(DPSMate.L["testmode"])
 							</OnLoad>
 							<OnClick>
 								DPSMate.Options:ActivateTestMode()
@@ -1748,9 +1762,9 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								this.aide = DPSMate.localization.config.barfontTooltip
+								this.aide = DPSMate.L["barfontTooltip"]
 								this.func = DPSMate.Options.BarFontDropDown
-								this.title = DPSMate.localization.config.barfont
+								this.title = DPSMate.L["barfont"]
 								UIDropDownMenu_SetWidth(120)
 								getglobal(this:GetName().."_Text"):SetText(this.title)
 							</OnLoad>
@@ -1764,7 +1778,7 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								this.aide = DPSMate.localization.config.barfontsizeTooltip
+								this.aide = DPSMate.L["barfontsizeTooltip"]
 								this.func = function() 
 									DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["barfontsize"] = this:GetValue()
 									getglobal("DPSMate_"..DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["name"].."_ScrollFrame_Child_Total_Name"):SetFont(DPSMate.Options.fonts[DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["barfont"]], DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["barfontsize"], DPSMate.Options.fontflags[DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["barfontflag"]])
@@ -1776,7 +1790,7 @@
 								end
 								this:SetMinMaxValues(1,32)
 								this:SetValueStep(1)
-								getglobal(this:GetName().."Text"):SetText(DPSMate.localization.config.barfontsize)
+								getglobal(this:GetName().."Text"):SetText(DPSMate.L["barfontsize"])
 								getglobal(this:GetName().."Low"):SetText("1")
 								getglobal(this:GetName().."High"):SetText("32")
 							</OnLoad>
@@ -1791,9 +1805,9 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								this.aide = DPSMate.localization.config.barfontflagsTooltip
+								this.aide = DPSMate.L["barfontflagsTooltip"]
 								this.func = DPSMate.Options.BarFontFlagsDropDown
-								this.title = DPSMate.localization.config.barfontflags
+								this.title = DPSMate.L["barfontflags"]
 								UIDropDownMenu_SetWidth(120)
 								getglobal(this:GetName().."_Text"):SetText(this.title)
 							</OnLoad>
@@ -1808,9 +1822,9 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								this.aide = DPSMate.localization.config.bartextureTooltip
+								this.aide = DPSMate.L["bartextureTooltip"]
 								this.func = DPSMate.Options.BarTextureDropDown
-								this.title = DPSMate.localization.config.bartexture
+								this.title = DPSMate.L["bartexture"]
 								UIDropDownMenu_SetWidth(120)
 								getglobal(this:GetName().."_Text"):SetText(this.title)
 							</OnLoad>
@@ -1824,7 +1838,7 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								this.aide = DPSMate.localization.config.barspacingTooltip
+								this.aide = DPSMate.L["barspacingTooltip"]
 								this.func = function()
 									DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["barspacing"] = this:GetValue() 
 									for i=1, 40 do
@@ -1845,7 +1859,7 @@
 								end
 								this:SetMinMaxValues(1,10)
 								this:SetValueStep(1)
-								getglobal(this:GetName().."Text"):SetText(DPSMate.localization.config.barspacing)
+								getglobal(this:GetName().."Text"):SetText(DPSMate.L["barspacing"])
 								getglobal(this:GetName().."Low"):SetText("1")
 								getglobal(this:GetName().."High"):SetText("10")
 							</OnLoad>
@@ -1859,7 +1873,7 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								this.aide = DPSMate.localization.config.barheightTooltip
+								this.aide = DPSMate.L["barheightTooltip"]
 								this.func = function()
 									DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["barheight"] = this:GetValue() 
 									if DPSMateSettings["showtotals"] then getglobal("DPSMate_"..DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["name"].."_ScrollFrame_Child_Total"):SetHeight(DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["barheight"]) end
@@ -1879,7 +1893,7 @@
 								end
 								this:SetMinMaxValues(10,25)
 								this:SetValueStep(1)
-								getglobal(this:GetName().."Text"):SetText(DPSMate.localization.config.barheight)
+								getglobal(this:GetName().."Text"):SetText(DPSMate.L["barheight"])
 								getglobal(this:GetName().."Low"):SetText("10")
 								getglobal(this:GetName().."High"):SetText("25")
 							</OnLoad>
@@ -1893,11 +1907,11 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								getglobal(this:GetName().."_Font"):SetText(DPSMate.localization.config.fontcolor)
+								getglobal(this:GetName().."_Font"):SetText(DPSMate.L["fontcolor"])
 								getglobal(this:GetName().."_SwatchBg").r = 1
 								getglobal(this:GetName().."_SwatchBg").g = 1
 								getglobal(this:GetName().."_SwatchBg").b = 1
-								this.aide = DPSMate.localization.config.fontcolorTooltip
+								this.aide = DPSMate.L["fontcolorTooltip"]
 								this.var = "barfontcolor"
 								this.func = function()
 									for i=1, 40 do
@@ -1916,11 +1930,11 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								getglobal(this:GetName().."_Font"):SetText(DPSMate.localization.config.bgbarcolor)
+								getglobal(this:GetName().."_Font"):SetText(DPSMate.L["bgbarcolor"])
 								getglobal(this:GetName().."_SwatchBg").r = 1
 								getglobal(this:GetName().."_SwatchBg").g = 1
 								getglobal(this:GetName().."_SwatchBg").b = 1
-								this.aide = DPSMate.localization.config.bgbarcolorTooltip
+								this.aide = DPSMate.L["bgbarcolorTooltip"]
 								this.var = "bgbarcolor"
 								this.func = function()
 									for i=1, 40 do
@@ -1938,7 +1952,8 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.classicons)
+								this.aide = DPSMate.L["classiconstooltip"]
+								getglobal(this:GetName().."_Title"):SetText(DPSMate.L["classicons"])
 							</OnLoad>
 							<OnClick>
 								if DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["classicons"] then
@@ -1973,7 +1988,8 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.ranks)
+								this.aide = DPSMate.L["rankstooltip"]
+								getglobal(this:GetName().."_Title"):SetText(DPSMate.L["ranks"])
 							</OnLoad>
 							<OnClick>
 								if DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["ranks"] then
@@ -2009,7 +2025,8 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.enable)
+								this.aide = DPSMate.L["enabletitlebartooltip"]
+								getglobal(this:GetName().."_Title"):SetText(DPSMate.L["enable"])
 							</OnLoad>
 							<OnClick>
 								if DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["titlebar"] then
@@ -2031,9 +2048,9 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								this.aide = DPSMate.localization.config.barfontTooltip
+								this.aide = DPSMate.L["barfontTooltip"]
 								this.func = DPSMate.Options.TitleBarFontDropDown
-								this.title = DPSMate.localization.config.barfont
+								this.title = DPSMate.L["barfont"]
 								UIDropDownMenu_SetWidth(120)
 								getglobal(this:GetName().."_Text"):SetText(this.title)
 							</OnLoad>
@@ -2047,14 +2064,14 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								this.aide = DPSMate.localization.config.barfontsizeTooltip
+								this.aide = DPSMate.L["barfontsizeTooltip"]
 								this.func = function() 
 									DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["titlebarfontsize"] = this:GetValue()
 									getglobal("DPSMate_"..DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["name"].."_Head_Font"):SetFont(DPSMate.Options.fonts[DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["titlebarfont"]], DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["titlebarfontsize"], DPSMate.Options.fontflags[DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["titlebarfontflag"]])
 								end
 								this:SetMinMaxValues(1,32)
 								this:SetValueStep(1)
-								getglobal(this:GetName().."Text"):SetText(DPSMate.localization.config.barfontsize)
+								getglobal(this:GetName().."Text"):SetText(DPSMate.L["barfontsize"])
 								getglobal(this:GetName().."Low"):SetText("1")
 								getglobal(this:GetName().."High"):SetText("32")
 							</OnLoad>
@@ -2069,9 +2086,9 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								this.aide = DPSMate.localization.config.barfontflagsTooltip
+								this.aide = DPSMate.L["barfontflagsTooltip"]
 								this.func = DPSMate.Options.TitleBarFontFlagsDropDown
-								this.title = DPSMate.localization.config.barfontflags
+								this.title = DPSMate.L["barfontflags"]
 								UIDropDownMenu_SetWidth(120)
 								getglobal(this:GetName().."_Text"):SetText(this.title)
 							</OnLoad>
@@ -2086,9 +2103,9 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								this.aide = DPSMate.localization.config.bartextureTooltip
+								this.aide = DPSMate.L["bartextureTooltip"]
 								this.func = DPSMate.Options.TitleBarTextureDropDown
-								this.title = DPSMate.localization.config.bartexture
+								this.title = DPSMate.L["bartexture"]
 								UIDropDownMenu_SetWidth(120)
 								getglobal(this:GetName().."_Text"):SetText(this.title)
 							</OnLoad>
@@ -2102,14 +2119,14 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								this.aide = DPSMate.localization.config.barheightTooltip
+								this.aide = DPSMate.L["barheightTooltip"]
 								this.func = function()
 									DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["titlebarheight"] = this:GetValue()
 									getglobal("DPSMate_"..DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["name"].."_Head"):SetHeight(DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["titlebarheight"])
 								end
 								this:SetMinMaxValues(10,32)
 								this:SetValueStep(1)
-								getglobal(this:GetName().."Text"):SetText(DPSMate.localization.config.barheight)
+								getglobal(this:GetName().."Text"):SetText(DPSMate.L["barheight"])
 								getglobal(this:GetName().."Low"):SetText("10")
 								getglobal(this:GetName().."High"):SetText("32")
 							</OnLoad>
@@ -2123,14 +2140,14 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								this.aide = DPSMate.localization.config.bgOpacityTooltip
+								this.aide = DPSMate.L["bgOpacityTooltip"]
 								this.func = function()
 									DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["titlebaropacity"] = this:GetValue()
 									getglobal("DPSMate_"..DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["name"].."_Head_Background"):SetAlpha(DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["titlebaropacity"])
 								end
 								this:SetMinMaxValues(0,1)
 								this:SetValueStep(0.1)
-								getglobal(this:GetName().."Text"):SetText(DPSMate.localization.config.bgOpacity)
+								getglobal(this:GetName().."Text"):SetText(DPSMate.L["bgOpacity"])
 								getglobal(this:GetName().."Low"):SetText("0")
 								getglobal(this:GetName().."High"):SetText("1")
 							</OnLoad>
@@ -2144,11 +2161,11 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								getglobal(this:GetName().."_Font"):SetText(DPSMate.localization.config.bgcolor)
+								getglobal(this:GetName().."_Font"):SetText(DPSMate.L["bgcolor"])
 								getglobal(this:GetName().."_SwatchBg").r = 1
 								getglobal(this:GetName().."_SwatchBg").g = 1
 								getglobal(this:GetName().."_SwatchBg").b = 1
-								this.aide = DPSMate.localization.config.bgcolorTooltip
+								this.aide = DPSMate.L["bgcolorTooltip"]
 								this.var = "titlebarbgcolor"
 								this.func = function()
 									getglobal("DPSMate_"..DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["name"].."_Head_Background"):SetVertexColor(DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["titlebarbgcolor"][1], DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["titlebarbgcolor"][2], DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["titlebarbgcolor"][3])
@@ -2164,11 +2181,11 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								getglobal(this:GetName().."_Font"):SetText(DPSMate.localization.config.fontcolor)
+								getglobal(this:GetName().."_Font"):SetText(DPSMate.L["fontcolor"])
 								getglobal(this:GetName().."_SwatchBg").r = 1
 								getglobal(this:GetName().."_SwatchBg").g = 1
 								getglobal(this:GetName().."_SwatchBg").b = 1
-								this.aide = DPSMate.localization.config.fontcolorTooltip
+								this.aide = DPSMate.L["fontcolorTooltip"]
 								this.var = "titlebarfontcolor"
 								this.func = function()
 									getglobal("DPSMate_"..DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["name"].."_Head_Font"):SetTextColor(DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["titlebarfontcolor"][1], DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["titlebarfontcolor"][2], DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["titlebarfontcolor"][3])
@@ -2204,7 +2221,8 @@
 								</Anchors>
 								<Scripts>
 									<OnLoad>
-										getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.report)
+										this.aide = DPSMate.L["buttonshowtooltip"]
+										getglobal(this:GetName().."_Title"):SetText(DPSMate.L["report"])
 									</OnLoad>
 									<OnClick>
 										if DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["titlebarreport"] then
@@ -2222,7 +2240,8 @@
 								</Anchors>
 								<Scripts>
 									<OnLoad>
-										getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.mode)
+										this.aide = DPSMate.L["buttonshowtooltip"]
+										getglobal(this:GetName().."_Title"):SetText(DPSMate.L["mode"])
 									</OnLoad>
 									<OnClick>
 										if DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["titlebarsegments"] then
@@ -2242,7 +2261,8 @@
 								</Anchors>
 								<Scripts>
 									<OnLoad>
-										getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.reset)
+										this.aide = DPSMate.L["buttonshowtooltip"]
+										getglobal(this:GetName().."_Title"):SetText(DPSMate.L["reset"])
 									</OnLoad>
 									<OnClick>
 										if DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["titlebarreset"] then
@@ -2262,7 +2282,8 @@
 								</Anchors>
 								<Scripts>
 									<OnLoad>
-										getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.config)
+										this.aide = DPSMate.L["buttonshowtooltip"]
+										getglobal(this:GetName().."_Title"):SetText(DPSMate.L["config"])
 									</OnLoad>
 									<OnClick>
 										if DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["titlebarconfig"] then
@@ -2282,7 +2303,8 @@
 								</Anchors>
 								<Scripts>
 									<OnLoad>
-										getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.sync)
+										this.aide = DPSMate.L["buttonshowtooltip"]
+										getglobal(this:GetName().."_Title"):SetText(DPSMate.L["sync"])
 									</OnLoad>
 									<OnClick>
 										if DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["titlebarsync"] then
@@ -2302,7 +2324,8 @@
 								</Anchors>
 								<Scripts>
 									<OnLoad>
-										getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.enabledisable)
+										this.aide = DPSMate.L["buttonshowtooltip"]
+										getglobal(this:GetName().."_Title"):SetText(DPSMate.L["enabledisable"])
 									</OnLoad>
 									<OnClick>
 										if DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["titlebarenable"] then
@@ -2320,7 +2343,8 @@
 								</Anchors>
 								<Scripts>
 									<OnLoad>
-										getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.filter)
+										this.aide = DPSMate.L["buttonshowtooltip"]
+										getglobal(this:GetName().."_Title"):SetText(DPSMate.L["filter"])
 									</OnLoad>
 									<OnClick>
 										if DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["titlebarfilter"] then
@@ -2358,9 +2382,9 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								this.aide = DPSMate.localization.config.bgtexTooltip
+								this.aide = DPSMate.L["bgtexTooltip"]
 								this.func = DPSMate.Options.ContentBGTextureDropDown
-								this.title = DPSMate.localization.config.bgtex
+								this.title = DPSMate.L["bgtex"]
 								UIDropDownMenu_SetWidth(120)
 								getglobal(this:GetName().."_Text"):SetText(this.title)
 							</OnLoad>
@@ -2374,14 +2398,14 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								this.aide = DPSMate.localization.config.scaleTooltip
+								this.aide = DPSMate.L["scaleTooltip"]
 								this.func = function() 
 									DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["scale"] = this:GetValue()
 									getglobal("DPSMate_"..DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["name"]):SetScale(DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["scale"])
 								end
 								this:SetMinMaxValues(0.5,3)
 								this:SetValueStep(0.1)
-								getglobal(this:GetName().."Text"):SetText(DPSMate.localization.config.scale)
+								getglobal(this:GetName().."Text"):SetText(DPSMate.L["scale"])
 								getglobal(this:GetName().."Low"):SetText("0.5")
 								getglobal(this:GetName().."High"):SetText("3")
 							</OnLoad>
@@ -2395,14 +2419,14 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								this.aide = DPSMate.localization.config.opacityTooltip
+								this.aide = DPSMate.L["opacityTooltip"]
 								this.func = function() 
 									DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["opacity"] = this:GetValue()
 									getglobal("DPSMate_"..DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["name"]):SetAlpha(DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["opacity"])
 								end
 								this:SetMinMaxValues(0.0,1.0)
 								this:SetValueStep(0.1)
-								getglobal(this:GetName().."Text"):SetText(DPSMate.localization.config.opacity)
+								getglobal(this:GetName().."Text"):SetText(DPSMate.L["opacity"])
 								getglobal(this:GetName().."Low"):SetText("0.0")
 								getglobal(this:GetName().."High"):SetText("1.0")
 							</OnLoad>
@@ -2416,14 +2440,14 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								this.aide = DPSMate.localization.config.bgOpacityTooltip
+								this.aide = DPSMate.L["bgOpacityTooltip"]
 								this.func = function() 
 									DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["bgopacity"] = this:GetValue()
 									getglobal("DPSMate_"..DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["name"].."_ScrollFrame_Background"):SetAlpha(DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["bgopacity"])
 								end
 								this:SetMinMaxValues(0.0,1.0)
 								this:SetValueStep(0.1)
-								getglobal(this:GetName().."Text"):SetText(DPSMate.localization.config.bgOpacity)
+								getglobal(this:GetName().."Text"):SetText(DPSMate.L["bgOpacity"])
 								getglobal(this:GetName().."Low"):SetText("0.0")
 								getglobal(this:GetName().."High"):SetText("1.0")
 							</OnLoad>
@@ -2437,11 +2461,11 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								getglobal(this:GetName().."_Font"):SetText(DPSMate.localization.config.bgcolor)
+								getglobal(this:GetName().."_Font"):SetText(DPSMate.L["bgcolor"])
 								getglobal(this:GetName().."_SwatchBg").r = 1
 								getglobal(this:GetName().."_SwatchBg").g = 1
 								getglobal(this:GetName().."_SwatchBg").b = 1
-								this.aide=DPSMate.localization.config.bgcolorTooltip
+								this.aide=DPSMate.L["bgcolorTooltip"]
 								this.var = "contentbgcolor"
 								this.func = function()
 									getglobal("DPSMate_"..DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["name"].."_ScrollFrame_Background"):SetVertexColor(DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["contentbgcolor"][1], DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["contentbgcolor"][2], DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["contentbgcolor"][3])
@@ -2459,9 +2483,9 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								this.aide = DPSMate.localization.config.numberformatTooltip
+								this.aide = DPSMate.L["numberformatTooltip"]
 								this.func = DPSMate.Options.NumberFormatDropDown
-								this.title = DPSMate.localization.config.numberformat
+								this.title = DPSMate.L["numberformat"]
 								UIDropDownMenu_SetWidth(120)
 								getglobal(this:GetName().."_Text"):SetText(this.title)
 							</OnLoad>
@@ -2485,9 +2509,9 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								this.aide = DPSMate.localization.config.enterworldinstanceTooltip
+								this.aide = DPSMate.L["enterworldinstanceTooltip"]
 								this.func = DPSMate.Options.DataResetsDropDown
-								this.title = DPSMate.localization.config.enterworldinstance
+								this.title = DPSMate.L["enterworldinstance"]
 								UIDropDownMenu_SetWidth(120)
 								getglobal(this:GetName().."_Text"):SetText(this.title)
 							</OnLoad>
@@ -2502,9 +2526,9 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								this.aide = DPSMate.localization.config.joinpartyTooltip
+								this.aide = DPSMate.L["joinpartyTooltip"]
 								this.func = DPSMate.Options.DataResetsDropDown
-								this.title = DPSMate.localization.config.joinparty
+								this.title = DPSMate.L["joinparty"]
 								UIDropDownMenu_SetWidth(120)
 								getglobal(this:GetName().."_Text"):SetText(this.title)
 							</OnLoad>
@@ -2519,9 +2543,9 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								this.aide = DPSMate.localization.config.partymemberchangedTooltip
+								this.aide = DPSMate.L["partymemberchangedTooltip"]
 								this.func = DPSMate.Options.DataResetsDropDown
-								this.title = DPSMate.localization.config.partymemberchanged
+								this.title = DPSMate.L["partymemberchanged"]
 								UIDropDownMenu_SetWidth(120)
 								getglobal(this:GetName().."_Text"):SetText(this.title)
 							</OnLoad>
@@ -2536,9 +2560,9 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								this.aide = DPSMate.localization.config.leavingpartyTooltip
+								this.aide = DPSMate.L["leavingpartyTooltip"]
 								this.func = DPSMate.Options.DataResetsDropDown
-								this.title = DPSMate.localization.config.leavingparty
+								this.title = DPSMate.L["leavingparty"]
 								UIDropDownMenu_SetWidth(120)
 								getglobal(this:GetName().."_Text"):SetText(this.title)
 							</OnLoad>
@@ -2553,9 +2577,9 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								this.aide = DPSMate.localization.config.syncrequesttooltip
+								this.aide = DPSMate.L["syncrequesttooltip"]
 								this.func = DPSMate.Options.DataResetsDropDown
-								this.title = DPSMate.localization.config.syncrequest
+								this.title = DPSMate.L["syncrequest"]
 								UIDropDownMenu_SetWidth(120)
 								getglobal(this:GetName().."_Text"):SetText(this.title)
 							</OnLoad>
@@ -2570,9 +2594,9 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								this.aide = DPSMate.localization.config.dataresetslogouttooltip
+								this.aide = DPSMate.L["dataresetslogouttooltip"]
 								this.func = DPSMate.Options.DataResetsDropDown
-								this.title = DPSMate.localization.config.dataresetslogout
+								this.title = DPSMate.L["dataresetslogout"]
 								UIDropDownMenu_SetWidth(120)
 								getglobal(this:GetName().."_Text"):SetText(this.title)
 							</OnLoad>
@@ -2595,7 +2619,8 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.minimap)
+								this.aide = DPSMate.L["minimaptooltip"]
+								getglobal(this:GetName().."_Title"):SetText(DPSMate.L["minimap"])
 							</OnLoad>
 							<OnClick>
 								if DPSMateSettings["showminimapbutton"] then
@@ -2614,7 +2639,8 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.total)
+								this.aide = DPSMate.L["showtotaltooltip"]
+								getglobal(this:GetName().."_Title"):SetText(DPSMate.L["showtotal"])
 							</OnLoad>
 							<OnClick>
 								if DPSMateSettings["showtotals"] then
@@ -2639,7 +2665,8 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.solo)
+								this.aide = DPSMate.L["solotooltip"]
+								getglobal(this:GetName().."_Title"):SetText(DPSMate.L["solo"])
 							</OnLoad>
 							<OnClick>
 								if DPSMateSettings["hidewhensolo"] then
@@ -2664,7 +2691,8 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.combat)
+								this.aide = DPSMate.L["combattooltip"]
+								getglobal(this:GetName().."_Title"):SetText(DPSMate.L["combat"])
 							</OnLoad>
 							<OnClick>
 								if DPSMateSettings["hideincombat"] then
@@ -2693,7 +2721,8 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.bossfights)
+								this.aide = DPSMate.L["bossfightstooltip"]
+								getglobal(this:GetName().."_Title"):SetText(DPSMate.L["bossfights"])
 							</OnLoad>
 							<OnClick>
 								if DPSMateSettings["onlybossfights"] then
@@ -2710,7 +2739,8 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.pvp)
+								this.aide = DPSMate.L["pvptooltip"]
+								getglobal(this:GetName().."_Title"):SetText(DPSMate.L["pvp"])
 							</OnLoad>
 							<OnClick>
 								if DPSMateSettings["hideinpvp"] then
@@ -2732,7 +2762,8 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.disable)
+								this.aide = DPSMate.L["disabletooltip"]
+								getglobal(this:GetName().."_Title"):SetText(DPSMate.L["disable"])
 							</OnLoad>
 							<OnClick>
 								if DPSMateSettings["disablewhilehidden"] then
@@ -2750,7 +2781,8 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.mergepets)
+								this.aide = DPSMate.L["mergepetstooltip"]
+								getglobal(this:GetName().."_Title"):SetText(DPSMate.L["mergepets"])
 							</OnLoad>
 							<OnClick>
 								if DPSMateSettings["mergepets"] then
@@ -2770,7 +2802,7 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								this.aide = DPSMate.localization.config.segmentsTooltip
+								this.aide = DPSMate.L["segmentsTooltip"]
 								this.func = function() 
 									DPSMateSettings["datasegments"] = this:GetValue()
 									if DPSMate:TableLength(DPSMateHistory)>DPSMateSettings["datasegments"] then
@@ -2807,7 +2839,7 @@
 								end
 								this:SetMinMaxValues(1,13)
 								this:SetValueStep(1)
-								getglobal(this:GetName().."Text"):SetText(DPSMate.localization.config.segments)
+								getglobal(this:GetName().."Text"):SetText(DPSMate.L["segments"])
 								getglobal(this:GetName().."Low"):SetText("1")
 								getglobal(this:GetName().."High"):SetText("13")
 							</OnLoad>
@@ -2842,7 +2874,7 @@
 								</Anchors>
 								<Scripts>
 									<OnLoad>
-										getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.dps)
+										getglobal(this:GetName().."_Title"):SetText(DPSMate.L["dps"])
 									</OnLoad>
 								</Scripts>
 								<Frames>
@@ -2854,7 +2886,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
-												getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.damage)
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["damage"])
 											</OnLoad>
 											<OnClick>
 												DPSMate.Options:CheckButton("columnsdps", 1)
@@ -2864,12 +2896,12 @@
 									<CheckButton name="$parent_Check2" inherits="DPSMate_Template_CheckButton">
 										<Anchors>
 											<Anchor point="LEFT" relativeTo="$parent_Check1" relativePoint="RIGHT">
-												<Offset x="65" y="0" />
+												<Offset x="50" y="0" />
 											</Anchor>
 										</Anchors>
 										<Scripts>
 											<OnLoad>
-												getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.dps)
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["dps"])
 											</OnLoad>
 											<OnClick>
 												DPSMate.Options:CheckButton("columnsdps", 2)
@@ -2879,15 +2911,30 @@
 									<CheckButton name="$parent_Check3" inherits="DPSMate_Template_CheckButton">
 										<Anchors>
 											<Anchor point="LEFT" relativeTo="$parent_Check2" relativePoint="RIGHT">
-												<Offset x="65" y="0" />
+												<Offset x="50" y="0" />
 											</Anchor>
 										</Anchors>
 										<Scripts>
 											<OnLoad>
-												getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.percent)
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["percent"])
 											</OnLoad>
 											<OnClick>
 												DPSMate.Options:CheckButton("columnsdps", 3)
+											</OnClick>
+										</Scripts>
+									</CheckButton>
+									<CheckButton name="$parent_Check4" inherits="DPSMate_Template_CheckButton">
+										<Anchors>
+											<Anchor point="LEFT" relativeTo="$parent_Check3" relativePoint="RIGHT">
+												<Offset x="50" y="0" />
+											</Anchor>
+										</Anchors>
+										<Scripts>
+											<OnLoad>
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["edps"])
+											</OnLoad>
+											<OnClick>
+												DPSMate.Options:CheckButton("columnsdps", 4)
 											</OnClick>
 										</Scripts>
 									</CheckButton>
@@ -2901,7 +2948,7 @@
 								</Anchors>
 								<Scripts>
 									<OnLoad>
-										getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.damage)
+										getglobal(this:GetName().."_Title"):SetText(DPSMate.L["damage"])
 									</OnLoad>
 								</Scripts>
 								<Frames>
@@ -2913,7 +2960,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
-												getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.damage)
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["damage"])
 											</OnLoad>
 											<OnClick>
 												DPSMate.Options:CheckButton("columnsdmg", 1)
@@ -2923,12 +2970,12 @@
 									<CheckButton name="$parent_Check2" inherits="DPSMate_Template_CheckButton">
 										<Anchors>
 											<Anchor point="LEFT" relativeTo="$parent_Check1" relativePoint="RIGHT">
-												<Offset x="65" y="0" />
+												<Offset x="50" y="0" />
 											</Anchor>
 										</Anchors>
 										<Scripts>
 											<OnLoad>
-												getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.dps)
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["dps"])
 											</OnLoad>
 											<OnClick>
 												DPSMate.Options:CheckButton("columnsdmg", 2)
@@ -2938,15 +2985,30 @@
 									<CheckButton name="$parent_Check3" inherits="DPSMate_Template_CheckButton">
 										<Anchors>
 											<Anchor point="LEFT" relativeTo="$parent_Check2" relativePoint="RIGHT">
-												<Offset x="65" y="0" />
+												<Offset x="50" y="0" />
 											</Anchor>
 										</Anchors>
 										<Scripts>
 											<OnLoad>
-												getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.percent)
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["percent"])
 											</OnLoad>
 											<OnClick>
 												DPSMate.Options:CheckButton("columnsdmg", 3)
+											</OnClick>
+										</Scripts>
+									</CheckButton>
+									<CheckButton name="$parent_Check4" inherits="DPSMate_Template_CheckButton">
+										<Anchors>
+											<Anchor point="LEFT" relativeTo="$parent_Check3" relativePoint="RIGHT">
+												<Offset x="50" y="0" />
+											</Anchor>
+										</Anchors>
+										<Scripts>
+											<OnLoad>
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["edps"])
+											</OnLoad>
+											<OnClick>
+												DPSMate.Options:CheckButton("columnsdmg", 4)
 											</OnClick>
 										</Scripts>
 									</CheckButton>
@@ -2960,7 +3022,7 @@
 								</Anchors>
 								<Scripts>
 									<OnLoad>
-										getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.damagetaken)
+										getglobal(this:GetName().."_Title"):SetText(DPSMate.L["damagetaken"])
 									</OnLoad>
 								</Scripts>
 								<Frames>
@@ -2972,7 +3034,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
-												getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.damage)
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["damage"])
 											</OnLoad>
 											<OnClick>
 												DPSMate.Options:CheckButton("columnsdmgtaken", 1)
@@ -2982,12 +3044,12 @@
 									<CheckButton name="$parent_Check2" inherits="DPSMate_Template_CheckButton">
 										<Anchors>
 											<Anchor point="LEFT" relativeTo="$parent_Check1" relativePoint="RIGHT">
-												<Offset x="65" y="0" />
+												<Offset x="50" y="0" />
 											</Anchor>
 										</Anchors>
 										<Scripts>
 											<OnLoad>
-												getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.dtps)
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["dtps"])
 											</OnLoad>
 											<OnClick>
 												DPSMate.Options:CheckButton("columnsdmgtaken", 2)
@@ -2997,15 +3059,30 @@
 									<CheckButton name="$parent_Check3" inherits="DPSMate_Template_CheckButton">
 										<Anchors>
 											<Anchor point="LEFT" relativeTo="$parent_Check2" relativePoint="RIGHT">
-												<Offset x="65" y="0" />
+												<Offset x="50" y="0" />
 											</Anchor>
 										</Anchors>
 										<Scripts>
 											<OnLoad>
-												getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.percent)
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["percent"])
 											</OnLoad>
 											<OnClick>
 												DPSMate.Options:CheckButton("columnsdmgtaken", 3)
+											</OnClick>
+										</Scripts>
+									</CheckButton>
+									<CheckButton name="$parent_Check4" inherits="DPSMate_Template_CheckButton">
+										<Anchors>
+											<Anchor point="LEFT" relativeTo="$parent_Check3" relativePoint="RIGHT">
+												<Offset x="50" y="0" />
+											</Anchor>
+										</Anchors>
+										<Scripts>
+											<OnLoad>
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["edtps"])
+											</OnLoad>
+											<OnClick>
+												DPSMate.Options:CheckButton("columnsdmgtaken", 4)
 											</OnClick>
 										</Scripts>
 									</CheckButton>
@@ -3019,7 +3096,7 @@
 								</Anchors>
 								<Scripts>
 									<OnLoad>
-										getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.dtps)
+										getglobal(this:GetName().."_Title"):SetText(DPSMate.L["dtps"])
 									</OnLoad>
 								</Scripts>
 								<Frames>
@@ -3031,7 +3108,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
-												getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.damage)
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["damage"])
 											</OnLoad>
 											<OnClick>
 												DPSMate.Options:CheckButton("columnsdtps", 1)
@@ -3041,12 +3118,12 @@
 									<CheckButton name="$parent_Check2" inherits="DPSMate_Template_CheckButton">
 										<Anchors>
 											<Anchor point="LEFT" relativeTo="$parent_Check1" relativePoint="RIGHT">
-												<Offset x="65" y="0" />
+												<Offset x="50" y="0" />
 											</Anchor>
 										</Anchors>
 										<Scripts>
 											<OnLoad>
-												getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.dtps)
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["dtps"])
 											</OnLoad>
 											<OnClick>
 												DPSMate.Options:CheckButton("columnsdtps", 2)
@@ -3056,15 +3133,30 @@
 									<CheckButton name="$parent_Check3" inherits="DPSMate_Template_CheckButton">
 										<Anchors>
 											<Anchor point="LEFT" relativeTo="$parent_Check2" relativePoint="RIGHT">
-												<Offset x="65" y="0" />
+												<Offset x="50" y="0" />
 											</Anchor>
 										</Anchors>
 										<Scripts>
 											<OnLoad>
-												getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.percent)
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["percent"])
 											</OnLoad>
 											<OnClick>
 												DPSMate.Options:CheckButton("columnsdtps", 3)
+											</OnClick>
+										</Scripts>
+									</CheckButton>
+									<CheckButton name="$parent_Check4" inherits="DPSMate_Template_CheckButton">
+										<Anchors>
+											<Anchor point="LEFT" relativeTo="$parent_Check3" relativePoint="RIGHT">
+												<Offset x="50" y="0" />
+											</Anchor>
+										</Anchors>
+										<Scripts>
+											<OnLoad>
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["edtps"])
+											</OnLoad>
+											<OnClick>
+												DPSMate.Options:CheckButton("columnsdtps", 4)
 											</OnClick>
 										</Scripts>
 									</CheckButton>
@@ -3078,7 +3170,7 @@
 								</Anchors>
 								<Scripts>
 									<OnLoad>
-										getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.enemydamagedone)
+										getglobal(this:GetName().."_Title"):SetText(DPSMate.L["enemydamagedone"])
 									</OnLoad>
 								</Scripts>
 								<Frames>
@@ -3090,7 +3182,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
-												getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.damage)
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["damage"])
 											</OnLoad>
 											<OnClick>
 												DPSMate.Options:CheckButton("columnsedd", 1)
@@ -3100,12 +3192,12 @@
 									<CheckButton name="$parent_Check2" inherits="DPSMate_Template_CheckButton">
 										<Anchors>
 											<Anchor point="LEFT" relativeTo="$parent_Check1" relativePoint="RIGHT">
-												<Offset x="65" y="0" />
+												<Offset x="50" y="0" />
 											</Anchor>
 										</Anchors>
 										<Scripts>
 											<OnLoad>
-												getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.dps)
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["dps"])
 											</OnLoad>
 											<OnClick>
 												DPSMate.Options:CheckButton("columnsedd", 2)
@@ -3115,15 +3207,30 @@
 									<CheckButton name="$parent_Check3" inherits="DPSMate_Template_CheckButton">
 										<Anchors>
 											<Anchor point="LEFT" relativeTo="$parent_Check2" relativePoint="RIGHT">
-												<Offset x="65" y="0" />
+												<Offset x="50" y="0" />
 											</Anchor>
 										</Anchors>
 										<Scripts>
 											<OnLoad>
-												getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.percent)
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["percent"])
 											</OnLoad>
 											<OnClick>
 												DPSMate.Options:CheckButton("columnsedd", 3)
+											</OnClick>
+										</Scripts>
+									</CheckButton>
+									<CheckButton name="$parent_Check4" inherits="DPSMate_Template_CheckButton">
+										<Anchors>
+											<Anchor point="LEFT" relativeTo="$parent_Check3" relativePoint="RIGHT">
+												<Offset x="50" y="0" />
+											</Anchor>
+										</Anchors>
+										<Scripts>
+											<OnLoad>
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["edps"])
+											</OnLoad>
+											<OnClick>
+												DPSMate.Options:CheckButton("columnsedd", 4)
 											</OnClick>
 										</Scripts>
 									</CheckButton>
@@ -3137,7 +3244,7 @@
 								</Anchors>
 								<Scripts>
 									<OnLoad>
-										getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.enemydamagetaken)
+										getglobal(this:GetName().."_Title"):SetText(DPSMate.L["enemydamagetaken"])
 									</OnLoad>
 								</Scripts>
 								<Frames>
@@ -3149,7 +3256,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
-												getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.damage)
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["damage"])
 											</OnLoad>
 											<OnClick>
 												DPSMate.Options:CheckButton("columnsedt", 1)
@@ -3159,12 +3266,12 @@
 									<CheckButton name="$parent_Check2" inherits="DPSMate_Template_CheckButton">
 										<Anchors>
 											<Anchor point="LEFT" relativeTo="$parent_Check1" relativePoint="RIGHT">
-												<Offset x="65" y="0" />
+												<Offset x="50" y="0" />
 											</Anchor>
 										</Anchors>
 										<Scripts>
 											<OnLoad>
-												getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.dtps)
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["dtps"])
 											</OnLoad>
 											<OnClick>
 												DPSMate.Options:CheckButton("columnsedt", 2)
@@ -3174,15 +3281,30 @@
 									<CheckButton name="$parent_Check3" inherits="DPSMate_Template_CheckButton">
 										<Anchors>
 											<Anchor point="LEFT" relativeTo="$parent_Check2" relativePoint="RIGHT">
-												<Offset x="65" y="0" />
+												<Offset x="50" y="0" />
 											</Anchor>
 										</Anchors>
 										<Scripts>
 											<OnLoad>
-												getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.percent)
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["percent"])
 											</OnLoad>
 											<OnClick>
 												DPSMate.Options:CheckButton("columnsedt", 3)
+											</OnClick>
+										</Scripts>
+									</CheckButton>
+									<CheckButton name="$parent_Check4" inherits="DPSMate_Template_CheckButton">
+										<Anchors>
+											<Anchor point="LEFT" relativeTo="$parent_Check3" relativePoint="RIGHT">
+												<Offset x="50" y="0" />
+											</Anchor>
+										</Anchors>
+										<Scripts>
+											<OnLoad>
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["edtps"])
+											</OnLoad>
+											<OnClick>
+												DPSMate.Options:CheckButton("columnsedt", 4)
 											</OnClick>
 										</Scripts>
 									</CheckButton>
@@ -3196,7 +3318,7 @@
 								</Anchors>
 								<Scripts>
 									<OnLoad>
-										getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.healing)
+										getglobal(this:GetName().."_Title"):SetText(DPSMate.L["healing"])
 									</OnLoad>
 								</Scripts>
 								<Frames>
@@ -3208,7 +3330,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
-												getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.healing)
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["healing"])
 											</OnLoad>
 											<OnClick>
 												DPSMate.Options:CheckButton("columnshealing", 1)
@@ -3218,12 +3340,12 @@
 									<CheckButton name="$parent_Check2" inherits="DPSMate_Template_CheckButton">
 										<Anchors>
 											<Anchor point="LEFT" relativeTo="$parent_Check1" relativePoint="RIGHT">
-												<Offset x="65" y="0" />
+												<Offset x="50" y="0" />
 											</Anchor>
 										</Anchors>
 										<Scripts>
 											<OnLoad>
-												getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.hps)
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["hps"])
 											</OnLoad>
 											<OnClick>
 												DPSMate.Options:CheckButton("columnshealing", 2)
@@ -3233,15 +3355,30 @@
 									<CheckButton name="$parent_Check3" inherits="DPSMate_Template_CheckButton">
 										<Anchors>
 											<Anchor point="LEFT" relativeTo="$parent_Check2" relativePoint="RIGHT">
-												<Offset x="65" y="0" />
+												<Offset x="50" y="0" />
 											</Anchor>
 										</Anchors>
 										<Scripts>
 											<OnLoad>
-												getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.percent)
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["percent"])
 											</OnLoad>
 											<OnClick>
 												DPSMate.Options:CheckButton("columnshealing", 3)
+											</OnClick>
+										</Scripts>
+									</CheckButton>
+									<CheckButton name="$parent_Check4" inherits="DPSMate_Template_CheckButton">
+										<Anchors>
+											<Anchor point="LEFT" relativeTo="$parent_Check3" relativePoint="RIGHT">
+												<Offset x="50" y="0" />
+											</Anchor>
+										</Anchors>
+										<Scripts>
+											<OnLoad>
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["ehps"])
+											</OnLoad>
+											<OnClick>
+												DPSMate.Options:CheckButton("columnshealing", 4)
 											</OnClick>
 										</Scripts>
 									</CheckButton>
@@ -3255,7 +3392,7 @@
 								</Anchors>
 								<Scripts>
 									<OnLoad>
-										getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.healingtaken)
+										getglobal(this:GetName().."_Title"):SetText(DPSMate.L["healingtaken"])
 									</OnLoad>
 								</Scripts>
 								<Frames>
@@ -3267,7 +3404,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
-												getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.healing)
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["healing"])
 											</OnLoad>
 											<OnClick>
 												DPSMate.Options:CheckButton("columnshealingtaken", 1)
@@ -3277,12 +3414,12 @@
 									<CheckButton name="$parent_Check2" inherits="DPSMate_Template_CheckButton">
 										<Anchors>
 											<Anchor point="LEFT" relativeTo="$parent_Check1" relativePoint="RIGHT">
-												<Offset x="65" y="0" />
+												<Offset x="50" y="0" />
 											</Anchor>
 										</Anchors>
 										<Scripts>
 											<OnLoad>
-												getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.hps)
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["hps"])
 											</OnLoad>
 											<OnClick>
 												DPSMate.Options:CheckButton("columnshealingtaken", 2)
@@ -3292,15 +3429,30 @@
 									<CheckButton name="$parent_Check3" inherits="DPSMate_Template_CheckButton">
 										<Anchors>
 											<Anchor point="LEFT" relativeTo="$parent_Check2" relativePoint="RIGHT">
-												<Offset x="65" y="0" />
+												<Offset x="50" y="0" />
 											</Anchor>
 										</Anchors>
 										<Scripts>
 											<OnLoad>
-												getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.percent)
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["percent"])
 											</OnLoad>
 											<OnClick>
 												DPSMate.Options:CheckButton("columnshealingtaken", 3)
+											</OnClick>
+										</Scripts>
+									</CheckButton>
+									<CheckButton name="$parent_Check4" inherits="DPSMate_Template_CheckButton">
+										<Anchors>
+											<Anchor point="LEFT" relativeTo="$parent_Check3" relativePoint="RIGHT">
+												<Offset x="50" y="0" />
+											</Anchor>
+										</Anchors>
+										<Scripts>
+											<OnLoad>
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["ehps"])
+											</OnLoad>
+											<OnClick>
+												DPSMate.Options:CheckButton("columnshealingtaken", 4)
 											</OnClick>
 										</Scripts>
 									</CheckButton>
@@ -3314,7 +3466,7 @@
 								</Anchors>
 								<Scripts>
 									<OnLoad>
-										getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.hps)
+										getglobal(this:GetName().."_Title"):SetText(DPSMate.L["hps"])
 									</OnLoad>
 								</Scripts>
 								<Frames>
@@ -3326,7 +3478,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
-												getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.healing)
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["healing"])
 											</OnLoad>
 											<OnClick>
 												DPSMate.Options:CheckButton("columnshps", 1)
@@ -3336,12 +3488,12 @@
 									<CheckButton name="$parent_Check2" inherits="DPSMate_Template_CheckButton">
 										<Anchors>
 											<Anchor point="LEFT" relativeTo="$parent_Check1" relativePoint="RIGHT">
-												<Offset x="65" y="0" />
+												<Offset x="50" y="0" />
 											</Anchor>
 										</Anchors>
 										<Scripts>
 											<OnLoad>
-												getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.hps)
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["hps"])
 											</OnLoad>
 											<OnClick>
 												DPSMate.Options:CheckButton("columnshps", 2)
@@ -3351,15 +3503,30 @@
 									<CheckButton name="$parent_Check3" inherits="DPSMate_Template_CheckButton">
 										<Anchors>
 											<Anchor point="LEFT" relativeTo="$parent_Check2" relativePoint="RIGHT">
-												<Offset x="65" y="0" />
+												<Offset x="50" y="0" />
 											</Anchor>
 										</Anchors>
 										<Scripts>
 											<OnLoad>
-												getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.percent)
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["percent"])
 											</OnLoad>
 											<OnClick>
 												DPSMate.Options:CheckButton("columnshps", 3)
+											</OnClick>
+										</Scripts>
+									</CheckButton>
+									<CheckButton name="$parent_Check4" inherits="DPSMate_Template_CheckButton">
+										<Anchors>
+											<Anchor point="LEFT" relativeTo="$parent_Check3" relativePoint="RIGHT">
+												<Offset x="50" y="0" />
+											</Anchor>
+										</Anchors>
+										<Scripts>
+											<OnLoad>
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["ehps"])
+											</OnLoad>
+											<OnClick>
+												DPSMate.Options:CheckButton("columnshps", 4)
 											</OnClick>
 										</Scripts>
 									</CheckButton>
@@ -3373,7 +3540,7 @@
 								</Anchors>
 								<Scripts>
 									<OnLoad>
-										getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.overhealing)
+										getglobal(this:GetName().."_Title"):SetText(DPSMate.L["overhealing"])
 									</OnLoad>
 								</Scripts>
 								<Frames>
@@ -3385,7 +3552,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
-												getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.healing)
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["healing"])
 											</OnLoad>
 											<OnClick>
 												DPSMate.Options:CheckButton("columnsoverhealing", 1)
@@ -3395,12 +3562,12 @@
 									<CheckButton name="$parent_Check2" inherits="DPSMate_Template_CheckButton">
 										<Anchors>
 											<Anchor point="LEFT" relativeTo="$parent_Check1" relativePoint="RIGHT">
-												<Offset x="65" y="0" />
+												<Offset x="50" y="0" />
 											</Anchor>
 										</Anchors>
 										<Scripts>
 											<OnLoad>
-												getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.hps)
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["hps"])
 											</OnLoad>
 											<OnClick>
 												DPSMate.Options:CheckButton("columnsoverhealing", 2)
@@ -3410,15 +3577,30 @@
 									<CheckButton name="$parent_Check3" inherits="DPSMate_Template_CheckButton">
 										<Anchors>
 											<Anchor point="LEFT" relativeTo="$parent_Check2" relativePoint="RIGHT">
-												<Offset x="65" y="0" />
+												<Offset x="50" y="0" />
 											</Anchor>
 										</Anchors>
 										<Scripts>
 											<OnLoad>
-												getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.percent)
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["percent"])
 											</OnLoad>
 											<OnClick>
 												DPSMate.Options:CheckButton("columnsoverhealing", 3)
+											</OnClick>
+										</Scripts>
+									</CheckButton>
+									<CheckButton name="$parent_Check4" inherits="DPSMate_Template_CheckButton">
+										<Anchors>
+											<Anchor point="LEFT" relativeTo="$parent_Check3" relativePoint="RIGHT">
+												<Offset x="50" y="0" />
+											</Anchor>
+										</Anchors>
+										<Scripts>
+											<OnLoad>
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["ehps"])
+											</OnLoad>
+											<OnClick>
+												DPSMate.Options:CheckButton("columnsoverhealing", 4)
 											</OnClick>
 										</Scripts>
 									</CheckButton>
@@ -3432,7 +3614,7 @@
 								</Anchors>
 								<Scripts>
 									<OnLoad>
-										getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.effectivehealing)
+										getglobal(this:GetName().."_Title"):SetText(DPSMate.L["effectivehealing"])
 									</OnLoad>
 								</Scripts>
 								<Frames>
@@ -3444,7 +3626,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
-												getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.healing)
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["healing"])
 											</OnLoad>
 											<OnClick>
 												DPSMate.Options:CheckButton("columnsehealing", 1)
@@ -3454,12 +3636,12 @@
 									<CheckButton name="$parent_Check2" inherits="DPSMate_Template_CheckButton">
 										<Anchors>
 											<Anchor point="LEFT" relativeTo="$parent_Check1" relativePoint="RIGHT">
-												<Offset x="65" y="0" />
+												<Offset x="50" y="0" />
 											</Anchor>
 										</Anchors>
 										<Scripts>
 											<OnLoad>
-												getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.hps)
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["hps"])
 											</OnLoad>
 											<OnClick>
 												DPSMate.Options:CheckButton("columnsehealing", 2)
@@ -3469,15 +3651,30 @@
 									<CheckButton name="$parent_Check3" inherits="DPSMate_Template_CheckButton">
 										<Anchors>
 											<Anchor point="LEFT" relativeTo="$parent_Check2" relativePoint="RIGHT">
-												<Offset x="65" y="0" />
+												<Offset x="50" y="0" />
 											</Anchor>
 										</Anchors>
 										<Scripts>
 											<OnLoad>
-												getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.percent)
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["percent"])
 											</OnLoad>
 											<OnClick>
 												DPSMate.Options:CheckButton("columnsehealing", 3)
+											</OnClick>
+										</Scripts>
+									</CheckButton>
+									<CheckButton name="$parent_Check4" inherits="DPSMate_Template_CheckButton">
+										<Anchors>
+											<Anchor point="LEFT" relativeTo="$parent_Check3" relativePoint="RIGHT">
+												<Offset x="50" y="0" />
+											</Anchor>
+										</Anchors>
+										<Scripts>
+											<OnLoad>
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["ehps"])
+											</OnLoad>
+											<OnClick>
+												DPSMate.Options:CheckButton("columnsehealing", 4)
 											</OnClick>
 										</Scripts>
 									</CheckButton>
@@ -3491,7 +3688,7 @@
 								</Anchors>
 								<Scripts>
 									<OnLoad>
-										getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.effectivehealingtaken)
+										getglobal(this:GetName().."_Title"):SetText(DPSMate.L["effectivehealingtaken"])
 									</OnLoad>
 								</Scripts>
 								<Frames>
@@ -3503,7 +3700,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
-												getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.healing)
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["healing"])
 											</OnLoad>
 											<OnClick>
 												DPSMate.Options:CheckButton("columnsehealingtaken", 1)
@@ -3513,12 +3710,12 @@
 									<CheckButton name="$parent_Check2" inherits="DPSMate_Template_CheckButton">
 										<Anchors>
 											<Anchor point="LEFT" relativeTo="$parent_Check1" relativePoint="RIGHT">
-												<Offset x="65" y="0" />
+												<Offset x="50" y="0" />
 											</Anchor>
 										</Anchors>
 										<Scripts>
 											<OnLoad>
-												getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.hps)
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["hps"])
 											</OnLoad>
 											<OnClick>
 												DPSMate.Options:CheckButton("columnsehealingtaken", 2)
@@ -3528,15 +3725,30 @@
 									<CheckButton name="$parent_Check3" inherits="DPSMate_Template_CheckButton">
 										<Anchors>
 											<Anchor point="LEFT" relativeTo="$parent_Check2" relativePoint="RIGHT">
-												<Offset x="65" y="0" />
+												<Offset x="50" y="0" />
 											</Anchor>
 										</Anchors>
 										<Scripts>
 											<OnLoad>
-												getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.percent)
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["percent"])
 											</OnLoad>
 											<OnClick>
 												DPSMate.Options:CheckButton("columnsehealingtaken", 3)
+											</OnClick>
+										</Scripts>
+									</CheckButton>
+									<CheckButton name="$parent_Check4" inherits="DPSMate_Template_CheckButton">
+										<Anchors>
+											<Anchor point="LEFT" relativeTo="$parent_Check3" relativePoint="RIGHT">
+												<Offset x="50" y="0" />
+											</Anchor>
+										</Anchors>
+										<Scripts>
+											<OnLoad>
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["ehps"])
+											</OnLoad>
+											<OnClick>
+												DPSMate.Options:CheckButton("columnsehealingtaken", 4)
 											</OnClick>
 										</Scripts>
 									</CheckButton>
@@ -3550,7 +3762,7 @@
 								</Anchors>
 								<Scripts>
 									<OnLoad>
-										getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.effectivehps)
+										getglobal(this:GetName().."_Title"):SetText(DPSMate.L["effectivehps"])
 									</OnLoad>
 								</Scripts>
 								<Frames>
@@ -3562,7 +3774,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
-												getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.healing)
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["healing"])
 											</OnLoad>
 											<OnClick>
 												DPSMate.Options:CheckButton("columnsehps", 1)
@@ -3572,12 +3784,12 @@
 									<CheckButton name="$parent_Check2" inherits="DPSMate_Template_CheckButton">
 										<Anchors>
 											<Anchor point="LEFT" relativeTo="$parent_Check1" relativePoint="RIGHT">
-												<Offset x="65" y="0" />
+												<Offset x="50" y="0" />
 											</Anchor>
 										</Anchors>
 										<Scripts>
 											<OnLoad>
-												getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.hps)
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["hps"])
 											</OnLoad>
 											<OnClick>
 												DPSMate.Options:CheckButton("columnsehps", 2)
@@ -3587,15 +3799,30 @@
 									<CheckButton name="$parent_Check3" inherits="DPSMate_Template_CheckButton">
 										<Anchors>
 											<Anchor point="LEFT" relativeTo="$parent_Check2" relativePoint="RIGHT">
-												<Offset x="65" y="0" />
+												<Offset x="50" y="0" />
 											</Anchor>
 										</Anchors>
 										<Scripts>
 											<OnLoad>
-												getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.percent)
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["percent"])
 											</OnLoad>
 											<OnClick>
 												DPSMate.Options:CheckButton("columnsehps", 3)
+											</OnClick>
+										</Scripts>
+									</CheckButton>
+									<CheckButton name="$parent_Check4" inherits="DPSMate_Template_CheckButton">
+										<Anchors>
+											<Anchor point="LEFT" relativeTo="$parent_Check3" relativePoint="RIGHT">
+												<Offset x="50" y="0" />
+											</Anchor>
+										</Anchors>
+										<Scripts>
+											<OnLoad>
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["ehps"])
+											</OnLoad>
+											<OnClick>
+												DPSMate.Options:CheckButton("columnsehps", 4)
 											</OnClick>
 										</Scripts>
 									</CheckButton>
@@ -3609,7 +3836,7 @@
 								</Anchors>
 								<Scripts>
 									<OnLoad>
-										getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.absorbs)
+										getglobal(this:GetName().."_Title"):SetText(DPSMate.L["absorbs"])
 									</OnLoad>
 								</Scripts>
 								<Frames>
@@ -3621,7 +3848,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
-												getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.absorbs)
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["absorbs"])
 											</OnLoad>
 											<OnClick>
 												DPSMate.Options:CheckButton("columnsabsorbs", 1)
@@ -3631,15 +3858,45 @@
 									<CheckButton name="$parent_Check2" inherits="DPSMate_Template_CheckButton">
 										<Anchors>
 											<Anchor point="LEFT" relativeTo="$parent_Check1" relativePoint="RIGHT">
-												<Offset x="65" y="0" />
+												<Offset x="50" y="0" />
 											</Anchor>
 										</Anchors>
 										<Scripts>
 											<OnLoad>
-												getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.percent)
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["percent"])
 											</OnLoad>
 											<OnClick>
 												DPSMate.Options:CheckButton("columnsabsorbs", 2)
+											</OnClick>
+										</Scripts>
+									</CheckButton>
+									<CheckButton name="$parent_Check3" inherits="DPSMate_Template_CheckButton">
+										<Anchors>
+											<Anchor point="LEFT" relativeTo="$parent_Check2" relativePoint="RIGHT">
+												<Offset x="50" y="0" />
+											</Anchor>
+										</Anchors>
+										<Scripts>
+											<OnLoad>
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["hps"])
+											</OnLoad>
+											<OnClick>
+												DPSMate.Options:CheckButton("columnsabsorbs", 3)
+											</OnClick>
+										</Scripts>
+									</CheckButton>
+									<CheckButton name="$parent_Check4" inherits="DPSMate_Template_CheckButton">
+										<Anchors>
+											<Anchor point="LEFT" relativeTo="$parent_Check3" relativePoint="RIGHT">
+												<Offset x="50" y="0" />
+											</Anchor>
+										</Anchors>
+										<Scripts>
+											<OnLoad>
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["ehps"])
+											</OnLoad>
+											<OnClick>
+												DPSMate.Options:CheckButton("columnsabsorbs", 4)
 											</OnClick>
 										</Scripts>
 									</CheckButton>
@@ -3653,7 +3910,7 @@
 								</Anchors>
 								<Scripts>
 									<OnLoad>
-										getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.absorbstaken)
+										getglobal(this:GetName().."_Title"):SetText(DPSMate.L["absorbstaken"])
 									</OnLoad>
 								</Scripts>
 								<Frames>
@@ -3665,7 +3922,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
-												getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.absorbs)
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["absorbs"])
 											</OnLoad>
 											<OnClick>
 												DPSMate.Options:CheckButton("columnsabsorbstaken", 1)
@@ -3675,15 +3932,45 @@
 									<CheckButton name="$parent_Check2" inherits="DPSMate_Template_CheckButton">
 										<Anchors>
 											<Anchor point="LEFT" relativeTo="$parent_Check1" relativePoint="RIGHT">
-												<Offset x="65" y="0" />
+												<Offset x="50" y="0" />
 											</Anchor>
 										</Anchors>
 										<Scripts>
 											<OnLoad>
-												getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.percent)
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["percent"])
 											</OnLoad>
 											<OnClick>
 												DPSMate.Options:CheckButton("columnsabsorbstaken", 2)
+											</OnClick>
+										</Scripts>
+									</CheckButton>
+									<CheckButton name="$parent_Check3" inherits="DPSMate_Template_CheckButton">
+										<Anchors>
+											<Anchor point="LEFT" relativeTo="$parent_Check2" relativePoint="RIGHT">
+												<Offset x="50" y="0" />
+											</Anchor>
+										</Anchors>
+										<Scripts>
+											<OnLoad>
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["hps"])
+											</OnLoad>
+											<OnClick>
+												DPSMate.Options:CheckButton("columnsabsorbstaken", 3)
+											</OnClick>
+										</Scripts>
+									</CheckButton>
+									<CheckButton name="$parent_Check4" inherits="DPSMate_Template_CheckButton">
+										<Anchors>
+											<Anchor point="LEFT" relativeTo="$parent_Check3" relativePoint="RIGHT">
+												<Offset x="50" y="0" />
+											</Anchor>
+										</Anchors>
+										<Scripts>
+											<OnLoad>
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["ehps"])
+											</OnLoad>
+											<OnClick>
+												DPSMate.Options:CheckButton("columnsabsorbstaken", 4)
 											</OnClick>
 										</Scripts>
 									</CheckButton>
@@ -3697,7 +3984,7 @@
 								</Anchors>
 								<Scripts>
 									<OnLoad>
-										getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.healingandabsorbs)
+										getglobal(this:GetName().."_Title"):SetText(DPSMate.L["healingandabsorbs"])
 									</OnLoad>
 								</Scripts>
 								<Frames>
@@ -3709,7 +3996,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
-												getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.amount)
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["amount"])
 											</OnLoad>
 											<OnClick>
 												DPSMate.Options:CheckButton("columnshab", 1)
@@ -3719,12 +4006,12 @@
 									<CheckButton name="$parent_Check2" inherits="DPSMate_Template_CheckButton">
 										<Anchors>
 											<Anchor point="LEFT" relativeTo="$parent_Check1" relativePoint="RIGHT">
-												<Offset x="65" y="0" />
+												<Offset x="50" y="0" />
 											</Anchor>
 										</Anchors>
 										<Scripts>
 											<OnLoad>
-												getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.hps)
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["hps"])
 											</OnLoad>
 											<OnClick>
 												DPSMate.Options:CheckButton("columnshab", 2)
@@ -3734,15 +4021,30 @@
 									<CheckButton name="$parent_Check3" inherits="DPSMate_Template_CheckButton">
 										<Anchors>
 											<Anchor point="LEFT" relativeTo="$parent_Check2" relativePoint="RIGHT">
-												<Offset x="65" y="0" />
+												<Offset x="50" y="0" />
 											</Anchor>
 										</Anchors>
 										<Scripts>
 											<OnLoad>
-												getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.percent)
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["percent"])
 											</OnLoad>
 											<OnClick>
 												DPSMate.Options:CheckButton("columnshab", 3)
+											</OnClick>
+										</Scripts>
+									</CheckButton>
+									<CheckButton name="$parent_Check4" inherits="DPSMate_Template_CheckButton">
+										<Anchors>
+											<Anchor point="LEFT" relativeTo="$parent_Check3" relativePoint="RIGHT">
+												<Offset x="50" y="0" />
+											</Anchor>
+										</Anchors>
+										<Scripts>
+											<OnLoad>
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["ehps"])
+											</OnLoad>
+											<OnClick>
+												DPSMate.Options:CheckButton("columnshab", 4)
 											</OnClick>
 										</Scripts>
 									</CheckButton>
@@ -3756,7 +4058,7 @@
 								</Anchors>
 								<Scripts>
 									<OnLoad>
-										getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.deaths)
+										getglobal(this:GetName().."_Title"):SetText(DPSMate.L["deaths"])
 									</OnLoad>
 								</Scripts>
 								<Frames>
@@ -3768,7 +4070,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
-												getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.amount)
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["amount"])
 											</OnLoad>
 											<OnClick>
 												DPSMate.Options:CheckButton("columnsdeaths", 1)
@@ -3778,12 +4080,12 @@
 									<CheckButton name="$parent_Check2" inherits="DPSMate_Template_CheckButton">
 										<Anchors>
 											<Anchor point="LEFT" relativeTo="$parent_Check1" relativePoint="RIGHT">
-												<Offset x="65" y="0" />
+												<Offset x="50" y="0" />
 											</Anchor>
 										</Anchors>
 										<Scripts>
 											<OnLoad>
-												getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.percent)
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["percent"])
 											</OnLoad>
 											<OnClick>
 												DPSMate.Options:CheckButton("columnsdeaths", 2)
@@ -3800,7 +4102,7 @@
 								</Anchors>
 								<Scripts>
 									<OnLoad>
-										getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.interrupts)
+										getglobal(this:GetName().."_Title"):SetText(DPSMate.L["interrupts"])
 									</OnLoad>
 								</Scripts>
 								<Frames>
@@ -3812,7 +4114,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
-												getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.amount)
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["amount"])
 											</OnLoad>
 											<OnClick>
 												DPSMate.Options:CheckButton("columnsinterrupts", 1)
@@ -3822,12 +4124,12 @@
 									<CheckButton name="$parent_Check2" inherits="DPSMate_Template_CheckButton">
 										<Anchors>
 											<Anchor point="LEFT" relativeTo="$parent_Check1" relativePoint="RIGHT">
-												<Offset x="65" y="0" />
+												<Offset x="50" y="0" />
 											</Anchor>
 										</Anchors>
 										<Scripts>
 											<OnLoad>
-												getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.percent)
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["percent"])
 											</OnLoad>
 											<OnClick>
 												DPSMate.Options:CheckButton("columnsinterrupts", 2)
@@ -3844,7 +4146,7 @@
 								</Anchors>
 								<Scripts>
 									<OnLoad>
-										getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.dispels)
+										getglobal(this:GetName().."_Title"):SetText(DPSMate.L["dispels"])
 									</OnLoad>
 								</Scripts>
 								<Frames>
@@ -3856,7 +4158,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
-												getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.amount)
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["amount"])
 											</OnLoad>
 											<OnClick>
 												DPSMate.Options:CheckButton("columnsdispels", 1)
@@ -3866,12 +4168,12 @@
 									<CheckButton name="$parent_Check2" inherits="DPSMate_Template_CheckButton">
 										<Anchors>
 											<Anchor point="LEFT" relativeTo="$parent_Check1" relativePoint="RIGHT">
-												<Offset x="65" y="0" />
+												<Offset x="50" y="0" />
 											</Anchor>
 										</Anchors>
 										<Scripts>
 											<OnLoad>
-												getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.percent)
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["percent"])
 											</OnLoad>
 											<OnClick>
 												DPSMate.Options:CheckButton("columnsdispels", 2)
@@ -3888,7 +4190,7 @@
 								</Anchors>
 								<Scripts>
 									<OnLoad>
-										getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.dispelsreceived)
+										getglobal(this:GetName().."_Title"):SetText(DPSMate.L["dispelsreceived"])
 									</OnLoad>
 								</Scripts>
 								<Frames>
@@ -3900,7 +4202,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
-												getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.amount)
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["amount"])
 											</OnLoad>
 											<OnClick>
 												DPSMate.Options:CheckButton("columnsdispelsreceived", 1)
@@ -3910,12 +4212,12 @@
 									<CheckButton name="$parent_Check2" inherits="DPSMate_Template_CheckButton">
 										<Anchors>
 											<Anchor point="LEFT" relativeTo="$parent_Check1" relativePoint="RIGHT">
-												<Offset x="65" y="0" />
+												<Offset x="50" y="0" />
 											</Anchor>
 										</Anchors>
 										<Scripts>
 											<OnLoad>
-												getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.percent)
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["percent"])
 											</OnLoad>
 											<OnClick>
 												DPSMate.Options:CheckButton("columnsdispelsreceived", 2)
@@ -3932,7 +4234,7 @@
 								</Anchors>
 								<Scripts>
 									<OnLoad>
-										getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.decurses)
+										getglobal(this:GetName().."_Title"):SetText(DPSMate.L["decurses"])
 									</OnLoad>
 								</Scripts>
 								<Frames>
@@ -3944,7 +4246,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
-												getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.amount)
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["amount"])
 											</OnLoad>
 											<OnClick>
 												DPSMate.Options:CheckButton("columnsdecurses", 1)
@@ -3954,12 +4256,12 @@
 									<CheckButton name="$parent_Check2" inherits="DPSMate_Template_CheckButton">
 										<Anchors>
 											<Anchor point="LEFT" relativeTo="$parent_Check1" relativePoint="RIGHT">
-												<Offset x="65" y="0" />
+												<Offset x="50" y="0" />
 											</Anchor>
 										</Anchors>
 										<Scripts>
 											<OnLoad>
-												getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.percent)
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["percent"])
 											</OnLoad>
 											<OnClick>
 												DPSMate.Options:CheckButton("columnsdecurses", 2)
@@ -3976,7 +4278,7 @@
 								</Anchors>
 								<Scripts>
 									<OnLoad>
-										getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.decursesreceived)
+										getglobal(this:GetName().."_Title"):SetText(DPSMate.L["decursesreceived"])
 									</OnLoad>
 								</Scripts>
 								<Frames>
@@ -3988,7 +4290,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
-												getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.amount)
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["amount"])
 											</OnLoad>
 											<OnClick>
 												DPSMate.Options:CheckButton("columnsdecursesreceived", 1)
@@ -3998,12 +4300,12 @@
 									<CheckButton name="$parent_Check2" inherits="DPSMate_Template_CheckButton">
 										<Anchors>
 											<Anchor point="LEFT" relativeTo="$parent_Check1" relativePoint="RIGHT">
-												<Offset x="65" y="0" />
+												<Offset x="50" y="0" />
 											</Anchor>
 										</Anchors>
 										<Scripts>
 											<OnLoad>
-												getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.percent)
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["percent"])
 											</OnLoad>
 											<OnClick>
 												DPSMate.Options:CheckButton("columnsdecursesreceived", 2)
@@ -4020,7 +4322,7 @@
 								</Anchors>
 								<Scripts>
 									<OnLoad>
-										getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.disease)
+										getglobal(this:GetName().."_Title"):SetText(DPSMate.L["curedisease"])
 									</OnLoad>
 								</Scripts>
 								<Frames>
@@ -4032,7 +4334,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
-												getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.amount)
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["amount"])
 											</OnLoad>
 											<OnClick>
 												DPSMate.Options:CheckButton("columnsdisease", 1)
@@ -4042,12 +4344,12 @@
 									<CheckButton name="$parent_Check2" inherits="DPSMate_Template_CheckButton">
 										<Anchors>
 											<Anchor point="LEFT" relativeTo="$parent_Check1" relativePoint="RIGHT">
-												<Offset x="65" y="0" />
+												<Offset x="50" y="0" />
 											</Anchor>
 										</Anchors>
 										<Scripts>
 											<OnLoad>
-												getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.percent)
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["percent"])
 											</OnLoad>
 											<OnClick>
 												DPSMate.Options:CheckButton("columnsdisease", 2)
@@ -4064,7 +4366,7 @@
 								</Anchors>
 								<Scripts>
 									<OnLoad>
-										getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.diseasereceived)
+										getglobal(this:GetName().."_Title"):SetText(DPSMate.L["curediseasereceived"])
 									</OnLoad>
 								</Scripts>
 								<Frames>
@@ -4076,7 +4378,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
-												getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.amount)
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["amount"])
 											</OnLoad>
 											<OnClick>
 												DPSMate.Options:CheckButton("columnsdiseasereceived", 1)
@@ -4086,12 +4388,12 @@
 									<CheckButton name="$parent_Check2" inherits="DPSMate_Template_CheckButton">
 										<Anchors>
 											<Anchor point="LEFT" relativeTo="$parent_Check1" relativePoint="RIGHT">
-												<Offset x="65" y="0" />
+												<Offset x="50" y="0" />
 											</Anchor>
 										</Anchors>
 										<Scripts>
 											<OnLoad>
-												getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.percent)
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["percent"])
 											</OnLoad>
 											<OnClick>
 												DPSMate.Options:CheckButton("columnsdiseasereceived", 2)
@@ -4108,7 +4410,7 @@
 								</Anchors>
 								<Scripts>
 									<OnLoad>
-										getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.poison)
+										getglobal(this:GetName().."_Title"):SetText(DPSMate.L["curepoison"])
 									</OnLoad>
 								</Scripts>
 								<Frames>
@@ -4120,7 +4422,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
-												getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.amount)
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["amount"])
 											</OnLoad>
 											<OnClick>
 												DPSMate.Options:CheckButton("columnspoison", 1)
@@ -4130,12 +4432,12 @@
 									<CheckButton name="$parent_Check2" inherits="DPSMate_Template_CheckButton">
 										<Anchors>
 											<Anchor point="LEFT" relativeTo="$parent_Check1" relativePoint="RIGHT">
-												<Offset x="65" y="0" />
+												<Offset x="50" y="0" />
 											</Anchor>
 										</Anchors>
 										<Scripts>
 											<OnLoad>
-												getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.percent)
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["percent"])
 											</OnLoad>
 											<OnClick>
 												DPSMate.Options:CheckButton("columnspoison", 2)
@@ -4152,7 +4454,7 @@
 								</Anchors>
 								<Scripts>
 									<OnLoad>
-										getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.poisonreceived)
+										getglobal(this:GetName().."_Title"):SetText(DPSMate.L["curepoisonreceived"])
 									</OnLoad>
 								</Scripts>
 								<Frames>
@@ -4164,7 +4466,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
-												getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.amount)
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["amount"])
 											</OnLoad>
 											<OnClick>
 												DPSMate.Options:CheckButton("columnspoisonreceived", 1)
@@ -4174,12 +4476,12 @@
 									<CheckButton name="$parent_Check2" inherits="DPSMate_Template_CheckButton">
 										<Anchors>
 											<Anchor point="LEFT" relativeTo="$parent_Check1" relativePoint="RIGHT">
-												<Offset x="65" y="0" />
+												<Offset x="50" y="0" />
 											</Anchor>
 										</Anchors>
 										<Scripts>
 											<OnLoad>
-												getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.percent)
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["percent"])
 											</OnLoad>
 											<OnClick>
 												DPSMate.Options:CheckButton("columnspoisonreceived", 2)
@@ -4196,7 +4498,7 @@
 								</Anchors>
 								<Scripts>
 									<OnLoad>
-										getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.magic)
+										getglobal(this:GetName().."_Title"):SetText(DPSMate.L["liftmagic"])
 									</OnLoad>
 								</Scripts>
 								<Frames>
@@ -4208,7 +4510,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
-												getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.amount)
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["amount"])
 											</OnLoad>
 											<OnClick>
 												DPSMate.Options:CheckButton("columnsmagic", 1)
@@ -4218,12 +4520,12 @@
 									<CheckButton name="$parent_Check2" inherits="DPSMate_Template_CheckButton">
 										<Anchors>
 											<Anchor point="LEFT" relativeTo="$parent_Check1" relativePoint="RIGHT">
-												<Offset x="65" y="0" />
+												<Offset x="50" y="0" />
 											</Anchor>
 										</Anchors>
 										<Scripts>
 											<OnLoad>
-												getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.percent)
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["percent"])
 											</OnLoad>
 											<OnClick>
 												DPSMate.Options:CheckButton("columnsmagic", 2)
@@ -4240,7 +4542,7 @@
 								</Anchors>
 								<Scripts>
 									<OnLoad>
-										getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.magicreceived)
+										getglobal(this:GetName().."_Title"):SetText(DPSMate.L["liftmagicreceived"])
 									</OnLoad>
 								</Scripts>
 								<Frames>
@@ -4252,7 +4554,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
-												getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.amount)
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["amount"])
 											</OnLoad>
 											<OnClick>
 												DPSMate.Options:CheckButton("columnsmagicreceived", 1)
@@ -4262,12 +4564,12 @@
 									<CheckButton name="$parent_Check2" inherits="DPSMate_Template_CheckButton">
 										<Anchors>
 											<Anchor point="LEFT" relativeTo="$parent_Check1" relativePoint="RIGHT">
-												<Offset x="65" y="0" />
+												<Offset x="50" y="0" />
 											</Anchor>
 										</Anchors>
 										<Scripts>
 											<OnLoad>
-												getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.percent)
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["percent"])
 											</OnLoad>
 											<OnClick>
 												DPSMate.Options:CheckButton("columnsmagicreceived", 2)
@@ -4284,7 +4586,7 @@
 								</Anchors>
 								<Scripts>
 									<OnLoad>
-										getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.aurasgained)
+										getglobal(this:GetName().."_Title"):SetText(DPSMate.L["aurasgained"])
 									</OnLoad>
 								</Scripts>
 								<Frames>
@@ -4296,7 +4598,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
-												getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.amount)
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["amount"])
 											</OnLoad>
 											<OnClick>
 												DPSMate.Options:CheckButton("columnsaurasgained", 1)
@@ -4306,12 +4608,12 @@
 									<CheckButton name="$parent_Check2" inherits="DPSMate_Template_CheckButton">
 										<Anchors>
 											<Anchor point="LEFT" relativeTo="$parent_Check1" relativePoint="RIGHT">
-												<Offset x="65" y="0" />
+												<Offset x="50" y="0" />
 											</Anchor>
 										</Anchors>
 										<Scripts>
 											<OnLoad>
-												getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.percent)
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["percent"])
 											</OnLoad>
 											<OnClick>
 												DPSMate.Options:CheckButton("columnsaurasgained", 2)
@@ -4328,7 +4630,7 @@
 								</Anchors>
 								<Scripts>
 									<OnLoad>
-										getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.auraslost)
+										getglobal(this:GetName().."_Title"):SetText(DPSMate.L["auraslost"])
 									</OnLoad>
 								</Scripts>
 								<Frames>
@@ -4340,7 +4642,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
-												getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.amount)
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["amount"])
 											</OnLoad>
 											<OnClick>
 												DPSMate.Options:CheckButton("columnsauraslost", 1)
@@ -4350,12 +4652,12 @@
 									<CheckButton name="$parent_Check2" inherits="DPSMate_Template_CheckButton">
 										<Anchors>
 											<Anchor point="LEFT" relativeTo="$parent_Check1" relativePoint="RIGHT">
-												<Offset x="65" y="0" />
+												<Offset x="50" y="0" />
 											</Anchor>
 										</Anchors>
 										<Scripts>
 											<OnLoad>
-												getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.percent)
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["percent"])
 											</OnLoad>
 											<OnClick>
 												DPSMate.Options:CheckButton("columnsauraslost", 2)
@@ -4372,7 +4674,7 @@
 								</Anchors>
 								<Scripts>
 									<OnLoad>
-										getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.aurauptime)
+										getglobal(this:GetName().."_Title"):SetText(DPSMate.L["aurauptime"])
 									</OnLoad>
 								</Scripts>
 								<Frames>
@@ -4384,7 +4686,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
-												getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.amount)
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["amount"])
 											</OnLoad>
 											<OnClick>
 												DPSMate.Options:CheckButton("columnsaurauptime", 1)
@@ -4394,12 +4696,12 @@
 									<CheckButton name="$parent_Check2" inherits="DPSMate_Template_CheckButton">
 										<Anchors>
 											<Anchor point="LEFT" relativeTo="$parent_Check1" relativePoint="RIGHT">
-												<Offset x="65" y="0" />
+												<Offset x="50" y="0" />
 											</Anchor>
 										</Anchors>
 										<Scripts>
 											<OnLoad>
-												getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.percent)
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["percent"])
 											</OnLoad>
 											<OnClick>
 												DPSMate.Options:CheckButton("columnsaurauptime", 2)
@@ -4416,7 +4718,7 @@
 								</Anchors>
 								<Scripts>
 									<OnLoad>
-										getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.friendlyfire)
+										getglobal(this:GetName().."_Title"):SetText(DPSMate.L["friendlyfire"])
 									</OnLoad>
 								</Scripts>
 								<Frames>
@@ -4428,7 +4730,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
-												getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.damage)
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["damage"])
 											</OnLoad>
 											<OnClick>
 												DPSMate.Options:CheckButton("columnsfriendlyfire", 1)
@@ -4438,12 +4740,12 @@
 									<CheckButton name="$parent_Check2" inherits="DPSMate_Template_CheckButton">
 										<Anchors>
 											<Anchor point="LEFT" relativeTo="$parent_Check1" relativePoint="RIGHT">
-												<Offset x="65" y="0" />
+												<Offset x="50" y="0" />
 											</Anchor>
 										</Anchors>
 										<Scripts>
 											<OnLoad>
-												getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.dps)
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["dps"])
 											</OnLoad>
 											<OnClick>
 												DPSMate.Options:CheckButton("columnsfriendlyfire", 2)
@@ -4453,15 +4755,30 @@
 									<CheckButton name="$parent_Check3" inherits="DPSMate_Template_CheckButton">
 										<Anchors>
 											<Anchor point="LEFT" relativeTo="$parent_Check2" relativePoint="RIGHT">
-												<Offset x="65" y="0" />
+												<Offset x="50" y="0" />
 											</Anchor>
 										</Anchors>
 										<Scripts>
 											<OnLoad>
-												getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.percent)
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["percent"])
 											</OnLoad>
 											<OnClick>
 												DPSMate.Options:CheckButton("columnsfriendlyfire", 3)
+											</OnClick>
+										</Scripts>
+									</CheckButton>
+									<CheckButton name="$parent_Check4" inherits="DPSMate_Template_CheckButton">
+										<Anchors>
+											<Anchor point="LEFT" relativeTo="$parent_Check3" relativePoint="RIGHT">
+												<Offset x="50" y="0" />
+											</Anchor>
+										</Anchors>
+										<Scripts>
+											<OnLoad>
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["edps"])
+											</OnLoad>
+											<OnClick>
+												DPSMate.Options:CheckButton("columnsfriendlyfire", 4)
 											</OnClick>
 										</Scripts>
 									</CheckButton>
@@ -4475,7 +4792,7 @@
 								</Anchors>
 								<Scripts>
 									<OnLoad>
-										getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.procs)
+										getglobal(this:GetName().."_Title"):SetText(DPSMate.L["procs"])
 									</OnLoad>
 								</Scripts>
 								<Frames>
@@ -4487,7 +4804,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
-												getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.amount)
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["amount"])
 											</OnLoad>
 											<OnClick>
 												DPSMate.Options:CheckButton("columnsprocs", 1)
@@ -4497,12 +4814,12 @@
 									<CheckButton name="$parent_Check2" inherits="DPSMate_Template_CheckButton">
 										<Anchors>
 											<Anchor point="LEFT" relativeTo="$parent_Check1" relativePoint="RIGHT">
-												<Offset x="65" y="0" />
+												<Offset x="50" y="0" />
 											</Anchor>
 										</Anchors>
 										<Scripts>
 											<OnLoad>
-												getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.percent)
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["percent"])
 											</OnLoad>
 											<OnClick>
 												DPSMate.Options:CheckButton("columnsprocs", 2)
@@ -4519,7 +4836,7 @@
 								</Anchors>
 								<Scripts>
 									<OnLoad>
-										getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.casts)
+										getglobal(this:GetName().."_Title"):SetText(DPSMate.L["casts"])
 									</OnLoad>
 								</Scripts>
 								<Frames>
@@ -4531,7 +4848,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
-												getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.amount)
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["amount"])
 											</OnLoad>
 											<OnClick>
 												DPSMate.Options:CheckButton("columnscasts", 1)
@@ -4541,12 +4858,12 @@
 									<CheckButton name="$parent_Check2" inherits="DPSMate_Template_CheckButton">
 										<Anchors>
 											<Anchor point="LEFT" relativeTo="$parent_Check1" relativePoint="RIGHT">
-												<Offset x="65" y="0" />
+												<Offset x="50" y="0" />
 											</Anchor>
 										</Anchors>
 										<Scripts>
 											<OnLoad>
-												getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.percent)
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["percent"])
 											</OnLoad>
 											<OnClick>
 												DPSMate.Options:CheckButton("columnscasts", 2)
@@ -4563,7 +4880,7 @@
 								</Anchors>
 								<Scripts>
 									<OnLoad>
-										getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.threat)
+										getglobal(this:GetName().."_Title"):SetText(DPSMate.L["threat"])
 									</OnLoad>
 								</Scripts>
 								<Frames>
@@ -4575,7 +4892,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
-												getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.amount)
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["amount"])
 											</OnLoad>
 											<OnClick>
 												DPSMate.Options:CheckButton("columnsthreat", 1)
@@ -4585,12 +4902,12 @@
 									<CheckButton name="$parent_Check2" inherits="DPSMate_Template_CheckButton">
 										<Anchors>
 											<Anchor point="LEFT" relativeTo="$parent_Check1" relativePoint="RIGHT">
-												<Offset x="65" y="0" />
+												<Offset x="50" y="0" />
 											</Anchor>
 										</Anchors>
 										<Scripts>
 											<OnLoad>
-												getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.tps)
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["tps"])
 											</OnLoad>
 											<OnClick>
 												DPSMate.Options:CheckButton("columnsthreat", 2)
@@ -4600,15 +4917,30 @@
 									<CheckButton name="$parent_Check3" inherits="DPSMate_Template_CheckButton">
 										<Anchors>
 											<Anchor point="LEFT" relativeTo="$parent_Check2" relativePoint="RIGHT">
-												<Offset x="65" y="0" />
+												<Offset x="50" y="0" />
 											</Anchor>
 										</Anchors>
 										<Scripts>
 											<OnLoad>
-												getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.percent)
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["percent"])
 											</OnLoad>
 											<OnClick>
 												DPSMate.Options:CheckButton("columnsthreat", 3)
+											</OnClick>
+										</Scripts>
+									</CheckButton>
+									<CheckButton name="$parent_Check4" inherits="DPSMate_Template_CheckButton">
+										<Anchors>
+											<Anchor point="LEFT" relativeTo="$parent_Check3" relativePoint="RIGHT">
+												<Offset x="50" y="0" />
+											</Anchor>
+										</Anchors>
+										<Scripts>
+											<OnLoad>
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["etps"])
+											</OnLoad>
+											<OnClick>
+												DPSMate.Options:CheckButton("columnsthreat", 4)
 											</OnClick>
 										</Scripts>
 									</CheckButton>
@@ -4622,7 +4954,7 @@
 								</Anchors>
 								<Scripts>
 									<OnLoad>
-										getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.tps)
+										getglobal(this:GetName().."_Title"):SetText(DPSMate.L["tps"])
 									</OnLoad>
 								</Scripts>
 								<Frames>
@@ -4634,7 +4966,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
-												getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.amount)
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["amount"])
 											</OnLoad>
 											<OnClick>
 												DPSMate.Options:CheckButton("columnstps", 1)
@@ -4644,12 +4976,12 @@
 									<CheckButton name="$parent_Check2" inherits="DPSMate_Template_CheckButton">
 										<Anchors>
 											<Anchor point="LEFT" relativeTo="$parent_Check1" relativePoint="RIGHT">
-												<Offset x="65" y="0" />
+												<Offset x="50" y="0" />
 											</Anchor>
 										</Anchors>
 										<Scripts>
 											<OnLoad>
-												getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.tps)
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["tps"])
 											</OnLoad>
 											<OnClick>
 												DPSMate.Options:CheckButton("columnstps", 2)
@@ -4659,15 +4991,30 @@
 									<CheckButton name="$parent_Check3" inherits="DPSMate_Template_CheckButton">
 										<Anchors>
 											<Anchor point="LEFT" relativeTo="$parent_Check2" relativePoint="RIGHT">
-												<Offset x="65" y="0" />
+												<Offset x="50" y="0" />
 											</Anchor>
 										</Anchors>
 										<Scripts>
 											<OnLoad>
-												getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.percent)
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["percent"])
 											</OnLoad>
 											<OnClick>
 												DPSMate.Options:CheckButton("columnstps", 3)
+											</OnClick>
+										</Scripts>
+									</CheckButton>
+									<CheckButton name="$parent_Check4" inherits="DPSMate_Template_CheckButton">
+										<Anchors>
+											<Anchor point="LEFT" relativeTo="$parent_Check3" relativePoint="RIGHT">
+												<Offset x="50" y="0" />
+											</Anchor>
+										</Anchors>
+										<Scripts>
+											<OnLoad>
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["etps"])
+											</OnLoad>
+											<OnClick>
+												DPSMate.Options:CheckButton("columnstps", 4)
 											</OnClick>
 										</Scripts>
 									</CheckButton>
@@ -4681,7 +5028,7 @@
 								</Anchors>
 								<Scripts>
 									<OnLoad>
-										getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.fails)
+										getglobal(this:GetName().."_Title"):SetText(DPSMate.L["fails"])
 									</OnLoad>
 								</Scripts>
 								<Frames>
@@ -4693,7 +5040,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
-												getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.amount)
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["amount"])
 											</OnLoad>
 											<OnClick>
 												DPSMate.Options:CheckButton("columnsfails", 1)
@@ -4703,12 +5050,12 @@
 									<CheckButton name="$parent_Check2" inherits="DPSMate_Template_CheckButton">
 										<Anchors>
 											<Anchor point="LEFT" relativeTo="$parent_Check1" relativePoint="RIGHT">
-												<Offset x="65" y="0" />
+												<Offset x="50" y="0" />
 											</Anchor>
 										</Anchors>
 										<Scripts>
 											<OnLoad>
-												getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.percent)
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["percent"])
 											</OnLoad>
 											<OnClick>
 												DPSMate.Options:CheckButton("columnsfails", 2)
@@ -4725,7 +5072,7 @@
 								</Anchors>
 								<Scripts>
 									<OnLoad>
-										getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.ccbreaker)
+										getglobal(this:GetName().."_Title"):SetText(DPSMate.L["ccbreaker"])
 									</OnLoad>
 								</Scripts>
 								<Frames>
@@ -4737,7 +5084,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
-												getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.amount)
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["amount"])
 											</OnLoad>
 											<OnClick>
 												DPSMate.Options:CheckButton("columnsccbreaker", 1)
@@ -4747,12 +5094,12 @@
 									<CheckButton name="$parent_Check2" inherits="DPSMate_Template_CheckButton">
 										<Anchors>
 											<Anchor point="LEFT" relativeTo="$parent_Check1" relativePoint="RIGHT">
-												<Offset x="65" y="0" />
+												<Offset x="50" y="0" />
 											</Anchor>
 										</Anchors>
 										<Scripts>
 											<OnLoad>
-												getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.percent)
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["percent"])
 											</OnLoad>
 											<OnClick>
 												DPSMate.Options:CheckButton("columnsccbreaker", 2)
@@ -4780,7 +5127,8 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								getglobal(this:GetName().."_Title"):SetText("Show tooltips")
+								this.aide = DPSMate.L["showtooltipsTooltip"]
+								getglobal(this:GetName().."_Title"):SetText(DPSMate.L["showtooltips"])
 							</OnLoad>
 							<OnClick>
 								if DPSMateSettings["showtooltips"] then
@@ -4799,7 +5147,8 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								getglobal(this:GetName().."_Title"):SetText("Informative tooltips")
+								this.aide = DPSMate.L["informativetooltipsTooltip"]
+								getglobal(this:GetName().."_Title"):SetText(DPSMate.L["informativetooltips"])
 							</OnLoad>
 							<OnClick>
 								if DPSMateSettings["informativetooltips"] then
@@ -4818,13 +5167,13 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								this.aide = DPSMate.localization.config.subviewrowsTooltip
+								this.aide = DPSMate.L["subviewrowsTooltip"]
 								this.func = function() 
 									DPSMateSettings["subviewrows"] = this:GetValue()
 								end
 								this:SetMinMaxValues(1,10)
 								this:SetValueStep(1)
-								getglobal(this:GetName().."Text"):SetText(DPSMate.localization.config.subviewrows)
+								getglobal(this:GetName().."Text"):SetText(DPSMate.L["subviewrows"])
 								getglobal(this:GetName().."Low"):SetText("1")
 								getglobal(this:GetName().."High"):SetText("10")
 							</OnLoad>
@@ -4839,9 +5188,9 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								this.aide = DPSMate.localization.config.TooltipPositionDropDownTooltip
+								this.aide = DPSMate.L["TooltipPositionDropDownTooltip"]
 								this.func = DPSMate.Options.TooltipPositionDropDown
-								this.title = DPSMate.localization.config.TooltipPositionDropDown
+								this.title = DPSMate.L["TooltipPositionDropDown"]
 								UIDropDownMenu_SetWidth(120)
 								getglobal(this:GetName().."_Text"):SetText(this.title)
 							</OnLoad>
@@ -4864,7 +5213,7 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								getglobal(this:GetName().."_Title"):SetText("Shown modes")
+								getglobal(this:GetName().."_Title"):SetText(DPSMate.L["shownmodes"])
 							</OnLoad>
 							<OnShow>
 								DPSMate.Options:UpdateConfigModes(this, 0, true)
@@ -4882,7 +5231,7 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								getglobal(this:GetName().."_Title"):SetText("Hidden modes")
+								getglobal(this:GetName().."_Title"):SetText(DPSMate.L["hiddenmodes"])
 							</OnLoad>
 							<OnShow>
 								DPSMate.Options:UpdateConfigModes(this, 0, false)
@@ -4901,7 +5250,7 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								this.aide = ""
+								this.aide = DPSMate.L["moveleftTooltip"]
 								getglobal(this:GetName().."Text"):SetText("&lt;---")
 							</OnLoad>
 							<OnClick>
@@ -4934,7 +5283,7 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								this.aide = ""
+								this.aide = DPSMate.L["moverightTooltip"]
 								getglobal(this:GetName().."Text"):SetText("---&gt;")
 							</OnLoad>
 							<OnClick>
@@ -4969,8 +5318,8 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								this.aide = "Return a list of player being in the Synced-Channel."
-								getglobal(this:GetName().."Text"):SetText("Hello World!")
+								this.aide = DPSMate.L["helloworldTooltip"]
+								getglobal(this:GetName().."Text"):SetText(DPSMate.L["helloworld"])
 							</OnLoad>
 							<OnClick>
 								DPSMate.Sync:HelloWorld()
@@ -4994,7 +5343,8 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								getglobal(this:GetName().."_Title"):SetText("Enable")
+								this.aide = DPSMate.L["enablebroadcasting"]
+								getglobal(this:GetName().."_Title"):SetText(DPSMate.L["enable"])
 							</OnLoad>
 							<OnClick>
 								if DPSMateSettings["broadcasting"] then
@@ -5013,7 +5363,8 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								getglobal(this:GetName().."_Title"):SetText("Use Raidwarning")
+								this.aide = DPSMate.L["useraidwarningTooltip"]
+								getglobal(this:GetName().."_Title"):SetText(DPSMate.L["useraidwarning"])
 							</OnLoad>
 							<OnClick>
 								if DPSMateSettings["bcrw"] then
@@ -5030,7 +5381,8 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								getglobal(this:GetName().."_Title"):SetText("Relevant cooldowns")
+								this.aide = DPSMate.L["relevantcdsTooltip"]
+								getglobal(this:GetName().."_Title"):SetText(DPSMate.L["relevantcds"])
 							</OnLoad>
 							<OnClick>
 								if DPSMateSettings["bccd"] then
@@ -5047,7 +5399,8 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								getglobal(this:GetName().."_Title"):SetText("Ressurections")
+								this.aide = DPSMate.L["ressTooltip"]
+								getglobal(this:GetName().."_Title"):SetText(DPSMate.L["ress"])
 							</OnLoad>
 							<OnClick>
 								if DPSMateSettings["bcress"] then
@@ -5064,7 +5417,8 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								getglobal(this:GetName().."_Title"):SetText("Killingblows")
+								this.aide = DPSMate.L["killingblowsTooltip"]
+								getglobal(this:GetName().."_Title"):SetText(DPSMate.L["killingblows"])
 							</OnLoad>
 							<OnClick>
 								if DPSMateSettings["bckb"] then
@@ -5081,7 +5435,8 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								getglobal(this:GetName().."_Title"):SetText("Fails")
+								this.aide = DPSMate.L["failsTooltip"]
+								getglobal(this:GetName().."_Title"):SetText(DPSMate.L["fails"])
 							</OnLoad>
 							<OnClick>
 								if DPSMateSettings["bcfail"] then
@@ -5110,8 +5465,8 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.whatisdpsmate)
-								getglobal(this:GetName().."_Text"):SetText(DPSMate.localization.config.whatisdpsmateText)
+								getglobal(this:GetName().."_Title"):SetText(DPSMate.L["whatisdpsmate"])
+								getglobal(this:GetName().."_Text"):SetText(DPSMate.L["whatisdpsmateText"])
 							</OnLoad>
 						</Scripts>
 					</Frame>
@@ -5124,8 +5479,8 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.whocreateddpsmate)
-								getglobal(this:GetName().."_Text"):SetText(DPSMate.localization.config.whocreateddpsmateText)
+								getglobal(this:GetName().."_Title"):SetText(DPSMate.L["whocreateddpsmate"])
+								getglobal(this:GetName().."_Text"):SetText(DPSMate.L["whocreateddpsmateText"])
 							</OnLoad>
 						</Scripts>
 					</Frame>
@@ -5137,8 +5492,8 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								getglobal(this:GetName().."_Title"):SetText(DPSMate.localization.config.thanksto)
-								getglobal(this:GetName().."_Text"):SetText(DPSMate.localization.config.thankstoText)
+								getglobal(this:GetName().."_Title"):SetText(DPSMate.L["thanksto"])
+								getglobal(this:GetName().."_Text"):SetText(DPSMate.L["thankstoText"])
 							</OnLoad>
 						</Scripts>
 					</Frame>

@@ -70,7 +70,7 @@
 		<Scripts>
 			<OnEnter>
 				GameTooltip:SetOwner(this, "TOPLEFT")
-				GameTooltip:AddLine("LeftClick to open the details.")
+				GameTooltip:AddLine(DPSMate.L["leftclickopend"])
 				GameTooltip:Show()
 			</OnEnter>
 			<OnLeave>
@@ -148,7 +148,7 @@
 				<Scripts>
 					<OnEnter>
 						GameTooltip:SetOwner(this, "TOPLEFT")
-						GameTooltip:AddLine("RightClick to change the mode.")
+						GameTooltip:AddLine(DPSMate.L["rcchangemode"])
 						GameTooltip:Show()
 					</OnEnter>
 					<OnLeave>
@@ -173,7 +173,7 @@
 						<Scripts>
 							<OnEnter>
 								GameTooltip:SetOwner(this, "TOPLEFT")
-								GameTooltip:AddLine("Config")
+								GameTooltip:AddLine(DPSMate.L["config"])
 								GameTooltip:Show()
 							</OnEnter>
 							<OnLeave>
@@ -192,7 +192,7 @@
 						<Scripts>
 							<OnEnter>
 								GameTooltip:SetOwner(this, "TOPLEFT")
-								GameTooltip:AddLine("Reset")
+								GameTooltip:AddLine(DPSMate.L["reset"])
 								GameTooltip:Show()
 							</OnEnter>
 							<OnLeave>
@@ -211,7 +211,7 @@
 						<Scripts>
 							<OnEnter>
 								GameTooltip:SetOwner(this, "TOPLEFT")
-								GameTooltip:AddLine("Segment")
+								GameTooltip:AddLine(DPSMate.L["segment"])
 								GameTooltip:Show()
 							</OnEnter>
 							<OnLeave>
@@ -230,7 +230,7 @@
 						<Scripts>
 							<OnEnter>
 								GameTooltip:SetOwner(this, "TOPLEFT")
-								GameTooltip:AddLine("Filter options")
+								GameTooltip:AddLine(DPSMate.L["filter"])
 								GameTooltip:Show()
 							</OnEnter>
 							<OnLeave>
@@ -249,7 +249,7 @@
 						<Scripts>
 							<OnEnter>
 								GameTooltip:SetOwner(this, "TOPLEFT")
-								GameTooltip:AddLine("Report")
+								GameTooltip:AddLine(DPSMate.L["report"])
 								GameTooltip:Show()
 							</OnEnter>
 							<OnLeave>
@@ -269,7 +269,7 @@
 						<Scripts>
 							<OnEnter>
 								GameTooltip:SetOwner(this, "TOPLEFT")
-								GameTooltip:AddLine("Synchronizing")
+								GameTooltip:AddLine(DPSMate.L["sync"])
 								GameTooltip:Show()
 							</OnEnter>
 							<OnLeave>
@@ -288,7 +288,7 @@
 						<Scripts>
 							<OnEnter>
 								GameTooltip:SetOwner(this, "TOPLEFT")
-								GameTooltip:AddLine("Enable/Disable")
+								GameTooltip:AddLine(DPSMate.L["enabledisable"])
 								GameTooltip:Show()
 							</OnEnter>
 							<OnLeave>

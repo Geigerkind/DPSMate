@@ -138,7 +138,7 @@
 				<Scripts>
 					<OnEnter>
 						GameTooltip:SetOwner(this, "ANCHOR_RIGHT")
-						GameTooltip:SetText(DPSMate.localization.details.close, nil, nil, nil, nil, 1)
+						GameTooltip:SetText(DPSMate.L["close"], nil, nil, nil, nil, 1)
 						GameTooltip:Show()
 					</OnEnter>
 					<OnLeave>
@@ -391,7 +391,7 @@
 				</Backdrop>
 				<Layers>
 					<Layer level="ARTWORK">
-						<FontString name="$parent_Block" inherits="GameFontNormal" text="Block" justifyH="LEFT">
+						<FontString name="$parent_Block" inherits="GameFontNormal" justifyH="LEFT">
 							<Size x="50" y="24" />
 							<Anchors>
 								<Anchor point="TOPLEFT">
@@ -399,7 +399,7 @@
 								</Anchor>
 							</Anchors>
 						</FontString>
-						<FontString name="$parent_Crush" inherits="GameFontNormal" text="Crush" justifyH="LEFT">
+						<FontString name="$parent_Crush" inherits="GameFontNormal" justifyH="LEFT">
 							<Size x="50" y="24" />
 							<Anchors>
 								<Anchor point="TOP" relativeTo="$parent_Block" relativePoint="BOTTOM">
@@ -407,7 +407,7 @@
 								</Anchor>
 							</Anchors>
 						</FontString>
-						<FontString name="$parent_Hit" inherits="GameFontNormal" text="Hit" justifyH="LEFT">
+						<FontString name="$parent_Hit" inherits="GameFontNormal" justifyH="LEFT">
 							<Size x="50" y="24" />
 							<Anchors>
 								<Anchor point="TOP" relativeTo="$parent_Crush" relativePoint="BOTTOM">
@@ -415,7 +415,7 @@
 								</Anchor>
 							</Anchors>
 						</FontString>
-						<FontString name="$parent_Amount" inherits="GameFontNormal" text="Amount" justifyH="LEFT">
+						<FontString name="$parent_Amount" inherits="GameFontNormal" justifyH="LEFT">
 							<Size x="135" y="24" />
 							<Anchors>
 								<Anchor point="LEFT" relativeTo="$parent_Block" relativePoint="RIGHT">
@@ -423,25 +423,25 @@
 								</Anchor>
 							</Anchors>
 						</FontString>
-						<FontString name="$parent_Average" inherits="GameFontNormal" text="Average" justifyH="LEFT">
+						<FontString name="$parent_Average" inherits="GameFontNormal" justifyH="LEFT">
 							<Size x="60" y="24" />
 							<Anchors>
 								<Anchor point="LEFT" relativeTo="$parent_Amount" relativePoint="RIGHT" />
 							</Anchors>
 						</FontString>
-						<FontString name="$parent_Min" inherits="GameFontNormal" text="Min" justifyH="LEFT">
+						<FontString name="$parent_Min" inherits="GameFontNormal" justifyH="LEFT">
 							<Size x="60" y="24" />
 							<Anchors>
 								<Anchor point="LEFT" relativeTo="$parent_Average" relativePoint="RIGHT" />
 							</Anchors>
 						</FontString>
-						<FontString name="$parent_Max" inherits="GameFontNormal" text="Max" justifyH="LEFT">
+						<FontString name="$parent_Max" inherits="GameFontNormal" justifyH="LEFT">
 							<Size x="60" y="24" />
 							<Anchors>
 								<Anchor point="LEFT" relativeTo="$parent_Min" relativePoint="RIGHT" />
 							</Anchors>
 						</FontString>
-						<FontString name="$parent_Crit" inherits="GameFontNormal" text="Crit" justifyH="LEFT">
+						<FontString name="$parent_Crit" inherits="GameFontNormal" justifyH="LEFT">
 							<Size x="50" y="24" />
 							<Anchors>
 								<Anchor point="TOP" relativeTo="$parent_Hit" relativePoint="BOTTOM">
@@ -449,7 +449,7 @@
 								</Anchor>
 							</Anchors>
 						</FontString>
-						<FontString name="$parent_Miss" inherits="GameFontNormal" text="Miss" justifyH="LEFT">
+						<FontString name="$parent_Miss" inherits="GameFontNormal" justifyH="LEFT">
 							<Size x="120" y="24" />
 							<Anchors>
 								<Anchor point="TOP" relativeTo="$parent_Crit" relativePoint="BOTTOM">
@@ -657,6 +657,22 @@
 						</FontString>
 					</Layer>
 				</Layers>
+				<Scripts>
+					<OnLoad>
+						getglobal(this:GetName().."_Block"):SetText(DPSMate.L["block"])
+						getglobal(this:GetName().."_Crush"):SetText(DPSMate.L["crush"])
+						getglobal(this:GetName().."_Hit"):SetText(DPSMate.L["hit"])
+						getglobal(this:GetName().."_Amount"):SetText(DPSMate.L["amount"])
+						getglobal(this:GetName().."_Average"):SetText(DPSMate.L["average"])
+						getglobal(this:GetName().."_Min"):SetText(DPSMate.L["min"])
+						getglobal(this:GetName().."_Max"):SetText(DPSMate.L["max"])
+						getglobal(this:GetName().."_Crit"):SetText(DPSMate.L["crit"])
+						getglobal(this:GetName().."_Miss"):SetText(DPSMate.L["miss"])
+						getglobal(this:GetName().."_Parry"):SetText(DPSMate.L["parry"])
+						getglobal(this:GetName().."_Dodge"):SetText(DPSMate.L["dodge"])
+						getglobal(this:GetName().."_Resist"):SetText(DPSMate.L["resist"])
+					</OnLoad>
+				</Scripts>
 				<Frames>
 					<Frame name="$parent_Amount0" inherits="DPSMateTableAmountTemplate">
 						<Anchors>

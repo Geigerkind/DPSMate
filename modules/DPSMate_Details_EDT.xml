@@ -138,7 +138,7 @@
 				<Scripts>
 					<OnEnter>
 						GameTooltip:SetOwner(this, "ANCHOR_RIGHT")
-						GameTooltip:SetText(DPSMate.localization.details.close, nil, nil, nil, nil, 1)
+						GameTooltip:SetText(DPSMate.L["close"], nil, nil, nil, nil, 1)
 						GameTooltip:Show()
 					</OnEnter>
 					<OnLeave>
@@ -657,6 +657,22 @@
 						</FontString>
 					</Layer>
 				</Layers>
+				<Scripts>
+					<OnLoad>
+						getglobal(this:GetName().."_Block"):SetText(DPSMate.L["block"])
+						getglobal(this:GetName().."_Glance"):SetText(DPSMate.L["glance"])
+						getglobal(this:GetName().."_Hit"):SetText(DPSMate.L["hit"])
+						getglobal(this:GetName().."_Amount"):SetText(DPSMate.L["amount"])
+						getglobal(this:GetName().."_Average"):SetText(DPSMate.L["average"])
+						getglobal(this:GetName().."_Min"):SetText(DPSMate.L["min"])
+						getglobal(this:GetName().."_Max"):SetText(DPSMate.L["max"])
+						getglobal(this:GetName().."_Crit"):SetText(DPSMate.L["crit"])
+						getglobal(this:GetName().."_Miss"):SetText(DPSMate.L["miss"])
+						getglobal(this:GetName().."_Parry"):SetText(DPSMate.L["parry"])
+						getglobal(this:GetName().."_Dodge"):SetText(DPSMate.L["dodge"])
+						getglobal(this:GetName().."_Resist"):SetText(DPSMate.L["resist"])
+					</OnLoad>
+				</Scripts>
 				<Frames>
 					<Frame name="$parent_Amount0" inherits="DPSMateTableAmountTemplate">
 						<Anchors>

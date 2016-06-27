@@ -7,7 +7,7 @@
 		<Size x="680" y="30" />
 		<Layers>
 			<Layer level="ARTWORK">
-				<FontString name="$parent_Time" inherits="GameFontNormalSmall" text="22:22 PM" justifyH="LEFT">
+				<FontString name="$parent_Time" inherits="GameFontNormalSmall" justifyH="LEFT">
 					<Size x="75" y="30" />
 					<Anchors>
 						<Anchor point="TOPLEFT">
@@ -16,7 +16,7 @@
 					</Anchors>
 					<Color r="1" g="1" b="1" />
 				</FontString>
-				<FontString name="$parent_CBT" inherits="GameFontNormalSmall" text="9999s" justifyH="LEFT">
+				<FontString name="$parent_CBT" inherits="GameFontNormalSmall" justifyH="LEFT">
 					<Size x="75" y="30" />
 					<Anchors>
 						<Anchor point="LEFT" relativeTo="$parent_Time" relativePoint="RIGHT">
@@ -33,7 +33,7 @@
 						</Anchor>
 					</Anchors>
 				</Texture>
-				<FontString name="$parent_Ability" inherits="GameFontNormalSmall" text="999009s" justifyH="LEFT">
+				<FontString name="$parent_Ability" inherits="GameFontNormalSmall" justifyH="LEFT">
 					<Size x="250" y="30" />
 					<Anchors>
 						<Anchor point="LEFT" relativeTo="$parent_CBT" relativePoint="RIGHT">
@@ -42,7 +42,7 @@
 					</Anchors>
 					<Color r="1" g="1" b="1" />
 				</FontString>
-				<FontString name="$parent_Target" inherits="GameFontNormalSmall" text="999009s" justifyH="LEFT">
+				<FontString name="$parent_Target" inherits="GameFontNormalSmall" justifyH="LEFT">
 					<Size x="250" y="30" />
 					<Anchors>
 						<Anchor point="LEFT" relativeTo="$parent_Ability" relativePoint="RIGHT">
@@ -65,7 +65,7 @@
 		</Backdrop>
 		<Layers>
 			<Layer level="ARTWORK">
-				<FontString name="$parent_Title" inherits="GameFontNormalHuge" text="Buffs" justifyH="LEFT">
+				<FontString name="$parent_Title" inherits="GameFontNormalHuge" justifyH="LEFT">
 					<Size x="870" y="30" />
 					<Anchors>
 						<Anchor point="TOPLEFT">
@@ -74,7 +74,7 @@
 					</Anchors>
 					<Color r="1" g="1" b="1" />
 				</FontString>
-				<FontString name="$parent_Time" inherits="GameFontNormal" text="Time">
+				<FontString name="$parent_Time" inherits="GameFontNormal">
 					<Size x="75" y="30" />
 					<Anchors>
 						<Anchor point="TOPLEFT">
@@ -82,7 +82,7 @@
 						</Anchor>
 					</Anchors>
 				</FontString>
-				<FontString name="$parent_CBT" inherits="GameFontNormal" text="CBT">
+				<FontString name="$parent_CBT" inherits="GameFontNormal">
 					<Size x="75" y="30" />
 					<Anchors>
 						<Anchor point="LEFT" relativeTo="$parent_Time" relativePoint="RIGHT">
@@ -90,7 +90,7 @@
 						</Anchor>
 					</Anchors>
 				</FontString>
-				<FontString name="$parent_Ability" inherits="GameFontNormal" text="Ability">
+				<FontString name="$parent_Ability" inherits="GameFontNormal">
 					<Size x="250" y="30" />
 					<Anchors>
 						<Anchor point="LEFT" relativeTo="$parent_CBT" relativePoint="RIGHT">
@@ -98,7 +98,7 @@
 						</Anchor>
 					</Anchors>
 				</FontString>
-				<FontString name="$parent_Target" inherits="GameFontNormal" text="Target">
+				<FontString name="$parent_Target" inherits="GameFontNormal">
 					<Size x="250" y="30" />
 					<Anchors>
 						<Anchor point="LEFT" relativeTo="$parent_Ability" relativePoint="RIGHT">
@@ -192,7 +192,7 @@
 				<Scripts>
 					<OnEnter>
 						GameTooltip:SetOwner(this, "ANCHOR_RIGHT")
-						GameTooltip:SetText(DPSMate.localization.details.close, nil, nil, nil, nil, 1)
+						GameTooltip:SetText(DPSMate.L["close"], nil, nil, nil, nil, 1)
 						GameTooltip:Show()
 					</OnEnter>
 					<OnLeave>
@@ -215,7 +215,11 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."_Title"):SetText("CCBreaker")
+						getglobal(this:GetName().."_Title"):SetText(DPSMate.L["ccbreaker"])
+						getglobal(this:GetName().."_Time"):SetText(DPSMate.L["time"])
+						getglobal(this:GetName().."_CBT"):SetText(DPSMate.L["cbt"])
+						getglobal(this:GetName().."_Ability"):SetText(DPSMate.L["ability"])
+						getglobal(this:GetName().."_Target"):SetText(DPSMate.L["target"])
 						DPSMate.Modules.DetailsCCBreaker:CreateGraphTable(this)
 						this:SetVerticalScroll(0)
 					</OnLoad>

@@ -8,6 +8,8 @@ local g, g2
 local curKey = 1
 local db, cbt = {}, 0
 local _G = getglobal
+local tinsert = table.insert
+local strformat = string.format
 
 function DPSMate.Modules.DetailsEDT:UpdateDetails(obj, key)
 	curKey = key
@@ -17,7 +19,8 @@ function DPSMate.Modules.DetailsEDT:UpdateDetails(obj, key)
 		PieChart = false
 	end
 	DetailsUser = obj.user
-	DPSMate_Details_EDT_Title:SetText("Damage taken by "..obj.user)
+	DPSMate_Details_EDT_Title:SetText(DPSMate.L["dmgtakenby"]..obj.user)
+	DetailsArr, DetailsTotal, DmgArr = DPSMate.RegistredModules[DPSMateSettings["windows"][curKey]["CurMode"]]:EvalTable(DPSMateUser[DetailsUser], curKey)
 	DPSMate_Details_EDT:Show()
 	self:ScrollFrame_Update()
 	self:SelectCreatureButton(1)
@@ -29,8 +32,6 @@ function DPSMate.Modules.DetailsEDT:ScrollFrame_Update()
 	local line, lineplusoffset
 	local path = "DPSMate_Details_EDT_LogCreature"
 	local obj = _G(path.."_ScrollFrame")
-	local arr = db
-	DetailsArr, DetailsTotal, DmgArr = DPSMate.RegistredModules[DPSMateSettings["windows"][curKey]["CurMode"]]:EvalTable(DPSMateUser[DetailsUser], curKey)
 	local pet, len = "", DPSMate:TableLength(DetailsArr)
 	FauxScrollFrame_Update(obj,len,10,24)
 	for line=1,10 do
@@ -40,7 +41,7 @@ function DPSMate.Modules.DetailsEDT:ScrollFrame_Update()
 			local r,g,b,img = DPSMate:GetClassColor(DPSMateUser[user][2])
 			_G(path.."_ScrollButton"..line.."_Name"):SetText(user)
 			_G(path.."_ScrollButton"..line.."_Name"):SetTextColor(r,g,b)
-			_G(path.."_ScrollButton"..line.."_Value"):SetText(DmgArr[lineplusoffset][1].." ("..string.format("%.2f", (DmgArr[lineplusoffset][1]*100/DetailsTotal)).."%)")
+			_G(path.."_ScrollButton"..line.."_Value"):SetText(DmgArr[lineplusoffset][1].." ("..strformat("%.2f", (DmgArr[lineplusoffset][1]*100/DetailsTotal)).."%)")
 			_G(path.."_ScrollButton"..line.."_Icon"):SetTexture("Interface\\AddOns\\DPSMate\\images\\class\\"..img)
 			if len < 10 then
 				_G(path.."_ScrollButton"..line):SetWidth(235)
@@ -73,7 +74,7 @@ function DPSMate.Modules.DetailsEDT:SelectCreatureButton(i)
 		if DmgArr[DetailsSelected][2][lineplusoffset] ~= nil then
 			local ability = DPSMate:GetAbilityById(DmgArr[DetailsSelected][2][lineplusoffset])
 			_G(path.."_ScrollButton"..line.."_Name"):SetText(ability)
-			_G(path.."_ScrollButton"..line.."_Value"):SetText(DmgArr[DetailsSelected][3][lineplusoffset].." ("..string.format("%.2f", (DmgArr[DetailsSelected][3][lineplusoffset]*100/DmgArr[DetailsSelected][1])).."%)")
+			_G(path.."_ScrollButton"..line.."_Value"):SetText(DmgArr[DetailsSelected][3][lineplusoffset].." ("..strformat("%.2f", (DmgArr[DetailsSelected][3][lineplusoffset]*100/DmgArr[DetailsSelected][1])).."%)")
 			_G(path.."_ScrollButton"..line.."_Icon"):SetTexture(DPSMate.BabbleSpell:GetSpellIcon(strsub(ability, 1, (strfind(ability, "%(") or 0)-1) or ability))
 			if len < 10 then
 				_G(path.."_ScrollButton"..line):SetWidth(235)
@@ -97,9 +98,8 @@ function DPSMate.Modules.DetailsEDT:SelectCreatureButton(i)
 end
 
 function DPSMate.Modules.DetailsEDT:SelectDetailsButton(p,i)
-	local obj = _G("DPSMate_Details_EDT_Log_ScrollFrame")
+	local obj = DPSMate_Details_EDT_Log_ScrollFrame
 	local lineplusoffset = i + FauxScrollFrame_GetOffset(obj)
-	local arr = db
 	
 	for p=1, 10 do
 		_G("DPSMate_Details_EDT_Log_ScrollButton"..p.."_selected"):Hide()
@@ -109,7 +109,7 @@ function DPSMate.Modules.DetailsEDT:SelectDetailsButton(p,i)
 	local creature = tonumber(DetailsArr[p])
 	_G("DPSMate_Details_EDT_Log_ScrollButton"..i.."_selected"):Show()
 	
-	local path = arr[DPSMateUser[DetailsUser][1]][creature][ability]
+	local path = db[DPSMateUser[DetailsUser][1]][creature][ability]
 	local hit, crit, miss, parry, dodge, resist, hitMin, hitMax, critMin, critMax, hitav, critav, block, blockMin, blockMax, blockav, glance, glanceMin, glanceMax, glanceav = path[1], path[5], path[9], path[10], path[11], path[12], path[2], path[3], path[6], path[7], path[4], path[8], path[14], path[15], path[16], path[17], path[18], path[19], path[20], path[21]
 	local total, max = hit+crit+miss+parry+dodge+resist+glance+block, DPSMate:TMax({hit, crit, miss, parry, dodge, resist, glance, block})
 	
@@ -205,7 +205,7 @@ function DPSMate.Modules.DetailsEDT:UpdateLineGraph()
 
 	local Data1={{0,0}}
 	for cat, val in DPSMate:ScaleDown(sumTable, min) do
-		table.insert(Data1, {val[1],val[2], {}})
+		tinsert(Data1, {val[1],val[2], {}})
 	end
 
 	g2:AddDataSeries(Data1,{{1.0,0.0,0.0,0.8}, {1.0,0.0,0.0,0.8}}, {})
@@ -239,11 +239,11 @@ function DPSMate.Modules.DetailsEDT:SortLineTable(arr)
 			local i = 1
 			while true do
 				if not newArr[i] then
-					table.insert(newArr, i, va)
+					tinsert(newArr, i, va)
 					break
 				else
 					if newArr[i][1] > va[1] then
-						table.insert(newArr, i, va)
+						tinsert(newArr, i, va)
 						break
 					end
 				end

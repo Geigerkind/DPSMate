@@ -4,15 +4,17 @@ DPSMate.Modules.DispelsReceived.Hist = "Dispels"
 DPSMate.Options.Options[1]["args"]["dispelsreceived"] = {
 	order = 190,
 	type = 'toggle',
-	name = 'Dispels received',
-	desc = "Show Dispels received.",
+	name = DPSMate.L["dispelsreceived"],
+	desc = DPSMate.L["show"].." "..DPSMate.L["dispelsreceived"]..".",
 	get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["options"][1]["dispelsreceived"] end,
 	set = function() DPSMate.Options:ToggleDrewDrop(1, "dispelsreceived", DPSMate.Options.Dewdrop:GetOpenedParent()) end,
 }
 
 -- Register the moodule
-DPSMate:Register("dispelsreceived", DPSMate.Modules.DispelsReceived, "Dispels received")
+DPSMate:Register("dispelsreceived", DPSMate.Modules.DispelsReceived, DPSMate.L["dispelsreceived"])
 
+local tinsert = table.insert
+local strformat = string.format
 
 function DPSMate.Modules.DispelsReceived:GetSortedTable(arr,k)
 	local b, a, temp, total = {}, {}, {}, 0
@@ -33,13 +35,13 @@ function DPSMate.Modules.DispelsReceived:GetSortedTable(arr,k)
 		local i = 1
 		while true do
 			if (not b[i]) then
-				table.insert(b, i, val)
-				table.insert(a, i, cat)
+				tinsert(b, i, val)
+				tinsert(a, i, cat)
 				break
 			else
 				if b[i] < val then
-					table.insert(b, i, val)
-					table.insert(a, i, cat)
+					tinsert(b, i, val)
+					tinsert(a, i, cat)
 					break
 				end
 			end
@@ -68,13 +70,13 @@ function DPSMate.Modules.DispelsReceived:EvalTable(user, k)
 							local i = 1
 							while true do
 								if (not temp[cat][3][i]) then
-									table.insert(temp[cat][3], i, ve)
-									table.insert(temp[cat][2], i, ce)
+									tinsert(temp[cat][3], i, ve)
+									tinsert(temp[cat][2], i, ce)
 									break
 								else
 									if temp[cat][3][i] < ve then
-										table.insert(temp[cat][3], i, ve)
-										table.insert(temp[cat][2], i, ce)
+										tinsert(temp[cat][3], i, ve)
+										tinsert(temp[cat][2], i, ce)
 										break
 									end
 								end
@@ -92,13 +94,13 @@ function DPSMate.Modules.DispelsReceived:EvalTable(user, k)
 			local i = 1
 			while true do
 				if (not b[i]) then
-					table.insert(b, i, val)
-					table.insert(a, i, cat)
+					tinsert(b, i, val)
+					tinsert(a, i, cat)
 					break
 				else
 					if b[i][1] < val[1] then
-						table.insert(b, i, val)
-						table.insert(a, i, cat)
+						tinsert(b, i, val)
+						tinsert(a, i, cat)
 						break
 					end
 				end
@@ -119,10 +121,10 @@ function DPSMate.Modules.DispelsReceived:GetSettingValues(arr, cbt, k)
 		if dmg==0 then break end
 		local str = {[1]="",[2]="",[3]=""}
 		if DPSMateSettings["columnsdispelsreceived"][1] then str[1] = " "..dmg..p; strt[2] = tot..p end
-		if DPSMateSettings["columnsdispelsreceived"][2] then str[3] = " ("..string.format("%.1f", 100*dmg/tot).."%)" end
-		table.insert(name, DPSMate:GetUserById(a[cat]))
-		table.insert(value, str[2]..str[1]..str[3])
-		table.insert(perc, 100*(dmg/sort))
+		if DPSMateSettings["columnsdispelsreceived"][2] then str[3] = " ("..strformat("%.1f", 100*dmg/tot).."%)" end
+		tinsert(name, DPSMate:GetUserById(a[cat]))
+		tinsert(value, str[2]..str[1]..str[3])
+		tinsert(perc, 100*(dmg/sort))
 	end
 	return name, value, perc, strt
 end
@@ -132,10 +134,10 @@ function DPSMate.Modules.DispelsReceived:ShowTooltip(user,k)
 	if DPSMateSettings["informativetooltips"] then
 		for i=1, DPSMateSettings["subviewrows"] do
 			if not a[i] then break end
-			GameTooltip:AddDoubleLine(i..". "..DPSMate:GetUserById(a[i]),c[i][1].." ("..string.format("%.2f", 100*c[i][1]/b).."%)",1,1,1,1,1,1)
+			GameTooltip:AddDoubleLine(i..". "..DPSMate:GetUserById(a[i]),c[i][1].." ("..strformat("%.2f", 100*c[i][1]/b).."%)",1,1,1,1,1,1)
 			for p=1, 3 do 
 				if not c[i][2][p] or c[i][3][p]==0 then break end
-				GameTooltip:AddDoubleLine("       "..p..". "..DPSMate:GetAbilityById(c[i][2][p]),c[i][3][p].." ("..string.format("%.2f", 100*c[i][3][p]/c[i][1]).."%)",0.5,0.5,0.5,0.5,0.5,0.5)
+				GameTooltip:AddDoubleLine("       "..p..". "..DPSMate:GetAbilityById(c[i][2][p]),c[i][3][p].." ("..strformat("%.2f", 100*c[i][3][p]/c[i][1]).."%)",0.5,0.5,0.5,0.5,0.5,0.5)
 			end
 		end
 	end

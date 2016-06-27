@@ -13,7 +13,7 @@ function DPSMate.Modules.DetailsCasts:UpdateDetails(obj, key)
 	curKey = key
 	db, cbt = DPSMate:GetMode(key)
 	DetailsUser = obj.user
-	DPSMate_Details_Casts_Title:SetText("Casts of "..obj.user)
+	DPSMate_Details_Casts_Title:SetText(DPSMate.L["castsof"]..obj.user)
 	Buffpos = 0
 	self:CleanTables()
 	self:UpdateBuffs()

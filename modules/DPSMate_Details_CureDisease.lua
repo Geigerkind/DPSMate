@@ -7,12 +7,15 @@ local g, g2
 local curKey = 1
 local db, cbt = {}, 0
 local _G = getglobal
+local tinsert = table.insert
+local strformat = string.format
 
 function DPSMate.Modules.DetailsCureDisease:UpdateDetails(obj, key)
 	curKey = key
 	db, cbt = DPSMate:GetMode(key)
 	DetailsUser = obj.user
-	DPSMate_Details_CureDisease_Title:SetText("Disease cured by "..obj.user)
+	DPSMate_Details_CureDisease_Title:SetText(DPSMate.L["diseasecuredby"]..obj.user)
+	DetailsArr, DetailsTotal, DmgArr = DPSMate.Modules.DetailsCureDisease:EvalTable()
 	DPSMate_Details_CureDisease:Show()
 	self:ScrollFrame_Update()
 	self:SelectCreatureButton(1)
@@ -27,18 +30,18 @@ function DPSMate.Modules.DetailsCureDisease:EvalTable()
 			for ca, va in pairs(val) do
 				local taa, tbb, CVV = {}, {}, 0
 				for c, v in pairs(va) do
-					if DPSMateAbility[DPSMate:GetAbilityById(c)][2]=="Disease" then -- Performance can be increased here
+					if DPSMate.Modules.CureDisease:IsValid(DPSMate:GetAbilityById(c), DPSMate:GetAbilityById(cat)) then
 						CVV = CVV + v
 						local i = 1
 						while true do
 							if (not tbb[i]) then
-								table.insert(tbb, i, v)
-								table.insert(taa, i, c)
+								tinsert(tbb, i, v)
+								tinsert(taa, i, c)
 								break
 							else
 								if tbb[i] < v then
-									table.insert(tbb, i, v)
-									table.insert(taa, i, c)
+									tinsert(tbb, i, v)
+									tinsert(taa, i, c)
 									break
 								end
 							end
@@ -49,13 +52,13 @@ function DPSMate.Modules.DetailsCureDisease:EvalTable()
 				local i = 1
 				while true do
 					if (not tb[i]) then
-						table.insert(tb, i, {CVV, taa, tbb})
-						table.insert(ta, i, ca)
+						tinsert(tb, i, {CVV, taa, tbb})
+						tinsert(ta, i, ca)
 						break
 					else
 						if tb[i][1] < CVV then
-							table.insert(tb, i, {CVV, taa, tbb})
-							table.insert(ta, i, ca)
+							tinsert(tb, i, {CVV, taa, tbb})
+							tinsert(ta, i, ca)
 							break
 						end
 					end
@@ -67,13 +70,13 @@ function DPSMate.Modules.DetailsCureDisease:EvalTable()
 				local i = 1
 				while true do
 					if (not b[i]) then
-						table.insert(b, i, {CV, ta, tb})
-						table.insert(a, i, cat)
+						tinsert(b, i, {CV, ta, tb})
+						tinsert(a, i, cat)
 						break
 					else
 						if b[i][1] < CV then
-							table.insert(b, i, {CV, ta, tb})
-							table.insert(a, i, cat)
+							tinsert(b, i, {CV, ta, tb})
+							tinsert(a, i, cat)
 							break
 						end
 					end
@@ -88,9 +91,8 @@ end
 
 function DPSMate.Modules.DetailsCureDisease:ScrollFrame_Update()
 	local line, lineplusoffset
-	local obj = _G("DPSMate_Details_CureDisease_Log_ScrollFrame")
+	local obj = DPSMate_Details_CureDisease_Log_ScrollFrame
 	local path = "DPSMate_Details_CureDisease_Log_ScrollButton"
-	DetailsArr, DetailsTotal, DmgArr = DPSMate.Modules.DetailsCureDisease:EvalTable()
 	local len = DPSMate:TableLength(DetailsArr)
 	FauxScrollFrame_Update(obj,len,14,24)
 	for line=1,14 do
@@ -98,7 +100,7 @@ function DPSMate.Modules.DetailsCureDisease:ScrollFrame_Update()
 		if DetailsArr[lineplusoffset] ~= nil then
 			local ability = DPSMate:GetAbilityById(DetailsArr[lineplusoffset])
 			_G(path..line.."_Name"):SetText(ability)
-			_G(path..line.."_Value"):SetText(DmgArr[lineplusoffset][1].." ("..string.format("%.2f", 100*DmgArr[lineplusoffset][1]/DetailsTotal).."%)")
+			_G(path..line.."_Value"):SetText(DmgArr[lineplusoffset][1].." ("..strformat("%.2f", 100*DmgArr[lineplusoffset][1]/DetailsTotal).."%)")
 			_G(path..line.."_Icon"):SetTexture(DPSMate.BabbleSpell:GetSpellIcon(strsub(ability, 1, (strfind(ability, "%(") or 0)-1) or ability))
 			if len < 14 then
 				_G(path..line):SetWidth(235)
@@ -117,7 +119,7 @@ end
 
 function DPSMate.Modules.DetailsCureDisease:SelectCreatureButton(i)
 	local line, lineplusoffset
-	local obj = _G("DPSMate_Details_CureDisease_LogTwo_ScrollFrame")
+	local obj = DPSMate_Details_CureDisease_LogTwo_ScrollFrame
 	obj.index = i
 	local path = "DPSMate_Details_CureDisease_LogTwo_ScrollButton"
 	local len = DPSMate:TableLength(DmgArr[i][2])
@@ -129,7 +131,7 @@ function DPSMate.Modules.DetailsCureDisease:SelectCreatureButton(i)
 			local r,g,b,img = DPSMate:GetClassColor(DPSMateUser[user][2])
 			_G(path..line.."_Name"):SetText(user)
 			_G(path..line.."_Name"):SetTextColor(r,g,b)
-			_G(path..line.."_Value"):SetText(DmgArr[i][3][lineplusoffset][1].." ("..string.format("%.2f", 100*DmgArr[i][3][lineplusoffset][1]/DmgArr[i][1]).."%)")
+			_G(path..line.."_Value"):SetText(DmgArr[i][3][lineplusoffset][1].." ("..strformat("%.2f", 100*DmgArr[i][3][lineplusoffset][1]/DmgArr[i][1]).."%)")
 			_G(path..line.."_Icon"):SetTexture("Interface\\AddOns\\DPSMate\\images\\class\\"..img)
 			if len < 14 then
 				_G(path..line):SetWidth(235)
@@ -154,7 +156,7 @@ end
 
 function DPSMate.Modules.DetailsCureDisease:SelectCreatureAbilityButton(i, p)
 	local line, lineplusoffset
-	local obj = _G("DPSMate_Details_CureDisease_LogThree_ScrollFrame")
+	local obj = DPSMate_Details_CureDisease_LogThree_ScrollFrame
 	obj.index = i
 	local path = "DPSMate_Details_CureDisease_LogThree_ScrollButton"
 	local len = DPSMate:TableLength(DmgArr[i][3][p][2])
@@ -164,7 +166,7 @@ function DPSMate.Modules.DetailsCureDisease:SelectCreatureAbilityButton(i, p)
 		if DmgArr[i][3][p][2][lineplusoffset] ~= nil then
 			local ability = DPSMate:GetAbilityById(DmgArr[i][3][p][2][lineplusoffset])
 			_G(path..line.."_Name"):SetText(ability)
-			_G(path..line.."_Value"):SetText(DmgArr[i][3][p][3][lineplusoffset].." ("..string.format("%.2f", 100*DmgArr[i][3][p][3][lineplusoffset]/DmgArr[i][3][p][1]).."%)")
+			_G(path..line.."_Value"):SetText(DmgArr[i][3][p][3][lineplusoffset].." ("..strformat("%.2f", 100*DmgArr[i][3][p][3][lineplusoffset]/DmgArr[i][3][p][1]).."%)")
 			_G(path..line.."_Icon"):SetTexture(DPSMate.BabbleSpell:GetSpellIcon(strsub(ability, 1, (strfind(ability, "%(") or 0)-1) or ability))
 			if len < 14 then
 				_G(path..line):SetWidth(235)

@@ -4,15 +4,17 @@ DPSMate.Modules.DamageTaken.Hist = "DMGTaken"
 DPSMate.Options.Options[1]["args"]["damagetaken"] = {
 	order = 30,
 	type = 'toggle',
-	name = DPSMate.localization.config.damagetaken,
-	desc = "Show Damage taken.",
+	name = DPSMate.L["damagetaken"],
+	desc = DPSMate.L["show"].." "..DPSMate.L["damagetaken"]..".",
 	get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["options"][1]["damagetaken"] end,
 	set = function() DPSMate.Options:ToggleDrewDrop(1, "damagetaken", DPSMate.Options.Dewdrop:GetOpenedParent()) end,
 }
 
 -- Register the moodule
-DPSMate:Register("damagetaken", DPSMate.Modules.DamageTaken, "Damage taken")
+DPSMate:Register("damagetaken", DPSMate.Modules.DamageTaken, DPSMate.L["damagetaken"])
 
+local tinsert = table.insert
+local strformat = string.format
 
 function DPSMate.Modules.DamageTaken:GetSortedTable(arr,k)
 	local b, a, total = {}, {}, 0
@@ -21,13 +23,13 @@ function DPSMate.Modules.DamageTaken:GetSortedTable(arr,k)
 			local i = 1
 			while true do
 				if (not b[i]) then
-					table.insert(b, i, v["i"][2])
-					table.insert(a, i, c)
+					tinsert(b, i, v["i"][2])
+					tinsert(a, i, c)
 					break
 				else
 					if b[i] < v["i"][2] then
-						table.insert(b, i, v["i"][2])
-						table.insert(a, i, c)
+						tinsert(b, i, v["i"][2])
+						tinsert(a, i, c)
 						break
 					end
 				end
@@ -52,13 +54,13 @@ function DPSMate.Modules.DamageTaken:EvalTable(user, k)
 					local i = 1
 					while true do
 						if (not tb[i]) then
-							table.insert(ta, i, ca)
-							table.insert(tb, i, va[13])
+							tinsert(ta, i, ca)
+							tinsert(tb, i, va[13])
 							break
 						else
 							if (tb[i] < va[13]) then
-								table.insert(ta, i, ca)
-								table.insert(tb, i, va[13])
+								tinsert(ta, i, ca)
+								tinsert(tb, i, va[13])
 								break
 							end
 						end
@@ -69,13 +71,13 @@ function DPSMate.Modules.DamageTaken:EvalTable(user, k)
 			local i = 1
 			while true do
 				if (not d[i]) then
-					table.insert(a, i, cat)
-					table.insert(d, i, {CV, ta, tb})
+					tinsert(a, i, cat)
+					tinsert(d, i, {CV, ta, tb})
 					break
 				else
 					if (d[i][1] < CV) then
-						table.insert(a, i, cat)
-						table.insert(d, i, {CV, ta, tb})
+						tinsert(a, i, cat)
+						tinsert(d, i, {CV, ta, tb})
 						break
 					end
 				end
@@ -86,20 +88,22 @@ function DPSMate.Modules.DamageTaken:EvalTable(user, k)
 	return a, arr[user[1]]["i"][2], d
 end
 
-function DPSMate.Modules.DamageTaken:GetSettingValues(arr, cbt, k)
+function DPSMate.Modules.DamageTaken:GetSettingValues(arr, cbt, k,ecbt)
 	local name, value, perc, sortedTable, total, a, p, strt = {}, {}, {}, {}, 0, 0, "", {[1]="",[2]=""}
 	if DPSMateSettings["windows"][k]["numberformat"] == 2 then p = "K" end
 	sortedTable, total, a = DPSMate.Modules.DamageTaken:GetSortedTable(arr,k)
 	for cat, val in pairs(sortedTable) do
 		local dmg, tot, sort = DPSMate:FormatNumbers(val, total, sortedTable[1], k)
 		if dmg==0 then break end
-		local str = {[1]="",[2]="",[3]=""}
+		local str = {[1]="",[2]="",[3]="",[4]=""}
+		local pname = DPSMate:GetUserById(a[cat])
 		if DPSMateSettings["columnsdmgtaken"][1] then str[1] = " "..dmg..p; strt[2] = " "..tot..p end
-		if DPSMateSettings["columnsdmgtaken"][2] then str[3] = "("..string.format("%.1f", dmg/cbt)..")"; strt[1] = "("..string.format("%.1f", tot/cbt)..")" end
-		if DPSMateSettings["columnsdmgtaken"][3] then str[2] = " ("..string.format("%.1f", 100*dmg/tot).."%)" end 
-		table.insert(name, DPSMate:GetUserById(a[cat]))
-		table.insert(value, str[3]..str[1]..str[2])
-		table.insert(perc, 100*(dmg/sort))
+		if DPSMateSettings["columnsdmgtaken"][2] then str[3] = "("..strformat("%.1f", dmg/cbt)..")"; strt[1] = "("..strformat("%.1f", tot/cbt)..")" end
+		if DPSMateSettings["columnsdmgtaken"][3] then str[2] = " ("..strformat("%.1f", 100*dmg/tot).."%)" end 
+		if DPSMateSettings["columnsdmg"][4] then str[4] = " ("..strformat("%.1f", dmg/(ecbt[pname] or cbt))..p..")" end
+		tinsert(name, pname)
+		tinsert(value, str[3]..str[1]..str[4]..str[2])
+		tinsert(perc, 100*(dmg/sort))
 	end
 	return name, value, perc, strt
 end
@@ -109,10 +113,10 @@ function DPSMate.Modules.DamageTaken:ShowTooltip(user, k)
 	if DPSMateSettings["informativetooltips"] then
 		for i=1, DPSMateSettings["subviewrows"] do
 			if not a[i] then break end
-			GameTooltip:AddDoubleLine(i..". "..DPSMate:GetUserById(a[i]),c[i][1].." ("..string.format("%.2f", 100*c[i][1]/b).."%)",1,1,1,1,1,1)
+			GameTooltip:AddDoubleLine(i..". "..DPSMate:GetUserById(a[i]),c[i][1].." ("..strformat("%.2f", 100*c[i][1]/b).."%)",1,1,1,1,1,1)
 			for p=1, 3 do 
 				if not c[i][2][p] or c[i][3][p]==0 then break end
-				GameTooltip:AddDoubleLine("       "..p..". "..DPSMate:GetAbilityById(c[i][2][p]),c[i][3][p].." ("..string.format("%.2f", 100*c[i][3][p]/c[i][1]).."%)",0.5,0.5,0.5,0.5,0.5,0.5)
+				GameTooltip:AddDoubleLine("       "..p..". "..DPSMate:GetAbilityById(c[i][2][p]),c[i][3][p].." ("..strformat("%.2f", 100*c[i][3][p]/c[i][1]).."%)",0.5,0.5,0.5,0.5,0.5,0.5)
 			end
 		end
 	end

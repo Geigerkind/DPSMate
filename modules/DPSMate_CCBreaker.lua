@@ -4,17 +4,17 @@ DPSMate.Modules.CCBreaker.Hist = "CCBreaker"
 DPSMate.Options.Options[1]["args"]["ccbreaker"] = {
 	order = 310,
 	type = 'toggle',
-	name = "CCBreaker",
-	desc = "Show ccbreaker.",
+	name = DPSMate.L["ccbreaker"],
+	desc = DPSMate.L["show"].." "..DPSMate.L["ccbreaker"]..".",
 	get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["options"][1]["ccbreaker"] end,
 	set = function() DPSMate.Options:ToggleDrewDrop(1, "ccbreaker", DPSMate.Options.Dewdrop:GetOpenedParent()) end,
 }
 
 -- Register the moodule
-DPSMate:Register("ccbreaker", DPSMate.Modules.CCBreaker, "CCBreaker")
+DPSMate:Register("ccbreaker", DPSMate.Modules.CCBreaker, DPSMate.L["ccbreaker"])
 
 local tinsert = table.insert
-
+local strformat = string.format
 
 function DPSMate.Modules.CCBreaker:GetSortedTable(arr, k)
 	local b, a, total = {}, {}, 0
@@ -79,7 +79,7 @@ function DPSMate.Modules.CCBreaker:GetSettingValues(arr, cbt, k)
 		if dmg==0 then break end
 		local str = {[1]="",[2]="",[3]=""}
 		if DPSMateSettings["columnsccbreaker"][1] then str[1] = " "..dmg..p; strt[2] = tot..p end
-		if DPSMateSettings["columnsccbreaker"][2] then str[3] = " ("..string.format("%.1f", 100*dmg/tot).."%)" end
+		if DPSMateSettings["columnsccbreaker"][2] then str[3] = " ("..strformat("%.1f", 100*dmg/tot).."%)" end
 		tinsert(name, a[cat])
 		tinsert(value, str[2]..str[1]..str[3])
 		tinsert(perc, 100*(dmg/sort))
@@ -92,7 +92,7 @@ function DPSMate.Modules.CCBreaker:ShowTooltip(user,k)
 	if DPSMateSettings["informativetooltips"] then
 		for i=1, DPSMateSettings["subviewrows"] do
 			if not a[i] then break end
-			GameTooltip:AddDoubleLine(i..". "..DPSMate:GetAbilityById(a[i]),c[i].." ("..string.format("%.2f", 100*c[i]/b).."%)",1,1,1,1,1,1)
+			GameTooltip:AddDoubleLine(i..". "..DPSMate:GetAbilityById(a[i]),c[i].." ("..strformat("%.2f", 100*c[i]/b).."%)",1,1,1,1,1,1)
 		end
 	end
 end

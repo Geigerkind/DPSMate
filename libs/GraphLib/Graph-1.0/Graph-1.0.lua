@@ -81,7 +81,8 @@ function lib:CreateGraphRealtime(name,parent,relative,relativeTo,offsetX,offsetY
 	graph.DrawLine=self.DrawLine
 	graph.HideLines=self.HideLines
 	graph.HideFontStrings=GraphFunctions.HideFontStrings
-
+	graph.FindFontString=GraphFunctions.FindFontString
+	graph.ShowFontStrings=GraphFunctions.ShowFontStrings
 
 	--Set the update function
 
@@ -92,6 +93,9 @@ function lib:CreateGraphRealtime(name,parent,relative,relativeTo,offsetX,offsetY
 	graph.XMax=-0.75
 	graph.XMin=-10
 	graph.TimeRadius=0.5
+	graph.XGridInterval=0.25
+	graph.YGridInterval=0.25
+	graph.YLabelsLeft = true
 	graph.Mode="FAST"
 	graph.Filter="RECT"
 	graph.AxisColor={1.0,1.0,1.0,1.0}
@@ -157,6 +161,7 @@ function lib:CreateGraphLine(name,parent,relative,relativeTo,offsetX,offsetY,Wid
 
 	--Set the update function
 	graph:SetScript("OnUpdate", graph.OnUpdate)
+	
 	graph.NeedsUpdate=false
 
 
@@ -305,7 +310,87 @@ function lib:CreateGraphPieChart(name,parent,relative,relativeTo,offsetX,offsetY
 	return graph
 end
 
+-- Stacked Graphs
+-- By Shino <Kronos>
+-- Aka Geigerkind 
+-- Tom D. 
+-- http://legacy-logs.com
+-- <mail@legacy-logs.com>
+function lib:CreateStackedGraph(name,parent,relative,relativeTo,offsetX,offsetY,Width,Height)
+	local graph
+	local i
+	graph = CreateFrame("Frame",name,parent)
 
+	
+	graph:SetPoint(relative,parent,relativeTo,offsetX,offsetY)
+	graph:SetWidth(Width)
+	graph:SetHeight(Height)
+	graph:Show()
+
+
+	
+	
+	--Set the various functions
+	graph.SetXAxis=GraphFunctions.SetXAxis
+	graph.SetYAxis=GraphFunctions.SetYAxis
+	graph.AddDataSeries=GraphFunctions.AddDataSeries
+	graph.ResetData=GraphFunctions.ResetData
+	graph.RefreshGraph=GraphFunctions.RefreshStackedGraph
+	graph.CreateGridlines=GraphFunctions.CreateGridlines
+	graph.SetAxisDrawing=GraphFunctions.SetAxisDrawing
+	graph.SetGridSpacing=GraphFunctions.SetGridSpacing
+	graph.SetAxisColor=GraphFunctions.SetAxisColor
+	graph.SetGridColor=GraphFunctions.SetGridColor	
+	graph.SetAutoScale=GraphFunctions.SetAutoScale
+	graph.SetYLabels=GraphFunctions.SetYLabels
+	graph.SetXLabels=GraphFunctions.SetXLabels
+	graph.OnUpdate=GraphFunctions.OnUpdateGraph
+
+	graph.LockXMin=GraphFunctions.LockXMin
+	graph.LockXMax=GraphFunctions.LockXMax
+	graph.LockYMin=GraphFunctions.LockYMin
+	graph.LockYMax=GraphFunctions.LockYMax
+	
+
+
+	graph.DrawLine=self.DrawLine
+	graph.DrawBar=self.DrawBar
+	graph.HideLines=self.HideLines
+	graph.HideBars=self.HideBars
+	graph.HideFontStrings=GraphFunctions.HideFontStrings
+	graph.FindFontString=GraphFunctions.FindFontString
+	graph.ShowFontStrings=GraphFunctions.ShowFontStrings
+
+	--Set the update function
+	graph:SetScript("OnUpdate", graph.OnUpdate)
+	
+	graph.NeedsUpdate=false
+
+
+	--Initialize Data
+	graph.GraphType="STACKED"
+	graph.YMax=1
+	graph.YMin=-1
+	graph.XMax=1
+	graph.XMin=-1
+	graph.AxisColor={1.0,1.0,1.0,1.0}
+	graph.GridColor={0.5,0.5,0.5,0.5}
+	graph.XGridInterval=0.25
+	graph.YGridInterval=0.25
+	graph.XAxisDrawn=true
+	graph.YAxisDrawn=true
+	
+	graph.LockOnXMin=false
+	graph.LockOnXMax=false
+	graph.LockOnYMin=false
+	graph.LockOnYMax=false
+	graph.Data={}
+	graph.DataPoints={}
+
+	
+	
+	return graph
+end
 
 
 
@@ -363,13 +448,13 @@ end
 --Functions for Line Graph Data
 -------------------------------------------------------------------------------
 
-function GraphFunctions:AddDataSeries(points,color,Dp)
+function GraphFunctions:AddDataSeries(points,color,Dp,label)
 	--Make sure there is data points
 	if not points then
 		return
 	end
 	
-	table.insert(self.Data,{Points=points;Color=color})
+	table.insert(self.Data,{Points=points;Color=color;Label=label})
 	self.DataPoints = Dp
 	
 	self.NeedsUpdate=true
@@ -878,13 +963,14 @@ function GraphFunctions:CreateGridlines()
 		UpperYGridLine=self.YMax/self.YGridInterval
 		UpperYGridLine=math.min(math.floor(UpperYGridLine),math.ceil(UpperYGridLine))
 		TopSpace=Height*(1-(UpperYGridLine*self.YGridInterval-self.YMin)/(self.YMax-self.YMin))
+		
+		local alpha = 0
 		for i=LowerYGridLine,UpperYGridLine do
 			if i~=0 or not self.YAxisDrawn then
 				local YPos,T,F
 				YPos=Height*(i*self.YGridInterval-self.YMin)/(self.YMax-self.YMin)
 				T=self:DrawLine(self,0,YPos,Width,YPos,24,self.GridColor,"BACKGROUND")
-
-				if ((i~=UpperYGridLine) or (TopSpace>12)) then
+				if (((i~=UpperYGridLine) or (TopSpace>12))) and alpha==ceil(((UpperYGridLine-LowerYGridLine)/5)) then
 					if self.YLabelsLeft then
 						F=self:FindFontString()
 						F:SetFontObject("GameFontHighlightSmall")
@@ -904,8 +990,9 @@ function GraphFunctions:CreateGridlines()
 						F:SetText(i*self.YGridInterval)
 						F:Show()
 					end
-					
+					alpha = 0
 				end
+				alpha = alpha+1
 			end
 		end
 	end
@@ -1110,7 +1197,7 @@ end
 function GraphFunctions:RefreshLineGraph()
 	local k1, k2, series
 	self:HideLines(self)
-
+	
 	if self.AutoScale and self.Data then -- math.huge not implemented
 		local MinX, MaxX, MinY, MaxY = 1, -3, 200, -900
 		for k1, series in pairs(self.Data) do
@@ -1158,9 +1245,9 @@ function GraphFunctions:RefreshLineGraph()
 				TPoint.y=Height*(TPoint.y-self.YMin)/(self.YMax-self.YMin)
 				
 				if point[3] then
-					self:DrawLine(self,LastPoint.x,LastPoint.y,TPoint.x,TPoint.y,32,series.Color[2])
+					self:DrawLine(self,LastPoint.x,LastPoint.y,TPoint.x,TPoint.y,32,series.Color[2],nil,point)
 				else
-					self:DrawLine(self,LastPoint.x,LastPoint.y,TPoint.x,TPoint.y,32,series.Color[1])
+					self:DrawLine(self,LastPoint.x,LastPoint.y,TPoint.x,TPoint.y,32,series.Color[1],nil,point)
 				end
 
 				LastPoint=TPoint
@@ -1274,7 +1361,98 @@ function GraphFunctions:RefreshScatterPlot()
 	end
 end
 
+-- Stacked Graph
+function GraphFunctions:RefreshStackedGraph()
+	local k1, k2, series
+	self:HideLines(self)
+	self:HideBars(self)
+	
+	-- Format table
+	local p = {}
+	for k1, series in pairs(self.Data) do
+		for c,v in pairs(series.Points) do
+			for k2, point in pairs(v) do
+				point[1] = tonumber(string.format("%.1f",point[1]))
+				if p[point[1]] then
+					point[2] = point[2] + p[point[1]]
+					p[point[1]] = p[point[1]] + point[2]
+				else
+					p[point[1]] = point[2]
+				end
+			end
+		end
+	end
+	
+	if self.AutoScale and self.Data then -- math.huge not implemented
+		local MinX, MaxX, MinY, MaxY = 1, -3, 200, -900
+		for k1, series in pairs(self.Data) do
+			for c,v in series.Points do
+				for k2, point in v do
+					MinX=math.min(point[1],MinX)
+					MaxX=math.max(point[1],MaxX)
+					MinY=math.min(point[2],MinY)
+					MaxY=math.max(point[2],MaxY)
+				end
+			end
+		end
 
+		local XBorder, YBorder
+
+		XBorder=0.05*(MaxX-MinX)
+		YBorder=0.1*(MaxY-MinY)
+		
+		if not self.LockOnXMin then
+			self.XMin=MinX-XBorder
+		end
+		if not self.LockOnXMax then
+			self.XMax=MaxX
+		end
+		if not self.LockOnYMin then
+			self.YMin=MinY-YBorder
+		end
+		if not self.LockOnYMax then
+			self.YMax=MaxY+YBorder
+		end
+	end
+	
+	self:CreateGridlines()
+	
+	local Width=self:GetWidth()
+	local Height=self:GetHeight()
+	
+	for k1, series in pairs(self.Data) do
+		for c,v in series.Points do
+			local LastPoint
+			LastPoint=nil
+			for k2, point in pairs(v) do
+				if LastPoint then
+					local TPoint={x=point[1];y=point[2]}
+					
+					--DPSMate:SendMessage((TPoint.x or 0).."/"..(TPoint.y or 0))
+
+					TPoint.x=Width*(TPoint.x-self.XMin)/(self.XMax-self.XMin)
+					TPoint.y=Height*(TPoint.y-self.YMin)/(self.YMax-self.YMin)
+					
+					self:DrawLine(self,LastPoint.x,LastPoint.y,TPoint.x,TPoint.y,32,ColorTable[c],nil,point,series.Label[c])
+					local alphaX = (TPoint.x-LastPoint.x)/1
+					local alphaY = (TPoint.y-LastPoint.y)/1
+					local alphaLastX, alphaLastY
+					for i=1, 1 do
+						self:DrawBar(self, alphaLastX or LastPoint.x, alphaLastY or LastPoint.y, LastPoint.x+alphaX*i, LastPoint.y+alphaY*i, ColorTable[c], c, series.Label[c])
+						alphaLastX = LastPoint.x+alphaX*i
+						alphaLastY = LastPoint.y+alphaY*i
+					end
+
+					LastPoint=TPoint
+				else
+					LastPoint={x=point[1];y=point[2]}
+					LastPoint.x=Width*(LastPoint.x-self.XMin)/(self.XMax-self.XMin)
+					LastPoint.y=Height*(LastPoint.y-self.YMin)/(self.YMax-self.YMin)
+				end
+			end
+		end
+	end
+end
 
 
 
@@ -1294,8 +1472,8 @@ local TAXIROUTE_LINEFACTOR_2 = TAXIROUTE_LINEFACTOR / 2; -- Half o that
 -- ex,ey    - Coordinate of end of line
 -- w        - Width of line
 -- relPoint - Relative point on canvas to interpret coords (Default BOTTOMLEFT)
-function lib:DrawLine(C, sx, sy, ex, ey, w, color, layer)
-	local T, lineNum, relPoint;
+function lib:DrawLine(C, sx, sy, ex, ey, w, color, layer, point, label)
+	local T, lineNum, relPoint, P;
 	if (not relPoint) then relPoint = "BOTTOMLEFT"; end
 
 
@@ -1306,19 +1484,48 @@ function lib:DrawLine(C, sx, sy, ex, ey, w, color, layer)
 	T=nil;
 
 	for k,v in pairs(C.GraphLib_Lines) do
-		if not v:IsShown() and not T then
-			T=v;
+		if not v[1]:IsShown() and not T then
+			T=v[1];
+			P=v[2];
 			lineNum=k;
+			P:Show();
 			T:Show();		
 		end
 	end
-
-	if not T then
-		T=C:CreateTexture(C:GetName().."_Line"..(getn(C.GraphLib_Lines)+1), "ARTWORK");
-		T:SetTexture(TextureDirectory.."line");
-		tinsert(C.GraphLib_Lines,T);
+	
+	if point and T then
+		T.val = ceil(point[2])
 	end
 
+	if not T then
+		P = CreateFrame("Frame", C:GetName().."_LineTT"..(getn(C.GraphLib_Lines)+1), C)
+		P:SetHeight(10)
+		P:SetWidth(10)
+		P:EnableMouse(true)
+		
+		P:SetScript("OnEnter", function()
+			if T.val then
+				GameTooltip:SetOwner(P)
+				GameTooltip:AddLine("Value: "..T.val)
+				if label then
+					GameTooltip:AddLine("Label: "..label)
+				end
+				GameTooltip:Show()
+			end
+		end)
+		P:SetScript("OnLeave", function()
+			if T.val then
+				GameTooltip:Hide()
+			end
+		end)
+		T=C:CreateTexture(C:GetName().."_Line"..(getn(C.GraphLib_Lines)+1), "ARTWORK");
+		T:SetTexture(TextureDirectory.."line");
+		if point then
+			T.val = ceil(point[2])
+		end
+		tinsert(C.GraphLib_Lines,{[1]=T,[2]=P});
+	end
+	
 	if layer then
 		T:SetDrawLayer(layer)
 	end
@@ -1367,17 +1574,162 @@ function lib:DrawLine(C, sx, sy, ex, ey, w, color, layer)
 	T:SetTexCoord(TLx, TLy, BLx, BLy, TRx, TRy, BRx, BRy);
 	T:SetPoint("BOTTOMLEFT", C, relPoint, cx - Bwid, cy - Bhgt);
 	T:SetPoint("TOPRIGHT",	C, relPoint, cx + Bwid, cy + Bhgt);
+	P:ClearAllPoints();
+	--P:SetPoint("BOTTOMLEFT", C, relPoint, cx - Bwid, cy - Bhgt);
+	P:SetPoint("TOPRIGHT",	C, relPoint, cx + Bwid -10, cy + Bhgt);
 
 	return T
 end
 
-function lib:HideLines(C)
-	if not C.GraphLib_Lines then
-		return
+function lib:DrawBar(C, sx, sy, ex, ey, color, level, label)
+	local Bar, Tri, barNum, MinY, MaxY, P
+
+	--Want sx <= ex if not then flip them
+	if sx > ex then
+		sx, ex = ex, sx
+		sy, ey = ey, sy
 	end
 
-	for k,v in pairs(C.GraphLib_Lines) do
-		v:Hide()
+	if not C.GraphLib_Bars then
+		C.GraphLib_Bars = {}
+		C.GraphLib_Tris = {}
+		C.GraphLib_Bars_Used = {}
+		C.GraphLib_Tris_Used = {}
+		C.GraphLib_Frames = {}
+	end
+	
+	local bars = getn(C.GraphLib_Bars)
+	if bars > 0 then
+		local tris = getn(C.GraphLib_Tris)
+		Bar = C.GraphLib_Bars[bars][1]
+		tremove(C.GraphLib_Bars, bars)
+		Bar:Show()
+		
+		--P = C.GraphLib_Bars[bars][2]
+		--P:Show()
+
+		Tri = C.GraphLib_Tris[tris]
+		tremove(C.GraphLib_Tris, tris)
+		Tri:Show()
+	end
+
+	if not Bar then
+		--P = CreateFrame("Frame", C:GetName().."_AreaTT"..(getn(C.GraphLib_Bars)+1), C)
+		--P:SetHeight(10)
+		--P:SetWidth(10)
+		--P:EnableMouse(true)
+		
+		--P:SetScript("OnEnter", function()
+			--if label then
+			--	GameTooltip:SetOwner(P)
+			--	GameTooltip:AddLine("Label: "..label)
+			--	GameTooltip:Show()
+			--end
+		--end)
+	--	P:SetScript("OnLeave", function()
+		--	if label then
+		--		GameTooltip:Hide()
+		--	end
+		--end)
+		Bar = C:CreateTexture(nil, "ARTWORK")
+		Bar:SetTexture(1, 1, 1, 1)
+
+		Tri = C:CreateTexture(nil, "ARTWORK")
+		Tri:SetTexture(TextureDirectory.."triangle")
+	end
+
+	tinsert(C.GraphLib_Bars_Used, {Bar})
+	tinsert(C.GraphLib_Tris_Used, Tri)
+
+	if level then
+		if type(C.GraphLib_Frames[level]) == "nil" then
+			local newLevel = 100 - level
+			C.GraphLib_Frames[level] = CreateFrame("Frame", nil, C)
+			C.GraphLib_Frames[level]:SetFrameLevel(newLevel)
+			C.GraphLib_Frames[level]:SetAllPoints(C)
+
+			if C.TextFrame and C.TextFrame:GetFrameLevel() <= newLevel then
+				C.TextFrame:SetFrameLevel(newLevel + 1)
+				self.NeedsUpdate = true
+			end
+		end
+
+		Bar:SetParent(C.GraphLib_Frames[level])
+		Tri:SetParent(C.GraphLib_Frames[level])
+	end
+
+	Bar:SetVertexColor(color[1], color[2], color[3], color[4])
+	Tri:SetVertexColor(color[1], color[2], color[3], color[4])
+
+
+	if sy < ey then
+		Tri:SetTexCoord(0, 0, 0, 1, 1, 0, 1, 1)
+		MinY = sy
+		MaxY = ey
+	else
+		Tri:SetTexCoord(1, 0, 1, 1, 0, 0, 0, 1)
+		MinY = ey
+		MaxY = sy
+	end
+
+	--Has to be at least 1 wide
+	if MinY <= 1 then
+		MinY = 1
+	end
+	if self.xAxis then
+		local aa,bb,cc,dd,ee = self.xAxis:GetPoint()
+		local xAxisAlpha = dd-self.xAxis:GetWidth()
+	end
+	Bar:ClearAllPoints()
+	Bar:SetPoint("BOTTOMLEFT", C, "BOTTOMLEFT", sx, xAxisAlpha or 24)
+
+	local Width = ex - sx
+	if Width < 1 then
+		Width = 1
+	end
+	Bar:SetWidth(Width)
+	Bar:SetHeight(MinY-(xAxisAlpha or 24))
+
+
+	if (MaxY-MinY) >= 1 then
+		Tri:ClearAllPoints()
+		Tri:SetPoint("BOTTOMLEFT", C, "BOTTOMLEFT", sx, MinY)
+		Tri:SetWidth(Width)
+		Tri:SetHeight(MaxY - MinY)
+		--P:ClearAllPoints()
+		--P:SetPoint("BOTTOMLEFT", C, "BOTTOMLEFT", sx, MinY)
+		--P:SetWidth(Width)
+		--P:SetHeight(MaxY - MinY)
+	else
+		Tri:Hide()
+		--P:Hide()
+	end
+end
+
+function lib:HideBars(C)
+	if not C.GraphLib_Bars then
+		return
+	end
+	for cat, val in C.GraphLib_Bars do
+		val:Hide()
+		
+		C.GraphLib_Tris[cat]:Hide()
+	end
+	for cat, val in C.GraphLib_Bars_Used do
+		val[1]:Hide()
+	end
+	for cat, val in C.GraphLib_Tris_Used do
+		val:Hide()
+	end
+end
+
+function lib:HideLines(C)
+	if C.GraphLib_Lines then
+		for k,v in pairs(C.GraphLib_Lines) do
+			v[1]:Hide()
+			v[1].val = nil
+			v[2]:Hide()
+		end
 	end
 	
 	if not C.ppoints then
@@ -1412,8 +1764,75 @@ AceLibrary:Register(lib, major, minor)
 
 
 
-
-
+function TestStackedGraph()
+	local Graph=AceLibrary("Graph-1.0")
+	local g=Graph:CreateStackedGraph("TestStackedGraph",UIParent,"CENTER","CENTER",90,90,800,350)
+	
+	--local Data1={{{1,100},{1.2,110},{1.4,120},{1.6,130},{1.8,140},{2,150},{2.2,160},{2.4,170},{2.6,180},{2.8,190},{3,200},{3.2,190},{3.4,180},{3.6,170},{3.8,160},{4,150}},{{1,100},{1.2,110},{1.4,120},{1.6,130},{1.8,140},{2,150},{2.2,160},{2.4,170},{2.6,180},{2.8,190},{3,200},{3.2,190},{3.4,180},{3.6,170},{3.8,160},{4,150}}}
+	local Data1 = {}
+	local label = {}
+	local b = {}
+	for cat, val in DPSMateDamageDone[1][DPSMateUser["Shino"][1]] do
+		if cat~="i" and val["i"] then
+			local temp = {}
+			for c, v in val["i"] do
+				local i = 1
+				while true do
+					if not temp[i] then
+						table.insert(temp, i, {c,v})
+						break
+					elseif c<=temp[i][1] then
+						table.insert(temp, i, {c,v})
+						break
+					end
+					i = i + 1
+				end
+			end
+			local i = 1
+			while true do
+				if not b[i] then
+					table.insert(b, i, val[13])
+					table.insert(label, i, DPSMate:GetAbilityById(cat))
+					table.insert(Data1, i, temp)
+					break
+				elseif b[i]>=val[13] then
+					table.insert(b, i, val[13])
+					table.insert(label, i, DPSMate:GetAbilityById(cat))
+					table.insert(Data1, i, temp)
+					break
+				end
+				i = i + 1
+			end
+		end
+	end
+	-- Fill zero numbers
+	for cat, val in Data1 do
+		local alpha = 0
+		for ca, va in pairs(val) do
+			if alpha == 0 then
+				alpha = va[1]
+			else
+				if (va[1]-alpha)>5 then
+					table.insert(Data1[cat], ca, {alpha+3, 0})
+					table.insert(Data1[cat], ca+1, {va[1]-1, 0})
+				end
+				alpha = va[1]
+			end
+		end
+	end
+	
+	g:SetXAxis(0,300)
+	g:SetYAxis(0,4500)
+	g:SetGridSpacing(100,100)
+	g:SetGridColor({0.5,0.5,0.5,0.5})
+	g:SetAxisDrawing(true,true)
+	g:SetAxisColor({1.0,1.0,1.0,1.0})
+	g:SetAutoScale(true)
+	g:SetYLabels(true, false)
+	g:SetXLabels(true)
+	
+	g:AddDataSeries(Data1,{1.0,0.0,0.0,0.8}, {}, label)
+end
 
 
 --Test Functions

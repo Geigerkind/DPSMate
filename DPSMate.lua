@@ -1,11 +1,8 @@
--- Notes
--- Need to prevent scrolling if there is not enough statusbars
-
 -- Global Variables
 DPSMate = {}
-DPSMate.VERSION = 20
+DPSMate.VERSION = 22
 DPSMate.Parser = {}
-DPSMate.localization = {}
+DPSMate.L = AceLibrary("AceLocale-2.2")
 DPSMate.DB = {}
 DPSMate.Options = {}
 DPSMate.Sync = {}
@@ -95,6 +92,7 @@ local t = {}
 local tinsert = table.insert
 local strgsub = string.gsub
 local func = function(c) tinsert(t, c) end
+local strformat = string.format
 
 -- Begin functions
 
@@ -124,7 +122,7 @@ function DPSMate:SlashCMDHandler(msg)
 			if frame then
 				DPSMate.Options:Show(frame)
 			else
-				DPSMate:SendMessage("Following frames are available. If there is none type /config.")
+				DPSMate:SendMessage(DPSMate.L["framesavailable"])
 				for _, val in pairs(DPSMateSettings["windows"]) do
 					DPSMate:SendMessage("|c3ffddd80- "..val["name"].."|r")
 				end
@@ -134,21 +132,21 @@ function DPSMate:SlashCMDHandler(msg)
 			if frame then
 				DPSMate.Options:Hide(frame)
 			else
-				DPSMate:SendMessage("Following frames are available. If there is none type /config.")
+				DPSMate:SendMessage(DPSMate.L["framesavailable"])
 				for _, val in pairs(DPSMateSettings["windows"]) do
 					DPSMate:SendMessage("|c3ffddd80- "..val["name"].."|r")
 				end
 			end
 		else
-			DPSMate:SendMessage("|c3ffddd80About:|r A damage meter.")
-			DPSMate:SendMessage("|c3ffddd80Usage:|r /dps {lock|unlock|show|hide|config}")
-			DPSMate:SendMessage("|c3ffddd80- lock:|r Lock your windows.")
-			DPSMate:SendMessage("|c3ffddd80- unlock:|r Unlock your windows.")
-			DPSMate:SendMessage("|c3ffddd80- showAll:|r Show all windows.")
-			DPSMate:SendMessage("|c3ffddd80- hideAll:|r Hide all windows.")
-			DPSMate:SendMessage("|c3ffddd80- show {name}:|r Show the window with the name {name}.")
-			DPSMate:SendMessage("|c3ffddd80- hide {name}:|r Hide the window with the name {name}.")
-			DPSMate:SendMessage("|c3ffddd80- config:|r Opens the config menu.")
+			DPSMate:SendMessage(DPSMate.L["slashabout"])
+			DPSMate:SendMessage(DPSMate.L["slashusage"])
+			DPSMate:SendMessage(DPSMate.L["slashlock"])
+			DPSMate:SendMessage(DPSMate.L["slashunlock"])
+			DPSMate:SendMessage(DPSMate.L["slashshowAll"])
+			DPSMate:SendMessage(DPSMate.L["slashhideAll"])
+			DPSMate:SendMessage(DPSMate.L["slashshow"])
+			DPSMate:SendMessage(DPSMate.L["slashhide"])
+			DPSMate:SendMessage(DPSMate.L["slashconfig"])
 		end
 	end
 end
@@ -387,14 +385,14 @@ function DPSMate:ScaleDown(arr, start)
 end
 
 function DPSMate:SetStatusBarValue()
-	if not DPSMate:WindowsExist() or DPSMate.Options.TestMode then return end
-	DPSMate:HideStatusBars()
+	if not self:WindowsExist() or self.Options.TestMode then return end
+	self:HideStatusBars()
 	--DPSMate:SendMessage("Hidden!")
 	for k,c in DPSMateSettings.windows do
-		local arr, cbt = DPSMate:GetMode(k)
-		local user, val, perc, strt = DPSMate:GetSettingValues(arr,cbt,k)
+		local arr, cbt, ecbt = self:GetMode(k)
+		local user, val, perc, strt = self:GetSettingValues(arr,cbt,k,ecbt)
 		if DPSMateSettings["showtotals"] then
-			_G("DPSMate_"..c["name"].."_ScrollFrame_Child_Total_Name"):SetText("Total")
+			_G("DPSMate_"..c["name"].."_ScrollFrame_Child_Total_Name"):SetText(self.L["total"])
 			_G("DPSMate_"..c["name"].."_ScrollFrame_Child_Total_Value"):SetText(strt[1]..strt[2])
 		end
 		--DPSMate:SendMessage(c["name"])
@@ -406,7 +404,7 @@ function DPSMate:SetStatusBarValue()
 				local statusbar, name, value, texture, p = _G("DPSMate_"..c["name"].."_ScrollFrame_Child_StatusBar"..i), _G("DPSMate_"..c["name"].."_ScrollFrame_Child_StatusBar"..i.."_Name"), _G("DPSMate_"..c["name"].."_ScrollFrame_Child_StatusBar"..i.."_Value"), _G("DPSMate_"..c["name"].."_ScrollFrame_Child_StatusBar"..i.."_Icon"), ""
 				_G("DPSMate_"..c["name"].."_ScrollFrame_Child"):SetHeight((i+1)*(c["barheight"]+c["barspacing"]))
 				
-				local r,g,b,img = DPSMate:GetClassColor(user[i])
+				local r,g,b,img = self:GetClassColor(user[i])
 				statusbar:SetStatusBarColor(r,g,b, 1)
 				
 				if c["ranks"] then p=i..". " else p="" end
@@ -424,9 +422,9 @@ end
 
 function DPSMate:FormatNumbers(dmg,total,sort,k)
 	if DPSMateSettings["windows"][k]["numberformat"] == 2 then
-		dmg = string.format("%.1f", (dmg/1000))
-		total = string.format("%.1f", (total/1000))
-		sort = string.format("%.1f", (sort/1000))
+		dmg = strformat("%.1f", (dmg/1000))
+		total = strformat("%.1f", (total/1000))
+		sort = strformat("%.1f", (sort/1000))
 	end
 	return dmg, total, sort
 end
@@ -461,9 +459,9 @@ function DPSMate:ApplyFilter(key, name)
 	return false
 end
 
-function DPSMate:GetSettingValues(arr, cbt, k)
+function DPSMate:GetSettingValues(arr, cbt, k, ecbt)
 	k = k or 1
-	return DPSMate.RegistredModules[DPSMateSettings["windows"][k]["CurMode"]]:GetSettingValues(arr, cbt, k)
+	return DPSMate.RegistredModules[DPSMateSettings["windows"][k]["CurMode"]]:GetSettingValues(arr, cbt, k, ecbt)
 end
 
 function DPSMate:EvalTable(k)
@@ -491,9 +489,9 @@ function DPSMate:GetMode(k)
 		if val then
 			if strfind(cat, "segment") then
 				local num = tonumber(strsub(cat, 8))
-				return DPSMateHistory[Handler.Hist][num], DPSMateCombatTime["segments"][num]
+				return DPSMateHistory[Handler.Hist][num], DPSMateCombatTime["segments"][num][1], DPSMateCombatTime["segments"][num][2]
 			else
-				return result[cat][1], result[cat][2]
+				return result[cat][1], result[cat][2], DPSMateCombatTime["effective"][2]
 			end
 		end
 	end
@@ -505,9 +503,9 @@ function DPSMate:GetModeByArr(arr, k, Hist)
 		if val then
 			if strfind(cat, "segment") then
 				local num = tonumber(strsub(cat, 8))
-				return DPSMateHistory[Hist or arr.Hist][num], DPSMateCombatTime["segments"][num]
+				return DPSMateHistory[Hist or arr.Hist][num], DPSMateCombatTime["segments"][num][1], DPSMateCombatTime["segments"][num][2]
 			else
-				return result[cat][1], result[cat][2]
+				return result[cat][1], result[cat][2], DPSMateCombatTime["effective"][2]
 			end
 		end
 	end
@@ -562,24 +560,24 @@ function DPSMate:Broadcast(type, who, what, with, value, failtype)
 				ch = "RAID_WARNING"
 			end
 			if DPSMateSettings["bccd"] and type == 1 then
-				SendChatMessage(who.." gained "..what, ch, nil, nil)
+				SendChatMessage(self.L["bccdo"](who, what), ch, nil, nil)
 				return
 			elseif DPSMateSettings["bccd"] and type == 6 then
-				SendChatMessage(who.."'s "..what.." faded", ch, nil, nil)
+				SendChatMessage(self.L["bccdt"](who, what), ch, nil, nil)
 				return
 			elseif DPSMateSettings["bcress"] and type == 2 then
-				SendChatMessage(what.." has been resurrected by "..who, ch, nil, nil)
+				SendChatMessage(self.L["bcress"](who, what), ch, nil, nil)
 				return
 			elseif DPSMateSettings["bckb"] and type == 4 then
-				SendChatMessage(who.." has been killed by "..what.."'s "..with.." ("..value.." damage)", ch, nil, nil)
+				SendChatMessage(self.L["bckb"](who, what, with, value), ch, nil, nil)
 				return
 			elseif DPSMateSettings["bcfail"] and type == 3 then
 				if failtype == 1 then
-					SendChatMessage("Fail: "..what.." friendly fired "..who.." "..value.." damage with "..with, ch, nil, nil)
+					SendChatMessage(self.L["bcfailo"](what, who, value, with), ch, nil, nil)
 				elseif failtype == 3 then
-					SendChatMessage("Fail: "..who.." is afflicted by "..with, ch, nil, nil)
+					SendChatMessage(self.L["bcfailt"](who, with), ch, nil, nil)
 				else
-					SendChatMessage("Fail: "..who.." suffered "..value.." damage from "..with.." by "..what, ch, nil, nil)
+					SendChatMessage(self.L["bcfailth"](who, value, with, what), ch, nil, nil)
 				end
 				return
 			end
@@ -588,7 +586,7 @@ function DPSMate:Broadcast(type, who, what, with, value, failtype)
 end
 
 function DPSMate:SendMessage(msg)
-	DEFAULT_CHAT_FRAME:AddMessage("|cFFFF8080"..DPSMate.localization.name.."|r: "..msg)
+	DEFAULT_CHAT_FRAME:AddMessage("|cFFFF8080"..self.L["name"].."|r: "..msg)
 end
 
 function DPSMate:Register(prefix, table, name)

@@ -4,15 +4,17 @@ DPSMate.Modules.Absorbs.Hist = "Absorbs"
 DPSMate.Options.Options[1]["args"]["absorbs"] = {
 	order = 110,
 	type = 'toggle',
-	name = 'Absorbs',
-	desc = "Show Absorbs.",
+	name = DPSMate.L["absorbs"],
+	desc = DPSMate.L["show"].." "..DPSMate.L["absorbs"]..".",
 	get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["options"][1]["absorbs"] end,
 	set = function() DPSMate.Options:ToggleDrewDrop(1, "absorbs", DPSMate.Options.Dewdrop:GetOpenedParent()) end,
 }
 
 -- Register the moodule
-DPSMate:Register("absorbs", DPSMate.Modules.Absorbs, "Absorbs")
+DPSMate:Register("absorbs", DPSMate.Modules.Absorbs, DPSMate.L["absorbs"])
 
+local tinsert = table.insert
+local strformat = string.format
 
 function DPSMate.Modules.Absorbs:GetSortedTable(arr,k)
 	local b, a, total = {}, {}, 0
@@ -60,13 +62,13 @@ function DPSMate.Modules.Absorbs:GetSortedTable(arr,k)
 		local i = 1
 		while true do
 			if (not b[i]) then
-				table.insert(b, i, val)
-				table.insert(a, i, cat)
+				tinsert(b, i, val)
+				tinsert(a, i, cat)
 				break
 			else
 				if b[i] < val then
-					table.insert(b, i, val)
-					table.insert(a, i, cat)
+					tinsert(b, i, val)
+					tinsert(a, i, cat)
 					break
 				end
 			end
@@ -119,13 +121,13 @@ function DPSMate.Modules.Absorbs:EvalTable(user, k)
 								local i = 1
 								while true do
 									if (not qd[i]) then
-										table.insert(qd, i, qtt)
-										table.insert(qa, i, qt)
+										tinsert(qd, i, qtt)
+										tinsert(qa, i, qt)
 										break
 									else
 										if qd[i] < qtt then
-											table.insert(qd, i, qtt)
-											table.insert(qa, i, qt)
+											tinsert(qd, i, qtt)
+											tinsert(qa, i, qt)
 											break
 										end
 									end
@@ -135,13 +137,13 @@ function DPSMate.Modules.Absorbs:EvalTable(user, k)
 							local i = 1
 							while true do
 								if (not tdd[i]) then
-									table.insert(tdd, i, {CVV, qa, qd})
-									table.insert(taa, i, ut)
+									tinsert(tdd, i, {CVV, qa, qd})
+									tinsert(taa, i, ut)
 									break
 								else
 									if tdd[i][1] < CVV then
-										table.insert(tdd, i, {CVV, qa, qd})
-										table.insert(taa, i, ut)
+										tinsert(tdd, i, {CVV, qa, qd})
+										tinsert(taa, i, ut)
 										break
 									end
 								end
@@ -151,13 +153,13 @@ function DPSMate.Modules.Absorbs:EvalTable(user, k)
 						local i = 1
 						while true do
 							if (not td[i]) then
-								table.insert(td, i, {PerAbilityAbsorb, taa, tdd})
-								table.insert(ta, i, c)
+								tinsert(td, i, {PerAbilityAbsorb, taa, tdd})
+								tinsert(ta, i, c)
 								break
 							else
 								if td[i][1] < PerAbilityAbsorb then
-									table.insert(td, i, {PerAbilityAbsorb, taa, tdd})
-									table.insert(ta, i, c)
+									tinsert(td, i, {PerAbilityAbsorb, taa, tdd})
+									tinsert(ta, i, c)
 									break
 								end
 							end
@@ -173,13 +175,13 @@ function DPSMate.Modules.Absorbs:EvalTable(user, k)
 			local i = 1
 			while true do
 				if (not b[i]) then
-					table.insert(b, i, {CV,ta,td})
-					table.insert(a, i, cat)
+					tinsert(b, i, {CV,ta,td})
+					tinsert(a, i, cat)
 					break
 				else
 					if b[i][1] < CV then
-						table.insert(b, i, {CV,ta,td})
-						table.insert(a, i, cat)
+						tinsert(b, i, {CV,ta,td})
+						tinsert(a, i, cat)
 						break
 					end
 				end
@@ -191,19 +193,22 @@ function DPSMate.Modules.Absorbs:EvalTable(user, k)
 	return a, total, b
 end
 
-function DPSMate.Modules.Absorbs:GetSettingValues(arr, cbt, k)
+function DPSMate.Modules.Absorbs:GetSettingValues(arr, cbt, k,ecbt)
 	local name, value, perc, sortedTable, total, a, p, strt = {}, {}, {}, {}, 0, 0, "", {[1]="",[2]=""}
 	if DPSMateSettings["windows"][k]["numberformat"] == 2 then p = "K" end
 	sortedTable, total, a = DPSMate.Modules.Absorbs:GetSortedTable(arr, k)
 	for cat, val in pairs(sortedTable) do
 		local va, tot, sort = DPSMate:FormatNumbers(val, total, sortedTable[1], k)
 		if va==0 then break end
-		local str = {[1]="",[2]="",[3]=""}
+		local str = {[1]="",[2]="",[3]="",[4]=""}
+		local pname = DPSMate:GetUserById(a[cat])
 		if DPSMateSettings["columnsabsorbs"][1] then str[1] = " "..va..p; strt[2] = " "..tot..p end
-		if DPSMateSettings["columnsabsorbs"][2] then str[2] = " ("..string.format("%.1f", 100*va/tot).."%)" end
-		table.insert(name, DPSMate:GetUserById(a[cat]))
-		table.insert(value, str[1]..str[2])
-		table.insert(perc, 100*(va/sort))
+		if DPSMateSettings["columnsabsorbs"][2] then str[2] = " ("..strformat("%.1f", 100*va/tot).."%)" end
+		if DPSMateSettings["columnsabsorbs"][3] then str[3] = " ("..strformat("%.1f", va/cbt)..p..")" end
+		if DPSMateSettings["columnsabsorbs"][4] then str[4] = " ("..strformat("%.1f", va/(ecbt[pname] or cbt))..p..")" end
+		tinsert(name, pname)
+		tinsert(value, str[1]..str[3]..str[4]..str[2])
+		tinsert(perc, 100*(va/sort))
 	end
 	return name, value, perc, strt
 end
@@ -213,10 +218,10 @@ function DPSMate.Modules.Absorbs:ShowTooltip(user, k)
 	if DPSMateSettings["informativetooltips"] then
 		for i=1, DPSMateSettings["subviewrows"] do
 			if not a[i] then break end
-			GameTooltip:AddDoubleLine(i..". "..DPSMate:GetUserById(a[i]),c[i][1].." ("..string.format("%2.f", 100*c[i][1]/b).."%)",1,1,1,1,1,1)
+			GameTooltip:AddDoubleLine(i..". "..DPSMate:GetUserById(a[i]),c[i][1].." ("..strformat("%2.f", 100*c[i][1]/b).."%)",1,1,1,1,1,1)
 			for p=1, 3 do
 				if not c[i][2][p] then break end
-				GameTooltip:AddDoubleLine("      "..p..". "..DPSMate:GetAbilityById(c[i][2][p]),c[i][3][p][1].." ("..string.format("%.2f", 100*c[i][3][p][1]/c[i][1]).."%)",0.5,0.5,0.5,0.5,0.5,0.5)
+				GameTooltip:AddDoubleLine("      "..p..". "..DPSMate:GetAbilityById(c[i][2][p]),c[i][3][p][1].." ("..strformat("%.2f", 100*c[i][3][p][1]/c[i][1]).."%)",0.5,0.5,0.5,0.5,0.5,0.5)
 			end
 		end
 	end

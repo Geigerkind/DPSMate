@@ -8,12 +8,13 @@ local db, cbt = {}, 0
 local Buffpos = 0
 local _G = getglobal
 local tinsert = table.insert
+local strformat = string.format
 
 function DPSMate.Modules.DetailsCCBreaker:UpdateDetails(obj, key)
 	curKey = key
 	db, cbt = DPSMate:GetMode(key)
 	DetailsUser = obj.user
-	DPSMate_Details_CCBreaker_Title:SetText("CCBreaker of "..obj.user)
+	DPSMate_Details_CCBreaker_Title:SetText(DPSMate.L["ccbreakerof"]..obj.user)
 	Buffpos = 0
 	self:CleanTables()
 	self:UpdateBuffs()
@@ -68,6 +69,6 @@ function DPSMate.Modules.DetailsCCBreaker:UpdateBuffs(arg1)
 		_G(path..i.."_Ability"):SetText(ab)
 		_G(path..i.."_Target"):SetText(DPSMate:GetUserById(a[pos][2]))
 		_G(path..i.."_Time"):SetText(a[pos][4])
-		_G(path..i.."_CBT"):SetText(string.format("%.2f", a[pos][3]).."s")
+		_G(path..i.."_CBT"):SetText(strformat("%.2f", a[pos][3]).."s")
 	end
 end

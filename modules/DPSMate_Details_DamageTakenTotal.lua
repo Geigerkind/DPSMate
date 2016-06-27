@@ -8,6 +8,7 @@ local ColorTable={}
 local _G = getglobal
 local tinsert = table.insert
 local tremove = tremove
+local strformat = string.format
 
 function DPSMate.Modules.DetailsDamageTakenTotal:UpdateDetails(obj, key)
 	curKey = key
@@ -53,9 +54,9 @@ function DPSMate.Modules.DetailsDamageTakenTotal:UpdateDetails(obj, key)
 		g=DPSMate.Options.graph:CreateGraphLine("LineGraph",DPSMate_Details_DamageTakenTotal_DiagramLine,"CENTER","CENTER",0,0,750,230)
 		self:CreateGraphTable()
 	end
-	_G("DPSMate_Details_DamageTakenTotal_PlayerList_CB"):SetChecked(false)
-	_G("DPSMate_Details_DamageTakenTotal_PlayerList_CB").act = false
-	DPSMate_Details_DamageTakenTotal_Title:SetText("Damage taken summary")
+	DPSMate_Details_DamageTakenTotal_PlayerList_CB:SetChecked(false)
+	DPSMate_Details_DamageTakenTotal_PlayerList_CB.act = false
+	DPSMate_Details_DamageTakenTotal_Title:SetText(DPSMate.L["dmgtakensum"])
 	self:UpdateLineGraph()
 	self:LoadTable()
 	self:LoadLegendButtons()
@@ -280,12 +281,12 @@ function DPSMate.Modules.DetailsDamageTakenTotal:LoadTable()
 		_G("DPSMate_Details_DamageTakenTotal_PlayerList_Child_R"..cat.."_Amount"):SetText(val[2])
 		_G("DPSMate_Details_DamageTakenTotal_PlayerList_Child_R"..cat.."_StatusBar"):SetValue(100*val[2]/arr[1][2])
 		_G("DPSMate_Details_DamageTakenTotal_PlayerList_Child_R"..cat.."_StatusBar"):SetStatusBarColor(r,g,b, 1)
-		_G("DPSMate_Details_DamageTakenTotal_PlayerList_Child_R"..cat.."_AmountPerc"):SetText(string.format("%.1f", 100*val[2]/total).."%")
-		_G("DPSMate_Details_DamageTakenTotal_PlayerList_Child_R"..cat.."_Crush"):SetText(string.format("%.1f", 100*val[10]/val[9]).."%")
-		_G("DPSMate_Details_DamageTakenTotal_PlayerList_Child_R"..cat.."_Hit"):SetText(string.format("%.1f", 100*val[8]/val[9]).."%")
-		_G("DPSMate_Details_DamageTakenTotal_PlayerList_Child_R"..cat.."_Crit"):SetText(string.format("%.1f", 100*val[3]/val[5]).."%")
-		_G("DPSMate_Details_DamageTakenTotal_PlayerList_Child_R"..cat.."_Miss"):SetText(string.format("%.1f", 100*val[4]/val[6]).."%")
-		_G("DPSMate_Details_DamageTakenTotal_PlayerList_Child_R"..cat.."_DTPS"):SetText(string.format("%.1f", val[2]/cbt))
+		_G("DPSMate_Details_DamageTakenTotal_PlayerList_Child_R"..cat.."_AmountPerc"):SetText(strformat("%.1f", 100*val[2]/total).."%")
+		_G("DPSMate_Details_DamageTakenTotal_PlayerList_Child_R"..cat.."_Crush"):SetText(strformat("%.1f", 100*val[10]/val[9]).."%")
+		_G("DPSMate_Details_DamageTakenTotal_PlayerList_Child_R"..cat.."_Hit"):SetText(strformat("%.1f", 100*val[8]/val[9]).."%")
+		_G("DPSMate_Details_DamageTakenTotal_PlayerList_Child_R"..cat.."_Crit"):SetText(strformat("%.1f", 100*val[3]/val[5]).."%")
+		_G("DPSMate_Details_DamageTakenTotal_PlayerList_Child_R"..cat.."_Miss"):SetText(strformat("%.1f", 100*val[4]/val[6]).."%")
+		_G("DPSMate_Details_DamageTakenTotal_PlayerList_Child_R"..cat.."_DTPS"):SetText(strformat("%.1f", val[2]/cbt))
 		_G("DPSMate_Details_DamageTakenTotal_PlayerList_Child_R"..cat).user = val[7]
 		_G("DPSMate_Details_DamageTakenTotal_PlayerList_Child_R"..cat):Show()
 	end
@@ -296,13 +297,13 @@ function DPSMate.Modules.DetailsDamageTakenTotal:ShowTooltip(user, obj)
 	local a,b,c = DPSMate.Modules.DamageTaken:EvalTable(DPSMateUser[name], curKey)
 	local pet = ""
 	GameTooltip:SetOwner(obj, "TOPLEFT")
-	GameTooltip:AddLine(name.."'s damage taken", 1,1,1)
+	GameTooltip:AddLine(name.."'s "..string.lower(DPSMate.L["dmgtaken"]), 1,1,1)
 	for i=1, DPSMateSettings["subviewrows"] do
 		if not a[i] then break end
-		GameTooltip:AddDoubleLine(i..". "..DPSMate:GetUserById(a[i]),c[i][1].." ("..string.format("%.2f", 100*c[i][1]/b).."%)",1,1,1,1,1,1)
+		GameTooltip:AddDoubleLine(i..". "..DPSMate:GetUserById(a[i]),c[i][1].." ("..strformat("%.2f", 100*c[i][1]/b).."%)",1,1,1,1,1,1)
 		for p=1, 3 do 
 			if not c[i][2][p] or c[i][3][p]==0 then break end
-			GameTooltip:AddDoubleLine("       "..p..". "..DPSMate:GetAbilityById(c[i][2][p]),c[i][3][p].." ("..string.format("%.2f", 100*c[i][3][p]/c[i][1]).."%)",0.5,0.5,0.5,0.5,0.5,0.5)
+			GameTooltip:AddDoubleLine("       "..p..". "..DPSMate:GetAbilityById(c[i][2][p]),c[i][3][p].." ("..strformat("%.2f", 100*c[i][3][p]/c[i][1]).."%)",0.5,0.5,0.5,0.5,0.5,0.5)
 		end
 	end
 	GameTooltip:Show()

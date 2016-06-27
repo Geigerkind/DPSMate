@@ -13,7 +13,7 @@
 						<Anchor point="TOPLEFT" />
 					</Anchors>
 				</Texture>
-				<FontString name="$parent_Name" inherits="GameFontNormalSmall" text="Sinister Strike Eviscrate" justifyH="LEFT">
+				<FontString name="$parent_Name" inherits="GameFontNormalSmall" justifyH="LEFT">
 					<Size x="110" y="24" />
 					<Anchors>
 						<Anchor point="LEFT" relativeTo="$parent_Icon" relativePoint="RIGHT">
@@ -21,7 +21,7 @@
 						</Anchor>
 					</Anchors>
 				</FontString>
-				<FontString name="$parent_Value" inherits="GameFontNormalSmall" text="500000 (20.43%)">
+				<FontString name="$parent_Value" inherits="GameFontNormalSmall">
 					<Size x="70" y="24" />
 					<Anchors>
 						<Anchor point="RIGHT">
@@ -42,7 +42,7 @@
 		</Layers>
 		<Scripts>
 			<OnClick>
-				local pa, pt = getglobal("DPSMate_Details_Absorbs_Log_ScrollFrame"), getglobal("DPSMate_Details_Absorbs_LogTwo_ScrollFrame")
+				local pa, pt = DPSMate_Details_Absorbs_Log_ScrollFrame, DPSMate_Details_Absorbs_LogTwo_ScrollFrame
 				if this:GetParent():GetName()=="DPSMate_Details_Absorbs_LogCreature" then
 					DPSMate.Modules.DetailsAbsorbs:SelectCreatureButton(pa.index, this:GetID())
 				elseif this:GetParent():GetName()=="DPSMate_Details_Absorbs_Log" then
@@ -53,45 +53,6 @@
 			</OnClick>
 		</Scripts>
 	</Button>
-	
-	<Frame name="DPSMateTableAmountTemplate" virtual="true">
-		<Size x="140" y="30" />
-		<Layers>
-			<Layer level="ARTWORK">
-				<FontString name="$parent_Amount" inherits="GameFontNormalSmall" text="1000">
-					<Size x="35" y="24" />
-					<Anchors>
-						<Anchor point="LEFT"/>
-					</Anchors>
-					<Color r="1" g="1" b="1" />
-				</FontString>
-				<FontString name="$parent_Percent" inherits="GameFontNormalSmall" text="100%">
-					<Size x="40" y="24" />
-					<Anchors>
-						<Anchor point="RIGHT">
-							<Offset x="-3" y="0" />
-						</Anchor>
-					</Anchors>
-					<Color r="1" g="1" b="1" />
-				</FontString>
-			</Layer>
-		</Layers>
-		<Frames>
-			<StatusBar name="$parent_StatusBar">
-				<Size x="65" y="12" />
-				<Anchors>
-					<Anchor point="LEFT" relativeTo="$parent_Amount" relativePoint="RIGHT" />
-				</Anchors>
-				<Scripts>
-					<OnLoad>
-						this:SetMinMaxValues(1,100)
-						this:SetStatusBarTexture("Interface\\AddOns\\DPSMate\\images\\statusbar\\Healbot")
-						this:SetValue(100)
-					</OnLoad>
-				</Scripts>
-			</StatusBar>
-		</Frames>
-	</Frame>
 	
 	<Frame name="DPSMate_Details_Absorbs" parent="UIParent" movable="true" hidden="true">
 		<Size x="1010" y="600" />
@@ -106,7 +67,7 @@
 		</Backdrop>
 		<Layers>
 			<Layer level="ARTWORK">
-				<FontString name="$parent_Title" inherits="GameFontNormalHuge" justifyH="LEFT" justifyV="CENTER" text="Damage done for Shino">
+				<FontString name="$parent_Title" inherits="GameFontNormalHuge" justifyH="LEFT" justifyV="CENTER">
 					<Size x="900" y="40" />
 					<Anchors>
 						<Anchor point="TOPLEFT">
@@ -141,7 +102,7 @@
 				<Scripts>
 					<OnEnter>
 						GameTooltip:SetOwner(this, "ANCHOR_RIGHT")
-						GameTooltip:SetText(DPSMate.localization.details.close, nil, nil, nil, nil, 1)
+						GameTooltip:SetText(DPSMate.L["close"], nil, nil, nil, nil, 1)
 						GameTooltip:Show()
 					</OnEnter>
 					<OnLeave>
@@ -197,7 +158,7 @@
 						</Anchors>
 						<Scripts>
 							<OnVerticalScroll>
-								FauxScrollFrame_OnVerticalScroll(24, DPSMate.Modules.DetailsDamage.ScrollFrame_Update) 
+								FauxScrollFrame_OnVerticalScroll(24, DPSMate.Modules.DetailsAbsorbs.ScrollFrame_Update) 
 							</OnVerticalScroll>
 					   </Scripts>
 					</ScrollFrame>
@@ -300,7 +261,7 @@
 						</Anchors>
 						<Scripts>
 							<OnVerticalScroll>
-								FauxScrollFrame_OnVerticalScroll(24, DPSMate.Modules.DetailsDamage.ScrollFrame_Update) 
+								FauxScrollFrame_OnVerticalScroll(24, DPSMate.Modules.DetailsAbsorbs.SelectCreatureButton) 
 							</OnVerticalScroll>
 					   </Scripts>
 					</ScrollFrame>
@@ -403,7 +364,7 @@
 						</Anchors>
 						<Scripts>
 							<OnVerticalScroll>
-								FauxScrollFrame_OnVerticalScroll(24, DPSMate.Modules.DetailsDamage.ScrollFrame_Update) 
+								FauxScrollFrame_OnVerticalScroll(24, DPSMate.Modules.DetailsAbsorbs.SelectCauseButton) 
 							</OnVerticalScroll>
 					   </Scripts>
 					</ScrollFrame>
@@ -506,7 +467,7 @@
 						</Anchors>
 						<Scripts>
 							<OnVerticalScroll>
-								FauxScrollFrame_OnVerticalScroll(24, DPSMate.Modules.DetailsDamage.ScrollFrame_Update) 
+								FauxScrollFrame_OnVerticalScroll(24, DPSMate.Modules.DetailsAbsorbs.SelectCauseABButton) 
 							</OnVerticalScroll>
 					   </Scripts>
 					</ScrollFrame>
