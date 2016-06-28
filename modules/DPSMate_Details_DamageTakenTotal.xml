@@ -126,7 +126,7 @@
 			</OnLeave>
 		</Scripts>
 		<Frames>
-			<CheckButton name="$parent_CB" inherits="OptionsCheckButtonTemplate">
+			<CheckButton name="$parent_CB" inherits="UICheckButtonTemplate">
 				<Size x="26" y="26" />
 				<Anchors>
 					<Anchor point="TOPLEFT">
@@ -730,7 +730,7 @@
 					</Frame>
 				</ScrollChild>
 				<Frames>
-					<CheckButton name="$parent_CB" inherits="OptionsCheckButtonTemplate">
+					<CheckButton name="$parent_CB" inherits="UICheckButtonTemplate">
 						<Size x="26" y="26" />
 						<Anchors>
 							<Anchor point="TOPLEFT">
