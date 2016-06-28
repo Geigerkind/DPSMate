@@ -23,9 +23,9 @@ function DPSMate.Modules.DPS:GetSortedTable(arr,k)
 			local name = DPSMate:GetUserById(cat)
 			if (not DPSMateUser[name][4] or (DPSMateUser[name][4] and not DPSMateSettings["mergepets"])) then
 				if DPSMate:ApplyFilter(k, name) then
-					local CV = val["i"][2]
-					if DPSMate:PlayerExist(DPSMateUser, DPSMateUser[name]["pet"]) and arr[DPSMateUser[DPSMateUser[name]["pet"]][1]] then
-						CV=CV+arr[DPSMateUser[DPSMateUser[name]["pet"]][1]]["i"][2]
+					local CV = val["i"]
+					if DPSMate:PlayerExist(DPSMateUser, DPSMateUser[name][5]) and arr[DPSMateUser[DPSMateUser[name][5]][1]] then
+						CV=CV+arr[DPSMateUser[DPSMateUser[name]["pet"]][1]]["i"]
 					end
 					a[CV] = name
 					local i = 1
@@ -79,7 +79,7 @@ function DPSMate.Modules.DPS:EvalTable(user, k, cbt)
 				end
 			end
 		end
-		total=total+arr[v]["i"][2]
+		total=total+arr[v]["i"]
 	end
 	return a, strformat("%.1f", total/(cbt or 1)), d
 end

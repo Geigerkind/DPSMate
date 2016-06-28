@@ -26,7 +26,7 @@ function DPSMate.Modules.FriendlyFire:GetSortedTable(arr,k)
 				--DPSMate:SendMessage(catName.." and "..cName)
 				--DPSMate:SendMessage((DPSMateUser[cName][3] or "").." and "..(DPSMateUser[catName][3] or ""))
 				if DPSMateUser[cName][3] == DPSMateUser[catName][3] and DPSMateUser[catName][3] and DPSMateUser[cName][3] then
-					if temp[cat] then temp[cat]=temp[cat]+val["i"][2] else temp[cat] = val["i"][2] end
+					if temp[cat] then temp[cat]=temp[cat]+val["i"] else temp[cat] = val["i"] end
 				end
 			end
 		end

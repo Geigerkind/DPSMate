@@ -23,19 +23,19 @@ function DPSMate.Modules.DTPS:GetSortedTable(arr,k)
 			local i = 1
 			while true do
 				if (not b[i]) then
-					tinsert(b, i, v["i"][2])
+					tinsert(b, i, v["i"])
 					tinsert(a, i, c)
 					break
 				else
-					if b[i] < v["i"][2] then
-						tinsert(b, i, v["i"][2])
+					if b[i] < v["i"] then
+						tinsert(b, i, v["i"])
 						tinsert(a, i, c)
 						break
 					end
 				end
 				i=i+1
 			end
-			total = total + v["i"][2]
+			total = total + v["i"]
 		end
 	end
 	return b, total, a
@@ -85,7 +85,7 @@ function DPSMate.Modules.DTPS:EvalTable(user, k, cbt)
 			end
 		end
 	end
-	return a, strformat("%.1f", arr[user[1]]["i"][2]/(cbt or 1)), d
+	return a, strformat("%.1f", arr[user[1]]["i"]/(cbt or 1)), d
 end
 
 function DPSMate.Modules.DTPS:GetSettingValues(arr, cbt, k,ecbt)

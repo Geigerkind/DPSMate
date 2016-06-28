@@ -66,8 +66,8 @@ function DPSMate.Modules.HealingAndAbsorbs:GetSortedTable(arr, k)
 		local arr = DPSMate:GetModeByArr(DPSMateEHealing, k)
 		for c, v in pairs(arr) do
 			if DPSMate:ApplyFilter(k, DPSMate:GetUserById(c)) then
-				d[c] = v["i"][1]
-				total2 = total2 + v["i"][1]
+				d[c] = v["i"]
+				total2 = total2 + v["i"]
 			end
 		end
 		

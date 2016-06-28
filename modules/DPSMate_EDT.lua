@@ -23,7 +23,7 @@ function DPSMate.Modules.EDT:GetSortedTable(arr,k)
 			local CV = 0
 			for cat, val in pairs(v) do
 				if cat~="i" then
-					CV = CV+val["i"][2]
+					CV = CV+val["i"]
 				end
 			end
 			local i = 1
@@ -76,18 +76,18 @@ function DPSMate.Modules.EDT:EvalTable(user, k)
 			while true do
 				if (not d[i]) then
 					tinsert(a, i, cat)
-					tinsert(d, i, {val["i"][2], ta, tb})
+					tinsert(d, i, {val["i"], ta, tb})
 					break
 				else
-					if (d[i][1] < val["i"][2]) then
+					if (d[i][1] < val["i"]) then
 						tinsert(a, i, cat)
-						tinsert(d, i, {val["i"][2], ta, tb})
+						tinsert(d, i, {val["i"], ta, tb})
 						break
 					end
 				end
 				i = i + 1
 			end
-			total=total+val["i"][2]
+			total=total+val["i"]
 		end
 	end
 	return a, total, d
