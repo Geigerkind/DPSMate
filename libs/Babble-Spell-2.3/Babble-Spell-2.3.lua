@@ -1355,7 +1355,7 @@ BabbleSpell:RegisterTranslations("deDE", function()
 		["Quick Shots"] = "Schnelle Schüsse",
 		["Dazed"] = "Benommen",
 		["Volatile Infection"] = "Flüchtige Infektion",
-		["Corrosive Acid Spit"] = "Ätzende Säurespucke"
+		["Corrosive Acid Spit"] = "Ätzende Säurespucke",
 		["Poison Mind"] = "Gedanken vergiften",
 		["Knockdown"] = "Niederschlagen",
 		["Hand of Justice"] = "Hand der Gerechtigkeit",
@@ -1565,7 +1565,7 @@ BabbleSpell:RegisterTranslations("deDE", function()
 		["Greater Firepower"] = "Große Feuermacht",
 		["Arcane Protection"] = "Arkanschutz",
 		["Warchief's Blessing"] = "Segen des Kriegshäuptlings",
-		["Yaaarrrr"] = "Arrrr!"
+		["Yaaarrrr"] = "Arrrr!",
 		
 		-- Not translated yet
 		["Frost Protection"] = "None",
