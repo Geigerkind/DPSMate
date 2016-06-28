@@ -115,11 +115,19 @@ function DPSMate.Modules.DetailsDamageTakenTotal:AddTotalDataSeries()
 	tl = floor(tl-0.5*tl)
 	
 	for cat, val in db do
-		for ca, va in pairs(db[cat]["i"][1]) do
-			if sumTable[va[1]] then
-				sumTable[va[1]] = sumTable[va[1]] + va[2]
-			else
-				sumTable[va[1]] = va[2]
+		for ca, va in val do
+			if ca~="i" then
+				for c,v in va do
+					if v["i"] then
+						for q,s in v["i"] do
+							if sumTable[q] then
+								sumTable[q] = sumTable[q] + s
+							else
+								sumTable[q] = s
+							end
+						end
+					end
+				end
 			end
 		end
 	end
@@ -186,11 +194,9 @@ function DPSMate.Modules.DetailsDamageTakenTotal:GetTableValues()
 			if (not newArr[i]) then
 				tinsert(newArr, i, val)
 				break
-			else
-				if newArr[i][2] < val[2] then
-					tinsert(newArr, i, val)
-					break
-				end
+			elseif newArr[i][2]<=val[2] then
+				tinsert(newArr, i, val)
+				break
 			end
 			i=i+1
 		end
@@ -220,9 +226,36 @@ function DPSMate.Modules.DetailsDamageTakenTotal:CheckButtonCheckAll(obj)
 	end
 end
 
-function DPSMate.Modules.DetailsDamageTakenTotal:AddLinesButton(uid, obj)
-	local sumTable = db[uid]["i"][1]
+function DPSMate.Modules.DetailsDamageTakenTotal:SortLineTable(uid)
 	local user = DPSMate:GetUserById(uid)
+	local newArr = {}
+	-- user
+	for cat, val in db[DPSMateUser[user][1]] do
+		if cat~="i" then
+			for ca, va in val do
+				if va["i"] then
+					for c,v in va["i"] do
+						local i = 1
+						while true do
+							if not newArr[i] then
+								tinsert(newArr, i, {c,v})
+								break
+							elseif c<=newArr[i][1] then
+								tinsert(newArr, i, {c,v})
+								break
+							end
+							i = i+1
+						end
+					end
+				end
+			end
+		end
+	end
+	return newArr
+end
+
+function DPSMate.Modules.DetailsDamageTakenTotal:AddLinesButton(uid, obj)
+	local sumTable = self:SortLineTable(uid)
 	
 	sumTable = self:GetSummarizedTable(sumTable, cbt)
 	
@@ -275,7 +308,7 @@ function DPSMate.Modules.DetailsDamageTakenTotal:LoadTable()
 	for cat, val in pairs(arr) do
 		if cat>30 then break end
 		local r,g,b = DPSMate:GetClassColor(DPSMateUser[val[1]][2])
-		_G("DPSMate_Details_DamageTakenTotal_PlayerList_Child"):SetHeight(cat*30-210)
+		_G("DPSMate_Details_DamageTakenTotal_PlayerList_Child"):SetHeight(cat*30)
 		_G("DPSMate_Details_DamageTakenTotal_PlayerList_Child_R"..cat.."_Name"):SetText(val[1])
 		_G("DPSMate_Details_DamageTakenTotal_PlayerList_Child_R"..cat.."_Name"):SetTextColor(r,g,b)
 		_G("DPSMate_Details_DamageTakenTotal_PlayerList_Child_R"..cat.."_Amount"):SetText(val[2])
@@ -297,7 +330,7 @@ function DPSMate.Modules.DetailsDamageTakenTotal:ShowTooltip(user, obj)
 	local a,b,c = DPSMate.Modules.DamageTaken:EvalTable(DPSMateUser[name], curKey)
 	local pet = ""
 	GameTooltip:SetOwner(obj, "TOPLEFT")
-	GameTooltip:AddLine(name.."'s "..string.lower(DPSMate.L["dmgtaken"]), 1,1,1)
+	GameTooltip:AddLine(name.."'s "..strlower(DPSMate.L["damagetaken"]), 1,1,1)
 	for i=1, DPSMateSettings["subviewrows"] do
 		if not a[i] then break end
 		GameTooltip:AddDoubleLine(i..". "..DPSMate:GetUserById(a[i]),c[i][1].." ("..strformat("%.2f", 100*c[i][1]/b).."%)",1,1,1,1,1,1)

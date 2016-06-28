@@ -113,11 +113,15 @@ function DPSMate.Modules.DetailsDamageTotal:AddTotalDataSeries()
 	tl = floor(tl-0.3*tl)
 	
 	for cat, val in db do
-		for ca, va in pairs(db[cat]["i"][1]) do
-			if sumTable[va[1]] then
-				sumTable[va[1]] = sumTable[va[1]] + va[2]
-			else
-				sumTable[va[1]] = va[2]
+		for ca, va in val do
+			if ca~="i" and va["i"] then
+				for c,v in va["i"] do
+					if sumTable[c] then
+						sumTable[c] = sumTable[c] + v
+					else
+						sumTable[c] = v
+					end
+				end
 			end
 		end
 	end
@@ -164,23 +168,19 @@ function DPSMate.Modules.DetailsDamageTotal:GetTableValues()
 				end
 			else
 				-- That is just speculating, need to implement a proper way.
-				local delay = 2.8
-				if DPSMateUser[name][2] == "hunter" or DPSMateUser[name][2] == "paladin" then
-					delay = 5
-				elseif DPSMateUser[name][2] == "mage" or DPSMateUser[name][2] == "warlock" or DPSMateUser[name][2] == "shaman" or DPSMateUser[name][2] == "druid" then
-					delay = 6.5
-				end
-				for _, v in pairs(va[1]) do
-					if (v[1]-last)>=delay then
-						last = v[1]
+				local delay, last = 2.8, 0
+				local t = self:SortLineTable(cat)
+				for cat, val in t do
+					if last == 0 or (val[1]-last)>delay then
+						last = val[1]
 					else
-						time=time+(v[1]-last)
+						time = time + (val[1]-last)
 					end
 				end
 			end
 		end
-		tinsert(arr, {name, val["i"][2], crit, miss, time, totCrit, totMiss, cat})
-		total = total + val["i"][2]
+		tinsert(arr, {name, val["i"], crit, miss, time, totCrit, totMiss, cat})
+		total = total + val["i"]
 	end
 	local newArr = {}
 	for cat, val in arr do
@@ -223,20 +223,54 @@ function DPSMate.Modules.DetailsDamageTotal:CheckButtonCheckAll(obj)
 	end
 end
 
-function DPSMate.Modules.DetailsDamageTotal:AddLinesButton(uid, obj)
-	local sumTable = db[uid]["i"][1]
+function DPSMate.Modules.DetailsDamageTotal:SortLineTable(uid)
 	local user = DPSMate:GetUserById(uid)
-	if DPSMateUser[user]["pet"] then
-		if db[DPSMateUser[DPSMateUser[user][5]][1]] then
-			for cat, val in pairs(db[DPSMateUser[DPSMateUser[user][5]][1]]["i"][1]) do
-				if sumTable[cat] then
-					sumTable[cat] = sumTable[cat]+val
-				else
-					sumTable[cat] = val
+	local newArr = {}
+	-- user
+	for cat, val in db[DPSMateUser[user][1]] do
+		if cat~="i" and val["i"] then
+			for c,v in val["i"] do
+				local i = 1
+				while true do
+					if not newArr[i] then
+						tinsert(newArr, i, {c,v})
+						break
+					elseif c<=newArr[i][1] then
+						tinsert(newArr, i, {c,v})
+						break
+					end
+					i = i+1
 				end
 			end
 		end
 	end
+	-- Pet
+	if DPSMateUser[user][5] then
+		if db[DPSMateUser[DPSMateUser[user][5]][1]] then
+			for cat, val in db[DPSMateUser[DPSMateUser[user][5]][1]] do
+				if cat~="i" and val["i"] then
+					for c,v in val["i"] do
+						local i = 1
+						while true do
+							if not newArr[i] then
+								tinsert(newArr, i, {c,v})
+								break
+							elseif c<=newArr[i][1] then
+								tinsert(newArr, i, {c,v})
+								break
+							end
+							i = i+1
+						end
+					end
+				end
+			end
+		end
+	end
+	return newArr
+end
+
+function DPSMate.Modules.DetailsDamageTotal:AddLinesButton(uid, obj)
+	local sumTable = self:SortLineTable(uid)
 	
 	sumTable = self:GetSummarizedTable(sumTable)
 	
@@ -315,7 +349,7 @@ function DPSMate.Modules.DetailsDamageTotal:ShowTooltip(user, obj)
 	local a,b,c = DPSMate.Modules.Damage:EvalTable(DPSMateUser[name], curKey)
 	local pet = ""
 	GameTooltip:SetOwner(obj, "TOPLEFT")
-	GameTooltip:AddLine(name.."'s "..string.lower(DPSMate.L["dmgdone"]), 1,1,1)
+	GameTooltip:AddLine(name.."'s "..strlower(DPSMate.L["damagedone"]), 1,1,1)
 	for i=1, DPSMateSettings["subviewrows"] do
 		if not a[i] then break end
 		if c[i][2] then pet="(Pet)" else pet="" end
