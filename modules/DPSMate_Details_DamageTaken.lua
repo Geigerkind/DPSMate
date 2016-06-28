@@ -3,21 +3,17 @@ DPSMate.Modules.DetailsDamageTaken = {}
 
 -- Local variables
 local DetailsArr, DetailsTotal, DmgArr, DetailsUser, DetailsSelected  = {}, 0, {}, "", 1
-local PieChart = true
 local g, g2
 local curKey = 1
 local db, cbt = {}, 0
 local tinsert = table.insert
 local _G = getglobal
 local strformat = string.format
+local toggle = false
 
 function DPSMate.Modules.DetailsDamageTaken:UpdateDetails(obj, key)
 	curKey = key
 	db, cbt = DPSMate:GetMode(key)
-	if (PieChart) then
-		g2=DPSMate.Options.graph:CreateGraphLine("LineGraph",DPSMate_Details_DamageTaken_DiagramLine,"CENTER","CENTER",0,0,850,230)
-		PieChart = false
-	end
 	DetailsUser = obj.user
 	DPSMate_Details_DamageTaken_Title:SetText(DPSMate.L["dmgtakenby"]..obj.user)
 	DPSMate_Details_DamageTaken:Show()
@@ -25,7 +21,11 @@ function DPSMate.Modules.DetailsDamageTaken:UpdateDetails(obj, key)
 	self:ScrollFrame_Update()
 	self:SelectCreatureButton(1)
 	self:SelectDetailsButton(1,1)
-	self:UpdateLineGraph()
+	if toggle then
+		self:UpdateStackedGraph()
+	else
+		self:UpdateLineGraph()
+	end
 end
 
 function DPSMate.Modules.DetailsDamageTaken:ScrollFrame_Update()
@@ -177,6 +177,12 @@ function DPSMate.Modules.DetailsDamageTaken:SelectDetailsButton(p,i)
 end
 
 function DPSMate.Modules.DetailsDamageTaken:UpdateLineGraph()
+	if not g2 then
+		g2=DPSMate.Options.graph:CreateGraphLine("LineGraph",DPSMate_Details_DamageTaken_DiagramLine,"CENTER","CENTER",0,0,850,230)
+	end
+	if g then
+		g:Hide()
+	end
 	local sumTable = self:GetSummarizedTable(db)
 	local max = DPSMate:GetMaxValue(sumTable, 2)
 	local time = DPSMate:GetMaxValue(sumTable, 1)
@@ -198,6 +204,101 @@ function DPSMate.Modules.DetailsDamageTaken:UpdateLineGraph()
 	end
 
 	g2:AddDataSeries(Data1,{{1.0,0.0,0.0,0.8}, {1.0,0.0,0.0,0.8}}, {})
+	g2:Show()
+end
+
+function DPSMate.Modules.DetailsDamageTaken:UpdateStackedGraph()
+	if not g then
+		g=DPSMate.Options.graph:CreateStackedGraph("StackedGraph",DPSMate_Details_DamageTaken_DiagramLine,"CENTER","CENTER",0,0,850,230)
+		g:SetGridColor({0.5,0.5,0.5,0.5})
+		g:SetAxisDrawing(true,true)
+		g:SetAxisColor({1.0,1.0,1.0,1.0})
+		g:SetAutoScale(true)
+		g:SetYLabels(true, false)
+		g:SetXLabels(true)
+	end
+	if g2 then
+		g2:Hide()
+	end
+	
+	local Data1 = {}
+	local label = {}
+	local b = {}
+	local p = {}
+	local maxY = 0
+	local maxX = 0
+	for cat, val in db[DPSMateUser[DetailsUser][1]] do
+		if cat~="i" then
+			for ca, va in val do
+				if va["i"] then
+					local temp = {}
+					for c, v in va["i"] do
+						local key = tonumber(strformat("%.1f", c))
+						if p[key] then
+							p[key] = p[key] + v
+						else
+							p[key] = v
+						end
+						local i = 1
+						while true do
+							if not temp[i] then
+								tinsert(temp, i, {c,v})
+								break
+							elseif c<=temp[i][1] then
+								tinsert(temp, i, {c,v})
+								break
+							end
+							i = i + 1
+						end
+						maxY = math.max(p[key], maxY)
+						maxX = math.max(c, maxX)
+					end
+					local i = 1
+					while true do
+						if not b[i] then
+							tinsert(b, i, va[13])
+							tinsert(label, i, DPSMate:GetAbilityById(ca))
+							tinsert(Data1, i, temp)
+							break
+						elseif b[i]>=va[13] then
+							tinsert(b, i, va[13])
+							tinsert(label, i, DPSMate:GetAbilityById(ca))
+							tinsert(Data1, i, temp)
+							break
+						end
+						i = i + 1
+					end
+				end
+			end
+		end
+	end
+	-- Fill zero numbers
+	for cat, val in Data1 do
+		local alpha = 0
+		for ca, va in pairs(val) do
+			if alpha == 0 then
+				alpha = va[1]
+			else
+				if (va[1]-alpha)>3 then
+					tinsert(Data1[cat], ca, {alpha+1, 0})
+					tinsert(Data1[cat], ca+1, {va[1]-1, 0})
+				end
+				alpha = va[1]
+			end
+		end
+	end
+	
+	--for cat, val in Data1 do
+		--for ca, va in pairs(val) do
+		--	va = DPSMate.Sync:GetSummarizedTable(va)
+		--end
+	--end
+	
+	g:ResetData()
+	g:SetGridSpacing(maxX/7,maxY/7)
+	
+	g:AddDataSeries(Data1,{1.0,0.0,0.0,0.8}, {}, label)
+	g:Show()
 end
 
 function DPSMate.Modules.DetailsDamageTaken:CreateGraphTable()
@@ -221,7 +322,43 @@ function DPSMate.Modules.DetailsDamageTaken:CreateGraphTable()
 	lines[12]:Show()
 end
 
-function DPSMate.Modules.DetailsDamageTaken:GetSummarizedTable(arr)
-	return DPSMate.Sync:GetSummarizedTable(arr[DPSMateUser[DetailsUser][1]]["i"][1])
+function DPSMate.Modules.DetailsDamageTaken:SortLineTable(arr)
+	local newArr = {}
+	for cat, val in arr[DPSMateUser[DetailsUser][1]] do
+		if cat~="i" then
+			for c,v in val do
+				if v["i"] then
+					for ca, va in v["i"] do
+						local i=1
+						while true do
+							if (not newArr[i]) then 
+								tinsert(newArr, i, {ca, va})
+								break
+							end
+							if ca<=newArr[i][1] then
+								tinsert(newArr, i, {ca, va})
+								break
+							end
+							i=i+1
+						end
+					end
+				end
+			end
+		end
+	end
+	return newArr
 end
 
+function DPSMate.Modules.DetailsDamageTaken:GetSummarizedTable(arr)
+	return DPSMate.Sync:GetSummarizedTable(self:SortLineTable(arr))
+end
+
+function DPSMate.Modules.DetailsDamageTaken:ToggleMode()
+	if toggle then
+		self:UpdateLineGraph()
+		toggle=false
+	else
+		self:UpdateStackedGraph()
+		toggle=true
+	end
+end
