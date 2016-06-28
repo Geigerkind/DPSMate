@@ -34,7 +34,7 @@ function DPSMate.Modules.DetailsHealingAndAbsorbs:UpdateDetails(obj, key)
 	end
 	self:UpdatePie()
 	if toggle2 then
-		
+		self:UpdateStackedGraph()
 	else
 		self:UpdateLineGraph()
 	end

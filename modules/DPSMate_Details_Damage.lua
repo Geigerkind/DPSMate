@@ -3,14 +3,13 @@ DPSMate.Modules.DetailsDamage = {}
 
 -- Local variables
 local DetailsArr, DetailsTotal, DmgArr, DetailsUser, DetailsSelected  = {}, 0, {}, "", 1
-local PieChart = true
-local g, g2
+local g, g2, g3
 local curKey = 1
 local db, cbt, db2 = {}, 0, {}
 local _G = getglobal
 local tinsert = table.insert
 local strformat = string.format
-local toggle = false
+local toggle, toggle2 = false, false
 local t1, t2, TTotal = {}, {}, 0
 
 function DPSMate.Modules.DetailsDamage:UpdateDetails(obj, key)
@@ -19,11 +18,6 @@ function DPSMate.Modules.DetailsDamage:UpdateDetails(obj, key)
 	db2 = DPSMate:GetModeByArr(DPSMateEDT, key, "EDTaken")
 	DPSMate_Details.proc = "None"
 	UIDropDownMenu_SetSelectedValue(DPSMate_Details_DiagramLegend_Procs, "None")
-	if (PieChart) then
-		g=DPSMate.Options.graph:CreateGraphPieChart("PieChart", DPSMate_Details_Diagram, "CENTER", "CENTER", 0, 0, 200, 200)
-		g2=DPSMate.Options.graph:CreateGraphLine("LineGraph",DPSMate_Details_DiagramLine,"CENTER","CENTER",0,0,850,230)
-		PieChart = false
-	end
 	DetailsUser = obj.user
 	DPSMate_Details_Title:SetText(DPSMate.L["dmgdoneby"]..obj.user)
 	DPSMate_Details:Show()
@@ -39,7 +33,11 @@ function DPSMate.Modules.DetailsDamage:UpdateDetails(obj, key)
 		self:SelectDetailsButton(1)
 	end
 	self:UpdatePie()
-	self:UpdateLineGraph()
+	if toggle2 then
+		self:UpdateStackedGraph()
+	else
+		self:UpdateLineGraph()
+	end
 end
 
 function DPSMate.Modules.DetailsDamage:EvalToggleTable()
@@ -67,7 +65,7 @@ function DPSMate.Modules.DetailsDamage:EvalToggleTable()
 					end
 				end
 			end
-			c[1] = val[DPSMateUser[DetailsUser][1]]["i"][2]
+			c[1] = val[DPSMateUser[DetailsUser][1]]["i"]
 			local i = 1
 			while true do
 				if (not a[i]) then
@@ -289,6 +287,9 @@ function DPSMate.Modules.DetailsDamage:SelectDetailsButton(i)
 end
 
 function DPSMate.Modules.DetailsDamage:UpdatePie()
+	if not g then
+		g=DPSMate.Options.graph:CreateGraphPieChart("PieChart", DPSMate_Details_Diagram, "CENTER", "CENTER", 0, 0, 200, 200)
+	end
 	g:ResetPie()
 	for cat, val in DetailsArr do
 		local ability = tonumber(DetailsArr[cat])
@@ -299,6 +300,12 @@ function DPSMate.Modules.DetailsDamage:UpdatePie()
 end
 
 function DPSMate.Modules.DetailsDamage:UpdateLineGraph()
+	if not g2 then
+		g2=DPSMate.Options.graph:CreateGraphLine("LineGraph",DPSMate_Details_DiagramLine,"CENTER","CENTER",0,0,850,230)
+	end
+	if g3 then
+		g3:Hide()
+	end
 	local sumTable = self:GetSummarizedTable(db, cbt)
 	local max = DPSMate:GetMaxValue(sumTable, 2)
 	local time = DPSMate:GetMaxValue(sumTable, 1)
@@ -320,6 +327,99 @@ function DPSMate.Modules.DetailsDamage:UpdateLineGraph()
 	end
 
 	g2:AddDataSeries(Data1,{{1.0,0.0,0.0,0.8}, {1.0,1.0,0.0,0.8}}, self:AddProcPoints(DPSMate_Details.proc, Data1))
+	g2:Show()
+	toggle2 = false
+end
+
+function DPSMate.Modules.DetailsDamage:UpdateStackedGraph()
+	if not g3 then
+		g3=DPSMate.Options.graph:CreateStackedGraph("StackedGraph",DPSMate_Details_DiagramLine,"CENTER","CENTER",0,0,850,230)
+		g3:SetGridColor({0.5,0.5,0.5,0.5})
+		g3:SetAxisDrawing(true,true)
+		g3:SetAxisColor({1.0,1.0,1.0,1.0})
+		g3:SetAutoScale(true)
+		g3:SetYLabels(true, false)
+		g3:SetXLabels(true)
+	end
+	if g2 then
+		g2:Hide()
+	end
+	
+	local Data1 = {}
+	local label = {}
+	local b = {}
+	local p = {}
+	local maxY = 0
+	local maxX = 0
+	for cat, val in db[DPSMateUser[DetailsUser][1]] do
+		if cat~="i" and val["i"] then
+			local temp = {}
+			for c, v in val["i"] do
+				local key = tonumber(strformat("%.1f", c))
+				if p[key] then
+					p[key] = p[key] + v
+				else
+					p[key] = v
+				end
+				local i = 1
+				while true do
+					if not temp[i] then
+						tinsert(temp, i, {c,v})
+						break
+					elseif c<=temp[i][1] then
+						tinsert(temp, i, {c,v})
+						break
+					end
+					i = i + 1
+				end
+				maxY = math.max(p[key], maxY)
+				maxX = math.max(c, maxX)
+			end
+			local i = 1
+			while true do
+				if not b[i] then
+					tinsert(b, i, val[13])
+					tinsert(label, i, DPSMate:GetAbilityById(cat))
+					tinsert(Data1, i, temp)
+					break
+				elseif b[i]>=val[13] then
+					tinsert(b, i, val[13])
+					tinsert(label, i, DPSMate:GetAbilityById(cat))
+					tinsert(Data1, i, temp)
+					break
+				end
+				i = i + 1
+			end
+		end
+	end
+	-- Fill zero numbers
+	for cat, val in Data1 do
+		local alpha = 0
+		for ca, va in pairs(val) do
+			if alpha == 0 then
+				alpha = va[1]
+			else
+				if (va[1]-alpha)>3 then
+					tinsert(Data1[cat], ca, {alpha+1, 0})
+					tinsert(Data1[cat], ca+1, {va[1]-1, 0})
+				end
+				alpha = va[1]
+			end
+		end
+	end
+	
+	--for cat, val in Data1 do
+		--for ca, va in pairs(val) do
+		--	va = DPSMate.Sync:GetSummarizedTable(va)
+		--end
+	--end
+	
+	g3:ResetData()
+	g3:SetGridSpacing(maxX/7,maxY/7)
+	
+	g3:AddDataSeries(Data1,{1.0,0.0,0.0,0.8}, {}, label)
+	g3:Show()
+	toggle2 = true
 end
 
 function DPSMate.Modules.DetailsDamage:CreateGraphTable()
@@ -380,21 +480,44 @@ function DPSMate.Modules.DetailsDamage:ProcsDropDown()
 end
 
 function DPSMate.Modules.DetailsDamage:SortLineTable(t)
-	local newArr = t[DPSMateUser[DetailsUser][1]]["i"][1]
-	if DPSMateUser[DetailsUser][5] then
-		if t[DPSMateUser[DPSMateUser[DetailsUser][5]][1]] then
-			for _, val in pairs(t[DPSMateUser[DPSMateUser[DetailsUser][5]][1]]["i"][1]) do
+	local newArr = {}
+	for cat, val in t[DPSMateUser[DetailsUser][1]] do
+		if cat~="i" and val["i"] then
+			for ca, va in val["i"] do
 				local i=1
 				while true do
 					if (not newArr[i]) then 
-						tinsert(newArr, i, val)
+						tinsert(newArr, i, {ca, va})
 						break
 					end
-					if val[1]<newArr[i][1] then
-						tinsert(newArr, i, val)
+					if ca<=newArr[i][1] then
+						tinsert(newArr, i, {ca, va})
 						break
 					end
 					i=i+1
+				end
+			end
+		end
+	end
+	-- Pet
+	if DPSMateUser[DetailsUser][5] then
+		if t[DPSMateUser[DPSMateUser[DetailsUser][5]][1]] then
+			for cat, val in t[DPSMateUser[DPSMateUser[DetailsUser][5]][1]] do
+				if cat~="i" and val["i"] then
+					for ca, va in val["i"] do
+						local i=1
+						while true do
+							if (not newArr[i]) then 
+								tinsert(newArr, i, {ca, va})
+								break
+							end
+							if ca<=newArr[i][1] then
+								tinsert(newArr, i, {ca, va})
+								break
+							end
+							i=i+1
+						end
+					end
 				end
 			end
 		end
@@ -465,24 +588,32 @@ function DPSMate.Modules.DetailsDamage:AddProcPoints(name, dat)
 	return {bool, data}
 end
 
-function DPSMate.Modules.DetailsDamage:ToggleMode()
-	if toggle then
-		toggle = false
-		self:ScrollFrame_Update()
-		self:SelectDetailsButton(1)
-		DPSMate_Details_playerSpells:Hide()
-		DPSMate_Details_player:Hide()
-		DPSMate_Details_Diagram:Show()
-		DPSMate_Details_Log:Show()
+function DPSMate.Modules.DetailsDamage:ToggleMode(bool)
+	if bool then
+		if toggle2 then
+			self:UpdateLineGraph()
+		else
+			self:UpdateStackedGraph()
+		end
 	else
-		toggle = true
-		self:Player_Update()
-		self:PlayerSpells_Update(1)
-		self:SelectDetailsButton(1)
-		DPSMate_Details_playerSpells:Show()
-		DPSMate_Details_player:Show()
-		DPSMate_Details_Diagram:Hide()
-		DPSMate_Details_Log:Hide()
+		if toggle then
+			toggle = false
+			self:ScrollFrame_Update()
+			self:SelectDetailsButton(1)
+			DPSMate_Details_playerSpells:Hide()
+			DPSMate_Details_player:Hide()
+			DPSMate_Details_Diagram:Show()
+			DPSMate_Details_Log:Show()
+		else
+			toggle = true
+			self:Player_Update()
+			self:PlayerSpells_Update(1)
+			self:SelectDetailsButton(1)
+			DPSMate_Details_playerSpells:Show()
+			DPSMate_Details_player:Show()
+			DPSMate_Details_Diagram:Hide()
+			DPSMate_Details_Log:Hide()
+		end
 	end
 end
 

@@ -44,9 +44,9 @@
 			<OnClick>
 				if this:GetParent():GetName() == "DPSMate_Details_Healing_player" then
 					DPSMate.Modules.DetailsHealing:PlayerSpells_Update(this:GetID())
-					DPSMate.Modules.DetailsHealing:SelectDetails_EHealingButton(1)
+					DPSMate.Modules.DetailsHealing:SelectDetails_HealingButton(1)
 				else
-					DPSMate.Modules.DetailsHealing:SelectDetails_EHealingButton(this:GetID())
+					DPSMate.Modules.DetailsHealing:SelectDetails_HealingButton(this:GetID())
 				end
 			</OnClick>
 		</Scripts>
