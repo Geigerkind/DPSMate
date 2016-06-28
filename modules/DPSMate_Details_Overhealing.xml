@@ -149,6 +149,33 @@
 				<PushedTexture file="Interface\Buttons\UI-Panel-MinimizeButton-Down"/>
 				<HighlightTexture file="Interface\Buttons\UI-Panel-MinimizeButton-Highlight" alphaMode="ADD"/>
 			</Button>
+			<Button name="$parent_SwitchGraph">
+				<Size x="22" y="22" />
+				<Anchors>
+					<Anchor point="RIGHT" relativeTo="$parent_CloseButton" relativePoint="LEFT">
+						<Offset>
+							<AbsDimension x="-3" y="-3"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnEnter>
+						GameTooltip:SetOwner(this, "ANCHOR_RIGHT")
+						GameTooltip:SetText(DPSMate.L["switchgraphsdesc"], nil, nil, nil, nil, 1)
+						GameTooltip:Show()
+					</OnEnter>
+					<OnLeave>
+						GameTooltip:Hide()
+					</OnLeave>
+					<OnClick>
+						DPSMate.Modules.DetailsOverhealing:ToggleMode()
+						PlaySound("igMainMenuOptionCheckBoxOff")
+					</OnClick>
+				</Scripts>
+				<NormalTexture file="Interface\Buttons\UI-GroupLoot-Dice-Up"/>
+				<PushedTexture file="Interface\Buttons\UI-GroupLoot-Dice-Down"/>
+				<HighlightTexture file="Interface\Buttons\UI-GroupLoot-Dice-Highlight" alphaMode="ADD"/>
+			</Button>
 			<Frame name="$parent_DiagramLine">
 				<Size x="870" y="250" />
 				<Anchors>
