@@ -3,14 +3,13 @@ DPSMate.Modules.DetailsHealing = {}
 
 -- Local variables
 local DetailsArr, DetailsTotal, DmgArr, DetailsUser, DetailsSelected  = {}, 0, {}, "", 1
-local PieChart = true
-local g, g2
+local g, g2, g3
 local curKey = 1
 local db, cbt, db2 = {}, 0, {}
 local tinsert = table.insert
 local _G = getglobal
 local strformat = string.format
-local toggle = false
+local toggle, toggle2 = false, false
 local t1, t2, TTotal = {}, {}, 0
 
 function DPSMate.Modules.DetailsHealing:UpdateDetails(obj, key)
@@ -19,11 +18,6 @@ function DPSMate.Modules.DetailsHealing:UpdateDetails(obj, key)
 	db2 = DPSMate:GetModeByArr(DPSMateHealingTaken, key, "THealingTaken")
 	DPSMate_Details_Healing.proc = "None"
 	UIDropDownMenu_SetSelectedValue(DPSMate_Details_Healing_DiagramLegend_Procs, "None")
-	if (PieChart) then
-		g=DPSMate.Options.graph:CreateGraphPieChart("PieChart", DPSMate_Details_Healing_Diagram, "CENTER", "CENTER", 0, 0, 200, 200)
-		g2=DPSMate.Options.graph:CreateGraphLine("LineGraph",DPSMate_Details_Healing_DiagramLine,"CENTER","CENTER",0,0,850,230)
-		PieChart = false
-	end
 	DetailsUser = obj.user
 	DPSMate_Details_Healing_Title:SetText(DPSMate.L["healdoneby"]..obj.user)
 	DPSMate_Details_Healing:Show()
@@ -39,7 +33,11 @@ function DPSMate.Modules.DetailsHealing:UpdateDetails(obj, key)
 		self:SelectDetails_HealingButton(1)
 	end
 	self:UpdatePie()
-	self:UpdateLineGraph()
+	if toggle2 then
+		self:UpdateStackedGraph()
+	else
+		self:UpdateLineGraph()
+	end
 end
 
 function DPSMate.Modules.DetailsHealing:EvalToggleTable()
@@ -234,6 +232,9 @@ function DPSMate.Modules.DetailsHealing:SelectDetails_HealingButton(i)
 end
 
 function DPSMate.Modules.DetailsHealing:UpdatePie()
+	if not g then
+		g=DPSMate.Options.graph:CreateGraphPieChart("PieChart", DPSMate_Details_Healing_Diagram, "CENTER", "CENTER", 0, 0, 200, 200)
+	end
 	g:ResetPie()
 	for cat, val in pairs(DetailsArr) do
 		local ability = tonumber(DetailsArr[cat])
@@ -242,8 +243,37 @@ function DPSMate.Modules.DetailsHealing:UpdatePie()
 	end
 end
 
+function DPSMate.Modules.DetailsHealing:SortLineTable(t)
+	local newArr = {}
+	for cat, val in t[DPSMateUser[DetailsUser][1]] do
+		if cat~="i" and val["i"] then
+			for ca, va in val["i"] do
+				local i=1
+				while true do
+					if (not newArr[i]) then 
+						tinsert(newArr, i, {ca, va})
+						break
+					end
+					if ca<=newArr[i][1] then
+						tinsert(newArr, i, {ca, va})
+						break
+					end
+					i=i+1
+				end
+			end
+		end
+	end
+	return newArr
+end
+
 function DPSMate.Modules.DetailsHealing:UpdateLineGraph()
-	local sumTable = self:GetSummarizedTable(db[DPSMateUser[DetailsUser][1]]["i"][2])
+	if not g2 then
+		g2=DPSMate.Options.graph:CreateGraphLine("LineGraph",DPSMate_Details_Healing_DiagramLine,"CENTER","CENTER",0,0,850,230)
+	end
+	if g3 then
+		g3:Hide()
+	end
+	local sumTable = self:GetSummarizedTable(self:SortLineTable(db))
 	local max = DPSMate:GetMaxValue(sumTable, 2)
 	local time = DPSMate:GetMaxValue(sumTable, 1)
 	
@@ -264,6 +294,99 @@ function DPSMate.Modules.DetailsHealing:UpdateLineGraph()
 	end
 
 	g2:AddDataSeries(Data1,{{1.0,0.0,0.0,0.8}, {1.0,1.0,0.0,0.8}}, self:AddProcPoints(DPSMate_Details_Healing.proc, Data1))
+	g2:Show()
+	toggle2=false
+end
+
+function DPSMate.Modules.DetailsHealing:UpdateStackedGraph()
+	if not g3 then
+		g3=DPSMate.Options.graph:CreateStackedGraph("StackedGraph",DPSMate_Details_Healing_DiagramLine,"CENTER","CENTER",0,0,850,230)
+		g3:SetGridColor({0.5,0.5,0.5,0.5})
+		g3:SetAxisDrawing(true,true)
+		g3:SetAxisColor({1.0,1.0,1.0,1.0})
+		g3:SetAutoScale(true)
+		g3:SetYLabels(true, false)
+		g3:SetXLabels(true)
+	end
+	if g2 then
+		g2:Hide()
+	end
+	
+	local Data1 = {}
+	local label = {}
+	local b = {}
+	local p = {}
+	local maxY = 0
+	local maxX = 0
+	for cat, val in db[DPSMateUser[DetailsUser][1]] do
+		if cat~="i" and val["i"] then
+			local temp = {}
+			for c, v in val["i"] do
+				local key = tonumber(strformat("%.1f", c))
+				if p[key] then
+					p[key] = p[key] + v
+				else
+					p[key] = v
+				end
+				local i = 1
+				while true do
+					if not temp[i] then
+						tinsert(temp, i, {c,v})
+						break
+					elseif c<=temp[i][1] then
+						tinsert(temp, i, {c,v})
+						break
+					end
+					i = i + 1
+				end
+				maxY = math.max(p[key], maxY)
+				maxX = math.max(c, maxX)
+			end
+			local i = 1
+			while true do
+				if not b[i] then
+					tinsert(b, i, val[13])
+					tinsert(label, i, DPSMate:GetAbilityById(cat))
+					tinsert(Data1, i, temp)
+					break
+				elseif b[i]>=val[13] then
+					tinsert(b, i, val[13])
+					tinsert(label, i, DPSMate:GetAbilityById(cat))
+					tinsert(Data1, i, temp)
+					break
+				end
+				i = i + 1
+			end
+		end
+	end
+	-- Fill zero numbers
+	for cat, val in Data1 do
+		local alpha = 0
+		for ca, va in pairs(val) do
+			if alpha == 0 then
+				alpha = va[1]
+			else
+				if (va[1]-alpha)>3 then
+					tinsert(Data1[cat], ca, {alpha+1, 0})
+					tinsert(Data1[cat], ca+1, {va[1]-1, 0})
+				end
+				alpha = va[1]
+			end
+		end
+	end
+	
+	--for cat, val in Data1 do
+		--for ca, va in pairs(val) do
+		--	va = DPSMate.Sync:GetSummarizedTable(va)
+		--end
+	--end
+	
+	g3:ResetData()
+	g3:SetGridSpacing(maxX/7,maxY/7)
+	
+	g3:AddDataSeries(Data1,{1.0,0.0,0.0,0.8}, {}, label)
+	g3:Show()
+	toggle2 = true
 end
 
 function DPSMate.Modules.DetailsHealing:CreateGraphTable()
@@ -386,24 +509,32 @@ function DPSMate.Modules.DetailsHealing:AddProcPoints(name, dat)
 	return {bool, data}
 end
 
-function DPSMate.Modules.DetailsHealing:ToggleMode()
-	if toggle then
-		toggle = false
-		self:ScrollFrame_Update()
-		self:SelectDetails_HealingButton(1)
-		DPSMate_Details_Healing_playerSpells:Hide()
-		DPSMate_Details_Healing_player:Hide()
-		DPSMate_Details_Healing_Diagram:Show()
-		DPSMate_Details_Healing_Log:Show()
+function DPSMate.Modules.DetailsHealing:ToggleMode(bool)
+	if bool then
+		if toggle2 then
+			self:UpdateLineGraph()
+		else
+			self:UpdateStackedGraph()
+		end
 	else
-		toggle = true
-		self:Player_Update()
-		self:PlayerSpells_Update(1)
-		self:SelectDetails_HealingButton(1)
-		DPSMate_Details_Healing_playerSpells:Show()
-		DPSMate_Details_Healing_player:Show()
-		DPSMate_Details_Healing_Diagram:Hide()
-		DPSMate_Details_Healing_Log:Hide()
+		if toggle then
+			toggle = false
+			self:ScrollFrame_Update()
+			self:SelectDetails_HealingButton(1)
+			DPSMate_Details_Healing_playerSpells:Hide()
+			DPSMate_Details_Healing_player:Hide()
+			DPSMate_Details_Healing_Diagram:Show()
+			DPSMate_Details_Healing_Log:Show()
+		else
+			toggle = true
+			self:Player_Update()
+			self:PlayerSpells_Update(1)
+			self:SelectDetails_HealingButton(1)
+			DPSMate_Details_Healing_playerSpells:Show()
+			DPSMate_Details_Healing_player:Show()
+			DPSMate_Details_Healing_Diagram:Hide()
+			DPSMate_Details_Healing_Log:Hide()
+		end
 	end
 end
 
