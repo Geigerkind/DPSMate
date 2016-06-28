@@ -210,12 +210,12 @@ function DPSMate.Modules.DetailsOverhealing:UpdateStackedGraph()
 			local i = 1
 			while true do
 				if not b[i] then
-					tinsert(b, i, val[13])
+					tinsert(b, i, val[1])
 					tinsert(label, i, DPSMate:GetAbilityById(cat))
 					tinsert(Data1, i, temp)
 					break
-				elseif b[i]>=val[13] then
-					tinsert(b, i, val[13])
+				elseif b[i]>=val[1] then
+					tinsert(b, i, val[1])
 					tinsert(label, i, DPSMate:GetAbilityById(cat))
 					tinsert(Data1, i, temp)
 					break
