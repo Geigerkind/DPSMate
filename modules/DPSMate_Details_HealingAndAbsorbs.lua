@@ -345,7 +345,7 @@ function DPSMate.Modules.DetailsHealingAndAbsorbs:UpdateStackedGraph()
 	local p = {}
 	local maxY = 0
 	local maxX = 0
-	for cat, val in db[DPSMateUser[DetailsUser][1]] do
+	for cat, val in DPSMateEHealing[curKey][DPSMateUser[DetailsUser][1]] do
 		if cat~="i" and val["i"] then
 			local temp = {}
 			for c, v in val["i"] do
@@ -372,12 +372,12 @@ function DPSMate.Modules.DetailsHealingAndAbsorbs:UpdateStackedGraph()
 			local i = 1
 			while true do
 				if not b[i] then
-					tinsert(b, i, val[13])
+					tinsert(b, i, val[1])
 					tinsert(label, i, DPSMate:GetAbilityById(cat))
 					tinsert(Data1, i, temp)
 					break
-				elseif b[i]>=val[13] then
-					tinsert(b, i, val[13])
+				elseif b[i]>=val[1] then
+					tinsert(b, i, val[1])
 					tinsert(label, i, DPSMate:GetAbilityById(cat))
 					tinsert(Data1, i, temp)
 					break
@@ -386,6 +386,42 @@ function DPSMate.Modules.DetailsHealingAndAbsorbs:UpdateStackedGraph()
 			end
 		end
 	end
+	-- Add absorbs points
+	local temp = {}
+	for cat, val in DPSMateAbsorbs[curKey] do
+		if val[DPSMateUser[DetailsUser][1]] then
+			for ca, va in val[DPSMateUser[DetailsUser][1]]["i"] do
+				local i, dmg = 1, 5
+				if va[4] then
+					dmg = va[4]
+				end
+				if DPSMateDamageTaken[1][DPSMateUser[DetailsUser][1]][va[2]] then
+					if DPSMateDamageTaken[1][DPSMateUser[DetailsUser][1]][va[2]][va[3]] then
+						dmg = DPSMateDamageTaken[1][DPSMateUser[DetailsUser][1]][va[2]][va[3]][14]
+					end
+				end
+				if dmg>0 then
+					if not temp[va[3]] then
+						temp[va[3]] = {}
+					end
+					while true do
+						if (not temp[va[3]][i]) then
+							tinsert(temp[va[3]], i, {va[1], dmg})
+							break
+						elseif va[1]<=temp[va[3]][i][1] then
+							tinsert(temp[va[3]], i, {va[1], dmg})
+							break
+						end
+						i=i+1
+					end
+				end
+			end
+		end
+	end
+	for cat, val in temp do
+		tinsert(newArr, 1, val)
+	end
+	
 	-- Fill zero numbers
 	for cat, val in Data1 do
 		local alpha = 0
