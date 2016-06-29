@@ -497,7 +497,7 @@ function DPSMate.DB:OnEvent(event)
 		
 		player = UnitName("player")
 		
-		SetCVar("CombatLogRangeParty", 200);
+		--SetCVar("CombatLogRangePartyPlayers", 200);
 		SetCVar("CombatLogRangePartyPet", 200);
 		SetCVar("CombatLogRangeFriendlyPlayers", 200);
 		SetCVar("CombatLogRangeFriendlyPlayersPets", 200);
