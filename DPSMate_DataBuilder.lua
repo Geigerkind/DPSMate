@@ -496,6 +496,16 @@ function DPSMate.DB:OnEvent(event)
 		self:CombatTime()
 		
 		player = UnitName("player")
+		
+		SetCVar("CombatLogRangeParty", 200);
+		SetCVar("CombatLogRangePartyPet", 200);
+		SetCVar("CombatLogRangeFriendlyPlayers", 200);
+		SetCVar("CombatLogRangeFriendlyPlayersPets", 200);
+		SetCVar("CombatLogRangeHostilePlayers", 200);
+		SetCVar("CombatLogRangeHostilePlayersPets", 200);
+		SetCVar("CombatLogRangeCreature", 200);
+		SetCVar("CombatDeathLogRange", 200);
+		
 		DPSMate:SendMessage("DPSMate build "..DPSMate.VERSION.." has been loaded!")
 		self.loaded = true
 		InitialLoad = true
