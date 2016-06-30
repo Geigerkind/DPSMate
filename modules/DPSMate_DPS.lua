@@ -25,7 +25,7 @@ function DPSMate.Modules.DPS:GetSortedTable(arr,k)
 				if DPSMate:ApplyFilter(k, name) then
 					local CV = val["i"]
 					if DPSMate:PlayerExist(DPSMateUser, DPSMateUser[name][5]) and arr[DPSMateUser[DPSMateUser[name][5]][1]] then
-						CV=CV+arr[DPSMateUser[DPSMateUser[name]["pet"]][1]]["i"]
+						CV=CV+arr[DPSMateUser[DPSMateUser[name][5]][1]]["i"]
 					end
 					a[CV] = name
 					local i = 1

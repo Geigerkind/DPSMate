@@ -62,7 +62,7 @@ end
 function DPSMate.Modules.DetailsDeaths:SelectDetailsButton(i)
 	local obj = DPSMate_Details_Deaths_Log_ScrollFrame
 	local lineplusoffset = i + FauxScrollFrame_GetOffset(obj)
-	local user, pet = "", 0
+	local user = ""
 	
 	DetailsSelected = lineplusoffset
 	for p=1, 14 do
@@ -71,7 +71,7 @@ function DPSMate.Modules.DetailsDeaths:SelectDetailsButton(i)
 	_G("DPSMate_Details_Deaths_Log_ScrollButton"..i.."_selected"):Show()
 	
 	for i=1, 20 do
-		_G("DPSMate_Details_Deaths_LogDetails_Child_Row"..i.."_GameTime"):SetText()
+		_G("DPSMate_Details_Deaths_LogDetails_Child_Row"..i.."_Time"):SetText()
 		_G("DPSMate_Details_Deaths_LogDetails_Child_Row"..i.."_CombatTime"):SetText()
 		_G("DPSMate_Details_Deaths_LogDetails_Child_Row"..i.."_Cause"):SetText()
 		_G("DPSMate_Details_Deaths_LogDetails_Child_Row"..i.."_Cause"):SetTextColor()
@@ -85,7 +85,7 @@ function DPSMate.Modules.DetailsDeaths:SelectDetailsButton(i)
 			local name = DPSMate:GetUserById(val[1])
 			local type,r,g,b = "HIT", DPSMate:GetClassColor(DPSMateUser[name][2])
 			if val[4]==1 then type="CRIT" elseif val[4]==2 then type="CRUSH" end
-			_G("DPSMate_Details_Deaths_LogDetails_Child_Row"..cat.."_GameTime"):SetText(val[7])
+			_G("DPSMate_Details_Deaths_LogDetails_Child_Row"..cat.."_Time"):SetText(val[7])
 			_G("DPSMate_Details_Deaths_LogDetails_Child_Row"..cat.."_CombatTime"):SetText(ceil(val[6]).."s")
 			_G("DPSMate_Details_Deaths_LogDetails_Child_Row"..cat.."_Cause"):SetText(name)
 			_G("DPSMate_Details_Deaths_LogDetails_Child_Row"..cat.."_Cause"):SetTextColor(r,g,b,1)

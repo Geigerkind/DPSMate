@@ -51,7 +51,7 @@
 		<Size x="595" y="30" />
 		<Layers>
 			<Layer level="ARTWORK">
-				<FontString name="$parentgetglobalameTime" inherits="GameFontNormalSmall" justifyH="CENTER">
+				<FontString name="$parent_Time" inherits="GameFontNormalSmall" justifyH="CENTER">
 					<Size x="80" y="30" />
 					<Anchors>
 						<Anchor point="TOPLEFT" />
@@ -326,7 +326,7 @@
 				<Scripts>
 					<OnLoad>
 						DPSMate.Modules.DetailsDeaths:CreateGraphTable()
-						getglobal(this:GetName().."getglobalameTime"):SetText(DPSMate.L["time"])
+						getglobal(this:GetName().."_Time"):SetText(DPSMate.L["time"])
 						getglobal(this:GetName().."_CombatTime"):SetText(DPSMate.L["cbt"])
 						getglobal(this:GetName().."_Cause"):SetText(DPSMate.L["cause"])
 						getglobal(this:GetName().."_Ability"):SetText(DPSMate.L["ability"])
@@ -342,7 +342,7 @@
 				<HitRectInsets left="0" right="0" top="35" bottom="15"/>
 				<Layers>
 					<Layer level="ARTWORK">
-						<FontString name="$parentgetglobalameTime" inherits="GameFontNormal" justifyH="LEFT">
+						<FontString name="$parent_Time" inherits="GameFontNormal" justifyH="LEFT">
 							<Size x="70" y="24" />
 							<Anchors>
 								<Anchor point="TOPLEFT">
@@ -353,7 +353,7 @@
 						<FontString name="$parent_CombatTime" inherits="GameFontNormal" justifyH="LEFT">
 							<Size x="80" y="24" />
 							<Anchors>
-								<Anchor point="LEFT" relativeTo="$parentgetglobalameTime" relativePoint="RIGHT">
+								<Anchor point="LEFT" relativeTo="$parent_Time" relativePoint="RIGHT">
 									<Offset x="-5" y="0" />
 								</Anchor>
 							</Anchors>
@@ -361,7 +361,7 @@
 						<FontString name="$parent_Cause" inherits="GameFontNormal" justifyH="LEFT">
 							<Size x="80" y="24" />
 							<Anchors>
-								<Anchor point="LEFT" relativeTo="$parentgetglobalameTime" relativePoint="RIGHT">
+								<Anchor point="LEFT" relativeTo="$parent_Time" relativePoint="RIGHT">
 									<Offset x="95" y="0" />
 								</Anchor>
 							</Anchors>
@@ -369,7 +369,7 @@
 						<FontString name="$parent_Ability" inherits="GameFontNormal" justifyH="LEFT">
 							<Size x="80" y="24" />
 							<Anchors>
-								<Anchor point="LEFT" relativeTo="$parentgetglobalameTime" relativePoint="RIGHT">
+								<Anchor point="LEFT" relativeTo="$parent_Time" relativePoint="RIGHT">
 									<Offset x="195" y="0" />
 								</Anchor>
 							</Anchors>
@@ -377,7 +377,7 @@
 						<FontString name="$parent_Type" inherits="GameFontNormal" justifyH="LEFT">
 							<Size x="80" y="24" />
 							<Anchors>
-								<Anchor point="LEFT" relativeTo="$parentgetglobalameTime" relativePoint="RIGHT">
+								<Anchor point="LEFT" relativeTo="$parent_Time" relativePoint="RIGHT">
 									<Offset x="275" y="0" />
 								</Anchor>
 							</Anchors>
@@ -385,7 +385,7 @@
 						<FontString name="$parent_HealIn" inherits="GameFontNormal" justifyH="LEFT">
 							<Size x="80" y="24" />
 							<Anchors>
-								<Anchor point="LEFT" relativeTo="$parentgetglobalameTime" relativePoint="RIGHT">
+								<Anchor point="LEFT" relativeTo="$parent_Time" relativePoint="RIGHT">
 									<Offset x="336" y="0" />
 								</Anchor>
 							</Anchors>
@@ -393,7 +393,7 @@
 						<FontString name="$parent_DamageIn" inherits="GameFontNormal" justifyH="LEFT">
 							<Size x="80" y="24" />
 							<Anchors>
-								<Anchor point="LEFT" relativeTo="$parentgetglobalameTime" relativePoint="RIGHT">
+								<Anchor point="LEFT" relativeTo="$parent_Time" relativePoint="RIGHT">
 									<Offset x="420" y="0" />
 								</Anchor>
 							</Anchors>
