@@ -853,10 +853,10 @@ function DPSMate.Options:PopUpAccept(bool, bypass)
 			DPSMateDispels[2] = {}
 			DPSMateDeaths[2] = {}
 			DPSMateInterrupts[2] = {}
-			DPSMateGained[2] = {}
+			DPSMateAurasGained[2] = {}
 			DPSMateThreat[2] = {}
 			DPSMateFails[2] = {}
-			DPSMateAurasCCBreaker[2] = {}
+			DPSMateCCBreaker[2] = {}
 			DPSMateCombatTime["current"] = 1
 		end
 		DPSMate.Modules.DPS.DB = DPSMateDamageDone

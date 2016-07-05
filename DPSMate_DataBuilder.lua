@@ -1707,71 +1707,73 @@ function DPSMate.DB:UpdatePlayerCBT(cbt)
 end
 
 function DPSMate.DB:CombatTime()
-	local f = CreateFrame("Frame", "CombatFrame", UIParent)
-	f:SetScript("OnUpdate", function(self, elapsed)
-		if (CombatState) then
-			local notInCombat = false
-			LastUpdate = LastUpdate + arg1
-			CombatTime = CombatTime + arg1
-			if LastUpdate>=UpdateTime then
-				DPSMateCombatTime["total"] = DPSMateCombatTime["total"] + LastUpdate
-				DPSMateCombatTime["current"] = DPSMateCombatTime["current"] + LastUpdate
-				notInCombat = DPSMate.DB:UpdatePlayerCBT(LastUpdate)
-				
-				-- Check NPC E CBT Time (May be inaccurate) -> Can be used as active time later
-				for cat, _ in ActiveMob do
-					DPSMateCombatTime["effective"][1][cat] = (DPSMateCombatTime["effective"][1][cat] or 0) + LastUpdate
-					DPSMateCombatTime["effective"][2][cat] = (DPSMateCombatTime["effective"][2][cat] or 0) + LastUpdate
+	if not CombatFrame then
+		local f = CreateFrame("Frame", "CombatFrame", UIParent)
+		f:SetScript("OnUpdate", function(self, elapsed)
+			if (CombatState) then
+				local notInCombat = false
+				LastUpdate = LastUpdate + arg1
+				CombatTime = CombatTime + arg1
+				if LastUpdate>=UpdateTime then
+					DPSMateCombatTime["total"] = DPSMateCombatTime["total"] + LastUpdate
+					DPSMateCombatTime["current"] = DPSMateCombatTime["current"] + LastUpdate
+					notInCombat = DPSMate.DB:UpdatePlayerCBT(LastUpdate)
+					
+					-- Check NPC E CBT Time (May be inaccurate) -> Can be used as active time later
+					for cat, _ in ActiveMob do
+						DPSMateCombatTime["effective"][1][cat] = (DPSMateCombatTime["effective"][1][cat] or 0) + LastUpdate
+						DPSMateCombatTime["effective"][2][cat] = (DPSMateCombatTime["effective"][2][cat] or 0) + LastUpdate
+					end
+					ActiveMob = {}
+					
+					DPSMate.Parser.SendSpell = {}
+					LastUpdate = 0
 				end
-				ActiveMob = {}
 				
-				DPSMate.Parser.SendSpell = {}
-				LastUpdate = 0
+				if CombatTime>=CombatBuffer then
+					if notInCombat then 
+						CombatState = false
+						CombatTime = 0
+						DPSMate.DB:Attempt(true, DPSMate.DB:IsWipe(), nil)
+					end
+				end
+			else
+				DPSMate.DB.MainUpdate = DPSMate.DB.MainUpdate + arg1
 			end
-			
-			if CombatTime>=CombatBuffer then
-				if notInCombat then 
-					CombatState = false
-					CombatTime = 0
-					DPSMate.DB:Attempt(true, DPSMate.DB:IsWipe(), nil)
+			if DPSMate.DB.NeedUpdate then
+				MainLastUpdate = MainLastUpdate + arg1
+				if MainLastUpdate>=MainUpdateTime then
+					DPSMate.DB:UpdateKicks()
+					DPSMate:SetStatusBarValue()
+					DPSMate.DB.NeedUpdate = false
+					MainLastUpdate = 0
 				end
 			end
-		else
-			DPSMate.DB.MainUpdate = DPSMate.DB.MainUpdate + arg1
-		end
-		if DPSMate.DB.NeedUpdate then
-			MainLastUpdate = MainLastUpdate + arg1
-			if MainLastUpdate>=MainUpdateTime then
-				DPSMate.DB:UpdateKicks()
-				DPSMate:SetStatusBarValue()
-				DPSMate.DB.NeedUpdate = false
-				MainLastUpdate = 0
+			if DPSMate.DB.MainUpdate>=150 then
+				DPSMate.DB:ClearAwaitBuffs()
+				DPSMate.DB:ClearAwaitAbsorb()
+				DPSMate.DB:ClearAwaitHotDispel()
+				DPSMate.DB.MainUpdate = 0
+				DPSMate.Sync.Async = true
 			end
-		end
-		if DPSMate.DB.MainUpdate>=150 then
-			DPSMate.DB:ClearAwaitBuffs()
-			DPSMate.DB:ClearAwaitAbsorb()
-			DPSMate.DB:ClearAwaitHotDispel()
-			DPSMate.DB.MainUpdate = 0
-			DPSMate.Sync.Async = true
-		end
-		if DPSMate.Sync.Async then
-			DPSMate.Sync:OnUpdate(arg1)
-		end
-		if not CombatState then
-			DPSMate.Sync:SendAddonMessages(arg1)
-		end
-		if InitialLoad then
-			In1 = In1 + arg1
-			if In1>=1 then
-				DPSMate:SetStatusBarValue()
-				DPSMate.Parser:GetPlayerValues()
-				DPSMate.DB:OnGroupUpdate()
-				InitialLoad = false
+			if DPSMate.Sync.Async then
+				DPSMate.Sync:OnUpdate(arg1)
 			end
-		end
-		DPSMate.Sync:DismissVote(arg1)
-	end)
+			if not CombatState then
+				DPSMate.Sync:SendAddonMessages(arg1)
+			end
+			if InitialLoad then
+				In1 = In1 + arg1
+				if In1>=1 then
+					DPSMate:SetStatusBarValue()
+					DPSMate.Parser:GetPlayerValues()
+					DPSMate.DB:OnGroupUpdate()
+					InitialLoad = false
+				end
+			end
+			DPSMate.Sync:DismissVote(arg1)
+		end)
+	end
 end
 
 function DPSMate.DB:hasVanishedFeignDeath()

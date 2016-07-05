@@ -210,6 +210,7 @@ function DPSMate.Parser:GetPlayerValues()
 	end
 	DPSMatePlayer[4] = GetRealmName()
 	DPSMatePlayer[5] = GetGuildInfo("player")
+	DPSMatePlayer[6] = GetLocale()
 end
 
 function DPSMate.Parser:OnEvent(event)

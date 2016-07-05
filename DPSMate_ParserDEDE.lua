@@ -765,7 +765,7 @@ if (GetLocale() == "deDE") then
 			DB:DeathHistory(player, a, b, t[1], 1, 0, 1, 0)
 			return
 		end
-		for a,b,c,d in strgfind(msg, "(.+) gains (%d+) Energy from (.+)'s (.+)%.") do
+		for a,b,c,d in strgfind(msg, "(.+) bekommt (%d+) Energie durch (.+)s (.+)%.") do
 			DB:BuildBuffs(c, a, d, true)
 			DB:DestroyBuffs(c, d)
 			return 
@@ -808,15 +808,15 @@ if (GetLocale() == "deDE") then
 	end
 	
 	DPSMate.Parser.SpellAuraGoneSelf = function(self, msg)
-		for ab in strgfind(msg, "%'(.+)%' schwindet von Euch%.") do if DB.ShieldFlags[ab] then DB:UnregisterAbsorb(ab, player) end; if self.RCD[ab] then DPSMate:Broadcast(6, player, ab) end; DB:DestroyBuffs(player, ab); DB:UnregisterHotDispel(player, ab); DB:RemoveActiveCC(player, ab) end
+		for ab in strgfind(msg, "%'(.+)%' schwindet von Euch%.") do if strfind(ab, "%(") then ab=strsub(ab, 1, strfind(ab, "%(")-2) end;if DB.ShieldFlags[ab] then DB:UnregisterAbsorb(ab, player) end; if self.RCD[ab] then DPSMate:Broadcast(6, player, ab) end; DB:DestroyBuffs(player, ab); DB:UnregisterHotDispel(player, ab); DB:RemoveActiveCC(player, ab) end
 	end
 	
 	DPSMate.Parser.SpellAuraGoneParty = function(self, msg)
-		for ab, ta in strgfind(msg, "%'(.+)%' schwindet von (.+)%.") do if DB.ShieldFlags[ab] then DB:UnregisterAbsorb(ab, ta) end; if self.RCD[ab] then DPSMate:Broadcast(6, ta, ab) end; DB:DestroyBuffs(ta, ab); DB:UnregisterHotDispel(ta, ab); DB:RemoveActiveCC(ta, ab) end
+		for ab, ta in strgfind(msg, "%'(.+)%' schwindet von (.+)%.") do if strfind(ab, "%(") then ab=strsub(ab, 1, strfind(ab, "%(")-2) end;if DB.ShieldFlags[ab] then DB:UnregisterAbsorb(ab, ta) end; if self.RCD[ab] then DPSMate:Broadcast(6, ta, ab) end; DB:DestroyBuffs(ta, ab); DB:UnregisterHotDispel(ta, ab); DB:RemoveActiveCC(ta, ab) end
 	end
 	
 	DPSMate.Parser.SpellAuraGoneOther = function(self, msg)
-		for ab, ta in strgfind(msg, "%'(.+)%' schwindet von (.+)%.") do if DB.ShieldFlags[ab] then DB:UnregisterAbsorb(ab, ta) end; if self.RCD[ab] then DPSMate:Broadcast(6, ta, ab) end; DB:DestroyBuffs(ta, ab); DB:UnregisterHotDispel(ta, ab); DB:RemoveActiveCC(ta, ab) end
+		for ab, ta in strgfind(msg, "%'(.+)%' schwindet von (.+)%.") do if strfind(ab, "%(") then ab=strsub(ab, 1, strfind(ab, "%(")-2) end;if DB.ShieldFlags[ab] then DB:UnregisterAbsorb(ab, ta) end; if self.RCD[ab] then DPSMate:Broadcast(6, ta, ab) end; DB:DestroyBuffs(ta, ab); DB:UnregisterHotDispel(ta, ab); DB:RemoveActiveCC(ta, ab) end
 	end
 	
 	----------------------------------------------------------------------------------

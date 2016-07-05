@@ -667,17 +667,17 @@ end
 
 -- Power Word: Shield fades from you.
 function DPSMate.Parser:SpellAuraGoneSelf(msg)
-	for ab in strgfind(msg, "(.+) fades from you%.") do if DB.ShieldFlags[ab] then DB:UnregisterAbsorb(ab, player) end; if self.RCD[ab] then DPSMate:Broadcast(6, player, ab) end; DB:DestroyBuffs(player, ab); DB:UnregisterHotDispel(player, ab); DB:RemoveActiveCC(player, ab) end
+	for ab in strgfind(msg, "(.+) fades from you%.") do if strfind(ab, "%(") then ab=strsub(ab, 1, strfind(ab, "%(")-2) end; if DB.ShieldFlags[ab] then DB:UnregisterAbsorb(ab, player) end; if self.RCD[ab] then DPSMate:Broadcast(6, player, ab) end; DB:DestroyBuffs(player, ab); DB:UnregisterHotDispel(player, ab); DB:RemoveActiveCC(player, ab) end
 end
 
 -- Power Word: Shield fades from Senpie.
 function DPSMate.Parser:SpellAuraGoneParty(msg)
 	--DPSMate:SendMessage(msg)
-	for ab, ta in strgfind(msg, "(.+) fades from (.+)%.") do if DB.ShieldFlags[ab] then DB:UnregisterAbsorb(ab, ta) end; if self.RCD[ab] then DPSMate:Broadcast(6, ta, ab) end; DB:DestroyBuffs(ta, ab); DB:UnregisterHotDispel(ta, ab); DB:RemoveActiveCC(ta, ab) end
+	for ab, ta in strgfind(msg, "(.+) fades from (.+)%.") do if strfind(ab, "%(") then ab=strsub(ab, 1, strfind(ab, "%(")-2) end;if DB.ShieldFlags[ab] then DB:UnregisterAbsorb(ab, ta) end; if self.RCD[ab] then DPSMate:Broadcast(6, ta, ab) end; DB:DestroyBuffs(ta, ab); DB:UnregisterHotDispel(ta, ab); DB:RemoveActiveCC(ta, ab) end
 end
 
 function DPSMate.Parser:SpellAuraGoneOther(msg)
-	for ab, ta in strgfind(msg, "(.+) fades from (.+)%.") do if DB.ShieldFlags[ab] then DB:UnregisterAbsorb(ab, ta) end; if self.RCD[ab] then DPSMate:Broadcast(6, ta, ab) end; DB:DestroyBuffs(ta, ab); DB:UnregisterHotDispel(ta, ab); DB:RemoveActiveCC(ta, ab) end
+	for ab, ta in strgfind(msg, "(.+) fades from (.+)%.") do if strfind(ab, "%(") then ab=strsub(ab, 1, strfind(ab, "%(")-2) end;if DB.ShieldFlags[ab] then DB:UnregisterAbsorb(ab, ta) end; if self.RCD[ab] then DPSMate:Broadcast(6, ta, ab) end; DB:DestroyBuffs(ta, ab); DB:UnregisterHotDispel(ta, ab); DB:RemoveActiveCC(ta, ab) end
 end
 
 ----------------------------------------------------------------------------------
