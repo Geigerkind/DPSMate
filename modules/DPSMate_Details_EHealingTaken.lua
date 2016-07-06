@@ -183,13 +183,18 @@ function DPSMate.Modules.DetailsEHealingTaken:UpdateStackedGraph()
 	local p = {}
 	local maxY = 0
 	local maxX = 0
+	local temp = {}
+	local temp2 = {}
 	for cat, val in db[DPSMateUser[DetailsUser][1]] do
 		if cat~="i" then
 			for ca, va in val do
 				if va["i"] then
-					local temp = {}
 					for c, v in va["i"] do
 						local key = tonumber(strformat("%.1f", c))
+						if not temp[ca] then
+							temp[ca] = {}
+							temp2[ca] = 0
+						end
 						if p[key] then
 							p[key] = p[key] + v
 						else
@@ -197,35 +202,46 @@ function DPSMate.Modules.DetailsEHealingTaken:UpdateStackedGraph()
 						end
 						local i = 1
 						while true do
-							if not temp[i] then
-								tinsert(temp, i, {c,v})
+							if not temp[ca][i] then
+								tinsert(temp[ca], i, {c,v})
 								break
-							elseif c<=temp[i][1] then
-								tinsert(temp, i, {c,v})
+							elseif c<=temp[ca][i][1] then
+								tinsert(temp[ca], i, {c,v})
 								break
 							end
 							i = i + 1
 						end
+						temp2[ca] = temp2[ca] + va[1]
 						maxY = math.max(p[key], maxY)
 						maxX = math.max(c, maxX)
 					end
-					local i = 1
-					while true do
-						if not b[i] then
-							tinsert(b, i, va[1])
-							tinsert(label, i, DPSMate:GetAbilityById(ca))
-							tinsert(Data1, i, temp)
-							break
-						elseif b[i]>=va[1] then
-							tinsert(b, i, va[1])
-							tinsert(label, i, DPSMate:GetAbilityById(ca))
-							tinsert(Data1, i, temp)
-							break
-						end
-						i = i + 1
-					end
 				end
 			end
+		end
+	end
+	local min
+	for cat, val in temp do
+		temp[cat] = DPSMate.Sync:GetSummarizedTable(val)
+		local pmin = DPSMate:GetMinValue(val, 1)
+		if not min or pmin<min then
+			min = pmin
+		end
+	end
+	for cat, val in temp do
+		local i = 1
+		while true do
+			if not b[i] then
+				tinsert(b, i, temp2[cat])
+				tinsert(label, i, DPSMate:GetAbilityById(cat))
+				tinsert(Data1, i, val)
+				break
+			elseif b[i]>=temp2[cat] then
+				tinsert(b, i, temp2[cat])
+				tinsert(label, i, DPSMate:GetAbilityById(cat))
+				tinsert(Data1, i, val)
+				break
+			end
+			i = i + 1
 		end
 	end
 	-- Fill zero numbers
@@ -244,14 +260,12 @@ function DPSMate.Modules.DetailsEHealingTaken:UpdateStackedGraph()
 		end
 	end
 	
-	--for cat, val in Data1 do
-		--for ca, va in pairs(val) do
-		--	va = DPSMate.Sync:GetSummarizedTable(va)
-		--end
-	--end
+	for cat, val in Data1 do
+		Data1[cat] = DPSMate:ScaleDown(val, min)
+	end
 	
 	g:ResetData()
-	g:SetGridSpacing(maxX/7,maxY/7)
+	g:SetGridSpacing((maxX-min)/7,maxY/7)
 	
 	g:AddDataSeries(Data1,{1.0,0.0,0.0,0.8}, {}, label)
 	g:Show()

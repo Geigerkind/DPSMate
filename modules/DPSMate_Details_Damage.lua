@@ -375,6 +375,7 @@ function DPSMate.Modules.DetailsDamage:UpdateStackedGraph()
 				maxY = math.max(p[key], maxY)
 				maxX = math.max(c, maxX)
 			end
+			temp = DPSMate.Sync:GetSummarizedTable(temp)
 			local i = 1
 			while true do
 				if not b[i] then
@@ -407,12 +408,6 @@ function DPSMate.Modules.DetailsDamage:UpdateStackedGraph()
 			end
 		end
 	end
-	
-	--for cat, val in Data1 do
-		--for ca, va in pairs(val) do
-		--	va = DPSMate.Sync:GetSummarizedTable(va)
-		--end
-	--end
 	
 	g3:ResetData()
 	g3:SetGridSpacing(maxX/7,maxY/7)

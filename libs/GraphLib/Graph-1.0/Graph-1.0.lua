@@ -585,6 +585,25 @@ local ColorTable={
 	{0.5,1.0,0.0},
 	{0.5,0.0,1.0},
 	{0.0,1.0,0.5},
+	{0.1,0.1,0.1},
+	{0.2,0.2,0.2},
+	{0.3,0.3,0.3},
+	{0.4,0.4,0.4},
+	{0.5,0.5,0.5},
+	{0.6,0.6,0.6},
+	{0.7,0.7,0.7},
+	{0.8,0.8,0.8},
+	{0.9,0.9,0.9},
+	{1.0,1.0,1.0},
+	{0.15,0.15,0.15},
+	{0.25,0.25,0.25},
+	{0.35,0.35,0.35},
+	{0.45,0.45,0.45},
+	{0.55,0.55,0.55},
+	{0.65,0.65,0.65},
+	{0.75,0.75,0.75},
+	{0.85,0.85,0.85},
+	{0.95,0.95,0.95},
 }
 function GraphFunctions:AddPie(Percent, Color)
 	local k,v
@@ -1363,19 +1382,18 @@ end
 
 -- Stacked Graph
 function GraphFunctions:RefreshStackedGraph()
-	local k1, k2, series
 	self:HideLines(self)
 	self:HideBars(self)
 	
 	-- Format table
-	local p = {}
 	for k1, series in pairs(self.Data) do
+		local p = {}
 		for c,v in pairs(series.Points) do
 			for k2, point in pairs(v) do
 				point[1] = tonumber(string.format("%.1f",point[1]))
 				if p[point[1]] then
-					point[2] = point[2] + p[point[1]]
 					p[point[1]] = p[point[1]] + point[2]
+					point[2] = p[point[1]]
 				else
 					p[point[1]] = point[2]
 				end
@@ -1496,6 +1514,9 @@ function lib:DrawLine(C, sx, sy, ex, ey, w, color, layer, point, label)
 	if point and T then
 		T.val = ceil(point[2])
 	end
+	if label and T then
+		T.label = label
+	end
 
 	if not T then
 		P = CreateFrame("Frame", C:GetName().."_LineTT"..(getn(C.GraphLib_Lines)+1), C)
@@ -1507,8 +1528,8 @@ function lib:DrawLine(C, sx, sy, ex, ey, w, color, layer, point, label)
 			if T.val then
 				GameTooltip:SetOwner(P)
 				GameTooltip:AddLine("Value: "..T.val)
-				if label then
-					GameTooltip:AddLine("Label: "..label)
+				if T.label then
+					GameTooltip:AddLine("Label: "..T.label)
 				end
 				GameTooltip:Show()
 			end
@@ -1522,6 +1543,9 @@ function lib:DrawLine(C, sx, sy, ex, ey, w, color, layer, point, label)
 		T:SetTexture(TextureDirectory.."line");
 		if point then
 			T.val = ceil(point[2])
+		end
+		if label and T then
+			T.label = label
 		end
 		tinsert(C.GraphLib_Lines,{[1]=T,[2]=P});
 	end
@@ -1728,6 +1752,7 @@ function lib:HideLines(C)
 		for k,v in pairs(C.GraphLib_Lines) do
 			v[1]:Hide()
 			v[1].val = nil
+			v[1].label = nil
 			v[2]:Hide()
 		end
 	end

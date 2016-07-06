@@ -342,6 +342,7 @@ function DPSMate.Modules.DetailsHealing:UpdateStackedGraph()
 				maxY = math.max(p[key], maxY)
 				maxX = math.max(c, maxX)
 			end
+			temp = DPSMate.Sync:GetSummarizedTable(temp)
 			local i = 1
 			while true do
 				if not b[i] then
