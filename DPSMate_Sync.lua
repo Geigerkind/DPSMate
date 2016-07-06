@@ -110,7 +110,8 @@ function DPSMate.Sync:SendAddonMessages(elapsed)
 				for i=1, 80 do
 					--SDM("Test"..co, "Test"..co, "RAID")
 					if not Buffer[co] then break end
-					SDM(Buffer[co][1]..DPSMate.VERSION, Buffer[co][2], "RAID")
+					--SDM(Buffer[co][1]..DPSMate.VERSION, Buffer[co][2], "RAID")
+					SDM(Buffer[co][1].."NOTSYNC", Buffer[co][2], "RAID")
 					Buffer[co] = nil
 					co = co + 1
 				end
