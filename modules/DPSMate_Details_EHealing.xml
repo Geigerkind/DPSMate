@@ -395,11 +395,6 @@
 					<EdgeSize val="16" />
 					<Color r="0.157" g="0.08" b="0.06" a="0.5" />
 				</Backdrop>
-				<Scripts>
-					<OnLoad>
-						DPSMate.Modules.DetailsEHealing:CreateGraphTable()
-					</OnLoad>
-				</Scripts>
 				<Layers>
 					<Layer level="ARTWORK">
 						<FontString name="$parent_Hit" inherits="GameFontNormal" text="Hit" justifyH="LEFT">
@@ -496,6 +491,7 @@
 				</Layers>
 				<Scripts>
 					<OnLoad>
+						DPSMate.Modules.DetailsEHealing:CreateGraphTable()
 						getglobal(this:GetName().."_Hit"):SetText(DPSMate.L["hit"])
 						getglobal(this:GetName().."_Amount"):SetText(DPSMate.L["amount"])
 						getglobal(this:GetName().."_Average"):SetText(DPSMate.L["average"])

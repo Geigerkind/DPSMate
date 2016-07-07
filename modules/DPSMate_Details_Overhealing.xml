@@ -260,11 +260,6 @@
 					<EdgeSize val="16" />
 					<Color r="0.157" g="0.08" b="0.06" a="0.5" />
 				</Backdrop>
-				<Scripts>
-					<OnLoad>
-						DPSMate.Modules.DetailsOverhealing:CreateGraphTable()
-					</OnLoad>
-				</Scripts>
 				<Frames>
 					<ScrollFrame name="$parent_ScrollFrame" inherits="FauxScrollFrameTemplate">
 						<Anchors>
@@ -464,6 +459,7 @@
 				</Layers>
 				<Scripts>
 					<OnLoad>
+						DPSMate.Modules.DetailsOverhealing:CreateGraphTable()
 						getglobal(this:GetName().."_Hit"):SetText(DPSMate.L["hit"])
 						getglobal(this:GetName().."_Amount"):SetText(DPSMate.L["amount"])
 						getglobal(this:GetName().."_Average"):SetText(DPSMate.L["average"])

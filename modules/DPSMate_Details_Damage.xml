@@ -395,11 +395,6 @@
 					<EdgeSize val="16" />
 					<Color r="0.157" g="0.08" b="0.06" a="0.5" />
 				</Backdrop>
-				<Scripts>
-					<OnLoad>
-						DPSMate.Modules.DetailsDamage:CreateGraphTable()
-					</OnLoad>
-				</Scripts>
 				<Layers>
 					<Layer level="ARTWORK">
 						<FontString name="$parent_Block" inherits="GameFontNormal" text="Block" justifyH="LEFT">
@@ -670,6 +665,7 @@
 				</Layers>
 				<Scripts>
 					<OnLoad>
+						DPSMate.Modules.DetailsDamage:CreateGraphTable()
 						getglobal(this:GetName().."_Block"):SetText(DPSMate.L["block"])
 						getglobal(this:GetName().."_Glance"):SetText(DPSMate.L["glance"])
 						getglobal(this:GetName().."_Hit"):SetText(DPSMate.L["hit"])
