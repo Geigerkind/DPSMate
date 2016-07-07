@@ -414,3 +414,4 @@ DPSMate.L["fe"] = "Feralas"
 
 -- Not in translation
 DPSMate.L["switchgraphsdesc"] = "Switch graphs"
+DPSMate.L["switchindividualsdesc"] = "Individual/Total"
