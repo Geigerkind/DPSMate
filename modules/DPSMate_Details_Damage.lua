@@ -295,7 +295,7 @@ function DPSMate.Modules.DetailsDamage:UpdatePie()
 		local ability = tonumber(DetailsArr[cat])
 		if (DmgArr[cat][2]) then user=DPSMateUser[DPSMateUser[DetailsUser][5]][1] else user=DPSMateUser[DetailsUser][1] end
 		local percent = (db[user][ability][13]*100/DetailsTotal)
-		g:AddPie(percent, 0)
+		g:AddPie(percent, 0, DPSMate:GetAbilityById(ability))
 	end
 end
 

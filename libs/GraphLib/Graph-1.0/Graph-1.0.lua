@@ -605,7 +605,7 @@ local ColorTable={
 	{0.85,0.85,0.85},
 	{0.95,0.95,0.95},
 }
-function GraphFunctions:AddPie(Percent, Color)
+function GraphFunctions:AddPie(Percent, Color, label)
 	local k,v
 	local PiePercent=self.PercentOn
 
@@ -633,11 +633,36 @@ function GraphFunctions:AddPie(Percent, Color)
 	for k,v in pairs(PiePieces) do		
 		if (Percent+0.1)>CurPiece then
 			local t=self:FindTexture()
+			
 			t:SetTexture(TextureDirectory..v)
 			t:ClearAllPoints()
 			t:SetPoint("CENTER",self,"CENTER",0,0)
 			t:SetHeight(self:GetHeight())
 			t:SetWidth(self:GetWidth())
+			
+			if not t.f then
+				t.f = CreateFrame("Frame", "LabelFrame", self)
+				t.f:SetHeight(35)
+				t.f:SetWidth(35)
+				t.f:EnableMouse(true)
+				
+				t.f:SetScript("OnEnter", function()
+					if t.f.label and t.f.percent>3.5 then
+						GameTooltip:SetOwner(t.f, "ANCHOR_TOP")
+						GameTooltip:AddLine(t.f.label)
+						GameTooltip:Show()
+					end
+				end)
+				t.f:SetScript("OnLeave", function()
+					GameTooltip:Hide()
+				end)
+				t.f:ClearAllPoints()
+				t.f:SetPoint("CENTER",t,"CENTER",0,0)
+				t.f:Show()
+			end
+			t.f.label = label
+			t.f.percent = Percent
+			
 			GraphFunctions:RotateTexture(t,CurAngle)
 			t:Show()
 
@@ -645,7 +670,7 @@ function GraphFunctions:AddPie(Percent, Color)
 			Percent=Percent-CurPiece
 			PiePercent=PiePercent+CurPiece
 			CurAngle=CurAngle+Angle
-
+			
 			table.insert(Section.Textures,t)
 
 			if k == 7 then
@@ -769,6 +794,7 @@ function GraphFunctions:DrawLinePie(angle)
 end
 
 --Used to rotate the pie slices
+local NamePos = {}
 function GraphFunctions:RotateTexture(texture,angle)
 	local Radian=math.pi*(45-angle)/180
 	local Radian2=math.pi*(45+90-angle)/180
@@ -781,6 +807,23 @@ function GraphFunctions:RotateTexture(texture,angle)
 	ty2=tx
 
 	texture:SetTexCoord(0.5-tx,0.5-ty,0.5+tx2,0.5+ty2,0.5-tx2,0.5-ty2,0.5+tx,0.5+ty)
+	if not NamePos[texture.f.label] or (NamePos[texture.f.label]-GetTime())>=2 then
+		texture.f:ClearAllPoints()
+		if tx>0 then
+			if tx2<-0.5 then
+				tx = tx2-tx2*0.5
+				ty = ty+ty*0.5
+			else
+				tx = tx-tx*0.5
+				ty = ty+ty*0.5
+			end
+		else
+			tx = tx+tx*0.5
+			ty = ty-ty*0.5
+		end
+		texture.f:SetPoint("CENTER", texture, "CENTER", tx*100, ty*80)
+		NamePos[texture.f.label] = GetTime()
+	end
 end
 
 function GraphFunctions:SetSelectionFunc(f)
