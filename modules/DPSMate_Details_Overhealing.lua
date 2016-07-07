@@ -105,7 +105,7 @@ function DPSMate.Modules.DetailsOverhealing:UpdatePie()
 	for cat, val in pairs(DetailsArr) do
 		local ability = tonumber(DetailsArr[cat])
 		local percent = (db[DPSMateUser[DetailsUser][1]][ability][1]*100/DetailsTotal)
-		g:AddPie(percent, 0)
+		g:AddPie(percent, 0, DPSMate:GetAbilityById(ability))
 	end
 end
 

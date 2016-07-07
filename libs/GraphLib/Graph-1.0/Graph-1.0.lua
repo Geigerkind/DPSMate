@@ -807,22 +807,24 @@ function GraphFunctions:RotateTexture(texture,angle)
 	ty2=tx
 
 	texture:SetTexCoord(0.5-tx,0.5-ty,0.5+tx2,0.5+ty2,0.5-tx2,0.5-ty2,0.5+tx,0.5+ty)
-	if not NamePos[texture.f.label] or (NamePos[texture.f.label]-GetTime())>=2 then
-		texture.f:ClearAllPoints()
-		if tx>0 then
-			if tx2<-0.5 then
-				tx = tx2-tx2*0.5
-				ty = ty+ty*0.5
+	if texture.f.label then
+		if not NamePos[texture.f.label] or (NamePos[texture.f.label]-GetTime())>=2 then
+			texture.f:ClearAllPoints()
+			if tx>0 then
+				if tx2<-0.5 then
+					tx = tx2-tx2*0.5
+					ty = ty+ty*0.5
+				else
+					tx = tx-tx*0.5
+					ty = ty+ty*0.5
+				end
 			else
-				tx = tx-tx*0.5
-				ty = ty+ty*0.5
+				tx = tx+tx*0.5
+				ty = ty-ty*0.5
 			end
-		else
-			tx = tx+tx*0.5
-			ty = ty-ty*0.5
+			texture.f:SetPoint("CENTER", texture, "CENTER", tx*100, ty*80)
+			NamePos[texture.f.label] = GetTime()
 		end
-		texture.f:SetPoint("CENTER", texture, "CENTER", tx*100, ty*80)
-		NamePos[texture.f.label] = GetTime()
 	end
 end
 

@@ -289,7 +289,7 @@ function DPSMate.Modules.DetailsHealingAndAbsorbs:UpdatePie()
 	end
 	g:ResetPie()
 	for cat, val in pairs(DmgArr) do
-		g:AddPie(val[1]*100/DetailsTotal, 0)
+		g:AddPie(val[1]*100/DetailsTotal, 0, DPSMate:GetAbilityById(DetailsArr[cat]))
 	end
 end
 
