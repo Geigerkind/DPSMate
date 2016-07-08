@@ -9,7 +9,7 @@ local db, cbt, db2 = {}, 0, {}
 local tinsert = table.insert
 local _G = getglobal
 local strformat = string.format
-local toggle, toggle2 = false, false
+local toggle, toggle2, toggle3 = false, false, false
 local t1, t2, TTotal = {}, {}, 0
 
 function DPSMate.Modules.DetailsHealing:UpdateDetails(obj, key)
@@ -187,6 +187,13 @@ function DPSMate.Modules.DetailsHealing:PlayerSpells_Update(i)
 		_G("DPSMate_Details_Healing_player_ScrollButton"..p.."_selected"):Hide()
 	end
 	_G("DPSMate_Details_Healing_player_ScrollButton"..i.."_selected"):Show()
+	if toggle3 then
+		if toggle2 then
+			self:UpdateStackedGraph()
+		else
+			self:UpdateLineGraph()
+		end
+	end
 end
 
 function DPSMate.Modules.DetailsHealing:SelectDetails_HealingButton(i)
@@ -243,22 +250,43 @@ function DPSMate.Modules.DetailsHealing:UpdatePie()
 	end
 end
 
-function DPSMate.Modules.DetailsHealing:SortLineTable(t)
+function DPSMate.Modules.DetailsHealing:SortLineTable(t, b)
 	local newArr = {}
-	for cat, val in t[DPSMateUser[DetailsUser][1]] do
-		if cat~="i" and val["i"] then
-			for ca, va in val["i"] do
-				local i=1
-				while true do
-					if (not newArr[i]) then 
-						tinsert(newArr, i, {ca, va})
-						break
+	if b then
+		for cat, val in t[b][DPSMateUser[DetailsUser][1]] do
+			if cat~="i" and val["i"] then
+				for ca, va in val["i"] do
+					local i=1
+					while true do
+						if (not newArr[i]) then 
+							tinsert(newArr, i, {ca, va})
+							break
+						end
+						if ca<=newArr[i][1] then
+							tinsert(newArr, i, {ca, va})
+							break
+						end
+						i=i+1
 					end
-					if ca<=newArr[i][1] then
-						tinsert(newArr, i, {ca, va})
-						break
+				end
+			end
+		end
+	else
+		for cat, val in t[DPSMateUser[DetailsUser][1]] do
+			if cat~="i" and val["i"] then
+				for ca, va in val["i"] do
+					local i=1
+					while true do
+						if (not newArr[i]) then 
+							tinsert(newArr, i, {ca, va})
+							break
+						end
+						if ca<=newArr[i][1] then
+							tinsert(newArr, i, {ca, va})
+							break
+						end
+						i=i+1
 					end
-					i=i+1
 				end
 			end
 		end
@@ -273,14 +301,20 @@ function DPSMate.Modules.DetailsHealing:UpdateLineGraph()
 	if g3 then
 		g3:Hide()
 	end
-	local sumTable = self:GetSummarizedTable(self:SortLineTable(db))
+	local sumTable
+	if toggle3 then
+		sumTable = self:GetSummarizedTable(db2, t1[PSelected])
+	else
+		sumTable = self:GetSummarizedTable(db, nil)
+	end
 	local max = DPSMate:GetMaxValue(sumTable, 2)
 	local time = DPSMate:GetMaxValue(sumTable, 1)
+	local min = DPSMate:GetMinValue(sumTable, 1)
 	
 	g2:ResetData()
-	g2:SetXAxis(0,time)
+	g2:SetXAxis(0,time-min)
 	g2:SetYAxis(0,max+200)
-	g2:SetGridSpacing(time/10,max/7)
+	g2:SetGridSpacing((time-min)/10,max/7)
 	g2:SetGridColor({0.5,0.5,0.5,0.5})
 	g2:SetAxisDrawing(true,true)
 	g2:SetAxisColor({1.0,1.0,1.0,1.0})
@@ -289,8 +323,8 @@ function DPSMate.Modules.DetailsHealing:UpdateLineGraph()
 	g2:SetXLabels(true)
 
 	local Data1={{0,0}}
-	for cat, val in sumTable do
-		tinsert(Data1, {val[1],val[2], self:CheckProcs(DPSMate_Details_Healing.proc, val[1])})
+	for cat, val in DPSMate:ScaleDown(sumTable, min) do
+		tinsert(Data1, {val[1],val[2], DPSMate.Modules.DetailsEHealing:CheckProcs(DPSMate_Details_EHealing.proc, val[1]+min)})
 	end
 
 	g2:AddDataSeries(Data1,{{1.0,0.0,0.0,0.8}, {1.0,1.0,0.0,0.8}}, self:AddProcPoints(DPSMate_Details_Healing.proc, Data1))
@@ -318,72 +352,147 @@ function DPSMate.Modules.DetailsHealing:UpdateStackedGraph()
 	local p = {}
 	local maxY = 0
 	local maxX = 0
-	for cat, val in db[DPSMateUser[DetailsUser][1]] do
-		if cat~="i" and val["i"] then
-			local temp = {}
-			for c, v in val["i"] do
-				local key = tonumber(strformat("%.1f", c))
-				if p[key] then
-					p[key] = p[key] + v
-				else
-					p[key] = v
-				end
-				local i = 1
-				while true do
-					if not temp[i] then
-						tinsert(temp, i, {c,v})
-						break
-					elseif c<=temp[i][1] then
-						tinsert(temp, i, {c,v})
-						break
+	local temp = {}
+	local temp2 = {}
+	if toggle3 then
+		for cat, val in db2[t1[PSelected]][DPSMateUser[DetailsUser][1]] do
+			if cat~="i" and val["i"] then
+				for c, v in val["i"] do
+					local key = tonumber(strformat("%.1f", c))
+					if not temp[cat] then
+						temp[cat] = {}
+						temp2[cat] = 0
 					end
-					i = i + 1
+					if p[key] then
+						p[key] = p[key] + v
+					else
+						p[key] = v
+					end
+					local i = 1
+					while true do
+						if not temp[cat][i] then
+							tinsert(temp[cat], i, {c,v})
+							break
+						elseif c<=temp[cat][i][1] then
+							tinsert(temp[cat], i, {c,v})
+							break
+						end
+						i = i + 1
+					end
+					temp2[cat] = temp2[cat] + val[1]
+					maxY = math.max(p[key], maxY)
+					maxX = math.max(c, maxX)
 				end
-				maxY = math.max(p[key], maxY)
-				maxX = math.max(c, maxX)
 			end
-			temp = DPSMate.Sync:GetSummarizedTable(temp)
+		end
+		local min
+		for cat, val in temp do
+			temp[cat] = DPSMate.Sync:GetSummarizedTable(val)
+			local pmin = DPSMate:GetMinValue(val, 1)
+			if not min or pmin<min then
+				min = pmin
+			end
+		end
+		for cat, val in temp do
 			local i = 1
 			while true do
 				if not b[i] then
-					tinsert(b, i, val[1])
+					tinsert(b, i, temp2[cat])
 					tinsert(label, i, DPSMate:GetAbilityById(cat))
-					tinsert(Data1, i, temp)
+					tinsert(Data1, i, val)
 					break
-				elseif b[i]>=val[1] then
-					tinsert(b, i, val[1])
+				elseif b[i]>=temp2[cat] then
+					tinsert(b, i, temp2[cat])
 					tinsert(label, i, DPSMate:GetAbilityById(cat))
-					tinsert(Data1, i, temp)
+					tinsert(Data1, i, val)
 					break
 				end
 				i = i + 1
 			end
 		end
-	end
-	-- Fill zero numbers
-	for cat, val in Data1 do
-		local alpha = 0
-		for ca, va in pairs(val) do
-			if alpha == 0 then
-				alpha = va[1]
-			else
-				if (va[1]-alpha)>3 then
-					tinsert(Data1[cat], ca, {alpha+1, 0})
-					tinsert(Data1[cat], ca+1, {va[1]-1, 0})
+		-- Fill zero numbers
+		for cat, val in Data1 do
+			local alpha = 0
+			for ca, va in pairs(val) do
+				if alpha == 0 then
+					alpha = va[1]
+				else
+					if (va[1]-alpha)>3 then
+						tinsert(Data1[cat], ca, {alpha+1, 0})
+						tinsert(Data1[cat], ca+1, {va[1]-1, 0})
+					end
+					alpha = va[1]
 				end
-				alpha = va[1]
 			end
 		end
+		for cat, val in Data1 do
+			Data1[cat] = DPSMate:ScaleDown(val, min)
+		end
+	
+		g3:ResetData()
+		g3:SetGridSpacing((maxX-min)/7,maxY/7)
+	else
+		for cat, val in db[DPSMateUser[DetailsUser][1]] do
+			if cat~="i" and val["i"] then
+				local temp = {}
+				for c, v in val["i"] do
+					local key = tonumber(strformat("%.1f", c))
+					if p[key] then
+						p[key] = p[key] + v
+					else
+						p[key] = v
+					end
+					local i = 1
+					while true do
+						if not temp[i] then
+							tinsert(temp, i, {c,v})
+							break
+						elseif c<=temp[i][1] then
+							tinsert(temp, i, {c,v})
+							break
+						end
+						i = i + 1
+					end
+					maxY = math.max(p[key], maxY)
+					maxX = math.max(c, maxX)
+				end
+				temp = DPSMate.Sync:GetSummarizedTable(temp)
+				local i = 1
+				while true do
+					if not b[i] then
+						tinsert(b, i, val[1])
+						tinsert(label, i, DPSMate:GetAbilityById(cat))
+						tinsert(Data1, i, temp)
+						break
+					elseif b[i]>=val[1] then
+						tinsert(b, i, val[1])
+						tinsert(label, i, DPSMate:GetAbilityById(cat))
+						tinsert(Data1, i, temp)
+						break
+					end
+					i = i + 1
+				end
+			end
+		end
+		-- Fill zero numbers
+		for cat, val in Data1 do
+			local alpha = 0
+			for ca, va in pairs(val) do
+				if alpha == 0 then
+					alpha = va[1]
+				else
+					if (va[1]-alpha)>3 then
+						tinsert(Data1[cat], ca, {alpha+1, 0})
+						tinsert(Data1[cat], ca+1, {va[1]-1, 0})
+					end
+					alpha = va[1]
+				end
+			end
+		end
+		
+		g3:ResetData()
+		g3:SetGridSpacing(maxX/7,maxY/7)
 	end
-	
-	--for cat, val in Data1 do
-		--for ca, va in pairs(val) do
-		--	va = DPSMate.Sync:GetSummarizedTable(va)
-		--end
-	--end
-	
-	g3:ResetData()
-	g3:SetGridSpacing(maxX/7,maxY/7)
 	
 	g3:AddDataSeries(Data1,{1.0,0.0,0.0,0.8}, {}, label)
 	g3:Show()
@@ -447,8 +556,8 @@ function DPSMate.Modules.DetailsHealing:ProcsDropDown()
 	DPSMate_Details_Healing.LastUser = DetailsUser
 end
 
-function DPSMate.Modules.DetailsHealing:GetSummarizedTable(arr)
-	return DPSMate.Sync:GetSummarizedTable(arr)
+function DPSMate.Modules.DetailsHealing:GetSummarizedTable(arr,b)
+	return DPSMate.Sync:GetSummarizedTable(self:SortLineTable(arr,b))
 end
 
 function DPSMate.Modules.DetailsHealing:GetAuraGainedArr(k)
@@ -539,4 +648,15 @@ function DPSMate.Modules.DetailsHealing:ToggleMode(bool)
 	end
 end
 
-
+function DPSMate.Modules.DetailsHealing:ToggleIndividual()
+	if toggle3 then
+		toggle3 = false
+	else
+		toggle3 = true
+	end
+	if toggle2 then
+		self:UpdateStackedGraph()
+	else
+		self:UpdateLineGraph()
+	end
+end
