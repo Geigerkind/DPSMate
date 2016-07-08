@@ -269,10 +269,10 @@ function DPSMate.Modules.DetailsOverhealing:UpdateLineGraph()
 
 	local Data1={{0,0}}
 	for cat, val in DPSMate:ScaleDown(sumTable, min) do
-		tinsert(Data1, {val[1],val[2], DPSMate.Modules.DetailsEHealing:CheckProcs(DPSMate_Details_EHealing.proc, val[1]+min)})
+		tinsert(Data1, {val[1],val[2], self:CheckProcs(DPSMate_Details_Overhealing.proc, val[1]+min)})
 	end
 
-	g2:AddDataSeries(Data1,{{1.0,0.0,0.0,0.8}, {1.0,1.0,0.0,0.8}}, self:AddProcPoints(DPSMate_Details_Healing.proc, Data1))
+	g2:AddDataSeries(Data1,{{1.0,0.0,0.0,0.8}, {1.0,1.0,0.0,0.8}}, self:AddProcPoints(DPSMate_Details_Overhealing.proc, Data1))
 	g2:Show()
 	toggle2=false
 end

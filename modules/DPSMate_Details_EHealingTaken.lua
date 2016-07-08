@@ -9,7 +9,7 @@ local db, cbt = {}, 0
 local _G = getglobal
 local tinsert = table.insert
 local strformat = string.format
-local toggle = false
+local toggle, toggle3 = false, false
 
 function DPSMate.Modules.DetailsEHealingTaken:UpdateDetails(obj, key)
 	curKey = key
@@ -95,6 +95,13 @@ function DPSMate.Modules.DetailsEHealingTaken:SelectCreatureButton(i)
 	end
 	_G("DPSMate_Details_EHealingTaken_LogCreature_ScrollButton"..i.."_selected"):Show()
 	DPSMate.Modules.DetailsEHealingTaken:SelectDetailsButton(i,1)
+	if toggle3 then
+		if toggle then
+			self:UpdateStackedGraph()
+		else
+			self:UpdateLineGraph()
+		end
+	end
 end
 
 function DPSMate.Modules.DetailsEHealingTaken:SelectDetailsButton(p,i)
@@ -139,14 +146,20 @@ function DPSMate.Modules.DetailsEHealingTaken:UpdateLineGraph()
 	if g then
 		g:Hide()
 	end
-	local sumTable = self:GetSummarizedTable(db)
+	local sumTable
+	if toggle3 then
+		sumTable = self:GetSummarizedTable(db, DetailsArr[DetailsSelected])
+	else
+		sumTable = self:GetSummarizedTable(db, nil)
+	end
 	local max = DPSMate:GetMaxValue(sumTable, 2)
 	local time = DPSMate:GetMaxValue(sumTable, 1)
+	local min = DPSMate:GetMinValue(sumTable, 1)
 	
 	g2:ResetData()
-	g2:SetXAxis(0,time)
+	g2:SetXAxis(0,time-min)
 	g2:SetYAxis(0,max+200)
-	g2:SetGridSpacing(time/10,max/7)
+	g2:SetGridSpacing((time-min)/10,max/7)
 	g2:SetGridColor({0.5,0.5,0.5,0.5})
 	g2:SetAxisDrawing(true,true)
 	g2:SetAxisColor({1.0,1.0,1.0,1.0})
@@ -155,8 +168,8 @@ function DPSMate.Modules.DetailsEHealingTaken:UpdateLineGraph()
 	g2:SetXLabels(true)
 
 	local Data1={{0,0}}
-	for cat, val in pairs(sumTable) do
-		tinsert(Data1, {val[1],val[2], {}})
+	for cat, val in DPSMate:ScaleDown(sumTable, min) do
+		tinsert(Data1, {val[1],val[2],{}})
 	end
 
 	g2:AddDataSeries(Data1,{{1.0,0.0,0.0,0.8}, {1.0,0.0,0.0,0.8}}, {})
@@ -185,35 +198,68 @@ function DPSMate.Modules.DetailsEHealingTaken:UpdateStackedGraph()
 	local maxX = 0
 	local temp = {}
 	local temp2 = {}
-	for cat, val in db[DPSMateUser[DetailsUser][1]] do
-		if cat~="i" then
-			for ca, va in val do
-				if va["i"] then
-					for c, v in va["i"] do
-						local key = tonumber(strformat("%.1f", c))
-						if not temp[ca] then
-							temp[ca] = {}
-							temp2[ca] = 0
+	if toggle3 then
+		for cat, val in db[DPSMateUser[DetailsUser][1]][DetailsArr[DetailsSelected]] do
+			if val["i"] then
+				for c, v in val["i"] do
+					local key = tonumber(strformat("%.1f", c))
+					if not temp[cat] then
+						temp[cat] = {}
+						temp2[cat] = 0
+					end
+					if p[key] then
+						p[key] = p[key] + v
+					else
+						p[key] = v
+					end
+					local i = 1
+					while true do
+						if not temp[cat][i] then
+							tinsert(temp[cat], i, {c,v})
+							break
+						elseif c<=temp[cat][i][1] then
+							tinsert(temp[cat], i, {c,v})
+							break
 						end
-						if p[key] then
-							p[key] = p[key] + v
-						else
-							p[key] = v
-						end
-						local i = 1
-						while true do
-							if not temp[ca][i] then
-								tinsert(temp[ca], i, {c,v})
-								break
-							elseif c<=temp[ca][i][1] then
-								tinsert(temp[ca], i, {c,v})
-								break
+						i = i + 1
+					end
+					temp2[cat] = temp2[cat] + val[1]
+					maxY = math.max(p[key], maxY)
+					maxX = math.max(c, maxX)
+				end
+			end
+		end	
+	else
+		for cat, val in db[DPSMateUser[DetailsUser][1]] do
+			if cat~="i" then
+				for ca, va in val do
+					if va["i"] then
+						for c, v in va["i"] do
+							local key = tonumber(strformat("%.1f", c))
+							if not temp[ca] then
+								temp[ca] = {}
+								temp2[ca] = 0
 							end
-							i = i + 1
+							if p[key] then
+								p[key] = p[key] + v
+							else
+								p[key] = v
+							end
+							local i = 1
+							while true do
+								if not temp[ca][i] then
+									tinsert(temp[ca], i, {c,v})
+									break
+								elseif c<=temp[ca][i][1] then
+									tinsert(temp[ca], i, {c,v})
+									break
+								end
+								i = i + 1
+							end
+							temp2[ca] = temp2[ca] + va[1]
+							maxY = math.max(p[key], maxY)
+							maxX = math.max(c, maxX)
 						end
-						temp2[ca] = temp2[ca] + va[1]
-						maxY = math.max(p[key], maxY)
-						maxX = math.max(c, maxX)
 					end
 				end
 			end
@@ -292,24 +338,45 @@ function DPSMate.Modules.DetailsEHealingTaken:CreateGraphTable()
 	lines[12]:Show()
 end
 
-function DPSMate.Modules.DetailsEHealingTaken:SortLineTable(t)
+function DPSMate.Modules.DetailsEHealingTaken:SortLineTable(t,b)
 	local newArr = {}
-	for cat, val in t[DPSMateUser[DetailsUser][1]] do
-		if cat~="i" then
-			for c,v in val do
-				if v["i"] then
-					for ca, va in v["i"] do
-						local i=1
-						while true do
-							if (not newArr[i]) then 
-								tinsert(newArr, i, {ca, va})
-								break
+	if b then
+		for cat, val in t[DPSMateUser[DetailsUser][1]][b] do
+			if val["i"] then
+				for ca, va in val["i"] do
+					local i=1
+					while true do
+						if (not newArr[i]) then 
+							tinsert(newArr, i, {ca, va})
+							break
+						end
+						if ca<=newArr[i][1] then
+							tinsert(newArr, i, {ca, va})
+							break
+						end
+						i=i+1
+					end
+				end
+			end
+		end
+	else
+		for cat, val in t[DPSMateUser[DetailsUser][1]] do
+			if cat~="i" then
+				for c,v in val do
+					if v["i"] then
+						for ca, va in v["i"] do
+							local i=1
+							while true do
+								if (not newArr[i]) then 
+									tinsert(newArr, i, {ca, va})
+									break
+								end
+								if ca<=newArr[i][1] then
+									tinsert(newArr, i, {ca, va})
+									break
+								end
+								i=i+1
 							end
-							if ca<=newArr[i][1] then
-								tinsert(newArr, i, {ca, va})
-								break
-							end
-							i=i+1
 						end
 					end
 				end
@@ -319,8 +386,8 @@ function DPSMate.Modules.DetailsEHealingTaken:SortLineTable(t)
 	return newArr
 end
 
-function DPSMate.Modules.DetailsEHealingTaken:GetSummarizedTable(arr)
-	return DPSMate.Sync:GetSummarizedTable(self:SortLineTable(arr))
+function DPSMate.Modules.DetailsEHealingTaken:GetSummarizedTable(arr,b)
+	return DPSMate.Sync:GetSummarizedTable(self:SortLineTable(arr,b))
 end
 
 function DPSMate.Modules.DetailsEHealingTaken:ToggleMode()
@@ -330,5 +397,18 @@ function DPSMate.Modules.DetailsEHealingTaken:ToggleMode()
 	else
 		self:UpdateStackedGraph()
 		toggle=true
+	end
+end
+
+function DPSMate.Modules.DetailsEHealingTaken:ToggleIndividual()
+	if toggle3 then
+		toggle3 = false
+	else
+		toggle3 = true
+	end
+	if toggle then
+		self:UpdateStackedGraph()
+	else
+		self:UpdateLineGraph()
 	end
 end

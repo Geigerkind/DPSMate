@@ -180,6 +180,33 @@
 				<PushedTexture file="Interface\Buttons\UI-GroupLoot-Dice-Down"/>
 				<HighlightTexture file="Interface\Buttons\UI-GroupLoot-Dice-Highlight" alphaMode="ADD"/>
 			</Button>
+			<Button name="$parent_Individual">
+				<Size x="20" y="20" />
+				<Anchors>
+					<Anchor point="RIGHT" relativeTo="$parent_SwitchGraph" relativePoint="LEFT">
+						<Offset>
+							<AbsDimension x="-5" y="2"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnEnter>
+						GameTooltip:SetOwner(this, "ANCHOR_RIGHT")
+						GameTooltip:SetText(DPSMate.L["switchindividualsdesc"], nil, nil, nil, nil, 1)
+						GameTooltip:Show()
+					</OnEnter>
+					<OnLeave>
+						GameTooltip:Hide()
+					</OnLeave>
+					<OnClick>
+						DPSMate.Modules.DetailsEHealingTaken:ToggleIndividual()
+						PlaySound("igMainMenuOptionCheckBoxOff")
+					</OnClick>
+				</Scripts>
+				<NormalTexture file="Interface\Buttons\UI-GroupLoot-Pass-Up"/>
+				<PushedTexture file="Interface\Buttons\UI-GroupLoot-Pass-Down"/>
+				<HighlightTexture file="Interface\Buttons\UI-GroupLoot-Pass-Highlight" alphaMode="ADD"/>
+			</Button>
 			<Frame name="$parent_DiagramLine">
 				<Size x="870" y="250" />
 				<Anchors>
