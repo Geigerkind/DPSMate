@@ -5,15 +5,16 @@ DPSMate.Modules.DetailsOverhealing = {}
 local DetailsArr, DetailsTotal, DmgArr, DetailsUser, DetailsSelected  = {}, 0, {}, "", 1
 local g, g2, g3
 local curKey = 1
-local db, cbt = {}, 0
+local db, cbt, db2 = {}, 0, {}
 local _G = getglobal
 local tinsert = table.insert
 local strformat = string.format
-local toggle = false
+local toggle, toggle2, toggle3 = false,false,false
 
 function DPSMate.Modules.DetailsOverhealing:UpdateDetails(obj, key)
 	curKey = key
 	db, cbt = DPSMate:GetMode(key)
+	db2 = DPSMate:GetModeByArr(DPSMateOverhealingTaken, key, "OverhealingTaken")
 	DPSMate_Details_Overhealing.proc = "None"
 	UIDropDownMenu_SetSelectedValue(DPSMate_Details_Overhealing_DiagramLegend_Procs, "None")
 	DetailsUser = obj.user
@@ -21,10 +22,17 @@ function DPSMate.Modules.DetailsOverhealing:UpdateDetails(obj, key)
 	DPSMate_Details_Overhealing:Show()
 	UIDropDownMenu_Initialize(DPSMate_Details_Overhealing_DiagramLegend_Procs, DPSMate.Modules.DetailsOverhealing.ProcsDropDown)
 	DetailsArr, DetailsTotal, DmgArr = DPSMate.RegistredModules[DPSMateSettings["windows"][curKey]["CurMode"]]:EvalTable(DPSMateUser[DetailsUser], curKey)
-	self:ScrollFrame_Update()
-	self:SelectDetails_OverhealingButton(1)
-	self:UpdatePie()
+	t1, t2, TTotal = self:EvalToggleTable()
 	if toggle then
+		self:Player_Update()
+		self:PlayerSpells_Update(1)
+		self:SelectDetails_HealingButton(1)
+	else
+		self:ScrollFrame_Update()
+		self:SelectDetails_HealingButton(1)
+	end
+	self:UpdatePie()
+	if toggle2 then
 		self:UpdateStackedGraph()
 	else
 		self:UpdateLineGraph()
@@ -57,6 +65,84 @@ function DPSMate.Modules.DetailsOverhealing:ScrollFrame_Update()
 		_G("DPSMate_Details_Overhealing_Log_ScrollButton"..line.."_selected"):Hide()
 		if DetailsSelected == lineplusoffset then
 			_G("DPSMate_Details_Overhealing_Log_ScrollButton"..line.."_selected"):Show()
+		end
+	end
+end
+
+local PSelected = 1
+function DPSMate.Modules.DetailsOverhealing:Player_Update()
+	local line, lineplusoffset
+	local path = "DPSMate_Details_Overhealing_player"
+	local obj = _G(path.."_ScrollFrame")
+	local len = DPSMate:TableLength(t1)
+	FauxScrollFrame_Update(obj,len,8,24)
+	for line=1,8 do
+		lineplusoffset = line + FauxScrollFrame_GetOffset(obj)
+		if t1[lineplusoffset] ~= nil then
+			local user = DPSMate:GetUserById(t1[lineplusoffset])
+			local r,g,b,img = DPSMate:GetClassColor(DPSMateUser[user][2])
+			_G(path.."_ScrollButton"..line.."_Name"):SetText(user)
+			_G(path.."_ScrollButton"..line.."_Name"):SetTextColor(r,g,b)
+			_G(path.."_ScrollButton"..line.."_Value"):SetText(t2[lineplusoffset][1].." ("..strformat("%.2f", (t2[lineplusoffset][1]*100/TTotal)).."%)")
+			_G(path.."_ScrollButton"..line.."_Icon"):SetTexture("Interface\\AddOns\\DPSMate\\images\\class\\"..img)
+			if len < 8 then
+				_G(path.."_ScrollButton"..line):SetWidth(235)
+				_G(path.."_ScrollButton"..line.."_Name"):SetWidth(125)
+			else
+				_G(path.."_ScrollButton"..line):SetWidth(220)
+				_G(path.."_ScrollButton"..line.."_Name"):SetWidth(110)
+			end
+			_G(path.."_ScrollButton"..line):Show()
+		else
+			_G(path.."_ScrollButton"..line):Hide()
+		end
+		_G(path.."_ScrollButton"..line.."_selected"):Hide()
+		if PSelected == lineplusoffset then
+			_G(path.."_ScrollButton"..line.."_selected"):Show()
+		end
+	end
+end
+
+function DPSMate.Modules.DetailsOverhealing:PlayerSpells_Update(i)
+	local line, lineplusoffset
+	local path = "DPSMate_Details_Overhealing_playerSpells"
+	local obj = _G(path.."_ScrollFrame")
+	obj.id = (i + FauxScrollFrame_GetOffset(DPSMate_Details_Overhealing_player_ScrollFrame)) or obj.id
+	local len = DPSMate:TableLength(t2[i][2])
+	FauxScrollFrame_Update(obj,len,10,24)
+	for line=1,10 do
+		lineplusoffset = line + FauxScrollFrame_GetOffset(obj)
+		if t2[obj.id][2][lineplusoffset] ~= nil then
+			local ability = DPSMate:GetAbilityById(t2[obj.id][2][lineplusoffset])
+			_G(path.."_ScrollButton"..line.."_Name"):SetText(ability)
+			_G(path.."_ScrollButton"..line.."_Value"):SetText(t2[obj.id][3][lineplusoffset][1].." ("..strformat("%.2f", (t2[obj.id][3][lineplusoffset][1]*100/t2[obj.id][1])).."%)")
+			_G(path.."_ScrollButton"..line.."_Icon"):SetTexture(DPSMate.BabbleSpell:GetSpellIcon(strsub(ability, 1, (strfind(ability, "%(") or 0)-1) or ability))
+			if len < 10 then
+				_G(path.."_ScrollButton"..line):SetWidth(235)
+				_G(path.."_ScrollButton"..line.."_Name"):SetWidth(125)
+			else
+				_G(path.."_ScrollButton"..line):SetWidth(220)
+				_G(path.."_ScrollButton"..line.."_Name"):SetWidth(110)
+			end
+			_G(path.."_ScrollButton"..line):Show()
+		else
+			_G(path.."_ScrollButton"..line):Hide()
+		end
+		_G(path.."_ScrollButton"..line.."_selected"):Hide()
+		if DetailsSelected == lineplusoffset then
+			_G(path.."_ScrollButton"..line.."_selected"):Show()
+		end
+	end
+	PSelected = obj.id
+	for p=1, 8 do
+		_G("DPSMate_Details_Overhealing_player_ScrollButton"..p.."_selected"):Hide()
+	end
+	_G("DPSMate_Details_Overhealing_player_ScrollButton"..i.."_selected"):Show()
+	if toggle3 then
+		if toggle2 then
+			self:UpdateStackedGraph()
+		else
+			self:UpdateLineGraph()
 		end
 	end
 end
@@ -109,22 +195,43 @@ function DPSMate.Modules.DetailsOverhealing:UpdatePie()
 	end
 end
 
-function DPSMate.Modules.DetailsOverhealing:SortLineTable(t)
+function DPSMate.Modules.DetailsOverhealing:SortLineTable(t, b)
 	local newArr = {}
-	for cat, val in t[DPSMateUser[DetailsUser][1]] do
-		if cat~="i" and val["i"] then
-			for ca, va in val["i"] do
-				local i=1
-				while true do
-					if (not newArr[i]) then 
-						tinsert(newArr, i, {ca, va})
-						break
+	if b then
+		for cat, val in t[b][DPSMateUser[DetailsUser][1]] do
+			if cat~="i" and val["i"] then
+				for ca, va in val["i"] do
+					local i=1
+					while true do
+						if (not newArr[i]) then 
+							tinsert(newArr, i, {ca, va})
+							break
+						end
+						if ca<=newArr[i][1] then
+							tinsert(newArr, i, {ca, va})
+							break
+						end
+						i=i+1
 					end
-					if ca<=newArr[i][1] then
-						tinsert(newArr, i, {ca, va})
-						break
+				end
+			end
+		end
+	else
+		for cat, val in t[DPSMateUser[DetailsUser][1]] do
+			if cat~="i" and val["i"] then
+				for ca, va in val["i"] do
+					local i=1
+					while true do
+						if (not newArr[i]) then 
+							tinsert(newArr, i, {ca, va})
+							break
+						end
+						if ca<=newArr[i][1] then
+							tinsert(newArr, i, {ca, va})
+							break
+						end
+						i=i+1
 					end
-					i=i+1
 				end
 			end
 		end
@@ -139,14 +246,20 @@ function DPSMate.Modules.DetailsOverhealing:UpdateLineGraph()
 	if g3 then
 		g3:Hide()
 	end
-	local sumTable = self:GetSummarizedTable(self:SortLineTable(db))
+	local sumTable
+	if toggle3 then
+		sumTable = self:GetSummarizedTable(db2, t1[PSelected])
+	else
+		sumTable = self:GetSummarizedTable(db, nil)
+	end
 	local max = DPSMate:GetMaxValue(sumTable, 2)
 	local time = DPSMate:GetMaxValue(sumTable, 1)
+	local min = DPSMate:GetMinValue(sumTable, 1)
 	
 	g2:ResetData()
-	g2:SetXAxis(0,time)
+	g2:SetXAxis(0,time-min)
 	g2:SetYAxis(0,max+200)
-	g2:SetGridSpacing(time/10,max/7)
+	g2:SetGridSpacing((time-min)/10,max/7)
 	g2:SetGridColor({0.5,0.5,0.5,0.5})
 	g2:SetAxisDrawing(true,true)
 	g2:SetAxisColor({1.0,1.0,1.0,1.0})
@@ -155,12 +268,13 @@ function DPSMate.Modules.DetailsOverhealing:UpdateLineGraph()
 	g2:SetXLabels(true)
 
 	local Data1={{0,0}}
-	for cat, val in sumTable do
-		tinsert(Data1, {val[1],val[2], self:CheckProcs(DPSMate_Details_Overhealing.proc, val[1])})
+	for cat, val in DPSMate:ScaleDown(sumTable, min) do
+		tinsert(Data1, {val[1],val[2], DPSMate.Modules.DetailsEHealing:CheckProcs(DPSMate_Details_EHealing.proc, val[1]+min)})
 	end
 
-	g2:AddDataSeries(Data1,{{1.0,0.0,0.0,0.8}, {1.0,1.0,0.0,0.8}}, self:AddProcPoints(DPSMate_Details_Overhealing.proc, Data1))
+	g2:AddDataSeries(Data1,{{1.0,0.0,0.0,0.8}, {1.0,1.0,0.0,0.8}}, self:AddProcPoints(DPSMate_Details_Healing.proc, Data1))
 	g2:Show()
+	toggle2=false
 end
 
 function DPSMate.Modules.DetailsOverhealing:UpdateStackedGraph()
@@ -183,75 +297,151 @@ function DPSMate.Modules.DetailsOverhealing:UpdateStackedGraph()
 	local p = {}
 	local maxY = 0
 	local maxX = 0
-	for cat, val in db[DPSMateUser[DetailsUser][1]] do
-		if cat~="i" and val["i"] then
-			local temp = {}
-			for c, v in val["i"] do
-				local key = tonumber(strformat("%.1f", c))
-				if p[key] then
-					p[key] = p[key] + v
-				else
-					p[key] = v
-				end
-				local i = 1
-				while true do
-					if not temp[i] then
-						tinsert(temp, i, {c,v})
-						break
-					elseif c<=temp[i][1] then
-						tinsert(temp, i, {c,v})
-						break
+	local temp = {}
+	local temp2 = {}
+	if toggle3 then
+		for cat, val in db2[t1[PSelected]][DPSMateUser[DetailsUser][1]] do
+			if cat~="i" and val["i"] then
+				for c, v in val["i"] do
+					local key = tonumber(strformat("%.1f", c))
+					if not temp[cat] then
+						temp[cat] = {}
+						temp2[cat] = 0
 					end
-					i = i + 1
+					if p[key] then
+						p[key] = p[key] + v
+					else
+						p[key] = v
+					end
+					local i = 1
+					while true do
+						if not temp[cat][i] then
+							tinsert(temp[cat], i, {c,v})
+							break
+						elseif c<=temp[cat][i][1] then
+							tinsert(temp[cat], i, {c,v})
+							break
+						end
+						i = i + 1
+					end
+					temp2[cat] = temp2[cat] + val[1]
+					maxY = math.max(p[key], maxY)
+					maxX = math.max(c, maxX)
 				end
-				maxY = math.max(p[key], maxY)
-				maxX = math.max(c, maxX)
 			end
-			temp = DPSMate.Sync:GetSummarizedTable(temp)
+		end
+		local min
+		for cat, val in temp do
+			temp[cat] = DPSMate.Sync:GetSummarizedTable(val)
+			local pmin = DPSMate:GetMinValue(val, 1)
+			if not min or pmin<min then
+				min = pmin
+			end
+		end
+		for cat, val in temp do
 			local i = 1
 			while true do
 				if not b[i] then
-					tinsert(b, i, val[1])
+					tinsert(b, i, temp2[cat])
 					tinsert(label, i, DPSMate:GetAbilityById(cat))
-					tinsert(Data1, i, temp)
+					tinsert(Data1, i, val)
 					break
-				elseif b[i]>=val[1] then
-					tinsert(b, i, val[1])
+				elseif b[i]>=temp2[cat] then
+					tinsert(b, i, temp2[cat])
 					tinsert(label, i, DPSMate:GetAbilityById(cat))
-					tinsert(Data1, i, temp)
+					tinsert(Data1, i, val)
 					break
 				end
 				i = i + 1
 			end
 		end
-	end
-	-- Fill zero numbers
-	for cat, val in Data1 do
-		local alpha = 0
-		for ca, va in pairs(val) do
-			if alpha == 0 then
-				alpha = va[1]
-			else
-				if (va[1]-alpha)>3 then
-					tinsert(Data1[cat], ca, {alpha+1, 0})
-					tinsert(Data1[cat], ca+1, {va[1]-1, 0})
+		-- Fill zero numbers
+		for cat, val in Data1 do
+			local alpha = 0
+			for ca, va in pairs(val) do
+				if alpha == 0 then
+					alpha = va[1]
+				else
+					if (va[1]-alpha)>3 then
+						tinsert(Data1[cat], ca, {alpha+1, 0})
+						tinsert(Data1[cat], ca+1, {va[1]-1, 0})
+					end
+					alpha = va[1]
 				end
-				alpha = va[1]
 			end
 		end
+		for cat, val in Data1 do
+			Data1[cat] = DPSMate:ScaleDown(val, min)
+		end
+	
+		g3:ResetData()
+		g3:SetGridSpacing((maxX-min)/7,maxY/7)
+	else
+		for cat, val in db[DPSMateUser[DetailsUser][1]] do
+			if cat~="i" and val["i"] then
+				local temp = {}
+				for c, v in val["i"] do
+					local key = tonumber(strformat("%.1f", c))
+					if p[key] then
+						p[key] = p[key] + v
+					else
+						p[key] = v
+					end
+					local i = 1
+					while true do
+						if not temp[i] then
+							tinsert(temp, i, {c,v})
+							break
+						elseif c<=temp[i][1] then
+							tinsert(temp, i, {c,v})
+							break
+						end
+						i = i + 1
+					end
+					maxY = math.max(p[key], maxY)
+					maxX = math.max(c, maxX)
+				end
+				temp = DPSMate.Sync:GetSummarizedTable(temp)
+				local i = 1
+				while true do
+					if not b[i] then
+						tinsert(b, i, val[1])
+						tinsert(label, i, DPSMate:GetAbilityById(cat))
+						tinsert(Data1, i, temp)
+						break
+					elseif b[i]>=val[1] then
+						tinsert(b, i, val[1])
+						tinsert(label, i, DPSMate:GetAbilityById(cat))
+						tinsert(Data1, i, temp)
+						break
+					end
+					i = i + 1
+				end
+			end
+		end
+		-- Fill zero numbers
+		for cat, val in Data1 do
+			local alpha = 0
+			for ca, va in pairs(val) do
+				if alpha == 0 then
+					alpha = va[1]
+				else
+					if (va[1]-alpha)>3 then
+						tinsert(Data1[cat], ca, {alpha+1, 0})
+						tinsert(Data1[cat], ca+1, {va[1]-1, 0})
+					end
+					alpha = va[1]
+				end
+			end
+		end
+		
+		g3:ResetData()
+		g3:SetGridSpacing(maxX/7,maxY/7)
 	end
-	
-	--for cat, val in Data1 do
-		--for ca, va in pairs(val) do
-		--	va = DPSMate.Sync:GetSummarizedTable(va)
-		--end
-	--end
-	
-	g3:ResetData()
-	g3:SetGridSpacing(maxX/7,maxY/7)
 	
 	g3:AddDataSeries(Data1,{1.0,0.0,0.0,0.8}, {}, label)
 	g3:Show()
+	toggle2 = true
 end
 
 function DPSMate.Modules.DetailsOverhealing:CreateGraphTable()
@@ -311,8 +501,8 @@ function DPSMate.Modules.DetailsOverhealing:ProcsDropDown()
 	DPSMate_Details_Overhealing.LastUser = DetailsUser
 end
 
-function DPSMate.Modules.DetailsOverhealing:GetSummarizedTable(arr)
-	return DPSMate.Sync:GetSummarizedTable(arr)
+function DPSMate.Modules.DetailsOverhealing:GetSummarizedTable(arr,b)
+	return DPSMate.Sync:GetSummarizedTable(self:SortLineTable(arr,b))
 end
 
 function DPSMate.Modules.DetailsOverhealing:GetAuraGainedArr(k)
@@ -374,13 +564,44 @@ function DPSMate.Modules.DetailsOverhealing:AddProcPoints(name, dat)
 	return {bool, data}
 end
 
-function DPSMate.Modules.DetailsOverhealing:ToggleMode()
-	if toggle then
-		self:UpdateLineGraph()
-		toggle = false
+function DPSMate.Modules.DetailsOverhealing:ToggleMode(bool)
+	if bool then
+		if toggle2 then
+			self:UpdateLineGraph()
+		else
+			self:UpdateStackedGraph()
+		end
 	else
-		self:UpdateStackedGraph()
-		toggle = true
+		if toggle then
+			toggle = false
+			self:ScrollFrame_Update()
+			self:SelectDetails_HealingButton(1)
+			DPSMate_Details_Healing_playerSpells:Hide()
+			DPSMate_Details_Healing_player:Hide()
+			DPSMate_Details_Healing_Diagram:Show()
+			DPSMate_Details_Healing_Log:Show()
+		else
+			toggle = true
+			self:Player_Update()
+			self:PlayerSpells_Update(1)
+			self:SelectDetails_HealingButton(1)
+			DPSMate_Details_Healing_playerSpells:Show()
+			DPSMate_Details_Healing_player:Show()
+			DPSMate_Details_Healing_Diagram:Hide()
+			DPSMate_Details_Healing_Log:Hide()
+		end
 	end
 end
 
+function DPSMate.Modules.DetailsOverhealing:ToggleIndividual()
+	if toggle3 then
+		toggle3 = false
+	else
+		toggle3 = true
+	end
+	if toggle2 then
+		self:UpdateStackedGraph()
+	else
+		self:UpdateLineGraph()
+	end
+end

@@ -173,7 +173,7 @@
 						GameTooltip:Hide()
 					</OnLeave>
 					<OnClick>
-						DPSMate.Modules.DetailsHealing:ToggleMode()
+						DPSMate.Modules.DetailsHealing:ToggleMode(false)
 						PlaySound("igMainMenuOptionCheckBoxOff")
 					</OnClick>
 				</Scripts>
