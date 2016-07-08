@@ -208,6 +208,33 @@
 				<PushedTexture file="Interface\Buttons\UI-GroupLoot-Dice-Down"/>
 				<HighlightTexture file="Interface\Buttons\UI-GroupLoot-Dice-Highlight" alphaMode="ADD"/>
 			</Button>
+			<Button name="$parent_Individual">
+				<Size x="20" y="20" />
+				<Anchors>
+					<Anchor point="RIGHT" relativeTo="$parent_SwitchGraphs" relativePoint="LEFT">
+						<Offset>
+							<AbsDimension x="-5" y="2"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnEnter>
+						GameTooltip:SetOwner(this, "ANCHOR_RIGHT")
+						GameTooltip:SetText(DPSMate.L["switchindividualsdesc"], nil, nil, nil, nil, 1)
+						GameTooltip:Show()
+					</OnEnter>
+					<OnLeave>
+						GameTooltip:Hide()
+					</OnLeave>
+					<OnClick>
+						DPSMate.Modules.DetailsHealingAndAbsorbs:ToggleIndividual()
+						PlaySound("igMainMenuOptionCheckBoxOff")
+					</OnClick>
+				</Scripts>
+				<NormalTexture file="Interface\Buttons\UI-GroupLoot-Pass-Up"/>
+				<PushedTexture file="Interface\Buttons\UI-GroupLoot-Pass-Down"/>
+				<HighlightTexture file="Interface\Buttons\UI-GroupLoot-Pass-Highlight" alphaMode="ADD"/>
+			</Button>
 			<Frame name="$parent_DiagramLine">
 				<Size x="870" y="250" />
 				<Anchors>
@@ -244,7 +271,7 @@
 						<Scripts>
 							<OnEnter>
 								GameTooltip:SetOwner(this, "ANCHOR_RIGHT")
-								GameTooltip:SetText(DPSMate.L["procsTooltip"], nil, nil, nil, nil, 1)
+								GameTooltip:SetText(DPSMate.L["procstooltip"], nil, nil, nil, nil, 1)
 							</OnEnter>
 							<OnLeave>
 								GameTooltip:Hide()
@@ -541,60 +568,60 @@
 						</Anchors>
 						<Scripts>
 							<OnVerticalScroll>
-								FauxScrollFrame_OnVerticalScroll(24, DPSMate.Modules.DetailsHealingAndAbsorbs.Player_Update) 
+								FauxScrollFrame_OnVerticalScroll(24, DPSMate.Modules.DetailsHealingAndAbsorbsAndAbsorbs.Player_Update) 
 							</OnVerticalScroll>
 					   </Scripts>
 					</ScrollFrame>
-					<Button name="$parent_ScrollButton1" inherits="DPSMate_Details_Healing_ScrollButton" id="1">
+					<Button name="$parent_ScrollButton1" inherits="DPSMate_Details_HealingAndAbsorbs_ScrollButton" id="1">
 						<Anchors>
 							<Anchor point="TOPLEFT">
 								<Offset x="5" y="-5" />
 							</Anchor>
 						</Anchors>
 					</Button>
-					<Button name="$parent_ScrollButton2" inherits="DPSMate_Details_Healing_ScrollButton"  id="2">
+					<Button name="$parent_ScrollButton2" inherits="DPSMate_Details_HealingAndAbsorbs_ScrollButton"  id="2">
 						<Anchors>
 							<Anchor point="TOP" relativeTo="$parent_ScrollButton1" relativePoint="BOTTOM">
 								<Offset x="0" y="-2" />
 							</Anchor>
 						</Anchors>
 					</Button>
-					<Button name="$parent_ScrollButton3" inherits="DPSMate_Details_Healing_ScrollButton"  id="3">
+					<Button name="$parent_ScrollButton3" inherits="DPSMate_Details_HealingAndAbsorbs_ScrollButton"  id="3">
 						<Anchors>
 							<Anchor point="TOP" relativeTo="$parent_ScrollButton2" relativePoint="BOTTOM">
 								<Offset x="0" y="-2" />
 							</Anchor>
 						</Anchors>
 					</Button>
-					<Button name="$parent_ScrollButton4" inherits="DPSMate_Details_Healing_ScrollButton"  id="4">
+					<Button name="$parent_ScrollButton4" inherits="DPSMate_Details_HealingAndAbsorbs_ScrollButton"  id="4">
 						<Anchors>
 							<Anchor point="TOP" relativeTo="$parent_ScrollButton3" relativePoint="BOTTOM">
 								<Offset x="0" y="-2" />
 							</Anchor>
 						</Anchors>
 					</Button>
-					<Button name="$parent_ScrollButton5" inherits="DPSMate_Details_Healing_ScrollButton"  id="5">
+					<Button name="$parent_ScrollButton5" inherits="DPSMate_Details_HealingAndAbsorbs_ScrollButton"  id="5">
 						<Anchors>
 							<Anchor point="TOP" relativeTo="$parent_ScrollButton4" relativePoint="BOTTOM">
 								<Offset x="0" y="-2" />
 							</Anchor>
 						</Anchors>
 					</Button>
-					<Button name="$parent_ScrollButton6" inherits="DPSMate_Details_Healing_ScrollButton"  id="6">
+					<Button name="$parent_ScrollButton6" inherits="DPSMate_Details_HealingAndAbsorbs_ScrollButton"  id="6">
 						<Anchors>
 							<Anchor point="TOP" relativeTo="$parent_ScrollButton5" relativePoint="BOTTOM">
 								<Offset x="0" y="-2" />
 							</Anchor>
 						</Anchors>
 					</Button>
-					<Button name="$parent_ScrollButton7" inherits="DPSMate_Details_Healing_ScrollButton"  id="7">
+					<Button name="$parent_ScrollButton7" inherits="DPSMate_Details_HealingAndAbsorbs_ScrollButton"  id="7">
 						<Anchors>
 							<Anchor point="TOP" relativeTo="$parent_ScrollButton6" relativePoint="BOTTOM">
 								<Offset x="0" y="-2" />
 							</Anchor>
 						</Anchors>
 					</Button>
-					<Button name="$parent_ScrollButton8" inherits="DPSMate_Details_Healing_ScrollButton"  id="8">
+					<Button name="$parent_ScrollButton8" inherits="DPSMate_Details_HealingAndAbsorbs_ScrollButton"  id="8">
 						<Anchors>
 							<Anchor point="TOP" relativeTo="$parent_ScrollButton7" relativePoint="BOTTOM">
 								<Offset x="0" y="-2" />
@@ -630,74 +657,74 @@
 						</Anchors>
 						<Scripts>
 							<OnVerticalScroll>
-								FauxScrollFrame_OnVerticalScroll(24, DPSMate.Modules.DetailsHealingAndAbsorbs.PlayerSpells_Update) 
+								FauxScrollFrame_OnVerticalScroll(24, DPSMate.Modules.DetailsHealingAndAbsorbsAndAbsorbs.PlayerSpells_Update) 
 							</OnVerticalScroll>
 					   </Scripts>
 					</ScrollFrame>
-					<Button name="$parent_ScrollButton1" inherits="DPSMate_Details_Healing_ScrollButton" id="1">
+					<Button name="$parent_ScrollButton1" inherits="DPSMate_Details_HealingAndAbsorbs_ScrollButton" id="1">
 						<Anchors>
 							<Anchor point="TOPLEFT">
 								<Offset x="5" y="-5" />
 							</Anchor>
 						</Anchors>
 					</Button>
-					<Button name="$parent_ScrollButton2" inherits="DPSMate_Details_Healing_ScrollButton"  id="2">
+					<Button name="$parent_ScrollButton2" inherits="DPSMate_Details_HealingAndAbsorbs_ScrollButton"  id="2">
 						<Anchors>
 							<Anchor point="TOP" relativeTo="$parent_ScrollButton1" relativePoint="BOTTOM">
 								<Offset x="0" y="-2" />
 							</Anchor>
 						</Anchors>
 					</Button>
-					<Button name="$parent_ScrollButton3" inherits="DPSMate_Details_Healing_ScrollButton"  id="3">
+					<Button name="$parent_ScrollButton3" inherits="DPSMate_Details_HealingAndAbsorbs_ScrollButton"  id="3">
 						<Anchors>
 							<Anchor point="TOP" relativeTo="$parent_ScrollButton2" relativePoint="BOTTOM">
 								<Offset x="0" y="-2" />
 							</Anchor>
 						</Anchors>
 					</Button>
-					<Button name="$parent_ScrollButton4" inherits="DPSMate_Details_Healing_ScrollButton"  id="4">
+					<Button name="$parent_ScrollButton4" inherits="DPSMate_Details_HealingAndAbsorbs_ScrollButton"  id="4">
 						<Anchors>
 							<Anchor point="TOP" relativeTo="$parent_ScrollButton3" relativePoint="BOTTOM">
 								<Offset x="0" y="-2" />
 							</Anchor>
 						</Anchors>
 					</Button>
-					<Button name="$parent_ScrollButton5" inherits="DPSMate_Details_Healing_ScrollButton"  id="5">
+					<Button name="$parent_ScrollButton5" inherits="DPSMate_Details_HealingAndAbsorbs_ScrollButton"  id="5">
 						<Anchors>
 							<Anchor point="TOP" relativeTo="$parent_ScrollButton4" relativePoint="BOTTOM">
 								<Offset x="0" y="-2" />
 							</Anchor>
 						</Anchors>
 					</Button>
-					<Button name="$parent_ScrollButton6" inherits="DPSMate_Details_Healing_ScrollButton"  id="6">
+					<Button name="$parent_ScrollButton6" inherits="DPSMate_Details_HealingAndAbsorbs_ScrollButton"  id="6">
 						<Anchors>
 							<Anchor point="TOP" relativeTo="$parent_ScrollButton5" relativePoint="BOTTOM">
 								<Offset x="0" y="-2" />
 							</Anchor>
 						</Anchors>
 					</Button>
-					<Button name="$parent_ScrollButton7" inherits="DPSMate_Details_Healing_ScrollButton"  id="7">
+					<Button name="$parent_ScrollButton7" inherits="DPSMate_Details_HealingAndAbsorbs_ScrollButton"  id="7">
 						<Anchors>
 							<Anchor point="TOP" relativeTo="$parent_ScrollButton6" relativePoint="BOTTOM">
 								<Offset x="0" y="-2" />
 							</Anchor>
 						</Anchors>
 					</Button>
-					<Button name="$parent_ScrollButton8" inherits="DPSMate_Details_Healing_ScrollButton"  id="8">
+					<Button name="$parent_ScrollButton8" inherits="DPSMate_Details_HealingAndAbsorbs_ScrollButton"  id="8">
 						<Anchors>
 							<Anchor point="TOP" relativeTo="$parent_ScrollButton7" relativePoint="BOTTOM">
 								<Offset x="0" y="-2" />
 							</Anchor>
 						</Anchors>
 					</Button>
-					<Button name="$parent_ScrollButton9" inherits="DPSMate_Details_Healing_ScrollButton"  id="9">
+					<Button name="$parent_ScrollButton9" inherits="DPSMate_Details_HealingAndAbsorbs_ScrollButton"  id="9">
 						<Anchors>
 							<Anchor point="TOP" relativeTo="$parent_ScrollButton8" relativePoint="BOTTOM">
 								<Offset x="0" y="-2" />
 							</Anchor>
 						</Anchors>
 					</Button>
-					<Button name="$parent_ScrollButton10" inherits="DPSMate_Details_Healing_ScrollButton"  id="10">
+					<Button name="$parent_ScrollButton10" inherits="DPSMate_Details_HealingAndAbsorbs_ScrollButton"  id="10">
 						<Anchors>
 							<Anchor point="TOP" relativeTo="$parent_ScrollButton9" relativePoint="BOTTOM">
 								<Offset x="0" y="-2" />
