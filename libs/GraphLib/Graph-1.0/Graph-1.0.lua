@@ -1496,6 +1496,9 @@ function GraphFunctions:RefreshStackedGraph()
 					TPoint.x=Width*(TPoint.x-self.XMin)/(self.XMax-self.XMin)
 					TPoint.y=Height*(TPoint.y-self.YMin)/(self.YMax-self.YMin)
 					
+					if not ColorTable[c] then
+						ColorTable[c] = {0.01*math.random(0,100),0.01*math.random(0,100),0.01*math.random(0,100),1}
+					end
 					self:DrawLine(self,LastPoint.x,LastPoint.y,TPoint.x,TPoint.y,32,ColorTable[c],nil,point,series.Label[c])
 					local alphaX = (TPoint.x-LastPoint.x)/1
 					local alphaY = (TPoint.y-LastPoint.y)/1
@@ -1598,7 +1601,6 @@ function lib:DrawLine(C, sx, sy, ex, ey, w, color, layer, point, label)
 	if layer then
 		T:SetDrawLayer(layer)
 	end
-
 	T:SetVertexColor(color[1],color[2],color[3],color[4]);
 	-- Determine dimensions and center point of line
 	local dx,dy = ex - sx, ey - sy;
