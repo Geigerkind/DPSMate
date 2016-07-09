@@ -5,9 +5,9 @@
 ## Notes-deDE: [TO BE EDITED]
 ## Author: Shino <Synced> - Kronos
 ## SavedVariables: DPSMateSettings
-## SavedVariablesPerCharacter: DPSMateUser, DPSMateAbility, DPSMateDamageDone, DPSMateEDT, DPSMateEDD, DPSMateDamageTaken, DPSMateDispels, DPSMateInterrupts, DPSMateDeaths, DPSMateEHealing, DPSMateTHealing, DPSMateHealingTaken, DPSMateEHealingTaken, DPSMateOverhealing, DPSMateAbsorbs, DPSMateThreat, DPSMateAurasGained, DPSMateCombatTime, DPSMateHistory, DPSMateAttempts, DPSMatePlayer, DPSMateLoot, DPSMateFails, DPSMateCCBreaker
+## SavedVariablesPerCharacter: DPSMateUser, DPSMateAbility, DPSMateDamageDone, DPSMateEDT, DPSMateEDD, DPSMateDamageTaken, DPSMateDispels, DPSMateInterrupts, DPSMateDeaths, DPSMateEHealing, DPSMateTHealing, DPSMateHealingTaken, DPSMateEHealingTaken, DPSMateOverhealing, DPSMateOverhealingTaken, DPSMateAbsorbs, DPSMateThreat, DPSMateAurasGained, DPSMateCombatTime, DPSMateHistory, DPSMateAttempts, DPSMatePlayer, DPSMateLoot, DPSMateFails, DPSMateCCBreaker
 ## OptionalDeps: KLHThreatMeter
-## Version: 19
+## Version: 23
 
 libs\AceLibrary\AceLibrary.lua
 libs\Dewdrop-2.0\Dewdrop-2.0.lua
@@ -71,6 +71,8 @@ modules\DPSMate_Threat.lua
 modules\DPSMate_TPS.lua
 modules\DPSMate_Fails.lua
 modules\DPSMate_CCBreaker.lua
+modules\DPSMate_OHealingTaken.lua
+modules\DPSMate_OHPS.lua
 
 modules\DPSMate_Details_Damage.lua
 modules\DPSMate_Details_Damage.xml
@@ -94,6 +96,8 @@ modules\DPSMate_Details_HealingTaken.lua
 modules\DPSMate_Details_HealingTaken.xml
 modules\DPSMate_Details_EHealingTaken.lua
 modules\DPSMate_Details_EHealingTaken.xml
+modules\DPSMate_Details_OHealingTaken.lua
+modules\DPSMate_Details_OHealingTaken.xml
 modules\DPSMate_Details_Absorbs.lua
 modules\DPSMate_Details_Absorbs.xml
 modules\DPSMate_Details_AbsorbsTaken.lua

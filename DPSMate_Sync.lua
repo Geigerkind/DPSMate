@@ -43,7 +43,8 @@ local Arrays = {
 	[11] = {}, -- Deaths
 	[12] = {}, -- Interrupts
 	[13] = {}, -- Dispels
-	[14] = {} -- Auras
+	[14] = {}, -- Auras
+	[15] = {} -- O Healing taken
 }
 local tra = DPSMate.BabbleSpell
 
@@ -110,8 +111,8 @@ function DPSMate.Sync:SendAddonMessages(elapsed)
 				for i=1, 80 do
 					--SDM("Test"..co, "Test"..co, "RAID")
 					if not Buffer[co] then break end
-					--SDM(Buffer[co][1]..DPSMate.VERSION, Buffer[co][2], "RAID")
-					SDM(Buffer[co][1].."NOTSYNC", Buffer[co][2], "RAID")
+					SDM(Buffer[co][1]..DPSMate.VERSION, Buffer[co][2], "RAID")
+					--SDM(Buffer[co][1].."NOTSYNC", Buffer[co][2], "RAID")
 					Buffer[co] = nil
 					co = co + 1
 				end
@@ -167,6 +168,9 @@ function DPSMate.Sync:OnUpdate(elapsed)
 			self:HealingAllOut(DPSMateEHealingTaken, "ETaken")
 			self:HealingTakenAbilityOut(DPSMateEHealingTaken, "E")
 			self:HealingTakenStatOut(DPSMateEHealingTaken, "ETaken")
+			self:HealingAllOut(DPSMateOverhealingTaken, "OTaken")
+			self:HealingTakenAbilityOut(DPSMateOverhealingTaken, "O")
+			self:HealingTakenStatOut(DPSMateOverhealingTaken, "OTaken")
 			iterator = 8
 		elseif time>=21 and iterator==8 then
 			self:HealingAllOut(DPSMateOverhealing, "O")
@@ -377,6 +381,7 @@ function DPSMate.Sync:SyncStatus(arg2, arg4)
 		if Arrays[12][usid] then DPSMateInterrupts[1][usid] = Arrays[12][usid] end
 		if Arrays[13][usid] then DPSMateDispels[1][usid] = Arrays[13][usid] end
 		if Arrays[14][usid] then DPSMateAurasGained[1][usid] = Arrays[14][usid] end
+		if Arrays[15][usid] then DPSMateOverhealingTaken[1][usid] = Arrays[15][usid] end
 		DB.NeedUpdate = true
 	else
 		DB:BuildUser(arg4, nil)
@@ -1442,6 +1447,9 @@ DPSMate.Sync.Exec = {
 	["DPSMate_ETakenHealingAll"..DPSMate.VERSION] = function(arg2,arg4) DPSMate.Sync:HealingAllIn(arg2, arg4, 8) end,
 	["DPSMate_ETakenHealingStat"..DPSMate.VERSION] = function(arg2,arg4) DPSMate.Sync:HealingTakenStatIn(arg2, arg4, 8) end,
 	["DPSMate_EHealingTakenAbility"..DPSMate.VERSION] = function(arg2,arg4) DPSMate.Sync:HealingTakenAbilityIn(arg2, arg4, 8) end,
+	["DPSMate_OTakenHealingAll"..DPSMate.VERSION] = function(arg2,arg4) DPSMate.Sync:HealingAllIn(arg2, arg4, 15) end,
+	["DPSMate_OTakenHealingStat"..DPSMate.VERSION] = function(arg2,arg4) DPSMate.Sync:HealingTakenStatIn(arg2, arg4, 15) end,
+	["DPSMate_OHealingTakenAbility"..DPSMate.VERSION] = function(arg2,arg4) DPSMate.Sync:HealingTakenAbilityIn(arg2, arg4, 15) end,
 	["DPSMate_Absorbs"..DPSMate.VERSION] = function(arg2,arg4) DPSMate.Sync:AbsorbsIn(arg2, arg4) end,
 	["DPSMate_iAbsorbs"..DPSMate.VERSION] = function(arg2,arg4) DPSMate.Sync:iAbsorbsIn(arg2, arg4) end,
 	["DPSMate_Dispels"..DPSMate.VERSION] = function(arg2,arg4) DPSMate.Sync:DispelsIn(arg2, arg4) end,

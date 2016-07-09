@@ -14,7 +14,7 @@ local toggle, toggle2, toggle3 = false,false,false
 function DPSMate.Modules.DetailsOverhealing:UpdateDetails(obj, key)
 	curKey = key
 	db, cbt = DPSMate:GetMode(key)
-	db2 = DPSMate:GetModeByArr(DPSMateOverhealingTaken, key, "OverhealingTaken")
+	db2 = DPSMate:GetModeByArr(DPSMateOverhealingTaken, key, "OHealingTaken")
 	DPSMate_Details_Overhealing.proc = "None"
 	UIDropDownMenu_SetSelectedValue(DPSMate_Details_Overhealing_DiagramLegend_Procs, "None")
 	DetailsUser = obj.user
@@ -26,10 +26,10 @@ function DPSMate.Modules.DetailsOverhealing:UpdateDetails(obj, key)
 	if toggle then
 		self:Player_Update()
 		self:PlayerSpells_Update(1)
-		self:SelectDetails_HealingButton(1)
+		self:SelectDetails_OverhealingButton(1)
 	else
 		self:ScrollFrame_Update()
-		self:SelectDetails_HealingButton(1)
+		self:SelectDetails_OverhealingButton(1)
 	end
 	self:UpdatePie()
 	if toggle2 then
@@ -37,6 +37,53 @@ function DPSMate.Modules.DetailsOverhealing:UpdateDetails(obj, key)
 	else
 		self:UpdateLineGraph()
 	end
+end
+
+function DPSMate.Modules.DetailsOverhealing:EvalToggleTable()
+	local a,b = {},{}
+	local d = 0
+	for cat, val in db2 do
+		if val[DPSMateUser[DetailsUser][1]] then
+			local CV = 0
+			local c = {[1] = 0,[2] = {},[3] = {}}
+			for p, v in val[DPSMateUser[DetailsUser][1]] do
+				CV = CV + v[1]
+				local i = 1
+				while true do
+					if (not c[2][i]) then
+						tinsert(c[3], i, v)
+						tinsert(c[2], i, p)
+						break
+					else
+						if c[3][i][1] < v[1] then
+							tinsert(c[3], i, v)
+							tinsert(c[2], i, p)
+							break
+						end
+					end
+					i=i+1
+				end
+			end
+			c[1] = CV
+			local i = 1
+			while true do
+				if (not a[i]) then
+					tinsert(b, i, c)
+					tinsert(a, i, cat)
+					break
+				else
+					if b[i][1] < CV then
+						tinsert(b, i, c)
+						tinsert(a, i, cat)
+						break
+					end
+				end
+				i=i+1
+			end
+			d = d + CV
+		end
+	end
+	return a,b,d
 end
 
 function DPSMate.Modules.DetailsOverhealing:ScrollFrame_Update()
@@ -448,20 +495,20 @@ function DPSMate.Modules.DetailsOverhealing:CreateGraphTable()
 	local lines = {}
 	for i=1, 8 do
 		-- Horizontal
-		lines[i] = DPSMate.Options.graph:DrawLine(DPSMate_Details_Overhealing_Log, 252, 270-i*30, 617, 270-i*30, 20, {0.5,0.5,0.5,0.5}, "BACKGROUND")
+		lines[i] = DPSMate.Options.graph:DrawLine(DPSMate_Details_Overhealing_LogDetails_Overhealing, 10, 270-i*30, 370, 270-i*30, 20, {0.5,0.5,0.5,0.5}, "BACKGROUND")
 		lines[i]:Show()
 	end
 	-- Vertical
-	lines[9] = DPSMate.Options.graph:DrawLine(DPSMate_Details_Overhealing_Log, 302, 260, 302, 15, 20, {0.5,0.5,0.5,0.5}, "BACKGROUND")
+	lines[9] = DPSMate.Options.graph:DrawLine(DPSMate_Details_Overhealing_LogDetails_Overhealing, 57, 260, 57, 15, 20, {0.5,0.5,0.5,0.5}, "BACKGROUND")
 	lines[9]:Show()
 	
-	lines[10] = DPSMate.Options.graph:DrawLine(DPSMate_Details_Overhealing_Log, 437, 260, 437, 15, 20, {0.5,0.5,0.5,0.5}, "BACKGROUND")
+	lines[10] = DPSMate.Options.graph:DrawLine(DPSMate_Details_Overhealing_LogDetails_Overhealing, 192, 260, 192, 15, 20, {0.5,0.5,0.5,0.5}, "BACKGROUND")
 	lines[10]:Show()
 	
-	lines[11] = DPSMate.Options.graph:DrawLine(DPSMate_Details_Overhealing_Log, 497, 260, 497, 15, 20, {0.5,0.5,0.5,0.5}, "BACKGROUND")
+	lines[11] = DPSMate.Options.graph:DrawLine(DPSMate_Details_Overhealing_LogDetails_Overhealing, 252, 260, 252, 15, 20, {0.5,0.5,0.5,0.5}, "BACKGROUND")
 	lines[11]:Show()
 	
-	lines[12] = DPSMate.Options.graph:DrawLine(DPSMate_Details_Overhealing_Log, 557, 260, 557, 15, 20, {0.5,0.5,0.5,0.5}, "BACKGROUND")
+	lines[12] = DPSMate.Options.graph:DrawLine(DPSMate_Details_Overhealing_LogDetails_Overhealing, 312, 260, 312, 15, 20, {0.5,0.5,0.5,0.5}, "BACKGROUND")
 	lines[12]:Show()
 end
 
@@ -575,20 +622,20 @@ function DPSMate.Modules.DetailsOverhealing:ToggleMode(bool)
 		if toggle then
 			toggle = false
 			self:ScrollFrame_Update()
-			self:SelectDetails_HealingButton(1)
-			DPSMate_Details_Healing_playerSpells:Hide()
-			DPSMate_Details_Healing_player:Hide()
-			DPSMate_Details_Healing_Diagram:Show()
-			DPSMate_Details_Healing_Log:Show()
+			self:SelectDetails_OverhealingButton(1)
+			DPSMate_Details_Overhealing_playerSpells:Hide()
+			DPSMate_Details_Overhealing_player:Hide()
+			DPSMate_Details_Overhealing_Diagram:Show()
+			DPSMate_Details_Overhealing_Log:Show()
 		else
 			toggle = true
 			self:Player_Update()
 			self:PlayerSpells_Update(1)
-			self:SelectDetails_HealingButton(1)
-			DPSMate_Details_Healing_playerSpells:Show()
-			DPSMate_Details_Healing_player:Show()
-			DPSMate_Details_Healing_Diagram:Hide()
-			DPSMate_Details_Healing_Log:Hide()
+			self:SelectDetails_OverhealingButton(1)
+			DPSMate_Details_Overhealing_playerSpells:Show()
+			DPSMate_Details_Overhealing_player:Show()
+			DPSMate_Details_Overhealing_Diagram:Hide()
+			DPSMate_Details_Overhealing_Log:Hide()
 		end
 	end
 end

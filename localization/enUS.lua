@@ -415,3 +415,7 @@ DPSMate.L["fe"] = "Feralas"
 -- Not in translation
 DPSMate.L["switchgraphsdesc"] = "Switch graphs"
 DPSMate.L["switchindividualsdesc"] = "Individual/Total"
+DPSMate.L["OHPS"] = "OHPS"
+DPSMate.L["OHealingTaken"] = "Overhealing taken"
+DPSMate.L["eohps"] = "EOHPS"
+DPSMate.L["ohealtakenby"] = "Overhealing taken by "

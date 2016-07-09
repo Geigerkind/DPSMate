@@ -480,6 +480,8 @@ function DPSMate.Options:InitializeConfigMenu()
 		_G("DPSMate_ConfigMenu_Tab_Columns_Child_TPS_Check"..i):SetChecked(DPSMateSettings["columnstps"][i])
 		_G("DPSMate_ConfigMenu_Tab_Columns_Child_Absorbs_Check"..i):SetChecked(DPSMateSettings["columnsabsorbs"][i])
 		_G("DPSMate_ConfigMenu_Tab_Columns_Child_AbsorbsTaken_Check"..i):SetChecked(DPSMateSettings["columnsabsorbstaken"][i])
+		_G("DPSMate_ConfigMenu_Tab_Columns_Child_OHealingTaken_Check"..i):SetChecked(DPSMateSettings["columnsohealingtaken"][i])
+		_G("DPSMate_ConfigMenu_Tab_Columns_Child_OHPS_Check"..i):SetChecked(DPSMateSettings["columnsohps"][i])
 	end
 	for i=1, 2 do
 		_G("DPSMate_ConfigMenu_Tab_Columns_Child_Deaths_Check"..i):SetChecked(DPSMateSettings["columnsdeaths"][i])
@@ -672,7 +674,7 @@ function DPSMate.Options:OnEvent(event)
 						LastPopUp = GetTime()
 					end
 				elseif DPSMateSettings["dataresetsjoinparty"] == 1 then
-					DPSMate.Options:PopUpAccept()
+					DPSMate.Options:PopUpAccept(true)
 				end
 				DPSMate.DB:OnGroupUpdate()
 			elseif LastPartyNum ~= PartyNum	then
@@ -682,7 +684,7 @@ function DPSMate.Options:OnEvent(event)
 						LastPopUp = GetTime()
 					end
 				elseif DPSMateSettings["dataresetspartyamount"] == 1 then
-					DPSMate.Options:PopUpAccept()
+					DPSMate.Options:PopUpAccept(true)
 				end
 				DPSMate.DB:OnGroupUpdate()
 			end
@@ -694,7 +696,7 @@ function DPSMate.Options:OnEvent(event)
 						LastPopUp = GetTime()
 					end
 				elseif DPSMateSettings["dataresetsleaveparty"] == 1 then
-					DPSMate.Options:PopUpAccept()
+					DPSMate.Options:PopUpAccept(true)
 				end
 				DPSMate.DB:OnGroupUpdate()
 			end
@@ -706,7 +708,7 @@ function DPSMate.Options:OnEvent(event)
 				LastPopUp = GetTime()
 			end
 		elseif DPSMateSettings["dataresetsworld"] == 1 then
-			self:PopUpAccept()
+			self:PopUpAccept(true)
 		end
 		self:HideInPvP()
 	elseif event == "ZONE_CHANGED_NEW_AREA" then
@@ -800,6 +802,7 @@ function DPSMate.Options:PopUpAccept(bool, bypass)
 			DPSMateOverhealing = {[1]={},[2]={}}
 			DPSMateHealingTaken = {[1]={},[2]={}}
 			DPSMateEHealingTaken = {[1]={},[2]={}}
+			DPSMateOverhealingTaken = {[1]={},[2]={}}
 			DPSMateAbsorbs = {[1]={},[2]={}}
 			DPSMateDispels = {[1]={},[2]={}}
 			DPSMateDeaths = {[1]={},[2]={}}
@@ -819,6 +822,7 @@ function DPSMate.Options:PopUpAccept(bool, bypass)
 				OHealing = {},
 				EHealingTaken = {},
 				THealingTaken = {},
+				OHealingTaken = {},
 				Absorbs = {},
 				Deaths = {},
 				Interrupts = {},
@@ -849,6 +853,7 @@ function DPSMate.Options:PopUpAccept(bool, bypass)
 			DPSMateOverhealing[2] = {}
 			DPSMateHealingTaken[2] = {}
 			DPSMateEHealingTaken[2] = {}
+			DPSMateOverhealingTaken[2] = {}
 			DPSMateAbsorbs[2] = {}
 			DPSMateDispels[2] = {}
 			DPSMateDeaths[2] = {}
@@ -897,6 +902,8 @@ function DPSMate.Options:PopUpAccept(bool, bypass)
 		DPSMate.Modules.TPS.DB = DPSMateThreat
 		DPSMate.Modules.Fails.DB = DPSMateFails
 		DPSMate.Modules.CCBreaker.DB = DPSMateCCBreaker
+		DPSMate.Modules.OHPS = DPSMateOverhealing
+		DPSMate.Modules.OHealingTaken = DPSMateOverhealingTaken
 		for _, val in pairs(DPSMateSettings["windows"]) do
 			if not val["options"][2]["total"] and not val["options"][2]["currentfight"] then
 				val["options"][2]["total"] = true

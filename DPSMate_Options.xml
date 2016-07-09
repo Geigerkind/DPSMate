@@ -2864,7 +2864,7 @@
 				<HitRectInsets left="0" right="0" top="10" bottom="10"/> 
 				<ScrollChild>
 					<Frame name="$parent_Child">
-						<Size x="300" y="1950" />
+						<Size x="300" y="2060" />
 						<Frames>
 							<Frame name="$parent_DPS" inherits="DPSMate_Template_BoxColumns">
 								<Anchors>
@@ -5103,6 +5103,154 @@
 											</OnLoad>
 											<OnClick>
 												DPSMate.Options:CheckButton("columnsccbreaker", 2)
+											</OnClick>
+										</Scripts>
+									</CheckButton>
+								</Frames>
+							</Frame>
+							<Frame name="$parent_OHPS" inherits="DPSMate_Template_BoxColumns">
+								<Anchors>
+									<Anchor point="TOP" relativeTo="$parent_CCBreaker" relativePoint="BOTTOM">
+										<Offset x="0" y="-20" />
+									</Anchor>
+								</Anchors>
+								<Scripts>
+									<OnLoad>
+										getglobal(this:GetName().."_Title"):SetText(DPSMate.L["OHPS"])
+									</OnLoad>
+								</Scripts>
+								<Frames>
+									<CheckButton name="$parent_Check1" inherits="DPSMate_Template_CheckButton">
+										<Anchors>
+											<Anchor point="TOPLEFT">
+												<Offset x="10" y="-8" />
+											</Anchor>
+										</Anchors>
+										<Scripts>
+											<OnLoad>
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["healing"])
+											</OnLoad>
+											<OnClick>
+												DPSMate.Options:CheckButton("columnsohps", 1)
+											</OnClick>
+										</Scripts>
+									</CheckButton>
+									<CheckButton name="$parent_Check2" inherits="DPSMate_Template_CheckButton">
+										<Anchors>
+											<Anchor point="LEFT" relativeTo="$parent_Check1" relativePoint="RIGHT">
+												<Offset x="50" y="0" />
+											</Anchor>
+										</Anchors>
+										<Scripts>
+											<OnLoad>
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["OHPS"])
+											</OnLoad>
+											<OnClick>
+												DPSMate.Options:CheckButton("columnsohps", 2)
+											</OnClick>
+										</Scripts>
+									</CheckButton>
+									<CheckButton name="$parent_Check3" inherits="DPSMate_Template_CheckButton">
+										<Anchors>
+											<Anchor point="LEFT" relativeTo="$parent_Check2" relativePoint="RIGHT">
+												<Offset x="50" y="0" />
+											</Anchor>
+										</Anchors>
+										<Scripts>
+											<OnLoad>
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["percent"])
+											</OnLoad>
+											<OnClick>
+												DPSMate.Options:CheckButton("columnsohps", 3)
+											</OnClick>
+										</Scripts>
+									</CheckButton>
+									<CheckButton name="$parent_Check4" inherits="DPSMate_Template_CheckButton">
+										<Anchors>
+											<Anchor point="LEFT" relativeTo="$parent_Check3" relativePoint="RIGHT">
+												<Offset x="50" y="0" />
+											</Anchor>
+										</Anchors>
+										<Scripts>
+											<OnLoad>
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["eohps"])
+											</OnLoad>
+											<OnClick>
+												DPSMate.Options:CheckButton("columnsohps", 4)
+											</OnClick>
+										</Scripts>
+									</CheckButton>
+								</Frames>
+							</Frame>
+							<Frame name="$parent_OHealingTaken" inherits="DPSMate_Template_BoxColumns">
+								<Anchors>
+									<Anchor point="TOP" relativeTo="$parent_OHPS" relativePoint="BOTTOM">
+										<Offset x="0" y="-20" />
+									</Anchor>
+								</Anchors>
+								<Scripts>
+									<OnLoad>
+										getglobal(this:GetName().."_Title"):SetText(DPSMate.L["OHealingTaken"])
+									</OnLoad>
+								</Scripts>
+								<Frames>
+									<CheckButton name="$parent_Check1" inherits="DPSMate_Template_CheckButton">
+										<Anchors>
+											<Anchor point="TOPLEFT">
+												<Offset x="10" y="-8" />
+											</Anchor>
+										</Anchors>
+										<Scripts>
+											<OnLoad>
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["healing"])
+											</OnLoad>
+											<OnClick>
+												DPSMate.Options:CheckButton("columnsohealingtaken", 1)
+											</OnClick>
+										</Scripts>
+									</CheckButton>
+									<CheckButton name="$parent_Check2" inherits="DPSMate_Template_CheckButton">
+										<Anchors>
+											<Anchor point="LEFT" relativeTo="$parent_Check1" relativePoint="RIGHT">
+												<Offset x="50" y="0" />
+											</Anchor>
+										</Anchors>
+										<Scripts>
+											<OnLoad>
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["OHPS"])
+											</OnLoad>
+											<OnClick>
+												DPSMate.Options:CheckButton("columnsohealingtaken", 2)
+											</OnClick>
+										</Scripts>
+									</CheckButton>
+									<CheckButton name="$parent_Check3" inherits="DPSMate_Template_CheckButton">
+										<Anchors>
+											<Anchor point="LEFT" relativeTo="$parent_Check2" relativePoint="RIGHT">
+												<Offset x="50" y="0" />
+											</Anchor>
+										</Anchors>
+										<Scripts>
+											<OnLoad>
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["percent"])
+											</OnLoad>
+											<OnClick>
+												DPSMate.Options:CheckButton("columnsohealingtaken", 3)
+											</OnClick>
+										</Scripts>
+									</CheckButton>
+									<CheckButton name="$parent_Check4" inherits="DPSMate_Template_CheckButton">
+										<Anchors>
+											<Anchor point="LEFT" relativeTo="$parent_Check3" relativePoint="RIGHT">
+												<Offset x="50" y="0" />
+											</Anchor>
+										</Anchors>
+										<Scripts>
+											<OnLoad>
+												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["eohps"])
+											</OnLoad>
+											<OnClick>
+												DPSMate.Options:CheckButton("columnsohealingtaken", 4)
 											</OnClick>
 										</Scripts>
 									</CheckButton>

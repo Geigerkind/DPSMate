@@ -468,7 +468,10 @@ function DPSMate.Parser:SpellSelfBuff(msg)
 		DB:HealingTaken(DPSMateHealingTaken, t[1] or b, a, 0, 1, t[2], player)
 		DB:HealingTaken(DPSMateEHealingTaken, t[1] or b, a, 0, 1, t[2]-overheal, player)
 		DB:Healing(0, DPSMateEHealing, player, a, 0, 1, t[2]-overheal, t[1] or b)
-		if overheal>0 then DB:Healing(2, DPSMateOverhealing, player, a, 0, 1, overheal, t[1] or b) end
+		if overheal>0 then 
+			DB:Healing(2, DPSMateOverhealing, player, a, 0, 1, overheal, t[1] or b)
+			DB:HealingTaken(DPSMateOverhealingTaken, t[1] or b, a, 0, 1, overheal, player)
+		end
 		DB:Healing(1, DPSMateTHealing, player, a, 0, 1, t[2], t[1] or b)
 		DB:DeathHistory(t[1] or b, player, a, t[2], 0, 1, 1, 0)
 		return
@@ -480,7 +483,10 @@ function DPSMate.Parser:SpellSelfBuff(msg)
 		DB:HealingTaken(DPSMateHealingTaken, t[1] or b, a, 1, 0, t[2], player)
 		DB:HealingTaken(DPSMateEHealingTaken, t[1] or b, a, 1, 0, t[2]-overheal, player)
 		DB:Healing(0, DPSMateEHealing, player, a, 1, 0, t[2]-overheal, t[1] or b)
-		if overheal>0 then DB:Healing(2, DPSMateOverhealing, player, a, 1, 0, overheal, t[1] or b) end
+		if overheal>0 then 
+			DB:Healing(2, DPSMateOverhealing, player, a, 1, 0, overheal, t[1] or b) 
+			DB:HealingTaken(DPSMateOverhealingTaken, t[1] or b, a, 1, 0, overheal, player)
+		end
 		DB:Healing(1, DPSMateTHealing, player, a, 1, 0, t[2], t[1] or b)
 		DB:DeathHistory(t[1] or b, player, a, t[2], 1, 0, 1, 0)
 		return
@@ -510,7 +516,10 @@ function DPSMate.Parser:SpellPeriodicSelfBuff(msg) -- Maybe some loss here?
 		DB:HealingTaken(DPSMateHealingTaken, player, c.."(Periodic)", 1, 0, t[1], b)
 		DB:HealingTaken(DPSMateEHealingTaken, player, c.."(Periodic)", 1, 0, t[1]-overheal, b)
 		DB:Healing(0, DPSMateEHealing, b, c.."(Periodic)", 1, 0, t[1]-overheal, player)
-		if overheal>0 then DB:Healing(2, DPSMateOverhealing, b, c.."(Periodic)", 1, 0, overheal, player) end
+		if overheal>0 then 
+			DB:Healing(2, DPSMateOverhealing, b, c.."(Periodic)", 1, 0, overheal, player)
+			DB:HealingTaken(DPSMateOverhealingTaken, player, c.."(Periodic)", 1, 0, overheal, b)
+		end
 		DB:Healing(1, DPSMateTHealing, b, c.."(Periodic)", 1, 0, t[1], player)
 		DB:DeathHistory(player, b, c.."(Periodic)", t[1], 1, 0, 1, 0)
 		return
@@ -521,7 +530,10 @@ function DPSMate.Parser:SpellPeriodicSelfBuff(msg) -- Maybe some loss here?
 		DB:HealingTaken(DPSMateHealingTaken, player, b.."(Periodic)", 1, 0, t[1], player)
 		DB:HealingTaken(DPSMateEHealingTaken, player, b.."(Periodic)", 1, 0, t[1]-overheal, player)
 		DB:Healing(0, DPSMateEHealing, player, b.."(Periodic)", 1, 0, t[1]-overheal, player)
-		if overheal>0 then DB:Healing(2, DPSMateOverhealing, player, b.."(Periodic)", 1, 0, overheal, player) end
+		if overheal>0 then 
+			DB:Healing(2, DPSMateOverhealing, player, b.."(Periodic)", 1, 0, overheal, player)
+			DB:HealingTaken(DPSMateOverhealingTaken, player, b.."(Periodic)", 1, 0, overheal, player)
+		end
 		DB:Healing(1, DPSMateTHealing, player, b.."(Periodic)", 1, 0, t[1], player)
 		DB:DeathHistory(player, player, b.."(Periodic)", t[1], 1, 0, 1, 0)
 		return
@@ -553,7 +565,10 @@ function DPSMate.Parser:SpellPeriodicFriendlyPlayerBuffs(msg)
 		DB:HealingTaken(DPSMateHealingTaken, f, c.."(Periodic)", 1, 0, t[1], b)
 		DB:HealingTaken(DPSMateEHealingTaken, f, c.."(Periodic)", 1, 0, t[1]-overheal, b)
 		DB:Healing(0, DPSMateEHealing, b, c.."(Periodic)", 1, 0, t[1]-overheal, f)
-		if overheal>0 then DB:Healing(2, DPSMateOverhealing, b, c.."(Periodic)", 1, 0, overheal, f) end
+		if overheal>0 then 
+			DB:Healing(2, DPSMateOverhealing, b, c.."(Periodic)", 1, 0, overheal, f)
+			DB:HealingTaken(DPSMateOverhealingTaken, f, c.."(Periodic)", 1, 0, overheal, b)
+		end
 		DB:Healing(1, DPSMateTHealing, b, c.."(Periodic)", 1, 0, t[1], f)
 		DB:DeathHistory(f, b, c.."(Periodic)", t[1], 1, 0, 1, 0)
 		return
@@ -564,7 +579,10 @@ function DPSMate.Parser:SpellPeriodicFriendlyPlayerBuffs(msg)
 		DB:HealingTaken(DPSMateHealingTaken, f, b.."(Periodic)", 1, 0, t[1], player)
 		DB:HealingTaken(DPSMateEHealingTaken, f, b.."(Periodic)", 1, 0, t[1]-overheal, player)
 		DB:Healing(0, DPSMateEHealing, player, b.."(Periodic)", 1, 0, t[1]-overheal)
-		if overheal>0 then DB:Healing(2, DPSMateOverhealing, player, b.."(Periodic)", 1, 0, overheal) end
+		if overheal>0 then 
+			DB:Healing(2, DPSMateOverhealing, player, b.."(Periodic)", 1, 0, overheal)
+			DB:HealingTaken(DPSMateOverhealingTaken, f, b.."(Periodic)", 1, 0, overheal, player)
+		end
 		DB:Healing(1, DPSMateTHealing, player, b.."(Periodic)", 1, 0, t[1])
 		DB:DeathHistory(f, player, b.."(Periodic)", t[1], 1, 0, 1, 0)
 		return
@@ -575,7 +593,10 @@ function DPSMate.Parser:SpellPeriodicFriendlyPlayerBuffs(msg)
 		DB:HealingTaken(DPSMateHealingTaken, f, b.."(Periodic)", 1, 0, t[1], f)
 		DB:HealingTaken(DPSMateEHealingTaken, f, b.."(Periodic)", 1, 0, t[1]-overheal, f)
 		DB:Healing(0, DPSMateEHealing, f, b.."(Periodic)", 1, 0, t[1]-overheal, f)
-		if overheal>0 then DB:Healing(2, DPSMateOverhealing, f, b.."(Periodic)", 1, 0, overheal, f) end
+		if overheal>0 then 
+			DB:Healing(2, DPSMateOverhealing, f, b.."(Periodic)", 1, 0, overheal, f)
+			DB:HealingTaken(DPSMateOverhealingTaken, f, b.."(Periodic)", 1, 0, overheal, f)
+		end
 		DB:Healing(1, DPSMateTHealing, f, b.."(Periodic)", 1, 0, t[1], f)
 		DB:DeathHistory(f, f, b.."(Periodic)", t[1], 1, 0, 1, 0)
 		return
@@ -606,7 +627,10 @@ function DPSMate.Parser:SpellHostilePlayerBuff(msg)
 		DB:HealingTaken(DPSMateHealingTaken, t[2] or c, b, 0, 1, t[1], a)
 		DB:HealingTaken(DPSMateEHealingTaken, t[2] or c, b, 0, 1, t[1]-overheal, a)
 		DB:Healing(0, DPSMateEHealing, a, b, 0, 1, t[1]-overheal, t[2] or c)
-		if overheal>0 then DB:Healing(2, DPSMateOverhealing, a, b, 0, 1, overheal, t[2] or c) end
+		if overheal>0 then 
+			DB:Healing(2, DPSMateOverhealing, a, b, 0, 1, overheal, t[2] or c)
+			DB:HealingTaken(DPSMateOverhealingTaken, t[2] or c, b, 0, 1, overheal, a)
+		end
 		DB:Healing(1, DPSMateTHealing, a, b, 0, 1, t[1], t[2] or c)
 		DB:DeathHistory(t[2] or c, a, b, t[1], 0, 1, 1, 0)
 		return
@@ -618,7 +642,10 @@ function DPSMate.Parser:SpellHostilePlayerBuff(msg)
 		DB:HealingTaken(DPSMateHealingTaken, t[2] or c, b, 1, 0, t[1], a)
 		DB:HealingTaken(DPSMateEHealingTaken, t[2] or c, b, 1, 0, t[1]-overheal, a)
 		DB:Healing(0, DPSMateEHealing, a, b, 1, 0, t[1]-overheal, t[2] or c)
-		if overheal>0 then DB:Healing(2, DPSMateOverhealing, a, b, 1, 0, overheal, t[2] or c) end
+		if overheal>0 then 
+			DB:Healing(2, DPSMateOverhealing, a, b, 1, 0, overheal, t[2] or c)
+			DB:HealingTaken(DPSMateOverhealingTaken, t[2] or c, b, 1, 0, overheal, a)
+		end
 		DB:Healing(1, DPSMateTHealing, a, b, 1, 0, t[1], t[2] or c)
 		DB:DeathHistory(t[2] or c, a, b, t[1], 1, 0, 1, 0)
 		return

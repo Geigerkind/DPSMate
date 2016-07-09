@@ -195,7 +195,19 @@ function DPSMate.DB:OnEvent(event)
 					[3] = true,
 					[4] = false
 				},
+				columnsohps = {
+					[1] = false,
+					[2] = true,
+					[3] = true,
+					[4] = false
+				},
 				columnsoverhealing = {
+					[1] = true,
+					[2] = false,
+					[3] = true,
+					[4] = false
+				},
+				columnsohealingtaken = {
 					[1] = true,
 					[2] = false,
 					[3] = true,
@@ -357,6 +369,7 @@ function DPSMate.DB:OnEvent(event)
 				OHealing = {},
 				EHealingTaken = {},
 				THealingTaken = {},
+				OHealingTaken = {},
 				Absorbs = {},
 				Deaths = {},
 				Interrupts = {},
@@ -378,6 +391,7 @@ function DPSMate.DB:OnEvent(event)
 		if DPSMateOverhealing == nil then DPSMateOverhealing = {[1]={},[2]={}} end
 		if DPSMateHealingTaken == nil then DPSMateHealingTaken = {[1]={},[2]={}} end
 		if DPSMateEHealingTaken == nil then DPSMateEHealingTaken = {[1]={},[2]={}} end
+		if DPSMateOverhealingTaken == nil then DPSMateOverhealingTaken = {[1]={},[2]={}} end
 		if DPSMateAbsorbs == nil then DPSMateAbsorbs = {[1]={},[2]={}} end
 		if DPSMateDispels == nil then DPSMateDispels = {[1]={},[2]={}} end
 		if DPSMateDeaths == nil then DPSMateDeaths = {[1]={},[2]={}} end
@@ -430,6 +444,8 @@ function DPSMate.DB:OnEvent(event)
 		DPSMate.Modules.TPS.DB = DPSMateThreat
 		DPSMate.Modules.Fails.DB = DPSMateFails
 		DPSMate.Modules.CCBreaker.DB = DPSMateCCBreaker
+		DPSMate.Modules.OHPS.DB = DPSMateOverhealing
+		DPSMate.Modules.OHealingTaken.DB = DPSMateOverhealingTaken
 		
 		if not DPSMateSettings["columnsprocs"] then
 			DPSMateSettings["columnsprocs"] = {
@@ -461,6 +477,22 @@ function DPSMate.DB:OnEvent(event)
 			DPSMateSettings["columnstps"] = {
 				[1] = false,
 				[2] = true,
+				[3] = true,
+				[4] = false
+			}
+		end
+		if not DPSMateSettings["columnsohps"] then
+			DPSMateSettings["columnsohps"] = {
+				[1] = false,
+				[2] = true,
+				[3] = true,
+				[4] = false
+			}
+		end
+		if not DPSMateSettings["columnsohealingtaken"] then
+			DPSMateSettings["columnsohealingtaken"] = {
+				[1] = true,
+				[2] = false,
 				[3] = true,
 				[4] = false
 			}
