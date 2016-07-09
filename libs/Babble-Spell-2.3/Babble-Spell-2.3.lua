@@ -2406,7 +2406,7 @@ BabbleSpell:RegisterTranslations("deDE", function()
 		["Reckoning"] = "Abrechnung",
 		["Redemption"] = "Erl\195\182sung",
 		["Redoubt"] = "Verschanzen",
-		["Reflection"] = "Reflexion",
+		["Reflection"] = "Reflektieren",
 		["Regeneration"] = "Regeneration",
 		["Regrowth"] = "Nachwachsen",
 		["Reincarnation"] = "Reinkarnation",

@@ -81,9 +81,9 @@ if (GetLocale() == "deDE") then
 		for a,b,c,d,e in strgfind(msg, "(.+) von Euch trifft (.+) für (%d+)(.*)\.%s?(.*)") do 
 			t[1] = tnbr(c)
 			if strfind(e, "geblockt") then t[4]=1;t[2]=0;t[3]=0 end
-			if DPSMate.Parser.Kicks[a] then DB:AssignPotentialKick(player, a, c, GetTime()) end
+			if DPSMate.Parser.Kicks[a] then DB:AssignPotentialKick(player, a, b, GetTime()) end
 			if DPSMate.Parser.DmgProcs[a] then DB:BuildBuffs(player, player, a, true) end
-			DB:EnemyDamage(true, DPSMateEDT, player, a,  1, 0, 0, 0, 0, 0, t[1], c, t[4] or 0, 0)
+			DB:EnemyDamage(true, DPSMateEDT, player, a,  1, 0, 0, 0, 0, 0, t[1], b, t[4] or 0, 0)
 			DB:DamageDone(player, a, 1, 0, 0, 0, 0, 0, t[1], 0, t[4] or 0)
 			if self.TargetParty[c] then DB:BuildFail(1, c, player, a, t[1]) end
 			return
@@ -91,21 +91,21 @@ if (GetLocale() == "deDE") then
 		for a,b,c,d,e,f in strgfind(msg, "(.+) trifft (.+)%s?(.*)%. Schaden: (%d+)(.*)\.%s?(.*)") do 
 			t[1] = tnbr(d)
 			if c=="kritisch" then t[2] = 1;t[3]=0 end
-			if DPSMate.Parser.Kicks[a] then DB:AssignPotentialKick(player, a, c, GetTime()) end
+			if DPSMate.Parser.Kicks[a] then DB:AssignPotentialKick(player, a, b, GetTime()) end
 			if DPSMate.Parser.DmgProcs[a] then DB:BuildBuffs(player, player, a, true) end
-			DB:EnemyDamage(true, DPSMateEDT, player, a,  t[3] or 1, t[2] or 0, 0, 0, 0, 0, t[1], c, 0, 0)
+			DB:EnemyDamage(true, DPSMateEDT, player, a,  t[3] or 1, t[2] or 0, 0, 0, 0, 0, t[1], b, 0, 0)
 			DB:DamageDone(player, a, t[3] or 1, t[2] or 0, 0, 0, 0, 0, t[1], 0, 0)
-			if self.TargetParty[c] then DB:BuildFail(1, c, player, a, t[1]) end
+			if self.TargetParty[b] then DB:BuildFail(1, b, player, a, t[1]) end
 			return
 		end
 		for a,b,c,d,e in strgfind(msg, "(.+) trifft (.+) kritisch: (%d+)(.*)\.%s?(.*)") do 
 			t[1] = tnbr(c)
 			if strfind(e, "geblockt") then t[4]=1;t[2]=0;end
-			if DPSMate.Parser.Kicks[a] then DB:AssignPotentialKick(player, a, c, GetTime()) end
+			if DPSMate.Parser.Kicks[a] then DB:AssignPotentialKick(player, a, b, GetTime()) end
 			if DPSMate.Parser.DmgProcs[a] then DB:BuildBuffs(player, player, a, true) end
-			DB:EnemyDamage(true, DPSMateEDT, player, a,  0, t[2] or 1, 0, 0, 0, 0, t[1], c, t[4] or 0, 0)
+			DB:EnemyDamage(true, DPSMateEDT, player, a,  0, t[2] or 1, 0, 0, 0, 0, t[1], b, t[4] or 0, 0)
 			DB:DamageDone(player, a, 0, t[2] or 1, 0, 0, 0, 0, t[1], 0, t[4] or 0)
-			if self.TargetParty[c] then DB:BuildFail(1, c, player, a, t[1]) end
+			if self.TargetParty[b] then DB:BuildFail(1, b, player, a, t[1]) end
 			return
 		end
 		for a,b in strgfind(msg, "(.+) ist (.+) ausgewichen%.") do 
@@ -143,14 +143,14 @@ if (GetLocale() == "deDE") then
 		-- (NAME) is afflicted by (ABILITY). => Filtered out for now.
 		for a,b in strgfind(msg, "(.+) ist von (.+) betroffen%.") do DB:ConfirmAfflicted(a, b, GetTime()); if self.CC[b] then  DB:BuildActiveCC(a, b) end; return end
 		-- School can be used now but how and when?
-		for a,b,c,d,e in strgfind(msg, "(.+) erleidet (%d+) (%a-) von (.+) %(durch (.+)%)%.") do
+		for a,b,c,d,e in strgfind(msg, "(.+) erleidet (%d+) (.-) von (.+) %(durch (.+)%)%.") do
 			t[1] = tnbr(b)
 			DB:EnemyDamage(true, DPSMateEDT, d, e.."(Periodisch)", 1, 0, 0, 0, 0, 0, t[1], a, 0, 0)
 			DB:DamageDone(d, e.."(Periodisch)", 1, 0, 0, 0, 0, 0, t[1], 0, 0)
 			if self.TargetParty[a] and self.TargetParty[d] then DB:BuildFail(1, a, d, e.."(Periodisch)", t[1]) end
 			return
 		end
-		for a,b,c,d in strgfind(msg, "(.+) erleidet (%d+) (%a-) %(durch (.+)%)%.") do
+		for a,b,c,d in strgfind(msg, "(.+) erleidet (%d+) (.-) %(durch (.+)%)%.") do
 			t[1] = tnbr(b)
 			DB:EnemyDamage(true, DPSMateEDT, player, d.."(Periodisch)", 1, 0, 0, 0, 0, 0, t[1], a, 0, 0)
 			DB:DamageDone(player, d.."(Periodisch)", 1, 0, 0, 0, 0, 0, t[1], 0, 0)
