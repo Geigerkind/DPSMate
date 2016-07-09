@@ -165,7 +165,7 @@ if (GetLocale() == "deDE") then
 	-- X von Z wurde von Y pariert.
 	DPSMate.Parser.FriendlyPlayerDamage = function(self, msg)
 		t = {}
-		for f,a,b,c,d,e in strgfind(msg, "(.+)s (.+) trifft (.+) kritisch für (%d+)(.*)\.%s?(.*)") do 
+		for f,a,b,c,d,e in strgfind(msg, "(.-)s (.+) trifft (.+) kritisch für (%d+)(.*)\.%s?(.*)") do 
 			t[1] = tnbr(c)
 			if strfind(e, "geblockt") then t[4]=1;t[2]=0;end
 			if DPSMate.Parser.Kicks[a] then DB:AssignPotentialKick(f, a, c, GetTime()) end
@@ -175,7 +175,7 @@ if (GetLocale() == "deDE") then
 			if self.TargetParty[b] and self.TargetParty[f] then DB:BuildFail(1, b, f, a, t[1]) end
 			return
 		end
-		for f,a,b,c,d,e in strgfind(msg, "(.+)s (.+) trifft (.+) für (%d+)(.*)\.%s?(.*)") do 
+		for f,a,b,c,d,e in strgfind(msg, "(.-)s (.+) trifft (.+) für (%d+)(.*)\.%s?(.*)") do 
 			t[1] = tnbr(c)
 			if strfind(e, "geblockt") then t[4]=1;t[2]=0;t[3]=0 end
 			if DPSMate.Parser.Kicks[a] then DB:AssignPotentialKick(f, a, b, GetTime()) end
