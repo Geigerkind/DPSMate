@@ -1,6 +1,6 @@
 DPSMate.Modules.DetailsDamageTakenTotal = {}
 
-local g = nil
+local g, g2 = nil, nil
 local curKey = 1
 local db, cbt = {}, 0
 local buttons = {}
@@ -9,6 +9,9 @@ local _G = getglobal
 local tinsert = table.insert
 local tremove = tremove
 local strformat = string.format
+local toggle = false
+local totSumTable = {}
+local totMax, totTime = 0, 0
 
 function DPSMate.Modules.DetailsDamageTakenTotal:UpdateDetails(obj, key)
 	curKey = key
@@ -51,16 +54,38 @@ function DPSMate.Modules.DetailsDamageTakenTotal:UpdateDetails(obj, key)
 		{0.75,0.0,0.5},
 	}
 	if not g then
-		g=DPSMate.Options.graph:CreateGraphLine("LineGraph",DPSMate_Details_DamageTakenTotal_DiagramLine,"CENTER","CENTER",0,0,750,230)
+		g=DPSMate.Options.graph:CreateGraphLine("LineGraph",DPSMate_Details_DamageTakenTotal_DiagramLine,"CENTER","CENTER",0,0,740,220)
+		g2=DPSMate.Options.graph:CreateStackedGraph("StackedGraph",DPSMate_Details_DamageTakenTotal_DiagramLine,"CENTER","CENTER",0,0,850,220)
+		g2:SetGridColor({0.5,0.5,0.5,0.5})
+		g2:SetAxisDrawing(true,true)
+		g2:SetAxisColor({1.0,1.0,1.0,1.0})
+		g2:SetAutoScale(true)
+		g2:SetYLabels(true, false)
+		g2:SetXLabels(true)
+		g2:Hide()
 		self:CreateGraphTable()
 	end
 	DPSMate_Details_DamageTakenTotal_PlayerList_CB:SetChecked(false)
 	DPSMate_Details_DamageTakenTotal_PlayerList_CB.act = false
 	DPSMate_Details_DamageTakenTotal_Title:SetText(DPSMate.L["dmgtakensum"])
-	self:UpdateLineGraph()
 	self:LoadTable()
 	self:LoadLegendButtons()
+	if toggle then
+		self:UpdateStackedGraph()
+	else
+		self:UpdateLineGraph()
+	end
 	DPSMate_Details_DamageTakenTotal:Show()
+end
+
+function DPSMate.Modules.DetailsDamageTakenTotal:ToggleMode()
+	if toggle then
+		self:UpdateLineGraph()
+		toggle=false
+	else
+		self:UpdateStackedGraph()
+		toggle=true
+	end
 end
 
 function DPSMate.Modules.DetailsDamageTakenTotal:UpdateLineGraph()	
@@ -71,7 +96,76 @@ function DPSMate.Modules.DetailsDamageTakenTotal:UpdateLineGraph()
 	g:SetAutoScale(true)
 	g:SetYLabels(true, false)
 	g:SetXLabels(true)
+	DPSMate_Details_DamageTakenTotal_DiagramLine:SetWidth(770)
+	DPSMate_Details_DamageTakenTotal_DiagramLegend:Show()
 	self:AddTotalDataSeries()
+	local Max = totMax
+	for cat, val in pairs(buttons) do		
+		g:AddDataSeries(val[3], {val[1], {}}, {})
+		local temp = DPSMate:GetMaxValue(val[3], 2)
+		if temp>Max then
+			Max = temp
+		end
+	end
+	g:SetGridSpacing(totTime/10,Max/7)
+	g2:Hide()
+	g:Show()
+	toggle=false
+end
+
+function DPSMate.Modules.DetailsDamageTakenTotal:UpdateStackedGraph()
+	g:Hide()
+	DPSMate_Details_DamageTakenTotal_DiagramLine:SetWidth(870)
+	DPSMate_Details_DamageTakenTotal_DiagramLegend:Hide()
+	
+	local Data1 = {}
+	local label = {}
+	local maxX, maxY = 0,0
+	local p = {}
+	for cat, val in db do
+		local temp = {}
+		for ca, va in val do
+			if ca~="i" then
+				for q,s in va do
+					for c,v in s["i"] do
+						local i = 1
+						while true do
+							if not temp[i] then
+								tinsert(temp, i, {c,v})
+								break
+							elseif c<=temp[i][1] then
+								tinsert(temp, i, {c,v})
+								break
+							end
+							i=i+1
+						end
+						if p[c] then
+							p[c] = p[c] + v
+						else
+							p[c] = v
+						end
+						if maxX == 0 or maxX<c then
+							maxX = c
+						end
+					end
+				end
+			end
+		end
+		tinsert(label, 1, DPSMate:GetUserById(cat))
+		tinsert(Data1, 1, DPSMate.Sync:GetSummarizedTable(temp))
+	end
+	for cat, val in p do
+		if maxY<val then
+			maxY = val
+		end
+	end
+	
+	g2:ResetData()
+	g2:SetGridSpacing(maxX/7,(maxY/2)/14)
+	
+	g2:AddDataSeries(Data1,{1.0,0.0,0.0,0.8}, {}, label)
+	g2:Show()
+	toggle=true
 end
 
 function DPSMate.Modules.DetailsDamageTakenTotal:GetSummarizedTable(arr)
@@ -108,7 +202,6 @@ function DPSMate.Modules.DetailsDamageTakenTotal:CreateGraphTable()
 	lines[15]:Show()
 end
 
-local totSumTable = {}
 function DPSMate.Modules.DetailsDamageTakenTotal:AddTotalDataSeries()
 	local sumTable, newArr = {[0]=0}, {}
 	local tl = DPSMate:TableLength(db)
@@ -147,11 +240,11 @@ function DPSMate.Modules.DetailsDamageTakenTotal:AddTotalDataSeries()
 	end
 	
 	totSumTable = self:GetSummarizedTable(newArr)
-	local totMax = DPSMate:GetMaxValue(totSumTable, 2)
-	local time = DPSMate:GetMaxValue(totSumTable, 1)
+	totMax = DPSMate:GetMaxValue(totSumTable, 2)
+	totTime = DPSMate:GetMaxValue(totSumTable, 1)
 	g:SetXAxis(0,time)
 	g:SetYAxis(0,totMax+20)
-	g:SetGridSpacing(time/10,(totMax+20)/2)
+	g:SetGridSpacing(totTime/10,(totMax+20)/2)
 	
 	g:AddDataSeries(totSumTable,{{1.0,0.0,0.0,0.8}, {1.0,1.0,0.0,0.8}}, {})
 end
@@ -256,19 +349,33 @@ end
 
 function DPSMate.Modules.DetailsDamageTakenTotal:AddLinesButton(uid, obj)
 	local sumTable = self:SortLineTable(uid)
+	DPSMate_Details_DamageTakenTotal_DiagramLine:SetWidth(770)
+	DPSMate_Details_DamageTakenTotal_DiagramLegend:Show()
 	
 	sumTable = self:GetSummarizedTable(sumTable, cbt)
+	
+	local Max = DPSMate:GetMaxValue(sumTable, 2)
+	if Max > totMax then
+		g:SetGridSpacing(totTime/10,Max/7)
+	end
+	g2:Hide()
+	g:Show()
 	
 	g:AddDataSeries(sumTable, {ColorTable[1], {}}, {})
 	tinsert(buttons, {ColorTable[1], uid, sumTable})
 	tremove(ColorTable, 1)
 	obj.act = true
+	toggle=false
 	self:LoadLegendButtons()
 end
 
 function DPSMate.Modules.DetailsDamageTakenTotal:RemoveLinesButton(uid, obj)
 	obj.act = false
 	g:ResetData()
+	DPSMate_Details_DamageTakenTotal_DiagramLine:SetWidth(770)
+	DPSMate_Details_DamageTakenTotal_DiagramLegend:Show()
+	
+	g:Show()
 	for cat, val in buttons do
 		if val[2]==uid then
 			tinsert(ColorTable, 1, val[1])
@@ -277,10 +384,18 @@ function DPSMate.Modules.DetailsDamageTakenTotal:RemoveLinesButton(uid, obj)
 		end
 	end
 	
+	local Max = totMax
 	g:AddDataSeries(totSumTable,{{1.0,0.0,0.0,0.8}, {1.0,1.0,0.0,0.8}}, {})
 	for cat, val in pairs(buttons) do		
 		g:AddDataSeries(val[3], {val[1], {}}, {})
+		local temp = DPSMate:GetMaxValue(val[3], 2)
+		if temp>Max then
+			Max = temp
+		end
 	end
+	g:SetGridSpacing(totTime/10,Max/7)
+	g2:Hide()
+	toggle=false
 	self:LoadLegendButtons()
 end
 

@@ -7,7 +7,7 @@
 		<Size x="18" y="18" />
 		<Layers>
 			<Layer level="ARTWORK">
-				<FontString name="$parent_Font" inherits="GameFontNormalSmall" text="Total" justifyH="LEFT">
+				<FontString name="$parent_Font" inherits="GameFontNormalSmall" text="Average" justifyH="LEFT">
 					<Size x="60" y="18" />
 					<Anchors>
 						<Anchor point="LEFT" relativeTo="$parent" relativePoint="RIGHT">
@@ -230,6 +230,33 @@
 				<NormalTexture file="Interface\Buttons\UI-Panel-MinimizeButton-Up"/>
 				<PushedTexture file="Interface\Buttons\UI-Panel-MinimizeButton-Down"/>
 				<HighlightTexture file="Interface\Buttons\UI-Panel-MinimizeButton-Highlight" alphaMode="ADD"/>
+			</Button>
+			<Button name="$parent_SwitchGraph">
+				<Size x="22" y="22" />
+				<Anchors>
+					<Anchor point="RIGHT" relativeTo="$parent_CloseButton" relativePoint="LEFT">
+						<Offset>
+							<AbsDimension x="-3" y="-3"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnEnter>
+						GameTooltip:SetOwner(this, "ANCHOR_RIGHT")
+						GameTooltip:SetText(DPSMate.L["switchgraphsdesc"], nil, nil, nil, nil, 1)
+						GameTooltip:Show()
+					</OnEnter>
+					<OnLeave>
+						GameTooltip:Hide()
+					</OnLeave>
+					<OnClick>
+						DPSMate.Modules.DetailsDamageTakenTotal:ToggleMode()
+						PlaySound("igMainMenuOptionCheckBoxOff")
+					</OnClick>
+				</Scripts>
+				<NormalTexture file="Interface\Buttons\UI-GroupLoot-Dice-Up"/>
+				<PushedTexture file="Interface\Buttons\UI-GroupLoot-Dice-Down"/>
+				<HighlightTexture file="Interface\Buttons\UI-GroupLoot-Dice-Highlight" alphaMode="ADD"/>
 			</Button>
 			<Frame name="$parent_DiagramLine">
 				<Size x="770" y="250" />
