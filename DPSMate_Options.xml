@@ -5633,6 +5633,7 @@
 						</Scripts>
 					</Frame>
 					<Frame name="$parent_Thanks" inherits="DPSMate_Template_TextBox">
+						<Size x="280" y="80" />
 						<Anchors>
 							<Anchor point="TOP" relativeTo="$parent_Who" relativePoint="BOTTOM">
 								<Offset x="0" y="-17" />
