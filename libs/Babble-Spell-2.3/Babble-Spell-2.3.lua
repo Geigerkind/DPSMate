@@ -307,6 +307,8 @@ BabbleSpell:RegisterTranslations("enUS", function()
 		["Night Dragon's Breath"] = true,
 		["Whiteslash"] = true,
 		["Aura of Command"] = true,
+		["Persistent Shield"] = true,
+		["Stormcaller's Wrath"] = true,
 		
 		-- Original spells
 		["Abolish Disease"] = true,
@@ -1571,6 +1573,8 @@ BabbleSpell:RegisterTranslations("deDE", function()
 		["Yaaarrrr"] = "Arrrr!",
 		["Night Dragon's Breath"] = "Nachtdrachenodem",
 		["Aura of Command"] = "Aura des Befehls",
+		["Persistent Shield"] = "Standhafter Schild",
+		["Stormcaller's Wrath"] = "Zorn des Sturmrufers",
 		
 		-- Not translated yet
 		["Frost Protection"] = "Frostschutz",
@@ -2940,6 +2944,8 @@ BabbleSpell:RegisterTranslations("frFR", function()
 		["Brain Damage"] = "None",
 		["Night Dragon's Breath"] = "Souffle de dragon nocturne",
 		["Aura of Command"] = "Aura de commandement",
+		["Persistent Shield"] = "Bouclier persistant",
+		["Stormcaller's Wrath"] = "Courroux de l'implorateur des tempêtes",
 	
 		["Abolish Disease"] = "Abolir maladie",
 		["Abolish Poison Effect"] = "Effet Abolir le poison",
@@ -8184,6 +8190,8 @@ local spellIcons = {
 	["Brain Damage"] = "ability_gouge",
 	["Night Dragon's Breath"] = "trade_engineering",
 	["Aura of Command"] = "inv_banner_03",
+	["Persistent Shield"] = "inv_misc_ahnqirajtrinket_06",
+	["Stormcaller's Wrath"] = "spell_nature_starfall",
 	
 	-- Original Icons
 	["Abolish Disease"] = "Spell_Nature_NullifyDisease",

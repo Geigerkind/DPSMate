@@ -141,7 +141,7 @@ if (GetLocale() == "deDE") then
 	DPSMate.Parser.PeriodicDamage = function(self, msg)
 		t = {}
 		-- (NAME) is afflicted by (ABILITY). => Filtered out for now.
-		for a,b in strgfind(msg, "(.+) ist von (.+) betroffen%.") do DB:ConfirmAfflicted(a, b, GetTime()); if self.CC[b] then  DB:BuildActiveCC(a, b) end; return end
+		for a,b in strgfind(msg, "(.+) ist von (.+) betroffen%.") do if strfind(b, "%(") then b=strsub(b, 1, strfind(b, "%(")-2) end; DB:ConfirmAfflicted(a, b, GetTime()); if self.CC[b] then  DB:BuildActiveCC(a, b) end; return end
 		-- School can be used now but how and when?
 		for a,b,c,d,e in strgfind(msg, "(.+) erleidet (%d+) (.-) von (.+) %(durch (.+)%)%.") do
 			t[1] = tnbr(b)
@@ -488,6 +488,7 @@ if (GetLocale() == "deDE") then
 			return
 		end
 		for a in strgfind(msg, "Ihr seid von (.+) betroffen%.") do
+			if strfind(a, "%(") then a=strsub(a, 1, strfind(a, "%(")-2) end;
 			DB:BuildBuffs("Unbekannt", player, a, false)
 			if self.CC[a] then DB:BuildActiveCC(player, a) end
 			return
@@ -551,6 +552,7 @@ if (GetLocale() == "deDE") then
 			return
 		end
 		for a, b in strgfind(msg, "(.+) ist von (.+) betroffen%.") do
+			if strfind(b, "%(") then b=strsub(b, 1, strfind(b, "%(")-2) end;
 			DB:BuildBuffs("Unbekannt", a, b, false)
 			if self.CC[b] then DB:BuildActiveCC(a, b) end
 			return
