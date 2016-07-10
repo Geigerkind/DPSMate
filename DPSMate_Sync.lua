@@ -602,7 +602,7 @@ function DPSMate.Sync:HealingStatIn(arg2, arg4, arr)
 	local userid = DPSMateUser[arg4][1]
 	t = {}
 	strgsub(arg2, "(.-),", func)
-	t[3] = tra:GetTranslation(t[3]) or t[3]
+	t[3] = tra:GetTranslation(self:Replace(t[3])) or t[3]
 	DB:BuildAbility(t[3])
 	local abid = DPSMateAbility[t[3]][1]
 	t[1] = tnbr(t[1])
@@ -617,7 +617,7 @@ function DPSMate.Sync:HealingAbilityIn(arg2, arg4, arr)
 	local userid = DPSMateUser[arg4][1]
 	t = {}
 	strgsub(arg2, "(.-),", func)
-	t[1] = tra:GetTranslation(t[1]) or t[1]
+	t[1] = tra:GetTranslation(self:Replace(t[1])) or t[1]
 	DB:BuildAbility(t[1], nil)
 	if not Arrays[arr][userid] then return end
 	Arrays[arr][userid][DPSMateAbility[t[1]][1]] = {
@@ -643,7 +643,7 @@ function DPSMate.Sync:HealingTakenStatIn(arg2, arg4, arr)
 	local userid = DPSMateUser[arg4][1]
 	t = {}
 	strgsub(arg2, "(.-),", func)
-	t[3] = tra:GetTranslation(t[3]) or t[3]
+	t[3] = tra:GetTranslation(self:Replace(t[3])) or t[3]
 	DB:BuildAbility(t[3])
 	DB:BuildUser(t[4])
 	local abid = DPSMateAbility[t[3]][1]
@@ -661,7 +661,7 @@ function DPSMate.Sync:HealingTakenAbilityIn(arg2, arg4, arr)
 	strgsub(arg2, "(.-),", func)
 	DB:BuildUser(arg4, nil)
 	DB:BuildUser(t[1], nil)
-	t[2] = tra:GetTranslation(t[2]) or t[2]
+	t[2] = tra:GetTranslation(self:Replace(t[2])) or t[2]
 	DB:BuildAbility(t[2], nil)
 	local userid, userid2 = DPSMateUser[arg4][1], DPSMateUser[t[1]][1]
 	if not Arrays[arr][userid] then return end
