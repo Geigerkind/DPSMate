@@ -304,6 +304,9 @@ BabbleSpell:RegisterTranslations("enUS", function()
 		["Chromatic Mutation"] = true,
 		["Brood Power: Bronze"] = true,
 		["Brain Damage"] = true,
+		["Night Dragon's Breath"] = true,
+		["Whiteslash"] = true,
+		["Aura of Command"] = true,
 		
 		-- Original spells
 		["Abolish Disease"] = true,
@@ -1566,6 +1569,8 @@ BabbleSpell:RegisterTranslations("deDE", function()
 		["Arcane Protection"] = "Arkanschutz",
 		["Warchief's Blessing"] = "Segen des Kriegshäuptlings",
 		["Yaaarrrr"] = "Arrrr!",
+		["Night Dragon's Breath"] = "Nachtdrachenodem",
+		["Aura of Command"] = "Aura des Befehls",
 		
 		-- Not translated yet
 		["Frost Protection"] = "Frostschutz",
@@ -2933,6 +2938,8 @@ BabbleSpell:RegisterTranslations("frFR", function()
 		["Chromatic Mutation"] = "None",
 		["Brood Power: Bronze"] = "None",
 		["Brain Damage"] = "None",
+		["Night Dragon's Breath"] = "Souffle de dragon nocturne",
+		["Aura of Command"] = "Aura de commandement",
 	
 		["Abolish Disease"] = "Abolir maladie",
 		["Abolish Poison Effect"] = "Effet Abolir le poison",
@@ -8175,6 +8182,8 @@ local spellIcons = {
 	["Chromatic Mutation"] = "spell_shadow_metamorphosis",
 	["Brood Power: Bronze"] = "spell_nature_astralrecal",
 	["Brain Damage"] = "ability_gouge",
+	["Night Dragon's Breath"] = "trade_engineering",
+	["Aura of Command"] = "inv_banner_03",
 	
 	-- Original Icons
 	["Abolish Disease"] = "Spell_Nature_NullifyDisease",
