@@ -1448,36 +1448,39 @@ end
 function DPSMate.Options:NewSegment()
 	-- Get name of this session
 	local _,_,a = DPSMate.Modules.EDT:GetSortedTable(DPSMateEDT[2])
-	local name = DPSMate:GetUserById(a[1]) or "Unknown"
-	DPSMate.DB:Attempt(false)
-	if DPSMateSettings["onlybossfights"] then
-		if DPSMate.BabbleBoss:Contains(name) then
+	if a[1] then
+		local name = DPSMate:GetUserById(a[1]) or DPSMate.L["unknown"]
+		DPSMate.DB:Attempt(false)
+		if DPSMateSettings["onlybossfights"] then
+			if DPSMate.BabbleBoss:Contains(name) then
+				DPSMate.Options:CreateSegment(name)
+			end
+		else
 			DPSMate.Options:CreateSegment(name)
 		end
-	else
-		DPSMate.Options:CreateSegment(name)
+		
+		DPSMateDamageDone[2] = {}
+		DPSMateDamageTaken[2] = {}
+		DPSMateEDD[2] = {}
+		DPSMateEDT[2] = {}
+		DPSMateTHealing[2] = {}
+		DPSMateEHealing[2] = {}
+		DPSMateOverhealing[2] = {}
+		DPSMateEHealingTaken[2] = {}
+		DPSMateHealingTaken[2] = {}
+		DPSMateOverhealingTaken[2] = {}
+		DPSMateAbsorbs[2] = {}
+		DPSMateDeaths[2] = {}
+		DPSMateInterrupts[2] = {}
+		DPSMateDispels[2] = {}
+		DPSMateAurasGained[2] = {}
+		DPSMateThreat[2] = {}
+		DPSMateFails[2] = {}
+		DPSMateCCBreaker[2] = {}
+		DPSMateCombatTime["current"] = 1
+		DPSMateCombatTime["effective"][2] = {}
+		DPSMate:SetStatusBarValue()
 	end
-	
-	DPSMateDamageDone[2] = {}
-	DPSMateDamageTaken[2] = {}
-	DPSMateEDD[2] = {}
-	DPSMateEDT[2] = {}
-	DPSMateTHealing[2] = {}
-	DPSMateEHealing[2] = {}
-	DPSMateOverhealing[2] = {}
-	DPSMateEHealingTaken[2] = {}
-	DPSMateHealingTaken[2] = {}
-	DPSMateAbsorbs[2] = {}
-	DPSMateDeaths[2] = {}
-	DPSMateInterrupts[2] = {}
-	DPSMateDispels[2] = {}
-	DPSMateAurasGained[2] = {}
-	DPSMateThreat[2] = {}
-	DPSMateFails[2] = {}
-	DPSMateCCBreaker[2] = {}
-	DPSMateCombatTime["current"] = 1
-	DPSMateCombatTime["effective"][2] = {}
-	DPSMate:SetStatusBarValue()
 end
 
 function DPSMate.Options:CreateSegment(name)

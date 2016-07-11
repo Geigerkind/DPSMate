@@ -1836,7 +1836,12 @@ function DPSMate.DB:Attempt(mode, check, tar)
 		if mode then
 			if DPSMateAttempts[zone][1] and not DPSMateAttempts[zone][1][4] then
 				local _,_,a = DPSMate.Modules.EDT:GetSortedTable(DPSMateEDT[2])
-				DPSMateAttempts[zone][1][1] = DPSMate:GetUserById(a[1]) or DPSMate.L["unknown"]
+				local name = DPSMate:GetUserById(a[1])
+				if name == "" then
+					DPSMateAttempts[zone][1][1] = DPSMate.L["unknown"]
+				else
+					DPSMateAttempts[zone][1][1] = name or DPSMate.L["unknown"]
+				end
 				DPSMateAttempts[zone][1][4] = DPSMateCombatTime["total"]
 				DPSMateAttempts[zone][1][5] = check
 			end
@@ -1845,7 +1850,7 @@ function DPSMate.DB:Attempt(mode, check, tar)
 				tinsert(DPSMateAttempts[zone][1][6], {DPSMateCombatTime["total"], tar})
 			else
 				tinsert(DPSMateAttempts[zone], 1, {
-					[1] = DPSMate.L["unknown"],
+					[1] = DPSMate.L["unknown"] or "UnbekanntTest",
 					[2] = DPSMateCombatTime["total"],
 					[3] = GameTime_GetTime(),
 					[6] = {}

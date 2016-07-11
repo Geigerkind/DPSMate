@@ -17,7 +17,7 @@ function DPSMate.Modules.DetailsProcs:UpdateDetails(obj, key)
 	curKey = key
 	db, cbt = DPSMate:GetMode(key)
 	DetailsUser = obj.user
-	DPSMate_Details_Procs_Title:SetText(DPSMate.L[DPSMate.BabbleSpell:GetTranslation("procsof")]..obj.user)
+	DPSMate_Details_Procs_Title:SetText(DPSMate.L["procsof"]..obj.user)
 	Buffpos = 0
 	self:CleanTables()
 	hits = self:GetTotalHits()
