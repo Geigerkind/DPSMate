@@ -15,6 +15,9 @@ DPSMate:Register("procs", DPSMate.Modules.Procs, DPSMate.L["procs"])
 
 local tinsert = table.insert
 local strformat = string.format
+local nonProcProcs = {
+	["Holy Strength"] = true,
+}
 
 function DPSMate.Modules.Procs:GetSortedTable(arr,k)
 	local b, a, total = {}, {}, 0
