@@ -22,7 +22,7 @@ function DPSMate.Modules.FriendlyFire:GetSortedTable(arr,k)
 		local cName = DPSMate:GetUserById(c)
 		for cat, val in pairs(v) do
 			local catName = DPSMate:GetUserById(cat)
-			if DPSMate:ApplyFilter(k, catName) then
+			if DPSMate:ApplyFilter(k, catName) and  DPSMateUser[catName] and  DPSMateUser[cName] then
 				--DPSMate:SendMessage(catName.." and "..cName)
 				--DPSMate:SendMessage((DPSMateUser[cName][3] or "").." and "..(DPSMateUser[catName][3] or ""))
 				if DPSMateUser[cName][3] == DPSMateUser[catName][3] and DPSMateUser[catName][3] and DPSMateUser[cName][3] then

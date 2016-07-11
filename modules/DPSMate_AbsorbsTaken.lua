@@ -78,8 +78,7 @@ end
 function DPSMate.Modules.AbsorbsTaken:EvalTable(user, k)
 	local arr = DPSMate:GetMode(k)
 	local b, a, total = {}, {}, 0
-	if not arr[user[1]] then return end
-	for cat, val in pairs(arr[user[1]]) do -- 28 Target
+	for cat, val in arr[user[1]] do -- 28 Target
 		local PerTargetAbsorb, ta, tb = 0, {}, {}
 		for ca, va in pairs(val) do -- Power Word Shield
 			if ca~="i" then
@@ -89,11 +88,11 @@ function DPSMate.Modules.AbsorbsTaken:EvalTable(user, k)
 					for ce, ve in pairs(v) do
 						if ce~="i" then
 							local p = 5
-							if DPSMateDamageTaken[1][cat] then
-								if DPSMateDamageTaken[1][cat][cet] then
-									if DPSMateDamageTaken[1][cat][cet][vel[1]] then
-										if DPSMateDamageTaken[1][cat][cet][vel[1]][14]~=0 then
-											p=ceil(DPSMateDamageTaken[1][cat][cet][vel[1]][14])
+							if DPSMateDamageTaken[1][user[1]] then
+								if DPSMateDamageTaken[1][user[1]][ce] then
+									if DPSMateDamageTaken[1][user[1]][ce][ve[1]] then
+										if DPSMateDamageTaken[1][user[1]][ce][ve[1]][14]~=0 then
+											p=ceil(DPSMateDamageTaken[1][user[1]][ce][ve[1]][14])
 										end
 									end
 								end
@@ -154,7 +153,7 @@ function DPSMate.Modules.AbsorbsTaken:EvalTable(user, k)
 						tinsert(ta, i, ca)
 						break
 					else
-						if tb[i] < PerAbilityAbsorb then
+						if tb[i][1] < PerAbilityAbsorb then
 							tinsert(tb, i, {PerAbilityAbsorb, taa, tbb})
 							tinsert(ta, i, ca)
 							break
@@ -171,7 +170,7 @@ function DPSMate.Modules.AbsorbsTaken:EvalTable(user, k)
 				tinsert(a, i, cat)
 				break
 			else
-				if b[i] < PerTargetAbsorb then
+				if b[i][1] < PerTargetAbsorb then
 					tinsert(b, i, {PerTargetAbsorb, ta, tb})
 					tinsert(a, i, cat)
 					break
