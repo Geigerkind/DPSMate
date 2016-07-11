@@ -563,7 +563,7 @@ if (GetLocale() == "deDE") then
 	-- Xs Y trifft Z kritisch für d+ Heiligschaden.
 	DPSMate.Parser.CreatureVsCreatureSpellDamage = function(self, msg)
 		t = {}
-		for a,b,d,e,f in strgfind(msg, "(.+)s (.+) trifft (.+) kritisch für (%d+)(.*)") do
+		for a,b,d,e,f in strgfind(msg, "\w+s\b (.+) trifft (.+) kritisch für (%d+)(.*)") do
 			if strfind(f, "geblockt") then t[4]=1;t[2]=0 end
 			t[3] = tnbr(e)
 			DB:UnregisterPotentialKick(d, b, GetTime())
@@ -573,7 +573,7 @@ if (GetLocale() == "deDE") then
 			if self.FailDT[b] then DB:BuildFail(2, a, d, b, t[3]) end
 			return
 		end
-		for a,b,d,e,f in strgfind(msg, "(.+)s (.+) trifft (.+) für (%d+)(.*)") do
+		for a,b,d,e,f in strgfind(msg, "\w+s\b (.+) trifft (.+) für (%d+)(.*)") do
 			if strfind(f, "geblockt") then t[4]=1;t[1]=0 end
 			t[3] = tnbr(e)
 			DB:UnregisterPotentialKick(d, b, GetTime())

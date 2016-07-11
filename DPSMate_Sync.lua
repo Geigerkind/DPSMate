@@ -386,7 +386,7 @@ function DPSMate.Sync:SyncStatus(arg2, arg4)
 	else
 		DB:BuildUser(arg4, nil)
 		local usid = DPSMateUser[arg4][1]
-		for i=1, 14 do
+		for i=1, 15 do
 			Arrays[i][usid] = nil
 		end
 	end
@@ -1145,10 +1145,11 @@ end
 
 function DPSMate.Sync:EDAbilityOut(arr, prefix)
 	for cat, val in (arr[1]) do
+		local npc = DPSMate:GetUserById(cat)
 		if val[pid] then
 			for ca, va in pairs(val[pid]) do
 				if ca~="i" then
-					Buffer[cou] = {"DPSMate_ED"..prefix.."Ability", DPSMate:GetUserById(cat)..","..DPSMate:GetAbilityById(ca)..","..va[1]..","..va[2]..","..va[3]..","..ceil(va[4])..","..va[5]..","..va[6]..","..va[7]..","..ceil(va[8])..","..va[9]..","..va[10]..","..va[11]..","..va[12]..","..va[13]..","..va[14]..","..va[15]..","..va[16]..","..ceil(va[17])..","..va[18]..","..va[19]..","..va[20]..","..ceil(va[21])..","}
+					Buffer[cou] = {"DPSMate_ED"..prefix.."Ability", npc..","..DPSMate:GetAbilityById(ca)..","..va[1]..","..va[2]..","..va[3]..","..ceil(va[4])..","..va[5]..","..va[6]..","..va[7]..","..ceil(va[8])..","..va[9]..","..va[10]..","..va[11]..","..va[12]..","..va[13]..","..va[14]..","..va[15]..","..va[16]..","..ceil(va[17])..","..va[18]..","..va[19]..","..va[20]..","..ceil(va[21])..","}
 					cou = cou + 1
 					--SDM("DPSMate_ED"..prefix.."Ability", DPSMate:GetUserById(cat)..","..DPSMate:GetAbilityById(ca)..","..va[1]..","..va[2]..","..va[3]..","..ceil(va[4])..","..va[5]..","..va[6]..","..va[7]..","..ceil(va[8])..","..va[9]..","..va[10]..","..va[11]..","..va[12]..","..va[13]..","..va[14]..","..va[15]..","..va[16]..","..ceil(va[17])..","..va[18]..","..va[19]..","..va[20]..","..ceil(va[21])..",", "RAID")
 				end
