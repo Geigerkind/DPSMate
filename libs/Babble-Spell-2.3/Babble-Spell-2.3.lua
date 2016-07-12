@@ -360,6 +360,11 @@ BabbleSpell:RegisterTranslations("enUS", function()
 		["Physical Protection"] = true,
 		["Harm Prevention Belt"] = true,
 		["Rage"] = true,
+		["Chromatic Protection: Fire"] = true,
+		["Chromatic Protection: Frost"] = true,
+		["Chromatic Protection: Nature"] = true,
+		["Freeze"] = true,
+		["Shield Charge"] = true,
 		
 		-- Original spells
 		["Abolish Disease"] = true,
@@ -1734,6 +1739,11 @@ BabbleSpell:RegisterTranslations("deDE", function()
 		["Physical Protection"] = "Körperlicher Schutz",
 		["Harm Prevention Belt"] = "Unglücksverhinderungsgürtel",
 		["Rage"] = "Wut",
+		["Chromatic Protection: Fire"] = "Chromatischer Schutz: Feuer",
+		["Chromatic Protection: Frost"] = "Chromatischer Schutz: Frost",
+		["Chromatic Protection: Nature"] = "Chromatischer Schutz: Natur",
+		["Freeze"] = "Eiskälte",
+		["Shield Charge"] = "Schildansturm",
 		
 		-- Original
 		["Abolish Disease"] = "Krankheit aufheben",
@@ -3097,6 +3107,11 @@ BabbleSpell:RegisterTranslations("frFR", function()
 		["Physical Protection"] = "Protection physique",
 		["Harm Prevention Belt"] = "Ceinture de prévention",
 		["Rage"] = "Rage",
+		["Chromatic Protection: Fire"] = "Protection chromatique : Feu",
+		["Chromatic Protection: Frost"] = "Protection chromatique : Givre",
+		["Chromatic Protection: Nature"] = "Protection chromatique : Nature",
+		["Freeze"] = "Gel",
+		["Shield Charge"] = "Charge de bouclier",
 	
 		["Abolish Disease"] = "Abolir maladie",
 		["Abolish Poison Effect"] = "Effet Abolir le poison",
@@ -8395,6 +8410,11 @@ local spellIcons = {
 	["Physical Protection"] = "spell_holy_devotionaura",
 	["Harm Prevention Belt"] = "spell_holy_powerwordshield",
 	["Rage"] = "spell_shadow_unholyfrenzy",
+	["Chromatic Protection: Fire"] = "inv_ore_arcanite_01",
+	["Chromatic Protection: Frost"] = "inv_ore_arcanite_01",
+	["Chromatic Protection: Nature"] = "inv_ore_arcanite_01",
+	["Freeze"] = "temp",
+	["Shield Charge"] = "ability_warrior_charge",
 
 	-- Original Icons
 	["Abolish Disease"] = "Spell_Nature_NullifyDisease",
