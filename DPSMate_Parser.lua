@@ -168,7 +168,7 @@ DPSMate.Parser.DmgProcs = {
 	-- Can't add Hand of Ragnaros
 	[DPSMate.BabbleSpell:GetTranslation("Expose Weakness")] = true, -- To Test
 	[DPSMate.BabbleSpell:GetTranslation("Silence")] = true, -- To Test
-	[DPSMate.BabbleSpell:GetTranslation("Icy Chill")] = true, -- To Test
+	[DPSMate.BabbleSpell:GetTranslation("Chilled")] = true, -- To Test
 	[DPSMate.BabbleSpell:GetTranslation("Glimpse of Madness")] = true, -- To Test
 	[DPSMate.BabbleSpell:GetTranslation("Engulfing Shadows")] = true, -- To Test
 	[DPSMate.BabbleSpell:GetTranslation("Elemental Vulnerability")] = true, -- To Test
