@@ -482,6 +482,7 @@ function DPSMate.Options:InitializeConfigMenu()
 		_G("DPSMate_ConfigMenu_Tab_Columns_Child_AbsorbsTaken_Check"..i):SetChecked(DPSMateSettings["columnsabsorbstaken"][i])
 		_G("DPSMate_ConfigMenu_Tab_Columns_Child_OHealingTaken_Check"..i):SetChecked(DPSMateSettings["columnsohealingtaken"][i])
 		_G("DPSMate_ConfigMenu_Tab_Columns_Child_OHPS_Check"..i):SetChecked(DPSMateSettings["columnsohps"][i])
+		_G("DPSMate_ConfigMenu_Tab_Columns_Child_FriendlyFireTaken_Check"..i):SetChecked(DPSMateSettings["columnsfriendlyfiretaken"][i])
 	end
 	for i=1, 2 do
 		_G("DPSMate_ConfigMenu_Tab_Columns_Child_Deaths_Check"..i):SetChecked(DPSMateSettings["columnsdeaths"][i])
@@ -868,6 +869,7 @@ function DPSMate.Options:PopUpAccept(bool, bypass)
 		DPSMate.Modules.Damage.DB = DPSMateDamageDone
 		DPSMate.Modules.DamageTaken.DB = DPSMateDamageTaken
 		DPSMate.Modules.FriendlyFire.DB = DPSMateEDT
+		DPSMate.Modules.FriendlyFireTaken.DB = DPSMateEDT
 		DPSMate.Modules.DTPS.DB = DPSMateDamageTaken
 		DPSMate.Modules.EDD.DB = DPSMateEDD
 		DPSMate.Modules.EDT.DB = DPSMateEDT

@@ -350,6 +350,12 @@ function DPSMate.DB:OnEvent(event)
 					[3] = true,
 					[4] = false
 				},
+				columnsfriendlyfiretaken = {
+					[1] = true,
+					[2] = false,
+					[3] = true,
+					[4] = false
+				},
 				showtooltips = true,
 				informativetooltips = true,
 				subviewrows = 4,
@@ -419,6 +425,7 @@ function DPSMate.DB:OnEvent(event)
 		DPSMate.Modules.EDD.DB = DPSMateEDD
 		DPSMate.Modules.EDT.DB = DPSMateEDT
 		DPSMate.Modules.FriendlyFire.DB = DPSMateEDT
+		DPSMate.Modules.FriendlyFireTaken.DB = DPSMateEDT
 		DPSMate.Modules.Healing.DB = DPSMateTHealing
 		DPSMate.Modules.HPS.DB = DPSMateTHealing
 		DPSMate.Modules.Overhealing.DB = DPSMateOverhealing
@@ -512,6 +519,14 @@ function DPSMate.DB:OnEvent(event)
 		end
 		if not DPSMateSettings["mergepets"] then
 			DPSMateSettings["mergepets"] = true
+		end
+		if not DPSMateSettings["columnsfriendlyfiretaken"] then 
+			DPSMateSettings["columnsfriendlyfiretaken"] = {
+				[1] = true,
+				[2] = false,
+				[3] = true,
+				[4] = false
+			}
 		end
 		
 		if DPSMateCombatTime == nil then

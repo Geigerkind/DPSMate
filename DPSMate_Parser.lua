@@ -149,7 +149,6 @@ DPSMate.Parser.procs = {
 	[DPSMate.BabbleSpell:GetTranslation("Arcane Infused")] = true,
 	[DPSMate.BabbleSpell:GetTranslation("Quick Shots")] = true,
 	[DPSMate.BabbleSpell:GetTranslation("Rapid Fire")] = true,
-	
 }
 
 DPSMate.Parser.BuffExceptions = {

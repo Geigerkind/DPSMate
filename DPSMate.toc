@@ -73,6 +73,7 @@ modules\DPSMate_Fails.lua
 modules\DPSMate_CCBreaker.lua
 modules\DPSMate_OHealingTaken.lua
 modules\DPSMate_OHPS.lua
+modules\DPSMate_FriendlyFireTaken.lua
 
 modules\DPSMate_Details_Damage.lua
 modules\DPSMate_Details_Damage.xml

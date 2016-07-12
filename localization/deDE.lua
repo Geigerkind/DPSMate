@@ -419,4 +419,5 @@ if (GetLocale() == "deDE") then
 	DPSMate.L["OHealingTaken"] = "Überheilung bekommen"
 	DPSMate.L["eohps"] = "EOHPS"
 	DPSMate.L["ohealtakenby"] = "Überheilung bekommen von "
+	DPSMate.L["friendlyfiretaken"] = "Friendly fire bekommen"
 end
