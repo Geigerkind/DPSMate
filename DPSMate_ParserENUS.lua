@@ -502,7 +502,7 @@ function DPSMate.Parser:SpellSelfBuff(msg)
 		return
 	end
 	for a,b in strgfind(msg, "You gain (%d+) Rage from (.+)%.") do
-		if self.procs[b] then
+		if self.procs[b] and not self.OtherExceptions[b] then
 			DB:BuildBuffs(self.player, self.player, b, true)
 			DB:DestroyBuffs(self.player, b)
 		end
@@ -670,7 +670,7 @@ function DPSMate.Parser:SpellHostilePlayerBuff(msg)
 		return 
 	end
 	for a,b,c,d in strgfind(msg, "(.+) gains (%d+) Rage from (.+)'s (.+)%.") do
-		if self.procs[d] then
+		if self.procs[d] and not self.OtherExceptions[d] then
 			DB:BuildBuffs(c, a, d, true)
 			DB:DestroyBuffs(c, d)
 		end

@@ -155,6 +155,10 @@ DPSMate.Parser.procs = {
 DPSMate.Parser.BuffExceptions = {
 	[DPSMate.BabbleSpell:GetTranslation("Fury of Forgewright")] = true,
 }
+
+DPSMate.Parser.OtherExceptions = {
+	[DPSMate.BabbleSpell:GetTranslation("Mighty Rage")] = true,
+}
 DPSMate.Parser.DmgProcs = {
 	-- General
 	[DPSMate.BabbleSpell:GetTranslation("Life Steal")] = true,
