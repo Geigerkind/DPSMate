@@ -353,6 +353,15 @@ BabbleSpell:RegisterTranslations("enUS", function()
 		["Totemic Power"] = true,
 		["Electric Discharge"] = true,
 		["Stygian Grasp"] = true,
+		["Living Free Action"] = true,
+		["Devilsaur Fury"] = true,
+		["Windfury Weapon"] = true,
+		["Great Rage"] = true,
+		["Aura of Protection"] = true,
+		["Damage Absorb"] = true,
+		["Physical Protection"] = true,
+		["Harm Prevention Belt"] = true,
+		["Rage"] = true,
 		
 		-- Original spells
 		["Abolish Disease"] = true,

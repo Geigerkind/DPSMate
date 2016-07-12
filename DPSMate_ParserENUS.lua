@@ -1,5 +1,3 @@
-local player = UnitName("player")
-local _,playerclass = UnitClass("player")
 local t = {}
 local strgfind = string.gfind
 local DB = DPSMate.DB
@@ -16,24 +14,24 @@ function DPSMate.Parser:SelfHits(msg)
 	for a,b,c,d in strgfind(msg, "You (%a%a?)\it (.+) for (%d+)\.%s?(.*)") do
 		if a == "h" then t[1]=1;t[2]=0 end
 		if d == "(glancing)" then t[3]=1;t[1]=0;t[2]=0 elseif d ~= "" then t[4]=1;t[1]=0;t[2]=0 end
-		DB:EnemyDamage(true, DPSMateEDT, player, "AutoAttack", t[1] or 0, t[2] or 1, 0, 0, 0, 0, tnbr(c), b, t[4] or 0, t[3] or 0)
-		DB:DamageDone(player, "AutoAttack", t[1] or 0, t[2] or 1, 0, 0, 0, 0, tnbr(c), t[3] or 0, t[4] or 0)
-		if self.TargetParty[b] then DB:BuildFail(1, b, player, "AutoAttack", tnbr(c)) end
+		DB:EnemyDamage(true, DPSMateEDT, self.player, "AutoAttack", t[1] or 0, t[2] or 1, 0, 0, 0, 0, tnbr(c), b, t[4] or 0, t[3] or 0)
+		DB:DamageDone(self.player, "AutoAttack", t[1] or 0, t[2] or 1, 0, 0, 0, 0, tnbr(c), t[3] or 0, t[4] or 0)
+		if self.TargetParty[b] then DB:BuildFail(1, b, self.player, "AutoAttack", tnbr(c)) end
 		return
 	end
 	for a in strgfind(msg, "You fall and lose (%d+) health%.") do
-		DB:DamageTaken(player, "Falling", 1, 0, 0, 0, 0, 0, tnbr(a), "Environment", 0)
-		DB:DeathHistory(player, "Environment", "Falling", tnbr(a), 1, 0, 0, 0)
+		DB:DamageTaken(self.player, "Falling", 1, 0, 0, 0, 0, 0, tnbr(a), "Environment", 0)
+		DB:DeathHistory(self.player, "Environment", "Falling", tnbr(a), 1, 0, 0, 0)
 		return
 	end
 	for a in strgfind(msg, "You lose (%d+) health for swimming in lava%.") do
-		DB:DamageTaken(player, "Lava", 1, 0, 0, 0, 0, 0, tnbr(a), "Environment", 0)
-		DB:DeathHistory(player, "Environment", "Lava", tnbr(a), 1, 0, 0, 0)
+		DB:DamageTaken(self.player, "Lava", 1, 0, 0, 0, 0, 0, tnbr(a), "Environment", 0)
+		DB:DeathHistory(self.player, "Environment", "Lava", tnbr(a), 1, 0, 0, 0)
 		return
 	end
 	for a in strgfind(msg, "You are drowning and lose (%d+) health%.") do
-		DB:DamageTaken(player, "Drowning", 1, 0, 0, 0, 0, 0, tnbr(a), "Environment", 0)
-		DB:DeathHistory(player, "Environment", "Drowning", tnbr(a), 1, 0, 0, 0)
+		DB:DamageTaken(self.player, "Drowning", 1, 0, 0, 0, 0, 0, tnbr(a), "Environment", 0)
+		DB:DeathHistory(self.player, "Environment", "Drowning", tnbr(a), 1, 0, 0, 0)
 		return
 	end
 end
@@ -42,14 +40,14 @@ function DPSMate.Parser:SelfMisses(msg)
 	-- Filter out immune message --> using them?
 	t = {}
 	for a in strgfind(msg, "You miss (.+)%.") do 
-		DB:EnemyDamage(true, DPSMateEDT, player, "AutoAttack", 0, 0, 1, 0, 0, 0, 0, a, 0, 0)
-		DB:DamageDone(player, "AutoAttack", 0, 0, 1, 0, 0, 0, 0, 0, 0)
+		DB:EnemyDamage(true, DPSMateEDT, self.player, "AutoAttack", 0, 0, 1, 0, 0, 0, 0, a, 0, 0)
+		DB:DamageDone(self.player, "AutoAttack", 0, 0, 1, 0, 0, 0, 0, 0, 0)
 		return
 	end
 	for a,b in strgfind(msg, "You attack%. (.+) (%a-)%.") do 
 		if b=="parries" then t[1]=1 elseif b=="dodges" then t[2]=1 else t[3]=1 end
-		DB:EnemyDamage(true, DPSMateEDT, player, "AutoAttack", 0, 0, 0, t[1] or 0, t[2] or 0, 0, 0, a, t[3] or 0, 0)
-		DB:DamageDone(player, "AutoAttack", 0, 0, 0, t[1] or 0, t[2] or 0, 0, 0, 0, t[3] or 0)
+		DB:EnemyDamage(true, DPSMateEDT, self.player, "AutoAttack", 0, 0, 0, t[1] or 0, t[2] or 0, 0, 0, a, t[3] or 0, 0)
+		DB:DamageDone(self.player, "AutoAttack", 0, 0, 0, t[1] or 0, t[2] or 0, 0, 0, 0, t[3] or 0)
 	end
 end
 
@@ -63,27 +61,27 @@ function DPSMate.Parser:SelfSpellDMG(msg)
 		t[1] = tnbr(d)
 		if b=="h" then t[2]=1;t[3]=0 end
 		if strfind(e, "blocked") then t[4]=1;t[2]=0;t[3]=0 end
-		if DPSMate.Parser.Kicks[a] then DB:AssignPotentialKick(player, a, c, GetTime()) end
-		if DPSMate.Parser.DmgProcs[a] then DB:BuildBuffs(player, player, a, true) end
-		DB:EnemyDamage(true, DPSMateEDT, player, a,  t[2] or 0, t[3] or 1, 0, 0, 0, 0, t[1], c, t[4] or 0, 0)
-		DB:DamageDone(player, a, t[2] or 0, t[3] or 1, 0, 0, 0, 0, t[1], 0, t[4] or 0)
-		if self.TargetParty[c] then DB:BuildFail(1, c, player, a, t[1]) end
+		if DPSMate.Parser.Kicks[a] then DB:AssignPotentialKick(self.player, a, c, GetTime()) end
+		if DPSMate.Parser.DmgProcs[a] then DB:BuildBuffs(self.player, self.player, a, true) end
+		DB:EnemyDamage(true, DPSMateEDT, self.player, a,  t[2] or 0, t[3] or 1, 0, 0, 0, 0, t[1], c, t[4] or 0, 0)
+		DB:DamageDone(self.player, a, t[2] or 0, t[3] or 1, 0, 0, 0, 0, t[1], 0, t[4] or 0)
+		if self.TargetParty[c] then DB:BuildFail(1, c, self.player, a, t[1]) end
 		return
 	end
 	for a,b,c in strgfind(msg, "Your (.+) was (.-) by (.+)%.") do 
 		if b=="dodged" then t[1]=1 elseif b=="blocked" then t[2]=1 else t[3]=1 end
-		DB:EnemyDamage(true, DPSMateEDT, player, a, 0, 0, 0, 0, t[1] or 0, t[3] or 0, 0, c, t[2] or 0, 0)
-		DB:DamageDone(player, a, 0, 0, 0, 0, t[1] or 0, t[3] or 0, 0, 0, t[2] or 0)
+		DB:EnemyDamage(true, DPSMateEDT, self.player, a, 0, 0, 0, 0, t[1] or 0, t[3] or 0, 0, c, t[2] or 0, 0)
+		DB:DamageDone(self.player, a, 0, 0, 0, 0, t[1] or 0, t[3] or 0, 0, 0, t[2] or 0)
 		return
 	end
 	for a,b in strgfind(msg, "Your (.+) is parried by (.+)%.") do 
-		DB:EnemyDamage(true, DPSMateEDT, player, a, 0, 0, 0, 1, 0, 0, 0, b, 0, 0)
-		DB:DamageDone(player, a, 0, 0, 0, 1, 0, 0, 0, 0, 0)
+		DB:EnemyDamage(true, DPSMateEDT, self.player, a, 0, 0, 0, 1, 0, 0, 0, b, 0, 0)
+		DB:DamageDone(self.player, a, 0, 0, 0, 1, 0, 0, 0, 0, 0)
 		return
 	end
 	for a,b in strgfind(msg, "Your (.+) missed (.+)%.") do 
-		DB:EnemyDamage(true, DPSMateEDT, player, a, 0, 0, 1, 0, 0, 0, 0, b, 0, 0)
-		DB:DamageDone(player, a, 0, 0, 1, 0, 0, 0, 0, 0, 0)
+		DB:EnemyDamage(true, DPSMateEDT, self.player, a, 0, 0, 1, 0, 0, 0, 0, b, 0, 0)
+		DB:DamageDone(self.player, a, 0, 0, 1, 0, 0, 0, 0, 0, 0)
 		return
 	end
 end
@@ -103,9 +101,9 @@ function DPSMate.Parser:PeriodicDamage(msg)
 	end
 	for a,b,c,d in strgfind(msg, "(.+) suffers (%d+) (%a-) damage from your (.+)%.") do
 		t[1] = tnbr(b)
-		DB:EnemyDamage(true, DPSMateEDT, player, d.."(Periodic)", 1, 0, 0, 0, 0, 0, t[1], a, 0, 0)
-		DB:DamageDone(player, d.."(Periodic)", 1, 0, 0, 0, 0, 0, t[1], 0, 0)
-		if self.TargetParty[a] then DB:BuildFail(1, a, player, d.."(Periodic)", t[1]) end
+		DB:EnemyDamage(true, DPSMateEDT, self.player, d.."(Periodic)", 1, 0, 0, 0, 0, 0, t[1], a, 0, 0)
+		DB:DamageDone(self.player, d.."(Periodic)", 1, 0, 0, 0, 0, 0, t[1], 0, 0)
+		if self.TargetParty[a] then DB:BuildFail(1, a, self.player, d.."(Periodic)", t[1]) end
 		return
 	end
 end
@@ -117,7 +115,7 @@ function DPSMate.Parser:FriendlyPlayerDamage(msg)
 		t[1] = tnbr(d)
 		if b=="h" then t[2]=1;t[3]=0 end
 		if strfind(e, "blocked") then t[4]=1;t[2]=0;t[3]=0 end
-		if d=="you" then d=player end
+		if d=="you" then d=self.player end
 		if DPSMate.Parser.Kicks[a] then DB:AssignPotentialKick(f, a, c, GetTime()) end
 		if DPSMate.Parser.DmgProcs[a] then DB:BuildBuffs(f, f, a, true) end
 		DB:EnemyDamage(true, DPSMateEDT, f, a,  t[2] or 0, t[3] or 1, 0, 0, 0, 0, t[1], c, t[4] or 0, 0)
@@ -144,12 +142,12 @@ function DPSMate.Parser:FriendlyPlayerDamage(msg)
 	-- Hostile Player vs you
 	for f,a,b in strgfind(msg, "(.-)'s (.+) was (.-)%.") do 
 		if b=="dodged" then t[1]=1 elseif b=="blocked" then t[2]=1 elseif b=="parried" then t[4]=1 else t[3]=1 end
-		DB:EnemyDamage(true, DPSMateEDT, f, a, 0, 0, 0, t[4] or 0, t[1] or 0, t[3] or 0, 0, player, t[2] or 0, 0)
+		DB:EnemyDamage(true, DPSMateEDT, f, a, 0, 0, 0, t[4] or 0, t[1] or 0, t[3] or 0, 0, self.player, t[2] or 0, 0)
 		DB:DamageDone(f, a, 0, 0, 0, t[4] or 0, t[1] or 0, t[3] or 0, 0, 0, t[2] or 0)
 		return
 	end
 	for f,a in strgfind(msg, "(.-)'s (.+) misses you%.") do 
-		DB:EnemyDamage(true, DPSMateEDT, f, a, 0, 0, 1, 0, 0, 0, 0, player, 0, 0)
+		DB:EnemyDamage(true, DPSMateEDT, f, a, 0, 0, 1, 0, 0, 0, 0, self.player, 0, 0)
 		DB:DamageDone(f, a, 0, 0, 1, 0, 0, 0, 0, 0, 0)
 		return
 	end
@@ -160,7 +158,7 @@ function DPSMate.Parser:FriendlyPlayerHits(msg)
 	for a,b,c,d,e in strgfind(msg, "(.-) (%a%a?)\its (.+) for (%d+)\.%s?(.*)") do
 		if b=="h" then t[3]=1;t[4]=0 end
 		if e=="(glancing)" then t[1]=1;t[3]=0;t[4]=0 elseif e~="" then t[2]=1;t[3]=0;t[4]=0 end
-		if c=="you" then c=player end
+		if c=="you" then c=self.player end
 		t[5] = tnbr(d)
 		DB:EnemyDamage(true, DPSMateEDT, a, "AutoAttack", t[3] or 0, t[4] or 1, 0, 0, 0, 0, t[5], c, t[2] or 0, t[1] or 0)
 		DB:DamageDone(a, "AutoAttack", t[3] or 0, t[4] or 1, 0, 0, 0, 0, t[5], t[1] or 0, t[2] or 0)
@@ -188,14 +186,14 @@ end
 function DPSMate.Parser:FriendlyPlayerMisses(msg)
 	t = {}
 	for a,b in strgfind(msg, "(.-) misses (.+)%.") do 
-		if b=="you" then b=player end
+		if b=="you" then b=self.player end
 		DB:EnemyDamage(true, DPSMateEDT, a, "AutoAttack", 0, 0, 1, 0, 0, 0, 0, b, 0, 0)
 		DB:DamageDone(a, "AutoAttack", 0, 0, 1, 0, 0, 0, 0, 0, 0)
 		return
 	end
 	for a,b,c in strgfind(msg, "(.-) attacks%. (.+) (%a-)%.") do 
 		if c=="parries" or c=="parry" then t[1]=1 elseif c=="dodges" or c=="dodge" then t[2]=1 else t[3]=1 end 
-		if b=="You" then b=player end
+		if b=="You" then b=self.player end
 		DB:EnemyDamage(true, DPSMateEDT, a, "AutoAttack", 0, 0, 0, t[1] or 0, t[2] or 0, 0, 0, b, t[3] or 0, 0)
 		DB:DamageDone(a, "AutoAttack", 0, 0, 0, t[1] or 0, t[2] or 0, 0, 0, 0, t[3] or 0)
 		return
@@ -206,25 +204,25 @@ end
 function DPSMate.Parser:SpellDamageShieldsOnSelf(msg)
 	for a,b,c in strgfind(msg, "You reflect (%d+) (%a-) damage to (.+)%.") do 
 		local am = tnbr(a)
-		DB:EnemyDamage(true, DPSMateEDT, player, "Reflection", 1, 0, 0, 0, 0, 0, am, c, 0, 0)
-		DB:DamageDone(player, "Reflection", 1, 0, 0, 0, 0, 0, am, 0, 0)
+		DB:EnemyDamage(true, DPSMateEDT, self.player, "Reflection", 1, 0, 0, 0, 0, 0, am, c, 0, 0)
+		DB:DamageDone(self.player, "Reflection", 1, 0, 0, 0, 0, 0, am, 0, 0)
 	end
 	
 	-- The rebirth support
 	for a,b,c in strgfind(msg, "Your (.+) was (.-) by (.+)%.") do 
 		if b=="dodged" then t[1]=1 elseif b=="blocked" then t[2]=1 else t[3]=1 end
-		DB:EnemyDamage(true, DPSMateEDT, player, a, 0, 0, 0, 0, t[1] or 0, t[3] or 0, 0, c, t[2] or 0, 0)
-		DB:DamageDone(player, a, 0, 0, 0, 0, t[1] or 0, t[3] or 0, 0, 0, t[2] or 0)
+		DB:EnemyDamage(true, DPSMateEDT, self.player, a, 0, 0, 0, 0, t[1] or 0, t[3] or 0, 0, c, t[2] or 0, 0)
+		DB:DamageDone(self.player, a, 0, 0, 0, 0, t[1] or 0, t[3] or 0, 0, 0, t[2] or 0)
 		return
 	end
 	for a,b in strgfind(msg, "Your (.+) is parried by (.+)%.") do 
-		DB:EnemyDamage(true, DPSMateEDT, player, a, 0, 0, 0, 1, 0, 0, 0, b, 0, 0)
-		DB:DamageDone(player, a, 0, 0, 0, 1, 0, 0, 0, 0, 0)
+		DB:EnemyDamage(true, DPSMateEDT, self.player, a, 0, 0, 0, 1, 0, 0, 0, b, 0, 0)
+		DB:DamageDone(self.player, a, 0, 0, 0, 1, 0, 0, 0, 0, 0)
 		return
 	end
 	for a,b in strgfind(msg, "Your (.+) missed (.+)%.") do 
-		DB:EnemyDamage(true, DPSMateEDT, player, a, 0, 0, 1, 0, 0, 0, 0, b, 0, 0)
-		DB:DamageDone(player, a, 0, 0, 1, 0, 0, 0, 0, 0, 0)
+		DB:EnemyDamage(true, DPSMateEDT, self.player, a, 0, 0, 1, 0, 0, 0, 0, b, 0, 0)
+		DB:DamageDone(self.player, a, 0, 0, 1, 0, 0, 0, 0, 0, 0)
 		return
 	end
 end
@@ -233,7 +231,7 @@ end
 function DPSMate.Parser:SpellDamageShieldsOnOthers(msg)
 	for a,b,c,d in strgfind(msg, "(.+) reflects (%d+) (%a-) damage to (.+)%.") do
 		local am,ta = tnbr(b)
-		if d == "you" then ta=player end
+		if d == "you" then ta=self.player end
 		DB:EnemyDamage(true, DPSMateEDT, a, "Reflection", 1, 0, 0, 0, 0, 0, am, ta or d, 0, 0)
 		DB:DamageDone(a, "Reflection", 1, 0, 0, 0, 0, 0, am, 0, 0)
 	end
@@ -268,9 +266,9 @@ function DPSMate.Parser:CreatureVsSelfHits(msg)
 		if b=="h" then t[1]=1;t[2]=0 end
 		if strfind(d, "crushing") then t[3]=1;t[1]=0;t[2]=0 elseif strfind(d, "blocked") then t[4]=1;t[1]=0;t[2]=0 end
 		t[5] = tnbr(c)
-		DB:EnemyDamage(false, DPSMateEDD, player, "AutoAttack", t[1] or 0, t[2] or 1, 0, 0, 0, 0, t[5], a, t[4] or 0, t[3] or 0)
-		DB:DamageTaken(player, "AutoAttack", t[1] or 0, t[2] or 1, 0, 0, 0, 0, t[5], a, t[3] or 0)
-		DB:DeathHistory(player, a, "AutoAttack", t[5], t[1] or 0, t[2] or 1, 0, t[3] or 0)
+		DB:EnemyDamage(false, DPSMateEDD, self.player, "AutoAttack", t[1] or 0, t[2] or 1, 0, 0, 0, 0, t[5], a, t[4] or 0, t[3] or 0)
+		DB:DamageTaken(self.player, "AutoAttack", t[1] or 0, t[2] or 1, 0, 0, 0, 0, t[5], a, t[3] or 0)
+		DB:DeathHistory(self.player, a, "AutoAttack", t[5], t[1] or 0, t[2] or 1, 0, t[3] or 0)
 		return
 	end
 end
@@ -280,16 +278,16 @@ end
 -- Firetail Scorpid misses you.
 function DPSMate.Parser:CreatureVsSelfMisses(msg)
 	t = {}
-	for c in strgfind(msg, "(.+) attacks%. You absorb all the damage%.") do DB:Absorb("AutoAttack", player, c); return end
+	for c in strgfind(msg, "(.+) attacks%. You absorb all the damage%.") do DB:Absorb("AutoAttack", self.player, c); return end
 	for a in strgfind(msg, "(.+) misses you%.") do 
-		DB:EnemyDamage(false, DPSMateEDD, player, "AutoAttack", 0, 0, 1, 0, 0, 0, 0, a, 0, 0)
-		DB:DamageTaken(player, "AutoAttack", 0, 0, 1, 0, 0, 0, 0, a, 0)
+		DB:EnemyDamage(false, DPSMateEDD, self.player, "AutoAttack", 0, 0, 1, 0, 0, 0, 0, a, 0, 0)
+		DB:DamageTaken(self.player, "AutoAttack", 0, 0, 1, 0, 0, 0, 0, a, 0)
 		return
 	end
 	for a,b in strgfind(msg, "(.+) attacks. You (.+)%.") do 
 		if b=="parry" then t[1]=1 elseif b=="dodge" then t[2]=1 else t[3]=1 end 
-		DB:EnemyDamage(false, DPSMateEDD, player, "AutoAttack", 0, 0, 0, t[1] or 0, t[2] or 0, 0, 0, a, t[3] or 0, 0)
-		DB:DamageTaken(player, "AutoAttack", 0, 0, 0, t[1] or 0, t[2] or 0, 0, 0, a, 0)
+		DB:EnemyDamage(false, DPSMateEDD, self.player, "AutoAttack", 0, 0, 0, t[1] or 0, t[2] or 0, 0, 0, a, t[3] or 0, 0)
+		DB:DamageTaken(self.player, "AutoAttack", 0, 0, 0, t[1] or 0, t[2] or 0, 0, 0, a, 0)
 		return
 	end
 end 
@@ -304,31 +302,31 @@ function DPSMate.Parser:CreatureVsSelfSpellDamage(msg)
 		if c=="h" then t[1]=1;t[2]=0 end
 		if strfind(e, "blocked") then t[4]=1 end
 		t[3] = tnbr(d)
-		DB:UnregisterPotentialKick(player, b, GetTime())
-		DB:EnemyDamage(false, DPSMateEDD, player, b, t[1] or 0, t[2] or 1, 0, 0, 0, 0, t[3], a, t[4] or 0, 0)
-		DB:DamageTaken(player, b, t[1] or 0, t[2] or 1, 0, 0, 0, 0, t[3], a, 0)
-		DB:DeathHistory(player, a, b, t[3], t[1] or 0, t[2] or 1, 0, 0)
-		if self.FailDT[b] then DB:BuildFail(2, a, player, b, t[3]) end
+		DB:UnregisterPotentialKick(self.player, b, GetTime())
+		DB:EnemyDamage(false, DPSMateEDD, self.player, b, t[1] or 0, t[2] or 1, 0, 0, 0, 0, t[3], a, t[4] or 0, 0)
+		DB:DamageTaken(self.player, b, t[1] or 0, t[2] or 1, 0, 0, 0, 0, t[3], a, 0)
+		DB:DeathHistory(self.player, a, b, t[3], t[1] or 0, t[2] or 1, 0, 0)
+		if self.FailDT[b] then DB:BuildFail(2, a, self.player, b, t[3]) end
 		return
 	end
 	for a,b in strgfind(msg, "(.+)'s (.+) misses you.") do
-		DB:EnemyDamage(false, DPSMateEDD, player, b, 0, 0, 1, 0, 0, 0, 0, a, 0, 0)
-		DB:DamageTaken(player, b, 0, 0, 1, 0, 0, 0, 0, a, 0)
+		DB:EnemyDamage(false, DPSMateEDD, self.player, b, 0, 0, 1, 0, 0, 0, 0, a, 0, 0)
+		DB:DamageTaken(self.player, b, 0, 0, 1, 0, 0, 0, 0, a, 0)
 		return
 	end
 	for a,b in strgfind(msg, "(.+)'s (.+) was parried.") do
-		DB:EnemyDamage(false, DPSMateEDD, player, b, 0, 0, 0, 1, 0, 0, 0, a, 0, 0)
-		DB:DamageTaken(player, b, 0, 0, 0, 1, 0, 0, 0, a, 0)
+		DB:EnemyDamage(false, DPSMateEDD, self.player, b, 0, 0, 0, 1, 0, 0, 0, a, 0, 0)
+		DB:DamageTaken(self.player, b, 0, 0, 0, 1, 0, 0, 0, a, 0)
 		return
 	end
 	for a,b in strgfind(msg, "(.+)'s (.+) was dodged.") do
-		DB:EnemyDamage(false, DPSMateEDD, player, b, 0, 0, 0, 0, 1, 0, 0, a, 0, 0)
-		DB:DamageTaken(player, b, 0, 0, 0, 0, 1, 0, 0, a, 0)
+		DB:EnemyDamage(false, DPSMateEDD, self.player, b, 0, 0, 0, 0, 1, 0, 0, a, 0, 0)
+		DB:DamageTaken(self.player, b, 0, 0, 0, 0, 1, 0, 0, a, 0)
 		return
 	end
 	for a,b in strgfind(msg, "(.+)'s (.+) was resisted.") do
-		DB:EnemyDamage(false, DPSMateEDD, player, b, 0, 0, 0, 0, 0, 1, 0, a, 0, 0)
-		DB:DamageTaken(player, b, 0, 0, 0, 0, 0, 1, 0, a, 0)
+		DB:EnemyDamage(false, DPSMateEDD, self.player, b, 0, 0, 0, 0, 0, 1, 0, a, 0, 0)
+		DB:DamageTaken(self.player, b, 0, 0, 0, 0, 0, 1, 0, a, 0)
 		return
 	end
 end
@@ -340,23 +338,23 @@ function DPSMate.Parser:PeriodicSelfDamage(msg)
 	t = {}
 	for a,b,c,d,e in strgfind(msg, "You suffer (%d+) (%a+) damage from (.+)'s (.+)%.(.*)") do -- Potential to track school and resisted damage
 		t[1] = tnbr(a)
-		DB:EnemyDamage(false, DPSMateEDD, player, d.."(Periodic)", 1, 0, 0, 0, 0, 0, t[1], c, 0, 0)
-		DB:DamageTaken(player, d.."(Periodic)", 1, 0, 0, 0, 0, 0, t[1], c, 0)
-		DB:DeathHistory(player, c, d.."(Periodic)", t[1], 1, 0, 0, 0)
-		if self.FailDT[d] then DB:BuildFail(2, c, player, d, t[1]) end
+		DB:EnemyDamage(false, DPSMateEDD, self.player, d.."(Periodic)", 1, 0, 0, 0, 0, 0, t[1], c, 0, 0)
+		DB:DamageTaken(self.player, d.."(Periodic)", 1, 0, 0, 0, 0, 0, t[1], c, 0)
+		DB:DeathHistory(self.player, c, d.."(Periodic)", t[1], 1, 0, 0, 0)
+		if self.FailDT[d] then DB:BuildFail(2, c, self.player, d, t[1]) end
 		return
 	end
 	for a in strgfind(msg, "You are afflicted by (.+)%.") do
 		if strfind(a, "%(") then a=strsub(a, 1, strfind(a, "%(")-2) end
-		DB:BuildBuffs("Unknown", player, a, false)
-		if self.CC[a] then DB:BuildActiveCC(player, a) end
+		DB:BuildBuffs("Unknown", self.player, a, false)
+		if self.CC[a] then DB:BuildActiveCC(self.player, a) end
 		return
 	end
 	for a,b,d,e in strgfind(msg, "You suffer (%d+) (%a+) damage from your (.+)%.(.*)") do -- Potential to track school and resisted damage
 		t[1] = tnbr(a)
-		DB:EnemyDamage(false, DPSMateEDD, player, d.."(Periodic)", 1, 0, 0, 0, 0, 0, t[1], player, 0, 0)
-		DB:DamageTaken(player, d.."(Periodic)", 1, 0, 0, 0, 0, 0, t[1], player, 0)
-		DB:DeathHistory(player, player, d.."(Periodic)", t[1], 1, 0, 0, 0)
+		DB:EnemyDamage(false, DPSMateEDD, self.player, d.."(Periodic)", 1, 0, 0, 0, 0, 0, t[1], self.player, 0, 0)
+		DB:DamageTaken(self.player, d.."(Periodic)", 1, 0, 0, 0, 0, 0, t[1], self.player, 0)
+		DB:DeathHistory(self.player, self.player, d.."(Periodic)", t[1], 1, 0, 0, 0)
 		return
 	end
 end
@@ -464,43 +462,50 @@ end
 function DPSMate.Parser:SpellSelfBuff(msg)
 	t = {}
 	for a,b,c in strgfind(msg, "Your (.+) critically heals (.+) for (%d+)%.") do 
-		if b=="you" then t[1]=player end
+		if b=="you" then t[1]=self.player end
 		t[2] = tnbr(c)
 		overheal = self:GetOverhealByName(t[2], t[1] or b)
-		DB:HealingTaken(DPSMateHealingTaken, t[1] or b, a, 0, 1, t[2], player)
-		DB:HealingTaken(DPSMateEHealingTaken, t[1] or b, a, 0, 1, t[2]-overheal, player)
-		DB:Healing(0, DPSMateEHealing, player, a, 0, 1, t[2]-overheal, t[1] or b)
+		DB:HealingTaken(DPSMateHealingTaken, t[1] or b, a, 0, 1, t[2], self.player)
+		DB:HealingTaken(DPSMateEHealingTaken, t[1] or b, a, 0, 1, t[2]-overheal, self.player)
+		DB:Healing(0, DPSMateEHealing, self.player, a, 0, 1, t[2]-overheal, t[1] or b)
 		if overheal>0 then 
-			DB:Healing(2, DPSMateOverhealing, player, a, 0, 1, overheal, t[1] or b)
-			DB:HealingTaken(DPSMateOverhealingTaken, t[1] or b, a, 0, 1, overheal, player)
+			DB:Healing(2, DPSMateOverhealing, self.player, a, 0, 1, overheal, t[1] or b)
+			DB:HealingTaken(DPSMateOverhealingTaken, t[1] or b, a, 0, 1, overheal, self.player)
 		end
-		DB:Healing(1, DPSMateTHealing, player, a, 0, 1, t[2], t[1] or b)
-		DB:DeathHistory(t[1] or b, player, a, t[2], 0, 1, 1, 0)
+		DB:Healing(1, DPSMateTHealing, self.player, a, 0, 1, t[2], t[1] or b)
+		DB:DeathHistory(t[1] or b, self.player, a, t[2], 0, 1, 1, 0)
 		return
 	end
 	for a,b,c in strgfind(msg, "Your (.+) heals (.+) for (%d+)%.") do 
-		if b=="you" then t[1]=player end
+		if b=="you" then t[1]=self.player end
 		t[2] = tnbr(c)
 		overheal = self:GetOverhealByName(t[2], t[1] or b)
-		DB:HealingTaken(DPSMateHealingTaken, t[1] or b, a, 1, 0, t[2], player)
-		DB:HealingTaken(DPSMateEHealingTaken, t[1] or b, a, 1, 0, t[2]-overheal, player)
-		DB:Healing(0, DPSMateEHealing, player, a, 1, 0, t[2]-overheal, t[1] or b)
+		DB:HealingTaken(DPSMateHealingTaken, t[1] or b, a, 1, 0, t[2], self.player)
+		DB:HealingTaken(DPSMateEHealingTaken, t[1] or b, a, 1, 0, t[2]-overheal, self.player)
+		DB:Healing(0, DPSMateEHealing, self.player, a, 1, 0, t[2]-overheal, t[1] or b)
 		if overheal>0 then 
-			DB:Healing(2, DPSMateOverhealing, player, a, 1, 0, overheal, t[1] or b) 
-			DB:HealingTaken(DPSMateOverhealingTaken, t[1] or b, a, 1, 0, overheal, player)
+			DB:Healing(2, DPSMateOverhealing, self.player, a, 1, 0, overheal, t[1] or b) 
+			DB:HealingTaken(DPSMateOverhealingTaken, t[1] or b, a, 1, 0, overheal, self.player)
 		end
-		DB:Healing(1, DPSMateTHealing, player, a, 1, 0, t[2], t[1] or b)
-		DB:DeathHistory(t[1] or b, player, a, t[2], 1, 0, 1, 0)
+		DB:Healing(1, DPSMateTHealing, self.player, a, 1, 0, t[2], t[1] or b)
+		DB:DeathHistory(t[1] or b, self.player, a, t[2], 1, 0, 1, 0)
 		return
 	end
 	for a,b in strgfind(msg, "You gain (%d+) Energy from (.+)%.") do -- Potential to gain energy values for class evaluation
-		DB:BuildBuffs(player, player, b, true)
-		DB:DestroyBuffs(player, b)
+		DB:BuildBuffs(self.player, self.player, b, true)
+		DB:DestroyBuffs(self.player, b)
 		return
 	end
-	for a,b in strgfind(msg, "You gain (%d) extra attack through (.+)%.") do -- Potential for more evaluation
-		DB:BuildBuffs(player, player, b, true)
-		DB:DestroyBuffs(player, b)
+	for a,b in strgfind(msg, "You gain (%d) extra attack\s? through (.+)%.") do -- Potential for more evaluation
+		DB:BuildBuffs(self.player, self.player, b, true)
+		DB:DestroyBuffs(self.player, b)
+		return
+	end
+	for a,b in strgfind(msg, "You gain (%d+) Rage from (.+)%.") do
+		if self.procs[b] then
+			DB:BuildBuffs(self.player, self.player, b, true)
+			DB:DestroyBuffs(self.player, b)
+		end
 		return
 	end	
 end
@@ -514,42 +519,43 @@ function DPSMate.Parser:SpellPeriodicSelfBuff(msg) -- Maybe some loss here?
 	t = {}
 	for a,b,c in strgfind(msg, "You gain (%d+) health from (.+)'s (.+)%.") do
 		t[1]=tnbr(a)
-		overheal = self:GetOverhealByName(t[1], player)
-		DB:HealingTaken(DPSMateHealingTaken, player, c.."(Periodic)", 1, 0, t[1], b)
-		DB:HealingTaken(DPSMateEHealingTaken, player, c.."(Periodic)", 1, 0, t[1]-overheal, b)
-		DB:Healing(0, DPSMateEHealing, b, c.."(Periodic)", 1, 0, t[1]-overheal, player)
+		overheal = self:GetOverhealByName(t[1], self.player)
+		DB:HealingTaken(DPSMateHealingTaken, self.player, c.."(Periodic)", 1, 0, t[1], b)
+		DB:HealingTaken(DPSMateEHealingTaken, self.player, c.."(Periodic)", 1, 0, t[1]-overheal, b)
+		DB:Healing(0, DPSMateEHealing, b, c.."(Periodic)", 1, 0, t[1]-overheal, self.player)
 		if overheal>0 then 
-			DB:Healing(2, DPSMateOverhealing, b, c.."(Periodic)", 1, 0, overheal, player)
-			DB:HealingTaken(DPSMateOverhealingTaken, player, c.."(Periodic)", 1, 0, overheal, b)
+			DB:Healing(2, DPSMateOverhealing, b, c.."(Periodic)", 1, 0, overheal, self.player)
+			DB:HealingTaken(DPSMateOverhealingTaken, self.player, c.."(Periodic)", 1, 0, overheal, b)
 		end
-		DB:Healing(1, DPSMateTHealing, b, c.."(Periodic)", 1, 0, t[1], player)
-		DB:DeathHistory(player, b, c.."(Periodic)", t[1], 1, 0, 1, 0)
+		DB:Healing(1, DPSMateTHealing, b, c.."(Periodic)", 1, 0, t[1], self.player)
+		DB:DeathHistory(self.player, b, c.."(Periodic)", t[1], 1, 0, 1, 0)
 		return
 	end
 	for a,b in strgfind(msg, "You gain (%d+) health from (.+)%.") do 
 		t[1] = tnbr(a)
-		overheal = self:GetOverhealByName(t[1], player)
-		DB:HealingTaken(DPSMateHealingTaken, player, b.."(Periodic)", 1, 0, t[1], player)
-		DB:HealingTaken(DPSMateEHealingTaken, player, b.."(Periodic)", 1, 0, t[1]-overheal, player)
-		DB:Healing(0, DPSMateEHealing, player, b.."(Periodic)", 1, 0, t[1]-overheal, player)
+		overheal = self:GetOverhealByName(t[1], self.player)
+		DB:HealingTaken(DPSMateHealingTaken, self.player, b.."(Periodic)", 1, 0, t[1], self.player)
+		DB:HealingTaken(DPSMateEHealingTaken, self.player, b.."(Periodic)", 1, 0, t[1]-overheal, self.player)
+		DB:Healing(0, DPSMateEHealing, self.player, b.."(Periodic)", 1, 0, t[1]-overheal, self.player)
 		if overheal>0 then 
-			DB:Healing(2, DPSMateOverhealing, player, b.."(Periodic)", 1, 0, overheal, player)
-			DB:HealingTaken(DPSMateOverhealingTaken, player, b.."(Periodic)", 1, 0, overheal, player)
+			DB:Healing(2, DPSMateOverhealing, self.player, b.."(Periodic)", 1, 0, overheal, self.player)
+			DB:HealingTaken(DPSMateOverhealingTaken, self.player, b.."(Periodic)", 1, 0, overheal, self.player)
 		end
-		DB:Healing(1, DPSMateTHealing, player, b.."(Periodic)", 1, 0, t[1], player)
-		DB:DeathHistory(player, player, b.."(Periodic)", t[1], 1, 0, 1, 0)
+		DB:Healing(1, DPSMateTHealing, self.player, b.."(Periodic)", 1, 0, t[1], self.player)
+		DB:DeathHistory(self.player, self.player, b.."(Periodic)", t[1], 1, 0, 1, 0)
 		return
 	end
 	for a in strgfind(msg, "You gain (.+)%.") do
 		if strfind(a, "from") then return end
+		if self.BuffExceptions[a] then return end;
 		if strfind(a, "%(") then a=strsub(a, 1, strfind(a, "%(")-2) end -- Unstable Power (12)
-		DB:ConfirmBuff(player, a, GetTime())
+		DB:ConfirmBuff(self.player, a, GetTime())
 		if DPSMate.Parser.Dispels[a] then 
-			DB:RegisterHotDispel(player, a)
-			--DB:AwaitDispel(a, player, "Unknown", GetTime());
+			DB:RegisterHotDispel(self.player, a)
+			--DB:AwaitDispel(a, self.player, "Unknown", GetTime());
 		end
-		if self.RCD[a] then DPSMate:Broadcast(1, player, a) end
-		if self.FailDB[a] then DB:BuildFail(3, "Environment", player, a, 0) end
+		if self.RCD[a] then DPSMate:Broadcast(1, self.player, a) end
+		if self.FailDB[a] then DB:BuildFail(3, "Environment", self.player, a, 0) end
 		return 
 	end
 end
@@ -578,15 +584,15 @@ function DPSMate.Parser:SpellPeriodicFriendlyPlayerBuffs(msg)
 	for f,a,b in strgfind(msg, "(.+) gains (%d+) health from your (.+)%.") do 
 		t[1] = tnbr(a)
 		overheal = self:GetOverhealByName(t[1], f)
-		DB:HealingTaken(DPSMateHealingTaken, f, b.."(Periodic)", 1, 0, t[1], player)
-		DB:HealingTaken(DPSMateEHealingTaken, f, b.."(Periodic)", 1, 0, t[1]-overheal, player)
-		DB:Healing(0, DPSMateEHealing, player, b.."(Periodic)", 1, 0, t[1]-overheal)
+		DB:HealingTaken(DPSMateHealingTaken, f, b.."(Periodic)", 1, 0, t[1], self.player)
+		DB:HealingTaken(DPSMateEHealingTaken, f, b.."(Periodic)", 1, 0, t[1]-overheal, self.player)
+		DB:Healing(0, DPSMateEHealing, self.player, b.."(Periodic)", 1, 0, t[1]-overheal)
 		if overheal>0 then 
-			DB:Healing(2, DPSMateOverhealing, player, b.."(Periodic)", 1, 0, overheal)
-			DB:HealingTaken(DPSMateOverhealingTaken, f, b.."(Periodic)", 1, 0, overheal, player)
+			DB:Healing(2, DPSMateOverhealing, self.player, b.."(Periodic)", 1, 0, overheal)
+			DB:HealingTaken(DPSMateOverhealingTaken, f, b.."(Periodic)", 1, 0, overheal, self.player)
 		end
-		DB:Healing(1, DPSMateTHealing, player, b.."(Periodic)", 1, 0, t[1])
-		DB:DeathHistory(f, player, b.."(Periodic)", t[1], 1, 0, 1, 0)
+		DB:Healing(1, DPSMateTHealing, self.player, b.."(Periodic)", 1, 0, t[1])
+		DB:DeathHistory(f, self.player, b.."(Periodic)", t[1], 1, 0, 1, 0)
 		return
 	end
 	for f,a,b in strgfind(msg, "(.+) gains (%d+) health from (.+)%.") do 
@@ -605,6 +611,7 @@ function DPSMate.Parser:SpellPeriodicFriendlyPlayerBuffs(msg)
 	end
 	for f,a in strgfind(msg, "(.+) gains (.+)%.") do
 		if strfind(a, "from") then return end
+		if self.BuffExceptions[a] then return end;
 		if strfind(a, "%(") then a=strsub(a, 1, strfind(a, "%(")-2) end -- Unstable Power (12)
 		DB:ConfirmBuff(f, a, GetTime())
 		if DPSMate.Parser.Dispels[a] then
@@ -624,7 +631,7 @@ function DPSMate.Parser:SpellHostilePlayerBuff(msg)
 	t = {}
 	for a,b,c,d in strgfind(msg, "(.+)'s (.+) critically heals (.+) for (%d+)%.") do 
 		t[1] = tnbr(d)
-		if c=="you" then t[2]=player end
+		if c=="you" then t[2]=self.player end
 		overheal = self:GetOverhealByName(t[1], t[2] or c)
 		DB:HealingTaken(DPSMateHealingTaken, t[2] or c, b, 0, 1, t[1], a)
 		DB:HealingTaken(DPSMateEHealingTaken, t[2] or c, b, 0, 1, t[1]-overheal, a)
@@ -639,7 +646,7 @@ function DPSMate.Parser:SpellHostilePlayerBuff(msg)
 	end
 	for a,b,c,d in strgfind(msg, "(.+)'s (.+) heals (.+) for (%d+)%.") do 
 		t[1] = tnbr(d)
-		if c=="you" then t[2]=player end
+		if c=="you" then t[2]=self.player end
 		overheal = self:GetOverhealByName(t[1], t[2] or c)
 		DB:HealingTaken(DPSMateHealingTaken, t[2] or c, b, 1, 0, t[1], a)
 		DB:HealingTaken(DPSMateEHealingTaken, t[2] or c, b, 1, 0, t[1]-overheal, a)
@@ -657,9 +664,16 @@ function DPSMate.Parser:SpellHostilePlayerBuff(msg)
 		DB:DestroyBuffs(c, d)
 		return 
 	end
-	for a,b,c in strgfind(msg, "(.+) gains (%d+) extra attack through (.+)%.") do
+	for a,b,c in strgfind(msg, "(.+) gains (%d+) extra attack\s? through (.+)%.") do
 		DB:BuildBuffs(a, a, c, true)
 		DB:DestroyBuffs(a, c)
+		return 
+	end
+	for a,b,c,d in strgfind(msg, "(.+) gains (%d+) Rage from (.+)'s (.+)%.") do
+		if self.procs[d] then
+			DB:BuildBuffs(c, a, d, true)
+			DB:DestroyBuffs(c, d)
+		end
 		return 
 	end
 end
@@ -687,7 +701,7 @@ function DPSMate.Parser:CreatureVsCreatureSpellDamageAbsorb(msg)
 end
 
 function DPSMate.Parser:SpellPeriodicSelfBuffAbsorb(msg)
-	for ab in strgfind(msg, "You gain (.+)%.") do if DB.ShieldFlags[ab] then DB:ConfirmAbsorbApplication(ab, player, GetTime()) end end
+	for ab in strgfind(msg, "You gain (.+)%.") do if DB.ShieldFlags[ab] then DB:ConfirmAbsorbApplication(ab, self.player, GetTime()) end end
 end
 
 function DPSMate.Parser:SpellPeriodicFriendlyPlayerBuffsAbsorb(msg)
@@ -696,17 +710,17 @@ end
 
 -- Power Word: Shield fades from you.
 function DPSMate.Parser:SpellAuraGoneSelf(msg)
-	for ab in strgfind(msg, "(.+) fades from you%.") do if strfind(ab, "%(") then ab=strsub(ab, 1, strfind(ab, "%(")-2) end; if DB.ShieldFlags[ab] then DB:UnregisterAbsorb(ab, player) end; if self.RCD[ab] then DPSMate:Broadcast(6, player, ab) end; DB:DestroyBuffs(player, ab); DB:UnregisterHotDispel(player, ab); DB:RemoveActiveCC(player, ab) end
+	for ab in strgfind(msg, "(.+) fades from you%.") do if self.BuffExceptions[ab] then return end; if strfind(ab, "%(") then ab=strsub(ab, 1, strfind(ab, "%(")-2) end; if DB.ShieldFlags[ab] then DB:UnregisterAbsorb(ab, self.player) end; if self.RCD[ab] then DPSMate:Broadcast(6, self.player, ab) end; DB:DestroyBuffs(self.player, ab); DB:UnregisterHotDispel(self.player, ab); DB:RemoveActiveCC(self.player, ab) end
 end
 
 -- Power Word: Shield fades from Senpie.
 function DPSMate.Parser:SpellAuraGoneParty(msg)
 	--DPSMate:SendMessage(msg)
-	for ab, ta in strgfind(msg, "(.+) fades from (.+)%.") do if strfind(ab, "%(") then ab=strsub(ab, 1, strfind(ab, "%(")-2) end;if DB.ShieldFlags[ab] then DB:UnregisterAbsorb(ab, ta) end; if self.RCD[ab] then DPSMate:Broadcast(6, ta, ab) end; DB:DestroyBuffs(ta, ab); DB:UnregisterHotDispel(ta, ab); DB:RemoveActiveCC(ta, ab) end
+	for ab, ta in strgfind(msg, "(.+) fades from (.+)%.") do if self.BuffExceptions[ab] then return end; if strfind(ab, "%(") then ab=strsub(ab, 1, strfind(ab, "%(")-2) end;if DB.ShieldFlags[ab] then DB:UnregisterAbsorb(ab, ta) end; if self.RCD[ab] then DPSMate:Broadcast(6, ta, ab) end; DB:DestroyBuffs(ta, ab); DB:UnregisterHotDispel(ta, ab); DB:RemoveActiveCC(ta, ab) end
 end
 
 function DPSMate.Parser:SpellAuraGoneOther(msg)
-	for ab, ta in strgfind(msg, "(.+) fades from (.+)%.") do if strfind(ab, "%(") then ab=strsub(ab, 1, strfind(ab, "%(")-2) end;if DB.ShieldFlags[ab] then DB:UnregisterAbsorb(ab, ta) end; if self.RCD[ab] then DPSMate:Broadcast(6, ta, ab) end; DB:DestroyBuffs(ta, ab); DB:UnregisterHotDispel(ta, ab); DB:RemoveActiveCC(ta, ab) end
+	for ab, ta in strgfind(msg, "(.+) fades from (.+)%.") do if self.BuffExceptions[ab] then return end; if strfind(ab, "%(") then ab=strsub(ab, 1, strfind(ab, "%(")-2) end;if DB.ShieldFlags[ab] then DB:UnregisterAbsorb(ab, ta) end; if self.RCD[ab] then DPSMate:Broadcast(6, ta, ab) end; DB:DestroyBuffs(ta, ab); DB:UnregisterHotDispel(ta, ab); DB:RemoveActiveCC(ta, ab) end
 end
 
 ----------------------------------------------------------------------------------
@@ -719,14 +733,14 @@ end
 
 -- Is it really "yourself"?
 function DPSMate.Parser:SpellSelfBuffDispels(msg)
-	for ab, tar in strgfind(msg, "You cast (.+) on (.+)%.") do if DPSMate.Parser.Dispels[ab] then DB:AwaitDispel(ab, tar, player, GetTime()) end; if self.RCD[ab] then DPSMate:Broadcast(2, player, tar, ab) end; return end
-	for ab in strgfind(msg, "You cast (.+)%.") do if DPSMate.Parser.Dispels[ab] then DB:AwaitDispel(ab, "Unknown", player, GetTime()) end; return end
+	for ab, tar in strgfind(msg, "You cast (.+) on (.+)%.") do if DPSMate.Parser.Dispels[ab] then DB:AwaitDispel(ab, tar, self.player, GetTime()) end; if self.RCD[ab] then DPSMate:Broadcast(2, self.player, tar, ab) end; return end
+	for ab in strgfind(msg, "You cast (.+)%.") do if DPSMate.Parser.Dispels[ab] then DB:AwaitDispel(ab, "Unknown", self.player, GetTime()) end; return end
 end
 
 -- Avrora casts Remove Curse on you.
 -- Avrora casts Remove Curse on Avrora.
 function DPSMate.Parser:SpellHostilePlayerBuffDispels(msg)
-	for c, ab, ta in strgfind(msg, "(.+) casts (.+) on (.+)%.") do if ta=="you" then ta = player end; if DPSMate.Parser.Dispels[ab] then DB:AwaitDispel(ab, ta, c, GetTime()) end; if self.RCD[ab] then DPSMate:Broadcast(2, c, ta, ab) end; return end
+	for c, ab, ta in strgfind(msg, "(.+) casts (.+) on (.+)%.") do if ta=="you" then ta = self.player end; if DPSMate.Parser.Dispels[ab] then DB:AwaitDispel(ab, ta, c, GetTime()) end; if self.RCD[ab] then DPSMate:Broadcast(2, c, ta, ab) end; return end
 	for c, ab in strgfind(msg, "(.+) casts (.+)%.") do if DPSMate.Parser.Dispels[ab] then DB:AwaitDispel(ab, "Unknown", c, GetTime()) end; return end
 end
 
@@ -734,7 +748,7 @@ end
 -- Your Curse of Agony is removed.
 function DPSMate.Parser:SpellBreakAura(msg) 
 	for ta, ab in strgfind(msg, "(.+)'s (.+) is removed.") do DB:ConfirmRealDispel(ab, ta, GetTime()); return end
-	for ab in strgfind(msg, "Your (.+) is removed.") do DB:ConfirmRealDispel(ab, player, GetTime()); return end
+	for ab in strgfind(msg, "Your (.+) is removed.") do DB:ConfirmRealDispel(ab, self.player, GetTime()); return end
 end
 
 ----------------------------------------------------------------------------------
@@ -744,7 +758,7 @@ end
 -- You die.
 -- Senpie dies.
 function DPSMate.Parser:CombatFriendlyDeath(msg)
-	for ta in strgfind(msg, "(.-) (.-)%.") do if ta=="You" then DB:UnregisterDeath(player) else DB:UnregisterDeath(ta) end end
+	for ta in strgfind(msg, "(.-) (.-)%.") do if ta=="You" then DB:UnregisterDeath(self.player) else DB:UnregisterDeath(ta) end end
 end
 
 function DPSMate.Parser:CombatHostileDeaths(msg)
@@ -787,7 +801,7 @@ function DPSMate.Parser:Loot(msg)
 		return
 	end
 	for a,b,c,d in strgfind(msg, "You receive loot: |cff(.-)|Hitem:(%d+)(.+)%[(.+)%]|h|r") do
-		DB:Loot(player, linkQuality[a], tnbr(b), d)
+		DB:Loot(self.player, linkQuality[a], tnbr(b), d)
 		return
 	end
 end
@@ -799,7 +813,7 @@ function DPSMate.Parser:PetHits(msg)
 	for a,b,c,d,e in strgfind(msg, "(.-) (%a%a?)\its (.+) for (%d+)\.%s?(.*)") do
 		if b=="h" then t[3]=1;t[4]=0 end
 		if e=="(glancing)" then t[1]=1;t[3]=0;t[4]=0 elseif e~="" then t[2]=1;t[3]=0;t[4]=0 end
-		if c=="you" then c=player end
+		if c=="you" then c=self.player end
 		t[5] = tnbr(d)
 		DB:EnemyDamage(true, DPSMateEDT, a, "AutoAttack", t[3] or 0, t[4] or 1, 0, 0, 0, 0, t[5], c, t[2] or 0, t[1] or 0)
 		DB:DamageDone(a, "AutoAttack", t[3] or 0, t[4] or 1, 0, 0, 0, 0, t[5], t[1] or 0, t[2] or 0)
@@ -810,14 +824,14 @@ end
 function DPSMate.Parser:PetMisses(msg)
 	t = {}
 	for a,b in strgfind(msg, "(.-) misses (.+)%.") do 
-		if b=="you" then b=player end
+		if b=="you" then b=self.player end
 		DB:EnemyDamage(true, DPSMateEDT, a, "AutoAttack", 0, 0, 1, 0, 0, 0, 0, b, 0, 0)
 		DB:DamageDone(a, "AutoAttack", 0, 0, 1, 0, 0, 0, 0, 0, 0)
 		return
 	end
 	for a,b,c in strgfind(msg, "(.-) attacks%. (.+) (%a-)%.") do 
 		if c=="parries" or c=="parry" then t[1]=1 elseif c=="dodges" or c=="dodge" then t[2]=1 else t[3]=1 end 
-		if b=="You" then b=player end
+		if b=="You" then b=self.player end
 		DB:EnemyDamage(true, DPSMateEDT, a, "AutoAttack", 0, 0, 0, t[1] or 0, t[2] or 0, 0, 0, b, t[3] or 0, 0)
 		DB:DamageDone(a, "AutoAttack", 0, 0, 0, t[1] or 0, t[2] or 0, 0, 0, 0, t[3] or 0)
 		return
@@ -831,13 +845,13 @@ function DPSMate.Parser:PetSpellDamage(msg)
 		t[1] = tnbr(d)
 		if b=="h" then t[2]=1;t[3]=0 end
 		if strfind(e, "blocked") then t[4]=1;t[2]=0;t[3]=0 end
-		if d=="you" then d=player end
+		if d=="you" then d=self.player end
 		DB:EnemyDamage(true, DPSMateEDT, f, a,  t[2] or 0, t[3] or 1, 0, 0, 0, 0, t[1], c, t[4] or 0, 0)
 		DB:DamageDone(f, a, t[2] or 0, t[3] or 1, 0, 0, 0, 0, t[1], 0, t[4] or 0)
 		return
 	end
 	for a,b,c in strgfind(msg, "(.-)'s (.+) was resisted by (.+)%.") do 
-		if d=="you" then d=player end
+		if d=="you" then d=self.player end
 		DB:EnemyDamage(true, DPSMateEDT, a, b,  0, 0, 0, 0, 0, 1, 0, c, t[4] or 0, 0)
 		DB:DamageDone(a, c, 0, 0, 0, 0, 0, 1, 0, 0, 0)
 		return

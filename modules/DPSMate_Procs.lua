@@ -16,7 +16,38 @@ DPSMate:Register("procs", DPSMate.Modules.Procs, DPSMate.L["procs"])
 local tinsert = table.insert
 local strformat = string.format
 local nonProcProcs = {
-	["Holy Strength"] = true,
+	[DPSMate.BabbleSpell:GetTranslation("Holy Strength")] = true,
+	[DPSMate.BabbleSpell:GetTranslation("Felstriker")] = true,
+	[DPSMate.BabbleSpell:GetTranslation("Sanctuary")] = true,
+	[DPSMate.BabbleSpell:GetTranslation("Fury of Forgewright")] = true,
+	[DPSMate.BabbleSpell:GetTranslation("Primal Blessing")] = true,
+	[DPSMate.BabbleSpell:GetTranslation("Spinal Reaper")] = true, -- To test
+	[DPSMate.BabbleSpell:GetTranslation("Netherwind Focus")] = true, -- To test
+	[DPSMate.BabbleSpell:GetTranslation("Parry")] = true, -- To test
+	[DPSMate.BabbleSpell:GetTranslation("Untamed Fury")] = true,
+	[DPSMate.BabbleSpell:GetTranslation("Aura of the Blue Dragon")] = true, -- Mana Darkmoon card
+	[DPSMate.BabbleSpell:GetTranslation("Invigorate")] = true,
+	[DPSMate.BabbleSpell:GetTranslation("Head Rush")] = true,
+	[DPSMate.BabbleSpell:GetTranslation("Enigma Resist Bonus")] = true,
+	[DPSMate.BabbleSpell:GetTranslation("Enigma Blizzard Bonus")] = true,
+	[DPSMate.BabbleSpell:GetTranslation("Not There")] = true,
+	[DPSMate.BabbleSpell:GetTranslation("Epiphany")] = true,
+	[DPSMate.BabbleSpell:GetTranslation("Inspiration")] = true,
+	[DPSMate.BabbleSpell:GetTranslation("Blessed Recovery")] = true,
+	[DPSMate.BabbleSpell:GetTranslation("Focused Casting")] = true,
+	[DPSMate.BabbleSpell:GetTranslation("Clearcasting")] = true,
+	[DPSMate.BabbleSpell:GetTranslation("Nature's Grace")] = true,
+	[DPSMate.BabbleSpell:GetTranslation("Battlegear of Eternal Justice")] = true,
+	[DPSMate.BabbleSpell:GetTranslation("Redoubt")] = true,
+	[DPSMate.BabbleSpell:GetTranslation("Vengeance")] = true,
+	[DPSMate.BabbleSpell:GetTranslation("Stormcaller's Wrath")] = true,
+	[DPSMate.BabbleSpell:GetTranslation("Ancestral Healing")] = true,
+	[DPSMate.BabbleSpell:GetTranslation("Vampirism")] = true,
+	[DPSMate.BabbleSpell:GetTranslation("Nightfall")] = true,
+	[DPSMate.BabbleSpell:GetTranslation("Cheat Death")] = true,
+	[DPSMate.BabbleSpell:GetTranslation("Flurry")] = true,
+	[DPSMate.BabbleSpell:GetTranslation("Enrage")] = true,
+	[DPSMate.BabbleSpell:GetTranslation("Quick Shots")] = true,
 }
 
 function DPSMate.Modules.Procs:GetSortedTable(arr,k)
@@ -25,7 +56,8 @@ function DPSMate.Modules.Procs:GetSortedTable(arr,k)
 		if DPSMate:ApplyFilter(k, DPSMate:GetUserById(cat)) then
 			local CV = 0
 			for ca, va in pairs(val) do -- 3 ability
-				if va[4] then
+				local name = DPSMate:GetAbilityById(ca)
+				if va[4] or nonProcProcs[name] or DPSMate.Parser.DmgProcs[name] then
 					for c, v in va[1] do -- 1 Ability
 						CV=CV+1
 					end
@@ -56,7 +88,8 @@ function DPSMate.Modules.Procs:EvalTable(user, k)
 	local a, b, temp, total = {}, {}, {}, 0
 	local arr = DPSMate:GetMode(k)
 	for cat, val in pairs(arr[user[1]]) do -- 3 Ability
-		if val[4] then
+		local name = DPSMate:GetAbilityById(cat)
+		if val[4] or nonProcProcs[name] or DPSMate.Parser.DmgProcs[name] then
 			local CV = 0
 			for c, v in val[1] do -- 1 Ability
 				CV=CV+1

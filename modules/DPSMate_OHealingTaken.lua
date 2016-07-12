@@ -91,7 +91,7 @@ end
 function DPSMate.Modules.OHealingTaken:GetSettingValues(arr, cbt, k,ecbt)
 	local name, value, perc, sortedTable, total, a, p, strt = {}, {}, {}, {}, 0, 0, "", {[1]="",[2]=""}
 	if DPSMateSettings["windows"][k]["numberformat"] == 2 then p = "K" end
-	sortedTable, total, a = DPSMate.Modules.OHealingTaken:GetSortedTable(arr,k)
+	sortedTable, total, a = self:GetSortedTable(arr,k)
 	for cat, val in pairs(sortedTable) do
 		local va, tot, sort = DPSMate:FormatNumbers(val, total, sortedTable[1], k)
 		if va==0 then break end

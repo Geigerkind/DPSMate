@@ -6,8 +6,15 @@
 DPSMate.DB.loaded = false
 DPSMate.DB.ShieldFlags = {
 	[DPSMate.BabbleSpell:GetTranslation("Power Word: Shield")] = 0, -- All
+	[DPSMate.BabbleSpell:GetTranslation("Ice Barrier")] = 0, -- All
+	[DPSMate.BabbleSpell:GetTranslation("The Burrower's Shell")] = 0, -- All
+	[DPSMate.BabbleSpell:GetTranslation("Aura of Protection")] = 0, -- All
+	[DPSMate.BabbleSpell:GetTranslation("Damage Absorb")] = 0, -- All
+	[DPSMate.BabbleSpell:GetTranslation("Physical Protection")] = 1, -- Meele
+	[DPSMate.BabbleSpell:GetTranslation("Harm Prevention Belt")] = 0, -- All
 	[DPSMate.BabbleSpell:GetTranslation("Mana Shield")] = 1, -- Meele
 	[DPSMate.BabbleSpell:GetTranslation("Frost Protection")] = 2, -- Frost
+	[DPSMate.BabbleSpell:GetTranslation("Frost Resistance")] = 2, -- Frost
 	[DPSMate.BabbleSpell:GetTranslation("Fire Protection")] = 3, -- Fire
 	[DPSMate.BabbleSpell:GetTranslation("Nature Protection")] = 4, -- Nature
 	[DPSMate.BabbleSpell:GetTranslation("Shadow Protection")] = 5, -- Shadow
@@ -521,13 +528,23 @@ function DPSMate.DB:OnEvent(event)
 		
 		DPSMate:OnLoad()
 		DPSMate.Sync:OnLoad()
-		DPSMate.Parser:OnLoad()
 		DPSMate.Options:InitializeSegments()
 		DPSMate.Options:InitializeHideShowWindow()
 		
 		self:CombatTime()
 		
 		player = UnitName("player")
+		
+		-- Fixing an Log Bug
+		if not DPSMateUser["LASTRESETDPSMATE"] or DPSMateUser["LASTRESETDPSMATE"][2]<DPSMate.VERSION then
+			DPSMateUser = {}
+			DPSMateAbility = {}
+			DPSMateUser["LASTRESETDPSMATE"] = {
+				[1] = 1,
+				[2] = 30
+			}
+			DPSMate.Options:PopUpAccept(true, true)
+		end
 		
 		-- Look it up at NEC
 		--SetCVar("CombatLogRangeParty", 150);

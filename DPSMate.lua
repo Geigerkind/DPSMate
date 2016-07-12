@@ -400,7 +400,6 @@ function DPSMate:SetStatusBarValue()
 			for i=1, 40 do
 				--DPSMate:SendMessage("Test 1")
 				if (not user[i]) then break end -- To prevent visual issues
-				--DPSMate:SendMessage("Test 2")
 				local statusbar, name, value, texture, p = _G("DPSMate_"..c["name"].."_ScrollFrame_Child_StatusBar"..i), _G("DPSMate_"..c["name"].."_ScrollFrame_Child_StatusBar"..i.."_Name"), _G("DPSMate_"..c["name"].."_ScrollFrame_Child_StatusBar"..i.."_Value"), _G("DPSMate_"..c["name"].."_ScrollFrame_Child_StatusBar"..i.."_Icon"), ""
 				_G("DPSMate_"..c["name"].."_ScrollFrame_Child"):SetHeight((i+1)*(c["barheight"]+c["barspacing"]))
 				
