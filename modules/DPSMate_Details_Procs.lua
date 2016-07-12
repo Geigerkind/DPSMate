@@ -175,11 +175,10 @@ function DPSMate.Modules.DetailsProcs:GetSpecialSnowFlakeHits(ability)
 		end
 	elseif specialSnowflakesDmgTaken[1][ability] then
 		for cat, val in DPSMateDamageTaken[1][DPSMateUser[DetailsUser][1]] do
-			for ca, va in val do
-				if ca~="i" then
-					local abname = DPSMate:GetAbilityById(ca)
-					if abname == DPSMate.BabbleSpell:GetTranslation("AutoAttack") then
-						if specialSnowflakesDmgTaken[1][ability][abname] then
+			if cat~="i" then
+				for ca, va in val do
+					if ca~="i" then
+						if DPSMate:GetAbilityById(ca) == DPSMate.BabbleSpell:GetTranslation("AutoAttack") then
 							num = num + va[1] + va[5] + va[15]
 						end
 					end
@@ -188,11 +187,10 @@ function DPSMate.Modules.DetailsProcs:GetSpecialSnowFlakeHits(ability)
 		end
 	elseif specialSnowflakesDmgTaken[2][ability] then
 		for cat, val in DPSMateDamageTaken[1][DPSMateUser[DetailsUser][1]] do
-			for ca, va in val do
-				if ca~="i" then
-					local abname = DPSMate:GetAbilityById(ca)
-					if abname == DPSMate.BabbleSpell:GetTranslation("AutoAttack") then
-						if specialSnowflakesDmgTaken[1][ability][abname] then
+			if cat~="i" then
+				for ca, va in val do
+					if ca~="i" then
+						if DPSMate:GetAbilityById(ca) == DPSMate.BabbleSpell:GetTranslation("AutoAttack") then
 							num = num + va[5]
 						end
 					end
@@ -209,7 +207,7 @@ function DPSMate.Modules.DetailsProcs:GetSpecialSnowFlakeHits(ability)
 				end
 			end
 		end
-	elseif ability == DPSMate.BabbleSpell:GetTranslation("Vengeance") then
+	elseif ability == DPSMate.BabbleSpell:GetTranslation("Vengeance") or ability == DPSMate.BabbleSpell:GetTranslation("Flurry") then
 		for cat, val in DPSMateDamageDone[1][DPSMateUser[DetailsUser][1]] do
 			if cat~="i" then
 				num = num + val[5]
