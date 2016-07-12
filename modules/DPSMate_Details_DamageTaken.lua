@@ -18,6 +18,9 @@ function DPSMate.Modules.DetailsDamageTaken:UpdateDetails(obj, key)
 	DPSMate_Details_DamageTaken_Title:SetText(DPSMate.L["dmgtakenby"]..obj.user)
 	DPSMate_Details_DamageTaken:Show()
 	DetailsArr, DetailsTotal, DmgArr = DPSMate.RegistredModules[DPSMateSettings["windows"][curKey]["CurMode"]]:EvalTable(DPSMateUser[DetailsUser], curKey)
+	DPSMate_Details_DamageTaken.proc = "None"
+	UIDropDownMenu_SetSelectedValue(DPSMate_Details_DamageTaken_DiagramLegend_Procs, "None")
+	UIDropDownMenu_Initialize(DPSMate_Details_DamageTaken_DiagramLegend_Procs, self.ProcsDropDown)
 	self:ScrollFrame_Update()
 	self:SelectCreatureButton(1)
 	self:SelectDetailsButton(1,1)
@@ -33,15 +36,15 @@ function DPSMate.Modules.DetailsDamageTaken:ScrollFrame_Update()
 	local path = "DPSMate_Details_DamageTaken_LogCreature"
 	local obj = _G(path.."_ScrollFrame")
 	local pet, len = "", DPSMate:TableLength(DetailsArr)
-	FauxScrollFrame_Update(obj,len,10,24)
-	for line=1,10 do
+	FauxScrollFrame_Update(obj,len,8,24)
+	for line=1,8 do
 		lineplusoffset = line + FauxScrollFrame_GetOffset(obj)
 		if DetailsArr[lineplusoffset] ~= nil then
 			local user = DPSMate:GetUserById(DetailsArr[lineplusoffset])
 			_G(path.."_ScrollButton"..line.."_Name"):SetText(user)
 			_G(path.."_ScrollButton"..line.."_Value"):SetText(DmgArr[lineplusoffset][1].." ("..strformat("%.2f", (DmgArr[lineplusoffset][1]*100/DetailsTotal)).."%)")
 			_G(path.."_ScrollButton"..line.."_Icon"):SetTexture("Interface\\AddOns\\DPSMate\\images\\npc")
-			if len < 10 then
+			if len < 8 then
 				_G(path.."_ScrollButton"..line):SetWidth(235)
 				_G(path.."_ScrollButton"..line.."_Name"):SetWidth(125)
 			else
@@ -89,7 +92,7 @@ function DPSMate.Modules.DetailsDamageTaken:SelectCreatureButton(i)
 		_G(path.."_ScrollButton"..line.."_selected"):Hide()
 		_G(path.."_ScrollButton1_selected"):Show()
 	end
-	for p=1, 10 do
+	for p=1, 8 do
 		_G("DPSMate_Details_DamageTaken_LogCreature_ScrollButton"..p.."_selected"):Hide()
 	end
 	_G("DPSMate_Details_DamageTaken_LogCreature_ScrollButton"..i.."_selected"):Show()
@@ -213,10 +216,10 @@ function DPSMate.Modules.DetailsDamageTaken:UpdateLineGraph()
 
 	local Data1={{0,0}}
 	for cat, val in DPSMate:ScaleDown(sumTable, min) do
-		tinsert(Data1, {val[1],val[2], {}})
+		tinsert(Data1, {val[1],val[2], self:CheckProcs(DPSMate_Details_DamageTaken.proc, val[1]+min)})
 	end
 
-	g2:AddDataSeries(Data1,{{1.0,0.0,0.0,0.8}, {1.0,0.0,0.0,0.8}}, {})
+	g2:AddDataSeries(Data1,{{1.0,0.0,0.0,0.8}, {1.0,1.0,0.0,0.8}}, self:AddProcPoints(DPSMate_Details_DamageTaken.proc, Data1))
 	g2:Show()
 end
 
@@ -466,6 +469,101 @@ end
 
 function DPSMate.Modules.DetailsDamageTaken:GetSummarizedTable(arr, b)
 	return DPSMate.Sync:GetSummarizedTable(self:SortLineTable(arr, b))
+end
+
+function DPSMate.Modules.DetailsDamageTaken:ProcsDropDown()
+	local arr = DPSMate.Modules.DetailsDamageTaken:GetAuraGainedArr(curKey)
+	DPSMate_Details_DamageTaken.proc = "None"
+	
+    local function on_click()
+        UIDropDownMenu_SetSelectedValue(DPSMate_Details_DamageTaken_DiagramLegend_Procs, this.value)
+		DPSMate_Details_DamageTaken.proc = this.value
+		DPSMate.Modules.DetailsDamageTaken:UpdateLineGraph()
+    end
+	
+	UIDropDownMenu_AddButton{
+		text = "None",
+		value = "None",
+		func = on_click,
+	}
+	
+	-- Adding dynamic channel
+	if arr[DPSMateUser[DetailsUser][1]] then
+		for cat, val in pairs(arr[DPSMateUser[DetailsUser][1]]) do
+			local ability = DPSMate:GetAbilityById(cat)
+			if DPSMate.Parser.procs[ability] or DPSMate.Parser.DmgProcs[ability] then
+				UIDropDownMenu_AddButton{
+					text = ability,
+					value = cat,
+					func = on_click,
+				}
+			end
+		end
+	end
+	
+	if DPSMate_Details_DamageTaken.LastUser~=DetailsUser then
+		UIDropDownMenu_SetSelectedValue(DPSMate_Details_DamageTaken_DiagramLegend_Procs, "None")
+	end
+	DPSMate_Details_DamageTaken.LastUser = DetailsUser
+end
+
+function DPSMate.Modules.DetailsDamageTaken:GetAuraGainedArr(k)
+	local modes = {["total"]=1,["currentfight"]=2}
+	for cat, val in pairs(DPSMateSettings["windows"][k]["options"][2]) do
+		if val then
+			if strfind(cat, "segment") then
+				local num = tonumber(strsub(cat, 8))
+				return DPSMateHistory["Auras"][num]
+			else
+				return DPSMateAurasGained[modes[cat]]
+			end
+		end
+	end
+end
+
+function DPSMate.Modules.DetailsDamageTaken:CheckProcs(name, val)
+	local arr = DPSMate.Modules.DetailsDamageTaken:GetAuraGainedArr(curKey)
+	if arr[DPSMateUser[DetailsUser][1]] then
+		if arr[DPSMateUser[DetailsUser][1]][name] then
+			for i=1, DPSMate:TableLength(arr[DPSMateUser[DetailsUser][1]][name][1]) do
+				if not arr[DPSMateUser[DetailsUser][1]][name][1][i] or not arr[DPSMateUser[DetailsUser][1]][name][2][i] or arr[DPSMateUser[DetailsUser][1]][name][4] then return false end
+				if val > arr[DPSMateUser[DetailsUser][1]][name][1][i] and val < arr[DPSMateUser[DetailsUser][1]][name][2][i] then
+					return true
+				end
+			end
+		end
+	end
+	return false
+end
+
+function DPSMate.Modules.DetailsDamageTaken:AddProcPoints(name, dat)
+	local bool, data, LastVal = false, {}, 0
+	local arr = DPSMate.Modules.DetailsDamageTaken:GetAuraGainedArr(curKey)
+	if arr[DPSMateUser[DetailsUser][1]] then
+		if arr[DPSMateUser[DetailsUser][1]][name] then
+			if arr[DPSMateUser[DetailsUser][1]][name][4] then
+				for cat, val in pairs(dat) do
+					for i=1, DPSMate:TableLength(arr[DPSMateUser[DetailsUser][1]][name][1]) do
+						if arr[DPSMateUser[DetailsUser][1]][name][1][i]<=val[1] then
+							local tempbool = true
+							for _, va in pairs(data) do
+								if va[1] == arr[DPSMateUser[DetailsUser][1]][name][1][i] then
+									tempbool = false
+									break
+								end
+							end
+							if tempbool then	
+								bool = true
+								tinsert(data, {arr[DPSMateUser[DetailsUser][1]][name][1][i], LastVal, {val[1], val[2]}})
+							end
+						end
+					end
+					LastVal = {val[1], val[2]}
+				end
+			end
+		end
+	end
+	return {bool, data}
 end
 
 function DPSMate.Modules.DetailsDamageTaken:ToggleMode()

@@ -221,10 +221,57 @@
 					<Color r="0.157" g="0.08" b="0.06" a="0.5" />
 				</Backdrop>
 			</Frame>
-			<Frame name="$parent_LogCreature">
-				<Size x="245" y="270" />
+			<Frame name="$parent_DiagramLegend">
+				<Size x="245" y="55" />
 				<Anchors>
 					<Anchor point="TOPLEFT" relativeTo="$parent_DiagramLine" relativePoint="BOTTOMLEFT" />
+				</Anchors>
+				<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+					<BackgroundInsets left="6" right="6" top="6" bottom="6" />
+					<TileSize val="16" />
+					<EdgeSize val="16" />
+					<Color r="0.157" g="0.08" b="0.06" a="0.5" />
+				</Backdrop>
+				<Frames>
+					<Frame name="$parent_Procs" inherits="UIDropDownMenuTemplate" id="1">
+						<Size x="200" y="24" />
+						<Anchors>
+							<Anchor point="TOP">
+								<Offset x="0" y="-18" />
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnEnter>
+								GameTooltip:SetOwner(this, "ANCHOR_RIGHT")
+								GameTooltip:SetText(DPSMate.L["procstooltip"], nil, nil, nil, nil, 1)
+							</OnEnter>
+							<OnLeave>
+								GameTooltip:Hide()
+							</OnLeave>
+							<OnLoad>
+								UIDropDownMenu_SetWidth(200)
+								getglobal(this:GetName().."_Text"):SetText(DPSMate.L["procs"])
+							</OnLoad>
+						</Scripts>
+						<Layers>
+							<Layer level="ARTWORK">
+								<FontString name="$parent_Text" inherits="GameFontNormalSmall" alphaMode="ADD">
+									<Size x="200" y="20" />
+									<Anchors>
+										<Anchor point="TOP">
+											<Offset x="0" y="15" />
+										</Anchor>
+									</Anchors>
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+				</Frames>
+			</Frame>
+			<Frame name="$parent_LogCreature">
+				<Size x="245" y="215" />
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parent_DiagramLegend" relativePoint="BOTTOMLEFT" />
 				</Anchors>
 				<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
 					<BackgroundInsets left="6" right="6" top="6" bottom="6" />
@@ -308,26 +355,12 @@
 							</Anchor>
 						</Anchors>
 					</Button>
-					<Button name="$parent_ScrollButton9" inherits="DPSMate_Details_DamageTaken_ScrollButton"  id="9">
-						<Anchors>
-							<Anchor point="TOP" relativeTo="$parent_ScrollButton8" relativePoint="BOTTOM">
-								<Offset x="0" y="-2" />
-							</Anchor>
-						</Anchors>
-					</Button>
-					<Button name="$parent_ScrollButton10" inherits="DPSMate_Details_DamageTaken_ScrollButton"  id="10">
-						<Anchors>
-							<Anchor point="TOP" relativeTo="$parent_ScrollButton9" relativePoint="BOTTOM">
-								<Offset x="0" y="-2" />
-							</Anchor>
-						</Anchors>
-					</Button>
 				</Frames>
 			</Frame>
 			<Frame name="$parent_Log">
 				<Size x="245" y="270" />
 				<Anchors>
-					<Anchor point="TOPLEFT" relativeTo="$parent_LogCreature" relativePoint="TOPRIGHT" />
+					<Anchor point="TOPLEFT" relativeTo="$parent_DiagramLegend" relativePoint="TOPRIGHT" />
 				</Anchors>
 				<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
 					<BackgroundInsets left="6" right="6" top="6" bottom="6" />
