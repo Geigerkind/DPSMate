@@ -966,7 +966,7 @@ function DPSMate.DB:EnemyDamage(mode, arr, Duser, Dname, Dhit, Dcrit, Dmiss, Dpa
 		local p = "1 :"
 		if not mode then p = "2 :" end
 		DPSMate:SendMessage("If you see this message, please report it to Shino. You have encountered a bug! Also make a screenshot of your combatlog in this timeframe please.")
-		DPSMate:SendMessage("Dump: "..p..Duser..","..Dname..","..Dhit..","..Dcrit..","..Dmiss..","..Dparry..","..Ddodge..","..Dresist..","..Damount..","..(Dcause or "")..","..Dblock..","..Dcrush)
+		DPSMate:SendMessage("Dump: "..p..Duser..","..Dname..","..Dhit..","..Dcrit..","..Dmiss..","..Dparry..","..Ddodge..","..Dresist..","..Damount..","..cause..","..Dblock..","..Dcrush)
 		return
 	end
 	ActiveMob[cause] = true
@@ -1518,16 +1518,12 @@ function DPSMate.DB:EvaluateDispel()
 				local check = nil
 				for q, t in ConfirmedDispel[cat] do
 					if (va[3]-t[2])<=1 then
-						check = t[1]
 						tremove(ConfirmedDispel[cat], q)
+						self:Dispels(va[1], va[2], cat, t[1])
+						tremove(AwaitDispel[cat], ca)
+						lastDispel = nil;
+						return
 					end
-				end
-				if check then
-					self:Dispels(va[1], va[2], cat, check)
-					tremove(AwaitDispel[cat], ca)
-					lastDispel = nil;
-					--DPSMate:SendMessage("Direct Removed!")
-					return
 				end
 			end
 			--DPSMate:SendMessage("Test 1")
@@ -1537,16 +1533,12 @@ function DPSMate.DB:EvaluateDispel()
 					local check = nil
 					for q, t in ConfirmedDispel[lastDispel] do
 						if (va[3]-t[2])<=1 then
-							check = t[1]
 							tremove(ConfirmedDispel[lastDispel], q)
+							self:Dispels(va[1], va[2], lastDispel, t[1])
+							tremove(AwaitDispel[cat], ca)
+							lastDispel = nil;
+							return
 						end
-					end
-					if check then
-						self:Dispels(va[1], va[2], lastDispel, check)
-						tremove(AwaitDispel[cat], ca)
-						lastDispel = nil;
-						--DPSMate:SendMessage("Direct Removed!")
-						return
 					end
 				end
 			end

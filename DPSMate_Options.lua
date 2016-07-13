@@ -152,7 +152,7 @@ DPSMate.Options.Options = {
 				type = 'execute',
 				name = DPSMate.L["newsegment"],
 				desc = DPSMate.L["newsegmentdesc"],
-				func = function() DPSMate.Options:NewSegment(); DPSMate.Options.Dewdrop:Close() end,
+				func = function() DPSMate.Options:NewSegment("New segment"); DPSMate.Options.Dewdrop:Close() end,
 			},
 			deletesegment = {
 				order = 30,
@@ -1447,11 +1447,14 @@ function DPSMate.Options:InializePlayerDewDrop(obj)
 	end
 end
 
-function DPSMate.Options:NewSegment()
+function DPSMate.Options:NewSegment(segname)
 	-- Get name of this session
 	local _,_,a = DPSMate.Modules.EDT:GetSortedTable(DPSMateEDT[2])
-	if a[1] then
-		local name = DPSMate:GetUserById(a[1]) or DPSMate.L["unknown"]
+	if a[1] or segname~=nil then
+		local name = segname
+		if not segname then
+			name = DPSMate:GetUserById(a[1]) or DPSMate.L["unknown"]
+		end
 		DPSMate.DB:Attempt(false)
 		if DPSMateSettings["onlybossfights"] then
 			if DPSMate.BabbleBoss:Contains(name) then
@@ -1727,7 +1730,9 @@ function DPSMate.Options:Show(frame)
 end
 
 function DPSMate.Options:RemoveSegment(i)
-	tremove(DPSMateHistory, i)
+	for cat, val in DPSMateHistory do
+		tremove(DPSMateHistory[cat], i)
+	end
 	DPSMate.Options:InitializeSegments()
 	DPSMate.Options.Dewdrop:Close()
 end

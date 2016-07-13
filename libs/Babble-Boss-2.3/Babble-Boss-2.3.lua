@@ -14,14 +14,14 @@ local MINOR_VERSION = tonumber(string.sub("$Revision: 17545 $", 12, -3))
 
 if not AceLibrary then error(MAJOR_VERSION .. " requires AceLibrary") end
 
-if not AceLibrary:HasInstance("AceLocale-2.2") then error(MAJOR_VERSION .. " requires AceLocale-2.2") end
+if not AceLibrary:HasInstance("AceLocale-2.3") then error(MAJOR_VERSION .. " requires AceLocale-2.3") end
 
-local _, x = AceLibrary("AceLocale-2.2"):GetLibraryVersion()
+local _, x = AceLibrary("AceLocale-2.3"):GetLibraryVersion()
 MINOR_VERSION = MINOR_VERSION * 100000 + x
 
 if not AceLibrary:IsNewVersion(MAJOR_VERSION, MINOR_VERSION) then return end
 
-local BabbleBoss = AceLibrary("AceLocale-2.2"):new(MAJOR_VERSION)
+local BabbleBoss = AceLibrary("AceLocale-2.3"):new(MAJOR_VERSION)
 
 -- uncomment below for debug information
 -- BabbleBoss:EnableDebugging()

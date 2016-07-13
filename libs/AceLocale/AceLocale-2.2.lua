@@ -11,7 +11,7 @@ Description: Localization library for addons to use to handle proper
 Dependencies: AceLibrary
 ]]
 
-local MAJOR_VERSION = "AceLocale-2.2"
+local MAJOR_VERSION = "AceLocale-2.3"
 local MINOR_VERSION = "$Revision: 15291 $"
 
 if not AceLibrary then error(MAJOR_VERSION .. " requires AceLibrary.") end

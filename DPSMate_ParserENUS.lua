@@ -170,7 +170,7 @@ function DPSMate.Parser:FriendlyPlayerDamage(msg)
 	-- Hostile Player vs you
 	for f,a,b in strgfind(msg, "(.-)'s (.+) was (.-)%.") do 
 		if b=="dodged" then t[1]=1 elseif b=="blocked" then t[2]=1 elseif b=="parried" then t[4]=1 else t[3]=1 end
-		DB:EnemyDamage(true, DPSMateEDT, f, a, 0, 0, 0, t[4] or 0, t[1] or 0, t[3] or 0, 0, self.player, t[2] or 0, 0)
+		DB:EnemyDamage(true, DPSMateEDT, f, a, 0, 0, 0, t[4] or 0, t[1] or 0, t[3] or 0, 0, self.player, t[2] or 0, 0) -- Here is the error?
 		DB:DamageDone(f, a, 0, 0, 0, t[4] or 0, t[1] or 0, t[3] or 0, 0, 0, t[2] or 0)
 		return
 	end
