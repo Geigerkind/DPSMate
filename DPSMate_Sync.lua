@@ -742,10 +742,8 @@ function DPSMate.Sync:AbsorbsIn(arg2, arg4)
 	if not Arrays[10][userid][userid2] then return end
 	if not Arrays[10][userid][userid2][userid3] then Arrays[10][userid][userid2][userid3] = {} end
 	if not Arrays[10][userid][userid2][userid3][tnbr(t[3])] then Arrays[10][userid][userid2][userid3][tnbr(t[3])] = {} end
-	Arrays[10][userid][userid2][userid3][tnbr(t[3])][DPSMateUser[t[4]][1]] = {
-		[1] = tnbr(t[5]),
-		[2] = tnbr(t[6]),
-	}
+	if not Arrays[10][userid][userid2][userid3][tnbr(t[3])][DPSMateUser[t[4]][1]] then Arrays[10][userid][userid2][userid3][tnbr(t[3])][DPSMateUser[t[4]][1]] = {} end
+	Arrays[10][userid][userid2][userid3][tnbr(t[3])][DPSMateUser[t[4]][1]][tnbr(t[5])] = tnbr(t[6])
 	DB.NeedUpdate = true
 end
 
@@ -1275,8 +1273,10 @@ function DPSMate.Sync:AbsorbsOut()
 							cou = cou + 1
 							--SDM("DPSMate_iAbsorbs", DPSMate:GetUserById(cat)..","..DPSMate:GetAbilityById(ca)..","..c..","..ve[1]..","..ve[2]..","..ve[3]..","..ve[4]..",", "RAID")
 						else
-							Buffer[cou] = {"DPSMate_Absorbs", DPSMate:GetUserById(cat)..","..DPSMate:GetAbilityById(ca)..","..c..","..DPSMate:GetUserById(ce)..","..ve[1]..","..ve[2]..","}
-							cou = cou + 1
+							for cet, vel in ve do
+								Buffer[cou] = {"DPSMate_Absorbs", DPSMate:GetUserById(cat)..","..DPSMate:GetAbilityById(ca)..","..c..","..DPSMate:GetUserById(ce)..","..cet..","..vel..","}
+								cou = cou + 1
+							end
 							--SDM("DPSMate_Absorbs", DPSMate:GetUserById(cat)..","..DPSMate:GetAbilityById(ca)..","..c..","..DPSMate:GetUserById(ce)..","..ve[1]..","..ve[2]..",", "RAID")
 						end
 					end

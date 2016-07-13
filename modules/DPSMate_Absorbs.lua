@@ -31,17 +31,27 @@ function DPSMate.Modules.Absorbs:GetSortedTable(arr,k)
 							local PerShieldAbsorb = 0
 							for cet, vel in pairs(ve) do
 								if cet~="i" then
-									local p = 5
-									if DPSMateDamageTaken[1][cat] then
-										if DPSMateDamageTaken[1][cat][cet] then
-											if DPSMateDamageTaken[1][cat][cet][vel[1]] then
-												if DPSMateDamageTaken[1][cat][cet][vel[1]][14]~=0 then
-													p=ceil(DPSMateDamageTaken[1][cat][cet][vel[1]][14])
+									for qq,ss in vel do
+										local p = 5
+										if DPSMateDamageTaken[1][cat] then
+											if DPSMateDamageTaken[1][cat][cet] then
+												if DPSMateDamageTaken[1][cat][cet][qq] then
+													if DPSMateDamageTaken[1][cat][cet][qq][14]~=0 then
+														p=ceil(DPSMateDamageTaken[1][cat][cet][qq][14])
+													end
+												end
+											end
+										elseif DPSMateEDT[1][cat] then
+											if DPSMateEDT[1][cat][cet] then
+												if DPSMateEDT[1][cat][cet][qq] then
+													if DPSMateEDT[1][cat][cet][qq][4]~=0 then
+														p=ceil((DPSMateEDT[1][cat][cet][qq][4]+DPSMateEDT[1][cat][cet][qq][8])/2)
+													end
 												end
 											end
 										end
+										PerShieldAbsorb=PerShieldAbsorb+ss*p
 									end
-									PerShieldAbsorb=PerShieldAbsorb+vel[2]*p
 								end
 							end
 							if ve["i"][1]==1 then
@@ -92,19 +102,29 @@ function DPSMate.Modules.Absorbs:EvalTable(user, k)
 							local PerShieldAbsorb = 0
 							for cet, vel in pairs(ve) do
 								if cet~="i" then
-									local p = 5
-									if DPSMateDamageTaken[1][cat] then
-										if DPSMateDamageTaken[1][cat][cet] then
-											if DPSMateDamageTaken[1][cat][cet][vel[1]] then
-												if DPSMateDamageTaken[1][cat][cet][vel[1]][14]~=0 then
-													p=ceil(DPSMateDamageTaken[1][cat][cet][vel[1]][14])
+									for qq,ss in vel do
+										local p = 5
+										if DPSMateDamageTaken[1][cat] then
+											if DPSMateDamageTaken[1][cat][cet] then
+												if DPSMateDamageTaken[1][cat][cet][qq] then
+													if DPSMateDamageTaken[1][cat][cet][qq][14]~=0 then
+														p=ceil(DPSMateDamageTaken[1][cat][cet][qq][14])
+													end
+												end
+											end
+										elseif DPSMateEDT[1][cat] then
+											if DPSMateEDT[1][cat][cet] then
+												if DPSMateEDT[1][cat][cet][qq] then
+													if DPSMateEDT[1][cat][cet][qq][4]~=0 then
+														p=ceil((DPSMateEDT[1][cat][cet][qq][4]+DPSMateEDT[1][cat][cet][qq][8])/2)
+													end
 												end
 											end
 										end
+										PerShieldAbsorb=PerShieldAbsorb+ss*p
+										if not temp[cet] then temp[cet] = {} end
+										if not temp[cet][qq] then temp[cet][qq] = ss*p else temp[cet][qq] =temp[cet][qq]+ss*p end
 									end
-									PerShieldAbsorb=PerShieldAbsorb+vel[2]*p
-									if not temp[cet] then temp[cet] = {} end
-									if not temp[cet][vel[1]] then temp[cet][vel[1]] = vel[2]*p else temp[cet][vel[1]] =temp[cet][vel[1]]+vel[2]*p end
 								end
 							end
 							if ve["i"][1]==1 then

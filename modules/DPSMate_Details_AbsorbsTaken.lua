@@ -109,9 +109,14 @@ function DPSMate.Modules.DetailsAbsorbsTaken:SelectCauseButton(i,p)
 		lineplusoffset = line + FauxScrollFrame_GetOffset(obj)
 		if DmgArr[i][3][p][2][lineplusoffset] ~= nil then
 			local user = DPSMate:GetUserById(DmgArr[i][3][p][2][lineplusoffset])
+			local r,g,b,img = DPSMate:GetClassColor(DPSMateUser[user][2])
 			_G(path.."_ScrollButton"..line.."_Name"):SetText(user)
 			_G(path.."_ScrollButton"..line.."_Value"):SetText(DmgArr[i][3][p][3][lineplusoffset][1].." ("..strformat("%.2f", (DmgArr[i][3][p][3][lineplusoffset][1]*100/DmgArr[i][3][p][1])).."%)")
-			_G(path.."_ScrollButton"..line.."_Icon"):SetTexture("Interface\\AddOns\\DPSMate\\images\\dummy")
+			if DPSMateUser[user][2] then
+				_G(path.."_ScrollButton"..line.."_Icon"):SetTexture("Interface\\AddOns\\DPSMate\\images\\class\\"..img)
+			else
+				_G(path.."_ScrollButton"..line.."_Icon"):SetTexture("Interface\\AddOns\\DPSMate\\images\\npc")
+			end
 			if len < 10 then
 				_G(path.."_ScrollButton"..line):SetWidth(235)
 				_G(path.."_ScrollButton"..line.."_Name"):SetWidth(125)
@@ -198,8 +203,13 @@ function DPSMate.Modules.DetailsAbsorbsTaken:SortLineTable(arr)
 			local i, dmg = 1, 5
 			if va[4] then
 				dmg = va[4]
-			elseif DPSMateDamageTaken[1][DPSMateUser[DetailsUser][1]][va[2]][va[3]][14] then
-				dmg = DPSMateDamageTaken[1][DPSMateUser[DetailsUser][1]][va[2]][va[3]][14]
+			end
+			if DPSMateDamageTaken[1][DPSMateUser[DetailsUser][1]] then
+				if DPSMateDamageTaken[1][DPSMateUser[DetailsUser][1]][va[2]] then
+					if DPSMateDamageTaken[1][DPSMateUser[DetailsUser][1]][va[2]][va[3]] then
+						dmg = DPSMateDamageTaken[1][DPSMateUser[DetailsUser][1]][va[2]][va[3]][14]
+					end
+				end
 			end
 			if dmg>0 then
 				while true do

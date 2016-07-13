@@ -109,9 +109,14 @@ function DPSMate.Modules.DetailsAbsorbs:SelectCauseButton(i,p)
 		lineplusoffset = line + FauxScrollFrame_GetOffset(obj)
 		if DmgArr[i][3][p][2][lineplusoffset] ~= nil then
 			local user = DPSMate:GetUserById(DmgArr[i][3][p][2][lineplusoffset])
+			local r,g,b,img = DPSMate:GetClassColor(DPSMateUser[user][2])
 			_G(path.."_ScrollButton"..line.."_Name"):SetText(user)
 			_G(path.."_ScrollButton"..line.."_Value"):SetText(DmgArr[i][3][p][3][lineplusoffset][1].." ("..strformat("%.2f", (DmgArr[i][3][p][3][lineplusoffset][1]*100/DmgArr[i][3][p][1])).."%)")
-			_G(path.."_ScrollButton"..line.."_Icon"):SetTexture("Interface\\AddOns\\DPSMate\\images\\npc")
+			if DPSMateUser[user][2] then
+				_G(path.."_ScrollButton"..line.."_Icon"):SetTexture("Interface\\AddOns\\DPSMate\\images\\class\\"..img)
+			else
+				_G(path.."_ScrollButton"..line.."_Icon"):SetTexture("Interface\\AddOns\\DPSMate\\images\\npc")
+			end
 			if len < 10 then
 				_G(path.."_ScrollButton"..line):SetWidth(235)
 				_G(path.."_ScrollButton"..line.."_Name"):SetWidth(125)

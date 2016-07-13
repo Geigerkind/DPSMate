@@ -15,7 +15,9 @@ DPSMate.DB.ShieldFlags = {
 	[DPSMate.BabbleSpell:GetTranslation("Mana Shield")] = 1, -- Meele
 	[DPSMate.BabbleSpell:GetTranslation("Frost Protection")] = 2, -- Frost
 	[DPSMate.BabbleSpell:GetTranslation("Frost Resistance")] = 2, -- Frost
+	[DPSMate.BabbleSpell:GetTranslation("Frost Ward")] = 2, -- Frost
 	[DPSMate.BabbleSpell:GetTranslation("Fire Protection")] = 3, -- Fire
+	[DPSMate.BabbleSpell:GetTranslation("Fire Ward")] = 3, -- Fire
 	[DPSMate.BabbleSpell:GetTranslation("Nature Protection")] = 4, -- Nature
 	[DPSMate.BabbleSpell:GetTranslation("Shadow Protection")] = 5, -- Shadow
 	[DPSMate.BabbleSpell:GetTranslation("Arcane Protection")] = 6, -- Arcane
@@ -23,6 +25,7 @@ DPSMate.DB.ShieldFlags = {
 }
 local AbilityFlags = {
 	["Magic"] = 0,
+	["Fire"] = 3,
 	["Holy"] = 7,
 	["Shadow"] = 5,
 	["Nature"] = 4,
@@ -766,7 +769,7 @@ function DPSMate.DB:GetAlpha(k)
 end
 
 -- First crit/hit av value will be half if it is not the first hit actually. Didnt want to add an exception for it though. Maybe later :/
-local CastsBuffer = {[1]={},[2]={},[3]={}}
+local CastsBuffer = {[1]={[1]={},[2]={}},[2]={[1]={},[2]={}},[3]={[1]={},[2]={}}}
 function DPSMate.DB:DamageDone(Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, Ddodge, Dresist, Damount, Dglance, Dblock)
 	if self:BuildUser(Duser, nil) or self:BuildAbility(Dname, nil) then return end -- Attempt to fix this problem?
 	
@@ -811,19 +814,19 @@ function DPSMate.DB:DamageDone(Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, Ddodge,
 		local path = DPSMateDamageDone[cat][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]]
 		-- Casts evaluation
 		local time = GT()
-		if CastsBuffer[1][Duser] then
-			if CastsBuffer[1][Duser][Dname] then
-				if time>=(CastsBuffer[1][Duser][Dname]+0.1) then
-					CastsBuffer[1][Duser][Dname] = time
+		if CastsBuffer[1][cat][Duser] then
+			if CastsBuffer[1][cat][Duser][Dname] then
+				if time>=(CastsBuffer[1][cat][Duser][Dname]+0.1) then
+					CastsBuffer[1][cat][Duser][Dname] = time
 					path[22] = path[22] + 1
 				end
 			else
-				CastsBuffer[1][Duser][Dname] = time
+				CastsBuffer[1][cat][Duser][Dname] = time
 				path[22] = path[22] + 1
 			end
 		else
-			CastsBuffer[1][Duser] = {}
-			CastsBuffer[1][Duser][Dname] = time
+			CastsBuffer[1][cat][Duser] = {}
+			CastsBuffer[1][cat][Duser][Dname] = time
 			path[22] = path[22] + 1
 		end
 		path[1] = path[1] + Dhit
@@ -905,19 +908,19 @@ function DPSMate.DB:DamageTaken(Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, Ddodge
 		local path = DPSMateDamageTaken[cat][DPSMateUser[Duser][1]][DPSMateUser[cause][1]][DPSMateAbility[Dname][1]]
 		-- Casts evaluation
 		local time = GT()
-		if CastsBuffer[2][Duser] then
-			if CastsBuffer[2][Duser][Dname] then
-				if time>=(CastsBuffer[2][Duser][Dname]+0.1) then
-					CastsBuffer[2][Duser][Dname] = time
+		if CastsBuffer[2][cat][Duser] then
+			if CastsBuffer[2][cat][Duser][Dname] then
+				if time>=(CastsBuffer[2][cat][Duser][Dname]+0.1) then
+					CastsBuffer[2][cat][Duser][Dname] = time
 					path[19] = path[19] + 1
 				end
 			else
-				CastsBuffer[2][Duser][Dname] = time
+				CastsBuffer[2][cat][Duser][Dname] = time
 				path[19] = path[19] + 1
 			end
 		else
-			CastsBuffer[2][Duser] = {}
-			CastsBuffer[2][Duser][Dname] = time
+			CastsBuffer[2][cat][Duser] = {}
+			CastsBuffer[2][cat][Duser][Dname] = time
 			path[19] = path[19] + 1
 		end
 		path[1] = path[1] + Dhit
@@ -928,7 +931,6 @@ function DPSMate.DB:DamageTaken(Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, Ddodge
 		path[11] = path[11] + Ddodge
 		path[12] = path[12] + Dresist
 		path[13] = path[13] + Damount
-		path[14] = (path[14] + Damount)/2
 		if Dhit == 1 then
 			if (Damount < path[2] or path[2] == 0) then path[2] = Damount end
 			if Damount > path[3] then path[3] = Damount end
@@ -944,6 +946,7 @@ function DPSMate.DB:DamageTaken(Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, Ddodge
 		end
 		DPSMateDamageTaken[cat][DPSMateUser[Duser][1]]["i"] = DPSMateDamageTaken[cat][DPSMateUser[Duser][1]]["i"] + Damount
 		if Damount > 0 then 
+			path[14] = (path[14] + Damount)/2
 			local time = floor(DPSMateCombatTime[val])
 			if path["i"][time] then
 				path["i"][time] = path["i"][time] + Damount
@@ -1006,19 +1009,19 @@ function DPSMate.DB:EnemyDamage(mode, arr, Duser, Dname, Dhit, Dcrit, Dmiss, Dpa
 		local path = arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]]
 		-- Casts evaluation
 		local time = GT()
-		if CastsBuffer[3][Duser] then
-			if CastsBuffer[3][Duser][Dname] then
-				if time>=(CastsBuffer[3][Duser][Dname]+0.1) then
-					CastsBuffer[3][Duser][Dname] = time
+		if CastsBuffer[3][cat][Duser] then
+			if CastsBuffer[3][cat][Duser][Dname] then
+				if time>=(CastsBuffer[3][cat][Duser][Dname]+0.1) then
+					CastsBuffer[3][cat][Duser][Dname] = time
 					path[22] = path[22] + 1
 				end
 			else
-				CastsBuffer[3][Duser][Dname] = time
+				CastsBuffer[3][cat][Duser][Dname] = time
 				path[22] = path[22] + 1
 			end
 		else
-			CastsBuffer[3][Duser] = {}
-			CastsBuffer[3][Duser][Dname] = time
+			CastsBuffer[3][cat][Duser] = {}
+			CastsBuffer[3][cat][Duser][Dname] = time
 			path[22] = path[22] + 1
 		end
 		path[1] = path[1] + Dhit
@@ -1214,8 +1217,16 @@ end
 -- Weasel casts Frostbolt. -> Game: Can FPP absorb the FD? Yes -> Go for it. (The Power Word Shield is ignored until FPP fades)
 -- What if a shield is refreshed
 local Await = {}
+local realAbility = {
+	["Greater Fire Protection Potion"] = "Fire Protection",
+	["Greater Frost Protection Potion"] = "Frost Protection",
+	["Greater Nature Protection Potion"] = "Nature Protection",
+	["Greater Holy Protection Potion"] = "Holy Protection",
+	["Greater Shadow Protection Potion"] = "Shadow Protection",
+	["Greater Arcane Protection Potion"] = "Arcane Protection",
+}
 function DPSMate.DB:AwaitingAbsorbConfirmation(owner, ability, abilityTarget, time)
-	tinsert(Await, {owner, ability, abilityTarget, time})
+	tinsert(Await, {owner, realAbility[ability] or ability, abilityTarget, time})
 	--DPSMate:SendMessage(time)
 	--DPSMate:SendMessage("Awaiting confirmation!")
 end
@@ -1233,15 +1244,18 @@ end
 function DPSMate.DB:ConfirmAbsorbApplication(ability, abilityTarget, time)
 	--DPSMate:SendMessage(time)
 	for cat, val in pairs(Await) do
+		--DPSMate:SendMessage(ability.."=="..val[2].."////"..val[4].."<="..time.."/////"..val[3].."=="..abilityTarget)
 		if val[4]<=time and val[2]==ability then
 			if val[3]==abilityTarget then
-				self:RegisterAbsorb(val[1], val[2], val[3])
+				self:RegisterAbsorb(val[1], ability, abilityTarget)
+				--DPSMate:SendMessage("Aborb registered!")
 				tremove(Await, cat)
 				return
 			end
 		end
 	end
 	self:RegisterAbsorb(DPSMate.L["unknown"], ability, abilityTarget)
+	--DPSMate:SendMessage("Aborb registered! (Unknown) /"..ability.."/"..abilityTarget)
 end
 
 function DPSMate.DB:RegisterAbsorb(owner, ability, abilityTarget)
@@ -1267,6 +1281,7 @@ function DPSMate.DB:RegisterAbsorb(owner, ability, abilityTarget)
 			},
 		})
 	end
+	self.NeedUpdate = true
 end
 
 local broken = {}
@@ -1278,6 +1293,7 @@ function DPSMate.DB:SetUnregisterVariables(broAbsorb, ab, c)
 		broken[2] = broAbsorb
 		broken[3] = DPSMateAbility[ab][1]
 		broken[4] = DPSMateUser[c][1]
+		--DPSMate:SendMessage("Unregister Variables set")
 	end
 end
 
@@ -1296,6 +1312,7 @@ function DPSMate.DB:UnregisterAbsorb(ability, abilityTarget)
 		end
 	end
 	broken = {2,0,0,0}
+	--DPSMate:SendMessage("Absorb unregistered!")
 	self.NeedUpdate = true
 end
 
@@ -1324,8 +1341,8 @@ end
 function DPSMate.DB:GetAbsorbingShield(ability, abilityTarget, cat)
 	-- Checking for active Shields
 	local AbsorbingAbility = {}	
+	local activeShields = {}
 	if DPSMateAbsorbs[cat][DPSMateUser[abilityTarget][1]] then
-		local activeShields = {}
 		for cat, val in pairs(DPSMateAbsorbs[cat][DPSMateUser[abilityTarget][1]]) do
 			for ca, va in pairs(val) do
 				if ca~="i" then
@@ -1345,10 +1362,16 @@ function DPSMate.DB:GetAbsorbingShield(ability, abilityTarget, cat)
 		-- Checking for Shields that just absorb the ability's school
 		local AAS, ASS = {}, {}
 		for cat, val in pairs(activeShields) do
+			--DPSMate:SendMessage("Test 2 / "..DPSMate:GetAbilityById(val[1]).."//"..AbilityFlags[DPSMateAbility[ability][2]].."//"..DPSMateAbility[ability][2].."//"..self.ShieldFlags[DPSMate:GetAbilityById(val[1])].."//"..ability)
 			if self.ShieldFlags[DPSMate:GetAbilityById(val[1])]==0 then
 				AAS[cat] = {val[1],val[2]}
-			elseif self.ShieldFlags[DPSMate:GetAbilityById(val[1])]==AbilityFlags[DPSMateAbility[ability][2]] then
+				--DPSMate:SendMessage("Fired! 3")
+			elseif AbilityFlags[DPSMateAbility[ability][2]]==0 or self.ShieldFlags[DPSMate:GetAbilityById(val[1])]==AbilityFlags[DPSMateAbility[ability][2]] then
 				ASS[cat] = {val[1],val[2]}
+				--DPSMate:SendMessage("Fired! 2")
+			elseif not DPSMateAbility[ability][2] or not AbilityFlags[DPSMateAbility[ability][2]] then
+				ASS[cat] = {val[1],val[2]}
+				--DPSMate:SendMessage("Fired!")
 			end
 		end
 		
@@ -1378,6 +1401,16 @@ function DPSMate.DB:GetAbsorbingShield(ability, abilityTarget, cat)
 						end
 					end
 				end
+			else
+				if AAS then
+					for cat, val in pairs(AAS) do
+						return {cat, {val[1],val[2]}}
+					end
+				else
+					for cat, val in pairs(ASS) do
+						return {cat, {val[1],val[2]}}
+					end
+				end
 			end
 		end
 	end
@@ -1386,18 +1419,21 @@ end
 
 function DPSMate.DB:Absorb(ability, abilityTarget, incTarget)
 	if self:BuildUser(incTarget, nil) or self:BuildUser(abilityTarget, nil) or self:BuildAbility(ability, nil) then return end
+	--DPSMate:SendMessage("Absorb: "..ability.."/"..abilityTarget.."/"..incTarget)
 	for cat, val in pairs({[1]="total", [2]="current"}) do 
 		local AbsorbingAbility = self:GetAbsorbingShield(ability, abilityTarget, cat)
+		--DPSMate:SendMessage(AbsorbingAbility)
 		if AbsorbingAbility[1] then
+		--	DPSMate:SendMessage("Test 1")
 			if not DPSMateAbsorbs[cat][DPSMateUser[abilityTarget][1]][AbsorbingAbility[1]][AbsorbingAbility[2][1]][AbsorbingAbility[2][2]][DPSMateUser[incTarget][1]] then
-				DPSMateAbsorbs[cat][DPSMateUser[abilityTarget][1]][AbsorbingAbility[1]][AbsorbingAbility[2][1]][AbsorbingAbility[2][2]][DPSMateUser[incTarget][1]] = {
-					[1] = 0,
-					[2] = 0,
-				}
+				DPSMateAbsorbs[cat][DPSMateUser[abilityTarget][1]][AbsorbingAbility[1]][AbsorbingAbility[2][1]][AbsorbingAbility[2][2]][DPSMateUser[incTarget][1]] = {}
 			end
 			local path = DPSMateAbsorbs[cat][DPSMateUser[abilityTarget][1]][AbsorbingAbility[1]][AbsorbingAbility[2][1]][AbsorbingAbility[2][2]][DPSMateUser[incTarget][1]]
-			path[1] = DPSMateAbility[ability][1] 
-			path[2] = path[2]+1 
+			if path[DPSMateAbility[ability][1]] then
+				path[DPSMateAbility[ability][1]] = path[DPSMateAbility[ability][1]] + 1
+			else
+				path[DPSMateAbility[ability][1]] = 1
+			end
 			tinsert(DPSMateAbsorbs[cat][DPSMateUser[abilityTarget][1]][AbsorbingAbility[1]]["i"], {DPSMateCombatTime[val], DPSMateUser[incTarget][1], DPSMateAbility[ability][1]})
 		end
 	end
@@ -1852,7 +1888,7 @@ function DPSMate.DB:CombatTime()
 					ActiveMob = {}
 					
 					DPSMate.Parser.SendSpell = {}
-					CastsBuffer = {[1]={},[2]={},[3]={}}
+					CastsBuffer = {[1]={[1]={},[2]={}},[2]={[1]={},[2]={}},[3]={[1]={},[2]={}}}
 					LastUpdate = 0
 				end
 				

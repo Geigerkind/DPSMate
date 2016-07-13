@@ -31,17 +31,34 @@ function DPSMate.Modules.AbsorbsTaken:GetSortedTable(arr,k)
 							local PerShieldAbsorb = 0
 							for cet, vel in pairs(ve) do
 								if cet~="i" then
-									local p = 5
-									if DPSMateDamageTaken[1][cat] then
-										if DPSMateDamageTaken[1][cat][cet] then
-											if DPSMateDamageTaken[1][cat][cet][vel[1]] then
-												if DPSMateDamageTaken[1][cat][cet][vel[1]][14]~=0 then
-													p=ceil(DPSMateDamageTaken[1][cat][cet][vel[1]][14])
+									for qq,ss in vel do
+										local p = 5
+										if DPSMateDamageTaken[1][cat] then
+											--DPSMate:SendMessage("VTEST: 1")
+											if DPSMateDamageTaken[1][cat][cet] then
+												--DPSMate:SendMessage("VTEST: 2")
+												if DPSMateDamageTaken[1][cat][cet][qq] then
+												--	DPSMate:SendMessage("VTEST: 3")
+													if DPSMateDamageTaken[1][cat][cet][qq][14]~=0 then
+														p=ceil(DPSMateDamageTaken[1][cat][cet][qq][14])
+														--DPSMate:SendMessage("VALUE: "..p)
+													end
 												end
 											end
 										end
+										if DPSMateEDT[1][cat] and p==5 then
+											if DPSMateEDT[1][cat][cet] then
+													--DPSMate:SendMessage("ZERO TEST BEFORE//"..DPSMate:GetAbilityById(qq))
+												if DPSMateEDT[1][cat][cet][qq] then
+													--DPSMate:SendMessage("ZERO TEST//"..DPSMate:GetAbilityById(qq))
+													if DPSMateEDT[1][cat][cet][qq][4]~=0 then
+														p=ceil((DPSMateEDT[1][cat][cet][qq][4]+DPSMateEDT[1][cat][cet][qq][8])/2)
+													end
+												end
+											end
+										end
+										PerShieldAbsorb=PerShieldAbsorb+ss*p
 									end
-									PerShieldAbsorb=PerShieldAbsorb+vel[2]*p
 								end
 							end
 							if ve["i"][1]==1 then
@@ -87,19 +104,29 @@ function DPSMate.Modules.AbsorbsTaken:EvalTable(user, k)
 					local PerShieldAbsorb = 0
 					for ce, ve in pairs(v) do
 						if ce~="i" then
-							local p = 5
-							if DPSMateDamageTaken[1][user[1]] then
-								if DPSMateDamageTaken[1][user[1]][ce] then
-									if DPSMateDamageTaken[1][user[1]][ce][ve[1]] then
-										if DPSMateDamageTaken[1][user[1]][ce][ve[1]][14]~=0 then
-											p=ceil(DPSMateDamageTaken[1][user[1]][ce][ve[1]][14])
+							for qq,ss in ve do
+								local p = 5
+								if DPSMateDamageTaken[1][user[1]] then
+									if DPSMateDamageTaken[1][user[1]][ce] then
+										if DPSMateDamageTaken[1][user[1]][ce][qq] then
+											if DPSMateDamageTaken[1][user[1]][ce][qq][14]~=0 then
+												p=ceil(DPSMateDamageTaken[1][user[1]][ce][qq][14])
+											end
+										end
+									end
+								elseif DPSMateEDT[1][user[1]] then
+									if DPSMateEDT[1][user[1]][ce] then
+										if DPSMateEDT[1][user[1]][ce][qq] then
+											if DPSMateEDT[1][user[1]][ce][qq][4]~=0 then
+												p=ceil((DPSMateEDT[1][user[1]][ce][qq][4]+DPSMateEDT[1][user[1]][ce][qq][8])/2)
+											end
 										end
 									end
 								end
+								PerShieldAbsorb=PerShieldAbsorb+ss*p
+								if not temp[ce] then temp[ce] = {} end
+								if not temp[ce][qq] then temp[ce][qq] = ss*p else temp[ce][qq] =temp[ce][qq]+ss*p end
 							end
-							PerShieldAbsorb=PerShieldAbsorb+ve[2]*p
-							if not temp[ce] then temp[ce] = {} end
-							if not temp[ce][ve[1]] then temp[ce][ve[1]] = ve[2]*p else temp[ce][ve[1]] =temp[ce][ve[1]]+ve[2]*p end
 						end
 					end
 					if v["i"][1]==1 then
@@ -209,6 +236,10 @@ function DPSMate.Modules.AbsorbsTaken:ShowTooltip(user, k)
 		for i=1, DPSMateSettings["subviewrows"] do
 			if not a[i] then break end
 			GameTooltip:AddDoubleLine(i..". "..DPSMate:GetUserById(a[i]),c[i][1].." ("..strformat("%2.f", 100*c[i][1]/b).."%)",1,1,1,1,1,1)
+			for p=1, 3 do
+				if not c[i][2][p] then break end
+				GameTooltip:AddDoubleLine("      "..p..". "..DPSMate:GetAbilityById(c[i][2][p]),c[i][3][p][1].." ("..strformat("%.2f", 100*c[i][3][p][1]/c[i][1]).."%)",0.5,0.5,0.5,0.5,0.5,0.5)
+			end
 		end
 	end
 end
