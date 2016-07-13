@@ -138,7 +138,7 @@ function DPSMate.Modules.FriendlyFireTaken:ShowTooltip(user, k)
 end
 
 function DPSMate.Modules.FriendlyFireTaken:OpenDetails(obj, key)
-	DPSMate.Modules.DetailsFF:UpdateDetails(obj, key)
+	DPSMate.Modules.DetailsFFT:UpdateDetails(obj, key)
 end
 
 function DPSMate.Modules.FriendlyFireTaken:OpenTotalDetails(obj, key)

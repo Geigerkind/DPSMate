@@ -141,6 +141,8 @@ modules\DPSMate_Details_CCBreaker.lua
 modules\DPSMate_Details_CCBreaker.xml
 modules\DPSMate_Details_FriendlyFire.lua
 modules\DPSMate_Details_FriendlyFire.xml
+modules\DPSMate_Details_FriendlyFireTaken.lua
+modules\DPSMate_Details_FriendlyFireTaken.xml
 
 DPSMate_Frame.xml
 DPSMate_Options.xml

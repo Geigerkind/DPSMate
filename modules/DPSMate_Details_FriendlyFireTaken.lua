@@ -1,5 +1,5 @@
 -- Global Variables
-DPSMate.Modules.DetailsFF = {}
+DPSMate.Modules.DetailsFFT = {}
 
 -- Local variables
 local DetailsArr, DetailsTotal, DmgArr, DetailsUser, DetailsSelected  = {}, 0, {}, "", 1
@@ -11,13 +11,13 @@ local tinsert = table.insert
 local strformat = string.format
 local toggle, toggle3 = false, false
 
-function DPSMate.Modules.DetailsFF:UpdateDetails(obj, key)
+function DPSMate.Modules.DetailsFFT:UpdateDetails(obj, key)
 	curKey = key
 	db, cbt = DPSMate:GetMode(key)
 	DetailsUser = obj.user
-	DPSMate_Details_FF_Title:SetText(DPSMate.L["ffby"]..obj.user)
+	DPSMate_Details_FFT_Title:SetText(DPSMate.L["fftby"]..obj.user)
 	DetailsArr, DetailsTotal, DmgArr = DPSMate.RegistredModules[DPSMateSettings["windows"][curKey]["CurMode"]]:EvalTable(DPSMateUser[DetailsUser], curKey)
-	DPSMate_Details_FF:Show()
+	DPSMate_Details_FFT:Show()
 	self:ScrollFrame_Update()
 	self:SelectCreatureButton(1)
 	self:SelectDetailsButton(1,1)
@@ -28,10 +28,10 @@ function DPSMate.Modules.DetailsFF:UpdateDetails(obj, key)
 	end
 end
 
-function DPSMate.Modules.DetailsFF:ScrollFrame_Update()
+function DPSMate.Modules.DetailsFFT:ScrollFrame_Update()
 	local line, lineplusoffset
-	local path = "DPSMate_Details_FF_LogCreature"
-	local obj = _G(path.."_ScrollFrame")
+	local path = "DPSMate_Details_FFT_LogCreature"
+	local obj = DPSMate_Details_FFT_LogCreature_ScrollFrame
 	local pet, len = "", DPSMate:TableLength(DetailsArr)
 	FauxScrollFrame_Update(obj,len,10,24)
 	for line=1,10 do
@@ -61,12 +61,11 @@ function DPSMate.Modules.DetailsFF:ScrollFrame_Update()
 	end
 end
 
-function DPSMate.Modules.DetailsFF:SelectCreatureButton(i)
+function DPSMate.Modules.DetailsFFT:SelectCreatureButton(i)
 	local line, lineplusoffset
-	local path = "DPSMate_Details_FF_Log"
+	local path = "DPSMate_Details_FFT_Log"
 	local obj = _G(path.."_ScrollFrame")
-	obj.index = i + FauxScrollFrame_GetOffset(DPSMate_Details_FF_LogCreature_ScrollFrame)
-	DetailsSelected = obj.index
+	obj.index = i + FauxScrollFrame_GetOffset(DPSMate_Details_FFT_LogCreature_ScrollFrame)
 	local len = DPSMate:TableLength(DmgArr[i][2])
 	FauxScrollFrame_Update(obj,len,10,24)
 	for line=1,10 do
@@ -91,10 +90,11 @@ function DPSMate.Modules.DetailsFF:SelectCreatureButton(i)
 		_G(path.."_ScrollButton1_selected"):Show()
 	end
 	for p=1, 10 do
-		_G("DPSMate_Details_FF_LogCreature_ScrollButton"..p.."_selected"):Hide()
+		_G("DPSMate_Details_FFT_LogCreature_ScrollButton"..p.."_selected"):Hide()
 	end
-	_G("DPSMate_Details_FF_LogCreature_ScrollButton"..i.."_selected"):Show()
-	DPSMate.Modules.DetailsFF:SelectDetailsButton(i,1)
+	_G("DPSMate_Details_FFT_LogCreature_ScrollButton"..i.."_selected"):Show()
+	DPSMate.Modules.DetailsFFT:SelectDetailsButton(i,1)
+	DetailsSelected = obj.index
 	if toggle3 then
 		if toggle then
 			self:UpdateStackedGraph()
@@ -104,79 +104,80 @@ function DPSMate.Modules.DetailsFF:SelectCreatureButton(i)
 	end
 end
 
-function DPSMate.Modules.DetailsFF:SelectDetailsButton(p,i)
-	local obj = DPSMate_Details_FF_Log_ScrollFrame
+function DPSMate.Modules.DetailsFFT:SelectDetailsButton(p,i)
+	local obj = DPSMate_Details_FFT_Log_ScrollFrame
 	local lineplusoffset = i + FauxScrollFrame_GetOffset(obj)
+	
 	for p=1, 10 do
-		_G("DPSMate_Details_FF_Log_ScrollButton"..p.."_selected"):Hide()
+		_G("DPSMate_Details_FFT_Log_ScrollButton"..p.."_selected"):Hide()
 	end
 	-- Performance?
 	local ability = tonumber(DmgArr[p][2][lineplusoffset])
 	local creature = tonumber(DetailsArr[p])
-	_G("DPSMate_Details_FF_Log_ScrollButton"..i.."_selected"):Show()
+	_G("DPSMate_Details_FFT_Log_ScrollButton"..i.."_selected"):Show()
 	
-	local path = db[creature][DPSMateUser[DetailsUser][1]][ability]
+	local path = db[DPSMateUser[DetailsUser][1]][creature][ability]
 	local hit, crit, miss, parry, dodge, resist, hitMin, hitMax, critMin, critMax, hitav, critav = path[1], path[5], path[9], path[10], path[11], path[12], path[2], path[3], path[6], path[7], path[4], path[8]
 	local total, max = hit+crit+miss+parry+dodge+resist, DPSMate:TMax({hit, crit, miss, parry, dodge, resist})
 	
 	-- Hit
-	_G("DPSMate_Details_FF_LogDetails_Amount2_Amount"):SetText(hit)
-	_G("DPSMate_Details_FF_LogDetails_Amount2_Percent"):SetText(ceil(100*hit/total).."%")
-	_G("DPSMate_Details_FF_LogDetails_Amount2_StatusBar"):SetValue(ceil(100*hit/max))
-	_G("DPSMate_Details_FF_LogDetails_Amount2_StatusBar"):SetStatusBarColor(0.9,0.0,0.0,1)
-	_G("DPSMate_Details_FF_LogDetails_Average2"):SetText(ceil(hitav))
-	_G("DPSMate_Details_FF_LogDetails_Min2"):SetText(hitMin)
-	_G("DPSMate_Details_FF_LogDetails_Max2"):SetText(hitMax)
+	_G("DPSMate_Details_FFT_LogDetails_Amount2_Amount"):SetText(hit)
+	_G("DPSMate_Details_FFT_LogDetails_Amount2_Percent"):SetText(ceil(100*hit/total).."%")
+	_G("DPSMate_Details_FFT_LogDetails_Amount2_StatusBar"):SetValue(ceil(100*hit/max))
+	_G("DPSMate_Details_FFT_LogDetails_Amount2_StatusBar"):SetStatusBarColor(0.9,0.0,0.0,1)
+	_G("DPSMate_Details_FFT_LogDetails_Average2"):SetText(ceil(hitav))
+	_G("DPSMate_Details_FFT_LogDetails_Min2"):SetText(hitMin)
+	_G("DPSMate_Details_FFT_LogDetails_Max2"):SetText(hitMax)
 	
 	-- Crit
-	_G("DPSMate_Details_FF_LogDetails_Amount3_Amount"):SetText(crit)
-	_G("DPSMate_Details_FF_LogDetails_Amount3_Percent"):SetText(ceil(100*crit/total).."%")
-	_G("DPSMate_Details_FF_LogDetails_Amount3_StatusBar"):SetValue(ceil(100*crit/max))
-	_G("DPSMate_Details_FF_LogDetails_Amount3_StatusBar"):SetStatusBarColor(0.0,0.9,0.0,1)
-	_G("DPSMate_Details_FF_LogDetails_Average3"):SetText(ceil(critav))
-	_G("DPSMate_Details_FF_LogDetails_Min3"):SetText(critMin)
-	_G("DPSMate_Details_FF_LogDetails_Max3"):SetText(critMax)
+	_G("DPSMate_Details_FFT_LogDetails_Amount3_Amount"):SetText(crit)
+	_G("DPSMate_Details_FFT_LogDetails_Amount3_Percent"):SetText(ceil(100*crit/total).."%")
+	_G("DPSMate_Details_FFT_LogDetails_Amount3_StatusBar"):SetValue(ceil(100*crit/max))
+	_G("DPSMate_Details_FFT_LogDetails_Amount3_StatusBar"):SetStatusBarColor(0.0,0.9,0.0,1)
+	_G("DPSMate_Details_FFT_LogDetails_Average3"):SetText(ceil(critav))
+	_G("DPSMate_Details_FFT_LogDetails_Min3"):SetText(critMin)
+	_G("DPSMate_Details_FFT_LogDetails_Max3"):SetText(critMax)
 	
 	-- Miss
-	_G("DPSMate_Details_FF_LogDetails_Amount4_Amount"):SetText(miss)
-	_G("DPSMate_Details_FF_LogDetails_Amount4_Percent"):SetText(ceil(100*miss/total).."%")
-	_G("DPSMate_Details_FF_LogDetails_Amount4_StatusBar"):SetValue(ceil(100*miss/max))
-	_G("DPSMate_Details_FF_LogDetails_Amount4_StatusBar"):SetStatusBarColor(0.0,0.0,1.0,1)
-	_G("DPSMate_Details_FF_LogDetails_Average4"):SetText("-")
-	_G("DPSMate_Details_FF_LogDetails_Min4"):SetText("-")
-	_G("DPSMate_Details_FF_LogDetails_Max4"):SetText("-")
+	_G("DPSMate_Details_FFT_LogDetails_Amount4_Amount"):SetText(miss)
+	_G("DPSMate_Details_FFT_LogDetails_Amount4_Percent"):SetText(ceil(100*miss/total).."%")
+	_G("DPSMate_Details_FFT_LogDetails_Amount4_StatusBar"):SetValue(ceil(100*miss/max))
+	_G("DPSMate_Details_FFT_LogDetails_Amount4_StatusBar"):SetStatusBarColor(0.0,0.0,1.0,1)
+	_G("DPSMate_Details_FFT_LogDetails_Average4"):SetText("-")
+	_G("DPSMate_Details_FFT_LogDetails_Min4"):SetText("-")
+	_G("DPSMate_Details_FFT_LogDetails_Max4"):SetText("-")
 	
 	-- Parry
-	_G("DPSMate_Details_FF_LogDetails_Amount5_Amount"):SetText(parry)
-	_G("DPSMate_Details_FF_LogDetails_Amount5_Percent"):SetText(ceil(100*parry/total).."%")
-	_G("DPSMate_Details_FF_LogDetails_Amount5_StatusBar"):SetValue(ceil(100*parry/max))
-	_G("DPSMate_Details_FF_LogDetails_Amount5_StatusBar"):SetStatusBarColor(1.0,1.0,0.0,1)
-	_G("DPSMate_Details_FF_LogDetails_Average5"):SetText("-")
-	_G("DPSMate_Details_FF_LogDetails_Min5"):SetText("-")
-	_G("DPSMate_Details_FF_LogDetails_Max5"):SetText("-")
+	_G("DPSMate_Details_FFT_LogDetails_Amount5_Amount"):SetText(parry)
+	_G("DPSMate_Details_FFT_LogDetails_Amount5_Percent"):SetText(ceil(100*parry/total).."%")
+	_G("DPSMate_Details_FFT_LogDetails_Amount5_StatusBar"):SetValue(ceil(100*parry/max))
+	_G("DPSMate_Details_FFT_LogDetails_Amount5_StatusBar"):SetStatusBarColor(1.0,1.0,0.0,1)
+	_G("DPSMate_Details_FFT_LogDetails_Average5"):SetText("-")
+	_G("DPSMate_Details_FFT_LogDetails_Min5"):SetText("-")
+	_G("DPSMate_Details_FFT_LogDetails_Max5"):SetText("-")
 	
 	-- Dodge
-	_G("DPSMate_Details_FF_LogDetails_Amount6_Amount"):SetText(dodge)
-	_G("DPSMate_Details_FF_LogDetails_Amount6_Percent"):SetText(ceil(100*dodge/total).."%")
-	_G("DPSMate_Details_FF_LogDetails_Amount6_StatusBar"):SetValue(ceil(100*dodge/max))
-	_G("DPSMate_Details_FF_LogDetails_Amount6_StatusBar"):SetStatusBarColor(1.0,0.0,1.0,1)
-	_G("DPSMate_Details_FF_LogDetails_Average6"):SetText("-")
-	_G("DPSMate_Details_FF_LogDetails_Min6"):SetText("-")
-	_G("DPSMate_Details_FF_LogDetails_Max6"):SetText("-")
+	_G("DPSMate_Details_FFT_LogDetails_Amount6_Amount"):SetText(dodge)
+	_G("DPSMate_Details_FFT_LogDetails_Amount6_Percent"):SetText(ceil(100*dodge/total).."%")
+	_G("DPSMate_Details_FFT_LogDetails_Amount6_StatusBar"):SetValue(ceil(100*dodge/max))
+	_G("DPSMate_Details_FFT_LogDetails_Amount6_StatusBar"):SetStatusBarColor(1.0,0.0,1.0,1)
+	_G("DPSMate_Details_FFT_LogDetails_Average6"):SetText("-")
+	_G("DPSMate_Details_FFT_LogDetails_Min6"):SetText("-")
+	_G("DPSMate_Details_FFT_LogDetails_Max6"):SetText("-")
 	
 	-- Resist
-	_G("DPSMate_Details_FF_LogDetails_Amount7_Amount"):SetText(resist)
-	_G("DPSMate_Details_FF_LogDetails_Amount7_Percent"):SetText(ceil(100*resist/total).."%")
-	_G("DPSMate_Details_FF_LogDetails_Amount7_StatusBar"):SetValue(ceil(100*resist/max))
-	_G("DPSMate_Details_FF_LogDetails_Amount7_StatusBar"):SetStatusBarColor(0.0,1.0,1.0,1)
-	_G("DPSMate_Details_FF_LogDetails_Average7"):SetText("-")
-	_G("DPSMate_Details_FF_LogDetails_Min7"):SetText("-")
-	_G("DPSMate_Details_FF_LogDetails_Max7"):SetText("-")
+	_G("DPSMate_Details_FFT_LogDetails_Amount7_Amount"):SetText(resist)
+	_G("DPSMate_Details_FFT_LogDetails_Amount7_Percent"):SetText(ceil(100*resist/total).."%")
+	_G("DPSMate_Details_FFT_LogDetails_Amount7_StatusBar"):SetValue(ceil(100*resist/max))
+	_G("DPSMate_Details_FFT_LogDetails_Amount7_StatusBar"):SetStatusBarColor(0.0,1.0,1.0,1)
+	_G("DPSMate_Details_FFT_LogDetails_Average7"):SetText("-")
+	_G("DPSMate_Details_FFT_LogDetails_Min7"):SetText("-")
+	_G("DPSMate_Details_FFT_LogDetails_Max7"):SetText("-")
 end
 
-function DPSMate.Modules.DetailsFF:UpdateLineGraph()
+function DPSMate.Modules.DetailsFFT:UpdateLineGraph()
 	if not g2 then
-		g2=DPSMate.Options.graph:CreateGraphLine("LineGraph",DPSMate_Details_FF_DiagramLine,"CENTER","CENTER",0,0,850,230)
+		g2=DPSMate.Options.graph:CreateGraphLine("LineGraph",DPSMate_Details_FFT_DiagramLine,"CENTER","CENTER",0,0,850,230)
 	end
 	if g then
 		g:Hide()
@@ -211,9 +212,9 @@ function DPSMate.Modules.DetailsFF:UpdateLineGraph()
 	g2:Show()
 end
 
-function DPSMate.Modules.DetailsFF:UpdateStackedGraph()
+function DPSMate.Modules.DetailsFFT:UpdateStackedGraph()
 	if not g then
-		g=DPSMate.Options.graph:CreateStackedGraph("StackedGraph",DPSMate_Details_FF_DiagramLine,"CENTER","CENTER",0,0,850,230)
+		g=DPSMate.Options.graph:CreateStackedGraph("StackedGraph",DPSMate_Details_FFT_DiagramLine,"CENTER","CENTER",0,0,850,230)
 		g:SetGridColor({0.5,0.5,0.5,0.5})
 		g:SetAxisDrawing(true,true)
 		g:SetAxisColor({1.0,1.0,1.0,1.0})
@@ -234,7 +235,7 @@ function DPSMate.Modules.DetailsFF:UpdateStackedGraph()
 	local temp = {}
 	local temp2 = {}
 	if toggle3 then
-		for cat, val in db[DetailsArr[DetailsSelected]][DPSMateUser[DetailsUser][1]] do
+		for cat, val in db[DPSMateUser[DetailsUser][1]][DetailsArr[DetailsSelected]] do
 			if cat~="i" and val["i"] then
 				for c, v in val["i"] do
 					local key = tonumber(strformat("%.1f", c))
@@ -265,9 +266,9 @@ function DPSMate.Modules.DetailsFF:UpdateStackedGraph()
 			end
 		end	
 	else
-		for cat, val in db do
-			if DPSMate:TContains(DetailsArr,cat) and val[DPSMateUser[DetailsUser][1]] then
-				for ca, va in val[DPSMateUser[DetailsUser][1]] do
+		for cat, val in db[DPSMateUser[DetailsUser][1]] do
+			if DPSMate:TContains(DetailsArr,cat) then
+				for ca, va in val do
 					if ca~="i" and va["i"] then
 						for c, v in va["i"] do
 							local key = tonumber(strformat("%.1f", c))
@@ -359,31 +360,31 @@ function DPSMate.Modules.DetailsFF:UpdateStackedGraph()
 	g:Show()
 end
 
-function DPSMate.Modules.DetailsFF:CreateGraphTable()
+function DPSMate.Modules.DetailsFFT:CreateGraphTable()
 	local lines = {}
 	for i=1, 8 do
 		-- Horizontal
-		lines[i] = DPSMate.Options.graph:DrawLine(DPSMate_Details_FF_Log, 252, 270-i*30, 617, 270-i*30, 20, {0.5,0.5,0.5,0.5}, "BACKGROUND")
+		lines[i] = DPSMate.Options.graph:DrawLine(DPSMate_Details_FFT_Log, 252, 270-i*30, 617, 270-i*30, 20, {0.5,0.5,0.5,0.5}, "BACKGROUND")
 		lines[i]:Show()
 	end
 	-- Vertical
-	lines[9] = DPSMate.Options.graph:DrawLine(DPSMate_Details_FF_Log, 302, 260, 302, 15, 20, {0.5,0.5,0.5,0.5}, "BACKGROUND")
+	lines[9] = DPSMate.Options.graph:DrawLine(DPSMate_Details_FFT_Log, 302, 260, 302, 15, 20, {0.5,0.5,0.5,0.5}, "BACKGROUND")
 	lines[9]:Show()
 	
-	lines[10] = DPSMate.Options.graph:DrawLine(DPSMate_Details_FF_Log, 437, 260, 437, 15, 20, {0.5,0.5,0.5,0.5}, "BACKGROUND")
+	lines[10] = DPSMate.Options.graph:DrawLine(DPSMate_Details_FFT_Log, 437, 260, 437, 15, 20, {0.5,0.5,0.5,0.5}, "BACKGROUND")
 	lines[10]:Show()
 	
-	lines[11] = DPSMate.Options.graph:DrawLine(DPSMate_Details_FF_Log, 497, 260, 497, 15, 20, {0.5,0.5,0.5,0.5}, "BACKGROUND")
+	lines[11] = DPSMate.Options.graph:DrawLine(DPSMate_Details_FFT_Log, 497, 260, 497, 15, 20, {0.5,0.5,0.5,0.5}, "BACKGROUND")
 	lines[11]:Show()
 	
-	lines[12] = DPSMate.Options.graph:DrawLine(DPSMate_Details_FF_Log, 557, 260, 557, 15, 20, {0.5,0.5,0.5,0.5}, "BACKGROUND")
+	lines[12] = DPSMate.Options.graph:DrawLine(DPSMate_Details_FFT_Log, 557, 260, 557, 15, 20, {0.5,0.5,0.5,0.5}, "BACKGROUND")
 	lines[12]:Show()
 end
 
-function DPSMate.Modules.DetailsFF:SortLineTable(arr, b)
+function DPSMate.Modules.DetailsFFT:SortLineTable(arr, b)
 	local newArr = {}
 	if b then
-		for cat, val in arr[b][DPSMateUser[DetailsUser][1]] do
+		for cat, val in arr[DPSMateUser[DetailsUser][1]][b] do
 			if cat~="i" and val["i"] then
 				for c,v in val["i"] do
 					local i = 1
@@ -403,26 +404,22 @@ function DPSMate.Modules.DetailsFF:SortLineTable(arr, b)
 			end
 		end	
 	else
-		for cat, val in arr do
-			if val[DPSMateUser[DetailsUser][1]] then
-				if DPSMateUser[DPSMate:GetUserById(cat)][3] == DPSMateUser[DetailsUser][3] and DPSMateUser[DetailsUser][1] then
-					for ca, va in val[DPSMateUser[DetailsUser][1]] do
-						if ca~="i" and va["i"] then
-							for c,v in va["i"] do
-								local i = 1
-								while true do
-									if not newArr[i] then
-										tinsert(newArr, i, {c,v})
-										break
-									else
-										if c<=newArr[i][1] then
-											tinsert(newArr, i, {c,v})
-											break
-										end
-									end
-									i = i +1
+		for cat, val in arr[DPSMateUser[DetailsUser][1]] do
+			for ca, va in val do
+				if ca~="i" and va["i"] then
+					for c,v in va["i"] do
+						local i = 1
+						while true do
+							if not newArr[i] then
+								tinsert(newArr, i, {c,v})
+								break
+							else
+								if c<=newArr[i][1] then
+									tinsert(newArr, i, {c,v})
+									break
 								end
 							end
+							i = i +1
 						end
 					end
 				end
@@ -432,11 +429,11 @@ function DPSMate.Modules.DetailsFF:SortLineTable(arr, b)
 	return newArr
 end
 
-function DPSMate.Modules.DetailsFF:GetSummarizedTable(arr,b)
+function DPSMate.Modules.DetailsFFT:GetSummarizedTable(arr,b)
 	return DPSMate.Sync:GetSummarizedTable(self:SortLineTable(arr,b))
 end
 
-function DPSMate.Modules.DetailsFF:ToggleMode()
+function DPSMate.Modules.DetailsFFT:ToggleMode()
 	if toggle then
 		self:UpdateLineGraph()
 		toggle=false
@@ -446,7 +443,7 @@ function DPSMate.Modules.DetailsFF:ToggleMode()
 	end
 end
 
-function DPSMate.Modules.DetailsFF:ToggleIndividual()
+function DPSMate.Modules.DetailsFFT:ToggleIndividual()
 	if toggle3 then
 		toggle3 = false
 	else
