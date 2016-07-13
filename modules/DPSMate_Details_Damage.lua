@@ -220,6 +220,7 @@ function DPSMate.Modules.DetailsDamage:SelectDetailsButton(i)
 	local hit, crit, miss, parry, dodge, resist, hitMin, hitMax, critMin, critMax, hitav, critav, glance, glanceMin, glanceMax, glanceav, block, blockMin, blockMax, blockav = path[1], path[5], path[9], path[10], path[11], path[12], path[2], path[3], path[6], path[7], path[4], path[8], path[14], path[15], path[16], path[17], path[18], path[19], path[20], path[21]
 	local total, max = hit+crit+miss+parry+dodge+resist+glance+block, DPSMate:TMax({hit, crit, miss, parry, dodge, resist, glance, block})
 	
+	DPSMate_Details_LogDetails_Casts:SetText("C: "..path[22])
 	-- Block
 	_G("DPSMate_Details_LogDetails_Amount0_Amount"):SetText(block)
 	_G("DPSMate_Details_LogDetails_Amount0_Percent"):SetText(ceil(100*block/total).."%")

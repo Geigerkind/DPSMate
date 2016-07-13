@@ -663,6 +663,13 @@ if (GetLocale() == "deDE") then
 			end
 			return
 		end
+		for a,b in strgfind(msg, "Ihr bekommt (%d+) Mana durch (.+)%.") do -- Potential to gain energy values for class evaluation
+			if self.procs[b] then
+				DB:BuildBuffs(self.player, self.player, b, true)
+				DB:DestroyBuffs(self.player, b)
+			end
+			return
+		end
 	end
 	
 	-- Ihr erhaltet d+ Gesundheit durch X.
@@ -820,6 +827,13 @@ if (GetLocale() == "deDE") then
 		end
 		for a,b,c,d in strgfind(msg, "(.+) bekommt (%d+) Wut durch (.+)s (.+)%.") do
 			if self.procs[d] and not self.OtherExceptions[d] then
+				DB:BuildBuffs(c, a, d, true)
+				DB:DestroyBuffs(c, d)
+			end
+			return 
+		end
+		for a,b,c,d in strgfind(msg, "(.+) bekommt (%d+) Mana durch (.+)s (.+)%.") do
+			if self.procs[d] then
 				DB:BuildBuffs(c, a, d, true)
 				DB:DestroyBuffs(c, d)
 			end

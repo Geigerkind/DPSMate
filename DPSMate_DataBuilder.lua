@@ -63,6 +63,7 @@ local tinsert = table.insert
 local tremove = table.remove
 local _G = getglobal
 local player = ""
+local GT = GetTime
 
 -- Begin Functions
 
@@ -765,6 +766,7 @@ function DPSMate.DB:GetAlpha(k)
 end
 
 -- First crit/hit av value will be half if it is not the first hit actually. Didnt want to add an exception for it though. Maybe later :/
+local CastsBuffer = {[1]={},[2]={},[3]={}}
 function DPSMate.DB:DamageDone(Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, Ddodge, Dresist, Damount, Dglance, Dblock)
 	if self:BuildUser(Duser, nil) or self:BuildAbility(Dname, nil) then return end -- Attempt to fix this problem?
 	
@@ -802,10 +804,28 @@ function DPSMate.DB:DamageDone(Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, Ddodge,
 				[19] = 0,
 				[20] = 0,
 				[21] = 0,
+				[22] = 0, -- Casts
 				["i"] = {}
 			}
 		end
 		local path = DPSMateDamageDone[cat][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]]
+		-- Casts evaluation
+		local time = GT()
+		if CastsBuffer[1][Duser] then
+			if CastsBuffer[1][Duser][Dname] then
+				if time>=(CastsBuffer[1][Duser][Dname]+0.1) then
+					CastsBuffer[1][Duser][Dname] = time
+					path[22] = path[22] + 1
+				end
+			else
+				CastsBuffer[1][Duser][Dname] = time
+				path[22] = path[22] + 1
+			end
+		else
+			CastsBuffer[1][Duser] = {}
+			CastsBuffer[1][Duser][Dname] = time
+			path[22] = path[22] + 1
+		end
 		path[1] = path[1] + Dhit
 		path[5] = path[5] + Dcrit
 		path[9] = path[9] + Dmiss
@@ -878,10 +898,28 @@ function DPSMate.DB:DamageTaken(Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, Ddodge
 				[16] = 0,
 				[17] = 0,
 				[18] = 0,
+				[19] = 0,
 				["i"] = {}
 			}
 		end
 		local path = DPSMateDamageTaken[cat][DPSMateUser[Duser][1]][DPSMateUser[cause][1]][DPSMateAbility[Dname][1]]
+		-- Casts evaluation
+		local time = GT()
+		if CastsBuffer[2][Duser] then
+			if CastsBuffer[2][Duser][Dname] then
+				if time>=(CastsBuffer[2][Duser][Dname]+0.1) then
+					CastsBuffer[2][Duser][Dname] = time
+					path[19] = path[19] + 1
+				end
+			else
+				CastsBuffer[2][Duser][Dname] = time
+				path[19] = path[19] + 1
+			end
+		else
+			CastsBuffer[2][Duser] = {}
+			CastsBuffer[2][Duser][Dname] = time
+			path[19] = path[19] + 1
+		end
 		path[1] = path[1] + Dhit
 		path[5] = path[5] + Dcrit
 		path[9] = path[9] + Dmiss
@@ -961,10 +999,28 @@ function DPSMate.DB:EnemyDamage(mode, arr, Duser, Dname, Dhit, Dcrit, Dmiss, Dpa
 				[19] = 0,
 				[20] = 0,
 				[21] = 0,
+				[22] = 0,
 				["i"] = {}
 			}
 		end
 		local path = arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]]
+		-- Casts evaluation
+		local time = GT()
+		if CastsBuffer[3][Duser] then
+			if CastsBuffer[3][Duser][Dname] then
+				if time>=(CastsBuffer[3][Duser][Dname]+0.1) then
+					CastsBuffer[3][Duser][Dname] = time
+					path[22] = path[22] + 1
+				end
+			else
+				CastsBuffer[3][Duser][Dname] = time
+				path[22] = path[22] + 1
+			end
+		else
+			CastsBuffer[3][Duser] = {}
+			CastsBuffer[3][Duser][Dname] = time
+			path[22] = path[22] + 1
+		end
 		path[1] = path[1] + Dhit
 		path[5] = path[5] + Dcrit
 		path[9] = path[9] + Dmiss
@@ -1796,6 +1852,7 @@ function DPSMate.DB:CombatTime()
 					ActiveMob = {}
 					
 					DPSMate.Parser.SendSpell = {}
+					CastsBuffer = {[1]={},[2]={},[3]={}}
 					LastUpdate = 0
 				end
 				

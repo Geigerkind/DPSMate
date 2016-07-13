@@ -107,7 +107,7 @@ function DPSMate.Modules.DetailsDamageTaken:SelectCreatureButton(i)
 end
 
 function DPSMate.Modules.DetailsDamageTaken:SelectDetailsButton(p,i)
-	local obj = _G("DPSMate_Details_DamageTaken_Log_ScrollFrame")
+	local obj = DPSMate_Details_DamageTaken_Log_ScrollFrame
 	local lineplusoffset = i + FauxScrollFrame_GetOffset(obj)
 	
 	for p=1, 10 do
@@ -122,6 +122,7 @@ function DPSMate.Modules.DetailsDamageTaken:SelectDetailsButton(p,i)
 	local hit, crit, miss, parry, dodge, resist, hitMin, hitMax, critMin, critMax, hitav, critav, crush, crushMin, crushMax, crushav = path[1], path[5], path[9], path[10], path[11], path[12], path[2], path[3], path[6], path[7], path[4], path[8], path[15], path[16], path[17], path[18]
 	local total, max = hit+crit+miss+parry+dodge+resist+crush, DPSMate:TMax({hit, crit, miss, parry, dodge, resist, crush})
 	
+	DPSMate_Details_DamageTaken_LogDetails_Casts:SetText("C: "..path[19])
 	-- Crush
 	_G("DPSMate_Details_DamageTaken_LogDetails_Amount1_Amount"):SetText(crush)
 	_G("DPSMate_Details_DamageTaken_LogDetails_Amount1_Percent"):SetText(ceil(100*crush/total).."%")

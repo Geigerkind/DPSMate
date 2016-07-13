@@ -28,6 +28,7 @@ local BabbleSpell = AceLibrary("AceLocale-2.2"):new(MAJOR_VERSION)
 BabbleSpell:RegisterTranslations("enUS", function()
 	return {
 		-- Costum Added
+		["Torch"] = true,
 		["Major Healing Potion"] = true,
 		["Major Mana Potion"] = true,
 		["Mana Potion"] = true,
@@ -1414,6 +1415,7 @@ end)
 BabbleSpell:RegisterTranslations("deDE", function()
 	return {
 		-- Translation by Bambustreppe
+		["Torch"] = "Fackel",
 		["Major Healing Potion"] = "Erheblicher Heiltrank",
 		["Major Mana Potion"] = "Erheblicher Manatrank",
 		["Mana Potion"] = "Manatrank",
@@ -2793,6 +2795,7 @@ BabbleSpell:RegisterTranslations("frFR", function()
 		["Mana Potion"] = "Potion de mana",
 		["Restore Mana"] = "Restauration du mana",
 		["Major Rejuvenation Potion"] = "Potion de régénération majeure",
+		["Torch"] = "Torche",
 		-- Costum added
 		["Holy Strength"] = "None",
 		["Earthstrike"] = "None",
@@ -8096,6 +8099,7 @@ end)
 
 local spellIcons = {
 	-- Costum Icons
+	["Torch"] = "ability_rogue_ambush",
 	["Healing Potion"] = "inv_misc_herb_10",
 	["Major Healing Potion"] = "inv_misc_herb_mountainsilversage",
 	["Major Mana Potion"] = "inv_misc_herb_icecap",
