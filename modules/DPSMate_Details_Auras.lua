@@ -3,6 +3,7 @@ DPSMate.Modules.Auras = {}
 
 -- Local variables
 local DetailsUser = ""
+local g
 local curKey = 1
 local db, cbt = {}, 0
 local Buffpos, Debuffpos = 0, 0
@@ -237,6 +238,7 @@ function DPSMate.Modules.Auras:UpdateDetails(obj, key)
 	self:CleanTables()
 	self:UpdateBuffs()
 	self:UpdateDebuffs()
+	self:UpdateStackedGraph()
 	DPSMate_Details_Auras:Show()
 end
 
@@ -249,6 +251,37 @@ function DPSMate.Modules.Auras:CreateGraphTable(obj)
 	-- Vertical
 	DPSMate.Options.graph:DrawLine(obj, 235, 215, 235, 15, 20, {0.5,0.5,0.5,0.5}, "BACKGROUND")
 	DPSMate.Options.graph:DrawLine(obj, 300, 215, 300, 15, 20, {0.5,0.5,0.5,0.5}, "BACKGROUND")
+end
+
+function DPSMate.Modules.Auras:UpdateStackedGraph()
+	if not g then
+		g = DPSMate.Options.graph:CreateStackedGraph("StackedGraph",DPSMate_Details_Auras_DiagramLine,"CENTER","CENTER",0,0,660,170)
+		g:SetGridColor({0.5,0.5,0.5,0.5})
+		g:SetAxisDrawing(true,true)
+		g:SetAxisColor({1.0,1.0,1.0,1.0})
+		g:SetAutoScale(true)
+		g:SetYLabels(true, false)
+		g:SetXLabels(true)
+		g:Show()
+	end
+	
+	local Data1 = {}
+	local maxX, maxY = 0, 0
+	local label = {}
+	
+	for cat, val in db[DPSMateUser[DetailsUser][1]] do -- ability
+		local temp = {}
+		for ca, va in val[1] do
+			tinsert(temp, {va, 1})
+		end
+		tinsert(Data1, temp)
+		tinsert(label, DPSMate:GetAbilityById(cat))
+	end
+	
+	g:ResetData()
+	g:SetGridSpacing(800/7,10/7)
+	
+	g:AddDataSeries(Data1,{1.0,0.0,0.0,0.8}, {}, label)
 end
 
 function DPSMate.Modules.Auras:SortTable()
