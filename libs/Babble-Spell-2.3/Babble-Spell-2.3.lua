@@ -28,6 +28,11 @@ local BabbleSpell = AceLibrary("AceLocale-2.2"):new(MAJOR_VERSION)
 BabbleSpell:RegisterTranslations("enUS", function()
 	return {
 		-- Costum Added
+		["Major Healing Potion"] = true,
+		["Major Mana Potion"] = true,
+		["Mana Potion"] = true,
+		["Restore Mana"] = true,
+		["Major Rejuvenation Potion"] = true,
 		["Holy Strength"] = true,
 		["Earthstrike"] = true,
 		["Rogue Armor Energize"] = true,
@@ -365,6 +370,7 @@ BabbleSpell:RegisterTranslations("enUS", function()
 		["Chromatic Protection: Nature"] = true,
 		["Freeze"] = true,
 		["Shield Charge"] = true,
+		["Healing Potion"] = true,
 		
 		-- Original spells
 		["Abolish Disease"] = true,
@@ -1408,6 +1414,11 @@ end)
 BabbleSpell:RegisterTranslations("deDE", function()
 	return {
 		-- Translation by Bambustreppe
+		["Major Healing Potion"] = "Erheblicher Heiltrank",
+		["Major Mana Potion"] = "Erheblicher Manatrank",
+		["Mana Potion"] = "Manatrank",
+		["Restore Mana"] = "Mana wiederherstellen",
+		["Major Rejuvenation Potion"] = "Erheblicher Verjüngungstrank",
 		["Holy Strength"] = "Heilige Stärke",
 		["Earthstrike"] = "Erdschlag",
 		["Rogue Armor Energize"] = "Energiegeladene Rüstung des Schurken",
@@ -1744,6 +1755,7 @@ BabbleSpell:RegisterTranslations("deDE", function()
 		["Chromatic Protection: Nature"] = "Chromatischer Schutz: Natur",
 		["Freeze"] = "Eiskälte",
 		["Shield Charge"] = "Schildansturm",
+		["Healing Potion"] = "Heiltrank",
 		
 		-- Original
 		["Abolish Disease"] = "Krankheit aufheben",
@@ -2775,6 +2787,12 @@ end)
 
 BabbleSpell:RegisterTranslations("frFR", function()
 	return {
+		["Healing Potion"] = "Potion de soins",
+		["Major Healing Potion"] = "Potion de soins majeure",
+		["Major Mana Potion"] = "Potion de mana majeure",
+		["Mana Potion"] = "Potion de mana",
+		["Restore Mana"] = "Restauration du mana",
+		["Major Rejuvenation Potion"] = "Potion de régénération majeure",
 		-- Costum added
 		["Holy Strength"] = "None",
 		["Earthstrike"] = "None",
@@ -8078,6 +8096,12 @@ end)
 
 local spellIcons = {
 	-- Costum Icons
+	["Healing Potion"] = "inv_misc_herb_10",
+	["Major Healing Potion"] = "inv_misc_herb_mountainsilversage",
+	["Major Mana Potion"] = "inv_misc_herb_icecap",
+	["Mana Potion"] = "inv_misc_herb_icecap",
+	["Restore Mana"] = "inv_misc_herb_icecap",
+	["Major Rejuvenation Potion"] = "inv_misc_herb_sansamroot",
 	["Holy Strength"] = "spell_holy_blessingofstrength",
 	["Earthstrike"] = "spell_nature_abolishmagic", 
 	["Rogue Armor Energize"] = "trade_engineering",

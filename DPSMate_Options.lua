@@ -1395,7 +1395,7 @@ function DPSMate.Options:ReportUserDetails(obj, channel, name)
 		chn = "CHANNEL"; index = GetChannelName(channel)
 	end
 	SendChatMessage(DPSMate.L["name"].." - "..DPSMate.L["reportof"].." "..user.."'s ".._G("DPSMate_"..DPSMateSettings["windows"][Key]["name"].."_Head_Font"):GetText().." - "..DPSMate:GetModeName(Key).." - "..b, chn, nil, index)
-	for i=1, 5 do
+	for i=1, 10 do
 		if (not a[i]) then break end
 		local p
 		if type(c[i])=="table" then p = c[i][1] else p = c[i] end

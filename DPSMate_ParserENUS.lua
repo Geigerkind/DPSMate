@@ -489,6 +489,9 @@ function DPSMate.Parser:SpellSelfBuff(msg)
 		end
 		DB:Healing(1, DPSMateTHealing, self.player, a, 1, 0, t[2], t[1] or b)
 		DB:DeathHistory(t[1] or b, self.player, a, t[2], 1, 0, 1, 0)
+		if self.procs[a] then
+			DB:BuildBuffs(self.player, self.player, a, true)
+		end
 		return
 	end
 	for a,b in strgfind(msg, "You gain (%d+) Energy from (.+)%.") do -- Potential to gain energy values for class evaluation
@@ -503,6 +506,13 @@ function DPSMate.Parser:SpellSelfBuff(msg)
 	end
 	for a,b in strgfind(msg, "You gain (%d+) Rage from (.+)%.") do
 		if self.procs[b] and not self.OtherExceptions[b] then
+			DB:BuildBuffs(self.player, self.player, b, true)
+			DB:DestroyBuffs(self.player, b)
+		end
+		return
+	end	
+	for a,b in strgfind(msg, "You gain (%d+) Mana from (.+)%.") do
+		if self.procs[b] then
 			DB:BuildBuffs(self.player, self.player, b, true)
 			DB:DestroyBuffs(self.player, b)
 		end
@@ -657,6 +667,9 @@ function DPSMate.Parser:SpellHostilePlayerBuff(msg)
 		end
 		DB:Healing(1, DPSMateTHealing, a, b, 1, 0, t[1], t[2] or c)
 		DB:DeathHistory(t[2] or c, a, b, t[1], 1, 0, 1, 0)
+		if self.procs[b] then
+			DB:BuildBuffs(a, c, b, true)
+		end
 		return
 	end
 	for a,b,c,d in strgfind(msg, "(.+) gains (%d+) Energy from (.+)'s (.+)%.") do
@@ -671,6 +684,13 @@ function DPSMate.Parser:SpellHostilePlayerBuff(msg)
 	end
 	for a,b,c,d in strgfind(msg, "(.+) gains (%d+) Rage from (.+)'s (.+)%.") do
 		if self.procs[d] and not self.OtherExceptions[d] then
+			DB:BuildBuffs(c, a, d, true)
+			DB:DestroyBuffs(c, d)
+		end
+		return 
+	end
+	for a,b,c,d in strgfind(msg, "(.+) gains (%d+) Mana from (.+)'s (.+)%.") do
+		if self.procs[d] then
 			DB:BuildBuffs(c, a, d, true)
 			DB:DestroyBuffs(c, d)
 		end

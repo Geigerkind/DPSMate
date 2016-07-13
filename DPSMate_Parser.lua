@@ -52,6 +52,12 @@ DPSMate.Parser.procs = {
 	[DPSMate.BabbleSpell:GetTranslation("Battle Squawk")] = true,
 	[DPSMate.BabbleSpell:GetTranslation("Devilsaur Fury")] = true,
 	[DPSMate.BabbleSpell:GetTranslation("Furious Howl")] = true,
+	[DPSMate.BabbleSpell:GetTranslation("Healing Potion")] = true,
+	[DPSMate.BabbleSpell:GetTranslation("Major Rejuvenation Potion")] = true,
+	[DPSMate.BabbleSpell:GetTranslation("Mana Potion")] = true,
+	[DPSMate.BabbleSpell:GetTranslation("Restore Mana")] = true,
+	[DPSMate.BabbleSpell:GetTranslation("Dreamless Sleep")] = true,
+	
 	
 	-- Rogue
 	[DPSMate.BabbleSpell:GetTranslation("Slice and Dice")] = true,
