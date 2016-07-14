@@ -28,6 +28,12 @@ local BabbleSpell = AceLibrary("AceLocale-2.3"):new(MAJOR_VERSION)
 BabbleSpell:RegisterTranslations("enUS", function()
 	return {
 		-- Costum Added
+		["Greater Fire Protection Potion"] = true,
+		["Greater Nature Protection Potion"] = true,
+		["Greater Shadow Protection Potion"] = true,
+		["Greater Holy Protection Potion"] = true,
+		["Greater Frost Protection Potion"] = true,
+		["Greater Arcane Protection Potion"] = true,
 		["Wild Polymorph"] = true,
 		["Silithyst"] = true,
 		["Torch"] = true,
@@ -1417,6 +1423,12 @@ end)
 BabbleSpell:RegisterTranslations("deDE", function()
 	return {
 		-- Translation by Bambustreppe
+		["Greater Fire Protection Potion"] = "Großer Feuerschutztrank",
+		["Greater Nature Protection Potion"] = "Großer Naturschutztrank",
+		["Greater Shadow Protection Potion"] = "Großer Schattenschutztrank",
+		["Greater Holy Protection Potion"] = "Großer Heiligschutztrank",
+		["Greater Frost Protection Potion"] = "Großer Frostschutztrank",
+		["Greater Arcane Protection Potion"] = "Großer Arkanschutztrank",
 		["Wild Polymorph"] = "Wilde Verwandlung",
 		["Silithyst"] = "Silithyst",
 		["Torch"] = "Fackel",
@@ -2803,6 +2815,12 @@ BabbleSpell:RegisterTranslations("frFR", function()
 		["Wild Polymorph"] = "Métamorphose sauvage",
 		["Silithyst"] = "Silithyste",
 		-- Costum added
+		["Greater Fire Protection Potion"] = "None",
+		["Greater Nature Protection Potion"] = "None",
+		["Greater Shadow Protection Potion"] = "None",
+		["Greater Holy Protection Potion"] = "None",
+		["Greater Frost Protection Potion"] = "None",
+		["Greater Arcane Protection Potion"] = "None",
 		["Holy Strength"] = "None",
 		["Earthstrike"] = "None",
 		["Rogue Armor Energize"] = "None",

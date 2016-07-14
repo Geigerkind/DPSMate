@@ -1218,12 +1218,12 @@ end
 -- What if a shield is refreshed
 local Await = {}
 local realAbility = {
-	["Greater Fire Protection Potion"] = "Fire Protection",
-	["Greater Frost Protection Potion"] = "Frost Protection",
-	["Greater Nature Protection Potion"] = "Nature Protection",
-	["Greater Holy Protection Potion"] = "Holy Protection",
-	["Greater Shadow Protection Potion"] = "Shadow Protection",
-	["Greater Arcane Protection Potion"] = "Arcane Protection",
+	[DPSMate.BabbleSpell:GetTranslation("Greater Fire Protection Potion")] = DPSMate.BabbleSpell:GetTranslation("Fire Protection"),
+	[DPSMate.BabbleSpell:GetTranslation("Greater Frost Protection Potion")] = DPSMate.BabbleSpell:GetTranslation("Frost Protection"),
+	[DPSMate.BabbleSpell:GetTranslation("Greater Nature Protection Potion")] = DPSMate.BabbleSpell:GetTranslation("Nature Protection"),
+	[DPSMate.BabbleSpell:GetTranslation("Greater Holy Protection Potion")] = DPSMate.BabbleSpell:GetTranslation("Holy Protection"),
+	[DPSMate.BabbleSpell:GetTranslation("Greater Shadow Protection Potion")] = DPSMate.BabbleSpell:GetTranslation("Shadow Protection"),
+	[DPSMate.BabbleSpell:GetTranslation("Greater Arcane Protection Potion")] = DPSMate.BabbleSpell:GetTranslation("Arcane Protection"),
 }
 function DPSMate.DB:AwaitingAbsorbConfirmation(owner, ability, abilityTarget, time)
 	tinsert(Await, {owner, realAbility[ability] or ability, abilityTarget, time})
