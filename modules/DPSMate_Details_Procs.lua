@@ -29,23 +29,6 @@ local specialSnowflakes = {
 		[DPSMate.BabbleSpell:GetTranslation("Fireball")] = true,
 		[DPSMate.BabbleSpell:GetTranslation("Frostbolt")] = true,
 	},
-	[DPSMate.BabbleSpell:GetTranslation("Aura of the Blue Dragon")] = {
-		[DPSMate.BabbleSpell:GetTranslation("Flash Heal")] = true,
-		[DPSMate.BabbleSpell:GetTranslation("Greater Heal")] = true,
-		[DPSMate.BabbleSpell:GetTranslation("Heal")] = true,
-		[DPSMate.BabbleSpell:GetTranslation("Prayer of Healing")] = true,
-		[DPSMate.BabbleSpell:GetTranslation("Lesser Heal")] = true,
-		[DPSMate.BabbleSpell:GetTranslation("Desperate Prayer")] = true,
-		[DPSMate.BabbleSpell:GetTranslation("Flash of Light")] = true,
-		[DPSMate.BabbleSpell:GetTranslation("Holy Light")] = true,
-		[DPSMate.BabbleSpell:GetTranslation("Holy Shock")] = true,
-		[DPSMate.BabbleSpell:GetTranslation("Regrowth")] = true,
-		[DPSMate.BabbleSpell:GetTranslation("Swiftmend")] = true,
-		[DPSMate.BabbleSpell:GetTranslation("Healing Touch")] = true,
-		[DPSMate.BabbleSpell:GetTranslation("Chain Heal")] = true,
-		[DPSMate.BabbleSpell:GetTranslation("Healing Wave")] = true,
-		[DPSMate.BabbleSpell:GetTranslation("Lesser Healing Wave")] = true,
-	},
 	[DPSMate.BabbleSpell:GetTranslation("Head Rush")] = {
 		[DPSMate.BabbleSpell:GetTranslation("Sinister Strike")] = true,
 		[DPSMate.BabbleSpell:GetTranslation("Backstab")] = true,
@@ -64,14 +47,6 @@ local specialSnowflakes = {
 		[DPSMate.BabbleSpell:GetTranslation("Fireball")] = true,
 		[DPSMate.BabbleSpell:GetTranslation("Frostbolt")] = true,
 	},
-	[DPSMate.BabbleSpell:GetTranslation("Epiphany")] = {
-		[DPSMate.BabbleSpell:GetTranslation("Flash Heal")] = true,
-		[DPSMate.BabbleSpell:GetTranslation("Greater Heal")] = true,
-		[DPSMate.BabbleSpell:GetTranslation("Heal")] = true,
-		[DPSMate.BabbleSpell:GetTranslation("Prayer of Healing")] = true,
-		[DPSMate.BabbleSpell:GetTranslation("Lesser Heal")] = true,
-		[DPSMate.BabbleSpell:GetTranslation("Desperate Prayer")] = true,
-	},
 	[DPSMate.BabbleSpell:GetTranslation("Clearcasting")] = {
 		[DPSMate.BabbleSpell:GetTranslation("Arcane Missiles")] = true,
 		[DPSMate.BabbleSpell:GetTranslation("Fireball")] = true,
@@ -81,14 +56,6 @@ local specialSnowflakes = {
 		[DPSMate.BabbleSpell:GetTranslation("Earth Shock")] = true,
 		[DPSMate.BabbleSpell:GetTranslation("Flame Shock")] = true,
 		[DPSMate.BabbleSpell:GetTranslation("Frost Shock")] = true,
-	},
-	[DPSMate.BabbleSpell:GetTranslation("Nature's Grace")] = {
-		[DPSMate.BabbleSpell:GetTranslation("Regrowth")] = true,
-		[DPSMate.BabbleSpell:GetTranslation("Swiftmend")] = true,
-		[DPSMate.BabbleSpell:GetTranslation("Healing Touch")] = true,
-		[DPSMate.BabbleSpell:GetTranslation("Starfire")] = true,
-		[DPSMate.BabbleSpell:GetTranslation("Wrath")] = true,
-		[DPSMate.BabbleSpell:GetTranslation("Moonfire")] = true,
 	},
 	[DPSMate.BabbleSpell:GetTranslation("Battlegear of Eternal Justice")] = {
 		[DPSMate.BabbleSpell:GetTranslation("Judgement")] = true,
@@ -136,6 +103,41 @@ local specialSnowflakesHealTaken = {
 		[DPSMate.BabbleSpell:GetTranslation("Healing Wave")] = true,
 		[DPSMate.BabbleSpell:GetTranslation("Lesser Healing Wave")] = true,
 	}
+}
+local specialSnowflakesHealDone = {
+	[DPSMate.BabbleSpell:GetTranslation("Nature's Grace")] = {
+		[DPSMate.BabbleSpell:GetTranslation("Regrowth")] = true,
+		[DPSMate.BabbleSpell:GetTranslation("Swiftmend")] = true,
+		[DPSMate.BabbleSpell:GetTranslation("Healing Touch")] = true,
+		--[DPSMate.BabbleSpell:GetTranslation("Starfire")] = true,
+		--[DPSMate.BabbleSpell:GetTranslation("Wrath")] = true,
+		--[DPSMate.BabbleSpell:GetTranslation("Moonfire")] = true,
+	},
+	[DPSMate.BabbleSpell:GetTranslation("Epiphany")] = {
+		[DPSMate.BabbleSpell:GetTranslation("Flash Heal")] = true,
+		[DPSMate.BabbleSpell:GetTranslation("Greater Heal")] = true,
+		[DPSMate.BabbleSpell:GetTranslation("Heal")] = true,
+		[DPSMate.BabbleSpell:GetTranslation("Prayer of Healing")] = true,
+		[DPSMate.BabbleSpell:GetTranslation("Lesser Heal")] = true,
+		[DPSMate.BabbleSpell:GetTranslation("Desperate Prayer")] = true,
+	},
+	[DPSMate.BabbleSpell:GetTranslation("Aura of the Blue Dragon")] = {
+		[DPSMate.BabbleSpell:GetTranslation("Flash Heal")] = true,
+		[DPSMate.BabbleSpell:GetTranslation("Greater Heal")] = true,
+		[DPSMate.BabbleSpell:GetTranslation("Heal")] = true,
+		[DPSMate.BabbleSpell:GetTranslation("Prayer of Healing")] = true,
+		[DPSMate.BabbleSpell:GetTranslation("Lesser Heal")] = true,
+		[DPSMate.BabbleSpell:GetTranslation("Desperate Prayer")] = true,
+		[DPSMate.BabbleSpell:GetTranslation("Flash of Light")] = true,
+		[DPSMate.BabbleSpell:GetTranslation("Holy Light")] = true,
+		[DPSMate.BabbleSpell:GetTranslation("Holy Shock")] = true,
+		[DPSMate.BabbleSpell:GetTranslation("Regrowth")] = true,
+		[DPSMate.BabbleSpell:GetTranslation("Swiftmend")] = true,
+		[DPSMate.BabbleSpell:GetTranslation("Healing Touch")] = true,
+		[DPSMate.BabbleSpell:GetTranslation("Chain Heal")] = true,
+		[DPSMate.BabbleSpell:GetTranslation("Healing Wave")] = true,
+		[DPSMate.BabbleSpell:GetTranslation("Lesser Healing Wave")] = true,
+	},
 }
 
 function DPSMate.Modules.DetailsProcs:UpdateDetails(obj, key)
@@ -204,6 +206,14 @@ function DPSMate.Modules.DetailsProcs:GetSpecialSnowFlakeHits(ability)
 					if specialSnowflakesHealTaken[ability][DPSMate:GetAbilityById(ca)] then
 						num = num + va[2] + va[3]
 					end
+				end
+			end
+		end
+	elseif specialSnowflakesHealDone[ability] then
+		for cat, val in DPSMateTHealing[1][DPSMateUser[DetailsUser][1]] do
+			if cat~="i" then
+				if specialSnowflakesHealDone[ability][DPSMate:GetAbilityById(cat)] then
+					num = num + va[2] + va[3]
 				end
 			end
 		end

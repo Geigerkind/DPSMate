@@ -28,6 +28,8 @@ local BabbleSpell = AceLibrary("AceLocale-2.3"):new(MAJOR_VERSION)
 BabbleSpell:RegisterTranslations("enUS", function()
 	return {
 		-- Costum Added
+		["Wild Polymorph"] = true,
+		["Silithyst"] = true,
 		["Torch"] = true,
 		["Major Healing Potion"] = true,
 		["Major Mana Potion"] = true,
@@ -1415,6 +1417,8 @@ end)
 BabbleSpell:RegisterTranslations("deDE", function()
 	return {
 		-- Translation by Bambustreppe
+		["Wild Polymorph"] = "Wilde Verwandlung",
+		["Silithyst"] = "Silithyst",
 		["Torch"] = "Fackel",
 		["Major Healing Potion"] = "Erheblicher Heiltrank",
 		["Major Mana Potion"] = "Erheblicher Manatrank",
@@ -2796,6 +2800,8 @@ BabbleSpell:RegisterTranslations("frFR", function()
 		["Restore Mana"] = "Restauration du mana",
 		["Major Rejuvenation Potion"] = "Potion de régénération majeure",
 		["Torch"] = "Torche",
+		["Wild Polymorph"] = "Métamorphose sauvage",
+		["Silithyst"] = "Silithyste",
 		-- Costum added
 		["Holy Strength"] = "None",
 		["Earthstrike"] = "None",
@@ -8099,6 +8105,8 @@ end)
 
 local spellIcons = {
 	-- Costum Icons
+	["Wild Polymorph"] = "spell_nature_polymorph",
+	["Silithyst"] = "spell_holiday_tow_spicecloud",
 	["Torch"] = "ability_rogue_ambush",
 	["Healing Potion"] = "inv_misc_herb_10",
 	["Major Healing Potion"] = "inv_misc_herb_mountainsilversage",

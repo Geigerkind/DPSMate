@@ -155,6 +155,9 @@ DPSMate.Parser.procs = {
 	[DPSMate.BabbleSpell:GetTranslation("Arcane Infused")] = true,
 	[DPSMate.BabbleSpell:GetTranslation("Quick Shots")] = true,
 	[DPSMate.BabbleSpell:GetTranslation("Rapid Fire")] = true,
+	
+	-- Boss Spells
+	
 }
 
 DPSMate.Parser.BuffExceptions = {
@@ -163,6 +166,7 @@ DPSMate.Parser.BuffExceptions = {
 
 DPSMate.Parser.OtherExceptions = {
 	[DPSMate.BabbleSpell:GetTranslation("Mighty Rage")] = true,
+	[DPSMate.BabbleSpell:GetTranslation("Bloodrage")] = true,
 }
 DPSMate.Parser.DmgProcs = {
 	-- General

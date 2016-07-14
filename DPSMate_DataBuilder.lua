@@ -560,7 +560,7 @@ function DPSMate.DB:OnEvent(event)
 			DPSMateAbility = {}
 			DPSMateUser["LASTRESETDPSMATE"] = {
 				[1] = 1,
-				[2] = 30
+				[2] = DPSMate.VERSION
 			}
 			DPSMate.Options:PopUpAccept(true, true)
 		end
@@ -1754,6 +1754,8 @@ function DPSMate.DB:ConfirmBuff(target, ability, time)
 	self:BuildBuffs("Unknown", target, ability, false)
 end
 
+-- Sometimes the fade event is not fired.
+-- What if the fade event is fired after a gain event for some reason
 function DPSMate.DB:BuildBuffs(cause, target, ability, bool)
 	if self:BuildUser(target, nil) or self:BuildUser(cause, nil) or self:BuildAbility(ability, nil) then return end
 	for cat, val in pairs({[1]="total", [2]="current"}) do 
@@ -1787,14 +1789,19 @@ function DPSMate.DB:DestroyBuffs(target, ability)
 	if self:BuildUser(target, nil) or self:BuildAbility(ability, nil) then return end
 	for cat, val in pairs({[1]="total", [2]="current"}) do 
 		if not DPSMateAurasGained[cat][DPSMateUser[target][1]] then
-			self:BuildBuffs(DPSMate.L["unknown"], target, ability, false)
+			DPSMateAurasGained[cat][DPSMateUser[target][1]] = {}
 		end
 		if not DPSMateAurasGained[cat][DPSMateUser[target][1]][DPSMateAbility[ability][1]] then
-			self:BuildBuffs(DPSMate.L["unknown"], target, ability, false)
+			DPSMateAurasGained[cat][DPSMateUser[target][1]][DPSMateAbility[ability][1]] = {
+				[1] = {},
+				[2] = {},
+				[3] = {},
+				[4] = bool,
+			}
 		end
 		local TL = DPSMate:TableLength(DPSMateAurasGained[cat][DPSMateUser[target][1]][DPSMateAbility[ability][1]][2])+1
 		if not DPSMateAurasGained[cat][DPSMateUser[target][1]][DPSMateAbility[ability][1]][1][TL] then
-			self:BuildBuffs(DPSMate.L["unknown"], target, ability, false)
+			DPSMateAurasGained[cat][DPSMateUser[target][1]][DPSMateAbility[ability][1]][1][TL] = DPSMateCombatTime[val]
 		end
 		tinsert(DPSMateAurasGained[cat][DPSMateUser[target][1]][DPSMateAbility[ability][1]][2], DPSMateCombatTime[val])
 	end
