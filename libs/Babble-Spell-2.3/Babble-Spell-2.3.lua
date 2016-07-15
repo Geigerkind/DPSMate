@@ -28,6 +28,8 @@ local BabbleSpell = AceLibrary("AceLocale-2.3"):new(MAJOR_VERSION)
 BabbleSpell:RegisterTranslations("enUS", function()
 	return {
 		-- Costum Added
+		["Web"] = true,
+		["Black Sludge"] = true,
 		["Arcane Bolt"] = true,
 		["Shock"] = true,
 		["Hooked Net"] = true,
@@ -1441,6 +1443,8 @@ end)
 BabbleSpell:RegisterTranslations("deDE", function()
 	return {
 		-- Translation by Bambustreppe
+		["Web"] = "Gespinst",
+		["Black Sludge"] = "Schwarzer Schlick",
 		["Arcane Bolt"] = "Arkanblitz",
 		["Shock"] = "Schock",
 		["Hooked Net"] = "Netz mit Widerhaken",
@@ -2841,6 +2845,8 @@ end)
 
 BabbleSpell:RegisterTranslations("frFR", function()
 	return {
+		["Web"] = "Rets",
+		["Black Sludge"] = "Vase noire",
 		["Healing Potion"] = "Potion de soins",
 		["Major Healing Potion"] = "Potion de soins majeure",
 		["Major Mana Potion"] = "Potion de mana majeure",
@@ -8178,6 +8184,8 @@ end)
 
 local spellIcons = {
 	-- Costum Icons
+	["Web"] = "ability_ensnare",
+	["Black Sludge"] = "spell_shadow_callofbone",
 	["Arcane Bolt"] = "spell_arcane_starfire",
 	["Shock"] = "temp",
 	["Hooked Net"] = "ability_ensnare",
