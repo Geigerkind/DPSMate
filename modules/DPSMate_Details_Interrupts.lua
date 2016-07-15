@@ -94,7 +94,7 @@ function DPSMate.Modules.DetailsInterrupts:ScrollFrame_Update()
 		if DetailsArr[lineplusoffset] ~= nil then
 			local ability = DPSMate:GetAbilityById(DetailsArr[lineplusoffset])
 			_G(path..line.."_Name"):SetText(ability)
-			_G(path..line.."_Value"):SetText(DmgArr[lineplusoffset][1].." ("..(100*DmgArr[lineplusoffset][1]/DetailsTotal).."%)")
+			_G(path..line.."_Value"):SetText(DmgArr[lineplusoffset][1].." ("..string.format("%.2f", 100*DmgArr[lineplusoffset][1]/DetailsTotal).."%)")
 			_G(path..line.."_Icon"):SetTexture(DPSMate.BabbleSpell:GetSpellIcon(strsub(ability, 1, (strfind(ability, "%(") or 0)-1) or ability))
 			if len < 14 then
 				_G(path..line):SetWidth(235)
@@ -125,7 +125,7 @@ function DPSMate.Modules.DetailsInterrupts:SelectCreatureButton(i)
 		lineplusoffset = line + FauxScrollFrame_GetOffset(obj)
 		if DmgArr[i][2][lineplusoffset] ~= nil then
 			_G(path..line.."_Name"):SetText(DPSMate:GetUserById(DmgArr[i][2][lineplusoffset]))
-			_G(path..line.."_Value"):SetText(DmgArr[i][3][lineplusoffset][1].." ("..(100*DmgArr[i][3][lineplusoffset][1]/DmgArr[i][1]).."%)")
+			_G(path..line.."_Value"):SetText(DmgArr[i][3][lineplusoffset][1].." ("..string.format("%.2f", 100*DmgArr[i][3][lineplusoffset][1]/DmgArr[i][1]).."%)")
 			_G(path..line.."_Icon"):SetTexture("Interface\\AddOns\\DPSMate\\images\\npc")
 			if len < 14 then
 				_G(path..line):SetWidth(235)
@@ -160,7 +160,7 @@ function DPSMate.Modules.DetailsInterrupts:SelectCreatureAbilityButton(i, p)
 		if DmgArr[i][3][p][2][lineplusoffset] ~= nil then
 			local ability = DPSMate:GetAbilityById(DmgArr[i][3][p][2][lineplusoffset])
 			_G(path..line.."_Name"):SetText(ability)
-			_G(path..line.."_Value"):SetText(DmgArr[i][3][p][3][lineplusoffset].." ("..(100*DmgArr[i][3][p][3][lineplusoffset]/DmgArr[i][3][p][1]).."%)")
+			_G(path..line.."_Value"):SetText(DmgArr[i][3][p][3][lineplusoffset].." ("..string.format("%.2f", 100*DmgArr[i][3][p][3][lineplusoffset]/DmgArr[i][3][p][1]).."%)")
 			_G(path..line.."_Icon"):SetTexture(DPSMate.BabbleSpell:GetSpellIcon(strsub(ability, 1, (strfind(ability, "%(") or 0)-1) or ability))
 			if len < 14 then
 				_G(path..line):SetWidth(235)
