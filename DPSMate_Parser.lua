@@ -345,6 +345,13 @@ function DPSMate.Parser:OnLoad()
 			[2] = strlower(playerclass),
 		}
 	end
+	-- Prevent this addon from causing issues
+	if SW_FixLogString then
+		SW_FixLogString = function(str)
+			return str
+		end
+		DPSMate:SendMessage("Please disable SW_StatsFixLogStrings. This addon causes issues.")
+	end
 end
 
 function DPSMate.Parser:GetPlayerValues()
