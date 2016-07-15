@@ -1492,6 +1492,7 @@ function DPSMate.DB:ConfirmRealDispel(ability, target, time)
 	--self:Dispels("Unknown", "Unknown", target, ability)
 end
 
+-- Deprecated time component
 function DPSMate.DB:EvaluateDispel()
 	--DPSMate:SendMessage("Test 1")
 	for cat, val in ActiveHotDispel do
@@ -1500,8 +1501,10 @@ function DPSMate.DB:EvaluateDispel()
 				local check = nil
 				for q, t in ConfirmedDispel[cat] do
 					if DPSMate:TContains(DPSMate.Parser["De"..DPSMateAbility[t[1]][2]], va[2]) then
-						check = t[1]
-						tremove(ConfirmedDispel[cat], q)
+						if not check then
+							check = t[1]
+							tremove(ConfirmedDispel[cat], q)
+						end
 					end
 				end
 				if check then
@@ -1515,30 +1518,26 @@ function DPSMate.DB:EvaluateDispel()
 	for cat, val in AwaitDispel do
 		for ca, va in val do
 			if ConfirmedDispel[cat] then
-				local check = nil
-				for q, t in ConfirmedDispel[cat] do
-					if (va[3]-t[2])<=1 then
-						tremove(ConfirmedDispel[cat], q)
-						self:Dispels(va[1], va[2], cat, t[1])
-						tremove(AwaitDispel[cat], ca)
-						lastDispel = nil;
-						return
-					end
+				local q = DPSMate:TableLength(ConfirmedDispel[cat])
+				if q>0 then
+					self:Dispels(va[1], va[2], cat, ConfirmedDispel[cat][q][1])
+					tremove(ConfirmedDispel[cat], q)
+					tremove(AwaitDispel[cat], ca)
+					lastDispel = nil;
+					return
 				end
 			end
 			--DPSMate:SendMessage("Test 1")
 			if cat == DPSMate.L["unknown"] and lastDispel then
 				--DPSMate:SendMessage("Test 2")
 				if ConfirmedDispel[lastDispel] then
-					local check = nil
-					for q, t in ConfirmedDispel[lastDispel] do
-						if (va[3]-t[2])<=1 then
-							tremove(ConfirmedDispel[lastDispel], q)
-							self:Dispels(va[1], va[2], lastDispel, t[1])
-							tremove(AwaitDispel[cat], ca)
-							lastDispel = nil;
-							return
-						end
+					local q = DPSMate:TableLength(ConfirmedDispel[lastDispel])
+					if q>0 then
+						self:Dispels(va[1], va[2], lastDispel, ConfirmedDispel[lastDispel][q][1])
+						tremove(ConfirmedDispel[lastDispel], q)
+						tremove(AwaitDispel[cat], ca)
+						lastDispel = nil;
+						return
 					end
 				end
 			end
