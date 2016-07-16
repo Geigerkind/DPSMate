@@ -47,6 +47,7 @@ local Arrays = {
 	[15] = {} -- O Healing taken
 }
 local tra = DPSMate.BabbleSpell
+local npctra = DPSMate.NPCDB
 
 -- Beginn Functions
 
@@ -471,6 +472,7 @@ function DPSMate.Sync:DMGTakenStatIn(arg2, arg4)
 	t = {}
 	strgsub(arg2, "(.-),", func)
 	t[3] = tra:GetTranslation(self:Replace(t[3])) or t[3]
+	t[4] = npctra:GetTranslation(t[4]) or t[4]
 	DB:BuildAbility(t[3])
 	DB:BuildUser(t[4])
 	local abid = DPSMateAbility[t[3]][1]
@@ -486,6 +488,7 @@ end
 function DPSMate.Sync:DMGTakenAbilityIn(arg2, arg4)
 	t = {}
 	strgsub(arg2, "(.-),", func)
+	t[1] = npctra:GetTranslation(t[1]) or t[1]
 	DB:BuildUser(t[1], nil)
 	t[2] = tra:GetTranslation(self:Replace(t[2])) or t[2]
 	DB:BuildAbility(t[2], nil)
@@ -525,6 +528,7 @@ end
 function DPSMate.Sync:EDAllIn(arr, arg2, arg4)
 	t = {}
 	strgsub(arg2, "(.-),", func)
+	t[1] = npctra:GetTranslation(t[1]) or t[1]
 	DB:BuildUser(t[1], nil)
 	local userid = DPSMateUser[t[1]][1]
 	if not Arrays[arr][userid] then
@@ -538,6 +542,7 @@ end
 function DPSMate.Sync:EDStatIn(arr, arg2, arg4)
 	t = {}
 	strgsub(arg2, "(.-),", func)
+	t[1] = npctra:GetTranslation(t[1]) or t[1]
 	DB:BuildUser(t[1], nil)
 	t[4] = tra:GetTranslation(self:Replace(t[4])) or t[4]
 	DB:BuildAbility(t[4])
@@ -553,6 +558,7 @@ end
 function DPSMate.Sync:EDAbilityIn(arr, arg2, arg4)
 	t = {}
 	strgsub(arg2, "(.-),", func)
+	t[1] = npctra:GetTranslation(t[1]) or t[1]
 	DB:BuildUser(t[1], nil)
 	t[2] = tra:GetTranslation(self:Replace(t[2])) or t[2]
 	DB:BuildAbility(t[2], nil)
@@ -647,6 +653,7 @@ function DPSMate.Sync:HealingTakenStatIn(arg2, arg4, arr)
 	t = {}
 	strgsub(arg2, "(.-),", func)
 	t[3] = tra:GetTranslation(self:Replace(t[3])) or t[3]
+	t[4] = npctra:GetTranslation(t[4]) or t[4]
 	DB:BuildAbility(t[3])
 	DB:BuildUser(t[4])
 	local abid = DPSMateAbility[t[3]][1]
@@ -663,6 +670,7 @@ function DPSMate.Sync:HealingTakenAbilityIn(arg2, arg4, arr)
 	t = {}
 	strgsub(arg2, "(.-),", func)
 	DB:BuildUser(arg4, nil)
+	t[1] = npctra:GetTranslation(t[1]) or t[1]
 	DB:BuildUser(t[1], nil)
 	t[2] = tra:GetTranslation(self:Replace(t[2])) or t[2]
 	DB:BuildAbility(t[2], nil)
@@ -692,6 +700,7 @@ end
 function DPSMate.Sync:iAbsorbsIn(arg2, arg4) 
 	t = {}
 	strgsub(arg2, "(.-),", func)
+	t[1] = npctra:GetTranslation(t[1]) or t[1]
 	DB:BuildUser(t[1], nil)
 	t[2] = tra:GetTranslation(t[2]) or t[2]
 	DB:BuildAbility(t[2], nil)
@@ -720,6 +729,7 @@ end
 function DPSMate.Sync:AbsorbsStatIn(arg2, arg4)
 	t = {}
 	strgsub(arg2, "(.-),", func)
+	t[1] = npctra:GetTranslation(t[1]) or t[1]
 	DB:BuildUser(t[1], nil)
 	local userid, userid2 = DPSMateUser[arg4][1], DPSMateUser[t[1]][1]
 	if not DPSMateAbsorbs[1][DPSMateUser[arg4][1]] then return end
@@ -736,6 +746,8 @@ end
 function DPSMate.Sync:AbsorbsIn(arg2, arg4) 
 	t = {}
 	strgsub(arg2, "(.-),", func)
+	t[1] = npctra:GetTranslation(t[1]) or t[1]
+	t[4] = npctra:GetTranslation(t[4]) or t[4]
 	DB:BuildUser(t[1], nil)
 	DB:BuildUser(t[4], nil)
 	t[2] = tra:GetTranslation(t[2]) or t[2]
@@ -773,6 +785,7 @@ function DPSMate.Sync:DeathsIn(arg2, arg4)
 	t = {}
 	strgsub(arg2, "(.-),", func)
 	DB:BuildUser(arg4, nil)
+	t[3] = npctra:GetTranslation(t[3]) or t[3]
 	DB:BuildUser(t[3], nil)
 	t[4] = tra:GetTranslation(self:Replace(t[4])) or t[4]
 	DB:BuildAbility(t[4], nil)
@@ -809,6 +822,7 @@ end
 function DPSMate.Sync:InterruptsAbilityIn(arg2, arg4)
 	t = {}
 	strgsub(arg2, "(.-),", func)
+	t[2] = npctra:GetTranslation(t[2]) or t[2]
 	DB:BuildUser(t[2], nil)
 	t[1] = tra:GetTranslation(t[1]) or t[1]
 	t[3] = tra:GetTranslation(t[3]) or t[3]
@@ -839,6 +853,7 @@ end
 function DPSMate.Sync:DispelsIn(arg2, arg4)
 	t = {}
 	strgsub(arg2, "(.-),", func)
+	t[2] = npctra:GetTranslation(t[2]) or t[2]
 	DB:BuildUser(t[2], nil)
 	t[1] = tra:GetTranslation(t[1]) or t[1]
 	t[3] = tra:GetTranslation(t[3]) or t[3]
@@ -892,6 +907,7 @@ end
 function DPSMate.Sync:AurasCauseIn(arg2, arg4)
 	t = {}
 	strgsub(arg2, "(.-),", func)
+	t[2] = npctra:GetTranslation(t[2]) or t[2]
 	DB:BuildUser(t[2], nil)
 	t[1] = tra:GetTranslation(t[1]) or t[1]
 	DB:BuildAbility(t[1], nil)
@@ -1425,6 +1441,7 @@ DPSMate.Sync.Exec = {
 		strgsub(arg2, "(.-),", func) -- name, aura, target, time
 		t[3] = GetTime()
 		t[1] = tra:GetTranslation(t[1]) or t[1]
+		t[2] = npctra:GetTranslation(t[2]) or t[2]
 		if DPSMate.Parser.Kicks[t[1]] then DB:AwaitAfflictedStun(arg4, t[1], t[2], t[3]) end
 		if DPSMate.Parser.HotDispels[t[1]] then DB:AwaitHotDispel(t[1], t[2], arg4, t[3]) end
 		DB:AwaitingBuff(arg4, t[1], t[2], t[3])

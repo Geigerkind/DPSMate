@@ -15,6 +15,7 @@ libs\GraphLib\Graph-1.0\Graph-1.0.lua
 libs\AceLocale\AceLocale-2.2.lua
 libs\Babble-Spell-2.3\Babble-Spell-2.3.lua
 libs\Babble-Boss-2.3\Babble-Boss-2.3.lua
+libs\NPCDB-1.0\NPCDB-1.0.lua
 
 DPSMate.lua
 

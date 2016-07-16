@@ -1763,7 +1763,7 @@ BabbleBoss:Debug()
 BabbleBoss:SetStrictness(true)
 
 function BabbleBoss:Contains(name)
-	if bosses[name] then
+	if bosses[name] or bosses[self:HasReverseTranslation(name) and self:GetReverseTranslation(name) or false] then
 		return true
 	end
 	return false

@@ -157,7 +157,19 @@ DPSMate.Parser.procs = {
 	[DPSMate.BabbleSpell:GetTranslation("Rapid Fire")] = true,
 	
 	-- Boss Spells
-	
+	[DPSMate.BabbleSpell:GetTranslation("Lucifron's Curse")] = true,
+	[DPSMate.BabbleSpell:GetTranslation("Gehennas' Curse")] = true,
+	[DPSMate.BabbleSpell:GetTranslation("Panic")] = true,
+	[DPSMate.BabbleSpell:GetTranslation("Living Bomb")] = true,
+	[DPSMate.BabbleSpell:GetTranslation("Brood Affliction: Bronze")] = true,
+	[DPSMate.BabbleSpell:GetTranslation("Bellowing Roar")] = true,
+	[DPSMate.BabbleSpell:GetTranslation("Fear")] = true,
+	[DPSMate.BabbleSpell:GetTranslation("Entangle")] = true,
+	[DPSMate.BabbleSpell:GetTranslation("Digestive Acid")] = true,
+	[DPSMate.BabbleSpell:GetTranslation("Locust Swarm")] = true,
+	[DPSMate.BabbleSpell:GetTranslation("Web Wrap")] = true,
+	[DPSMate.BabbleSpell:GetTranslation("Mutating Injection")] = true,
+	[DPSMate.BabbleSpell:GetTranslation("Terrifying Roar")] = true,
 }
 
 DPSMate.Parser.BuffExceptions = {

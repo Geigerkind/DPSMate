@@ -17,7 +17,7 @@ Dependencies: None
 ]]
 
 local ACELIBRARY_MAJOR = "AceLibrary"
-local ACELIBRARY_MINOR = "$Revision: 14130 $"
+local ACELIBRARY_MINOR = "$Revision: 16130 $"
 
 local table_setn
 do
@@ -95,6 +95,10 @@ local function error(self, message, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11
 		message = string.format("%s: %s", self:GetLibraryVersion(), message)
 	elseif type(rawget(self, 'class')) == "table" and type(rawget(self.class, 'GetLibraryVersion')) == "function" and AceLibrary:HasInstance(self.class:GetLibraryVersion()) then
 		message = string.format("%s: %s", self.class:GetLibraryVersion(), message)
+	end
+	
+	if not string.find(message, "Babble%-Spell") then
+		return
 	end
 
 	local first = string.gsub(stack, "\n.*", "")

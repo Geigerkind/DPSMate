@@ -1,6 +1,6 @@
 -- Global Variables
 DPSMate = {}
-DPSMate.VERSION = 34
+DPSMate.VERSION = 35
 DPSMate.Parser = {}
 DPSMate.L = AceLibrary("AceLocale-2.3")
 DPSMate.DB = {}
@@ -72,6 +72,7 @@ DPSMate.RegistredModules = {}
 DPSMate.ModuleNames = {}
 DPSMate.BabbleSpell = AceLibrary("Babble-Spell-2.3")
 DPSMate.BabbleBoss = AceLibrary("Babble-Boss-2.3")
+DPSMate.NPCDB = AceLibrary("NPCDB-1.0")
 DPSMate.UserId = nil
 DPSMate.AbilityId = nil
 

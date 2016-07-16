@@ -350,7 +350,7 @@ DPSMate.Options.Options = {
 				type = "toggle",
 				name = DPSMate.L["grouponly"],
 				desc = DPSMate.L["grouponlydesc"],
-				get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["grouponly"] end,
+				get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key or 1]["grouponly"] end,
 				set = function() DPSMate.DB:OnGroupUpdate();DPSMate.Options:SimpleToggle(DPSMate.Options.Dewdrop:GetOpenedParent().Key, "grouponly");DPSMate.Options.Dewdrop:Close() end,
 			}
 		},

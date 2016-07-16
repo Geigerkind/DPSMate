@@ -310,7 +310,7 @@ function AceLocale.prototype:GetTranslation(text)
 	if not rawget(self, TRANSLATIONS) then
 		AceLocale.error(self, "No translations registered")
 	end
-	return self[text]
+	return self[text] or ""
 end
 
 function AceLocale.prototype:GetStrictTranslation(text)
@@ -375,7 +375,7 @@ function AceLocale.prototype:HasReverseTranslation(text)
 	local x = rawget(self, REVERSE_TRANSLATIONS)
 	if not x then
 		if not rawget(self, TRANSLATIONS) then
-			AceLocale.error(self, "No translations registered")
+			--AceLocale.error(self, "No translations registered")
 		end
 		initReverse(self)
 		x = self[REVERSE_TRANSLATIONS]

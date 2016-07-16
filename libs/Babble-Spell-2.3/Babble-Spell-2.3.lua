@@ -28,6 +28,11 @@ local BabbleSpell = AceLibrary("AceLocale-2.3"):new(MAJOR_VERSION)
 BabbleSpell:RegisterTranslations("enUS", function()
 	return {
 		-- Costum Added
+		["Digestive Acid"] = true,
+		["Locust Swarm"] = true,
+		["Web Wrap"] = true,
+		["Mutating Injection"] = true,
+		["Terrifying Roar"] = true,
 		["Web"] = true,
 		["Black Sludge"] = true,
 		["Arcane Bolt"] = true,
@@ -1443,6 +1448,11 @@ end)
 BabbleSpell:RegisterTranslations("deDE", function()
 	return {
 		-- Translation by Bambustreppe
+		["Digestive Acid"] = "Magensäure",
+		["Locust Swarm"] = "Heuschreckenschwarm",
+		["Web Wrap"] = "Fangnetz",
+		["Mutating Injection"] = "Mutagene Injektion",
+		["Terrifying Roar"] = "Erschreckendes Gebrüll",
 		["Web"] = "Gespinst",
 		["Black Sludge"] = "Schwarzer Schlick",
 		["Arcane Bolt"] = "Arkanblitz",
@@ -2845,6 +2855,11 @@ end)
 
 BabbleSpell:RegisterTranslations("frFR", function()
 	return {
+		["Digestive Acid"] = "Acide digestif",
+		["Locust Swarm"] = "Nuée de sauterelles",
+		["Web Wrap"] = "Entoilage",
+		["Mutating Injection"] = "Injection mutante",
+		["Terrifying Roar"] = "Rugissement terrifiant",
 		["Web"] = "Rets",
 		["Black Sludge"] = "Vase noire",
 		["Healing Potion"] = "Potion de soins",
@@ -8184,6 +8199,11 @@ end)
 
 local spellIcons = {
 	-- Costum Icons
+	["Digestive Acid"] = "ability_creature_disease_02",
+	["Locust Swarm"] = "spell_nature_insectswarm",
+	["Web Wrap"] = "spell_nature_web",
+	["Mutating Injection"] = "spell_shadow_callofbone",
+	["Terrifying Roar"] = "ability_devour",
 	["Web"] = "ability_ensnare",
 	["Black Sludge"] = "spell_shadow_callofbone",
 	["Arcane Bolt"] = "spell_arcane_starfire",
