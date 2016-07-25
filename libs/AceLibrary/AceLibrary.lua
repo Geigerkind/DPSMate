@@ -31,9 +31,95 @@ do
 end
 
 local string_gfind = string.gmatch or string.gfind
-
 local _G = getfenv(0)
 local previous = _G[ACELIBRARY_MAJOR]
+
+local tmp
+if previous then
+	previous.error = function(self, message, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18, a19, a20)
+		if type(self) ~= "table" then
+			_G.error(string.format("Bad argument #1 to `error' (table expected, got %s)", type(self)), 2)
+		end
+		if not tmp then
+			tmp = {}
+		else
+			for k in pairs(tmp) do tmp[k] = nil end
+			table_setn(tmp, 0)
+		end
+
+		table.insert(tmp, a1)
+		table.insert(tmp, a2)
+		table.insert(tmp, a3)
+		table.insert(tmp, a4)
+		table.insert(tmp, a5)
+		table.insert(tmp, a6)
+		table.insert(tmp, a7)
+		table.insert(tmp, a8)
+		table.insert(tmp, a9)
+		table.insert(tmp, a10)
+		table.insert(tmp, a11)
+		table.insert(tmp, a12)
+		table.insert(tmp, a13)
+		table.insert(tmp, a14)
+		table.insert(tmp, a15)
+		table.insert(tmp, a16)
+		table.insert(tmp, a17)
+		table.insert(tmp, a18)
+		table.insert(tmp, a19)
+		table.insert(tmp, a20)
+
+		local stack = debugstack()
+		if not message then
+			local _,_,second = string.find(stack, "\n(.-)\n")
+			message = "error raised! " .. second
+		else
+			for i = 1,table.getn(tmp) do
+				tmp[i] = tostring(tmp[i])
+			end
+			for i = 1,10 do
+				table.insert(tmp, "nil")
+			end
+			message = string.format(message, unpack(tmp))
+		end
+
+		if getmetatable(self) and getmetatable(self).__tostring then
+			message = string.format("%s: %s", tostring(self), message)
+		elseif type(rawget(self, 'GetLibraryVersion')) == "function" and AceLibrary:HasInstance(self:GetLibraryVersion()) then
+			message = string.format("%s: %s", self:GetLibraryVersion(), message)
+		elseif type(rawget(self, 'class')) == "table" and type(rawget(self.class, 'GetLibraryVersion')) == "function" and AceLibrary:HasInstance(self.class:GetLibraryVersion()) then
+			message = string.format("%s: %s", self.class:GetLibraryVersion(), message)
+		end
+		
+		if not string.find(message, "Babble%-Spell") then
+			return
+		end
+
+		local first = string.gsub(stack, "\n.*", "")
+		local file = string.gsub(first, ".*\\(.*).lua:%d+: .*", "%1")
+		file = string.gsub(file, "([%(%)%.%*%+%-%[%]%?%^%$%%])", "%%%1")
+
+		local i = 0
+		for s in string_gfind(stack, "\n([^\n]*)") do
+			i = i + 1
+			if not string.find(s, file .. "%.lua:%d+:") then
+				file = string.gsub(s, "^.*\\(.*).lua:%d+: .*", "%1")
+				file = string.gsub(file, "([%(%)%.%*%+%-%[%]%?%^%$%%])", "%%%1")
+				break
+			end
+		end
+		local j = 0
+		for s in string_gfind(stack, "\n([^\n]*)") do
+			j = j + 1
+			if j > i and not string.find(s, file .. "%.lua:%d+:") then
+				_G.error(message, j + 1)
+				return
+			end
+		end
+		_G.error(message, 2)
+		return
+	end
+end
+
 if previous and not previous:IsNewVersion(ACELIBRARY_MAJOR, ACELIBRARY_MINOR) then return end
 
 -- @table AceLibrary

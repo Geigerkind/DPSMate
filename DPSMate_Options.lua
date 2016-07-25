@@ -844,6 +844,36 @@ function DPSMate.Options:PopUpAccept(bool, bypass)
 			}
 			DPSMateAttempts = {}
 			DPSMateLoot = {}
+			
+			-- Get buffs of people after reset
+			local type = "party"
+			local num = GetNumPartyMembers()
+			if num<=0 then
+				type = "raid"
+				num = GetNumRaidMembers()
+			end
+			for p=1, num do
+				for i=1, 32 do
+					GameTooltip:SetOwner(UIParent)
+					GameTooltip:SetUnitBuff(type..p, i)
+					local buff = GameTooltipTextLeft1:GetText()
+					GameTooltip:Hide()
+					if buff then
+						DPSMate.DB:BuildBuffs(DPSMate.L["Unknown"], UnitName(type..p), buff, false)
+					end
+				end
+			end
+			if type == "party" or num <= 0 then
+				for i=0,31 do
+					GameTooltip:SetOwner(UIParent)
+					GameTooltip:SetPlayerBuff(i)
+					local buff = GameTooltipTextLeft1:GetText()
+					GameTooltip:Hide()
+					if buff then
+						DPSMate.DB:BuildBuffs(DPSMate.L["unknown"], UnitName("player"), buff, false)
+					end
+				end
+			end
 		else
 			DPSMateDamageDone[2] = {}
 			DPSMateDamageTaken[2] = {}
@@ -1399,13 +1429,23 @@ function DPSMate.Options:ReportUserDetails(obj, channel, name)
 		if (not a[i]) then break end
 		local p
 		if type(c[i])=="table" then p = c[i][1] else p = c[i] end
-		if DPSMateSettings["windows"][Key]["CurMode"] == "fails" then
-			SendChatMessage(i..". "..DPSMate.Modules.Fails:Type(a[i]).." - "..p, chn, nil, index)
-		else
-			if DPSMate:TContains(AbilityModes, DPSMateSettings["windows"][Key]["CurMode"]) then
-				SendChatMessage(i..". "..DPSMate:GetAbilityById(a[i]).." - "..p, chn, nil, index)
+		if DPSMateSettings["windows"][Key]["CurMode"] == "deaths" then
+			local type = " (HIT)"
+			if c[i][3]==1 then type=" (CRIT)" elseif c[i][3]==2 then type=" (CRUSH)" end
+			if c[i][2]==1 then
+				SendChatMessage(i..". |cFF8cff80"..DPSMate:GetAbilityById(a[i]).." => ".."+"..c[i][1]..type.."|r", chn, nil, index)
 			else
-				SendChatMessage(i..". "..DPSMate:GetUserById(a[i]).." - "..p, chn, nil, index)
+				SendChatMessage(i..". |cFFFF8080"..DPSMate:GetAbilityById(a[i]).." => ".."-"..c[i][1]..type.."|r", chn, nil, index)
+			end
+		else
+			if DPSMateSettings["windows"][Key]["CurMode"] == "fails" then
+				SendChatMessage(i..". "..DPSMate.Modules.Fails:Type(a[i]).." - "..p, chn, nil, index)
+			else
+				if DPSMate:TContains(AbilityModes, DPSMateSettings["windows"][Key]["CurMode"]) then
+					SendChatMessage(i..". "..DPSMate:GetAbilityById(a[i]).." - "..p, chn, nil, index)
+				else
+					SendChatMessage(i..". "..DPSMate:GetUserById(a[i]).." - "..p, chn, nil, index)
+				end
 			end
 		end
 	end

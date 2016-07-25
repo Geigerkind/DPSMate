@@ -1829,15 +1829,20 @@ function DPSMate.DB:UnitIsSaved(unit)
 end
 
 function DPSMate.DB:IsWipe()
+	local am = 0
 	for i=1, GetNumRaidMembers() do
 		if not UnitIsDead("raid"..i) then
 			-- People who are saved with pala bubble or feight death or vanish
 			if not DPSMate.DB:UnitIsSaved("raid"..i) then
-				return false
+				am = am + 1
 			end
 		end
 	end
-	return true
+	if am > 3 then
+		return false
+	else
+		return true
+	end
 end
 local UAC = UnitAffectingCombat
 local UN = UnitName
@@ -1951,6 +1956,14 @@ function DPSMate.DB:hasVanishedFeignDeath()
 	end
 end
 
+local oldRepopMe = RepopMe
+function NewRepopMe()
+	DPSMate.DB:Attempt(true, true, nil)
+	oldRepopMe()
+end
+RepopMe = NewRepopMe
+
+
 -- No idea how this error occours.
 function DPSMate.DB:Attempt(mode, check, tar)
 	local zone = GetRealZoneText()
@@ -1970,10 +1983,10 @@ function DPSMate.DB:Attempt(mode, check, tar)
 			end
 		else
 			if check then
-				tinsert(DPSMateAttempts[zone][1][6], {DPSMateCombatTime["total"], tar})
+				tinsert(DPSMateAttempts[zone][1][6], {DPSMateCombatTime["total"], tar or DPSMate.L["unknown"]})
 			else
 				tinsert(DPSMateAttempts[zone], 1, {
-					[1] = DPSMate.L["unknown"] or "UnbekanntTest",
+					[1] = DPSMate.L["unknown"],
 					[2] = DPSMateCombatTime["total"],
 					[3] = GameTime_GetTime(),
 					[6] = {}
