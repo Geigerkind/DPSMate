@@ -762,47 +762,49 @@ local specialAbTrans = {
 	["whitedamage"] = DPSMate.BabbleSpell:GetTranslation("AutoAttack"),
 }
 
-local oldModSpecialAttack = klhtm.combat.specialattack
-klhtm.combat.specialattack = function(abilityid, target, damage, iscrit, spellschool)
-	oldModSpecialAttack(abilityid, target, damage, iscrit, spellschool)
-	if specialAbTrans[abilityid] then
-		if not DPSMate.DB.KTMHOOK[specialAbTrans[abilityid]] then
-			DPSMate.DB.KTMHOOK[specialAbTrans[abilityid]] = {}
+if klhtm then
+	local oldModSpecialAttack = klhtm.combat.specialattack
+	klhtm.combat.specialattack = function(abilityid, target, damage, iscrit, spellschool)
+		oldModSpecialAttack(abilityid, target, damage, iscrit, spellschool)
+		if specialAbTrans[abilityid] then
+			if not DPSMate.DB.KTMHOOK[specialAbTrans[abilityid]] then
+				DPSMate.DB.KTMHOOK[specialAbTrans[abilityid]] = {}
+			end
+			tinsert(DPSMate.DB.KTMHOOK[specialAbTrans[abilityid]], {target, klhtm.combat.event.threat})
+			DPSMate.DB:Threat(player, specialAbTrans[abilityid], target, klhtm.combat.event.threat, 1)
 		end
-		tinsert(DPSMate.DB.KTMHOOK[specialAbTrans[abilityid]], {target, klhtm.combat.event.threat})
-		DPSMate.DB:Threat(player, specialAbTrans[abilityid], target, klhtm.combat.event.threat, 1)
 	end
-end
 
-local oldModNormalAttack = klhtm.combat.normalattack
-klhtm.combat.normalattack = function(spellname, spellid, damage, isdot, target, iscrit, spellschool)
-	oldModNormalAttack(spellname, spellid, damage, isdot, target, iscrit, spellschool)
-	if not DPSMate.DB.KTMHOOK[spellname] then
-		DPSMate.DB.KTMHOOK[spellname] = {}
+	local oldModNormalAttack = klhtm.combat.normalattack
+	klhtm.combat.normalattack = function(spellname, spellid, damage, isdot, target, iscrit, spellschool)
+		oldModNormalAttack(spellname, spellid, damage, isdot, target, iscrit, spellschool)
+		if not DPSMate.DB.KTMHOOK[spellname] then
+			DPSMate.DB.KTMHOOK[spellname] = {}
+		end
+		tinsert(DPSMate.DB.KTMHOOK[spellname], {target, klhtm.combat.event.threat})
+		DPSMate.DB:Threat(player, spellname, target, klhtm.combat.event.threat, 1)
 	end
-	tinsert(DPSMate.DB.KTMHOOK[spellname], {target, klhtm.combat.event.threat})
-	DPSMate.DB:Threat(player, spellname, target, klhtm.combat.event.threat, 1)
-end
 
-local oldModHeal = klhtm.combat.registerheal
-klhtm.combat.registerheal = function(spellname, spellid, amount, target)
-	oldModNormalAttack(spellname, spellid, amount, target)
-	if not DPSMate.DB.KTMHOOK[spellname] then
-		DPSMate.DB.KTMHOOK[spellname] = {}
+	local oldModHeal = klhtm.combat.registerheal
+	klhtm.combat.registerheal = function(spellname, spellid, amount, target)
+		oldModNormalAttack(spellname, spellid, amount, target)
+		if not DPSMate.DB.KTMHOOK[spellname] then
+			DPSMate.DB.KTMHOOK[spellname] = {}
+		end
+		tinsert(DPSMate.DB.KTMHOOK[spellname], {target, klhtm.combat.event.threat})
+		DPSMate.DB:Threat(player, spellname, target, klhtm.combat.event.threat, 1)
 	end
-	tinsert(DPSMate.DB.KTMHOOK[spellname], {target, klhtm.combat.event.threat})
-	DPSMate.DB:Threat(player, spellname, target, klhtm.combat.event.threat, 1)
-end
 
-local oldModPowerGain = klhtm.combat.powergain
-klhtm.combat.powergain = function(amount, powertype, spellid)
-	oldModPowerGain(amount, powertype, spellid)
-	if not DPSMate.DB.KTMHOOK[powertype] then
-		DPSMate.DB.KTMHOOK[powertype] = {}
+	local oldModPowerGain = klhtm.combat.powergain
+	klhtm.combat.powergain = function(amount, powertype, spellid)
+		oldModPowerGain(amount, powertype, spellid)
+		if not DPSMate.DB.KTMHOOK[powertype] then
+			DPSMate.DB.KTMHOOK[powertype] = {}
+		end
+		local target = UnitName("target") or player
+		tinsert(DPSMate.DB.KTMHOOK[powertype], {target, klhtm.combat.event.threat})
+		DPSMate.DB:Threat(player, powertype, target, klhtm.combat.event.threat, 1)
 	end
-	local target = UnitName("target") or player
-	tinsert(DPSMate.DB.KTMHOOK[powertype], {target, klhtm.combat.event.threat})
-	DPSMate.DB:Threat(player, powertype, target, klhtm.combat.event.threat, 1)
 end
 
 function DPSMate.DB:UpdateThreat()
