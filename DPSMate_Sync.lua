@@ -1447,8 +1447,8 @@ function DPSMate.Sync:ThreatIn(arg2,arg4)
 end
 
 function DPSMate.Sync:ThreatOut()
-	if not DPSMateThreat[pid] then return end
-	for cat, val in DPSMateThreat[pid] do
+	if not DPSMateThreat[1][pid] then return end
+	for cat, val in DPSMateThreat[1][pid] do
 		local tar = DPSMate:GetUserById(cat)
 		for ca, va in val do
 			Buffer[cou] = {"DPSMate_Threat", tar..","..DPSMate:GetAbilityById(ca)..","..va[1]..","..va[2]..","..va[3]..","..va[4]..","}
@@ -1458,8 +1458,8 @@ function DPSMate.Sync:ThreatOut()
 end
 
 function DPSMate.Sync:ThreatStatsOut()
-	if not DPSMateThreat[pid] then return end
-	for cat, val in DPSMateThreat[pid] do
+	if not DPSMateThreat[1][pid] then return end
+	for cat, val in DPSMateThreat[1][pid] do
 		local tar = DPSMate:GetUserById(cat)
 		for ca, va in val do
 			local ability = DPSMate:GetAbilityById(ca)
