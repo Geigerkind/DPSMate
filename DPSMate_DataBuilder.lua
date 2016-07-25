@@ -649,6 +649,7 @@ function DPSMate.DB:OnGroupUpdate()
 	local name = UnitName("player")
 	if pet and pet ~= DPSMate.L["unknown"] then
 		self:BuildUser(name, nil)
+		self:BuildUser(pet, nil)
 		DPSMateUser[pet][4] = true
 		DPSMateUser[name][5] = pet
 		DPSMateUser[pet][6] = DPSMateUser[name][1]
