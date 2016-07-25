@@ -1464,7 +1464,7 @@ function DPSMate.Sync:ThreatStatsOut()
 		for ca, va in val do
 			local ability = DPSMate:GetAbilityById(ca)
 			for c, v in self:GetSummarizedTable(va["i"]) do
-				Buffer[cou] = {"DPSMate_ThreatStats", tar..","..ability..","..v[1]..","..v[2]..","}
+				Buffer[cou] = {"DPSMate_ThreatStats", tar..","..ability..","..c..","..v..","}
 				cou = cou + 1
 			end
 		end
