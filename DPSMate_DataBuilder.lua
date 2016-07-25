@@ -1440,6 +1440,8 @@ function DPSMate.DB:Absorb(ability, abilityTarget, incTarget)
 end
 
 local AwaitDispel = {}
+local NextTotemDispel = false
+local TotemDispelTimer = 0
 function DPSMate.DB:AwaitDispel(ability, target, cause, time)
 	if not AwaitDispel[target] then AwaitDispel[target] = {} end
 	tinsert(AwaitDispel[target], {cause, ability, time})
@@ -1488,8 +1490,54 @@ function DPSMate.DB:ConfirmRealDispel(ability, target, time)
 	tinsert(ConfirmedDispel[target], {ability, time})
 	lastDispel = target;
 	self:EvaluateDispel()
-	--DPSMate:SendMessage("Test 3")
+	NextTotemDispel = true
 	--self:Dispels("Unknown", "Unknown", target, ability)
+end
+
+function DPSMate.DB:ApplyRemainingDispels()
+	local num = 0
+	for cat, val in ConfirmedDispel do
+		for ca, va in val do
+			num = num + 1
+			if (GetTime()-va[2])>2 then
+				local type = "party"
+				local num = GetNumPartyMembers()
+				if num <= 0 then
+					type="raid"
+					num=GetNumRaidMembers()
+				end
+				if type=="party" then
+					for i=1, num do
+						if UnitClass(type..i)==DPSMate.L["shaman"] then
+							self:Dispels(UnitName(type..i), DPSMate.L["poisoncleansingtotem"], cat, va[1])
+							tremove(ConfirmedDispel[cat], ca)
+							return
+						end
+					end
+				else
+					local subGRP = {}
+					local PSGRP = nil
+					for i=1, num do
+						local a,b,c = GetRaidRosterInfo(i)
+						if UnitClass(type..i)==DPSMate.L["shaman"] then
+							subGRP[c] = UnitName(type..i)
+						end
+						if UnitName(type..i)==cat then
+							PSGRP = c
+						end
+						if PSGRP and subGRP[PSGRP] then
+							self:Dispels(subGRP[PSGRP], DPSMate.L["poisoncleansingtotem"], cat, va[1])
+							tremove(ConfirmedDispel[cat], ca)
+							return
+						end
+					end
+				end
+			end
+		end
+	end
+	if num == 0 then
+		NextTotemDispel = false
+	end
 end
 
 -- Deprecated time component
@@ -1900,6 +1948,14 @@ function DPSMate.DB:CombatTime()
 						CombatState = false
 						CombatTime = 0
 						DPSMate.DB:Attempt(true, DPSMate.DB:IsWipe(), nil)
+					end
+				end
+				
+				if NextTotemDispel then
+					TotemDispelTimer = TotemDispelTimer + arg1
+					if TotemDispelTimer>2 then
+						DPSMate.DB:ApplyRemainingDispels()
+						TotemDispelTimer = 0
 					end
 				end
 			else
