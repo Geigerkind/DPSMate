@@ -859,7 +859,7 @@ function DPSMate.Options:PopUpAccept(bool, bypass)
 					local buff = GameTooltipTextLeft1:GetText()
 					GameTooltip:Hide()
 					if buff then
-						DPSMate.DB:BuildBuffs(DPSMate.L["Unknown"], UnitName(type..p), buff, false)
+						DPSMate.DB:BuildBuffs(DPSMate.L["unknown"], UnitName(type..p), buff, false)
 					end
 				end
 			end

@@ -20,8 +20,8 @@ if (GetLocale() == "deDE") then
 		end
 		for a,b,c in strgfind(msg, "Ihr trefft (.+)%. Schaden: (%d+)\.%s?(.*)") do
 			if c == "(gestreift)" then t[3]=1;t[1]=0 elseif c ~= "" then t[4]=1;t[1]=0; end
-			DB:EnemyDamage(true, DPSMateEDT, self.player, "Angreifen", 1, 0, 0, 0, 0, 0, tnbr(b), a, t[4] or 0, t[3] or 0)
-			DB:DamageDone(self.player, "Angreifen", 1, 0, 0, 0, 0, 0, tnbr(b), t[3] or 0, t[4] or 0)
+			DB:EnemyDamage(true, DPSMateEDT, self.player, "Angreifen", t[1] or 1, 0, 0, 0, 0, 0, tnbr(b), a, t[4] or 0, t[3] or 0)
+			DB:DamageDone(self.player, "Angreifen", t[1] or 1, 0, 0, 0, 0, 0, tnbr(b), t[3] or 0, t[4] or 0)
 			if self.TargetParty[a] then DB:BuildFail(1, a, self.player, "Angreifen", tnbr(b)) end
 			return
 		end
@@ -91,8 +91,8 @@ if (GetLocale() == "deDE") then
 			if strfind(e, "geblockt") then t[4]=1;t[2]=0;t[3]=0 end
 			if DPSMate.Parser.Kicks[a] then DB:AssignPotentialKick(self.player, a, b, GetTime()) end
 			if DPSMate.Parser.DmgProcs[a] then DB:BuildBuffs(self.player, self.player, a, true) end
-			DB:EnemyDamage(true, DPSMateEDT, self.player, a,  1, 0, 0, 0, 0, 0, t[1], b, t[4] or 0, 0)
-			DB:DamageDone(self.player, a, 1, 0, 0, 0, 0, 0, t[1], 0, t[4] or 0)
+			DB:EnemyDamage(true, DPSMateEDT, self.player, a,  t[2] or 1, 0, 0, 0, 0, 0, t[1], b, t[4] or 0, 0)
+			DB:DamageDone(self.player, a, t[2] or 1, 0, 0, 0, 0, 0, t[1], 0, t[4] or 0)
 			if self.TargetParty[c] then DB:BuildFail(1, c, self.player, a, t[1]) end
 			return
 		end
@@ -205,8 +205,8 @@ if (GetLocale() == "deDE") then
 			if strfind(e, "geblockt") then t[4]=1;t[2]=0;t[3]=0 end
 			if DPSMate.Parser.Kicks[a] then DB:AssignPotentialKick(f, a, b, GetTime()) end
 			if DPSMate.Parser.DmgProcs[a] then DB:BuildBuffs(f, f, a, true) end
-			DB:EnemyDamage(true, DPSMateEDT, f, a,  1, 0, 0, 0, 0, 0, t[1], b, t[4] or 0, 0)
-			DB:DamageDone(f, a, 1, 0, 0, 0, 0, 0, t[1], 0, t[4] or 0)
+			DB:EnemyDamage(true, DPSMateEDT, f, a,  t[2] or 1, 0, 0, 0, 0, 0, t[1], b, t[4] or 0, 0)
+			DB:DamageDone(f, a, t[2] or 1, 0, 0, 0, 0, 0, t[1], 0, t[4] or 0)
 			if self.TargetParty[b] and self.TargetParty[f] then DB:BuildFail(1, b, f, a, t[1]) end
 			return
 		end
@@ -450,7 +450,7 @@ if (GetLocale() == "deDE") then
 		t = {}
 		for a,b,c,d,e in strgfind(msg, "(.+) trifft Euch(.*) %(mit (.+)%)%. Schaden: (%d+)(.*)") do -- Potential here to track school and resisted damage
 			if b=="" then t[1]=1;t[2]=0 end
-			if strfind(e, "geblockt") then t[4]=1 end
+			if strfind(e, "geblockt") then t[4]=1;t[1]=0;t[2]=0 end
 			t[3] = tnbr(d)
 			DB:UnregisterPotentialKick(self.player, b, GetTime())
 			DB:EnemyDamage(false, DPSMateEDD, self.player, c, t[1] or 0, t[2] or 1, 0, 0, 0, 0, t[3], a, t[4] or 0, 0)
