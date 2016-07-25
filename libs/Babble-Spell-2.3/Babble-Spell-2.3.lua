@@ -28,6 +28,8 @@ local BabbleSpell = AceLibrary("AceLocale-2.3"):new(MAJOR_VERSION)
 BabbleSpell:RegisterTranslations("enUS", function()
 	return {
 		-- Costum Added
+		["Explosion"] = true,
+		["Massive Eruption"] = true,
 		["Energy"] = true,
 		["Rage"] = true,
 		["Mana"] = true,
@@ -1851,6 +1853,8 @@ end)
 BabbleSpell:RegisterTranslations("deDE", function()
 	return {
 		-- Translation by Bambustreppe
+		["Explosion"] = "Explosion",
+		["Massive Eruption"] = "Massiver Ausbruch",
 		["Energy"] = "Energie",
 		["Rage"] = "Wut",
 		["Mana"] = "Mana",
@@ -3661,6 +3665,8 @@ end)
 
 BabbleSpell:RegisterTranslations("frFR", function()
 	return {
+		["Explosion"] = "Explosion",
+		["Massive Eruption"] = "Eruption massive",
 		["Energy"] = "Energy",
 		["Rage"] = "Rage",
 		["Mana"] = "Mana",
@@ -8093,6 +8099,8 @@ end)
 BabbleSpell:RegisterTranslations("koKR", function()
 	return {
 		-- Costum added
+		["Explosion"] = "spell_shadow_corpseexplode",
+		["Massive Eruption"] = "spell_fire_volcano",
 		["Holy Strength"] = "None",
 		["Earthstrike"] = "None",
 		["Rogue Armor Energize"] = "None",
