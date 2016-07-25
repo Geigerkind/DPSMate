@@ -28,6 +28,11 @@ local BabbleSpell = AceLibrary("AceLocale-2.3"):new(MAJOR_VERSION)
 BabbleSpell:RegisterTranslations("enUS", function()
 	return {
 		-- Costum Added
+		["Energy"] = true,
+		["Rage"] = true,
+		["Mana"] = true,
+		["Grace of Earth"] = true,
+		["Black Amnesty"] = true,
 		["Dismember"] = true,
 		["Trip"] = true,
 		["Fire Shield II"] = true,
@@ -1846,6 +1851,11 @@ end)
 BabbleSpell:RegisterTranslations("deDE", function()
 	return {
 		-- Translation by Bambustreppe
+		["Energy"] = "Energie",
+		["Rage"] = "Wut",
+		["Mana"] = "Mana",
+		["Grace of Earth"] = "Erdanmut",
+		["Black Amnesty"] = "Schwarze Amnestie",
 		["Dismember"] = "Zerstückeln",
 		["Trip"] = "Straucheln",
 		["Fire Shield II"] = "Feuerschild",
@@ -3651,6 +3661,11 @@ end)
 
 BabbleSpell:RegisterTranslations("frFR", function()
 	return {
+		["Energy"] = "Energy",
+		["Rage"] = "Rage",
+		["Mana"] = "Mana",
+		["Grace of Earth"] = "Grâce de la terre",
+		["Black Amnesty"] = "Amnistie noire",
 		["Dismember"] = "Démembrer",
 		["Trip"] = "Croc-en-jambe",
 		["Fire Shield II"] = "Bouclier de feu",
@@ -9393,6 +9408,8 @@ end)
 
 local spellIcons = {
 	-- Costum Icons
+	["Grace of Earth"] = "ability_physical_taunt",
+	["Black Amnesty"] = "spell_fire_flamebolt",
 	["Dismember"] = "ability_backstab",
 	["Trip"] = "ability_rogue_trip",
 	["Fire Shield II"] = "spell_fire_immolation",

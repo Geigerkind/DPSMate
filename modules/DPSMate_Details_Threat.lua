@@ -1,5 +1,5 @@
 -- Global Variables
-DPSMate.Modules.DetailsDamageTaken = {}
+DPSMate.Modules.DetailsThreat = {}
 
 -- Local variables
 local DetailsArr, DetailsTotal, DmgArr, DetailsUser, DetailsSelected  = {}, 0, {}, "", 1
@@ -11,16 +11,16 @@ local _G = getglobal
 local strformat = string.format
 local toggle, toggle3 = false, false
 
-function DPSMate.Modules.DetailsDamageTaken:UpdateDetails(obj, key)
+function DPSMate.Modules.DetailsThreat:UpdateDetails(obj, key)
 	curKey = key
 	db, cbt = DPSMate:GetMode(key)
 	DetailsUser = obj.user
-	DPSMate_Details_DamageTaken_Title:SetText(DPSMate.L["dmgtakenby"]..obj.user)
-	DPSMate_Details_DamageTaken:Show()
+	DPSMate_Details_Threat_Title:SetText(DPSMate.L["threatdoneby"]..obj.user)
+	DPSMate_Details_Threat:Show()
 	DetailsArr, DetailsTotal, DmgArr = DPSMate.RegistredModules[DPSMateSettings["windows"][curKey]["CurMode"]]:EvalTable(DPSMateUser[DetailsUser], curKey)
-	DPSMate_Details_DamageTaken.proc = "None"
-	UIDropDownMenu_SetSelectedValue(DPSMate_Details_DamageTaken_DiagramLegend_Procs, "None")
-	UIDropDownMenu_Initialize(DPSMate_Details_DamageTaken_DiagramLegend_Procs, self.ProcsDropDown)
+	DPSMate_Details_Threat.proc = "None"
+	UIDropDownMenu_SetSelectedValue(DPSMate_Details_Threat_DiagramLegend_Procs, "None")
+	UIDropDownMenu_Initialize(DPSMate_Details_Threat_DiagramLegend_Procs, self.ProcsDropDown)
 	self:ScrollFrame_Update()
 	self:SelectCreatureButton(1)
 	self:SelectDetailsButton(1,1)
@@ -31,18 +31,18 @@ function DPSMate.Modules.DetailsDamageTaken:UpdateDetails(obj, key)
 	end
 end
 
-function DPSMate.Modules.DetailsDamageTaken:ScrollFrame_Update()
+function DPSMate.Modules.DetailsThreat:ScrollFrame_Update()
 	local line, lineplusoffset
-	local path = "DPSMate_Details_DamageTaken_LogCreature"
+	local path = "DPSMate_Details_Threat_LogCreature"
 	local obj = _G(path.."_ScrollFrame")
 	local pet, len = "", DPSMate:TableLength(DetailsArr)
 	FauxScrollFrame_Update(obj,len,8,24)
 	for line=1,8 do
 		lineplusoffset = line + FauxScrollFrame_GetOffset(obj)
 		if DetailsArr[lineplusoffset] ~= nil then
-			local user = DPSMate:GetUserById(DetailsArr[lineplusoffset])
+			local user = DPSMate:GetUserById(DmgArr[lineplusoffset][1])
 			_G(path.."_ScrollButton"..line.."_Name"):SetText(user)
-			_G(path.."_ScrollButton"..line.."_Value"):SetText(DmgArr[lineplusoffset][1].." ("..strformat("%.2f", (DmgArr[lineplusoffset][1]*100/DetailsTotal)).."%)")
+			_G(path.."_ScrollButton"..line.."_Value"):SetText(DetailsArr[lineplusoffset].." ("..strformat("%.2f", (DetailsArr[lineplusoffset]*100/DetailsTotal)).."%)")
 			_G(path.."_ScrollButton"..line.."_Icon"):SetTexture("Interface\\AddOns\\DPSMate\\images\\npc")
 			if len < 8 then
 				_G(path.."_ScrollButton"..line):SetWidth(235)
@@ -62,9 +62,9 @@ function DPSMate.Modules.DetailsDamageTaken:ScrollFrame_Update()
 	end
 end
 
-function DPSMate.Modules.DetailsDamageTaken:SelectCreatureButton(i)
+function DPSMate.Modules.DetailsThreat:SelectCreatureButton(i)
 	local line, lineplusoffset
-	local path = "DPSMate_Details_DamageTaken_Log"
+	local path = "DPSMate_Details_Threat_Log"
 	local obj = _G(path.."_ScrollFrame")
 	i = i or obj.index
 	obj.index = i
@@ -93,9 +93,9 @@ function DPSMate.Modules.DetailsDamageTaken:SelectCreatureButton(i)
 		_G(path.."_ScrollButton1_selected"):Show()
 	end
 	for p=1, 8 do
-		_G("DPSMate_Details_DamageTaken_LogCreature_ScrollButton"..p.."_selected"):Hide()
+		_G("DPSMate_Details_Threat_LogCreature_ScrollButton"..p.."_selected"):Hide()
 	end
-	_G("DPSMate_Details_DamageTaken_LogCreature_ScrollButton"..i.."_selected"):Show()
+	_G("DPSMate_Details_Threat_LogCreature_ScrollButton"..i.."_selected"):Show()
 	self:SelectDetailsButton(i,1)
 	if toggle3 then
 		if toggle then
@@ -106,97 +106,42 @@ function DPSMate.Modules.DetailsDamageTaken:SelectCreatureButton(i)
 	end
 end
 
-function DPSMate.Modules.DetailsDamageTaken:SelectDetailsButton(p,i)
-	local obj = DPSMate_Details_DamageTaken_Log_ScrollFrame
+function DPSMate.Modules.DetailsThreat:SelectDetailsButton(p,i)
+	local obj = DPSMate_Details_Threat_Log_ScrollFrame
 	local lineplusoffset = i + FauxScrollFrame_GetOffset(obj)
 	
 	for p=1, 10 do
-		_G("DPSMate_Details_DamageTaken_Log_ScrollButton"..p.."_selected"):Hide()
+		_G("DPSMate_Details_Threat_Log_ScrollButton"..p.."_selected"):Hide()
 	end
 	-- Performance?
 	local ability = tonumber(DmgArr[p][2][lineplusoffset])
-	local creature = tonumber(DetailsArr[p])
-	_G("DPSMate_Details_DamageTaken_Log_ScrollButton"..i.."_selected"):Show()
+	local creature = tonumber(DmgArr[p][1])
+	_G("DPSMate_Details_Threat_Log_ScrollButton"..i.."_selected"):Show()
 	
 	local path = db[DPSMateUser[DetailsUser][1]][creature][ability]
-	local hit, crit, miss, parry, dodge, resist, hitMin, hitMax, critMin, critMax, hitav, critav, crush, crushMin, crushMax, crushav = path[1], path[5], path[9], path[10], path[11], path[12], path[2], path[3], path[6], path[7], path[4], path[8], path[15], path[16], path[17], path[18]
-	local total, max = hit+crit+miss+parry+dodge+resist+crush, DPSMate:TMax({hit, crit, miss, parry, dodge, resist, crush})
+	local hit, min, max,amount = path[4],path[2],path[3],path[1]
 	
-	DPSMate_Details_DamageTaken_LogDetails_Casts:SetText("C: "..path[19])
+	DPSMate_Details_Threat_LogDetails_Casts:SetText("C: "..hit)
 	-- Crush
-	_G("DPSMate_Details_DamageTaken_LogDetails_Amount1_Amount"):SetText(crush)
-	_G("DPSMate_Details_DamageTaken_LogDetails_Amount1_Percent"):SetText(ceil(100*crush/total).."%")
-	_G("DPSMate_Details_DamageTaken_LogDetails_Amount1_StatusBar"):SetValue(ceil(100*crush/max))
-	_G("DPSMate_Details_DamageTaken_LogDetails_Amount1_StatusBar"):SetStatusBarColor(1.0,0.7,0.3,1)
-	_G("DPSMate_Details_DamageTaken_LogDetails_Average1"):SetText(ceil(crushav))
-	_G("DPSMate_Details_DamageTaken_LogDetails_Min1"):SetText(crushMin)
-	_G("DPSMate_Details_DamageTaken_LogDetails_Max1"):SetText(crushMax)
-	
-	-- Hit
-	_G("DPSMate_Details_DamageTaken_LogDetails_Amount2_Amount"):SetText(hit)
-	_G("DPSMate_Details_DamageTaken_LogDetails_Amount2_Percent"):SetText(ceil(100*hit/total).."%")
-	_G("DPSMate_Details_DamageTaken_LogDetails_Amount2_StatusBar"):SetValue(ceil(100*hit/max))
-	_G("DPSMate_Details_DamageTaken_LogDetails_Amount2_StatusBar"):SetStatusBarColor(0.9,0.0,0.0,1)
-	_G("DPSMate_Details_DamageTaken_LogDetails_Average2"):SetText(ceil(hitav))
-	_G("DPSMate_Details_DamageTaken_LogDetails_Min2"):SetText(hitMin)
-	_G("DPSMate_Details_DamageTaken_LogDetails_Max2"):SetText(hitMax)
-	
-	-- Crit
-	_G("DPSMate_Details_DamageTaken_LogDetails_Amount3_Amount"):SetText(crit)
-	_G("DPSMate_Details_DamageTaken_LogDetails_Amount3_Percent"):SetText(ceil(100*crit/total).."%")
-	_G("DPSMate_Details_DamageTaken_LogDetails_Amount3_StatusBar"):SetValue(ceil(100*crit/max))
-	_G("DPSMate_Details_DamageTaken_LogDetails_Amount3_StatusBar"):SetStatusBarColor(0.0,0.9,0.0,1)
-	_G("DPSMate_Details_DamageTaken_LogDetails_Average3"):SetText(ceil(critav))
-	_G("DPSMate_Details_DamageTaken_LogDetails_Min3"):SetText(critMin)
-	_G("DPSMate_Details_DamageTaken_LogDetails_Max3"):SetText(critMax)
-	
-	-- Miss
-	_G("DPSMate_Details_DamageTaken_LogDetails_Amount4_Amount"):SetText(miss)
-	_G("DPSMate_Details_DamageTaken_LogDetails_Amount4_Percent"):SetText(ceil(100*miss/total).."%")
-	_G("DPSMate_Details_DamageTaken_LogDetails_Amount4_StatusBar"):SetValue(ceil(100*miss/max))
-	_G("DPSMate_Details_DamageTaken_LogDetails_Amount4_StatusBar"):SetStatusBarColor(0.0,0.0,1.0,1)
-	_G("DPSMate_Details_DamageTaken_LogDetails_Average4"):SetText("-")
-	_G("DPSMate_Details_DamageTaken_LogDetails_Min4"):SetText("-")
-	_G("DPSMate_Details_DamageTaken_LogDetails_Max4"):SetText("-")
-	
-	-- Parry
-	_G("DPSMate_Details_DamageTaken_LogDetails_Amount5_Amount"):SetText(parry)
-	_G("DPSMate_Details_DamageTaken_LogDetails_Amount5_Percent"):SetText(ceil(100*parry/total).."%")
-	_G("DPSMate_Details_DamageTaken_LogDetails_Amount5_StatusBar"):SetValue(ceil(100*parry/max))
-	_G("DPSMate_Details_DamageTaken_LogDetails_Amount5_StatusBar"):SetStatusBarColor(1.0,1.0,0.0,1)
-	_G("DPSMate_Details_DamageTaken_LogDetails_Average5"):SetText("-")
-	_G("DPSMate_Details_DamageTaken_LogDetails_Min5"):SetText("-")
-	_G("DPSMate_Details_DamageTaken_LogDetails_Max5"):SetText("-")
-	
-	-- Dodge
-	_G("DPSMate_Details_DamageTaken_LogDetails_Amount6_Amount"):SetText(dodge)
-	_G("DPSMate_Details_DamageTaken_LogDetails_Amount6_Percent"):SetText(ceil(100*dodge/total).."%")
-	_G("DPSMate_Details_DamageTaken_LogDetails_Amount6_StatusBar"):SetValue(ceil(100*dodge/max))
-	_G("DPSMate_Details_DamageTaken_LogDetails_Amount6_StatusBar"):SetStatusBarColor(1.0,0.0,1.0,1)
-	_G("DPSMate_Details_DamageTaken_LogDetails_Average6"):SetText("-")
-	_G("DPSMate_Details_DamageTaken_LogDetails_Min6"):SetText("-")
-	_G("DPSMate_Details_DamageTaken_LogDetails_Max6"):SetText("-")
-	
-	-- Resist
-	_G("DPSMate_Details_DamageTaken_LogDetails_Amount7_Amount"):SetText(resist)
-	_G("DPSMate_Details_DamageTaken_LogDetails_Amount7_Percent"):SetText(ceil(100*resist/total).."%")
-	_G("DPSMate_Details_DamageTaken_LogDetails_Amount7_StatusBar"):SetValue(ceil(100*resist/max))
-	_G("DPSMate_Details_DamageTaken_LogDetails_Amount7_StatusBar"):SetStatusBarColor(0.0,1.0,1.0,1)
-	_G("DPSMate_Details_DamageTaken_LogDetails_Average7"):SetText("-")
-	_G("DPSMate_Details_DamageTaken_LogDetails_Min7"):SetText("-")
-	_G("DPSMate_Details_DamageTaken_LogDetails_Max7"):SetText("-")
+	_G("DPSMate_Details_Threat_LogDetails_Amount1_Amount"):SetText(hit)
+	_G("DPSMate_Details_Threat_LogDetails_Amount1_Percent"):SetText("100%")
+	_G("DPSMate_Details_Threat_LogDetails_Amount1_StatusBar"):SetValue(100)
+	_G("DPSMate_Details_Threat_LogDetails_Amount1_StatusBar"):SetStatusBarColor(1.0,0.7,0.3,1)
+	_G("DPSMate_Details_Threat_LogDetails_Average1"):SetText(ceil(amount/hit))
+	_G("DPSMate_Details_Threat_LogDetails_Min1"):SetText(ceil(min))
+	_G("DPSMate_Details_Threat_LogDetails_Max1"):SetText(ceil(max))
 end
 
-function DPSMate.Modules.DetailsDamageTaken:UpdateLineGraph()
+function DPSMate.Modules.DetailsThreat:UpdateLineGraph()
 	if not g2 then
-		g2=DPSMate.Options.graph:CreateGraphLine("LineGraph",DPSMate_Details_DamageTaken_DiagramLine,"CENTER","CENTER",0,0,850,230)
+		g2=DPSMate.Options.graph:CreateGraphLine("LineGraph",DPSMate_Details_Threat_DiagramLine,"CENTER","CENTER",0,0,850,230)
 	end
 	if g then
 		g:Hide()
 	end
 	local sumTable
 	if toggle3 then
-		sumTable = self:GetSummarizedTable(db, DetailsArr[DetailsSelected])
+		sumTable = self:GetSummarizedTable(db, DmgArr[DetailsSelected][1])
 	else
 		sumTable = self:GetSummarizedTable(db, nil)
 	end
@@ -217,17 +162,17 @@ function DPSMate.Modules.DetailsDamageTaken:UpdateLineGraph()
 
 	local Data1={{0,0}}
 	for cat, val in DPSMate:ScaleDown(sumTable, min) do
-		tinsert(Data1, {val[1],val[2], self:CheckProcs(DPSMate_Details_DamageTaken.proc, val[1]+min)})
+		tinsert(Data1, {val[1],val[2], self:CheckProcs(DPSMate_Details_Threat.proc, val[1]+min)})
 	end
 
-	g2:AddDataSeries(Data1,{{1.0,0.0,0.0,0.8}, {1.0,1.0,0.0,0.8}}, self:AddProcPoints(DPSMate_Details_DamageTaken.proc, Data1))
+	g2:AddDataSeries(Data1,{{1.0,0.0,0.0,0.8}, {1.0,1.0,0.0,0.8}}, self:AddProcPoints(DPSMate_Details_Threat.proc, Data1))
 	g2:Show()
 	toggle = false
 end
 
-function DPSMate.Modules.DetailsDamageTaken:UpdateStackedGraph()
+function DPSMate.Modules.DetailsThreat:UpdateStackedGraph()
 	if not g then
-		g=DPSMate.Options.graph:CreateStackedGraph("StackedGraph",DPSMate_Details_DamageTaken_DiagramLine,"CENTER","CENTER",0,0,850,230)
+		g=DPSMate.Options.graph:CreateStackedGraph("StackedGraph",DPSMate_Details_Threat_DiagramLine,"CENTER","CENTER",0,0,850,230)
 		g:SetGridColor({0.5,0.5,0.5,0.5})
 		g:SetAxisDrawing(true,true)
 		g:SetAxisColor({1.0,1.0,1.0,1.0})
@@ -248,7 +193,7 @@ function DPSMate.Modules.DetailsDamageTaken:UpdateStackedGraph()
 	local temp = {}
 	local temp2 = {}
 	if toggle3 then
-		for cat, val in db[DPSMateUser[DetailsUser][1]][DetailsArr[DetailsSelected]] do
+		for cat, val in db[DPSMateUser[DetailsUser][1]][DmgArr[DetailsSelected][1]] do
 			if val["i"] then
 				for c, v in val["i"] do
 					local key = tonumber(strformat("%.1f", c))
@@ -272,7 +217,7 @@ function DPSMate.Modules.DetailsDamageTaken:UpdateStackedGraph()
 						end
 						i = i + 1
 					end
-					temp2[cat] = temp2[cat] + val[13]
+					temp2[cat] = temp2[cat] + val[1]
 					maxY = math.max(p[key], maxY)
 					maxX = math.max(c, maxX)
 				end
@@ -351,7 +296,7 @@ function DPSMate.Modules.DetailsDamageTaken:UpdateStackedGraph()
 								end
 								i = i + 1
 							end
-							temp2[ca] = temp2[ca] + va[13]
+							temp2[ca] = temp2[ca] + va[1]
 							maxY = math.max(p[key], maxY)
 							maxX = math.max(c, maxX)
 						end
@@ -401,28 +346,28 @@ function DPSMate.Modules.DetailsDamageTaken:UpdateStackedGraph()
 	toggle = true
 end
 
-function DPSMate.Modules.DetailsDamageTaken:CreateGraphTable()
+function DPSMate.Modules.DetailsThreat:CreateGraphTable()
 	local lines = {}
 	for i=1, 8 do
 		-- Horizontal
-		lines[i] = DPSMate.Options.graph:DrawLine(DPSMate_Details_DamageTaken_Log, 252, 270-i*30, 617, 270-i*30, 20, {0.5,0.5,0.5,0.5}, "BACKGROUND")
+		lines[i] = DPSMate.Options.graph:DrawLine(DPSMate_Details_Threat_Log, 252, 270-i*30, 617, 270-i*30, 20, {0.5,0.5,0.5,0.5}, "BACKGROUND")
 		lines[i]:Show()
 	end
 	-- Vertical
-	lines[9] = DPSMate.Options.graph:DrawLine(DPSMate_Details_DamageTaken_Log, 302, 260, 302, 15, 20, {0.5,0.5,0.5,0.5}, "BACKGROUND")
+	lines[9] = DPSMate.Options.graph:DrawLine(DPSMate_Details_Threat_Log, 302, 260, 302, 15, 20, {0.5,0.5,0.5,0.5}, "BACKGROUND")
 	lines[9]:Show()
 	
-	lines[10] = DPSMate.Options.graph:DrawLine(DPSMate_Details_DamageTaken_Log, 437, 260, 437, 15, 20, {0.5,0.5,0.5,0.5}, "BACKGROUND")
+	lines[10] = DPSMate.Options.graph:DrawLine(DPSMate_Details_Threat_Log, 437, 260, 437, 15, 20, {0.5,0.5,0.5,0.5}, "BACKGROUND")
 	lines[10]:Show()
 	
-	lines[11] = DPSMate.Options.graph:DrawLine(DPSMate_Details_DamageTaken_Log, 497, 260, 497, 15, 20, {0.5,0.5,0.5,0.5}, "BACKGROUND")
+	lines[11] = DPSMate.Options.graph:DrawLine(DPSMate_Details_Threat_Log, 497, 260, 497, 15, 20, {0.5,0.5,0.5,0.5}, "BACKGROUND")
 	lines[11]:Show()
 	
-	lines[12] = DPSMate.Options.graph:DrawLine(DPSMate_Details_DamageTaken_Log, 557, 260, 557, 15, 20, {0.5,0.5,0.5,0.5}, "BACKGROUND")
+	lines[12] = DPSMate.Options.graph:DrawLine(DPSMate_Details_Threat_Log, 557, 260, 557, 15, 20, {0.5,0.5,0.5,0.5}, "BACKGROUND")
 	lines[12]:Show()
 end
 
-function DPSMate.Modules.DetailsDamageTaken:SortLineTable(arr, b)
+function DPSMate.Modules.DetailsThreat:SortLineTable(arr, b)
 	local newArr = {}
 	if b then
 		for cat, val in arr[DPSMateUser[DetailsUser][1]][b] do
@@ -470,18 +415,18 @@ function DPSMate.Modules.DetailsDamageTaken:SortLineTable(arr, b)
 	return newArr
 end
 
-function DPSMate.Modules.DetailsDamageTaken:GetSummarizedTable(arr, b)
+function DPSMate.Modules.DetailsThreat:GetSummarizedTable(arr, b)
 	return DPSMate.Sync:GetSummarizedTable(self:SortLineTable(arr, b))
 end
 
-function DPSMate.Modules.DetailsDamageTaken:ProcsDropDown()
-	local arr = DPSMate.Modules.DetailsDamageTaken:GetAuraGainedArr(curKey)
-	DPSMate_Details_DamageTaken.proc = "None"
+function DPSMate.Modules.DetailsThreat:ProcsDropDown()
+	local arr = DPSMate.Modules.DetailsThreat:GetAuraGainedArr(curKey)
+	DPSMate_Details_Threat.proc = "None"
 	
     local function on_click()
-        UIDropDownMenu_SetSelectedValue(DPSMate_Details_DamageTaken_DiagramLegend_Procs, this.value)
-		DPSMate_Details_DamageTaken.proc = this.value
-		DPSMate.Modules.DetailsDamageTaken:UpdateLineGraph()
+        UIDropDownMenu_SetSelectedValue(DPSMate_Details_Threat_DiagramLegend_Procs, this.value)
+		DPSMate_Details_Threat.proc = this.value
+		DPSMate.Modules.DetailsThreat:UpdateLineGraph()
     end
 	
 	UIDropDownMenu_AddButton{
@@ -504,13 +449,13 @@ function DPSMate.Modules.DetailsDamageTaken:ProcsDropDown()
 		end
 	end
 	
-	if DPSMate_Details_DamageTaken.LastUser~=DetailsUser then
-		UIDropDownMenu_SetSelectedValue(DPSMate_Details_DamageTaken_DiagramLegend_Procs, "None")
+	if DPSMate_Details_Threat.LastUser~=DetailsUser then
+		UIDropDownMenu_SetSelectedValue(DPSMate_Details_Threat_DiagramLegend_Procs, "None")
 	end
-	DPSMate_Details_DamageTaken.LastUser = DetailsUser
+	DPSMate_Details_Threat.LastUser = DetailsUser
 end
 
-function DPSMate.Modules.DetailsDamageTaken:GetAuraGainedArr(k)
+function DPSMate.Modules.DetailsThreat:GetAuraGainedArr(k)
 	local modes = {["total"]=1,["currentfight"]=2}
 	for cat, val in pairs(DPSMateSettings["windows"][k]["options"][2]) do
 		if val then
@@ -524,8 +469,8 @@ function DPSMate.Modules.DetailsDamageTaken:GetAuraGainedArr(k)
 	end
 end
 
-function DPSMate.Modules.DetailsDamageTaken:CheckProcs(name, val)
-	local arr = DPSMate.Modules.DetailsDamageTaken:GetAuraGainedArr(curKey)
+function DPSMate.Modules.DetailsThreat:CheckProcs(name, val)
+	local arr = DPSMate.Modules.DetailsThreat:GetAuraGainedArr(curKey)
 	if arr[DPSMateUser[DetailsUser][1]] then
 		if arr[DPSMateUser[DetailsUser][1]][name] then
 			for i=1, DPSMate:TableLength(arr[DPSMateUser[DetailsUser][1]][name][1]) do
@@ -539,9 +484,9 @@ function DPSMate.Modules.DetailsDamageTaken:CheckProcs(name, val)
 	return false
 end
 
-function DPSMate.Modules.DetailsDamageTaken:AddProcPoints(name, dat)
+function DPSMate.Modules.DetailsThreat:AddProcPoints(name, dat)
 	local bool, data, LastVal = false, {}, 0
-	local arr = DPSMate.Modules.DetailsDamageTaken:GetAuraGainedArr(curKey)
+	local arr = DPSMate.Modules.DetailsThreat:GetAuraGainedArr(curKey)
 	if arr[DPSMateUser[DetailsUser][1]] then
 		if arr[DPSMateUser[DetailsUser][1]][name] then
 			if arr[DPSMateUser[DetailsUser][1]][name][4] then
@@ -569,7 +514,7 @@ function DPSMate.Modules.DetailsDamageTaken:AddProcPoints(name, dat)
 	return {bool, data}
 end
 
-function DPSMate.Modules.DetailsDamageTaken:ToggleMode()
+function DPSMate.Modules.DetailsThreat:ToggleMode()
 	if toggle then
 		self:UpdateLineGraph()
 		toggle=false
@@ -579,7 +524,7 @@ function DPSMate.Modules.DetailsDamageTaken:ToggleMode()
 	end
 end
 
-function DPSMate.Modules.DetailsDamageTaken:ToggleIndividual()
+function DPSMate.Modules.DetailsThreat:ToggleIndividual()
 	if toggle3 then
 		toggle3 = false
 	else

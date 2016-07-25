@@ -44,7 +44,8 @@ local Arrays = {
 	[12] = {}, -- Interrupts
 	[13] = {}, -- Dispels
 	[14] = {}, -- Auras
-	[15] = {} -- O Healing taken
+	[15] = {}, -- O Healing taken
+	[16] = {} -- Threat
 }
 local tra = DPSMate.BabbleSpell
 local npctra = DPSMate.NPCDB
@@ -187,6 +188,10 @@ function DPSMate.Sync:OnUpdate(elapsed)
 			self:EDAllOut(DPSMateEDT, "T")
 			self:EDAbilityOut(DPSMateEDT, "T")
 			self:EDStatOut(DPSMateEDT, "T")
+			iterator = 11
+		elseif time>=30 and iterator==11 then
+			self:ThreatOut()
+			self:ThreatStatsOut()
 			Buffer[cou] = {"DPSMate_SyncStatus", "0"}
 			cou = cou + 1
 			self.Async, iterator, time = false, 1, 0
@@ -340,9 +345,6 @@ end
 function DPSMate.Sync:OnEvent(event)
 	if event == "CHAT_MSG_ADDON" then
 		if DB.loaded then
-			if arg1 == "KLHTM" then
-				self:Threat(arg2,arg4)
-			end
 			if DPSMateSettings["sync"] then
 				if arg4 == player then return end 
 				if self.Exec[arg1] then
@@ -383,11 +385,12 @@ function DPSMate.Sync:SyncStatus(arg2, arg4)
 		if Arrays[13][usid] then DPSMateDispels[1][usid] = Arrays[13][usid] end
 		if Arrays[14][usid] then DPSMateAurasGained[1][usid] = Arrays[14][usid] end
 		if Arrays[15][usid] then DPSMateOverhealingTaken[1][usid] = Arrays[15][usid] end
+		if Arrays[16][usid] then DPSMateThreat[1][usid] = Arrays[16][usid] end
 		DB.NeedUpdate = true
 	else
 		DB:BuildUser(arg4, nil)
 		local usid = DPSMateUser[arg4][1]
-		for i=1, 15 do
+		for i=1, 16 do
 			Arrays[i][usid] = nil
 		end
 	end
@@ -1429,10 +1432,87 @@ function DPSMate.Sync:AurasOut()
 	end
 end
 
-function DPSMate.Sync:Threat(arg2, arg4)
-	for a in strgfind(arg2, "t (%d+)") do
-		DB:Threat(tnbr(a), arg4)
+----------------------------------------------------------------------------------
+--------------                       Threat                         --------------                                  
+----------------------------------------------------------------------------------
+
+function DPSMate.Sync:ThreatIn(arg2,arg4)
+	for cat, val in loadstring("return {"..arg2.."}")() do
+		for ca, va in val do
+			for c,v in va do
+				DB:Threat(arg4, tra:GetTranslation(cat) or cat, npctra:GetTranslation(ca) or ca, v, 1)
+			end
+		end
 	end
+end
+
+function DPSMate.Sync:ThreatOut()
+	if not DPSMateThreat[pid] then return end
+	for cat, val in DPSMateThreat[pid] do
+		local tar = DPSMate:GetUserById(cat)
+		for ca, va in val do
+			Buffer[cou] = {"DPSMate_Threat", tar..","..DPSMate:GetAbilityById(ca)..","..va[1]..","..va[2]..","..va[3]..","..va[4]..","}
+			cou = cou + 1
+		end
+	end
+end
+
+function DPSMate.Sync:ThreatStatsOut()
+	if not DPSMateThreat[pid] then return end
+	for cat, val in DPSMateThreat[pid] do
+		local tar = DPSMate:GetUserById(cat)
+		for ca, va in val do
+			local ability = DPSMate:GetAbilityById(ca)
+			for c, v in self:GetSummarizedTable(va["i"]) do
+				Buffer[cou] = {"DPSMate_ThreatStats", tar..","..ability..","..v[1]..","..v[2]..","}
+				cou = cou + 1
+			end
+		end
+	end
+end
+
+function DPSMate.Sync:ThreatAllIn(arg2, arg4)
+	t = {}
+	t[1] = npctra:GetTranslation(t[1]) or t[1]
+	t[2] = tra:GetTranslation(t[2]) or t[2]
+	DB:BuildUser(arg4, nil)
+	DB:BuildUser(t[1], nil)
+	DB:BuildAbility(t[2], nil)
+	local usid, abid, piid = DPSMateUser[t[1]][1], DPSMateAbility[t[2]][1], DPSMateUser[arg4][1]
+	if not Arrays[16][piid] then
+		Arrays[16][piid] = {}
+	end
+	if not Arrays[16][piid][usid] then
+		Arrays[16][piid][usid] = {}
+	end
+	if not Arrays[16][piid][usid][abid] then
+		Arrays[16][piid][usid][abid] = {
+			[1] = tnbr(t[3]),
+			[2] = tnbr(t[4]),
+			[3] = tnbr(t[5]),
+			[4] = tnbr(t[6]),
+			["i"] = {}
+		}
+	end
+end
+
+function DPSMate.Sync:ThreatStatsIn(arg2,arg4)
+	t = {}
+	t[1] = npctra:GetTranslation(t[1]) or t[1]
+	t[2] = tra:GetTranslation(t[2]) or t[2]
+	DB:BuildUser(arg4, nil)
+	DB:BuildUser(t[1], nil)
+	DB:BuildAbility(t[2], nil)
+	local usid, abid, piid = DPSMateUser[t[1]][1], DPSMateAbility[t[2]][1], DPSMateUser[arg4][1]
+	if not Arrays[16][piid] then
+		return
+	end
+	if not Arrays[16][piid][usid] then
+		return
+	end
+	t[1] = tnbr(t[1])
+	Arrays[16][piid][usid][abid]["i"][t[1]] = tnbr(t[2])
+	if t[1]>DPSMateCombatTime["total"] then DPSMateCombatTime["total"]=t[1] end
 end
 
 DPSMate.Sync.Exec = {
@@ -1498,5 +1578,8 @@ DPSMate.Sync.Exec = {
 	["DPSMate_VoteFail"..DPSMate.VERSION] = function() DPSMate:SendMessage(DPSMate.L["votefailederror"]) end,
 	["DPSMate_Participate"..DPSMate.VERSION] = function() DPSMate.Sync:CountParticipants() end,
 	["DPSMate_SyncTimer"..DPSMate.VERSION] = function(arg2) DPSMate.Sync:SetTimer(arg2) end,
-	["DPSMate_SyncStatus"..DPSMate.VERSION] = function(arg2,arg4) DPSMate.Sync:SyncStatus(arg2, arg4) end
+	["DPSMate_SyncStatus"..DPSMate.VERSION] = function(arg2,arg4) DPSMate.Sync:SyncStatus(arg2, arg4) end,
+	["DPSMate_Threat"..DPSMate.VERSION] = function(arg2,arg4) DPSMate.Sync:ThreatAllIn(arg2, arg4) end,
+	["DPSMate_ThreatStats"..DPSMate.VERSION] = function(arg2,arg4) DPSMate.Sync:ThreatStatsIn(arg2, arg4) end,
+	["KLHTMHOOK"] = function(arg2,arg4) DPSMate.Sync:ThreatIn(arg2,arg4) end
 }
