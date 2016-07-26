@@ -701,6 +701,10 @@ if (GetLocale() == "deDE") then
 			return
 		end
 		for b,a in strgfind(msg, "Ihr bekommt durch (.+) (%d) Extra-Angriff\e?%.") do -- Potential for more evaluation
+			DB.NextSwing[self.player] = {
+				[1] = tnbr(a),
+				[2] = b
+			}
 			DB:BuildBuffs(self.player, self.player, b, true)
 			DB:DestroyBuffs(self.player, b)
 			return
@@ -870,6 +874,10 @@ if (GetLocale() == "deDE") then
 			return 
 		end
 		for a,c,b in strgfind(msg, "(.+) bekommt durch (.+) (%d+) Extra-Angriff\e?%.") do
+			DB.NextSwing[a] = {
+				[1] = tnbr(b),
+				[2] = c
+			}
 			DB:BuildBuffs(a, a, c, true)
 			DB:DestroyBuffs(a, c)
 			return 

@@ -554,6 +554,10 @@ function DPSMate.Parser:SpellSelfBuff(msg)
 		return
 	end
 	for a,b in strgfind(msg, "You gain (%d) extra attack\s? through (.+)%.") do -- Potential for more evaluation
+		DB.NextSwing[self.player] = {
+			[1] = tnbr(a),
+			[2] = b
+		}
 		DB:BuildBuffs(self.player, self.player, b, true)
 		DB:DestroyBuffs(self.player, b)
 		return
@@ -732,6 +736,10 @@ function DPSMate.Parser:SpellHostilePlayerBuff(msg)
 		return 
 	end
 	for a,b,c in strgfind(msg, "(.+) gains (%d+) extra attack\s? through (.+)%.") do
+		DB.NextSwing[a] = {
+			[1] = tnbr(b),
+			[2] = c
+		}
 		DB:BuildBuffs(a, a, c, true)
 		DB:DestroyBuffs(a, c)
 		return 
