@@ -142,7 +142,7 @@ function DPSMate.Modules.DetailsEHealing:SelectDetails_EHealingButton(i)
 	
 	-- Hit
 	_G("DPSMate_Details_EHealing_LogDetails_EHealing_Amount0_Amount"):SetText(hit)
-	_G("DPSMate_Details_EHealing_LogDetails_EHealing_Amount0_Percent"):SetText(ceil(100*hit/total).."%")
+	_G("DPSMate_Details_EHealing_LogDetails_EHealing_Amount0_Percent"):SetText(strformat("%.1f", 100*hit/total).."%")
 	_G("DPSMate_Details_EHealing_LogDetails_EHealing_Amount0_StatusBar"):SetValue(ceil(100*hit/max))
 	_G("DPSMate_Details_EHealing_LogDetails_EHealing_Amount0_StatusBar"):SetStatusBarColor(0.3,0.7,1.0,1)
 	_G("DPSMate_Details_EHealing_LogDetails_EHealing_Average0"):SetText(ceil(hitav))
@@ -151,7 +151,7 @@ function DPSMate.Modules.DetailsEHealing:SelectDetails_EHealingButton(i)
 	
 	-- Crit
 	_G("DPSMate_Details_EHealing_LogDetails_EHealing_Amount1_Amount"):SetText(crit)
-	_G("DPSMate_Details_EHealing_LogDetails_EHealing_Amount1_Percent"):SetText(ceil(100*crit/total).."%")
+	_G("DPSMate_Details_EHealing_LogDetails_EHealing_Amount1_Percent"):SetText(strformat("%.1f", 100*crit/total).."%")
 	_G("DPSMate_Details_EHealing_LogDetails_EHealing_Amount1_StatusBar"):SetValue(ceil(100*crit/max))
 	_G("DPSMate_Details_EHealing_LogDetails_EHealing_Amount1_StatusBar"):SetStatusBarColor(1.0,0.7,0.3,1)
 	_G("DPSMate_Details_EHealing_LogDetails_EHealing_Average1"):SetText(ceil(critav))

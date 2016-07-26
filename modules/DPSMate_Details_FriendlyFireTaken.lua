@@ -122,7 +122,7 @@ function DPSMate.Modules.DetailsFFT:SelectDetailsButton(p,i)
 	
 	-- Hit
 	_G("DPSMate_Details_FFT_LogDetails_Amount2_Amount"):SetText(hit)
-	_G("DPSMate_Details_FFT_LogDetails_Amount2_Percent"):SetText(ceil(100*hit/total).."%")
+	_G("DPSMate_Details_FFT_LogDetails_Amount2_Percent"):SetText(strformat("%.1f", 100*hit/total).."%")
 	_G("DPSMate_Details_FFT_LogDetails_Amount2_StatusBar"):SetValue(ceil(100*hit/max))
 	_G("DPSMate_Details_FFT_LogDetails_Amount2_StatusBar"):SetStatusBarColor(0.9,0.0,0.0,1)
 	_G("DPSMate_Details_FFT_LogDetails_Average2"):SetText(ceil(hitav))
@@ -131,7 +131,7 @@ function DPSMate.Modules.DetailsFFT:SelectDetailsButton(p,i)
 	
 	-- Crit
 	_G("DPSMate_Details_FFT_LogDetails_Amount3_Amount"):SetText(crit)
-	_G("DPSMate_Details_FFT_LogDetails_Amount3_Percent"):SetText(ceil(100*crit/total).."%")
+	_G("DPSMate_Details_FFT_LogDetails_Amount3_Percent"):SetText(strformat("%.1f", 100*crit/total).."%")
 	_G("DPSMate_Details_FFT_LogDetails_Amount3_StatusBar"):SetValue(ceil(100*crit/max))
 	_G("DPSMate_Details_FFT_LogDetails_Amount3_StatusBar"):SetStatusBarColor(0.0,0.9,0.0,1)
 	_G("DPSMate_Details_FFT_LogDetails_Average3"):SetText(ceil(critav))
@@ -140,7 +140,7 @@ function DPSMate.Modules.DetailsFFT:SelectDetailsButton(p,i)
 	
 	-- Miss
 	_G("DPSMate_Details_FFT_LogDetails_Amount4_Amount"):SetText(miss)
-	_G("DPSMate_Details_FFT_LogDetails_Amount4_Percent"):SetText(ceil(100*miss/total).."%")
+	_G("DPSMate_Details_FFT_LogDetails_Amount4_Percent"):SetText(strformat("%.1f", 100*miss/total).."%")
 	_G("DPSMate_Details_FFT_LogDetails_Amount4_StatusBar"):SetValue(ceil(100*miss/max))
 	_G("DPSMate_Details_FFT_LogDetails_Amount4_StatusBar"):SetStatusBarColor(0.0,0.0,1.0,1)
 	_G("DPSMate_Details_FFT_LogDetails_Average4"):SetText("-")
@@ -149,7 +149,7 @@ function DPSMate.Modules.DetailsFFT:SelectDetailsButton(p,i)
 	
 	-- Parry
 	_G("DPSMate_Details_FFT_LogDetails_Amount5_Amount"):SetText(parry)
-	_G("DPSMate_Details_FFT_LogDetails_Amount5_Percent"):SetText(ceil(100*parry/total).."%")
+	_G("DPSMate_Details_FFT_LogDetails_Amount5_Percent"):SetText(strformat("%.1f", 100*parry/total).."%")
 	_G("DPSMate_Details_FFT_LogDetails_Amount5_StatusBar"):SetValue(ceil(100*parry/max))
 	_G("DPSMate_Details_FFT_LogDetails_Amount5_StatusBar"):SetStatusBarColor(1.0,1.0,0.0,1)
 	_G("DPSMate_Details_FFT_LogDetails_Average5"):SetText("-")
@@ -158,7 +158,7 @@ function DPSMate.Modules.DetailsFFT:SelectDetailsButton(p,i)
 	
 	-- Dodge
 	_G("DPSMate_Details_FFT_LogDetails_Amount6_Amount"):SetText(dodge)
-	_G("DPSMate_Details_FFT_LogDetails_Amount6_Percent"):SetText(ceil(100*dodge/total).."%")
+	_G("DPSMate_Details_FFT_LogDetails_Amount6_Percent"):SetText(strformat("%.1f", 100*dodge/total).."%")
 	_G("DPSMate_Details_FFT_LogDetails_Amount6_StatusBar"):SetValue(ceil(100*dodge/max))
 	_G("DPSMate_Details_FFT_LogDetails_Amount6_StatusBar"):SetStatusBarColor(1.0,0.0,1.0,1)
 	_G("DPSMate_Details_FFT_LogDetails_Average6"):SetText("-")
@@ -167,7 +167,7 @@ function DPSMate.Modules.DetailsFFT:SelectDetailsButton(p,i)
 	
 	-- Resist
 	_G("DPSMate_Details_FFT_LogDetails_Amount7_Amount"):SetText(resist)
-	_G("DPSMate_Details_FFT_LogDetails_Amount7_Percent"):SetText(ceil(100*resist/total).."%")
+	_G("DPSMate_Details_FFT_LogDetails_Amount7_Percent"):SetText(strformat("%.1f", 100*resist/total).."%")
 	_G("DPSMate_Details_FFT_LogDetails_Amount7_StatusBar"):SetValue(ceil(100*resist/max))
 	_G("DPSMate_Details_FFT_LogDetails_Amount7_StatusBar"):SetStatusBarColor(0.0,1.0,1.0,1)
 	_G("DPSMate_Details_FFT_LogDetails_Average7"):SetText("-")
