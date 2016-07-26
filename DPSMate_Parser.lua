@@ -179,6 +179,9 @@ DPSMate.Parser.BuffExceptions = {
 DPSMate.Parser.OtherExceptions = {
 	[DPSMate.BabbleSpell:GetTranslation("Mighty Rage")] = true,
 	[DPSMate.BabbleSpell:GetTranslation("Bloodrage")] = true,
+	[DPSMate.BabbleSpell:GetTranslation("Holy Strength")] = true,
+	[DPSMate.BabbleSpell:GetTranslation("Dreamless Sleep")] = true,
+	[DPSMate.BabbleSpell:GetTranslation("Vampirism")] = true,
 }
 DPSMate.Parser.DmgProcs = {
 	-- General

@@ -690,7 +690,7 @@ if (GetLocale() == "deDE") then
 			end
 			DB:Healing(1, DPSMateTHealing, self.player, a, 1, 0, t[2], t[1] or b)
 			DB:DeathHistory(t[1] or b, self.player, a, t[2], 1, 0, 1, 0)
-			if self.procs[a] then
+			if self.procs[a] and not self.OtherExceptions[a] then
 				DB:BuildBuffs(self.player, self.player, a, true)
 			end
 			return
@@ -849,7 +849,7 @@ if (GetLocale() == "deDE") then
 			end
 			DB:Healing(1, DPSMateTHealing, a, b, 1, 0, t[1], t[2] or c)
 			DB:DeathHistory(t[2] or c, a, b, t[1], 1, 0, 1, 0)
-			if self.procs[b] then
+			if self.procs[b] and not self.OtherExceptions[b] then
 				DB:BuildBuffs(a, c, b, true)
 			end
 			return

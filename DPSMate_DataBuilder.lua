@@ -1917,11 +1917,13 @@ function DPSMate.DB:ConfirmBuff(target, ability, time)
 		if val[4]<=(time or 0) then
 			if val[2]==ability and val[3]==target then
 				self:BuildBuffs(val[1], target, ability, false)
+				--DPSMate:SendMessage("Fired 2: "..time)
 				--DPSMate:SendMessage("Confirmed Buff!")
 				return
 			end
 		end
 	end
+	--DPSMate:SendMessage("Fired 1: "..time)
 	self:BuildBuffs("Unknown", target, ability, false)
 end
 
