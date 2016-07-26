@@ -1227,15 +1227,15 @@ function DPSMate.DB:Healing(mode, arr, Duser, Dname, Dhit, Dcrit, Damount)
 			}
 		end
 		local path = arr[cat][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]]
+		path[1] = path[1]+Damount
+		path[2] = path[2]+Dhit
+		path[3] = path[3]+Dcrit
 		if Dhit==1 then
 			path[4] = self:WeightedAverage(path[4], Damount, path[2]-Dhit, Dhit)
 		end
 		if Dcrit==1 then
 			path[5] = self:WeightedAverage(path[5], Damount, path[3]-Dcrit, Dcrit)
 		end
-		path[1] = path[1]+Damount
-		path[2] = path[2]+Dhit
-		path[3] = path[3]+Dcrit
 		arr[cat][DPSMateUser[Duser][1]]["i"] = arr[cat][DPSMateUser[Duser][1]]["i"]+Damount
 		if Dhit==1 then 
 			if Damount<path[6] or path[6]==0 then
@@ -1296,6 +1296,9 @@ function DPSMate.DB:HealingTaken(arr, Duser, Dname, Dhit, Dcrit, Damount, target
 			}
 		end
 		local path = arr[cat][DPSMateUser[Duser][1]][DPSMateUser[target][1]][DPSMateAbility[Dname][1]]
+		path[1] = path[1]+Damount
+		path[2] = path[2]+Dhit
+		path[3] = path[3]+Dcrit
 		if Dhit==1 then
 			path[4] = self:WeightedAverage(path[4], Damount, path[2]-Dhit, Dhit)
 			if Damount<path[6] or path[6]==0 then
@@ -1314,9 +1317,6 @@ function DPSMate.DB:HealingTaken(arr, Duser, Dname, Dhit, Dcrit, Damount, target
 				path[9] = Damount 
 			end
 		end
-		path[1] = path[1]+Damount
-		path[2] = path[2]+Dhit
-		path[3] = path[3]+Dcrit
 		arr[cat][DPSMateUser[Duser][1]]["i"] = arr[cat][DPSMateUser[Duser][1]]["i"]+Damount
 		if Damount > 0 then 
 			local time = floor(DPSMateCombatTime[val])

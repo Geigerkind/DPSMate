@@ -18,6 +18,41 @@ if not AceLibrary:IsNewVersion(major, minor) then return end
 local lib={}
 local GraphFunctions={}
 
+local gsub = gsub
+local ipairs = ipairs
+local pairs = pairs
+local sqrt = sqrt
+local table = table
+local tinsert = tinsert
+local tremove = tremove
+local type = type
+local math_max = math.max
+local math_min = math.min
+local math_ceil = math.ceil
+local math_pi = math.pi
+local math_floor = math.floor
+local math_pow = math.pow
+local math_random = math.random
+local math_cos = math.cos
+local math_sin = math.sin
+local math_deg = math.deg
+local math_atan = math.atan
+local math_abs = math.abs
+local math_fmod = math.fmod
+local math_huge = math.huge
+local table_remove = table.remove
+local table_insert = table.insert
+
+local CreateFrame = CreateFrame
+local GetCursorPosition = GetCursorPosition
+local GetTime = GetTime
+local MouseIsOver = MouseIsOver
+local UnitHealth = UnitHealth
+
+local UIParent = UIParent
+
+local DEFAULT_CHAT_FRAME = DEFAULT_CHAT_FRAME
+
 --Search for just Addon\\ at the front since the interface part often gets trimmed
 local TextureDirectory="Interface\\AddOns\\DPSMate\\libs\\GraphLib\\GraphTextures\\"
 
@@ -33,6 +68,7 @@ function lib:CreateGraphRealtime(name,parent,relative,relativeTo,offsetX,offsetY
 	local i
 	graph = CreateFrame("Frame",name,parent)
 
+	Width = math_floor(Width)
 	
 	graph:SetPoint(relative,parent,relativeTo,offsetX,offsetY)
 	graph:SetWidth(Width)
@@ -41,7 +77,9 @@ function lib:CreateGraphRealtime(name,parent,relative,relativeTo,offsetX,offsetY
 
 	--Create the bars
 	graph.Bars={}
-	graph.BarNum=Width
+	graph.BarsUsing = {}
+	graph.BarNum = Width
+	graph.Height = Height
 	for i=1,Width do
 		local bar
 		bar = CreateFrame("StatusBar",name.."Bar"..i,graph)--graph:CreateTexture(nil,"ARTWORK")
@@ -49,14 +87,15 @@ function lib:CreateGraphRealtime(name,parent,relative,relativeTo,offsetX,offsetY
 		bar:SetHeight(Height)
 		bar:SetWidth(1)
 		bar:SetOrientation("VERTICAL")
-		bar:SetMinMaxValues(0,Height)
+		bar:SetMinMaxValues(0,1)
 		bar:SetStatusBarTexture("Interface\\Buttons\\WHITE8X8.blp")
 
 		local t=bar:GetStatusBarTexture()		
 		t:SetGradientAlpha("VERTICAL",0.2,0.0,0.0,0.5,1.0,0.0,0.0,1.0)
 		
 		bar:Show()
-		table.insert(graph.Bars,bar)
+		table_insert(graph.Bars,bar)
+		table_insert(graph.BarsUsing, bar)
 	end
 
 	
@@ -72,17 +111,31 @@ function lib:CreateGraphRealtime(name,parent,relative,relativeTo,offsetX,offsetY
 	graph.SetGridSpacing=GraphFunctions.SetGridSpacing
 	graph.SetAxisColor=GraphFunctions.SetAxisColor
 	graph.SetGridColor=GraphFunctions.SetGridColor
+	graph.SetGridColorSecondary = GraphFunctions.SetGridColorSecondary
+	graph.SetGridSecondaryMultiple = GraphFunctions.SetGridSecondaryMultiple
 	graph.SetFilterRadius=GraphFunctions.SetFilterRadius
-	graph.SetAutoscaleYAxis=GraphFunctions.SetAutoscaleYAxis
+	--graph.SetAutoscaleYAxis=GraphFunctions.SetAutoscaleYAxis
 	graph.SetBarColors=GraphFunctions.SetBarColors
 	graph.SetMode=GraphFunctions.SetMode
 	graph.SetAutoScale=GraphFunctions.SetAutoScale
 
+	graph.SetWidth = GraphFunctions.RealtimeSetWidth
+	graph.SetHeight = GraphFunctions.RealtimeSetHeight
+	graph.SetBarColors = GraphFunctions.RealtimeSetColors
+	graph.GetMaxValue = GraphFunctions.GetMaxValue
+	graph.GetValue = GraphFunctions.RealtimeGetValue
+	graph.SetUpdateLimit = GraphFunctions.SetUpdateLimit
+	graph.SetDecay = GraphFunctions.SetDecay
+	graph.SetMinMaxY = GraphFunctions.SetMinMaxY
+	graph.AddBar = GraphFunctions.AddBar
+	graph.SetYLabels = GraphFunctions.SetYLabels
+	
 	graph.DrawLine=self.DrawLine
 	graph.HideLines=self.HideLines
 	graph.HideFontStrings=GraphFunctions.HideFontStrings
 	graph.FindFontString=GraphFunctions.FindFontString
 	graph.ShowFontStrings=GraphFunctions.ShowFontStrings
+	graph.SetBars = GraphFunctions.SetBars
 
 	--Set the update function
 
@@ -100,13 +153,25 @@ function lib:CreateGraphRealtime(name,parent,relative,relativeTo,offsetX,offsetY
 	graph.Filter="RECT"
 	graph.AxisColor={1.0,1.0,1.0,1.0}
 	graph.GridColor={0.5,0.5,0.5,0.5}
+	graph.BarColorTop = {1.0, 0.0, 0.0, 1.0}
+	graph.BarColorBot = {0.2, 0.0, 0.0, 0.5}
 	graph.AutoScale=false
 	graph.Data={}
+	graph.MinMaxY = 0
+	graph.CurVal = 0
+	graph.LastDataTime = GetTime()
+	
+	graph.LimitUpdates = 0
+	graph.NextUpdate = 0
+	
+	graph.BarHeight = {}
+	graph.LastShift = GetTime()
+	graph.BarWidth = (graph.XMax - graph.XMin) / graph.BarNum
+	graph.DecaySet = 0.8
+	graph.Decay = math_pow(graph.DecaySet, graph.BarWidth)
+	graph.ExpNorm = 1 / (1 - graph.Decay)
 
-	graph.BarHeight={}
-	graph.LastShift=GetTime()
-	graph.BarWidth=(graph.XMax-graph.XMin)/graph.BarNum
-	graph.FilterOverlap=math.max(math.ceil((graph.TimeRadius+graph.XMax)/graph.BarWidth),0)
+	graph.FilterOverlap = math_max(math_ceil((graph.TimeRadius + graph.XMax) / graph.BarWidth), 0)
 	for i=1,graph.BarNum do
 		graph.BarHeight[i]=0
 	end
@@ -351,7 +416,7 @@ function lib:CreateStackedGraph(name,parent,relative,relativeTo,offsetX,offsetY,
 	graph.LockYMin=GraphFunctions.LockYMin
 	graph.LockYMax=GraphFunctions.LockYMax
 	
-
+	graph.FindNearValue=GraphFunctions.FindNearValue
 
 	graph.DrawLine=self.DrawLine
 	graph.DrawBar=self.DrawBar
@@ -408,7 +473,7 @@ function GraphFunctions:AddTimeData(value)
 	local t={}
 	t.Time=GetTime()
 	t.Value=value
-	table.insert(self.Data,t)
+	table_insert(self.Data,t)
 end
 
 --RefreshRealtimeGraph - Refreshes the gridlines for the realtime graph
@@ -454,7 +519,7 @@ function GraphFunctions:AddDataSeries(points,color,Dp,label)
 		return
 	end
 	
-	table.insert(self.Data,{Points=points;Color=color;Label=label})
+	table_insert(self.Data,{Points=points;Color=color;Label=label})
 	self.DataPoints = Dp
 	
 	self.NeedsUpdate=true
@@ -489,7 +554,7 @@ function GraphFunctions:FindTexture()
 		end
 	end
 	local g=self:CreateTexture(nil,"BACKGROUND")
-	table.insert(self.Textures,g)
+	table_insert(self.Textures,g)
 	return g
 end
 
@@ -519,7 +584,7 @@ function GraphFunctions:FindFontString()
 		end
 	end
 	local g=self:CreateFontString(nil,"OVERLAY")
-	table.insert(self.FontStrings,g)
+	table_insert(self.FontStrings,g)
 	return g
 end
 
@@ -619,7 +684,7 @@ function GraphFunctions:AddPie(Percent, Color, label)
 		if self.onColor<=26 then
 			Color=ColorTable[self.onColor]
 		else
-			Color={math.random(),math.random(),math.random()}
+			Color={math_random(),math_random(),math_random()}
 		end
 		self.onColor=self.onColor+1
 	end
@@ -671,7 +736,7 @@ function GraphFunctions:AddPie(Percent, Color, label)
 			PiePercent=PiePercent+CurPiece
 			CurAngle=CurAngle+Angle
 			
-			table.insert(Section.Textures,t)
+			table_insert(Section.Textures,t)
 
 			if k == 7 then
 				LastPiece=0.09
@@ -684,7 +749,7 @@ function GraphFunctions:AddPie(Percent, Color, label)
 	--Finish adding section data
 	Section.Color=Color
 	Section.Angle=CurAngle
-	table.insert(self.Sections,Section)
+	table_insert(self.Sections,Section)
 	
 	self:DrawLinePie((PiePercent+LastPiece)*360/100)
 	self.PercentOn=PiePercent
@@ -709,7 +774,7 @@ function GraphFunctions:CompletePie(Color)
 		if self.onColor<=26 then
 			Color=ColorTable[self.onColor]
 		else
-			Color={math.random(),math.random(),math.random()}
+			Color={math_random(),math_random(),math_random()}
 		end
 		self.onColor=self.onColor+1
 	end
@@ -733,7 +798,7 @@ function GraphFunctions:CompletePie(Color)
 				PiePercent=PiePercent+CurPiece
 				CurAngle=CurAngle+Angle
 
-				table.insert(Section.Textures,t)
+				table_insert(Section.Textures,t)
 			end
 			CurPiece=CurPiece/2
 			Angle=Angle/2
@@ -749,13 +814,13 @@ function GraphFunctions:CompletePie(Color)
 		t:Show()
 
 		t:SetVertexColor(Color[1],Color[2],Color[3],1.0)
-		table.insert(Section.Textures,t)
+		table_insert(Section.Textures,t)
 	end
 
 	--Finish adding section data
 	Section.Color=Color
 	Section.Angle=360
-	table.insert(self.Sections,Section)
+	table_insert(self.Sections,Section)
 
 
 	self.PercentOn=PiePercent
@@ -778,7 +843,7 @@ end
 
 function GraphFunctions:DrawLinePie(angle)
 	local sx,sy,ex,ey
-	local Radian=math.pi*(90-angle)/180
+	local Radian=math_pi*(90-angle)/180
 	local w,h
 	w=self:GetWidth()/2
 	h=self:GetHeight()/2
@@ -787,8 +852,8 @@ function GraphFunctions:DrawLinePie(angle)
 	sx=w
 	sy=h
 	
-	ex=sx+0.88*w*math.cos(Radian)
-	ey=sx+0.88*h*math.sin(Radian)
+	ex=sx+0.88*w*math_cos(Radian)
+	ey=sx+0.88*h*math_sin(Radian)
 	
 	self:DrawLine(self,sx,sy,ex,ey,34,{0.0,0.0,0.0,1.0},"OVERLAY")
 end
@@ -796,13 +861,13 @@ end
 --Used to rotate the pie slices
 local NamePos = {}
 function GraphFunctions:RotateTexture(texture,angle)
-	local Radian=math.pi*(45-angle)/180
-	local Radian2=math.pi*(45+90-angle)/180
+	local Radian=math_pi*(45-angle)/180
+	local Radian2=math_pi*(45+90-angle)/180
 	local Radius=0.70710678118654752440084436210485
 
 	local tx,ty,tx2,ty2
-	tx=Radius*math.cos(Radian)
-	ty=Radius*math.sin(Radian)
+	tx=Radius*math_cos(Radian)
+	ty=Radius*math_sin(Radian)
 	tx2=-ty
 	ty2=tx
 
@@ -843,7 +908,7 @@ function GraphFunctions:PieChart_OnUpdate()
 		dX=mX/Scale-sX
 		dY=mY/Scale-sY
 
-		local Angle=90-math.deg(math.atan(dY/dX))
+		local Angle=90-math_deg(math_atan(dY/dX))
 		dY=dY*self.Ratio
 		local Dist=dX*dX+dY*dY
 
@@ -871,7 +936,7 @@ function GraphFunctions:PieChart_OnUpdate()
 						end
 					end
 
-					local ColorAdd=0.15*math.abs(math.fmod(GetTime(),3)-1.5)-0.1125
+					local ColorAdd=0.15*math_abs(math_fmod(GetTime(),3)-1.5)-0.1125
 					
 					Color={}
 					Color[1]=v.Color[1]+ColorAdd
@@ -930,7 +995,7 @@ function GraphFunctions:SetXAxis(xmin,xmax)
 	
 	if self.GraphType=="REALTIME" then
 		self.BarWidth=(xmax-xmin)/self.BarNum
-		self.FilterOverlap=math.max(math.ceil((self.TimeRadius+xmax)/self.BarWidth),0)
+		self.FilterOverlap=math_max(math_ceil((self.TimeRadius+xmax)/self.BarWidth),0)
 		self.LastShift=GetTime()+xmin
 	end
 end
@@ -974,6 +1039,205 @@ function GraphFunctions:LockYMax(state)
 	self.LockOnYMax = state
 end
 
+
+-------------------------------------------------------------------------------
+--Functions for Realtime Graphs
+-------------------------------------------------------------------------------
+
+--AddTimeData - Adds a data value to the realtime graph at this moment in time
+function GraphFunctions:AddTimeData(value)
+	if type(value) ~= "number" then
+		return
+	end
+
+	local t = {}
+	t.Time = GetTime()
+	self.LastDataTime = t.Time
+	t.Value = value
+	tinsert(self.Data, t)
+end
+
+--RefreshRealtimeGraph - Refreshes the gridlines for the realtime graph
+function GraphFunctions:RefreshRealtimeGraph()
+	self:HideLines(self)
+	self:CreateGridlines()
+end
+
+--SetFilterRadius - controls the radius of the filter
+function GraphFunctions:SetFilterRadius(radius)
+	self.TimeRadius = radius
+end
+
+--SetAutoscaleYAxis - If enabled the maximum y axis is adjusted to be 25% more than the max value
+function GraphFunctions:SetAutoscaleYAxis(scale)
+	self.AutoScale = scale
+end
+
+--SetBarColors - 
+function GraphFunctions:SetBarColors(BotColor, TopColor)
+	local Temp
+	if BotColor.r then
+		Temp = BotColor
+		BotColor = {Temp.r, Temp.g, Temp.b, Temp.a}
+	end
+	if TopColor.r then
+		Temp = TopColor
+		TopColor = {Temp.r, Temp.g, Temp.b, Temp.a}
+	end
+	for i = 1, self.BarNum do
+		local t = self.Bars[i]:GetStatusBarTexture()
+		t:SetGradientAlpha("VERTICAL", BotColor[1], BotColor[2], BotColor[3], BotColor[4], TopColor[1], TopColor[2], TopColor[3], TopColor[4])
+	end
+end
+
+function GraphFunctions:SetMode(mode)
+	self.Mode = mode
+
+	if mode ~= "SLOW" then
+		self.LastShift = GetTime() + self.XMin
+	end
+end
+
+function GraphFunctions:RealtimeSetColors(BotColor, TopColor)
+	local Temp
+	if BotColor.r then
+		Temp = BotColor
+		BotColor = {Temp.r, Temp.g, Temp.b, Temp.a}
+	end
+	if TopColor.r then
+		Temp = TopColor
+		TopColor = {Temp.r, Temp.g, Temp.b, Temp.a}
+	end
+	self.BarColorBot = BotColor
+	self.BarColorTop = TopColor
+	for _, v in pairs(self.Bars) do
+		v:GetStatusBarTexture():SetGradientAlpha("VERTICAL", self.BarColorBot[1], self.BarColorBot[2], self.BarColorBot[3], self.BarColorBot[4], self.BarColorTop[1], self.BarColorTop[2], self.BarColorTop[3], self.BarColorTop[4])
+	end
+end
+
+function GraphFunctions:RealtimeSetWidth(Width)
+	Width = math_floor(Width)
+
+	if Width == self.BarNum then
+		return
+	end
+
+	self.BarNum = Width
+	for i = 1, Width do
+		if type(self.Bars[i]) == "nil" then
+			local bar
+			bar = CreateFrame("StatusBar", self:GetName().."Bar"..i, self)
+			bar:SetPoint("BOTTOMLEFT", self, "BOTTOMLEFT", i - 1, 0)
+			bar:SetHeight(self.Height)
+			bar:SetWidth(1)
+			bar:SetOrientation("VERTICAL")
+			bar:SetMinMaxValues(0, 1)
+			bar:SetStatusBarTexture("Interface\\Buttons\\WHITE8X8")
+			bar:GetStatusBarTexture():SetHorizTile(false)
+			bar:GetStatusBarTexture():SetVertTile(false)
+
+			local t = bar:GetStatusBarTexture()
+			t:SetGradientAlpha("VERTICAL", self.BarColorBot[1], self.BarColorBot[2], self.BarColorBot[3], self.BarColorBot[4], self.BarColorTop[1], self.BarColorTop[2], self.BarColorTop[3], self.BarColorTop[4])
+
+			tinsert(self.Bars, bar)
+		else
+			self.Bars[i]:SetPoint("BOTTOMLEFT", self, "BOTTOMLEFT", i - 1, 0)
+		end
+		self.BarHeight[i] = 0
+	end
+
+	local SizeOfBarsUsed = table.maxn(self.BarsUsing)
+
+	if Width > SizeOfBarsUsed then
+		for i = SizeOfBarsUsed + 1, Width do
+			tinsert(self.BarsUsing, self.Bars[i])
+			self.Bars[i]:Show()
+		end
+	elseif Width < SizeOfBarsUsed then
+		for i = Width + 1, SizeOfBarsUsed do
+			tremove(self.BarsUsing, Width + 1)
+			self.Bars[i]:Hide()
+		end
+	end
+
+	self.BarWidth = (self.XMax - self.XMin) / self.BarNum
+	self.Decay = math_pow(self.DecaySet, self.BarWidth)
+	self.ExpNorm = 1 / (1 - self.Decay) / 0.95 --Actually a finite geometric series
+
+
+	self:OldSetWidth(Width)
+	self:RefreshGraph()
+end
+
+function GraphFunctions:RealtimeSetHeight(Height)
+	self.Height = Height
+
+	for i = 1, self.BarNum do
+		--self.Bars[i]:Hide()
+		self.Bars[i]:SetValue(0)
+		self.Bars[i]:SetHeight(self.Height)
+	end
+
+	self:OldSetHeight(Height)
+	self:RefreshGraph()
+end
+
+function GraphFunctions:GetMaxValue()
+	--Is there any data that could possibly be not zero?
+	if self.LastDataTime < (self.LastShift + self.XMin - self.TimeRadius) then
+		return 0
+	end
+
+	local MaxY = 0
+
+	for i = 1, self.BarNum do
+		MaxY = math_max(MaxY, self.BarHeight[i])
+	end
+
+	return MaxY
+end
+
+
+
+function GraphFunctions:RealtimeGetValue(Time)
+	local Bar
+	if Time < self.XMin or Time > self.XMax then
+		return 0
+	end
+
+	Bar = math_min(math_max(math_floor(self.BarNum * (Time - self.XMin) / (self.XMax - self.XMin) + 0.5), 1), self.BarNum)
+
+	return self.BarHeight[Bar]
+end
+
+function GraphFunctions:SetUpdateLimit(Time)
+	self.LimitUpdates = Time
+end
+
+function GraphFunctions:SetDecay(decay) 
+	self.DecaySet = decay
+	self.Decay = math_pow(self.DecaySet, self.BarWidth)
+	self.ExpNorm = 1 / (1 - self.Decay) / 0.95 --Actually a finite geometric series (divide 0.96 instead of 1 since seems doesn't quite work right)
+end
+
+function GraphFunctions:AddBar(value)
+	for i = 1, self.BarNum - 1 do
+		self.BarHeight[i] = self.BarHeight[i + 1]
+	end
+	self.BarHeight[self.BarNum] = value
+	self.AddedBar = true
+end
+
+function GraphFunctions:SetBars()
+	local YHeight = self.YMax - self.YMin
+
+	for i, bar in pairs(self.BarsUsing) do
+		local h
+		h = (self.BarHeight[i] - self.YMin) / YHeight
+
+		bar:SetValue(h)
+	end
+end
 
 
 -------------------------------------------------------------------------------
@@ -1023,9 +1287,9 @@ function GraphFunctions:CreateGridlines()
 	if self.YGridInterval then
 		local LowerYGridLine,UpperYGridLine,TopSpace
 		LowerYGridLine=self.YMin/self.YGridInterval
-		LowerYGridLine=math.max(math.floor(LowerYGridLine),math.ceil(LowerYGridLine))
+		LowerYGridLine=math_max(math_floor(LowerYGridLine),math_ceil(LowerYGridLine))
 		UpperYGridLine=self.YMax/self.YGridInterval
-		UpperYGridLine=math.min(math.floor(UpperYGridLine),math.ceil(UpperYGridLine))
+		UpperYGridLine=math_min(math_floor(UpperYGridLine),math_ceil(UpperYGridLine))
 		TopSpace=Height*(1-(UpperYGridLine*self.YGridInterval-self.YMin)/(self.YMax-self.YMin))
 		
 		local alpha = 0
@@ -1033,8 +1297,13 @@ function GraphFunctions:CreateGridlines()
 			if i~=0 or not self.YAxisDrawn then
 				local YPos,T,F
 				YPos=Height*(i*self.YGridInterval-self.YMin)/(self.YMax-self.YMin)
-				T=self:DrawLine(self,0,YPos,Width,YPos,24,self.GridColor,"BACKGROUND")
-				if (((i~=UpperYGridLine) or (TopSpace>12))) and alpha==ceil(((UpperYGridLine-LowerYGridLine)/5)) then
+				if self.GraphType~="REALTIME" then
+					T=self:DrawLine(self,0,YPos,Width,YPos,24,self.GridColor,"BACKGROUND")
+				end
+				if (((i~=UpperYGridLine) or (TopSpace>12))) and alpha==ceil(((UpperYGridLine-LowerYGridLine)/6)) then
+					if self.GraphType=="REALTIME" then
+						T=self:DrawLine(self,0,YPos,Width,YPos,24,self.GridColor,"BACKGROUND")
+					end
 					if self.YLabelsLeft then
 						F=self:FindFontString()
 						F:SetFontObject("GameFontHighlightSmall")
@@ -1064,9 +1333,9 @@ function GraphFunctions:CreateGridlines()
 	if self.XGridInterval then
 		local LowerXGridLine,UpperXGridLine
 		LowerXGridLine=self.XMin/self.XGridInterval
-		LowerXGridLine=math.max(math.floor(LowerXGridLine),math.ceil(LowerXGridLine))
+		LowerXGridLine=math_max(math_floor(LowerXGridLine),math_ceil(LowerXGridLine))
 		UpperXGridLine=self.XMax/self.XGridInterval
-		UpperXGridLine=math.min(math.floor(UpperXGridLine),math.ceil(UpperXGridLine))
+		UpperXGridLine=math_min(math_floor(UpperXGridLine),math_ceil(UpperXGridLine))
 
 		for i=LowerXGridLine,UpperXGridLine do
 			if i~=0 or not self.XAxisDrawn then
@@ -1143,6 +1412,13 @@ function GraphFunctions:OnUpdateGraphRealtime(obj)
 	local i,j
 	local CurTime=GetTime()
 	local MaxBarHeight=obj:GetHeight()
+	local BarsChanged
+	
+	if self.NextUpdate > CurTime or (self.Mode == "RAW" and not (self.NeedsUpdate or self.AddedBar)) then
+		return
+	end
+
+	self.NextUpdate = CurTime + self.LimitUpdates
 	
 	--Slow Mode performs an entire convolution every frame
 	if self.Mode=="SLOW" then
@@ -1160,11 +1436,11 @@ function GraphFunctions:OnUpdateGraphRealtime(obj)
 			local DataValue=1/(2*self.TimeRadius)
 			for k,v in pairs(self.Data) do
 				if v.Time<(CurTime+self.XMin-self.TimeRadius) then
-					table.remove(self.Data,k)	
+					table_remove(self.Data,k)	
 				else	
 					local DataTime=v.Time-CurTime
-					local LowestBar=math.max(math.floor((DataTime-self.XMin-self.TimeRadius)/BarTimeRadius),1)
-					local HighestBar=math.min(math.ceil((DataTime-self.XMin+self.TimeRadius)/BarTimeRadius),self.BarNum)
+					local LowestBar=math_max(math_floor((DataTime-self.XMin-self.TimeRadius)/BarTimeRadius),1)
+					local HighestBar=math_min(math_ceil((DataTime-self.XMin+self.TimeRadius)/BarTimeRadius),self.BarNum)
 					for i=LowestBar,HighestBar do
 						self.BarHeight[i]=self.BarHeight[i]+v.Value*DataValue
 					end
@@ -1177,83 +1453,180 @@ function GraphFunctions:OnUpdateGraphRealtime(obj)
 			for k,v in pairs(self.Data) do
 				local Temp
 				if v.Time<(CurTime+self.XMin-self.TimeRadius) then
-					table.remove(self.Data,k)	
+					table_remove(self.Data,k)	
 				else	
 					local DataTime=v.Time-CurTime
-					local LowestBar=math.max(math.floor((DataTime-self.XMin-self.TimeRadius)/BarTimeRadius),1)
-					local HighestBar=math.min(math.ceil((DataTime-self.XMin+self.TimeRadius)/BarTimeRadius),self.BarNum)
+					local LowestBar=math_max(math_floor((DataTime-self.XMin-self.TimeRadius)/BarTimeRadius),1)
+					local HighestBar=math_min(math_ceil((DataTime-self.XMin+self.TimeRadius)/BarTimeRadius),self.BarNum)
 
 
 					for i=LowestBar,HighestBar do
-						self.BarHeight[i]=self.BarHeight[i]+v.Value*DataValue*math.abs(BarTimeRadius*i+self.XMin-DataTime)
+						self.BarHeight[i]=self.BarHeight[i]+v.Value*DataValue*math_abs(BarTimeRadius*i+self.XMin-DataTime)
 					end
 				end
 			end
 		end
+		BarsChanged = true
 	elseif self.Mode=="FAST" then
-		local ShiftBars=math.floor((CurTime-self.LastShift)/self.BarWidth)
-		local RecalcBars=self.BarNum-(ShiftBars+self.FilterOverlap)+1
+		local ShiftBars = math_floor((CurTime - self.LastShift) / self.BarWidth)
 
-		for i=1,self.BarNum do
-			if i<RecalcBars then
-				self.BarHeight[i]=self.BarHeight[i+ShiftBars]
-			else
-				self.BarHeight[i]=0
+		if ShiftBars > 0 and not (self.LastDataTime < (self.LastShift + self.XMin - self.TimeRadius * 2)) then
+			local RecalcBars = self.BarNum - (ShiftBars + self.FilterOverlap) + 1
+
+			for i = 1, self.BarNum do
+				if i < RecalcBars then
+					self.BarHeight[i] = self.BarHeight[i + ShiftBars]
+				else
+					self.BarHeight[i] = 0
+				end
 			end
-		end
 
-		local k,v
-		local BarTimeRadius=(self.XMax-self.XMin)/self.BarNum
-		local DataValue=1/(2*self.TimeRadius)
+			local BarTimeRadius = (self.XMax - self.XMin) / self.BarNum
+			local DataValue = 1 / (2 * self.TimeRadius)
+			local TimeDiff = CurTime-self.LastShift
 
-		CurTime=self.LastShift+ShiftBars*self.BarWidth
-		self.LastShift=CurTime
+			CurTime = self.LastShift + ShiftBars * self.BarWidth
+			self.LastShift = CurTime
 
-		if self.Filter=="RECT" then
-			--Take the convolution of the dataset on to the bars wtih a rectangular filter
-			local DataValue=1/(2*self.TimeRadius)
-			for k,v in pairs(self.Data) do
-				if v.Time<(CurTime+self.XMin-self.TimeRadius) then
-					table.remove(self.Data,k)	
-				else	
-					local DataTime=v.Time-CurTime
-					local LowestBar=math.max(math.max(math.floor((DataTime-self.XMin-self.TimeRadius)/BarTimeRadius),RecalcBars),1)
-					local HighestBar=math.min(math.ceil((DataTime-self.XMin+self.TimeRadius)/BarTimeRadius),self.BarNum)
-					if LowestBar<=HighestBar then
-						for i=LowestBar,HighestBar do
-							self.BarHeight[i]=self.BarHeight[i]+v.Value*DataValue
+			if self.Filter == "RECT" then
+				--Take the convolution of the dataset on to the bars wtih a rectangular filter
+				local DataValue = 1 / (2 * self.TimeRadius)
+				for k, v in pairs(self.Data) do
+					if v.Time < (CurTime + self.XMax - self.TimeRadius - TimeDiff) then
+						tremove(self.Data, k)
+					else
+						local DataTime = v.Time - CurTime
+						local LowestBar = math_max(math_max(math_floor((DataTime - self.XMin - self.TimeRadius) / BarTimeRadius), RecalcBars), 1)
+						local HighestBar = math_min(math_ceil((DataTime - self.XMin + self.TimeRadius) / BarTimeRadius), self.BarNum)
+						if LowestBar <= HighestBar then
+							for i = LowestBar, HighestBar do
+								self.BarHeight[i] = self.BarHeight[i] + v.Value * DataValue
+							end
 						end
 					end
 				end
 			end
+			BarsChanged = true
+		else
+			CurTime = self.LastShift + ShiftBars * self.BarWidth
+			self.LastShift = CurTime
 		end
+	elseif self.Mode == "EXP" then
+		local ShiftBars = math_floor((CurTime - self.LastShift) / self.BarWidth)
+
+		if ShiftBars > 0 then
+			local RecalcBars = self.BarNum - ShiftBars + 1
+
+			for i = 1, self.BarNum do
+				if i < RecalcBars then
+					self.BarHeight[i] = self.BarHeight[i + ShiftBars]
+				end
+			end
+
+			--Now to calculate the new bars
+			local Total
+			local Weight = 1 / self.TimeRadius / self.ExpNorm
+
+			for i = RecalcBars, self.BarNum do
+				Total = 0
+
+				--Implement an EXPFAST which does this only once instead of for each bar
+				for k, v in pairs(self.Data) do
+					Total = Total + v.Value * Weight
+					if v.Time < (self.LastShift - self.TimeRadius) then
+						tremove(self.Data, k)
+					end
+				end
+
+				self.CurVal = self.Decay * self.CurVal + Total
+
+				self.BarHeight[i] = self.CurVal
+
+				self.LastShift = self.LastShift + self.BarWidth
+			end
+
+			if self.CurVal < 0.1 then
+				self.CurVal = 0
+			end
+			BarsChanged = true
+		else
+			self.LastShift = self.LastShift + self.BarWidth * ShiftBars
+		end
+	elseif self.Mode == "EXPFAST" then
+		local ShiftBars = math_floor((CurTime - self.LastShift) / self.BarWidth)
+		local RecalcBars = self.BarNum - ShiftBars + 1
+
+		if ShiftBars > 0 and not (self.LastDataTime < (self.LastShift + self.XMin-self.TimeRadius)) then
+			for i = 1, self.BarNum do
+				if i < RecalcBars then
+					self.BarHeight[i] = self.BarHeight[i + ShiftBars]
+				end
+			end
+
+			--Now to calculate the new bars
+			local Total
+			local Weight = 1 / self.TimeRadius / self.ExpNorm
+
+			Total = 0
+
+			--Implement an EXPFAST which does this only once instead of for each bar
+			for k, v in pairs(self.Data) do
+				Total = Total + v.Value * Weight
+				if v.Time < (self.LastShift - self.TimeRadius) then
+					tremove(self.Data, k)
+				end
+			end
+
+			--self.LastShift = self.LastShift+self.BarWidth*ShiftBars
+
+			if self.CurVal ~= 0 or Total ~= 0 then
+				for i = RecalcBars, self.BarNum do
+					self.CurVal = self.Decay * self.CurVal + Total
+					self.BarHeight[i] = self.CurVal
+				end
+				self.LastDataTime = self.LastShift + self.BarWidth * ShiftBars
+			else
+				for i = RecalcBars, self.BarNum do
+					self.BarHeight[i] = 0
+				end
+			end
+
+			if self.CurVal < 0.1 then
+				self.CurVal = 0
+			end
+			BarsChanged = true
+		end
+		self.LastShift = self.LastShift + self.BarWidth * ShiftBars
+	elseif self.Mode == "RAW" then
+		--Do nothing really
+		--Using .AddedBar so we cut down on updating the grid
+		self.AddedBar = false
+		BarsChanged = true
 	end
 
-	if self.AutoScale then
-		local MaxY=0
 
-		for i=1,self.BarNum do
-			MaxY=math.max(MaxY,self.BarHeight[i])
-		end
-		MaxY=1.25*MaxY
-		
-		if MaxY~=0 and math.abs((self.YMax-MaxY)/(2*(self.YMax+MaxY)))>0.01 then
-			self.YMax=MaxY
-			if self.RefreshGraph then
-				self:RefreshGraph()
+	if BarsChanged then
+		if self.AutoScale then
+			local MaxY = 0
+
+			for i = 1, self.BarNum do
+				MaxY = math_max(MaxY, self.BarHeight[i])
+			end
+			MaxY = 1.25 * MaxY
+
+			MaxY = math_max(MaxY, self.MinMaxY)
+
+			if MaxY ~= 0 and math_abs(self.YMax - MaxY) > 0.01 then
+				self.YMax = MaxY
+				self.NeedsUpdate = true
 			end
 		end
+		self:SetBars()
 	end
-	for i,bar in pairs(self.Bars) do
-		local h
-		h=math.max(math.min(MaxBarHeight*(self.BarHeight[i]-self.YMin)/(self.YMax-self.YMin),MaxBarHeight),0)
-		
-		if h~=0 then
-			bar:SetValue(h)
-			bar:Show()
-		else
-			bar:Hide()
-		end
+
+	if self.NeedsUpdate then
+		self.NeedsUpdate = false
+		self:RefreshGraph()
 	end
 end
 
@@ -1262,14 +1635,14 @@ function GraphFunctions:RefreshLineGraph()
 	local k1, k2, series
 	self:HideLines(self)
 	
-	if self.AutoScale and self.Data then -- math.huge not implemented
+	if self.AutoScale and self.Data then -- math_huge not implemented
 		local MinX, MaxX, MinY, MaxY = 1, -3, 200, -900
 		for k1, series in pairs(self.Data) do
 			for k2, point in pairs(series.Points) do
-				MinX=math.min(point[1],MinX)
-				MaxX=math.max(point[1],MaxX)
-				MinY=math.min(point[2],MinY)
-				MaxY=math.max(point[2],MaxY)
+				MinX=math_min(point[1],MinX)
+				MaxX=math_max(point[1],MaxX)
+				MinY=math_min(point[2],MinY)
+				MaxY=math_max(point[2],MaxY)
 			end
 		end
 
@@ -1328,7 +1701,7 @@ function GraphFunctions:RefreshLineGraph()
 		for k3, p2 in pairs(self.DataPoints[2]) do
 			-- Needs fine tuning
 			local PPoint = self:CreateTexture()
-			PPoint:SetTexture("Interface\\AddOns\\!ShinoUI\\modules\\modmaps\\blips\\party") -- Adjust path later
+			PPoint:SetTexture(TextureDirectory.."party") 
 			local PPLastPointX = Width*(p2[2][1]-self.XMin)/(self.XMax-self.XMin)
 			local PPLastPointY = Height*(p2[2][2]-self.YMin)/(self.YMax-self.YMin)
 			local PPNextPointX = Width*(p2[3][1]-self.XMin)/(self.XMax-self.XMin)
@@ -1338,7 +1711,7 @@ function GraphFunctions:RefreshLineGraph()
 			PPoint:SetPoint("LEFT", self.yAxis, "LEFT", pointx-5, pointy-22)
 			PPoint:SetHeight(20)
 			PPoint:SetWidth(20)
-			table.insert(self.ppoints, PPoint)
+			table_insert(self.ppoints, PPoint)
 		end
 	end
 	
@@ -1352,13 +1725,13 @@ function GraphFunctions:RefreshScatterPlot()
 	self:HideLines(self)
 
 	if self.AutoScale and self.Data then
-		local MinX, MaxX, MinY, MaxY = math.huge, -math.huge, math.huge, -math.huge
+		local MinX, MaxX, MinY, MaxY = math_huge, -math_huge, math_huge, -math_huge
 		for k1, series in pairs(self.Data) do
 			for k2, point in pairs(series.Points) do
-				MinX=math.min(point[1],MinX)
-				MaxX=math.max(point[1],MaxX)
-				MinY=math.min(point[2],MinY)
-				MaxY=math.max(point[2],MaxY)
+				MinX=math_min(point[1],MinX)
+				MaxX=math_max(point[1],MaxX)
+				MinY=math_min(point[2],MinY)
+				MaxY=math_max(point[2],MaxY)
 			end
 		end
 
@@ -1391,8 +1764,8 @@ function GraphFunctions:RefreshScatterPlot()
 		local MinX,MaxX = self.XMax, self.XMin
 		for k2, point in pairs(series.Points) do
 			local x,y
-			MinX=math.min(point[1],MinX)
-			MaxX=math.max(point[1],MaxX)
+			MinX=math_min(point[1],MinX)
+			MaxX=math_max(point[1],MaxX)
 			x=Width*(point[1]-self.XMin)/(self.XMax-self.XMin)
 			y=Height*(point[2]-self.YMin)/(self.YMax-self.YMin)
 
@@ -1425,6 +1798,15 @@ function GraphFunctions:RefreshScatterPlot()
 	end
 end
 
+function GraphFunctions:FindNearValue(arr, val)
+	for cat, var in arr do
+		if (val+0.5)>=cat and (val-0.5)<=cat then
+			return cat
+		end
+	end
+	return false
+end
+
 -- Stacked Graph
 function GraphFunctions:RefreshStackedGraph()
 	self:HideLines(self)
@@ -1435,10 +1817,11 @@ function GraphFunctions:RefreshStackedGraph()
 		local p = {}
 		for c,v in pairs(series.Points) do
 			for k2, point in pairs(v) do
-				point[1] = tonumber(string.format("%.1f",point[1]))
-				if p[point[1]] then
-					p[point[1]] = p[point[1]] + point[2]
-					point[2] = p[point[1]]
+				point[1] = math_floor(point[1])
+				local near = self:FindNearValue(p, point[1])
+				if near then
+					p[near] = p[near] + point[2]
+					point[2] = p[near]
 				else
 					p[point[1]] = point[2]
 				end
@@ -1446,15 +1829,15 @@ function GraphFunctions:RefreshStackedGraph()
 		end
 	end
 	
-	if self.AutoScale and self.Data then -- math.huge not implemented
+	if self.AutoScale and self.Data then -- math_huge not implemented
 		local MinX, MaxX, MinY, MaxY = 1, -3, 200, -900
 		for k1, series in pairs(self.Data) do
 			for c,v in series.Points do
 				for k2, point in v do
-					MinX=math.min(point[1],MinX)
-					MaxX=math.max(point[1],MaxX)
-					MinY=math.min(point[2],MinY)
-					MaxY=math.max(point[2],MaxY)
+					MinX=math_min(point[1],MinX)
+					MaxX=math_max(point[1],MaxX)
+					MinY=math_min(point[2],MinY)
+					MaxY=math_max(point[2],MaxY)
 				end
 			end
 		end
@@ -1497,17 +1880,10 @@ function GraphFunctions:RefreshStackedGraph()
 					TPoint.y=Height*(TPoint.y-self.YMin)/(self.YMax-self.YMin)
 					
 					if not ColorTable[c] then
-						ColorTable[c] = {0.01*math.random(0,100),0.01*math.random(0,100),0.01*math.random(0,100),1}
+						ColorTable[c] = {0.01*math_random(0,100),0.01*math_random(0,100),0.01*math_random(0,100),1}
 					end
 					self:DrawLine(self,LastPoint.x,LastPoint.y,TPoint.x,TPoint.y,32,ColorTable[c],nil,point,series.Label[c])
-					local alphaX = (TPoint.x-LastPoint.x)/1
-					local alphaY = (TPoint.y-LastPoint.y)/1
-					local alphaLastX, alphaLastY
-					for i=1, 1 do
-						self:DrawBar(self, alphaLastX or LastPoint.x, alphaLastY or LastPoint.y, LastPoint.x+alphaX*i, LastPoint.y+alphaY*i, ColorTable[c], c, series.Label[c])
-						alphaLastX = LastPoint.x+alphaX*i
-						alphaLastY = LastPoint.y+alphaY*i
-					end
+					self:DrawBar(self, LastPoint.x, LastPoint.y, TPoint.x, TPoint.y, ColorTable[c], c, series.Label[c])
 
 					LastPoint=TPoint
 				else
@@ -1568,8 +1944,8 @@ function lib:DrawLine(C, sx, sy, ex, ey, w, color, layer, point, label)
 
 	if not T then
 		P = CreateFrame("Frame", C:GetName().."_LineTT"..(getn(C.GraphLib_Lines)+1), C)
-		P:SetHeight(10)
-		P:SetWidth(10)
+		P:SetHeight(15)
+		P:SetWidth(15)
 		P:EnableMouse(true)
 		
 		P:SetScript("OnEnter", function()
@@ -1647,8 +2023,70 @@ function lib:DrawLine(C, sx, sy, ex, ey, w, color, layer, point, label)
 	T:SetPoint("TOPRIGHT",	C, relPoint, cx + Bwid, cy + Bhgt);
 	P:ClearAllPoints();
 	--P:SetPoint("BOTTOMLEFT", C, relPoint, cx - Bwid, cy - Bhgt);
-	P:SetPoint("TOPRIGHT",	C, relPoint, cx + Bwid -10, cy + Bhgt);
+	if (ey-sy)<0 then
+		P:SetPoint("BOTTOMLEFT", C, relPoint, cx + Bwid -22.5, cy - Bhgt + 11.25);
+	else
+		P:SetPoint("BOTTOMLEFT", C, relPoint, cx + Bwid -22.5, cy + Bhgt - 11.25);
+	end
+	return T
+end
 
+--Thanks to Celandro
+function lib:DrawVLine(C, x, sy, ey, w, color, layer)
+	local relPoint = "BOTTOMLEFT"
+
+	if not C.GraphLib_Lines then
+		C.GraphLib_Lines = {}
+		C.GraphLib_Lines_Used = {}
+	end
+
+	local T = tremove(C.GraphLib_Lines) or C:CreateTexture(nil, "ARTWORK")
+	T:SetTexture(TextureDirectory.."sline")
+	tinsert(C.GraphLib_Lines_Used, T)
+
+	T:SetDrawLayer(layer or "ARTWORK")
+
+	T:SetVertexColor(color[1], color[2], color[3], color[4])
+
+	if sy > ey then
+		sy, ey = ey, sy
+	end
+
+	-- Set texture coordinates and anchors
+	T:ClearAllPoints()
+	T:SetTexCoord(1, 0, 0, 0, 1, 1, 0, 1)
+	T:SetPoint("BOTTOMLEFT", C, relPoint, x - w / 2, sy)
+	T:SetPoint("TOPRIGHT", C, relPoint, x + w / 2, ey)
+	T:Show()
+	return T
+end
+
+function lib:DrawHLine(C, sx, ex, y, w, color, layer)
+	local relPoint = "BOTTOMLEFT"
+
+	if not C.GraphLib_Lines then
+		C.GraphLib_Lines = {}
+		C.GraphLib_Lines_Used = {}
+	end
+
+	local T = tremove(C.GraphLib_Lines) or C:CreateTexture(nil, "ARTWORK")
+	T:SetTexture(TextureDirectory.."sline")
+	tinsert(C.GraphLib_Lines_Used, T)
+
+	T:SetDrawLayer(layer or "ARTWORK")
+
+	T:SetVertexColor(color[1], color[2], color[3], color[4])
+
+	if sx > ex then
+		sx, ex = ex, sx
+	end
+
+	-- Set texture coordinates and anchors
+	T:ClearAllPoints()
+	T:SetTexCoord(0, 0, 0, 1, 1, 0, 1, 1)
+	T:SetPoint("BOTTOMLEFT", C, relPoint, sx, y - w / 2)
+	T:SetPoint("TOPRIGHT", C, relPoint, ex, y + w / 2)
+	T:Show()
 	return T
 end
 
@@ -1851,10 +2289,10 @@ function TestStackedGraph()
 				local i = 1
 				while true do
 					if not temp[i] then
-						table.insert(temp, i, {c,v})
+						table_insert(temp, i, {c,v})
 						break
 					elseif c<=temp[i][1] then
-						table.insert(temp, i, {c,v})
+						table_insert(temp, i, {c,v})
 						break
 					end
 					i = i + 1
@@ -1863,14 +2301,14 @@ function TestStackedGraph()
 			local i = 1
 			while true do
 				if not b[i] then
-					table.insert(b, i, val[13])
-					table.insert(label, i, DPSMate:GetAbilityById(cat))
-					table.insert(Data1, i, temp)
+					table_insert(b, i, val[13])
+					table_insert(label, i, DPSMate:GetAbilityById(cat))
+					table_insert(Data1, i, temp)
 					break
 				elseif b[i]>=val[13] then
-					table.insert(b, i, val[13])
-					table.insert(label, i, DPSMate:GetAbilityById(cat))
-					table.insert(Data1, i, temp)
+					table_insert(b, i, val[13])
+					table_insert(label, i, DPSMate:GetAbilityById(cat))
+					table_insert(Data1, i, temp)
 					break
 				end
 				i = i + 1
@@ -1885,8 +2323,8 @@ function TestStackedGraph()
 				alpha = va[1]
 			else
 				if (va[1]-alpha)>5 then
-					table.insert(Data1[cat], ca, {alpha+3, 0})
-					table.insert(Data1[cat], ca+1, {va[1]-1, 0})
+					table_insert(Data1[cat], ca, {alpha+3, 0})
+					table_insert(Data1[cat], ca+1, {va[1]-1, 0})
 				end
 				alpha = va[1]
 			end
