@@ -895,6 +895,10 @@ function DPSMate.DB:GetAlpha(k)
 	end
 end
 
+function DPSMate.DB:WeightedAverage(a, b, c, d)
+	return a*(c/(c+d))+b*(d/(c+d))
+end
+
 -- First crit/hit av value will be half if it is not the first hit actually. Didnt want to add an exception for it though. Maybe later :/
 local CastsBuffer = {[1]={[1]={},[2]={}},[2]={[1]={},[2]={}},[3]={[1]={},[2]={}}}
 local AAttack = DPSMate.BabbleSpell:GetTranslation("AutoAttack")
@@ -977,19 +981,19 @@ function DPSMate.DB:DamageDone(Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, Ddodge,
 		if Dhit == 1 then
 			if (Damount < path[2] or path[2] == 0) then path[2] = Damount end
 			if Damount > path[3] then path[3] = Damount end
-			if path[4] == 0 then path[4] = Damount else path[4] = (path[4]+Damount)/2 end
+			path[4] = self:WeightedAverage(path[4], Damount, path[1]-Dhit, Dhit)
 		elseif Dcrit == 1 then
 			if (Damount < path[6] or path[6] == 0) then path[6] = Damount end
 			if Damount > path[7] then path[7] = Damount end
-			if path[8] == 0 then path[8] = Damount else path[8] = (path[8]+Damount)/2 end
+			path[8] = self:WeightedAverage(path[8], Damount, path[5]-Dcrit, Dcrit)
 		elseif Dglance == 1 then
 			if (Damount < path[15] or path[15] == 0) then path[15] = Damount end
 			if Damount > path[16] then path[16] = Damount end
-			if path[17] == 0 then path[17] = Damount else path[17] = (path[17]+Damount)/2 end
+			path[17] = self:WeightedAverage(path[17], Damount, path[14]-Dglance, Dglance)
 		elseif Dblock == 1 then
 			if (Damount < path[19] or path[19] == 0) then path[19] = Damount end
 			if Damount > path[20] then path[20] = Damount end
-			if path[21] == 0 then path[21] = Damount else path[21] = (path[21]+Damount)/2 end
+			path[21] = self:WeightedAverage(path[21], Damount, path[18]-Dblock, Dblock)
 		end
 		DPSMateDamageDone[cat][DPSMateUser[Duser][1]]["i"] = DPSMateDamageDone[cat][DPSMateUser[Duser][1]]["i"] + Damount
 		if Damount > 0 then 
@@ -1070,15 +1074,15 @@ function DPSMate.DB:DamageTaken(Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, Ddodge
 		if Dhit == 1 then
 			if (Damount < path[2] or path[2] == 0) then path[2] = Damount end
 			if Damount > path[3] then path[3] = Damount end
-			if path[4] == 0 then path[4] = Damount else path[4] = (path[4]+Damount)/2 end
+			path[4] = self:WeightedAverage(path[4], Damount, path[1]-Dhit, Dhit)
 		elseif Dcrit == 1 then
 			if (Damount < path[6] or path[6] == 0) then path[6] = Damount end
 			if Damount > path[7] then path[7] = Damount end
-			if path[8] == 0 then path[8] = Damount else path[8] = (path[8]+Damount)/2 end
+			path[8] = self:WeightedAverage(path[8], Damount, path[5]-Dcrit, Dcrit)
 		elseif Dcrush == 1 then
 			if (Damount < path[16] or path[16] == 0) then path[16] = Damount end
 			if Damount > path[17] then path[17] = Damount end
-			if path[18] == 0 then path[18] = Damount else path[18] = (path[18]+Damount)/2 end
+			path[18] = self:WeightedAverage(path[18], Damount, path[15]-Dcrush, Dcrush)
 		end
 		DPSMateDamageTaken[cat][DPSMateUser[Duser][1]]["i"] = DPSMateDamageTaken[cat][DPSMateUser[Duser][1]]["i"] + Damount
 		if Damount > 0 then 
@@ -1172,19 +1176,19 @@ function DPSMate.DB:EnemyDamage(mode, arr, Duser, Dname, Dhit, Dcrit, Dmiss, Dpa
 		if Dhit == 1 then
 			if (Damount < path[2] or path[2] == 0) then path[2] = Damount end
 			if Damount > path[3] then path[3] = Damount end
-			if path[4] == 0 then path[4] = Damount else path[4] = (path[4]+Damount)/2 end
+			path[4] = self:WeightedAverage(path[4], Damount, path[1]-Dhit, Dhit)
 		elseif Dcrit == 1 then
 			if (Damount < path[6] or path[6] == 0) then path[6] = Damount end
 			if Damount > path[7] then path[7] = Damount end
-			if path[8] == 0 then path[8] = Damount else path[8] = (path[8]+Damount)/2 end
+			path[8] = self:WeightedAverage(path[8], Damount, path[5]-Dcrit, Dcrit)
 		elseif Dblock == 1 then
 			if (Damount < path[15] or path[15] == 0) then path[15] = Damount end
 			if Damount > path[16] then path[16] = Damount end
-			if path[17] == 0 then path[17] = Damount else path[17] = (path[17]+Damount)/2 end
+			path[17] = self:WeightedAverage(path[17], Damount, path[14]-Dblock, Dblock)
 		elseif Dcrush == 1 then
 			if (Damount < path[19] or path[19] == 0) then path[19] = Damount end
 			if Damount > path[20] then path[20] = Damount end
-			if path[21] == 0 then path[21] = Damount else path[21] = (path[21]+Damount)/2 end
+			path[21] = self:WeightedAverage(path[21], Damount, path[18]-Dcrush, Dcrush)
 		end
 		arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser][1]]["i"] = arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser][1]]["i"] + Damount
 		if Damount > 0 then
@@ -1224,18 +1228,10 @@ function DPSMate.DB:Healing(mode, arr, Duser, Dname, Dhit, Dcrit, Damount)
 		end
 		local path = arr[cat][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]]
 		if Dhit==1 then
-			if path[4]>0 then
-				path[4] = (path[4]+Damount)/2
-			else
-				path[4] = Damount
-			end
+			path[4] = self:WeightedAverage(path[4], Damount, path[2]-Dhit, Dhit)
 		end
 		if Dcrit==1 then
-			if path[5]>0 then
-				path[5] = (path[5]+Damount)/2
-			else
-				path[5] = Damount
-			end
+			path[5] = self:WeightedAverage(path[5], Damount, path[3]-Dcrit, Dcrit)
 		end
 		path[1] = path[1]+Damount
 		path[2] = path[2]+Dhit
@@ -1301,11 +1297,7 @@ function DPSMate.DB:HealingTaken(arr, Duser, Dname, Dhit, Dcrit, Damount, target
 		end
 		local path = arr[cat][DPSMateUser[Duser][1]][DPSMateUser[target][1]][DPSMateAbility[Dname][1]]
 		if Dhit==1 then
-			if path[4]>0 then
-				path[4] = (path[4]+Damount)/2
-			else
-				path[4] = Damount
-			end
+			path[4] = self:WeightedAverage(path[4], Damount, path[2]-Dhit, Dhit)
 			if Damount<path[6] or path[6]==0 then
 				path[6] = Damount; 
 			end
@@ -1314,11 +1306,7 @@ function DPSMate.DB:HealingTaken(arr, Duser, Dname, Dhit, Dcrit, Damount, target
 			end
 		end
 		if Dcrit==1 then
-			if path[5]>0 then
-				path[5] = (path[6]+Damount)/2
-			else
-				path[5] = Damount
-			end
+			path[5] = self:WeightedAverage(path[5], Damount, path[3]-Dcrit, Dcrit)
 			if Damount<path[8] or path[8]==0 then
 				path[8] = Damount; 
 			end
