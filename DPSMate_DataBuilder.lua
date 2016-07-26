@@ -2177,7 +2177,9 @@ function DPSMate.DB:Attempt(mode, check, tar)
 			end
 		else
 			if check then
-				tinsert(DPSMateAttempts[zone][1][6], {DPSMateCombatTime["total"], tar or DPSMate.L["unknown"]})
+				if DPSMateAttempts[zone] and DPSMateAttempts[zone][1] then
+					tinsert(DPSMateAttempts[zone][1][6], {DPSMateCombatTime["total"], tar or DPSMate.L["unknown"]})
+				end
 			else
 				tinsert(DPSMateAttempts[zone], 1, {
 					[1] = DPSMate.L["unknown"],

@@ -1462,9 +1462,24 @@ function DPSMate.Sync:ThreatStatsOut()
 	for cat, val in DPSMateThreat[1][pid] do
 		local tar = DPSMate:GetUserById(cat)
 		for ca, va in val do
-			local ability = DPSMate:GetAbilityById(ca)
-			for c, v in self:GetSummarizedTable(va["i"]) do
-				Buffer[cou] = {"DPSMate_ThreatStats", tar..","..ability..","..c..","..v..","}
+			local ability, a = DPSMate:GetAbilityById(ca), {}
+			for c,v in va["i"] do
+				local i = 1
+				while true do
+					if (not a[i]) then
+						tinsert(a, i, {c,v})
+						break
+					else
+						if c<=a[i][1] then
+							tinsert(a, i, {c,v})
+							break
+						end
+					end
+					i=i+1
+				end
+			end
+			for c, v in self:GetSummarizedTable(a) do
+				Buffer[cou] = {"DPSMate_ThreatStats", tar..","..ability..","..v[1]..","..v[2]..","}
 				cou = cou + 1
 			end
 		end
