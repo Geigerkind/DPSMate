@@ -226,7 +226,7 @@ function DPSMate.Parser:FriendlyPlayerMisses(msg)
 		DB:DamageDone(a, "AutoAttack", 0, 0, 1, 0, 0, 0, 0, 0, 0)
 		return
 	end
-	for c,ta in strgfind(msg, "(.+) attack%. (.+) absorb\s? all the damage%.") do if ta=="you" then ta=self.player end; DB:Absorb("AutoAttack", ta, c); return end
+	for c,ta in strgfind(msg, "(.+) attack\s?%. (.+) absorb\s? all the damage%.") do if ta=="You" then ta=self.player end; DB:Absorb("AutoAttack", ta, c); return end
 	for a,b,c in strgfind(msg, "(.-) attacks%. (.+) (%a-)%.") do 
 		if c=="parries" or c=="parry" then t[1]=1 elseif c=="dodges" or c=="dodge" then t[2]=1 else t[3]=1 end 
 		if b=="You" then b=self.player end
@@ -274,7 +274,7 @@ function DPSMate.Parser:SpellDamageShieldsOnOthers(msg)
 	end
 	
 	-- The rebirth support
-	for c,ta in strgfind(msg, "(.+) attack%. (.+) absorb\s? all the damage%.") do if ta=="you" then ta=self.player end; DB:Absorb("AutoAttack", ta, c); return end
+	for c,ta in strgfind(msg, "(.+) attack\s?%. (.+) absorb\s? all the damage%.") do if ta=="You" then ta=self.player end; DB:Absorb("AutoAttack", ta, c); return end
 	for f,a,b,c in strgfind(msg, "(.-)'s (.+) was (.-) by (.+)%.") do 
 		if b=="dodged" then t[1]=1 elseif b=="blocked" then t[2]=1 else t[3]=1 end
 		DB:EnemyDamage(true, DPSMateEDT, f, a, 0, 0, 0, 0, t[1] or 0, t[3] or 0, 0, c, t[2] or 0, 0)
@@ -457,7 +457,7 @@ function DPSMate.Parser:SpellPeriodicDamageTaken(msg)
 		if self.CC[b] then DB:BuildActiveCC(a, b) end
 		return
 	end
-	for f,a,b in strgfind(msg, "(.+)'s (.+) was absorbed by (.+)%.") do -- To Test
+	for f,a,b in strgfind(msg, "(.+)'s (.+) is absorbed by (.+)%.") do
 		DB:Absorb(a.."(Periodic)", f, b)
 		return
 	end
@@ -498,7 +498,7 @@ function DPSMate.Parser:CreatureVsCreatureSpellDamage(msg)
 		DB:DamageTaken(c, b, 0, 0, 0, 0, 0, 1, 0, a, 0)
 		return
 	end
-	for f,a,b in strgfind(msg, "(.+)'s (.+) was absorbed by (.+)%.") do -- To Test
+	for f,a,b in strgfind(msg, "(.+)'s (.+) is absorbed by (.+)%.") do
 		DB:Absorb(a, f, b)
 		return
 	end

@@ -423,4 +423,5 @@ if (GetLocale() == "deDE") then
 	DPSMate.L["fftby"] = "Friendly fire bekommen von "
 	DPSMate.L["poisoncleansingtotem"] = "Totem der Giftreinigung"
 	DPSMate.L["threatdoneby"] = "Aggro gemacht von "
+	DPSMate.L["periodic"] = "(Periodisch)"
 end

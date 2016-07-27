@@ -929,7 +929,7 @@ function DPSMate.Options:PopUpAccept(bool, bypass)
 		DPSMate.Modules.AurasLost.DB = DPSMateAurasGained
 		DPSMate.Modules.AurasUptimers.DB = DPSMateAurasGained
 		DPSMate.Modules.Procs.DB = DPSMateAurasGained
-		DPSMate.Modules.Casts.DB = DPSMateCasts
+		DPSMate.Modules.Casts.DB = DPSMateEDT
 		DPSMate.Modules.Threat.DB = DPSMateThreat
 		DPSMate.Modules.TPS.DB = DPSMateThreat
 		DPSMate.Modules.Fails.DB = DPSMateFails

@@ -2837,11 +2837,11 @@
 									DPSMate.Options:InitializeSegments()
 									DPSMate:SetStatusBarValue()
 								end
-								this:SetMinMaxValues(1,13)
+								this:SetMinMaxValues(1,20)
 								this:SetValueStep(1)
 								getglobal(this:GetName().."Text"):SetText(DPSMate.L["segments"])
 								getglobal(this:GetName().."Low"):SetText("1")
-								getglobal(this:GetName().."High"):SetText("13")
+								getglobal(this:GetName().."High"):SetText("20")
 							</OnLoad>
 						</Scripts>
 					</Slider>

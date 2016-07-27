@@ -17,7 +17,7 @@ Dependencies: None
 ]]
 
 local ACELIBRARY_MAJOR = "AceLibrary"
-local ACELIBRARY_MINOR = "$Revision: 16130 $"
+local ACELIBRARY_MINOR = "$Revision: 99130 $"
 
 local table_setn
 do

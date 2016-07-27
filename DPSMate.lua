@@ -1,6 +1,6 @@
 -- Global Variables
 DPSMate = {}
-DPSMate.VERSION = 41
+DPSMate.VERSION = 42
 DPSMate.Parser = {}
 DPSMate.L = AceLibrary("AceLocale-2.3")
 DPSMate.DB = {}

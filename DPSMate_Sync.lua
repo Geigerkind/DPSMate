@@ -49,15 +49,16 @@ local Arrays = {
 }
 local tra = DPSMate.BabbleSpell
 local npctra = DPSMate.NPCDB
+local per = false
 
 -- Beginn Functions
 
 function DPSMate.Sync:Replace(text)
 	local a,b = strfind(text, "%(")
 	if a and b then
-		return strsub(text, 1, a-1)
+		return strsub(text, 1, a-1), true
 	end
-	return text
+	return text, false
 end
 
 -- Function to avoid disconnects on Kronos
@@ -110,6 +111,7 @@ function DPSMate.Sync:SendAddonMessages(elapsed)
 		self.LU = self.LU + elapsed
 		if self.LU > 1.3 then
 			if self:GetMessageState() then
+				--DPSMate:SendMessage("SENDED!")
 				for i=1, 80 do
 					--SDM("Test"..co, "Test"..co, "RAID")
 					if not Buffer[co] then break end
@@ -413,7 +415,11 @@ function DPSMate.Sync:DMGDoneStatIn(arg2, arg4)
 	local userid = DPSMateUser[arg4][1]
 	t = {}
 	strgsub(arg2, "(.-),", func)
-	t[3] = tra:GetTranslation(self:Replace(t[3])) or t[3]
+	t[3], per = self:Replace(t[3])
+	t[3] = tra:GetTranslation(t[3]) or t[3]
+	if per then
+		t[3] = t[3]..DPSMate.L["periodic"]
+	end
 	DB:BuildAbility(t[3])
 	local abid = DPSMateAbility[t[3]][1]
 	t[1] = tnbr(t[1])
@@ -427,7 +433,11 @@ function DPSMate.Sync:DMGDoneAbilityIn(arg2, arg4)
 	local userid = DPSMateUser[arg4][1]
 	t = {}
 	strgsub(arg2, "(.-),", func)
-	t[1] = tra:GetTranslation(self:Replace(t[1])) or t[1]
+	t[1], per = self:Replace(t[1])
+	t[1] = tra:GetTranslation(t[1]) or t[1]
+	if per then
+		t[1] = t[1]..DPSMate.L["periodic"]
+	end
 	DB:BuildAbility(t[1], nil)
 	if not Arrays[1][userid] then return end
 	Arrays[1][userid][DPSMateAbility[t[1]][1]] = {
@@ -474,7 +484,11 @@ function DPSMate.Sync:DMGTakenStatIn(arg2, arg4)
 	local userid = DPSMateUser[arg4][1]
 	t = {}
 	strgsub(arg2, "(.-),", func)
-	t[3] = tra:GetTranslation(self:Replace(t[3])) or t[3]
+	t[3], per = self:Replace(t[3])
+	t[3] = tra:GetTranslation(t[3]) or t[3]
+	if per then
+		t[3] = t[3]..DPSMate.L["periodic"]
+	end
 	t[4] = npctra:GetTranslation(t[4]) or t[4]
 	DB:BuildAbility(t[3])
 	DB:BuildUser(t[4])
@@ -493,7 +507,11 @@ function DPSMate.Sync:DMGTakenAbilityIn(arg2, arg4)
 	strgsub(arg2, "(.-),", func)
 	t[1] = npctra:GetTranslation(t[1]) or t[1]
 	DB:BuildUser(t[1], nil)
-	t[2] = tra:GetTranslation(self:Replace(t[2])) or t[2]
+	t[2], per = self:Replace(t[2])
+	t[2] = tra:GetTranslation(t[2]) or t[2]
+	if per then
+		t[2] = t[2]..DPSMate.L["periodic"]
+	end
 	DB:BuildAbility(t[2], nil)
 	local userid, userid2 = DPSMateUser[arg4][1], DPSMateUser[t[1]][1]
 	if not Arrays[2][userid] then return end
@@ -547,7 +565,11 @@ function DPSMate.Sync:EDStatIn(arr, arg2, arg4)
 	strgsub(arg2, "(.-),", func)
 	t[1] = npctra:GetTranslation(t[1]) or t[1]
 	DB:BuildUser(t[1], nil)
-	t[4] = tra:GetTranslation(self:Replace(t[4])) or t[4]
+	t[4], per = self:Replace(t[4])
+	t[4] = tra:GetTranslation(t[4]) or t[4]
+	if per then
+		t[4] = t[4]..DPSMate.L["periodic"]
+	end
 	DB:BuildAbility(t[4])
 	local userid, userid2, abid = DPSMateUser[t[1]][1], DPSMateUser[arg4][1], DPSMateAbility[t[4]][1]
 	if not Arrays[arr][userid] then return end
@@ -563,7 +585,11 @@ function DPSMate.Sync:EDAbilityIn(arr, arg2, arg4)
 	strgsub(arg2, "(.-),", func)
 	t[1] = npctra:GetTranslation(t[1]) or t[1]
 	DB:BuildUser(t[1], nil)
-	t[2] = tra:GetTranslation(self:Replace(t[2])) or t[2]
+	t[2], per = self:Replace(t[2])
+	t[2] = tra:GetTranslation(t[2]) or t[2]
+	if per then
+		t[2] = t[2]..DPSMate.L["periodic"]
+	end
 	DB:BuildAbility(t[2], nil)
 	local userid, userid2 = DPSMateUser[t[1]][1], DPSMateUser[arg4][1]
 	if not Arrays[arr][userid] then return end
@@ -614,7 +640,11 @@ function DPSMate.Sync:HealingStatIn(arg2, arg4, arr)
 	local userid = DPSMateUser[arg4][1]
 	t = {}
 	strgsub(arg2, "(.-),", func)
-	t[3] = tra:GetTranslation(self:Replace(t[3])) or t[3]
+	t[3], per = self:Replace(t[3])
+	t[3] = tra:GetTranslation(t[3]) or t[3]
+	if per then
+		t[3] = t[3]..DPSMate.L["periodic"]
+	end
 	DB:BuildAbility(t[3])
 	local abid = DPSMateAbility[t[3]][1]
 	t[1] = tnbr(t[1])
@@ -629,7 +659,11 @@ function DPSMate.Sync:HealingAbilityIn(arg2, arg4, arr)
 	local userid = DPSMateUser[arg4][1]
 	t = {}
 	strgsub(arg2, "(.-),", func)
-	t[1] = tra:GetTranslation(self:Replace(t[1])) or t[1]
+	t[1], per = self:Replace(t[1])
+	t[1] = tra:GetTranslation(t[1]) or t[1]
+	if per then
+		t[1] = t[1]..DPSMate.L["periodic"]
+	end
 	DB:BuildAbility(t[1], nil)
 	if not Arrays[arr][userid] then return end
 	Arrays[arr][userid][DPSMateAbility[t[1]][1]] = {
@@ -655,7 +689,11 @@ function DPSMate.Sync:HealingTakenStatIn(arg2, arg4, arr)
 	local userid = DPSMateUser[arg4][1]
 	t = {}
 	strgsub(arg2, "(.-),", func)
-	t[3] = tra:GetTranslation(self:Replace(t[3])) or t[3]
+	t[3], per = self:Replace(t[3])
+	t[3] = tra:GetTranslation(t[3]) or t[3]
+	if per then
+		t[3] = t[3]..DPSMate.L["periodic"]
+	end
 	t[4] = npctra:GetTranslation(t[4]) or t[4]
 	DB:BuildAbility(t[3])
 	DB:BuildUser(t[4])
@@ -675,7 +713,11 @@ function DPSMate.Sync:HealingTakenAbilityIn(arg2, arg4, arr)
 	DB:BuildUser(arg4, nil)
 	t[1] = npctra:GetTranslation(t[1]) or t[1]
 	DB:BuildUser(t[1], nil)
-	t[2] = tra:GetTranslation(self:Replace(t[2])) or t[2]
+	t[2], per = self:Replace(t[2])
+	t[2] = tra:GetTranslation(t[2]) or t[2]
+	if per then
+		t[2] = t[2]..DPSMate.L["periodic"]
+	end
 	DB:BuildAbility(t[2], nil)
 	local userid, userid2 = DPSMateUser[arg4][1], DPSMateUser[t[1]][1]
 	if not Arrays[arr][userid] then return end

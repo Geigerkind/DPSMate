@@ -350,6 +350,8 @@ DPSMate.Parser.playerclass = nil
 local Execute = {}
 local _,playerclass = UnitClass("player")
 local DB = DPSMate.DB
+local _G = getfenv(0)
+local string_find = string.find
 
 -- Begin Functions
 
@@ -366,6 +368,15 @@ function DPSMate.Parser:OnLoad()
 			return str
 		end
 		DPSMate:SendMessage("Please disable SW_StatsFixLogStrings. This addon causes issues.")
+	end
+	
+	-- Prevent error messages of NPCDB
+	local oldError = _G.error
+	_G.error = function(message, prio)
+		if string_find(message, "NPCDB") then
+			return
+		end
+		oldError(message, prio)
 	end
 end
 

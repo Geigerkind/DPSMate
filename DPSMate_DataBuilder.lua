@@ -843,7 +843,7 @@ function DPSMate.DB:UpdateThreat()
 end
 
 function DPSMate.DB:Threat(cause, spellname, target, value, amount)
-	if self:BuildUser(name, nil) or self:BuildUser(target, nil) or self:BuildAbility(spellname, nil) or value==0 then return end
+	if self:BuildUser(target, nil) or self:BuildUser(cause, nil) or self:BuildAbility(spellname, nil) or value==0 then return end
 	for cat, val in pairs({[1]="total", [2]="current"}) do
 		if not DPSMateThreat[cat][DPSMateUser[cause][1]] then
 			DPSMateThreat[cat][DPSMateUser[cause][1]] = {}
@@ -2097,6 +2097,7 @@ function DPSMate.DB:CombatTime()
 				end
 			else
 				DPSMate.DB.MainUpdate = DPSMate.DB.MainUpdate + arg1
+				DPSMate.Sync:SendAddonMessages(arg1)
 			end
 			if DPSMate.DB.NeedUpdate then
 				MainLastUpdate = MainLastUpdate + arg1
@@ -2113,13 +2114,11 @@ function DPSMate.DB:CombatTime()
 				DPSMate.DB:ClearAwaitAbsorb()
 				DPSMate.DB:ClearAwaitHotDispel()
 				DPSMate.DB.MainUpdate = 0
+				--DPSMate:SendMessage("150 !!")
 				DPSMate.Sync.Async = true
 			end
 			if DPSMate.Sync.Async then
 				DPSMate.Sync:OnUpdate(arg1)
-			end
-			if not CombatState then
-				DPSMate.Sync:SendAddonMessages(arg1)
 			end
 			if InitialLoad then
 				In1 = In1 + arg1
