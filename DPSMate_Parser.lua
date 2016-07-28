@@ -381,7 +381,7 @@ function DPSMate.Parser:OnLoad()
 	
 	-- Changing the GetTranslation function
 	local oldGetTranslation = DPSMate.BabbleSpell.GetTranslation
-	DPSMate.BabbleSpell.GetTranslation = function(msg)
+	DPSMate.BabbleSpell.GetTranslation = function(self, msg)
 		if DPSMate.BabbleSpell:HasTranslation(msg) then
 			DPSMate:SendMessage("Fired!")
 			return oldGetTranslation(msg)
