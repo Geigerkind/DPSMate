@@ -997,7 +997,7 @@ end
 function DPSMate.Options:DropDownStyleReset()
 	for i=1, 20 do
 		local button = _G("DropDownList1Button"..i)
-		_G("DropDownList1Button"..i.."NormalText"):SetFont(DPSMate.Options.fonts["FRIZQT"], 12)
+		_G("DropDownList1Button"..i.."NormalText"):SetFont(DPSMate.Options.fonts["FRIZQT"], 10)
 		_G("DropDownList1Button"..i):SetScript("OnEnter", function()
 			_G(this:GetName().."Highlight"):Show()
 		end)
