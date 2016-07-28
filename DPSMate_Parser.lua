@@ -382,10 +382,14 @@ function DPSMate.Parser:OnLoad()
 	-- Changing the GetTranslation function
 	local oldGetTranslation = DPSMate.BabbleSpell.GetTranslation
 	DPSMate.BabbleSpell.GetTranslation = function(self, msg)
-		if DPSMate.BabbleSpell:HasTranslation(msg) then
-			return oldGetTranslation(self, msg)
+		if msg=="" or msg==" " then
+			return msg
 		else
-			return oldGetTranslation(self, DPSMate.BabbleSpell:GetReverseTranslation(msg))
+			if DPSMate.BabbleSpell:HasTranslation(msg) then
+				return oldGetTranslation(self, msg)
+			else
+				return oldGetTranslation(self, DPSMate.BabbleSpell:GetReverseTranslation(msg))
+			end
 		end
 	end
 end
