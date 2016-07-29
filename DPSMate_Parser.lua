@@ -387,8 +387,10 @@ function DPSMate.Parser:OnLoad()
 		else
 			if DPSMate.BabbleSpell:HasTranslation(msg) then
 				return oldGetTranslation(self, msg)
-			else
+			elseif DPSMate.BabbleSpell:HasReverseTranslation(msg) then
 				return oldGetTranslation(self, DPSMate.BabbleSpell:GetReverseTranslation(msg))
+			else
+				return msg
 			end
 		end
 	end
