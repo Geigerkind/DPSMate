@@ -5804,7 +5804,7 @@
 				--this:RegisterEvent("SPELLCAST_INTERRUPTED")
 				
 				this:RegisterEvent("PLAYER_AURAS_CHANGED")
-				this:RegisterEvent("UNIT_AURA")
+				--this:RegisterEvent("UNIT_AURA")
 				this:RegisterEvent("PLAYER_TARGET_CHANGED")
 			</OnLoad>
 			<OnEvent>

@@ -933,6 +933,8 @@ function DPSMate.Sync:AurasAllIn(arg2, arg4)
 		[2] = {},
 		[3] = {},
 		[4] = false,
+		[5] = tnbr(t[2]),
+		[6] = tnbr(t[3]),
 	}
 	if t[2]=="1" then
 		Arrays[14][userid][userid2][4] = true
@@ -1453,7 +1455,7 @@ function DPSMate.Sync:AurasOut()
 	for cat, val in pairs(DPSMateAurasGained[1][pid]) do -- ability
 		if val[4] then p = 1 end
 		local ability = DPSMate:GetAbilityById(cat)
-		Buffer[cou] = {"DPSMate_AurasAll", ability..","..p..","}
+		Buffer[cou] = {"DPSMate_AurasAll", ability..","..p..","..val[5]..","..val[6]..","}
 		cou = cou + 1
 		--SDM("DPSMate_AurasAll", ability..","..p..",", "RAID")
 		for ca, va in pairs(val[1]) do

@@ -697,7 +697,7 @@ end
 -- if strfind(msg, "begins to") or strfind(msg, "Rage") then return end
 function DPSMate.Parser:SpellHostilePlayerBuff(msg)
 	t = {}
-	for a,b,c,d in strgfind(msg, "(.+)'s (.+) critically heals (.+) for (%d+)%.") do 
+	for a,b,c,d in strgfind(msg, "(.-)'s (.+) critically heals (.+) for (%d+)%.") do 
 		t[1] = tnbr(d)
 		if c=="you" then t[2]=self.player end
 		overheal = self:GetOverhealByName(t[1], t[2] or c)
@@ -712,7 +712,7 @@ function DPSMate.Parser:SpellHostilePlayerBuff(msg)
 		DB:DeathHistory(t[2] or c, a, b, t[1], 0, 1, 1, 0)
 		return
 	end
-	for a,b,c,d in strgfind(msg, "(.+)'s (.+) heals (.+) for (%d+)%.") do 
+	for a,b,c,d in strgfind(msg, "(.-)'s (.+) heals (.+) for (%d+)%.") do 
 		t[1] = tnbr(d)
 		if c=="you" then t[2]=self.player end
 		overheal = self:GetOverhealByName(t[1], t[2] or c)

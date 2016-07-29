@@ -27,6 +27,9 @@ local BabbleBoss = AceLibrary("AceLocale-2.3"):new(MAJOR_VERSION)
 -- BabbleBoss:EnableDebugging()
 
 local bosses = {
+	-- Costum bosses
+	["Firesworn"] = true,
+
 	["Avalanchion"] = true,
 	["The Windreaver"] = true,
 	["Baron Charr"] = true,
@@ -314,6 +317,7 @@ local bosses = {
 
 BabbleBoss:RegisterTranslations("deDE", function()
 	return {
+		["Firesworn"] = "Feueranbeter",
 		["Avalanchion"] = "Avalanchion",
 		["The Windreaver"] = "Der Windpl\195\188nderer",
 		["Baron Charr"] = "Baron Charr",

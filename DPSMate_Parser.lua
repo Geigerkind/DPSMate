@@ -442,25 +442,24 @@ end
 -- The totem aura just reports a removed event in the chat.
 -- Maybe we can guess here?
 function DPSMate.Parser:UnitAuraDispels(unit)
-	if unit=="player" or unit=="target" then
-		for i=1, 16 do
-			DPSMate_Tooltip:SetOwner(UIParent, "ANCHOR_NONE")
-			DPSMate_Tooltip:ClearLines()
-			DPSMate_Tooltip:SetUnitDebuff(unit, i, "HARMFUL")
-			local aura = DPSMate_TooltipTextLeft1:GetText()
-			local type = DPSMate_TooltipTextRight1:GetText()
-			DPSMate_Tooltip:Hide()
-			if not aura then break end
-			DB:BuildAbility(aura, type)
-			DPSMateAbility[aura][2] = type
-		end
+	for i=0, 3 do
+		DPSMate_Tooltip:SetOwner(UIParent, "ANCHOR_NONE")
+		DPSMate_Tooltip:ClearLines()
+		--DPSMate_Tooltip:SetUnitDebuff(unit, i, "HARMFUL")
+		DPSMate_Tooltip:SetPlayerBuff(GetPlayerBuff(i, "HARMFUL"))
+		local aura = DPSMate_TooltipTextLeft1:GetText()
+		local type = DPSMate_TooltipTextRight1:GetText()
+		DPSMate_Tooltip:Hide()
+		if not aura then break end
+		DB:BuildAbility(aura, type)
+		DPSMateAbility[aura][2] = type
 	end
 end
 
 Execute = {
 	["CHAT_MSG_COMBAT_HOSTILE_DEATH"] = function(arg1) DPSMate.Parser:CombatHostileDeaths(arg1) end,
 	["CHAT_MSG_COMBAT_FRIENDLY_DEATH"] = function(arg1) DPSMate.Parser:CombatFriendlyDeath(arg1) end,
-	["UNIT_AURA"] = function(arg1) DPSMate.Parser:UnitAuraDispels(arg1) end, -- !
+	["PLAYER_AURAS_CHANGED"] = function(arg1) DPSMate.Parser:UnitAuraDispels(arg1) end, -- !
 	["CHAT_MSG_SPELL_BREAK_AURA"] = function(arg1) DPSMate.Parser:SpellBreakAura(arg1) end,
 	["CHAT_MSG_SPELL_AURA_GONE_PARTY"] = function(arg1) DPSMate.Parser:SpellAuraGoneParty(arg1) end,
 	["CHAT_MSG_SPELL_AURA_GONE_OTHER"] = function(arg1) DPSMate.Parser:SpellAuraGoneOther(arg1) end,

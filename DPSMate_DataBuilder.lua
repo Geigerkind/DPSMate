@@ -1952,18 +1952,21 @@ function DPSMate.DB:BuildBuffs(cause, target, ability, bool)
 				[2] = {},
 				[3] = {},
 				[4] = bool,
+				[5] = 0,
+				[6] = 0,
 			}
 		end
-		if not DPSMateAurasGained[cat][DPSMateUser[target][1]][DPSMateAbility[ability][1]][3][DPSMateUser[cause][1]] then
-			DPSMateAurasGained[cat][DPSMateUser[target][1]][DPSMateAbility[ability][1]][3][DPSMateUser[cause][1]] = 0
+		local path = DPSMateAurasGained[cat][DPSMateUser[target][1]][DPSMateAbility[ability][1]]
+		if not path[3][DPSMateUser[cause][1]] then
+			path[3][DPSMateUser[cause][1]] = 0
 		end
-		local TL = DPSMate:TableLength(DPSMateAurasGained[cat][DPSMateUser[target][1]][DPSMateAbility[ability][1]][1])
-		local TLTWO = DPSMate:TableLength(DPSMateAurasGained[cat][DPSMateUser[target][1]][DPSMateAbility[ability][1]][2])
-		for i=1, (TL-TLTWO) do
-			tinsert(DPSMateAurasGained[cat][DPSMateUser[target][1]][DPSMateAbility[ability][1]][2], DPSMateAurasGained[cat][DPSMateUser[target][1]][DPSMateAbility[ability][1]][1][TLTWO+i])
+		for i=1, (path[5]-path[6]) do
+			tinsert(path[2], path[1][path[6]+i])
+			path[6] = path[6] + 1
 		end
-		tinsert(DPSMateAurasGained[cat][DPSMateUser[target][1]][DPSMateAbility[ability][1]][1], DPSMateCombatTime[val])
-		DPSMateAurasGained[cat][DPSMateUser[target][1]][DPSMateAbility[ability][1]][3][DPSMateUser[cause][1]] = DPSMateAurasGained[cat][DPSMateUser[target][1]][DPSMateAbility[ability][1]][3][DPSMateUser[cause][1]] + 1
+		tinsert(path[1], DPSMateCombatTime[val])
+		path[5] = path[5] + 1
+		path[3][DPSMateUser[cause][1]] = path[3][DPSMateUser[cause][1]] + 1
 	end
 	self.NeedUpdate = true
 end
@@ -1981,13 +1984,18 @@ function DPSMate.DB:DestroyBuffs(target, ability)
 				[2] = {},
 				[3] = {},
 				[4] = bool,
+				[5] = 0,
+				[6] = 0,
 			}
 		end
-		local TL = DPSMate:TableLength(DPSMateAurasGained[cat][DPSMateUser[target][1]][DPSMateAbility[ability][1]][2])+1
-		if not DPSMateAurasGained[cat][DPSMateUser[target][1]][DPSMateAbility[ability][1]][1][TL] then
-			DPSMateAurasGained[cat][DPSMateUser[target][1]][DPSMateAbility[ability][1]][1][TL] = DPSMateCombatTime[val]
+		local path = DPSMateAurasGained[cat][DPSMateUser[target][1]][DPSMateAbility[ability][1]]
+		local TL = path[6]+1
+		if not path[1][TL] then
+			path[1][TL] = DPSMateCombatTime[val]
+			path[5] = path[5] + 1
 		end
-		tinsert(DPSMateAurasGained[cat][DPSMateUser[target][1]][DPSMateAbility[ability][1]][2], DPSMateCombatTime[val])
+		tinsert(path[2], DPSMateCombatTime[val])
+		path[6] = path[6] + 1
 	end
 	self.NeedUpdate = true
 end
