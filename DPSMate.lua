@@ -489,7 +489,11 @@ function DPSMate:GetMode(k)
 		if val then
 			if strfind(cat, "segment") then
 				local num = tonumber(strsub(cat, 8))
-				return DPSMateHistory[Handler.Hist][num], DPSMateCombatTime["segments"][num][1], DPSMateCombatTime["segments"][num][2]
+				if DPSMateHistory[Handler.Hist][num] then
+					return DPSMateHistory[Handler.Hist][num], DPSMateCombatTime["segments"][num][1], DPSMateCombatTime["segments"][num][2]
+				else
+					return result[cat][1], result[cat][2], DPSMateCombatTime["effective"][2]
+				end
 			else
 				return result[cat][1], result[cat][2], DPSMateCombatTime["effective"][2]
 			end
@@ -503,7 +507,11 @@ function DPSMate:GetModeByArr(arr, k, Hist)
 		if val then
 			if strfind(cat, "segment") then
 				local num = tonumber(strsub(cat, 8))
-				return DPSMateHistory[Hist or arr.Hist][num], DPSMateCombatTime["segments"][num][1], DPSMateCombatTime["segments"][num][2]
+				if DPSMateHistory[Hist or arr.Hist][num] then
+					return DPSMateHistory[Hist or arr.Hist][num], DPSMateCombatTime["segments"][num][1], DPSMateCombatTime["segments"][num][2]
+				else
+					return result[cat][1], result[cat][2], DPSMateCombatTime["effective"][2]
+				end
 			else
 				return result[cat][1], result[cat][2], DPSMateCombatTime["effective"][2]
 			end
