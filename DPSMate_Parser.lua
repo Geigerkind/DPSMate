@@ -290,32 +290,45 @@ DPSMate.Parser.Dispels = {
 	[DPSMate.BabbleSpell:GetTranslation("Cure Poison")] = true,
 	[DPSMate.BabbleSpell:GetTranslation("Disease Cleansing Totem")] = true,
 	[DPSMate.BabbleSpell:GetTranslation("Purge")] = true,
+	-- Potion
+	[DPSMate.BabbleSpell:GetTranslation("Powerful Anti-Venom")] = true,
+	[DPSMate.BabbleSpell:GetTranslation("Restoration")] = true,
+	[DPSMate.BabbleSpell:GetTranslation("Purification")] = true,
 }
 DPSMate.Parser.DeCurse = {
 	[DPSMate.BabbleSpell:GetTranslation("Remove Curse")] = true,
 	[DPSMate.BabbleSpell:GetTranslation("Remove Lesser Curse")] = true,
+	[DPSMate.BabbleSpell:GetTranslation("Restoration")] = true,
+	[DPSMate.BabbleSpell:GetTranslation("Purification")] = true,
 }
 DPSMate.Parser.DeMagic = {
 	[DPSMate.BabbleSpell:GetTranslation("Dispel Magic")] = true,
 	[DPSMate.BabbleSpell:GetTranslation("Devour Magic")] = true,
 	[DPSMate.BabbleSpell:GetTranslation("Purge")] = true,
+	[DPSMate.BabbleSpell:GetTranslation("Restoration")] = true,
 }
 DPSMate.Parser.DeDisease = {
 	[DPSMate.BabbleSpell:GetTranslation("Purify")] = true,
 	[DPSMate.BabbleSpell:GetTranslation("Abolish Disease")] = true,
 	[DPSMate.BabbleSpell:GetTranslation("Cure Disease")] = true,
 	[DPSMate.BabbleSpell:GetTranslation("Disease Cleansing Totem")] = true,
+	[DPSMate.BabbleSpell:GetTranslation("Restoration")] = true,
+	[DPSMate.BabbleSpell:GetTranslation("Purification")] = true,
 }
 DPSMate.Parser.DePoison = {
 	[DPSMate.BabbleSpell:GetTranslation("Abolish Poison")] = true,
 	[DPSMate.BabbleSpell:GetTranslation("Purify")] = true,
 	[DPSMate.BabbleSpell:GetTranslation("Poison Cleansing Totem")] = true,
 	[DPSMate.BabbleSpell:GetTranslation("Cure Poison")] = true,
+	[DPSMate.BabbleSpell:GetTranslation("Powerful Anti-Venom")] = true,
+	[DPSMate.BabbleSpell:GetTranslation("Restoration")] = true,
+	[DPSMate.BabbleSpell:GetTranslation("Purification")] = true,
 }
 DPSMate.Parser.DebuffTypes = {}
 DPSMate.Parser.HotDispels = {
 	[DPSMate.BabbleSpell:GetTranslation("Abolish Poison")] = true,
 	[DPSMate.BabbleSpell:GetTranslation("Abolish Disease")] = true,
+	[DPSMate.BabbleSpell:GetTranslation("Restoration")] = true,
 }
 
 DPSMate.Parser.Kicks = {

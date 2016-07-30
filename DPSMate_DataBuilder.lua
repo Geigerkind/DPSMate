@@ -1689,27 +1689,31 @@ function DPSMate.DB:EvaluateDispel()
 	end
 	for cat, val in AwaitDispel do
 		for ca, va in val do
-			if ConfirmedDispel[cat] then
-				local q = DPSMate:TableLength(ConfirmedDispel[cat])
-				if q>0 then
-					self:Dispels(va[1], va[2], cat, ConfirmedDispel[cat][q][1])
-					tremove(ConfirmedDispel[cat], q)
-					tremove(AwaitDispel[cat], ca)
-					lastDispel = nil;
-					return
-				end
-			end
-			--DPSMate:SendMessage("Test 1")
-			if cat == DPSMate.L["unknown"] and lastDispel then
-				--DPSMate:SendMessage("Test 2")
-				if ConfirmedDispel[lastDispel] then
-					local q = DPSMate:TableLength(ConfirmedDispel[lastDispel])
+			if (GetTime()-(va[3] or 0))<=2 then
+				if ConfirmedDispel[cat] then
+					local q = DPSMate:TableLength(ConfirmedDispel[cat])
 					if q>0 then
-						self:Dispels(va[1], va[2], lastDispel, ConfirmedDispel[lastDispel][q][1])
-						tremove(ConfirmedDispel[lastDispel], q)
-						tremove(AwaitDispel[cat], ca)
-						lastDispel = nil;
+						self:Dispels(va[1], va[2], cat, ConfirmedDispel[cat][q][1])
+						tremove(ConfirmedDispel[cat], q)
+						self:EvaluateDispel()
+						--tremove(AwaitDispel[cat], ca)
+						--lastDispel = nil;
 						return
+					end
+				end
+				--DPSMate:SendMessage("Test 1")
+				if cat == DPSMate.L["unknown"] and lastDispel then
+					--DPSMate:SendMessage("Test 2")
+					if ConfirmedDispel[lastDispel] then
+						local q = DPSMate:TableLength(ConfirmedDispel[lastDispel])
+						if q>0 then
+							self:Dispels(va[1], va[2], lastDispel, ConfirmedDispel[lastDispel][q][1])
+							tremove(ConfirmedDispel[lastDispel], q)
+							self:EvaluateDispel()
+							--tremove(AwaitDispel[cat], ca)
+							--lastDispel = nil;
+							return
+						end
 					end
 				end
 			end

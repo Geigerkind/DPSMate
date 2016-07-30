@@ -826,7 +826,7 @@ function DPSMate.Parser:SpellHostilePlayerBuffDispels(msg)
 	for c, ab in strgfind(msg, "(.+) casts (.+)%.") do if DPSMate.Parser.Dispels[ab] then DB:AwaitDispel(ab, "Unknown", c, GetTime()) end; return end
 end
 
--- Avrora's  Curse of Agony is removed.
+-- Avrora's Curse of Agony is removed.
 -- Your Curse of Agony is removed.
 function DPSMate.Parser:SpellBreakAura(msg) 
 	for ta, ab in strgfind(msg, "(.+)'s (.+) is removed.") do DB:ConfirmRealDispel(ab, ta, GetTime()); return end

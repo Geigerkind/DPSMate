@@ -999,7 +999,16 @@ function DPSMate.Options:DropDownStyleReset()
 		local button = _G("DropDownList1Button"..i)
 		_G("DropDownList1Button"..i.."NormalText"):SetFont(DPSMate.Options.fonts["FRIZQT"], 10)
 		_G("DropDownList1Button"..i):SetScript("OnEnter", function()
-			_G(this:GetName().."Highlight"):Show()
+			 if ( this.hasArrow ) then
+			  ToggleDropDownMenu(this:GetParent():GetID() + 1, this.value);
+			else
+			  CloseDropDownMenus(this:GetParent():GetID() + 1);
+			end
+			getglobal(this:GetName().."Highlight"):Show();
+			UIDropDownMenu_StopCounting(this:GetParent());
+			if ( this.tooltipTitle ) then
+			  GameTooltip_AddNewbieTip(this.tooltipTitle, 1.0, 1.0, 1.0, this.tooltipText, 1);
+			end
 		end)
 		_G("DropDownList1Backdrop"):SetBackdrop({ 
 			bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background", 

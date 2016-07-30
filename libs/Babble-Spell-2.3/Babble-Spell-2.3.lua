@@ -28,6 +28,7 @@ local BabbleSpell = AceLibrary("AceLocale-2.3"):new(MAJOR_VERSION)
 BabbleSpell:RegisterTranslations("enUS", function()
 	return {
 		-- Costum Added
+		["Powerful Anti-Venom"] = true,
 		["Wildvine Potion"] = true,
 		["Lily Root"] = true,
 		["Healthstone"] = true,
@@ -2071,6 +2072,7 @@ end)
 BabbleSpell:RegisterTranslations("deDE", function()
 	return {
 		-- Translation by Bambustrepp
+		["Powerful Anti-Venom"] = "Mächtiges Gegengift",
 		["Wildvine Potion"] = "Wildrankentrank",
 		["Lily Root"] = "Lilienwurzel",
 		["Healthstone"] = "Gesundheitsstein",
@@ -4101,6 +4103,7 @@ end)
 
 BabbleSpell:RegisterTranslations("frFR", function()
 	return {
+		["Powerful Anti-Venom"] = "Anti-venin puissant",
 		["Wildvine Potion"] = "Potion de sauvageonne",
 		["Lily Root"] = "Racine de lis",
 		["Healthstone"] = "",
@@ -8753,6 +8756,7 @@ end)
 BabbleSpell:RegisterTranslations("koKR", function()
 	return {
 		-- Costum added
+		["Powerful Anti-Venom"] = "inv_drink_14",
 		["Explosion"] = "spell_shadow_corpseexplode",
 		["Massive Eruption"] = "spell_fire_volcano",
 		["Holy Strength"] = "None",
