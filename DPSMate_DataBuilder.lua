@@ -1379,7 +1379,7 @@ function DPSMate.DB:ConfirmAbsorbApplication(ability, abilityTarget, time)
 		end
 	end
 	self:RegisterAbsorb(DPSMate.L["unknown"], ability, abilityTarget)
-	--DPSMate:SendMessage("Aborb registered! (Unknown) /"..ability.."/"..abilityTarget)
+--	DPSMate:SendMessage("Aborb registered! (Unknown) /"..ability.."/"..abilityTarget)
 end
 
 function DPSMate.DB:RegisterAbsorb(owner, ability, abilityTarget)

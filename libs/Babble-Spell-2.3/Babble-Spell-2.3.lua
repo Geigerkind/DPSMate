@@ -28,6 +28,13 @@ local BabbleSpell = AceLibrary("AceLocale-2.3"):new(MAJOR_VERSION)
 BabbleSpell:RegisterTranslations("enUS", function()
 	return {
 		-- Costum Added
+		["Unholy Frenzy"] = true,
+		["Harvest Soul"] = true,
+		["Stomp"] = true,
+		["Flesh Rot"] = true,
+		["Slime"] = true,
+		["Test Sunder Armor"] = true,
+		
 		["Powerful Anti-Venom"] = true,
 		["Wildvine Potion"] = true,
 		["Lily Root"] = true,
@@ -2072,6 +2079,12 @@ end)
 BabbleSpell:RegisterTranslations("deDE", function()
 	return {
 		-- Translation by Bambustrepp
+		["Unholy Frenzy"] = "Unheilige Raserei",
+		["Harvest Soul"] = "Seele ernten",
+		["Stomp"] = "Stampfen",
+		["Flesh Rot"] = "Verwesendes Fleisch",
+		["Slime"] = "Schleim",
+		["Test Sunder Armor"] = "Rüstung zerreißen",
 		["Powerful Anti-Venom"] = "Mächtiges Gegengift",
 		["Wildvine Potion"] = "Wildrankentrank",
 		["Lily Root"] = "Lilienwurzel",
@@ -4103,6 +4116,12 @@ end)
 
 BabbleSpell:RegisterTranslations("frFR", function()
 	return {
+		["Unholy Frenzy"] = "Frénésie impie",
+		["Harvest Soul"] = "Moisson d'âme",
+		["Stomp"] = "Piétinement",
+		["Flesh Rot"] = "Putréfaction de la chair",
+		["Slime"] = "Gelée",
+		["Test Sunder Armor"] = "",
 		["Powerful Anti-Venom"] = "Anti-venin puissant",
 		["Wildvine Potion"] = "Potion de sauvageonne",
 		["Lily Root"] = "Racine de lis",
@@ -10074,6 +10093,12 @@ end)
 
 local spellIcons = {
 	-- Costum Icons
+	["Unholy Frenzy"] = "spell_nature_bloodlust",
+	["Harvest Soul"] = "spell_shadow_curseofachimonde",
+	["Stomp"] = "ability_warstomp",
+	["Flesh Rot"] = "ability_ghoulfrenzy",
+	["Slime"] = "spell_nature_abolishmagic",
+	["Test Sunder Armor"] = "ability_warrior_sunder",
 	["Wildvine Potion"] = "inv_misc_herb_17",
 	["Lily Root"] = "temp",
 	["Healthstone"] = "inv_stone_04",
