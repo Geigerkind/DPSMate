@@ -64,7 +64,7 @@ function DPSMate.Parser:SelfSpellDMG(msg)
 	for a,b,c,d,e,f in strgfind(msg, "Your (.+) (%a%a?)\its (.+) for (%d+)(.*)%. %((%d+) absorbed%)") do 
 		DB:SetUnregisterVariables(tnbr(f), a, self.player)
 	end
-	for a,b,c,d,e in strgfind(msg, "Your (.+) (%a%a?)\its (.+) for (%d+)(.*)\.%s?(.*)") do 
+	for a,b,c,d,e,f in strgfind(msg, "Your (.+) (%a%a?)\its (.+) for (%d+)(.*)\.%s?(.*)") do 
 		t[1] = tnbr(d)
 		if b=="h" then t[2]=1;t[3]=0 end
 		if strfind(e, "blocked") then t[4]=1;t[2]=0;t[3]=0 end
@@ -238,6 +238,7 @@ end
 
 -- You reflect 20 Holy damage to Razzashi Serpent.
 function DPSMate.Parser:SpellDamageShieldsOnSelf(msg)
+	t = {}
 	for a,b,c in strgfind(msg, "You reflect (%d+) (%a-) damage to (.+)%.") do 
 		local am = tnbr(a)
 		DB:EnemyDamage(true, DPSMateEDT, self.player, "Reflection", 1, 0, 0, 0, 0, 0, am, c, 0, 0)
@@ -266,6 +267,7 @@ end
 
 -- Helboar reflects 4 Fire damage to you.
 function DPSMate.Parser:SpellDamageShieldsOnOthers(msg)
+	t = {}
 	for a,b,c,d in strgfind(msg, "(.+) reflects (%d+) (%a-) damage to (.+)%.") do
 		local am,ta = tnbr(b)
 		if d == "you" then ta=self.player end

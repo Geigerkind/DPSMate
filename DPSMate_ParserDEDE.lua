@@ -323,6 +323,7 @@ if (GetLocale() == "deDE") then
 	end
 	
 	DPSMate.Parser.SpellDamageShieldsOnSelf = function(self, msg)
+		t = {}
 		for a,b,c in strgfind(msg, "Ihr reflektiert (%d+) (%a-) auf (.+)%.") do 
 			local am = tnbr(a)
 			DB:EnemyDamage(true, DPSMateEDT, self.player, "Reflektieren", 1, 0, 0, 0, 0, 0, am, c, 0, 0)
@@ -360,6 +361,7 @@ if (GetLocale() == "deDE") then
 	
 	-- X reflektiert d+ Feuerschaden auf Euch.
 	DPSMate.Parser.SpellDamageShieldsOnOthers = function(self, msg)
+		t = {}
 		for a,b,c,d in strgfind(msg, "(.+) reflektiert (%d+) (%a-) auf (.+)%.") do
 			local am,ta = tnbr(b)
 			if d == "Euch" then ta=self.player end

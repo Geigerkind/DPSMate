@@ -998,7 +998,8 @@ DPSMate.Parser.UseAction = function(slot, checkCursor, onSelf)
 	local aura = DPSMate_TooltipTextLeft1:GetText()
 	local target = DPSMate.Parser:GetTarget()
 	if aura and target and (OverTimeDispels[aura] or AbsorbAbilities[aura]) and not DPSMate.Parser.SendSpell[aura] then
-		--DPSMate:SendMessage("Send:"..aura)
+	--if aura and target and not DPSMate.Parser.SendSpell[aura] then
+		--DPSMate:SendMessage("Send:"..aura.." with target: "..target)
 		SDM("DPSMate"..DPSMate.SYNCVERSION, aura..","..target..",", "RAID")
 		DPSMate.Parser.SendSpell[aura] = true
 	end
