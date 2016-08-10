@@ -1530,7 +1530,7 @@ end
 
 function DPSMate.Sync:ThreatAllIn(arg2, arg4)
 	t = {}
-
+	strgsub(arg2, "(.-),", func)
 
 	DB:BuildUser(arg4, nil)
 	DB:BuildUser(t[1], nil)
@@ -1555,7 +1555,7 @@ end
 
 function DPSMate.Sync:ThreatStatsIn(arg2,arg4)
 	t = {}
-
+	strgsub(arg2, "(.-),", func)
 
 	DB:BuildUser(arg4, nil)
 	DB:BuildUser(t[1], nil)
