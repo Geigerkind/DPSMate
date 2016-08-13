@@ -1435,7 +1435,11 @@ function DPSMate.Options:ReportUserDetails(obj, channel, name)
 	else
 		chn = "CHANNEL"; index = GetChannelName(channel)
 	end
-	SendChatMessage(DPSMate.L["name"].." - "..DPSMate.L["reportof"].." "..user.."'s ".._G("DPSMate_"..DPSMateSettings["windows"][Key]["name"].."_Head_Font"):GetText().." - "..DPSMate:GetModeName(Key).." - "..b, chn, nil, index)
+	local bb = ""
+	if b~=0 then
+		bb = " - "..b
+	end
+	SendChatMessage(DPSMate.L["name"].." - "..DPSMate.L["reportof"].." "..user.."'s ".._G("DPSMate_"..DPSMateSettings["windows"][Key]["name"].."_Head_Font"):GetText().." - "..DPSMate:GetModeName(Key)..bb, chn, nil, index)
 	for i=1, 10 do
 		if (not a[i]) then break end
 		local p
@@ -1483,7 +1487,9 @@ function DPSMate.Options:InializePlayerDewDrop(obj)
 	while true do
 		local id, name = GetChannelName(i);
 		if (not name) then break end
-		tinsert(channel, name)
+		if not DPSMate:TContains(channel, name) then
+			tinsert(channel, name)
+		end
 		i=i+1
 	end
 	
