@@ -66,10 +66,10 @@ local cctime = 0;
 function NewSDM(prefix, message, type)
 	--DPSMate:SendMessage(ccount)
 	if (GT()-cctime)>=1.6 then
+		cctime = GT()
 		ccount = 0
 	end
 	ccount = ccount + 1
-	cctime = GT()
 	SDM(prefix, message, type)
 end
 SendAddonMessage = NewSDM
@@ -97,10 +97,10 @@ function DPSMate.Sync:GetSyncDelay(elapsed)
 end
 
 function DPSMate.Sync:GetMessageState()
-	if sname ~= "Kronos" and sname ~= "Kronos II" then return true end 
-	--if (GT()-cctime)>=1.6 and ccount<=800 then
-		--return true
-	--end
+	--if sname ~= "Kronos" and sname ~= "Kronos II" then return true end 
+	if ccount<=750 then
+		return true
+	end
 	return false
 end
 
@@ -114,7 +114,7 @@ function DPSMate.Sync:SendAddonMessages(elapsed)
 				for i=1, 80 do
 					--SDM("Test"..co, "Test"..co, "RAID")
 					if not Buffer[co] then break end
-					SDM(Buffer[co][1]..DPSMate.SYNCVERSION, Buffer[co][2], "RAID")
+					SendAddonMessage(Buffer[co][1]..DPSMate.SYNCVERSION, Buffer[co][2], "RAID")
 					--SDM(Buffer[co][1].."NOTSYNC", Buffer[co][2], "RAID")
 					Buffer[co] = nil
 					co = co + 1
