@@ -423,3 +423,5 @@ DPSMate.L["fftby"] = "Friendly fire taken by "
 DPSMate.L["poisoncleansingtotem"] = "Poison Cleansing Totem"
 DPSMate.L["threatdoneby"] = "Threat done by "
 DPSMate.L["periodic"] = "(Periodic)"
+DPSMate.L["reportchannel"] = {[1]="Whisper",[2]="Raid",[3]="Party",[4]="Say",[5]="Officer",[6]="Guild"}
+DPSMate.L["raid"] = "Raid"

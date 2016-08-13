@@ -367,7 +367,7 @@ if (GetLocale() == "deDE") then
 	DPSMate.L["topleft"] = "Oben Links"
 	DPSMate.L["left"] = "Links"
 	DPSMate.L["top"] = "Oben"
-	DPSMate.L["gchannel"] = {[1]="Schlachtzug",[2]="Gruppe",[3]="Sagen",[4]="Offizier",[5]="Gilde"}
+	DPSMate.L["gchannel"] = {[1]="Raid",[2]="Party",[3]="Say",[4]="Officer",[5]="Guild"}
 	DPSMate.L["nodetailserror"] = "Es gibt keine Einzelheiten zu berichten."
 	DPSMate.L["reportof"] = "Bericht über"
 	DPSMate.L["opendetails"] = "Öffne Einzelheiten"
@@ -424,4 +424,6 @@ if (GetLocale() == "deDE") then
 	DPSMate.L["poisoncleansingtotem"] = "Totem der Giftreinigung"
 	DPSMate.L["threatdoneby"] = "Aggro gemacht von "
 	DPSMate.L["periodic"] = "(Periodisch)"
+	DPSMate.L["reportchannel"] = {[1]="Whisper",[2]="Raid",[3]="Party",[4]="Say",[5]="Officer",[6]="Guild"}
+	DPSMate.L["raid"] = "Raid"
 end

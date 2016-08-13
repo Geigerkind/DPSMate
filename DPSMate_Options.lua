@@ -363,7 +363,7 @@ DPSMate.Options.TestMode = false
 local LastPopUp = 0
 local TimeToNextPopUp = 1
 local PartyNum, LastPartyNum = 0, 0
-local SelectedChannel = "Raid"
+local SelectedChannel = DPSMate.L["raid"]
 
 local _G = getglobal
 local tinsert = table.insert
@@ -1069,7 +1069,7 @@ function UIDropDownMenu_Initialize(frame, initFunction, displayMode, level)
 end
 
 function DPSMate.Options:ChannelDropDown()
-	local channel, i = {[1]="Whisper",[2]="Raid",[3]="Party",[4]="Say",[5]="Officer",[6]="Guild"}, 1
+	local channel, i = DPSMate.L["reportchannel"], 1
 	
     local function on_click()
         UIDropDownMenu_SetSelectedValue(DPSMate_Report_Channel, this.value)
@@ -1079,7 +1079,9 @@ function DPSMate.Options:ChannelDropDown()
 	while true do
 		local id, name = GetChannelName(i);
 		if (not name) then break end
-		tinsert(channel, name)
+		if not DPSMate:TContains(channel, name) then
+			tinsert(channel, name)
+		end
 		i=i+1
 	end
 	
@@ -1404,7 +1406,7 @@ function DPSMate.Options:Report()
 	if (channel == DPSMate.L["whisper"]) then
 		chn = "WHISPER"; index = DPSMate_Report_Editbox:GetText();
 	elseif DPSMate:TContains(DPSMate.L["gchannel"], channel) then
-		chn = channel
+		chn = strupper(channel)
 	else
 		chn = "CHANNEL"; index = GetChannelName(channel)
 	end
@@ -1429,7 +1431,7 @@ function DPSMate.Options:ReportUserDetails(obj, channel, name)
 	if (channel == DPSMate.L["whisper"]) then
 		chn = "WHISPER"; index = name;
 	elseif DPSMate:TContains(DPSMate.L["gchannel"], channel) then
-		chn = channel
+		chn = strupper(channel)
 	else
 		chn = "CHANNEL"; index = GetChannelName(channel)
 	end
