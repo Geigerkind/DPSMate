@@ -426,4 +426,6 @@ if (GetLocale() == "deDE") then
 	DPSMate.L["periodic"] = "(Periodisch)"
 	DPSMate.L["reportchannel"] = {[1]="Whisper",[2]="Raid",[3]="Party",[4]="Say",[5]="Officer",[6]="Guild"}
 	DPSMate.L["raid"] = "Raid"
+	DPSMate.L["activity"] = "Aktivität: "
+	DPSMate.L["of"] = "von"
 end

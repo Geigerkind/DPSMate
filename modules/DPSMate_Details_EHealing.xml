@@ -112,6 +112,14 @@
 						</Anchor>
 					</Anchors>
 				</FontString>
+				<FontString name="$parent_SubTitle" inherits="GameFontNormal" justifyH="LEFT" justifyV="CENTER">
+					<Size x="900" y="40" />
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset x="20" y="-33" />
+						</Anchor>
+					</Anchors>
+				</FontString>
 			</Layer>
 		</Layers>
 		<Scripts>

@@ -778,7 +778,7 @@
 	--------------                    DPSMate PopUP                     --------------                                  
 	----------------------------------------------------------------------------------
 	
-	<Frame name="DPSMate_PopUp" movable="true" hidden="true">
+	<Frame name="DPSMate_PopUp" movable="true" hidden="true" frameStrata="HIGH">
 		<Size x="250" y="60" />
 		<Anchors>
 			<Anchor point="CENTER" />
@@ -908,7 +908,7 @@
 		</Frames>
 	</Frame>
 	
-	<Frame name="DPSMate_Vote" movable="true" hidden="true">
+	<Frame name="DPSMate_Vote" movable="true" hidden="true" frameStrata="HIGH">
 		<Size x="250" y="60" />
 		<Anchors>
 			<Anchor point="CENTER" />
@@ -1009,7 +1009,7 @@
 		</Frames>
 	</Frame>
 	
-	<Frame name="DPSMate_Logout" movable="true" hidden="true">
+	<Frame name="DPSMate_Logout" movable="true" hidden="true" frameStrata="HIGH">
 		<Size x="250" y="80" />
 		<Anchors>
 			<Anchor point="CENTER" />
@@ -1116,7 +1116,7 @@
 	--------------                   DPSMate Report                     --------------                                  
 	----------------------------------------------------------------------------------
 	
-	<Frame name="DPSMate_Report" movable="true" hidden="true">
+	<Frame name="DPSMate_Report" movable="true" hidden="true" frameStrata="HIGH">
 		<Size x="180" y="170" />
 		<Anchors>
 			<Anchor point="CENTER" />
@@ -1314,7 +1314,7 @@
 		</Frames>
 	</Frame>
 	
-	<Frame name="DPSMate_RealTime" movable="true" hidden="true" virtual="true">
+	<Frame name="DPSMate_RealTime" movable="true" hidden="true" virtual="true" frameStrata="HIGH">
 		<Size x="200" y="160" />
 		<Anchors>
 			<Anchor point="CENTER" />
@@ -1379,7 +1379,7 @@
 	--------------                 DPSMate Config Menu                  --------------                                  
 	----------------------------------------------------------------------------------
 	
-	<Frame name="DPSMate_ConfigMenu" movable="true" hidden="true">
+	<Frame name="DPSMate_ConfigMenu" movable="true" hidden="true" frameStrata="HIGH">
 		<Size x="450" y="300" />
 		<Anchors>
 			<Anchor point="CENTER" />

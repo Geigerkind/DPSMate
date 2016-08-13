@@ -11,6 +11,7 @@ local tinsert = table.insert
 local strformat = string.format
 local toggle, toggle2, toggle3 = false, false, false
 local t1, t2, TTotal = {}, {}, 0
+local mode = {[1]="total",[2]="current"}
 
 function DPSMate.Modules.DetailsDamage:UpdateDetails(obj, key)
 	curKey = key
@@ -20,6 +21,7 @@ function DPSMate.Modules.DetailsDamage:UpdateDetails(obj, key)
 	UIDropDownMenu_SetSelectedValue(DPSMate_Details_DiagramLegend_Procs, "None")
 	DetailsUser = obj.user
 	DPSMate_Details_Title:SetText(DPSMate.L["dmgdoneby"]..obj.user)
+	DPSMate_Details_SubTitle:SetText(DPSMate.L["activity"]..strformat("%.2f", DPSMateCombatTime["effective"][key][obj.user] or 0).."s "..DPSMate.L["of"].." "..strformat("%.2f", DPSMateCombatTime[mode[key]]).."s ("..strformat("%.2f", 100*(DPSMateCombatTime["effective"][key][obj.user] or 0)/DPSMateCombatTime[mode[key]]).."%)")
 	DPSMate_Details:Show()
 	UIDropDownMenu_Initialize(DPSMate_Details_DiagramLegend_Procs, DPSMate.Modules.DetailsDamage.ProcsDropDown)
 	DetailsArr, DetailsTotal, DmgArr = DPSMate.RegistredModules[DPSMateSettings["windows"][curKey]["CurMode"]]:EvalTable(DPSMateUser[DetailsUser], curKey)
