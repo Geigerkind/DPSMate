@@ -376,11 +376,8 @@ function DPSMate.Parser:OnLoad()
 		}
 	end
 	-- Prevent this addon from causing issues
-	if SW_FixLogString then
-		SW_FixLogString = function(str)
-			return str
-		end
-		DPSMate:SendMessage("Please disable SW_StatsFixLogStrings. This addon causes issues.")
+	if SW_FixLogStrings then
+		DPSMate:SendMessage("Please disable SW_StatsFixLogStrings and SW_Stats. Those addons causes issues.")
 	end
 	
 	-- Prevent error messages of NPCDB
@@ -434,7 +431,7 @@ end
 
 function DPSMate.Parser:OnEvent(event)
 	if Execute[event] then
-		--DPSMate:SendMessage(event..": "..arg1)
+	--	DPSMate:SendMessage(event..": "..arg1)
 		Execute[event](arg1)
 	end
 end
