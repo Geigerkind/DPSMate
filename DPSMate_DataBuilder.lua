@@ -1665,7 +1665,7 @@ function DPSMate.DB:EvaluateDispel()
 			if ConfirmedDispel[cat] then
 				local check = nil
 				for q, t in ConfirmedDispel[cat] do
-					if DPSMate:TContains(DPSMate.Parser["De"..DPSMateAbility[t[1]][2]], va[2]) then
+					if DPSMate.Parser.HotDispels[va[2]] then
 						if not check then
 							check = t[1]
 							tremove(ConfirmedDispel[cat], q)
