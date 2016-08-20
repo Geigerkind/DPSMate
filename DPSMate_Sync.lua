@@ -1567,9 +1567,9 @@ function DPSMate.Sync:ThreatStatsIn(arg2,arg4)
 	if not Arrays[16][piid][usid] then
 		return
 	end
-	t[1] = tnbr(t[1])
-	Arrays[16][piid][usid][abid]["i"][t[1]] = tnbr(t[2])
-	if t[1]>DPSMateCombatTime["total"] then DPSMateCombatTime["total"]=t[1] end
+	t[3] = tnbr(t[3])
+	Arrays[16][piid][usid][abid]["i"][t[3]] = tnbr(t[4])
+	if t[3]>DPSMateCombatTime["total"] then DPSMateCombatTime["total"]=t[3] end
 end
 
 DPSMate.Sync.Exec = {

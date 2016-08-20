@@ -175,7 +175,7 @@ if (GetLocale() == "deDE") then
 			if self.TargetParty[a] then DB:BuildFail(1, a, self.player, d.."(Periodisch)", t[1]) end
 			return
 		end
-		for f,a,b in strgfind(msg, "(.+%s*)'?s (.+) wurde von (.+) absorbiert%.") do -- To Test
+		for f,a,b in strgfind(msg, "(.-%s*)'?s (.+) wurde von (.+) absorbiert%.") do -- To Test
 			f = self:ReplaceSwString(f)
 			DB:Absorb(a.."(Periodisch)", b, f)
 			return
@@ -192,10 +192,11 @@ if (GetLocale() == "deDE") then
 	-- X von Z wurde von Y pariert.
 	DPSMate.Parser.FriendlyPlayerDamage = function(self, msg)
 		t = {}
-		for k,a,b,c,d,f in strgfind(msg, "(.+%s*)'?s (.+) trifft (.+) kritisch für (%d+)(.*)%. %((%d+) absorbiert%)") do 
+		for k,a,b,c,d,f in strgfind(msg, "(.-%s*)'?s (.+) trifft (.+) kritisch für (%d+)(.*)%. %((%d+) absorbiert%)") do 
+			k = self:ReplaceSwString(k)
 			DB:SetUnregisterVariables(tnbr(f), b, k)
 		end
-		for f,a,b,c,d,e in strgfind(msg, "(.+%s*)'?s (.+) trifft (.+) kritisch für (%d+)(.*)\.%s?(.*)") do 
+		for f,a,b,c,d,e in strgfind(msg, "(.-%s*)'?s (.+) trifft (.+) kritisch für (%d+)(.*)\.%s?(.*)") do 
 			t[1] = tnbr(c)
 			f = self:ReplaceSwString(f)
 			if strfind(e, "geblockt") then t[4]=1;t[2]=0;end
@@ -206,7 +207,7 @@ if (GetLocale() == "deDE") then
 			if self.TargetParty[b] and self.TargetParty[f] then DB:BuildFail(1, b, f, a, t[1]) end
 			return
 		end
-		for f,a,b,c,d,e in strgfind(msg, "(.+%s*)'?s (.+) trifft (.+) für (%d+)(.*)\.%s?(.*)") do 
+		for f,a,b,c,d,e in strgfind(msg, "(.-%s*)'?s (.+) trifft (.+) für (%d+)(.*)\.%s?(.*)") do 
 			t[1] = tnbr(c)
 			f = self:ReplaceSwString(f)
 			if strfind(e, "geblockt") then t[4]=1;t[2]=0;t[3]=0 end
@@ -232,7 +233,7 @@ if (GetLocale() == "deDE") then
 			DB:DamageDone(f, a, 0, 0, 1, 0, 0, 0, 0, 0, 0)
 			return
 		end
-		for f,a,b in strgfind(msg, "(.+%s*)'?s (.+) wurde von (.+) widerstanden%.") do
+		for f,a,b in strgfind(msg, "(.-%s*)'?s (.+) wurde von (.+) widerstanden%.") do
 			f = self:ReplaceSwString(f)
 			DB:EnemyDamage(true, DPSMateEDT, f, a, 0, 0, 0, 0, 0, 1, 0, b, 0, 0)
 			DB:DamageDone(f, a, 0, 0, 0, 0, 0, 1, 0, 0, 0)
@@ -394,7 +395,7 @@ if (GetLocale() == "deDE") then
 			DB:DamageDone(f, a, 0, 0, 1, 0, 0, 0, 0, 0, 0)
 			return
 		end
-		for f,a,b in strgfind(msg, "(.+%s*)'?s (.+) wurde von (.+) widerstanden%.") do
+		for f,a,b in strgfind(msg, "(.-%s*)'?s (.+) wurde von (.+) widerstanden%.") do
 			f = self:ReplaceSwString(f)
 			DB:EnemyDamage(true, DPSMateEDT, f, a, 0, 0, 0, 0, 0, 1, 0, b, 0, 0)
 			DB:DamageDone(f, a, 0, 0, 0, 0, 0, 1, 0, 0, 0)
@@ -481,7 +482,7 @@ if (GetLocale() == "deDE") then
 			if self.FailDT[b] then DB:BuildFail(2, a, self.player, b, t[3]) end
 			return
 		end
-		for a,b,c,d in strgfind(msg, "(.+%s*)'?s (.+) trifft Euch kritisch für (%d+)(.*)") do -- Potential here to track school and resisted damage
+		for a,b,c,d in strgfind(msg, "(.-%s*)'?s (.+) trifft Euch kritisch für (%d+)(.*)") do -- Potential here to track school and resisted damage
 			--if c=="kritisch" then t[1]=1;t[2]=0 end
 			--if strfind(e, "geblockt") then t[4]=1 end
 			t[3] = tnbr(c)
@@ -498,13 +499,13 @@ if (GetLocale() == "deDE") then
 			DB:DamageTaken(self.player, b, 0, 0, 1, 0, 0, 0, 0, a, 0)
 			return
 		end
-		for a,b in strgfind(msg, "(.+%s*)'?s (.+) wurde pariert%.") do
+		for a,b in strgfind(msg, "(.-%s*)'?s (.+) wurde pariert%.") do
 			a = self:ReplaceSwString(a)
 			DB:EnemyDamage(false, DPSMateEDD, self.player, b, 0, 0, 0, 1, 0, 0, 0, a, 0, 0)
 			DB:DamageTaken(self.player, b, 0, 0, 0, 1, 0, 0, 0, a, 0)
 			return
 		end
-		for a,b in strgfind(msg, "(.+%s*)'?s (.+) wurde ausgewichen%.") do
+		for a,b in strgfind(msg, "(.-%s*)'?s (.+) wurde ausgewichen%.") do
 			a = self:ReplaceSwString(a)
 			DB:EnemyDamage(false, DPSMateEDD, self.player, b, 0, 0, 0, 0, 1, 0, 0, a, 0, 0)
 			DB:DamageTaken(self.player, b, 0, 0, 0, 0, 1, 0, 0, a, 0)
@@ -515,13 +516,13 @@ if (GetLocale() == "deDE") then
 			DB:DamageTaken(self.player, b, 0, 0, 0, 0, 0, 1, 0, a, 0)
 			return
 		end
-		for a,b in strgfind(msg, "(.+%s*)'?s (.+) wurde geblockt%.") do
+		for a,b in strgfind(msg, "(.-%s*)'?s (.+) wurde geblockt%.") do
 			a = self:ReplaceSwString(a)
 			DB:EnemyDamage(false, DPSMateEDD, self.player, b, 0, 0, 0, 0, 0, 0, 0, a, 1, 0)
 			DB:DamageTaken(self.player, b, 0, 0, 0, 0, 0, 0, 0, a, 1)
 			return
 		end
-		for a,b in strgfind(msg, "Ihr absorbiert (.+%s*)'?s (.+)%.") do
+		for a,b in strgfind(msg, "Ihr absorbiert (.-%s*)'?s (.+)%.") do
 			a = self:ReplaceSwString(a)
 			DB:Absorb(b, self.player, a)
 			return
@@ -551,7 +552,7 @@ if (GetLocale() == "deDE") then
 			DB:DeathHistory(self.player, self.player, d.."(Periodisch)", t[1], 1, 0, 0, 0)
 			return
 		end
-		for a,b in strgfind(msg, "Ihr absorbiert (.+%s*)'?s (.+)%.") do
+		for a,b in strgfind(msg, "Ihr absorbiert (.-%s*)'?s (.+)%.") do
 			a = self:ReplaceSwString(a)
 			DB:Absorb(b.."(Periodisch)", self.player, a)
 			return
@@ -613,7 +614,7 @@ if (GetLocale() == "deDE") then
 			if self.CC[b] then DB:BuildActiveCC(a, b) end
 			return
 		end
-		for f,a,b in strgfind(msg, "(.+%s*)'?s (.+) wurde von (.+) absorbiert%.") do -- To Test
+		for f,a,b in strgfind(msg, "(.-%s*)'?s (.+) wurde von (.+) absorbiert%.") do -- To Test
 			f = self:ReplaceSwString(f)
 			DB:Absorb(a.."(Periodisch)", f, b)
 			return
@@ -624,7 +625,7 @@ if (GetLocale() == "deDE") then
 	-- Xs Y trifft Z kritisch für d+ Heiligschaden.
 	DPSMate.Parser.CreatureVsCreatureSpellDamage = function(self, msg)
 		t = {}
-		for a,b,d,e,f in strgfind(msg, "(.+%s*)'?s (.+) trifft (.+) kritisch für (%d+)(.*)") do
+		for a,b,d,e,f in strgfind(msg, "(.-%s*)'?s (.+) trifft (.+) kritisch für (%d+)(.*)") do
 			if strfind(f, "geblockt") then t[4]=1;t[2]=0 end
 			t[3] = tnbr(e)
 			a = self:ReplaceSwString(a)
@@ -636,7 +637,7 @@ if (GetLocale() == "deDE") then
 			return
 		end
 		-- Ragnaross Zorn des
-		for a,b,d,e,f in strgfind(msg, "(.+%s*)'?s (.+) trifft (.+) für (%d+)(.*)") do
+		for a,b,d,e,f in strgfind(msg, "(.-%s*)'?s (.+) trifft (.+) für (%d+)(.*)") do
 			if strfind(f, "geblockt") then t[4]=1;t[1]=0 end
 			t[3] = tnbr(e)
 			a = self:ReplaceSwString(a)
@@ -662,13 +663,13 @@ if (GetLocale() == "deDE") then
 			DB:DamageTaken(c, b, 0, 0, 1, 0, 0, 0, 0, a, 0)
 			return
 		end
-		for a,b,c in strgfind(msg, "(.+%s*)'?s (.+) wurde von (.+) widerstanden%.") do
+		for a,b,c in strgfind(msg, "(.-%s*)'?s (.+) wurde von (.+) widerstanden%.") do
 			a = self:ReplaceSwString(a)
 			DB:EnemyDamage(false, DPSMateEDD, c, b, 0, 0, 0, 0, 0, 1, 0, a, 0, 0)
 			DB:DamageTaken(c, b, 0, 0, 0, 0, 0, 1, 0, a, 0)
 			return
 		end
-		for f,a,b in strgfind(msg, "(.+%s*)'?s (.+) wurde von (.+) absorbiert%.") do -- To Test
+		for f,a,b in strgfind(msg, "(.-%s*)'?s (.+) wurde von (.+) absorbiert%.") do -- To Test
 			f = self:ReplaceSwString(f)
 			DB:Absorb(a, f, b)
 			return
@@ -795,8 +796,9 @@ if (GetLocale() == "deDE") then
 	
 	DPSMate.Parser.SpellPeriodicFriendlyPlayerBuffs = function(self, msg)
 		t = {}
-		for f,a,b,c in strgfind(msg, "(.+) erhält (%d+) Gesundheit von (.+)s (.+)%.") do
+		for f,a,b,c in strgfind(msg, "(.+) erhält (%d+) Gesundheit von (.-%s*)'?s (.+)%.") do
 			t[1]=tnbr(a)
+			b = self:ReplaceSwString(b)
 			overheal = self:GetOverhealByName(t[1], f)
 			DB:HealingTaken(DPSMateHealingTaken, f, c.."(Periodisch)", 1, 0, t[1], b)
 			DB:HealingTaken(DPSMateEHealingTaken, f, c.."(Periodisch)", 1, 0, t[1]-overheal, b)
@@ -844,8 +846,9 @@ if (GetLocale() == "deDE") then
 	-- Kritische Heilung: Xs Y heilt Euch um d+ Punkte.
 	DPSMate.Parser.SpellHostilePlayerBuff = function(self, msg)
 		t = {}
-		for a,b,c,d in strgfind(msg, "Kritische Heilung: (.+)s (.+) heilt (.+) um (%d+) Punkte%.") do 
+		for a,b,c,d in strgfind(msg, "Kritische Heilung: (.-%s*)'?s (.+) heilt (.+) um (%d+) Punkte%.") do 
 			t[1] = tnbr(d)
+			a = self:ReplaceSwString(a)
 			if c=="Euch" then t[2]=self.player end
 			overheal = self:GetOverhealByName(t[1], t[2] or c)
 			DB:HealingTaken(DPSMateHealingTaken, t[2] or c, b, 0, 1, t[1], a)
@@ -859,7 +862,7 @@ if (GetLocale() == "deDE") then
 			DB:DeathHistory(t[2] or c, a, b, t[1], 0, 1, 1, 0)
 			return
 		end
-		for a,b,c,d in strgfind(msg, "(.+%s*)'?s (.+) heilt (.+) um (%d+) Punkte%.") do 
+		for a,b,c,d in strgfind(msg, "(.-%s*)'?s (.+) heilt (.+) um (%d+) Punkte%.") do 
 			t[1] = tnbr(d)
 			a = self:ReplaceSwString(a)
 			overheal = self:GetOverhealByName(t[1], t[2] or c)
@@ -891,7 +894,8 @@ if (GetLocale() == "deDE") then
 			DB:DeathHistory(self.player, a, b, t[1], 1, 0, 1, 0)
 			return
 		end
-		for a,b,c,d in strgfind(msg, "(.+) bekommt (%d+) Energie durch (.+)s (.+)%.") do
+		for a,b,c,d in strgfind(msg, "(.+) bekommt (%d+) Energie durch (.-%s*)'?s (.+)%.") do
+			c = self:ReplaceSwString(c)
 			DB:BuildBuffs(c, a, d, true)
 			DB:DestroyBuffs(c, d)
 			return 
@@ -905,15 +909,17 @@ if (GetLocale() == "deDE") then
 			DB:DestroyBuffs(a, c)
 			return 
 		end
-		for a,b,c,d in strgfind(msg, "(.+) bekommt (%d+) Wut durch (.+)s (.+)%.") do
+		for a,b,c,d in strgfind(msg, "(.+) bekommt (%d+) Wut durch (.-%s*)'?s (.+)%.") do
 			if self.procs[d] and not self.OtherExceptions[d] then
+				c = self:ReplaceSwString(c)
 				DB:BuildBuffs(c, a, d, true)
 				DB:DestroyBuffs(c, d)
 			end
 			return 
 		end
-		for a,b,c,d in strgfind(msg, "(.+) bekommt (%d+) Mana durch (.+)s (.+)%.") do
+		for a,b,c,d in strgfind(msg, "(.+) bekommt (%d+) Mana durch (.-%s*)'?s (.+)%.") do
 			if self.procs[d] then
+				c = self:ReplaceSwString(c)
 				DB:BuildBuffs(c, a, d, true)
 				DB:DestroyBuffs(c, d)
 			end
@@ -940,7 +946,7 @@ if (GetLocale() == "deDE") then
 	end
 	
 	DPSMate.Parser.CreatureVsCreatureSpellDamageAbsorb = function(self, msg)
-		for c, ab, b, a, x, d, absorbed in strgfind(msg, "(.+%s*)'?s (.+) trifft (.+) für (.+)%.(.*)%((%d+) absorbiert%)") do DB:SetUnregisterVariables(tnbr(absorbed), ab, self:ReplaceSwString(c)); return end
+		for c, ab, b, a, x, d, absorbed in strgfind(msg, "(.-%s*)'?s (.+) trifft (.+) für (.+)%.(.*)%((%d+) absorbiert%)") do DB:SetUnregisterVariables(tnbr(absorbed), ab, self:ReplaceSwString(c)); return end
 	end
 	
 	DPSMate.Parser.SpellPeriodicSelfBuffAbsorb = function(self, msg)
@@ -1091,7 +1097,7 @@ if (GetLocale() == "deDE") then
 	-- Marktast casts bla on bla.
 	DPSMate.Parser.PetSpellDamage = function(self, msg)
 		t = {}
-		for f,a,b,c,d,e in strgfind(msg, "(.+%s*)'?s (.+) trifft (.+) kritisch für (%d+)(.*)\.%s?(.*)") do 
+		for f,a,b,c,d,e in strgfind(msg, "(.-%s*)'?s (.+) trifft (.+) kritisch für (%d+)(.*)\.%s?(.*)") do 
 			t[1] = tnbr(c)
 			f = self:ReplaceSwString(f)
 			if strfind(e, "geblockt") then t[4]=1;t[2]=0;end
@@ -1102,7 +1108,7 @@ if (GetLocale() == "deDE") then
 			if self.TargetParty[b] and self.TargetParty[f] then DB:BuildFail(1, b, f, a, t[1]) end
 			return
 		end
-		for f,a,b,c,d,e in strgfind(msg, "(.+%s*)'?s (.+) trifft (.+) für (%d+)(.*)\.%s?(.*)") do 
+		for f,a,b,c,d,e in strgfind(msg, "(.-%s*)'?s (.+) trifft (.+) für (%d+)(.*)\.%s?(.*)") do 
 			t[1] = tnbr(c)
 			f = self:ReplaceSwString(f)
 			if strfind(e, "geblockt") then t[4]=1;t[2]=0;t[3]=0 end
@@ -1128,7 +1134,7 @@ if (GetLocale() == "deDE") then
 			DB:DamageDone(f, a, 0, 0, 1, 0, 0, 0, 0, 0, 0)
 			return
 		end
-		for f,a,b in strgfind(msg, "(.+%s*)'?s (.+) wurde von (.+) widerstanden%.") do
+		for f,a,b in strgfind(msg, "(.-%s*)'?s (.+) wurde von (.+) widerstanden%.") do
 			f = self:ReplaceSwString(f)
 			DB:EnemyDamage(true, DPSMateEDT, f, a, 0, 0, 0, 0, 0, 1, 0, b, 0, 0)
 			DB:DamageDone(f, a, 0, 0, 0, 0, 0, 1, 0, 0, 0)
