@@ -1939,10 +1939,10 @@ function lib:DrawLine(C, sx, sy, ex, ey, w, color, layer, point, label)
 		end
 	end
 	
-	if point and T then
+	if point and T and not T.val then
 		T.val = ceil(point[2])
 	end
-	if label and T then
+	if label and T and not T.label then
 		T.label = label
 	end
 
@@ -2026,6 +2026,7 @@ function lib:DrawLine(C, sx, sy, ex, ey, w, color, layer, point, label)
 	T:SetPoint("BOTTOMLEFT", C, relPoint, cx - Bwid, cy - Bhgt);
 	T:SetPoint("TOPRIGHT",	C, relPoint, cx + Bwid, cy + Bhgt);
 	P:ClearAllPoints();
+	P:SetParent(C);
 	--P:SetPoint("BOTTOMLEFT", C, relPoint, cx - Bwid, cy - Bhgt);
 	if (ey-sy)<0 then
 		P:SetPoint("BOTTOMLEFT", C, relPoint, cx + Bwid -22.5, cy - Bhgt + 11.25);

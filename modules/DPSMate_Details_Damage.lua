@@ -75,16 +75,16 @@ function DPSMate.Modules.DetailsDamage:UpdateCompare(obj, key, comp)
 	t1Comp, t2Comp, TTotalComp = self:EvalToggleTable(comp)
 	
 	if not g4 then
-		g4=DPSMate.Options.graph:CreateGraphPieChart("PieChart", DPSMate_Details_CompareDamage_Diagram, "CENTER", "CENTER", 0, 0, 200, 200)
-		g5=DPSMate.Options.graph:CreateGraphLine("LineGraph",DPSMate_Details_CompareDamage_DiagramLine,"CENTER","CENTER",0,0,850,230)
-		g6=DPSMate.Options.graph:CreateStackedGraph("StackedGraph",DPSMate_Details_CompareDamage_DiagramLine,"CENTER","CENTER",0,0,850,230)
+		g4=DPSMate.Options.graph:CreateGraphPieChart("PieChartComp", DPSMate_Details_CompareDamage_Diagram, "CENTER", "CENTER", 0, 0, 200, 200)
+		g5=DPSMate.Options.graph:CreateGraphLine("LineGraphComp",DPSMate_Details_CompareDamage_DiagramLine,"CENTER","CENTER",0,0,850,230)
+		g6=DPSMate.Options.graph:CreateStackedGraph("StackedGraphComp",DPSMate_Details_CompareDamage_DiagramLine,"CENTER","CENTER",0,0,850,230)
 		g6:SetGridColor({0.5,0.5,0.5,0.5})
 		g6:SetAxisDrawing(true,true)
 		g6:SetAxisColor({1.0,1.0,1.0,1.0})
 		g6:SetAutoScale(true)
 		g6:SetYLabels(true, false)
 		g6:SetXLabels(true)
-		g7=DPSMate.Options.graph:CreateGraphLine("LineGraph",DPSMate_Details_CompareDamage_Graph,"CENTER","CENTER",0,0,1750,230)
+		g7=DPSMate.Options.graph:CreateGraphLine("LineGraphSum",DPSMate_Details_CompareDamage_Graph,"CENTER","CENTER",0,0,1750,230)
 	end
 	
 	if toggle then
