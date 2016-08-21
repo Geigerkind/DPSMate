@@ -427,3 +427,5 @@ DPSMate.L["reportchannel"] = {[1]="Whisper",[2]="Raid",[3]="Party",[4]="Say",[5]
 DPSMate.L["raid"] = "Raid"
 DPSMate.L["activity"] = "Activity: "
 DPSMate.L["of"] = "of"
+DPSMate.L["comparewith"] = "Compare with"
+DPSMate.L["comparewithdesc"] = "Choose a player to compare this player to."

@@ -428,4 +428,6 @@ if (GetLocale() == "deDE") then
 	DPSMate.L["raid"] = "Raid"
 	DPSMate.L["activity"] = "Aktivität: "
 	DPSMate.L["of"] = "von"
+	DPSMate.L["comparewith"] = "Vergleichen mit"
+	DPSMate.L["comparewithdesc"] = "Wähle einen Spieler, mit dem du diesen Spieler vergleichen willst."
 end

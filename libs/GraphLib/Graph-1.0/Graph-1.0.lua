@@ -520,13 +520,14 @@ function GraphFunctions:AddDataSeries(points,color,Dp,label)
 	end
 	
 	table_insert(self.Data,{Points=points;Color=color;Label=label})
-	self.DataPoints = Dp
+	table_insert(self.DataPoints, Dp)
 	
 	self.NeedsUpdate=true
 end
 
 function GraphFunctions:ResetData()
 	self.Data={}
+	self.DataPoints={}
 	
 	self.NeedsUpdate=true
 end
@@ -624,8 +625,8 @@ local PiePieces={"Pie\\1-2";
 
 --26 Colors
 local ColorTable={
-	{0.9,0.0,0.0},
 	{0.0,0.9,0.0},
+	{0.9,0.0,0.0},
 	{0.0,0.0,1.0},
 	{1.0,1.0,0.0},
 	{1.0,0.0,1.0},
@@ -1697,21 +1698,24 @@ function GraphFunctions:RefreshLineGraph()
 	end
 	
 	self.ppoints = {}
-	if self.DataPoints[1] then
-		for k3, p2 in pairs(self.DataPoints[2]) do
-			-- Needs fine tuning
-			local PPoint = self:CreateTexture()
-			PPoint:SetTexture(TextureDirectory.."party") 
-			local PPLastPointX = Width*(p2[2][1]-self.XMin)/(self.XMax-self.XMin)
-			local PPLastPointY = Height*(p2[2][2]-self.YMin)/(self.YMax-self.YMin)
-			local PPNextPointX = Width*(p2[3][1]-self.XMin)/(self.XMax-self.XMin)
-			local PPNextPointY = Height*(p2[3][2]-self.YMin)/(self.YMax-self.YMin)
-			local pointx = Width*(p2[1]-self.XMin)/(self.XMax-self.XMin)
-			local pointy = PPLastPointY + (pointx-PPLastPointX)*((PPNextPointY-PPLastPointY)/(PPNextPointX-PPLastPointX))
-			PPoint:SetPoint("LEFT", self.yAxis, "LEFT", pointx-5, pointy-22)
-			PPoint:SetHeight(20)
-			PPoint:SetWidth(20)
-			table_insert(self.ppoints, PPoint)
+	if self.DataPoints then
+		for uuu, zzz in self.DataPoints do
+			for k3, p2 in pairs(zzz[2]) do
+				-- Needs fine tuning
+				local PPoint = self:CreateTexture()
+				PPoint:SetTexture(TextureDirectory.."party") 
+				PPoint:SetVertexColor(self.Data[uuu].Color[1][1], self.Data[uuu].Color[1][2], self.Data[uuu].Color[1][3], 1)
+				local PPLastPointX = Width*(p2[2][1]-self.XMin)/(self.XMax-self.XMin)
+				local PPLastPointY = Height*(p2[2][2]-self.YMin)/(self.YMax-self.YMin)
+				local PPNextPointX = Width*(p2[3][1]-self.XMin)/(self.XMax-self.XMin)
+				local PPNextPointY = Height*(p2[3][2]-self.YMin)/(self.YMax-self.YMin)
+				local pointx = Width*(p2[1]-self.XMin)/(self.XMax-self.XMin)
+				local pointy = PPLastPointY + (pointx-PPLastPointX)*((PPNextPointY-PPLastPointY)/(PPNextPointX-PPLastPointX))
+				PPoint:SetPoint("LEFT", self.yAxis, "LEFT", pointx-(12-floor(self:GetWidth()/850)*6.5), pointy-20)
+				PPoint:SetHeight(20)
+				PPoint:SetWidth(20)
+				table_insert(self.ppoints, PPoint)
+			end
 		end
 	end
 	
@@ -2242,12 +2246,10 @@ function lib:HideLines(C)
 		end
 	end
 	
-	if not C.ppoints then
-		return
-	end
-
-	for k,v in pairs(C.ppoints) do
-		v:Hide()
+	if C.ppoints then
+		for k,v in pairs(C.ppoints) do
+			v:Hide()
+		end
 	end
 end
 

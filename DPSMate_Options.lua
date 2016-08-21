@@ -250,6 +250,15 @@ DPSMate.Options.Options = {
 					},
 				},
 			},
+			compare = {
+				order = 20,
+				type = 'group',
+				name = DPSMate.L["comparewith"],
+				desc = DPSMate.L["comparewithdesc"],
+				args = {
+				
+				},
+			}
 		},
 		handler = DPSMate.Options,
 	},
@@ -980,10 +989,13 @@ function DPSMate.Options:ToggleDrewDrop(i, obj, pa)
 	return true
 end
 
-function DPSMate.Options:UpdateDetails(obj)
+function DPSMate.Options:UpdateDetails(obj, bool, objname)
+	if objname then
+		obj = _G(objname)
+	end
 	local key = obj:GetParent():GetParent():GetParent().Key
 	if obj.user then
-		DPSMate.RegistredModules[DPSMateSettings["windows"][key]["CurMode"]]:OpenDetails(obj, key)
+		DPSMate.RegistredModules[DPSMateSettings["windows"][key]["CurMode"]]:OpenDetails(obj, key, bool)
 	else
 		DPSMate:SendMessage(DPSMate.L["findusererror"])
 	end
@@ -1466,6 +1478,17 @@ function DPSMate.Options:ReportUserDetails(obj, channel, name)
 	end
 end
 
+local hexClassColor = {
+	warrior = "C79C6E",
+	rogue = "FFF569",
+	priest = "FFFFFF",
+	druid = "FF7D0A",
+	warlock = "9482C9",
+	mage = "69CCF0",
+	hunter = "ABD473",
+	paladin = "F58CBA",
+	shaman = "0070DE",
+}
 function DPSMate.Options:InializePlayerDewDrop(obj)
 	local channel, i = DPSMate.L["gchannel"], 1
 	local path = DPSMate.Options.Options[4]["args"]["report"]["args"]
@@ -1501,6 +1524,47 @@ function DPSMate.Options:InializePlayerDewDrop(obj)
 			desc = DPSMate.L["reportdetails"],
 			func = loadstring('DPSMate.Options:ReportUserDetails(DPSMate.Options.Dewdrop:GetOpenedParent(), "'..val..'"); DPSMate.Options.Dewdrop:Close()'),
 		}
+	end
+	
+	-- Compare with player
+	DPSMate.Options.Options[4]["args"]["compare"]["args"] = {}
+	path = DPSMate.Options.Options[4]["args"]["compare"]["args"]
+	local Key = obj:GetParent():GetParent():GetParent().Key
+	local db,cbt = DPSMate:GetMode(Key)
+	local temp = ''
+	for cat, _ in db do
+		local name = DPSMate:GetUserById(cat)
+		if name and name ~= obj.user then
+			if DPSMateSettings["windows"][Key]["grouponly"] then
+				if DPSMate.Parser.TargetParty[name] then
+					if temp=='' then
+						temp = '"'..name..'"'
+					else
+						temp = temp..',"'..name..'"'
+					end
+				end
+			else
+				if temp=='' then
+					temp = '"'..name..'"'
+				else
+					temp = temp..',"'..name..'"'
+				end
+			end
+		end
+	end
+	-- No clue what is wrong here. Fuck it
+	temp = assert(loadstring('return {'..temp..'}')) ();
+	sort(temp)
+	for _, val in temp do
+		if not strfind(val, "%s") then -- Have to find another method later to enable comparing npcs?
+			path[val] = {
+				order = 1,
+				type = "execute",
+				name = "|cFF"..hexClassColor[DPSMateUser[val][2] or "warrior"]..val.."|r",
+				desc = DPSMate.L["opendetails"],
+				func = loadstring('DPSMate.Options:UpdateDetails(nil, "'..val..'", "'..obj:GetName()..'"); DPSMate.Options.Dewdrop:Close()'),
+			}
+		end
 	end
 end
 
