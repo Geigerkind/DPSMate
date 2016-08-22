@@ -3,6 +3,7 @@ local strgfind = string.gfind
 local DB = DPSMate.DB
 local tnbr = tonumber
 local strgsub = string.gsub
+local npcdb = DPSMate.NPCDB
 
 --schmetternd
 if (GetLocale() == "deDE") then
@@ -371,11 +372,17 @@ if (GetLocale() == "deDE") then
 	-- X reflektiert d+ Feuerschaden auf Euch.
 	DPSMate.Parser.SpellDamageShieldsOnOthers = function(self, msg)
 		t = {}
-		for a,b,c,d in strgfind(msg, "(.-) reflektiert (%d+) (%a-) auf (.+)%.") do
+		for a,b,c,d in strgfind(msg, "(.+) reflektiert (%d+) (%a-) auf (.+)%.") do
 			local am,ta = tnbr(b)
 			if d == "Euch" then ta=self.player end
-			DB:EnemyDamage(true, DPSMateEDT, a, "Reflektieren", 1, 0, 0, 0, 0, 0, am, ta or d, 0, 0)
-			DB:DamageDone(a, "Reflektieren", 1, 0, 0, 0, 0, 0, am, 0, 0)
+			if npcdb:Contains(a) or strfind(a, "%s") then
+				DB:EnemyDamage(false, DPSMateEDD, d, "Reflektieren", 1, 0, 0, 0, 0, 0, 0, a, 0, 0)
+				DB:DamageTaken(d, "Reflektieren", 1, 0, 0, 0, 0, 0, 0, a, 0)
+				DB:DeathHistory(d, a, "Reflektieren", 0, 1, 0, 0, 0)
+			else
+				DB:EnemyDamage(true, DPSMateEDT, a, "Reflektieren", 1, 0, 0, 0, 0, 0, am, ta or d, 0, 0)
+				DB:DamageDone(a, "Reflektieren", 1, 0, 0, 0, 0, 0, am, 0, 0)
+			end
 		end
 		
 		-- The rebirth support

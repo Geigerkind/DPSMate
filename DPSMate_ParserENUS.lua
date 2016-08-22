@@ -2,6 +2,7 @@ local t = {}
 local strgfind = string.gfind
 local DB = DPSMate.DB
 local tnbr = tonumber
+local npcdb = DPSMate.NPCDB
 
 ----------------------------------------------------------------------------------
 --------------                    Damage Done                       --------------                                  
@@ -268,11 +269,17 @@ end
 -- Helboar reflects 4 Fire damage to you.
 function DPSMate.Parser:SpellDamageShieldsOnOthers(msg)
 	t = {}
-	for a,b,c,d in strgfind(msg, "(.-) reflects (%d+) (%a-) damage to (.+)%.") do
+	for a,b,c,d in strgfind(msg, "(.+) reflects (%d+) (%a-) damage to (.+)%.") do
 		local am,ta = tnbr(b)
 		if d == "you" then ta=self.player end
-		DB:EnemyDamage(true, DPSMateEDT, a, "Reflection", 1, 0, 0, 0, 0, 0, am, ta or d, 0, 0)
-		DB:DamageDone(a, "Reflection", 1, 0, 0, 0, 0, 0, am, 0, 0)
+		if npcdb:Contains(a) or strfind(a, "%s") then
+			DB:EnemyDamage(false, DPSMateEDD, d, "Reflection", 1, 0, 0, 0, 0, 0, 0, a, 0, 0)
+			DB:DamageTaken(d, "Reflection", 1, 0, 0, 0, 0, 0, 0, a, 0)
+			DB:DeathHistory(d, a, "Reflection", 0, 1, 0, 0, 0)
+		else
+			DB:EnemyDamage(true, DPSMateEDT, a, "Reflection", 1, 0, 0, 0, 0, 0, am, ta or d, 0, 0)
+			DB:DamageDone(a, "Reflection", 1, 0, 0, 0, 0, 0, am, 0, 0)
+		end
 	end
 	
 	-- The rebirth support
