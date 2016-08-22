@@ -268,7 +268,7 @@ end
 -- Helboar reflects 4 Fire damage to you.
 function DPSMate.Parser:SpellDamageShieldsOnOthers(msg)
 	t = {}
-	for a,b,c,d in strgfind(msg, "(.+) reflects (%d+) (%a-) damage to (.+)%.") do
+	for a,b,c,d in strgfind(msg, "(.-) reflects (%d+) (%a-) damage to (.+)%.") do
 		local am,ta = tnbr(b)
 		if d == "you" then ta=self.player end
 		DB:EnemyDamage(true, DPSMateEDT, a, "Reflection", 1, 0, 0, 0, 0, 0, am, ta or d, 0, 0)
