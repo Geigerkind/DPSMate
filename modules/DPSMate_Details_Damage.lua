@@ -388,19 +388,20 @@ function DPSMate.Modules.DetailsDamage:SelectDetailsButton(i, comp, cname)
 	local pathh = ""
 	local path,obj,lineplusoffset
 	local user, pet = DPSMateUser[cname or DetailsUser][1], ""
-	local uArr, dSel = DetailsArr, DetailsSelected
+	local uArr, dSel, d2 = DetailsArr, DetailsSelected, t2
 	if comp ~= "" and comp~=nil then
 		uArr = DetailsArrComp
 		dSel = DetailsSelectedComp
 		if not cname then
 			cname = DetailsUserComp
 		end
+		d2 = t2Comp
 	end
 	if toggle then
 		pathh = "DPSMate_Details"..comp.."_playerSpells"
 		obj = _G(pathh.."_ScrollFrame")
 		lineplusoffset = i + (FauxScrollFrame_GetOffset(obj) or 0)
-		path = t2[obj.id][3][lineplusoffset]
+		path = d2[obj.id][3][lineplusoffset]
 	else
 		pathh = "DPSMate_Details"..comp.."_Log"
 		obj = _G(pathh.."_ScrollFrame")
