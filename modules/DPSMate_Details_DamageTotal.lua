@@ -55,8 +55,8 @@ function DPSMate.Modules.DetailsDamageTotal:UpdateDetails(obj, key)
 		{0.75,0.0,0.5},
 	}
 	if not g then
-		g=DPSMate.Options.graph:CreateGraphLine("LineGraph",DPSMate_Details_DamageTotal_DiagramLine,"CENTER","CENTER",0,0,740,220)
-		g2=DPSMate.Options.graph:CreateStackedGraph("StackedGraph",DPSMate_Details_DamageTotal_DiagramLine,"CENTER","CENTER",0,0,850,220)
+		g=DPSMate.Options.graph:CreateGraphLine("DMGTLineGraph",DPSMate_Details_DamageTotal_DiagramLine,"CENTER","CENTER",0,0,740,220)
+		g2=DPSMate.Options.graph:CreateStackedGraph("DMGTStackedGraph",DPSMate_Details_DamageTotal_DiagramLine,"CENTER","CENTER",0,0,850,220)
 		g2:SetGridColor({0.5,0.5,0.5,0.5})
 		g2:SetAxisDrawing(true,true)
 		g2:SetAxisColor({1.0,1.0,1.0,1.0})
@@ -141,7 +141,7 @@ function DPSMate.Modules.DetailsDamageTotal:UpdateStackedGraph()
 			end
 		end
 		tinsert(label, 1, DPSMate:GetUserById(cat))
-		tinsert(Data1, 1, DPSMate.Sync:GetSummarizedTable(temp))
+		tinsert(Data1, 1, temp)
 	end
 	for cat, val in p do
 		if maxY<val then

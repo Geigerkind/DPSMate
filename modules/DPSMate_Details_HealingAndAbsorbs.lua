@@ -302,7 +302,7 @@ end
 
 function DPSMate.Modules.DetailsHealingAndAbsorbs:UpdatePie()
 	if not g then
-		g=DPSMate.Options.graph:CreateGraphPieChart("PieChart", DPSMate_Details_HealingAndAbsorbs_Diagram, "CENTER", "CENTER", 0, 0, 200, 200)
+		g=DPSMate.Options.graph:CreateGraphPieChart("HABPieChart", DPSMate_Details_HealingAndAbsorbs_Diagram, "CENTER", "CENTER", 0, 0, 200, 200)
 	end
 	g:ResetPie()
 	for cat, val in pairs(DmgArr) do
@@ -312,7 +312,7 @@ end
 
 function DPSMate.Modules.DetailsHealingAndAbsorbs:UpdateLineGraph()
 	if not g2 then
-		g2=DPSMate.Options.graph:CreateGraphLine("LineGraph",DPSMate_Details_HealingAndAbsorbs_DiagramLine,"CENTER","CENTER",0,0,850,230)
+		g2=DPSMate.Options.graph:CreateGraphLine("HABLineGraph",DPSMate_Details_HealingAndAbsorbs_DiagramLine,"CENTER","CENTER",0,0,850,230)
 	end
 	if g3 then
 		g3:Hide()
@@ -350,7 +350,7 @@ end
 
 function DPSMate.Modules.DetailsHealingAndAbsorbs:UpdateStackedGraph()
 	if not g3 then
-		g3=DPSMate.Options.graph:CreateStackedGraph("StackedGraph",DPSMate_Details_HealingAndAbsorbs_DiagramLine,"CENTER","CENTER",0,0,850,230)
+		g3=DPSMate.Options.graph:CreateStackedGraph("HABStackedGraph",DPSMate_Details_HealingAndAbsorbs_DiagramLine,"CENTER","CENTER",0,0,850,230)
 		g3:SetGridColor({0.5,0.5,0.5,0.5})
 		g3:SetAxisDrawing(true,true)
 		g3:SetAxisColor({1.0,1.0,1.0,1.0})
@@ -393,7 +393,6 @@ function DPSMate.Modules.DetailsHealingAndAbsorbs:UpdateStackedGraph()
 					maxY = math.max(p[key], maxY)
 					maxX = math.max(c, maxX)
 				end
-				temp = DPSMate.Sync:GetSummarizedTable(temp)
 				local i = 1
 				while true do
 					if not b[i] then
@@ -451,26 +450,9 @@ function DPSMate.Modules.DetailsHealingAndAbsorbs:UpdateStackedGraph()
 		
 		local min
 		for cat, val in Data1 do
-			Data1[cat] = DPSMate.Sync:GetSummarizedTable(val)
 			local pmin = DPSMate:GetMinValue(val, 1)
 			if not min or pmin<min then
 				min = pmin
-			end
-		end
-		
-		-- Fill zero numbers
-		for cat, val in Data1 do
-			local alpha = 0
-			for ca, va in pairs(val) do
-				if alpha == 0 then
-					alpha = va[1]
-				else
-					if (va[1]-alpha)>3 then
-						tinsert(Data1[cat], ca, {alpha+1, 0})
-						tinsert(Data1[cat], ca+1, {va[1]-1, 0})
-					end
-					alpha = va[1]
-				end
 			end
 		end
 		for cat, val in Data1 do

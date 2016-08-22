@@ -32,9 +32,9 @@ function DPSMate.Modules.DetailsDamage:UpdateDetails(obj, key)
 	t1, t2, TTotal = self:EvalToggleTable()
 	
 	if not g then
-		g=DPSMate.Options.graph:CreateGraphPieChart("PieChart", DPSMate_Details_Diagram, "CENTER", "CENTER", 0, 0, 200, 200)
-		g2=DPSMate.Options.graph:CreateGraphLine("LineGraph",DPSMate_Details_DiagramLine,"CENTER","CENTER",0,0,850,230)
-		g3=DPSMate.Options.graph:CreateStackedGraph("StackedGraph",DPSMate_Details_DiagramLine,"CENTER","CENTER",0,0,850,230)
+		g=DPSMate.Options.graph:CreateGraphPieChart("DMGPieChart", DPSMate_Details_Diagram, "CENTER", "CENTER", 0, 0, 200, 200)
+		g2=DPSMate.Options.graph:CreateGraphLine("DMGLineGraph",DPSMate_Details_DiagramLine,"CENTER","CENTER",0,0,850,230)
+		g3=DPSMate.Options.graph:CreateStackedGraph("DMGStackedGraph",DPSMate_Details_DiagramLine,"CENTER","CENTER",0,0,850,230)
 		g3:SetGridColor({0.5,0.5,0.5,0.5})
 		g3:SetAxisDrawing(true,true)
 		g3:SetAxisColor({1.0,1.0,1.0,1.0})
@@ -53,7 +53,7 @@ function DPSMate.Modules.DetailsDamage:UpdateDetails(obj, key)
 	end
 	self:UpdatePie(g)
 	if toggle2 then
-		self:UpdateStackedGraph()
+		self:UpdateStackedGraph(g3)
 	else
 		self:UpdateLineGraph(g2, "")
 	end
@@ -75,16 +75,16 @@ function DPSMate.Modules.DetailsDamage:UpdateCompare(obj, key, comp)
 	t1Comp, t2Comp, TTotalComp = self:EvalToggleTable(comp)
 	
 	if not g4 then
-		g4=DPSMate.Options.graph:CreateGraphPieChart("PieChartComp", DPSMate_Details_CompareDamage_Diagram, "CENTER", "CENTER", 0, 0, 200, 200)
-		g5=DPSMate.Options.graph:CreateGraphLine("LineGraphComp",DPSMate_Details_CompareDamage_DiagramLine,"CENTER","CENTER",0,0,850,230)
-		g6=DPSMate.Options.graph:CreateStackedGraph("StackedGraphComp",DPSMate_Details_CompareDamage_DiagramLine,"CENTER","CENTER",0,0,850,230)
+		g4=DPSMate.Options.graph:CreateGraphPieChart("DMGPieChartComp", DPSMate_Details_CompareDamage_Diagram, "CENTER", "CENTER", 0, 0, 200, 200)
+		g5=DPSMate.Options.graph:CreateGraphLine("DMGLineGraphComp",DPSMate_Details_CompareDamage_DiagramLine,"CENTER","CENTER",0,0,850,230)
+		g6=DPSMate.Options.graph:CreateStackedGraph("DMGStackedGraphComp",DPSMate_Details_CompareDamage_DiagramLine,"CENTER","CENTER",0,0,850,230)
 		g6:SetGridColor({0.5,0.5,0.5,0.5})
 		g6:SetAxisDrawing(true,true)
 		g6:SetAxisColor({1.0,1.0,1.0,1.0})
 		g6:SetAutoScale(true)
 		g6:SetYLabels(true, false)
 		g6:SetXLabels(true)
-		g7=DPSMate.Options.graph:CreateGraphLine("LineGraphSum",DPSMate_Details_CompareDamage_Graph,"CENTER","CENTER",0,0,1750,230)
+		g7=DPSMate.Options.graph:CreateGraphLine("DMGLineGraphSum",DPSMate_Details_CompareDamage_Graph,"CENTER","CENTER",0,0,1750,230)
 	end
 	
 	if toggle then
@@ -97,7 +97,7 @@ function DPSMate.Modules.DetailsDamage:UpdateCompare(obj, key, comp)
 	end
 	self:UpdatePie(g4, comp)
 	if toggle2 then
-		self:UpdateStackedGraph(comp)
+		self:UpdateStackedGraph(g6, "_CompareDamage", comp)
 	else
 		self:UpdateLineGraph(g5, "_CompareDamage", comp)
 	end
@@ -568,6 +568,13 @@ function DPSMate.Modules.DetailsDamage:UpdateStackedGraph(gg, comp, cname)
 		g5:Hide()
 	end
 	
+	local d1,d2,d3,d4 = t1,t2,TTotal,PSelected
+	if comp ~= "" and comp~=nil then
+		d1 = t1Comp
+		d2 = t2Comp
+		d4 = PSelected2
+	end
+	
 	local Data1 = {}
 	local label = {}
 	local b = {}
@@ -577,7 +584,7 @@ function DPSMate.Modules.DetailsDamage:UpdateStackedGraph(gg, comp, cname)
 	local temp = {}
 	local temp2 = {}
 	if toggle3 then
-		for cat, val in db2[t1[PSelected]][DPSMateUser[cname or DetailsUser][1]] do
+		for cat, val in db2[d1[d4]][DPSMateUser[cname or DetailsUser][1]] do
 			if cat~="i" and val["i"] then
 				for c, v in val["i"] do
 					local key = tonumber(strformat("%.1f", c))
@@ -609,7 +616,6 @@ function DPSMate.Modules.DetailsDamage:UpdateStackedGraph(gg, comp, cname)
 		end
 		local min
 		for cat, val in temp do
-			temp[cat] = DPSMate.Sync:GetSummarizedTable(val)
 			local pmin = DPSMate:GetMinValue(val, 1)
 			if not min or pmin<min then
 				min = pmin
@@ -630,21 +636,6 @@ function DPSMate.Modules.DetailsDamage:UpdateStackedGraph(gg, comp, cname)
 					break
 				end
 				i = i + 1
-			end
-		end
-		-- Fill zero numbers
-		for cat, val in Data1 do
-			local alpha = 0
-			for ca, va in pairs(val) do
-				if alpha == 0 then
-					alpha = va[1]
-				else
-					if (va[1]-alpha)>3 then
-						tinsert(Data1[cat], ca, {alpha+1, 0})
-						tinsert(Data1[cat], ca+1, {va[1]-1, 0})
-					end
-					alpha = va[1]
-				end
 			end
 		end
 		for cat, val in Data1 do
@@ -669,7 +660,7 @@ function DPSMate.Modules.DetailsDamage:UpdateStackedGraph(gg, comp, cname)
 						if not temp[i] then
 							tinsert(temp, i, {c,v})
 							break
-						elseif c<=temp[i][1] then
+						elseif c<temp[i][1] then
 							tinsert(temp, i, {c,v})
 							break
 						end
@@ -678,7 +669,6 @@ function DPSMate.Modules.DetailsDamage:UpdateStackedGraph(gg, comp, cname)
 					maxY = math.max(p[key], maxY)
 					maxX = math.max(c, maxX)
 				end
-				temp = DPSMate.Sync:GetSummarizedTable(temp)
 				local i = 1
 				while true do
 					if not b[i] then
@@ -693,21 +683,6 @@ function DPSMate.Modules.DetailsDamage:UpdateStackedGraph(gg, comp, cname)
 						break
 					end
 					i = i + 1
-				end
-			end
-		end
-		-- Fill zero numbers
-		for cat, val in Data1 do
-			local alpha = 0
-			for ca, va in pairs(val) do
-				if alpha == 0 then
-					alpha = va[1]
-				else
-					if (va[1]-alpha)>3 then
-						tinsert(Data1[cat], ca, {alpha+1, 0})
-						tinsert(Data1[cat], ca+1, {va[1]-1, 0})
-					end
-					alpha = va[1]
 				end
 			end
 		end
@@ -749,7 +724,9 @@ function DPSMate.Modules.DetailsDamage:ProcsDropDown()
     local function on_click()
         UIDropDownMenu_SetSelectedValue(DPSMate_Details_DiagramLegend_Procs, this.value)
 		DPSMate_Details.proc = this.value
-		DPSMate.Modules.DetailsDamage:UpdateLineGraph(g2, "")
+		if not toggle2 then
+			DPSMate.Modules.DetailsDamage:UpdateLineGraph(g2, "")
+		end
 		if DetailsUserComp then
 			DPSMate.Modules.DetailsDamage:UpdateSumGraph()
 		end
@@ -788,7 +765,9 @@ function DPSMate.Modules.DetailsDamage:ProcsDropDown_CompareDamage()
     local function on_click()
         UIDropDownMenu_SetSelectedValue(DPSMate_Details_CompareDamage_DiagramLegend_Procs, this.value)
 		DPSMate_Details_CompareDamage.proc = this.value
-		DPSMate.Modules.DetailsDamage:UpdateLineGraph(g5, "_CompareDamage", DetailsUserComp)
+		if not toggle2 then
+			DPSMate.Modules.DetailsDamage:UpdateLineGraph(g5, "_CompareDamage", DetailsUserComp)
+		end
 		DPSMate.Modules.DetailsDamage:UpdateSumGraph()
     end
 	

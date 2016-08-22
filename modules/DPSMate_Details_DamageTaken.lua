@@ -189,7 +189,7 @@ end
 
 function DPSMate.Modules.DetailsDamageTaken:UpdateLineGraph()
 	if not g2 then
-		g2=DPSMate.Options.graph:CreateGraphLine("LineGraph",DPSMate_Details_DamageTaken_DiagramLine,"CENTER","CENTER",0,0,850,230)
+		g2=DPSMate.Options.graph:CreateGraphLine("DMGTLineGraph",DPSMate_Details_DamageTaken_DiagramLine,"CENTER","CENTER",0,0,850,230)
 	end
 	if g then
 		g:Hide()
@@ -227,7 +227,7 @@ end
 
 function DPSMate.Modules.DetailsDamageTaken:UpdateStackedGraph()
 	if not g then
-		g=DPSMate.Options.graph:CreateStackedGraph("StackedGraph",DPSMate_Details_DamageTaken_DiagramLine,"CENTER","CENTER",0,0,850,230)
+		g=DPSMate.Options.graph:CreateStackedGraph("DMGTStackedGraph",DPSMate_Details_DamageTaken_DiagramLine,"CENTER","CENTER",0,0,850,230)
 		g:SetGridColor({0.5,0.5,0.5,0.5})
 		g:SetAxisDrawing(true,true)
 		g:SetAxisColor({1.0,1.0,1.0,1.0})
@@ -280,7 +280,6 @@ function DPSMate.Modules.DetailsDamageTaken:UpdateStackedGraph()
 		end
 		local min
 		for cat, val in temp do
-			temp[cat] = DPSMate.Sync:GetSummarizedTable(val)
 			local pmin = DPSMate:GetMinValue(val, 1)
 			if not min or pmin<min then
 				min = pmin
@@ -301,21 +300,6 @@ function DPSMate.Modules.DetailsDamageTaken:UpdateStackedGraph()
 					break
 				end
 				i = i + 1
-			end
-		end
-		-- Fill zero numbers
-		for cat, val in Data1 do
-			local alpha = 0
-			for ca, va in pairs(val) do
-				if alpha == 0 then
-					alpha = va[1]
-				else
-					if (va[1]-alpha)>3 then
-						tinsert(Data1[cat], ca, {alpha+1, 0})
-						tinsert(Data1[cat], ca+1, {va[1]-1, 0})
-					end
-					alpha = va[1]
-				end
 			end
 		end
 		for cat, val in Data1 do
@@ -374,21 +358,6 @@ function DPSMate.Modules.DetailsDamageTaken:UpdateStackedGraph()
 					break
 				end
 				i = i + 1
-			end
-		end
-		-- Fill zero numbers
-		for cat, val in Data1 do
-			local alpha = 0
-			for ca, va in pairs(val) do
-				if alpha == 0 then
-					alpha = va[1]
-				else
-					if (va[1]-alpha)>3 then
-						tinsert(Data1[cat], ca, {alpha+1, 0})
-						tinsert(Data1[cat], ca+1, {va[1]-1, 0})
-					end
-					alpha = va[1]
-				end
 			end
 		end
 		

@@ -116,8 +116,12 @@ function DPSMate.Modules.DPS:ShowTooltip(user,k)
 	end
 end
 
-function DPSMate.Modules.DPS:OpenDetails(obj, key)
-	DPSMate.Modules.DetailsDamage:UpdateDetails(obj, key)
+function DPSMate.Modules.DPS:OpenDetails(obj, key, bool)
+	if bool then
+		DPSMate.Modules.DetailsDamage:UpdateCompare(obj, key, bool)
+	else
+		DPSMate.Modules.DetailsDamage:UpdateDetails(obj, key)
+	end
 end
 
 function DPSMate.Modules.DPS:OpenTotalDetails(obj, key)
