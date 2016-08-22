@@ -1700,21 +1700,23 @@ function GraphFunctions:RefreshLineGraph()
 	self.ppoints = {}
 	if self.DataPoints then
 		for uuu, zzz in self.DataPoints do
-			for k3, p2 in pairs(zzz[2]) do
-				-- Needs fine tuning
-				local PPoint = self:CreateTexture()
-				PPoint:SetTexture(TextureDirectory.."party") 
-				PPoint:SetVertexColor(self.Data[uuu].Color[1][1], self.Data[uuu].Color[1][2], self.Data[uuu].Color[1][3], 1)
-				local PPLastPointX = Width*(p2[2][1]-self.XMin)/(self.XMax-self.XMin)
-				local PPLastPointY = Height*(p2[2][2]-self.YMin)/(self.YMax-self.YMin)
-				local PPNextPointX = Width*(p2[3][1]-self.XMin)/(self.XMax-self.XMin)
-				local PPNextPointY = Height*(p2[3][2]-self.YMin)/(self.YMax-self.YMin)
-				local pointx = Width*(p2[1]-self.XMin)/(self.XMax-self.XMin)
-				local pointy = PPLastPointY + (pointx-PPLastPointX)*((PPNextPointY-PPLastPointY)/(PPNextPointX-PPLastPointX))
-				PPoint:SetPoint("LEFT", self.yAxis, "LEFT", pointx-(12-floor(self:GetWidth()/850)*6.5), pointy-20)
-				PPoint:SetHeight(20)
-				PPoint:SetWidth(20)
-				table_insert(self.ppoints, PPoint)
+			if zzz[2] then
+				for k3, p2 in pairs(zzz[2]) do
+					-- Needs fine tuning
+					local PPoint = self:CreateTexture()
+					PPoint:SetTexture(TextureDirectory.."party") 
+					PPoint:SetVertexColor(self.Data[uuu].Color[1][1], self.Data[uuu].Color[1][2], self.Data[uuu].Color[1][3], 1)
+					local PPLastPointX = Width*(p2[2][1]-self.XMin)/(self.XMax-self.XMin)
+					local PPLastPointY = Height*(p2[2][2]-self.YMin)/(self.YMax-self.YMin)
+					local PPNextPointX = Width*(p2[3][1]-self.XMin)/(self.XMax-self.XMin)
+					local PPNextPointY = Height*(p2[3][2]-self.YMin)/(self.YMax-self.YMin)
+					local pointx = Width*(p2[1]-self.XMin)/(self.XMax-self.XMin)
+					local pointy = PPLastPointY + (pointx-PPLastPointX)*((PPNextPointY-PPLastPointY)/(PPNextPointX-PPLastPointX))
+					PPoint:SetPoint("LEFT", self.yAxis, "LEFT", pointx-(12-floor(self:GetWidth()/850)*6.5), pointy-20)
+					PPoint:SetHeight(20)
+					PPoint:SetWidth(20)
+					table_insert(self.ppoints, PPoint)
+				end
 			end
 		end
 	end

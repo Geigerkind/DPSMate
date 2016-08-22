@@ -53,6 +53,7 @@ DPSMate.DB.Zones = {
 }
 DPSMate.DB.KTMHOOK = {}
 DPSMate.DB.NextSwing = {}
+DPSMate.DB.NextSwingEDD = {}
 
 -- Local Variables
 local CombatState = false
@@ -1103,6 +1104,17 @@ local ActiveMob = {}
 function DPSMate.DB:EnemyDamage(mode, arr, Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, Ddodge, Dresist, Damount, cause, Dblock, Dcrush)
 	if self:BuildUser(Duser, nil) or self:BuildUser(cause, nil) or self:BuildAbility(Dname, nil) then return end
 	ActiveMob[cause] = true
+	
+	if mode then
+		-- Part to take extra swings as abilities into account
+		if self.NextSwingEDD[Duser] then
+			if Dname == AAttack and self.NextSwingEDD[Duser][1]>0 then
+				Dname = self.NextSwingEDD[Duser][2]
+				self.NextSwingEDD[Duser][1] = self.NextSwingEDD[Duser][1] - 1
+			end
+		end
+	end
+	
 	for cat, val in pairs({[1]="total", [2]="current"}) do 
 		if not arr[cat][DPSMateUser[cause][1]] then
 			arr[cat][DPSMateUser[cause][1]] = {}
@@ -1935,6 +1947,10 @@ function DPSMate.DB:BuildBuffs(cause, target, ability, bool)
 	if self:BuildUser(target, nil) or self:BuildUser(cause, nil) or self:BuildAbility(ability, nil) then return end
 	if windfuryab[ability] then
 		self.NextSwing[target] = {
+			[1] = 1,
+			[2] = ability
+		}
+		self.NextSwingEDD[target] = {
 			[1] = 1,
 			[2] = ability
 		}
