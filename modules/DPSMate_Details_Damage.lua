@@ -975,10 +975,14 @@ function DPSMate.Modules.DetailsDamage:ToggleMode(bool)
 	if bool then
 		if toggle2 then
 			self:UpdateLineGraph(g2,"")
-			self:UpdateLineGraph(g5,"_CompareDamage", DetailsUserComp)
+			if DPSMate_Details_CompareDamage:IsVisible() then
+				self:UpdateLineGraph(g5,"_CompareDamage", DetailsUserComp)
+			end
 		else
 			self:UpdateStackedGraph(g3,"")
-			self:UpdateStackedGraph(g6,"_CompareDamage", DetailsUserComp)
+			if DPSMate_Details_CompareDamage:IsVisible() then
+				self:UpdateStackedGraph(g6,"_CompareDamage", DetailsUserComp)
+			end
 		end
 	else
 		if toggle then
@@ -990,12 +994,14 @@ function DPSMate.Modules.DetailsDamage:ToggleMode(bool)
 			DPSMate_Details_Diagram:Show()
 			DPSMate_Details_Log:Show()
 			
-			self:ScrollFrame_Update("_CompareDamage")
-			self:SelectDetailsButton(1,"_CompareDamage")
-			DPSMate_Details_CompareDamage_playerSpells:Hide()
-			DPSMate_Details_CompareDamage_player:Hide()
-			DPSMate_Details_CompareDamage_Diagram:Show()
-			DPSMate_Details_CompareDamage_Log:Show()
+			if DPSMate_Details_CompareDamage:IsVisible() then
+				self:ScrollFrame_Update("_CompareDamage")
+				self:SelectDetailsButton(1,"_CompareDamage")
+				DPSMate_Details_CompareDamage_playerSpells:Hide()
+				DPSMate_Details_CompareDamage_player:Hide()
+				DPSMate_Details_CompareDamage_Diagram:Show()
+				DPSMate_Details_CompareDamage_Log:Show()
+			end
 		else
 			toggle = true
 			self:Player_Update("")
@@ -1006,13 +1012,15 @@ function DPSMate.Modules.DetailsDamage:ToggleMode(bool)
 			DPSMate_Details_Diagram:Hide()
 			DPSMate_Details_Log:Hide()
 			
-			self:Player_Update("_CompareDamage")
-			self:PlayerSpells_Update(1, "_CompareDamage")
-			self:SelectDetailsButton(1, "_CompareDamage")
-			DPSMate_Details_CompareDamage_playerSpells:Show()
-			DPSMate_Details_CompareDamage_player:Show()
-			DPSMate_Details_CompareDamage_Diagram:Hide()
-			DPSMate_Details_CompareDamage_Log:Hide()
+			if DPSMate_Details_CompareDamage:IsVisible() then
+				self:Player_Update("_CompareDamage")
+				self:PlayerSpells_Update(1, "_CompareDamage")
+				self:SelectDetailsButton(1, "_CompareDamage")
+				DPSMate_Details_CompareDamage_playerSpells:Show()
+				DPSMate_Details_CompareDamage_player:Show()
+				DPSMate_Details_CompareDamage_Diagram:Hide()
+				DPSMate_Details_CompareDamage_Log:Hide()
+			end
 		end
 	end
 end
@@ -1025,10 +1033,14 @@ function DPSMate.Modules.DetailsDamage:ToggleIndividual()
 	end
 	if toggle2 then
 		self:UpdateStackedGraph(g3,"")
-		self:UpdateStackedGraph(g6,"_CompareDamage", DetailsUserComp)
+		if DPSMate_Details_CompareDamage:IsVisible() then 
+			self:UpdateStackedGraph(g6,"_CompareDamage", DetailsUserComp)
+		end
 	else
 		self:UpdateLineGraph(g2,"")
-		self:UpdateLineGraph(g5,"_CompareDamage", DetailsUserComp)
+		if DPSMate_Details_CompareDamage:IsVisible() then
+			self:UpdateLineGraph(g5,"_CompareDamage", DetailsUserComp)
+		end
 	end
 	self:UpdateSumGraph()
 end
