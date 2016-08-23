@@ -943,8 +943,8 @@ function DPSMate.Options:PopUpAccept(bool, bypass)
 		DPSMate.Modules.TPS.DB = DPSMateThreat
 		DPSMate.Modules.Fails.DB = DPSMateFails
 		DPSMate.Modules.CCBreaker.DB = DPSMateCCBreaker
-		DPSMate.Modules.OHPS = DPSMateOverhealing
-		DPSMate.Modules.OHealingTaken = DPSMateOverhealingTaken
+		DPSMate.Modules.OHPS.DB = DPSMateOverhealing
+		DPSMate.Modules.OHealingTaken.DB = DPSMateOverhealingTaken
 		for _, val in pairs(DPSMateSettings["windows"]) do
 			if not val["options"][2]["total"] and not val["options"][2]["currentfight"] then
 				val["options"][2]["total"] = true
