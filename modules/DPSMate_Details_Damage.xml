@@ -49,7 +49,6 @@
 					else
 						DPSMate.Modules.DetailsDamage:SelectDetailsButton(this:GetID(), "_CompareDamage")
 					end
-
 				else
 					if this:GetParent():GetName() == "DPSMate_Details_player" then
 						DPSMate.Modules.DetailsDamage:PlayerSpells_Update(this:GetID(), "")

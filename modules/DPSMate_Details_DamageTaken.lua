@@ -19,6 +19,7 @@ function DPSMate.Modules.DetailsDamageTaken:UpdateDetails(obj, key)
 	curKey = key
 	db, cbt = DPSMate:GetMode(key)
 	DetailsUser = obj.user
+	DetailsUserComp = nil
 	DPSMate_Details_DamageTaken_Title:SetText(DPSMate.L["dmgtakenby"]..obj.user)
 	DPSMate_Details_DamageTaken:Show()
 	DetailsArr, DetailsTotal, DmgArr = DPSMate.RegistredModules[DPSMateSettings["windows"][curKey]["CurMode"]]:EvalTable(DPSMateUser[DetailsUser], curKey)
@@ -382,8 +383,13 @@ function DPSMate.Modules.DetailsDamageTaken:UpdateLineGraph(gg, comp, cname)
 	for cat, val in DPSMate:ScaleDown(sumTable, min) do
 		tinsert(Data1, {val[1],val[2], self:CheckProcs(_G("DPSMate_Details_"..comp.."DamageTaken").proc, val[1]+min, cname)})
 	end
-
-	gg:AddDataSeries(Data1,{{1.0,0.0,0.0,0.8}, {1.0,1.0,0.0,0.8}}, self:AddProcPoints(_G("DPSMate_Details_"..comp.."DamageTaken").proc, Data1, cname))
+	
+	local colorT = {{1.0,0.0,0.0,0.8}, {1.0,1.0,0.0,0.8}}
+	if cname then
+		colorT = {{0.2,0.8,0.2,0.8}, {0.5,0.8,0.9,0.8}}
+	end
+	
+	gg:AddDataSeries(Data1,colorT, self:AddProcPoints(_G("DPSMate_Details_"..comp.."DamageTaken").proc, Data1, cname))
 	gg:Show()
 	toggle = false
 end
@@ -616,7 +622,9 @@ function DPSMate.Modules.DetailsDamageTaken:ProcsDropDown()
 		if not toggle then
 			DPSMate.Modules.DetailsDamageTaken:UpdateLineGraph(g2, "")
 		end
-		self:UpdateSumGraph()
+		if DetailsUserComp then
+			self:UpdateSumGraph()
+		end
     end
 	
 	UIDropDownMenu_AddButton{
@@ -746,11 +754,15 @@ end
 function DPSMate.Modules.DetailsDamageTaken:ToggleMode()
 	if toggle then
 		self:UpdateLineGraph(g2, "")
-		self:UpdateLineGraph(g4, "Compare", DetailsUserComp)
+		if DetailsUserComp then
+			self:UpdateLineGraph(g4, "Compare", DetailsUserComp)
+		end
 		toggle=false
 	else
 		self:UpdateStackedGraph(g, "")
-		self:UpdateStackedGraph(g3, "Compare", DetailsUserComp)
+		if DetailsUserComp then
+			self:UpdateStackedGraph(g3, "Compare", DetailsUserComp)
+		end
 		toggle=true
 	end
 end
@@ -763,10 +775,14 @@ function DPSMate.Modules.DetailsDamageTaken:ToggleIndividual()
 	end
 	if not toggle then
 		self:UpdateLineGraph(g2, "")
-		self:UpdateLineGraph(g4, "Compare", DetailsUserComp)
+		if DetailsUserComp then
+			self:UpdateLineGraph(g4, "Compare", DetailsUserComp)
+		end
 	else
 		self:UpdateStackedGraph(g, "")
-		self:UpdateStackedGraph(g3, "Compare", DetailsUserComp)
+		if DetailsUserComp then
+			self:UpdateStackedGraph(g3, "Compare", DetailsUserComp)
+		end
 	end
 	self:UpdateSumGraph()
 end

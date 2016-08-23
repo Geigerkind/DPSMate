@@ -97,8 +97,12 @@ function DPSMate.Modules.EffectiveHPS:ShowTooltip(user, k)
 	end
 end
 
-function DPSMate.Modules.EffectiveHPS:OpenDetails(obj, key)
-	DPSMate.Modules.DetailsEHealing:UpdateDetails(obj, key)
+function DPSMate.Modules.EffectiveHPS:OpenDetails(obj, key, bool)
+	if bool then
+		DPSMate.Modules.DetailsEHealing:UpdateCompare(obj, key, bool)
+	else
+		DPSMate.Modules.DetailsEHealing:UpdateDetails(obj, key)
+	end
 end
 
 function DPSMate.Modules.EffectiveHPS:OpenTotalDetails(obj, key)

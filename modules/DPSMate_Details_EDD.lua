@@ -396,7 +396,12 @@ function DPSMate.Modules.DetailsEDD:UpdateLineGraph(gg, comp, cname)
 		tinsert(Data1, {val[1],val[2], {}})
 	end
 
-	gg:AddDataSeries(Data1,{{1.0,0.0,0.0,0.8}, {1.0,0.0,0.0,0.8}}, {})
+	local colorT = {{1.0,0.0,0.0,0.8}, {1.0,1.0,0.0,0.8}}
+	if cname then
+		colorT = {{0.2,0.8,0.2,0.8}, {0.5,0.8,0.9,0.8}}
+	end
+
+	gg:AddDataSeries(Data1,colorT, {})
 	gg:Show()
 end
 
@@ -600,11 +605,15 @@ end
 function DPSMate.Modules.DetailsEDD:ToggleMode() 
 	if toggle then
 		self:UpdateLineGraph(g2, "")
-		self:UpdateLineGraph(g4, "Compare", DetailsUserComp)
+		if DetailsUserComp then
+			self:UpdateLineGraph(g4, "Compare", DetailsUserComp)
+		end
 		toggle = false
 	else
 		self:UpdateStackedGraph(g, "")
-		self:UpdateStackedGraph(g3, "Compare", DetailsUserComp)
+		if DetailsUserComp then
+			self:UpdateStackedGraph(g3, "Compare", DetailsUserComp)
+		end
 		toggle = true
 	end
 end
@@ -617,10 +626,14 @@ function DPSMate.Modules.DetailsEDD:ToggleIndividual()
 	end
 	if toggle then
 		self:UpdateStackedGraph(g, "")
-		self:UpdateStackedGraph(g3, "Compare", DetailsUserComp)
+		if DetailsUserComp then
+			self:UpdateStackedGraph(g3, "Compare", DetailsUserComp)
+		end
 	else
 		self:UpdateLineGraph(g2, "")
-		self:UpdateLineGraph(g4, "Compare", DetailsUserComp)
+		if DetailsUserComp then
+			self:UpdateLineGraph(g4, "Compare", DetailsUserComp)
+		end
 	end
 	self:UpdateSumGraph()
 end

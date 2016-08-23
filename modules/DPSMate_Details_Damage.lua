@@ -24,6 +24,7 @@ function DPSMate.Modules.DetailsDamage:UpdateDetails(obj, key)
 	DPSMate_Details.proc = "None"
 	UIDropDownMenu_SetSelectedValue(DPSMate_Details_DiagramLegend_Procs, "None")
 	DetailsUser = obj.user
+	DetailsUserComp = nil
 	DPSMate_Details_Title:SetText(DPSMate.L["dmgdoneby"]..obj.user)
 	DPSMate_Details_SubTitle:SetText(DPSMate.L["activity"]..strformat("%.2f", DPSMateCombatTime["effective"][key][obj.user] or 0).."s "..DPSMate.L["of"].." "..strformat("%.2f", DPSMateCombatTime[mode[key]]).."s ("..strformat("%.2f", 100*(DPSMateCombatTime["effective"][key][obj.user] or 0)/DPSMateCombatTime[mode[key]]).."%)")
 	DPSMate_Details:Show()
@@ -387,7 +388,6 @@ function DPSMate.Modules.DetailsDamage:SelectDetailsButton(i, comp, cname)
 	if not comp then comp = DPSMate_Details.LastScroll or "" end
 	local pathh = ""
 	local path,obj,lineplusoffset
-	local user, pet = DPSMateUser[cname or DetailsUser][1], ""
 	local uArr, dSel, d2 = DetailsArr, DetailsSelected, t2
 	if comp ~= "" and comp~=nil then
 		uArr = DetailsArrComp
@@ -397,6 +397,7 @@ function DPSMate.Modules.DetailsDamage:SelectDetailsButton(i, comp, cname)
 		end
 		d2 = t2Comp
 	end
+	local user, pet = DPSMateUser[cname or DetailsUser][1], ""
 	if toggle then
 		pathh = "DPSMate_Details"..comp.."_playerSpells"
 		obj = _G(pathh.."_ScrollFrame")
@@ -505,10 +506,9 @@ function DPSMate.Modules.DetailsDamage:UpdatePie(gg, cname)
 	end
 	gg:ResetPie()
 	for cat, val in uArr do
-		local ability = tonumber(uArr[cat])
 		if (dArr[cat][2]) then user=DPSMateUser[DPSMateUser[cname or DetailsUser][5]][1] else user=DPSMateUser[cname or DetailsUser][1] end
-		local percent = (db[user][ability][13]*100/dTot)
-		gg:AddPie(percent, 0, DPSMate:GetAbilityById(ability))
+		local percent = (db[user][val][13]*100/dTot)
+		gg:AddPie(percent, 0, DPSMate:GetAbilityById(val))
 	end
 end
 
@@ -954,12 +954,12 @@ function DPSMate.Modules.DetailsDamage:ToggleMode(bool)
 	if bool then
 		if toggle2 then
 			self:UpdateLineGraph(g2,"")
-			if DPSMate_Details_CompareDamage:IsVisible() then
+			if DetailsUserComp then
 				self:UpdateLineGraph(g5,"_CompareDamage", DetailsUserComp)
 			end
 		else
 			self:UpdateStackedGraph(g3,"")
-			if DPSMate_Details_CompareDamage:IsVisible() then
+			if DetailsUserComp then
 				self:UpdateStackedGraph(g6,"_CompareDamage", DetailsUserComp)
 			end
 		end
@@ -973,7 +973,7 @@ function DPSMate.Modules.DetailsDamage:ToggleMode(bool)
 			DPSMate_Details_Diagram:Show()
 			DPSMate_Details_Log:Show()
 			
-			if DPSMate_Details_CompareDamage:IsVisible() then
+			if DetailsUserComp then
 				self:ScrollFrame_Update("_CompareDamage")
 				self:SelectDetailsButton(1,"_CompareDamage")
 				DPSMate_Details_CompareDamage_playerSpells:Hide()
@@ -991,7 +991,7 @@ function DPSMate.Modules.DetailsDamage:ToggleMode(bool)
 			DPSMate_Details_Diagram:Hide()
 			DPSMate_Details_Log:Hide()
 			
-			if DPSMate_Details_CompareDamage:IsVisible() then
+			if DetailsUserComp then
 				self:Player_Update("_CompareDamage")
 				self:PlayerSpells_Update(1, "_CompareDamage")
 				self:SelectDetailsButton(1, "_CompareDamage")
@@ -1012,12 +1012,12 @@ function DPSMate.Modules.DetailsDamage:ToggleIndividual()
 	end
 	if toggle2 then
 		self:UpdateStackedGraph(g3,"")
-		if DPSMate_Details_CompareDamage:IsVisible() then 
+		if DetailsUserComp then 
 			self:UpdateStackedGraph(g6,"_CompareDamage", DetailsUserComp)
 		end
 	else
 		self:UpdateLineGraph(g2,"")
-		if DPSMate_Details_CompareDamage:IsVisible() then
+		if DetailsUserComp then
 			self:UpdateLineGraph(g5,"_CompareDamage", DetailsUserComp)
 		end
 	end
