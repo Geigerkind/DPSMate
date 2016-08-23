@@ -427,7 +427,7 @@ function DPSMate.Modules.DetailsOverhealing:PlayerSpells_Update(i, comp)
 			if comp ~= "" and comp~=nil then
 				self:UpdateStackedGraph(g6, comp, DetailsUserComp)
 			else
-				self:UpdateStackedGraph(g3, "")
+				self:UpdateStackedGraph(g3)
 			end
 		else
 			if comp ~= "" and comp~=nil then
@@ -436,7 +436,9 @@ function DPSMate.Modules.DetailsOverhealing:PlayerSpells_Update(i, comp)
 				self:UpdateLineGraph(g2, "")
 			end
 		end
-		self:UpdateSumGraph()
+		if DetailsUserComp then
+			self:UpdateSumGraph()
+		end
 	end
 end
 
@@ -919,5 +921,7 @@ function DPSMate.Modules.DetailsOverhealing:ToggleIndividual()
 			self:UpdateLineGraph(g5,"Compare", DetailsUserComp)
 		end
 	end
-	self:UpdateSumGraph()
+	if DetailsUserComp then
+		self:UpdateSumGraph()
+	end
 end

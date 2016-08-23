@@ -42,7 +42,7 @@ function DPSMate.Modules.DetailsDamageTaken:UpdateDetails(obj, key)
 	end
 	
 	if toggle then
-		self:UpdateStackedGraph(g, "")
+		self:UpdateStackedGraph(g)
 	else
 		self:UpdateLineGraph(g2, "")
 	end
@@ -246,13 +246,21 @@ function DPSMate.Modules.DetailsDamageTaken:SelectCreatureButton(i, comp, cname)
 	self:SelectDetailsButton(i,1, comp, cname)
 	if toggle3 then
 		if toggle then
-			self:UpdateStackedGraph(g, "")
-			self:UpdateStackedGraph(g3, "Compare", DetailsUserComp)
+			if comp ~= "" and comp~=nil then
+				self:UpdateStackedGraph(g3, "Compare", DetailsUserComp)
+			else
+				self:UpdateStackedGraph(g)
+			end
 		else
-			self:UpdateLineGraph(g2, "")
-			self:UpdateLineGraph(g4, "Compare", DetailsUserComp)
+			if comp ~= "" and comp~=nil then
+				self:UpdateLineGraph(g4, "Compare", DetailsUserComp)
+			else
+				self:UpdateLineGraph(g2, "")
+			end
 		end
-		self:UpdateSumGraph()
+		if DetailsUserComp then
+			self:UpdateSumGraph()
+		end
 	end
 end
 
@@ -356,7 +364,7 @@ function DPSMate.Modules.DetailsDamageTaken:UpdateLineGraph(gg, comp, cname)
 	end
 	local sumTable
 	if toggle3 then
-		if comp~="" then
+		if comp ~= "" and comp then
 			sumTable = self:GetSummarizedTable(db, DetailsArrComp[DetailsSelectedComp])
 		else
 			sumTable = self:GetSummarizedTable(db, DetailsArr[DetailsSelected])
@@ -411,7 +419,7 @@ function DPSMate.Modules.DetailsDamageTaken:UpdateStackedGraph(gg, comp, cname)
 	local temp = {}
 	local temp2 = {}
 	local dSel, uArr = DetailsSelected, DetailsArr
-	if comp~="" then
+	if comp ~= "" and comp then
 		uArr = DetailsArrComp
 		dSel = DetailsSelectedComp
 	end
@@ -759,7 +767,7 @@ function DPSMate.Modules.DetailsDamageTaken:ToggleMode()
 		end
 		toggle=false
 	else
-		self:UpdateStackedGraph(g, "")
+		self:UpdateStackedGraph(g)
 		if DetailsUserComp then
 			self:UpdateStackedGraph(g3, "Compare", DetailsUserComp)
 		end
@@ -779,10 +787,12 @@ function DPSMate.Modules.DetailsDamageTaken:ToggleIndividual()
 			self:UpdateLineGraph(g4, "Compare", DetailsUserComp)
 		end
 	else
-		self:UpdateStackedGraph(g, "")
+		self:UpdateStackedGraph(g)
 		if DetailsUserComp then
 			self:UpdateStackedGraph(g3, "Compare", DetailsUserComp)
 		end
 	end
-	self:UpdateSumGraph()
+	if DetailsUserComp then
+		self:UpdateSumGraph()
+	end
 end
