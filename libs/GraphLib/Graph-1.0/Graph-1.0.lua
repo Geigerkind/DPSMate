@@ -333,6 +333,7 @@ function lib:CreateGraphPieChart(name,parent,relative,relativeTo,offsetX,offsetY
 	local graph
 	local i
 	graph = CreateFrame("Frame",name,parent)
+	graph.name = name
 
 	
 	graph:SetPoint(relative,parent,relativeTo,offsetX,offsetY)
@@ -353,10 +354,10 @@ function lib:CreateGraphPieChart(name,parent,relative,relativeTo,offsetX,offsetY
 	graph.HideLines=self.HideLines
 	graph.HideTextures=GraphFunctions.HideTextures
 	graph.FindTexture=GraphFunctions.FindTexture
-	--graph.OnUpdate=GraphFunctions.PieChart_OnUpdate
+	graph.OnUpdate=GraphFunctions.PieChart_OnUpdate
 	graph.SetSelectionFunc=GraphFunctions.SetSelectionFunc
 
-	--graph:SetScript("OnUpdate", graph.OnUpdate)
+	graph:SetScript("OnUpdate", graph.OnUpdate)
 	
 
 	--Initialize Data
@@ -380,7 +381,7 @@ end
 -- Aka Geigerkind 
 -- Tom D. 
 -- http://legacy-logs.com
--- <mail@legacy-logs.com>
+-- <shino@legacy-logs.com>
 function lib:CreateStackedGraphOLD(name,parent,relative,relativeTo,offsetX,offsetY,Width,Height)
 	local graph
 	local i
@@ -624,6 +625,8 @@ local PiePieces={"Pie\\1-2";
 		 "Pie\\1-128"}
 
 --26 Colors
+local colorByAbility = {}
+local AbilityByColor = {}
 local ColorTable={
 	{0.0,0.9,0.0},
 	{0.9,0.0,0.0},
@@ -680,15 +683,33 @@ function GraphFunctions:AddPie(Percent, Color, label)
 	local CurAngle=PiePercent*360/100
 	local Section={}
 	Section.Textures={}
-
-	if type(Color)~="table" then
-		if self.onColor<=26 then
-			Color=ColorTable[self.onColor]
-		else
-			Color={math_random(),math_random(),math_random()}
+	
+	if colorByAbility[label] then
+		Color = colorByAbility[label]
+	end
+	
+	if type(Color) ~= "table" and ColorTable[self.onColor] then
+		while true do
+			if ColorTable[self.onColor] then
+				if not AbilityByColor[ColorTable[self.onColor]] then
+					Color = ColorTable[self.onColor]
+					break
+				end
+			else
+				break
+			end
+			self.onColor=self.onColor+1
 		end
+	end
+	
+	if not ColorTable[self.onColor] and type(Color) ~= "table" then
+		ColorTable[self.onColor] = {0.01*math_random(0,100),0.01*math_random(0,100),0.01*math_random(0,100),1}
+		Color = ColorTable[self.onColor]
 		self.onColor=self.onColor+1
 	end
+	
+	colorByAbility[label] = Color
+	AbilityByColor[Color] = label
 
 	if PiePercent==0 then
 		self:DrawLinePie(0)
@@ -705,29 +726,8 @@ function GraphFunctions:AddPie(Percent, Color, label)
 			t:SetPoint("CENTER",self,"CENTER",0,0)
 			t:SetHeight(self:GetHeight())
 			t:SetWidth(self:GetWidth())
-			
-			if not t.f then
-				t.f = CreateFrame("Frame", "LabelFrame", self)
-				t.f:SetHeight(35)
-				t.f:SetWidth(35)
-				t.f:EnableMouse(true)
-				
-				t.f:SetScript("OnEnter", function()
-					if t.f.label and t.f.percent>3.5 then
-						GameTooltip:SetOwner(t.f, "ANCHOR_TOP")
-						GameTooltip:AddLine(t.f.label)
-						GameTooltip:Show()
-					end
-				end)
-				t.f:SetScript("OnLeave", function()
-					GameTooltip:Hide()
-				end)
-				t.f:ClearAllPoints()
-				t.f:SetPoint("CENTER",t,"CENTER",0,0)
-				t.f:Show()
-			end
-			t.f.label = label
-			t.f.percent = Percent
+			t.name = self.name
+			t.label = label
 			
 			GraphFunctions:RotateTexture(t,CurAngle)
 			t:Show()
@@ -860,7 +860,6 @@ function GraphFunctions:DrawLinePie(angle)
 end
 
 --Used to rotate the pie slices
-local NamePos = {}
 function GraphFunctions:RotateTexture(texture,angle)
 	local Radian=math_pi*(45-angle)/180
 	local Radian2=math_pi*(45+90-angle)/180
@@ -873,25 +872,6 @@ function GraphFunctions:RotateTexture(texture,angle)
 	ty2=tx
 
 	texture:SetTexCoord(0.5-tx,0.5-ty,0.5+tx2,0.5+ty2,0.5-tx2,0.5-ty2,0.5+tx,0.5+ty)
-	if texture.f.label then
-		if not NamePos[texture.f.label] or (NamePos[texture.f.label]-GetTime())>=2 then
-			texture.f:ClearAllPoints()
-			if tx>0 then
-				if tx2<-0.5 then
-					tx = tx2-tx2*0.5
-					ty = ty+ty*0.5
-				else
-					tx = tx-tx*0.5
-					ty = ty+ty*0.5
-				end
-			else
-				tx = tx+tx*0.5
-				ty = ty-ty*0.5
-			end
-			texture.f:SetPoint("CENTER", texture, "CENTER", tx*100, ty*80)
-			NamePos[texture.f.label] = GetTime()
-		end
-	end
 end
 
 function GraphFunctions:SetSelectionFunc(f)
@@ -900,9 +880,9 @@ end
 
 --TODO: Pie chart pieces need to be clickable
 function GraphFunctions:PieChart_OnUpdate()
-	if (MouseIsOver(self)) then
-		local sX,sY=self:GetCenter()
-		local Scale=self:GetEffectiveScale()
+	if (MouseIsOver(this)) then
+		local sX,sY=this:GetCenter()
+		local Scale=this:GetEffectiveScale()
 		local mX,mY=GetCursorPosition()
 		local dX,dY
 
@@ -910,7 +890,7 @@ function GraphFunctions:PieChart_OnUpdate()
 		dY=mY/Scale-sY
 
 		local Angle=90-math_deg(math_atan(dY/dX))
-		dY=dY*self.Ratio
+		dY=dY*this.Ratio
 		local Dist=dX*dX+dY*dY
 
 		if dX<0 then
@@ -918,55 +898,65 @@ function GraphFunctions:PieChart_OnUpdate()
 		end
 
 		--Are we on the Pie Chart?
-		if Dist<self.Radius then
+		if Dist<this.Radius then
 			--What section are we on?
-			for k, v in pairs(self.Sections) do
+			for k, v in pairs(this.Sections) do
 				if Angle<v.Angle then
 					local Color
-					if k~=self.LastSection then
-						if self.LastSection then
-							local Section=self.Sections[self.LastSection]
+					local label = AbilityByColor[v.Color]
+					if k~=this.LastSection then
+						if this.LastSection then
+							local Section=this.Sections[this.LastSection]
 							for _, t in pairs(Section.Textures) do
 								Color=Section.Color
+								--label=t.label
 								t:SetVertexColor(Color[1],Color[2],Color[3],1.0)
 							end
 						end
 
-						if self.SelectionFunc then
-							self:SelectionFunc(k)
+						if this.SelectionFunc then
+							this:SelectionFunc(k)
 						end
 					end
 
-					local ColorAdd=0.15*math_abs(math_fmod(GetTime(),3)-1.5)-0.1125
+					local ColorAdd=0.2
 					
 					Color={}
 					Color[1]=v.Color[1]+ColorAdd
 					Color[2]=v.Color[2]+ColorAdd
 					Color[3]=v.Color[3]+ColorAdd
-
+					
+					if label then
+						GameTooltip:SetOwner(this, "TOPLEFT")
+						GameTooltip:AddLine(label)
+						GameTooltip:Show()
+					end
+					
 					for _, t in pairs(v.Textures) do
 						t:SetVertexColor(Color[1],Color[2],Color[3],1.0)
 					end
 
-					self.LastSection = k
+					this.LastSection = k
 
 					return
 				end
 			end
 		end
 	else
-		if self.LastSection then
-			local Section=self.Sections[self.LastSection]
+		if this.LastSection then
+			local Section=this.Sections[this.LastSection]
 			for _, t in pairs(Section.Textures) do
 				local Color=Section.Color
 				t:SetVertexColor(Color[1],Color[2],Color[3],1.0)
 			end
-			self.LastSection=nil
+			this.LastSection=nil
 		end
-		if self.SelectionFunc then
-			self:SelectionFunc(k)
+		if this.SelectionFunc then
+			this:SelectionFunc(k)
 		end
-		
+		if MouseIsOver(this:GetParent()) then
+			GameTooltip:Hide()
+		end
 	end	
 end
 
@@ -1425,53 +1415,7 @@ function GraphFunctions:OnUpdateGraphRealtime(obj)
 	self.NextUpdate = CurTime + self.LimitUpdates
 	
 	--Slow Mode performs an entire convolution every frame
-	if self.Mode=="SLOW" then
-		--Initialize Bar Data
-		self.BarHeight={}
-		for i=1,self.BarNum do
-			self.BarHeight[i]=0
-		end
-		local k,v
-		local BarTimeRadius=(self.XMax-self.XMin)/self.BarNum
-		local DataValue=1/(2*self.TimeRadius)
-
-		if self.Filter=="RECT" then
-			--Take the convolution of the dataset on to the bars wtih a rectangular filter
-			local DataValue=1/(2*self.TimeRadius)
-			for k,v in pairs(self.Data) do
-				if v.Time<(CurTime+self.XMin-self.TimeRadius) then
-					table_remove(self.Data,k)	
-				else	
-					local DataTime=v.Time-CurTime
-					local LowestBar=math_max(math_floor((DataTime-self.XMin-self.TimeRadius)/BarTimeRadius),1)
-					local HighestBar=math_min(math_ceil((DataTime-self.XMin+self.TimeRadius)/BarTimeRadius),self.BarNum)
-					for i=LowestBar,HighestBar do
-						self.BarHeight[i]=self.BarHeight[i]+v.Value*DataValue
-					end
-				end
-			end
-		elseif self.Filter=="TRI" then
-			--Needs optimization badly
-			--Take the convolution of the dataset on to the bars wtih a triangular filter
-			local DataValue=1/(self.TimeRadius)
-			for k,v in pairs(self.Data) do
-				local Temp
-				if v.Time<(CurTime+self.XMin-self.TimeRadius) then
-					table_remove(self.Data,k)	
-				else	
-					local DataTime=v.Time-CurTime
-					local LowestBar=math_max(math_floor((DataTime-self.XMin-self.TimeRadius)/BarTimeRadius),1)
-					local HighestBar=math_min(math_ceil((DataTime-self.XMin+self.TimeRadius)/BarTimeRadius),self.BarNum)
-
-
-					for i=LowestBar,HighestBar do
-						self.BarHeight[i]=self.BarHeight[i]+v.Value*DataValue*math_abs(BarTimeRadius*i+self.XMin-DataTime)
-					end
-				end
-			end
-		end
-		BarsChanged = true
-	elseif self.Mode=="FAST" then
+	if self.Mode=="FAST" then
 		local ShiftBars = math_floor((CurTime - self.LastShift) / self.BarWidth)
 
 		if ShiftBars > 0 and not (self.LastDataTime < (self.LastShift + self.XMin - self.TimeRadius * 2)) then
@@ -1504,7 +1448,7 @@ function GraphFunctions:OnUpdateGraphRealtime(obj)
 						local HighestBar = math_min(math_ceil((DataTime - self.XMin + self.TimeRadius) / BarTimeRadius), self.BarNum)
 						if LowestBar <= HighestBar then
 							for i = LowestBar, HighestBar do
-								self.BarHeight[i] = self.BarHeight[i] + v.Value * DataValue
+								self.BarHeight[i] = self.BarHeight[i] + v.Value * DataValue * 2
 							end
 						end
 					end
@@ -1515,97 +1459,6 @@ function GraphFunctions:OnUpdateGraphRealtime(obj)
 			CurTime = self.LastShift + ShiftBars * self.BarWidth
 			self.LastShift = CurTime
 		end
-	elseif self.Mode == "EXP" then
-		local ShiftBars = math_floor((CurTime - self.LastShift) / self.BarWidth)
-
-		if ShiftBars > 0 then
-			local RecalcBars = self.BarNum - ShiftBars + 1
-
-			for i = 1, self.BarNum do
-				if i < RecalcBars then
-					self.BarHeight[i] = self.BarHeight[i + ShiftBars]
-				end
-			end
-
-			--Now to calculate the new bars
-			local Total
-			local Weight = 1 / self.TimeRadius / self.ExpNorm
-
-			for i = RecalcBars, self.BarNum do
-				Total = 0
-
-				--Implement an EXPFAST which does this only once instead of for each bar
-				for k, v in pairs(self.Data) do
-					Total = Total + v.Value * Weight
-					if v.Time < (self.LastShift - self.TimeRadius) then
-						tremove(self.Data, k)
-					end
-				end
-
-				self.CurVal = self.Decay * self.CurVal + Total
-
-				self.BarHeight[i] = self.CurVal
-
-				self.LastShift = self.LastShift + self.BarWidth
-			end
-
-			if self.CurVal < 0.1 then
-				self.CurVal = 0
-			end
-			BarsChanged = true
-		else
-			self.LastShift = self.LastShift + self.BarWidth * ShiftBars
-		end
-	elseif self.Mode == "EXPFAST" then
-		local ShiftBars = math_floor((CurTime - self.LastShift) / self.BarWidth)
-		local RecalcBars = self.BarNum - ShiftBars + 1
-
-		if ShiftBars > 0 and not (self.LastDataTime < (self.LastShift + self.XMin-self.TimeRadius)) then
-			for i = 1, self.BarNum do
-				if i < RecalcBars then
-					self.BarHeight[i] = self.BarHeight[i + ShiftBars]
-				end
-			end
-
-			--Now to calculate the new bars
-			local Total
-			local Weight = 1 / self.TimeRadius / self.ExpNorm
-
-			Total = 0
-
-			--Implement an EXPFAST which does this only once instead of for each bar
-			for k, v in pairs(self.Data) do
-				Total = Total + v.Value * Weight
-				if v.Time < (self.LastShift - self.TimeRadius) then
-					tremove(self.Data, k)
-				end
-			end
-
-			--self.LastShift = self.LastShift+self.BarWidth*ShiftBars
-
-			if self.CurVal ~= 0 or Total ~= 0 then
-				for i = RecalcBars, self.BarNum do
-					self.CurVal = self.Decay * self.CurVal + Total
-					self.BarHeight[i] = self.CurVal
-				end
-				self.LastDataTime = self.LastShift + self.BarWidth * ShiftBars
-			else
-				for i = RecalcBars, self.BarNum do
-					self.BarHeight[i] = 0
-				end
-			end
-
-			if self.CurVal < 0.1 then
-				self.CurVal = 0
-			end
-			BarsChanged = true
-		end
-		self.LastShift = self.LastShift + self.BarWidth * ShiftBars
-	elseif self.Mode == "RAW" then
-		--Do nothing really
-		--Using .AddedBar so we cut down on updating the grid
-		self.AddedBar = false
-		BarsChanged = true
 	end
 
 
@@ -1620,6 +1473,8 @@ function GraphFunctions:OnUpdateGraphRealtime(obj)
 
 			MaxY = math_max(MaxY, self.MinMaxY)
 
+			self.XBorder = 10
+			self.YBorder = 0
 			if MaxY ~= 0 and math_abs(self.YMax - MaxY) > 0.01 then
 				self.YMax = MaxY
 				self.NeedsUpdate = true
@@ -2353,7 +2208,6 @@ function lib:DrawBarNew(C, sx, sy, ex, ey, color, level, label)
 	end)
 end
 
-local colorByAbility = {}
 function GraphFunctions:RefreshStackedBarGraph()
 	self:HideLines(self)
 	self:HideBars(self)
