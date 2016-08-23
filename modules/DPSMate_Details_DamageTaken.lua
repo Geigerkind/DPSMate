@@ -615,7 +615,7 @@ function DPSMate.Modules.DetailsDamageTaken:ProcsDropDown()
 		if not toggle then
 			DPSMate.Modules.DetailsDamageTaken:UpdateLineGraph(g2, "")
 		end
-		^self:UpdateSumGraph()
+		self:UpdateSumGraph()
     end
 	
 	UIDropDownMenu_AddButton{
