@@ -97,8 +97,12 @@ function DPSMate.Modules.Overhealing:ShowTooltip(user, k)
 	end
 end
 
-function DPSMate.Modules.Overhealing:OpenDetails(obj, key)
-	DPSMate.Modules.DetailsOverhealing:UpdateDetails(obj, key)
+function DPSMate.Modules.Overhealing:OpenDetails(obj, key, bool)
+	if bool then
+		DPSMate.Modules.DetailsOverhealing:UpdateCompare(obj, key, bool)
+	else
+		DPSMate.Modules.DetailsOverhealing:UpdateDetails(obj, key)
+	end
 end
 
 function DPSMate.Modules.Overhealing:OpenTotalDetails(obj, key)
