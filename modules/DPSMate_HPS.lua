@@ -97,8 +97,12 @@ function DPSMate.Modules.HPS:ShowTooltip(user, k)
 	end
 end
 
-function DPSMate.Modules.HPS:OpenDetails(obj, key)
-	DPSMate.Modules.DetailsHealing:UpdateDetails(obj, key)
+function DPSMate.Modules.HPS:OpenDetails(obj, key, bool)
+	if bool then
+		DPSMate.Modules.DetailsHealing:UpdateCompare(obj, key, bool)
+	else
+		DPSMate.Modules.DetailsHealing:UpdateDetails(obj, key)
+	end
 end
 
 function DPSMate.Modules.HPS:OpenTotalDetails(obj, key)

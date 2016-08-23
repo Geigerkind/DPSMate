@@ -54,7 +54,7 @@ function DPSMate.Modules.DetailsDamage:UpdateDetails(obj, key)
 	end
 	self:UpdatePie(g)
 	if toggle2 then
-		self:UpdateStackedGraph(g3)
+		self:UpdateStackedGraph(g3,"")
 	else
 		self:UpdateLineGraph(g2, "")
 	end
