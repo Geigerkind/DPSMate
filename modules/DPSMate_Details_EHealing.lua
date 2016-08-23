@@ -69,7 +69,7 @@ function DPSMate.Modules.DetailsEHealing:UpdateCompare(obj, key, comp)
 	DPSMate_Details_CompareEHealing.proc = "None"
 	UIDropDownMenu_SetSelectedValue(DPSMate_Details_CompareEHealing_DiagramLegend_Procs, "None")
 	DetailsUserComp = comp
-	DPSMate_Details_CompareEHealing_Title:SetText(DPSMate.L["dmgdoneby"]..comp)
+	DPSMate_Details_CompareEHealing_Title:SetText(DPSMate.L["effhealdoneby"]..comp)
 	DPSMate_Details_CompareEHealing_SubTitle:SetText(DPSMate.L["activity"]..strformat("%.2f", DPSMateCombatTime["effective"][key][comp] or 0).."s "..DPSMate.L["of"].." "..strformat("%.2f", DPSMateCombatTime[mode[key]]).."s ("..strformat("%.2f", 100*(DPSMateCombatTime["effective"][key][comp] or 0)/DPSMateCombatTime[mode[key]]).."%)")
 	UIDropDownMenu_Initialize(DPSMate_Details_CompareEHealing_DiagramLegend_Procs, DPSMate.Modules.DetailsEHealing.ProcsDropDown_CompareEHealing)
 	DetailsArrComp, DetailsTotalComp, DmgArrComp = DPSMate.RegistredModules[DPSMateSettings["windows"][curKey]["CurMode"]]:EvalTable(DPSMateUser[comp], curKey)
