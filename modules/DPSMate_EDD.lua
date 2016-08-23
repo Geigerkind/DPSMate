@@ -127,8 +127,12 @@ function DPSMate.Modules.EDD:ShowTooltip(user, k)
 end
 
 
-function DPSMate.Modules.EDD:OpenDetails(obj, key)
-	DPSMate.Modules.DetailsEDD:UpdateDetails(obj, key)
+function DPSMate.Modules.EDD:OpenDetails(obj, key, bool)
+	if bool then
+		DPSMate.Modules.DetailsEDD:UpdateCompare(obj, key, bool)
+	else
+		DPSMate.Modules.DetailsEDD:UpdateDetails(obj, key)
+	end
 end
 
 function DPSMate.Modules.EDD:OpenTotalDetails(obj, key)

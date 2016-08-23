@@ -51,10 +51,10 @@ function DPSMate.Modules.DetailsDamageTaken:UpdateCompare(obj, key, comp)
 	self:UpdateDetails(obj, key)
 	
 	DPSMate_Details_CompareDamageTaken.proc = "None"
-	UIDropDownMenu_SetSelectedValue(DPSMate_Details_CompareDamage_DiagramLegend_Procs, "None")
+	UIDropDownMenu_SetSelectedValue(DPSMate_Details_CompareDamageTaken_DiagramLegend_Procs, "None")
 	DetailsUserComp = comp
 	DPSMate_Details_CompareDamageTaken_Title:SetText(DPSMate.L["dmgtakenby"]..comp)
-	UIDropDownMenu_Initialize(DPSMate_Details_CompareDamage_DiagramLegend_Procs, DPSMate.Modules.DetailsDamageTaken.ProcsDropDown_Compare)
+	UIDropDownMenu_Initialize(DPSMate_Details_CompareDamageTaken_DiagramLegend_Procs, DPSMate.Modules.DetailsDamageTaken.ProcsDropDown_Compare)
 	DetailsArrComp, DetailsTotalComp, DmgArrComp = DPSMate.RegistredModules[DPSMateSettings["windows"][curKey]["CurMode"]]:EvalTable(DPSMateUser[comp], curKey)
 	
 	if not g3 then
@@ -199,10 +199,11 @@ function DPSMate.Modules.DetailsDamageTaken:SelectCreatureButton(i, comp, cname)
 		uArr = DetailsArrComp
 		dArr = DmgArrComp
 		dTot = DetailsTotalComp
-		dSel = DetailsSelectedComp
 		DetailsSelectedComp = i
+		dSel = DetailsSelectedComp
 	else
 		DetailsSelected = i
+		dSel = DetailsSelected
 	end
 	local pet, len = "", DPSMate:TableLength(dArr[i][2])
 	local coeff = len-10

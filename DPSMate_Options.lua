@@ -1489,6 +1489,10 @@ local hexClassColor = {
 	paladin = "F58CBA",
 	shaman = "0070DE",
 }
+
+local CompareExcept = {
+	[DPSMate.L["enemydamagedone"]] = true
+}
 function DPSMate.Options:InializePlayerDewDrop(obj)
 	local channel, i = DPSMate.L["gchannel"], 1
 	local path = DPSMate.Options.Options[4]["args"]["report"]["args"]
@@ -1555,9 +1559,12 @@ function DPSMate.Options:InializePlayerDewDrop(obj)
 	-- No clue what is wrong here. Fuck it
 	temp = assert(loadstring('return {'..temp..'}')) ();
 	sort(temp)
-	for _, val in temp do
-		if not strfind(val, "%s") then -- Have to find another method later to enable comparing npcs?
-			path[val] = {
+	
+	local mode = _G(obj:GetParent():GetParent():GetParent():GetName().."_Head_Font"):GetText()
+	
+	for cat, val in temp do
+		if not strfind(val, "%s") or CompareExcept[mode] then -- Have to find another method later to enable comparing npcs?
+			path["Arg"..cat] = {
 				order = 1,
 				type = "execute",
 				name = "|cFF"..hexClassColor[DPSMateUser[val][2] or "warrior"]..val.."|r",
