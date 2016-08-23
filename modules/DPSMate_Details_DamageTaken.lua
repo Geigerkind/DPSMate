@@ -89,7 +89,7 @@ function DPSMate.Modules.DetailsDamageTaken:UpdateSumGraph()
 	-- Executing the sumGraph
 	local sumTable, sumTableTwo
 	if toggle3 then
-		sumTable = self:GetSummarizedTable(db, DetailsArrComp[DetailsSelectedComp])
+		sumTable = self:GetSummarizedTable(db, DetailsArrComp[DetailsSelectedComp], DetailsUserComp)
 		sumTableTwo = self:GetSummarizedTable(db, DetailsArr[DetailsSelected])
 	else
 		sumTable = self:GetSummarizedTable(db, nil, DetailsUserComp)
@@ -365,7 +365,7 @@ function DPSMate.Modules.DetailsDamageTaken:UpdateLineGraph(gg, comp, cname)
 	local sumTable
 	if toggle3 then
 		if comp ~= "" and comp then
-			sumTable = self:GetSummarizedTable(db, DetailsArrComp[DetailsSelectedComp])
+			sumTable = self:GetSummarizedTable(db, DetailsArrComp[DetailsSelectedComp], DetailsUserComp)
 		else
 			sumTable = self:GetSummarizedTable(db, DetailsArr[DetailsSelected])
 		end

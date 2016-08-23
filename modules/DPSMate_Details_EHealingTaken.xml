@@ -43,10 +43,10 @@
 		<Scripts>
 			<OnClick>
 				if this:GetParent():GetParent():GetName()=="DPSMate_Details_CompareEHealingTaken" then
-					if this:GetParent():GetName()=="DPSMate_Details_EHealingTaken_LogCreature" then
+					if this:GetParent():GetName()=="DPSMate_Details_CompareEHealingTaken_LogCreature" then
 						DPSMate.Modules.DetailsEHealingTaken:SelectCreatureButton(this:GetID(), "Compare")
 					else
-						DPSMate.Modules.DetailsEHealingTaken:SelectDetailsButton(DPSMate_Details_EHealingTaken_Log_ScrollFrame.index, this:GetID(), "Compare")
+						DPSMate.Modules.DetailsEHealingTaken:SelectDetailsButton(DPSMate_Details_CompareEHealingTaken_Log_ScrollFrame.index, this:GetID(), "Compare")
 					end
 				else
 					if this:GetParent():GetName()=="DPSMate_Details_EHealingTaken_LogCreature" then

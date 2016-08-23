@@ -122,8 +122,12 @@ function DPSMate.Modules.OHealingTaken:ShowTooltip(user, k)
 	end
 end
 
-function DPSMate.Modules.OHealingTaken:OpenDetails(obj, key)
-	DPSMate.Modules.DetailsOHealingTaken:UpdateDetails(obj, key)
+function DPSMate.Modules.OHealingTaken:OpenDetails(obj, key, bool)
+	if bool then
+		DPSMate.Modules.DetailsOHealingTaken:UpdateCompare(obj, key, bool)
+	else
+		DPSMate.Modules.DetailsOHealingTaken:UpdateDetails(obj, key)
+	end
 end
 
 function DPSMate.Modules.OHealingTaken:OpenTotalDetails(obj, key)

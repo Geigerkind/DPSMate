@@ -122,8 +122,12 @@ function DPSMate.Modules.HealingTaken:ShowTooltip(user, k)
 	end
 end
 
-function DPSMate.Modules.HealingTaken:OpenDetails(obj, key)
-	DPSMate.Modules.DetailsHealingTaken:UpdateDetails(obj, key)
+function DPSMate.Modules.HealingTaken:OpenDetails(obj, key, bool)
+	if bool then
+		DPSMate.Modules.DetailsHealingTaken:UpdateCompare(obj, key, bool)
+	else
+		DPSMate.Modules.DetailsHealingTaken:UpdateDetails(obj, key)
+	end
 end
 
 function DPSMate.Modules.HealingTaken:OpenTotalDetails(obj, key)
