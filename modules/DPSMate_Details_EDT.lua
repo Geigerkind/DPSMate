@@ -19,6 +19,7 @@ function DPSMate.Modules.DetailsEDT:UpdateDetails(obj, key)
 	curKey = key
 	db, cbt = DPSMate:GetMode(key)
 	DetailsUser = obj.user
+	DetailsUserComp = nil
 	DPSMate_Details_EDT_Title:SetText(DPSMate.L["dmgtakenby"]..obj.user)
 	DetailsArr, DetailsTotal, DmgArr = DPSMate.RegistredModules[DPSMateSettings["windows"][curKey]["CurMode"]]:EvalTable(DPSMateUser[DetailsUser], curKey)
 	DPSMate_Details_EDT:Show()
@@ -38,7 +39,7 @@ function DPSMate.Modules.DetailsEDT:UpdateDetails(obj, key)
 	end
 	
 	if toggle then
-		self:UpdateStackedGraph(g, "")
+		self:UpdateStackedGraph(g)
 	else
 		self:UpdateLineGraph(g2, "")
 	end
@@ -395,10 +396,8 @@ function DPSMate.Modules.DetailsEDT:UpdateLineGraph(gg, comp, cname)
 	for cat, val in DPSMate:ScaleDown(sumTable, min) do
 		tinsert(Data1, {val[1],val[2], {}})
 	end
-	local colorT = {{1.0,0.0,0.0,0.8}, {1.0,1.0,0.0,0.8}}
-	if cname then
-		colorT = {{0.2,0.8,0.2,0.8}, {0.5,0.8,0.9,0.8}}
-	end
+	local colorT = {{1.0,0.0,0.0,0.8}, {1.0,0.0,0.0,0.8}}
+	
 
 	gg:AddDataSeries(Data1,colorT, {})
 	gg:Show()
@@ -624,7 +623,7 @@ function DPSMate.Modules.DetailsEDT:ToggleIndividual()
 		toggle3 = true
 	end
 	if toggle then
-		self:UpdateStackedGraph(g, "")
+		self:UpdateStackedGraph(g)
 		if DetailsUserComp then
 			self:UpdateStackedGraph(g3, "Compare", DetailsUserComp)
 		end

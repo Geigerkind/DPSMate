@@ -54,7 +54,7 @@ function DPSMate.Modules.DetailsHealing:UpdateDetails(obj, key)
 	end
 	self:UpdatePie(g)
 	if toggle2 then
-		self:UpdateStackedGraph(g3,"")
+		self:UpdateStackedGraph(g3)
 	else
 		self:UpdateLineGraph(g2,"")
 	end
@@ -856,7 +856,7 @@ function DPSMate.Modules.DetailsHealing:ToggleMode(bool)
 				self:UpdateLineGraph(g5,"Compare", DetailsUserComp)
 			end
 		else
-			self:UpdateStackedGraph(g3,"")
+			self:UpdateStackedGraph(g3)
 			if DetailsUserComp then
 				self:UpdateStackedGraph(g6,"Compare", DetailsUserComp)
 			end
@@ -909,7 +909,7 @@ function DPSMate.Modules.DetailsHealing:ToggleIndividual()
 		toggle3 = true
 	end
 	if toggle2 then
-		self:UpdateStackedGraph(g3,"")
+		self:UpdateStackedGraph(g3)
 		if DetailsUserComp then 
 			self:UpdateStackedGraph(g6,"Compare", DetailsUserComp)
 		end

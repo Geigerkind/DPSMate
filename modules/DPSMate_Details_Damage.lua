@@ -54,7 +54,7 @@ function DPSMate.Modules.DetailsDamage:UpdateDetails(obj, key)
 	end
 	self:UpdatePie(g)
 	if toggle2 then
-		self:UpdateStackedGraph(g3,"")
+		self:UpdateStackedGraph(g3)
 	else
 		self:UpdateLineGraph(g2, "")
 	end
@@ -958,7 +958,7 @@ function DPSMate.Modules.DetailsDamage:ToggleMode(bool)
 				self:UpdateLineGraph(g5,"_CompareDamage", DetailsUserComp)
 			end
 		else
-			self:UpdateStackedGraph(g3,"")
+			self:UpdateStackedGraph(g3)
 			if DetailsUserComp then
 				self:UpdateStackedGraph(g6,"_CompareDamage", DetailsUserComp)
 			end
@@ -1011,7 +1011,7 @@ function DPSMate.Modules.DetailsDamage:ToggleIndividual()
 		toggle3 = true
 	end
 	if toggle2 then
-		self:UpdateStackedGraph(g3,"")
+		self:UpdateStackedGraph(g3)
 		if DetailsUserComp then 
 			self:UpdateStackedGraph(g6,"_CompareDamage", DetailsUserComp)
 		end
