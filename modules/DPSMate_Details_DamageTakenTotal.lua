@@ -253,7 +253,7 @@ end
 function DPSMate.Modules.DetailsDamageTakenTotal:GetTableValues()
 	local arr, total = {}, 0
 	for cat, val in db do
-		local CV, crit, totCrit, miss, totMiss, hit, totHit, crush = 0, 0, 0.000001, 0, 0.000001, 0, 0.000001, 0
+		local CV, crit, totCrit, miss, totMiss, hit, totHit, crush, totOverall = 0, 0, 0.000001, 0, 0.000001, 0, 0.000001, 0, 0
 		local name = DPSMate:GetUserById(cat)
 		for ca, va in pairs(val) do
 			if ca~="i" then
@@ -273,11 +273,12 @@ function DPSMate.Modules.DetailsDamageTakenTotal:GetTableValues()
 							miss=miss+v[9]+v[10]+v[11]+v[12]
 						end
 						CV = CV + v[13]
+						totOverall = totOverall+v[1]+v[5]+v[9]+v[10]+v[11]+v[12]+v[15]
 					end
 				end
 			end
 		end
-		tinsert(arr, {name, CV, crit, miss, totCrit, totMiss, cat, hit, totHit, crush, totCrush})
+		tinsert(arr, {name, CV, crit, miss, totCrit, totMiss, cat, hit, totHit, crush,totOverall})
 		total = total + CV
 	end
 	local newArr = {}
@@ -430,10 +431,10 @@ function DPSMate.Modules.DetailsDamageTakenTotal:LoadTable()
 		_G("DPSMate_Details_DamageTakenTotal_PlayerList_Child_R"..cat.."_StatusBar"):SetValue(100*val[2]/arr[1][2])
 		_G("DPSMate_Details_DamageTakenTotal_PlayerList_Child_R"..cat.."_StatusBar"):SetStatusBarColor(r,g,b, 1)
 		_G("DPSMate_Details_DamageTakenTotal_PlayerList_Child_R"..cat.."_AmountPerc"):SetText(strformat("%.1f", 100*val[2]/total).."%")
-		_G("DPSMate_Details_DamageTakenTotal_PlayerList_Child_R"..cat.."_Crush"):SetText(strformat("%.1f", 100*val[10]/val[9]).."%")
-		_G("DPSMate_Details_DamageTakenTotal_PlayerList_Child_R"..cat.."_Hit"):SetText(strformat("%.1f", 100*val[8]/val[9]).."%")
-		_G("DPSMate_Details_DamageTakenTotal_PlayerList_Child_R"..cat.."_Crit"):SetText(strformat("%.1f", 100*val[3]/val[5]).."%")
-		_G("DPSMate_Details_DamageTakenTotal_PlayerList_Child_R"..cat.."_Miss"):SetText(strformat("%.1f", 100*val[4]/val[6]).."%")
+		_G("DPSMate_Details_DamageTakenTotal_PlayerList_Child_R"..cat.."_Crush"):SetText(strformat("%.1f", 100*val[10]/val[11]).."%")
+		_G("DPSMate_Details_DamageTakenTotal_PlayerList_Child_R"..cat.."_Hit"):SetText(strformat("%.1f", 100*val[8]/val[11]).."%")
+		_G("DPSMate_Details_DamageTakenTotal_PlayerList_Child_R"..cat.."_Crit"):SetText(strformat("%.1f", 100*val[3]/val[11]).."%")
+		_G("DPSMate_Details_DamageTakenTotal_PlayerList_Child_R"..cat.."_Miss"):SetText(strformat("%.1f", 100*val[4]/val[11]).."%")
 		_G("DPSMate_Details_DamageTakenTotal_PlayerList_Child_R"..cat.."_DTPS"):SetText(strformat("%.1f", val[2]/cbt))
 		_G("DPSMate_Details_DamageTakenTotal_PlayerList_Child_R"..cat).user = val[7]
 		_G("DPSMate_Details_DamageTakenTotal_PlayerList_Child_R"..cat):Show()

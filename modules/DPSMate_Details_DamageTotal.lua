@@ -55,8 +55,8 @@ function DPSMate.Modules.DetailsDamageTotal:UpdateDetails(obj, key)
 		{0.75,0.0,0.5},
 	}
 	if not g then
-		g=DPSMate.Options.graph:CreateGraphLine("DMGTLineGraph",DPSMate_Details_DamageTotal_DiagramLine,"CENTER","CENTER",0,0,740,220)
-		g2=DPSMate.Options.graph:CreateStackedGraph("DMGTStackedGraph",DPSMate_Details_DamageTotal_DiagramLine,"CENTER","CENTER",0,0,850,220)
+		g=DPSMate.Options.graph:CreateGraphLine("DMGDTLineGraph",DPSMate_Details_DamageTotal_DiagramLine,"CENTER","CENTER",0,0,740,220)
+		g2=DPSMate.Options.graph:CreateStackedGraph("DMGDTStackedGraph",DPSMate_Details_DamageTotal_DiagramLine,"CENTER","CENTER",0,0,850,220)
 		g2:SetGridColor({0.5,0.5,0.5,0.5})
 		g2:SetAxisDrawing(true,true)
 		g2:SetAxisColor({1.0,1.0,1.0,1.0})
@@ -258,16 +258,7 @@ function DPSMate.Modules.DetailsDamageTotal:GetTableValues()
 					miss=miss+va[9]+va[10]+va[11]+va[12]
 				end
 			else
-				-- That is just speculating, need to implement a proper way.
-				local delay, last = 3.5, 0
-				local t = self:SortLineTable(cat)
-				for cat, val in t do
-					if last == 0 or (val[1]-last)>delay then
-						last = val[1]
-					else
-						time = time + (val[1]-last)
-					end
-				end
+				time = tonumber(strformat("%.2f", DPSMateCombatTime["effective"][curKey][name] or 0))
 			end
 		end
 		tinsert(arr, {name, val["i"], crit, miss, time, totCrit, totMiss, cat})
