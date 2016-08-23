@@ -42,10 +42,18 @@
 		</Layers>
 		<Scripts>
 			<OnClick>
-				if this:GetParent():GetName()=="DPSMate_Details_DamageTaken_LogCreature" then
-					DPSMate.Modules.DetailsDamageTaken:SelectCreatureButton(this:GetID())
+				if this:GetParent():GetParent():GetName()=="DPSMate_Details_CompareDamageTaken" then
+					if this:GetParent():GetName()=="DPSMate_Details_CompareDamageTaken_LogCreature" then
+						DPSMate.Modules.DetailsDamageTaken:SelectCreatureButton(this:GetID(), "Compare")
+					else
+						DPSMate.Modules.DetailsDamageTaken:SelectDetailsButton(DPSMate_Details_CompareDamageTaken_Log_ScrollFrame.index, this:GetID(), "Compare")
+					end
 				else
-					DPSMate.Modules.DetailsDamageTaken:SelectDetailsButton(DPSMate_Details_DamageTaken_Log_ScrollFrame.index, this:GetID())
+					if this:GetParent():GetName()=="DPSMate_Details_DamageTaken_LogCreature" then
+						DPSMate.Modules.DetailsDamageTaken:SelectCreatureButton(this:GetID(), "")
+					else
+						DPSMate.Modules.DetailsDamageTaken:SelectDetailsButton(DPSMate_Details_DamageTaken_Log_ScrollFrame.index, this:GetID(), "")
+					end
 				end
 			</OnClick>
 		</Scripts>
@@ -93,7 +101,7 @@
 	<Frame name="DPSMate_Details_DamageTaken" parent="UIParent" movable="true" hidden="true">
 		<Size x="900" y="600" />
 		<Anchors>
-			<Anchor point="CENTER" />
+			<Anchor point="RIGHT" />
 		</Anchors>
 		<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
 			<BackgroundInsets left="6" right="6" top="6" bottom="6" />
@@ -294,9 +302,14 @@
 							</Anchor>
 						</Anchors>
 						<Scripts>
-							<OnVerticalScroll>
+							<OnMouseWheel>
+								DPSMate_Details_DamageTaken.LastScroll = ""
+								if not this.oset then
+									this.oset = 0
+								end
+								this.oset = this.oset - arg1
 								FauxScrollFrame_OnVerticalScroll(24, DPSMate.Modules.DetailsDamageTaken.ScrollFrame_Update) 
-							</OnVerticalScroll>
+							</OnMouseWheel>
 					   </Scripts>
 					</ScrollFrame>
 					<Button name="$parent_ScrollButton1" inherits="DPSMate_Details_DamageTaken_ScrollButton" id="1">
@@ -370,7 +383,7 @@
 				</Backdrop>
 				<Scripts>
 					<OnLoad>
-						DPSMate.Modules.DetailsDamageTaken:CreateGraphTable()
+						DPSMate.Modules.DetailsDamageTaken:CreateGraphTable("")
 					</OnLoad>
 				</Scripts>
 				<Frames>
@@ -388,9 +401,681 @@
 							</Anchor>
 						</Anchors>
 						<Scripts>
-							<OnVerticalScroll>
+							<OnMouseWheel>
+								DPSMate_Details_DamageTaken.LastScroll = ""
+								if not this.oset then
+									this.oset = 0
+								end
+								this.oset = this.oset - arg1
 								FauxScrollFrame_OnVerticalScroll(24, DPSMate.Modules.DetailsDamageTaken.SelectCreatureButton) 
-							</OnVerticalScroll>
+							</OnMouseWheel>
+					   </Scripts>
+					</ScrollFrame>
+					<Button name="$parent_ScrollButton1" inherits="DPSMate_Details_DamageTaken_ScrollButton" id="1">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset x="5" y="-5" />
+							</Anchor>
+						</Anchors>
+					</Button>
+					<Button name="$parent_ScrollButton2" inherits="DPSMate_Details_DamageTaken_ScrollButton"  id="2">
+						<Anchors>
+							<Anchor point="TOP" relativeTo="$parent_ScrollButton1" relativePoint="BOTTOM">
+								<Offset x="0" y="-2" />
+							</Anchor>
+						</Anchors>
+					</Button>
+					<Button name="$parent_ScrollButton3" inherits="DPSMate_Details_DamageTaken_ScrollButton"  id="3">
+						<Anchors>
+							<Anchor point="TOP" relativeTo="$parent_ScrollButton2" relativePoint="BOTTOM">
+								<Offset x="0" y="-2" />
+							</Anchor>
+						</Anchors>
+					</Button>
+					<Button name="$parent_ScrollButton4" inherits="DPSMate_Details_DamageTaken_ScrollButton"  id="4">
+						<Anchors>
+							<Anchor point="TOP" relativeTo="$parent_ScrollButton3" relativePoint="BOTTOM">
+								<Offset x="0" y="-2" />
+							</Anchor>
+						</Anchors>
+					</Button>
+					<Button name="$parent_ScrollButton5" inherits="DPSMate_Details_DamageTaken_ScrollButton"  id="5">
+						<Anchors>
+							<Anchor point="TOP" relativeTo="$parent_ScrollButton4" relativePoint="BOTTOM">
+								<Offset x="0" y="-2" />
+							</Anchor>
+						</Anchors>
+					</Button>
+					<Button name="$parent_ScrollButton6" inherits="DPSMate_Details_DamageTaken_ScrollButton"  id="6">
+						<Anchors>
+							<Anchor point="TOP" relativeTo="$parent_ScrollButton5" relativePoint="BOTTOM">
+								<Offset x="0" y="-2" />
+							</Anchor>
+						</Anchors>
+					</Button>
+					<Button name="$parent_ScrollButton7" inherits="DPSMate_Details_DamageTaken_ScrollButton"  id="7">
+						<Anchors>
+							<Anchor point="TOP" relativeTo="$parent_ScrollButton6" relativePoint="BOTTOM">
+								<Offset x="0" y="-2" />
+							</Anchor>
+						</Anchors>
+					</Button>
+					<Button name="$parent_ScrollButton8" inherits="DPSMate_Details_DamageTaken_ScrollButton"  id="8">
+						<Anchors>
+							<Anchor point="TOP" relativeTo="$parent_ScrollButton7" relativePoint="BOTTOM">
+								<Offset x="0" y="-2" />
+							</Anchor>
+						</Anchors>
+					</Button>
+					<Button name="$parent_ScrollButton9" inherits="DPSMate_Details_DamageTaken_ScrollButton"  id="9">
+						<Anchors>
+							<Anchor point="TOP" relativeTo="$parent_ScrollButton8" relativePoint="BOTTOM">
+								<Offset x="0" y="-2" />
+							</Anchor>
+						</Anchors>
+					</Button>
+					<Button name="$parent_ScrollButton10" inherits="DPSMate_Details_DamageTaken_ScrollButton"  id="10">
+						<Anchors>
+							<Anchor point="TOP" relativeTo="$parent_ScrollButton9" relativePoint="BOTTOM">
+								<Offset x="0" y="-2" />
+							</Anchor>
+						</Anchors>
+					</Button>
+				</Frames>
+			</Frame>
+			<Frame name="$parent_LogDetails">
+				<Size x="380" y="270" />
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="$parent_Log" relativePoint="RIGHT" />
+				</Anchors>
+				<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+					<BackgroundInsets left="6" right="6" top="6" bottom="6" />
+					<TileSize val="16" />
+					<EdgeSize val="16" />
+					<Color r="0.157" g="0.08" b="0.06" a="0.5" />
+				</Backdrop>
+				<Layers>
+					<Layer level="ARTWORK">
+						<FontString name="$parent_Crush" inherits="GameFontNormal" text="Crush" justifyH="LEFT">
+							<Size x="50" y="24" />
+							<Anchors>
+								<Anchor point="TOPLEFT">
+									<Offset x="10" y="-38" />
+								</Anchor>
+							</Anchors>
+						</FontString>
+						<FontString name="$parent_Casts" inherits="GameFontNormal" text="C: ">
+							<Size x="60" y="24" />
+							<Anchors>
+								<Anchor point="BOTTOM" relativeTo="$parent_Crush" relativePoint="TOP">
+									<Offset x="0" y="6" />
+								</Anchor>
+							</Anchors>
+						</FontString>
+						<FontString name="$parent_Hit" inherits="GameFontNormal" text="Hit" justifyH="LEFT">
+							<Size x="50" y="24" />
+							<Anchors>
+								<Anchor point="TOP" relativeTo="$parent_Crush" relativePoint="BOTTOM">
+									<Offset x="0" y="-6" />
+								</Anchor>
+							</Anchors>
+						</FontString>
+						<FontString name="$parent_Amount" inherits="GameFontNormal" text="Amount" justifyH="LEFT">
+							<Size x="135" y="24" />
+							<Anchors>
+								<Anchor point="LEFT" relativeTo="$parent_Crush" relativePoint="RIGHT">
+									<Offset x="0" y="32" />
+								</Anchor>
+							</Anchors>
+						</FontString>
+						<FontString name="$parent_Average" inherits="GameFontNormal" text="Average" justifyH="LEFT">
+							<Size x="60" y="24" />
+							<Anchors>
+								<Anchor point="LEFT" relativeTo="$parent_Amount" relativePoint="RIGHT" />
+							</Anchors>
+						</FontString>
+						<FontString name="$parent_Min" inherits="GameFontNormal" text="Min" justifyH="LEFT">
+							<Size x="60" y="24" />
+							<Anchors>
+								<Anchor point="LEFT" relativeTo="$parent_Average" relativePoint="RIGHT" />
+							</Anchors>
+						</FontString>
+						<FontString name="$parent_Max" inherits="GameFontNormal" text="Max" justifyH="LEFT">
+							<Size x="60" y="24" />
+							<Anchors>
+								<Anchor point="LEFT" relativeTo="$parent_Min" relativePoint="RIGHT" />
+							</Anchors>
+						</FontString>
+						<FontString name="$parent_Crit" inherits="GameFontNormal" text="Crit" justifyH="LEFT">
+							<Size x="50" y="24" />
+							<Anchors>
+								<Anchor point="TOP" relativeTo="$parent_Hit" relativePoint="BOTTOM">
+									<Offset x="0" y="-6" />
+								</Anchor>
+							</Anchors>
+						</FontString>
+						<FontString name="$parent_Miss" inherits="GameFontNormal" text="Miss" justifyH="LEFT">
+							<Size x="120" y="24" />
+							<Anchors>
+								<Anchor point="TOP" relativeTo="$parent_Crit" relativePoint="BOTTOM">
+									<Offset x="35" y="-6" />
+								</Anchor>
+							</Anchors>
+						</FontString>
+						<FontString name="$parent_Parry" inherits="GameFontNormal" text="Parry" justifyH="LEFT">
+							<Size x="120" y="24" />
+							<Anchors>
+								<Anchor point="TOP" relativeTo="$parent_Miss" relativePoint="BOTTOM">
+									<Offset x="0" y="-6" />
+								</Anchor>
+							</Anchors>
+						</FontString>
+						<FontString name="$parent_Dodge" inherits="GameFontNormal" text="Dodge" justifyH="LEFT">
+							<Size x="120" y="24" />
+							<Anchors>
+								<Anchor point="TOP" relativeTo="$parent_Parry" relativePoint="BOTTOM">
+									<Offset x="0" y="-6" />
+								</Anchor>
+							</Anchors>
+						</FontString>
+						<FontString name="$parent_Resist" inherits="GameFontNormal" text="Resist" justifyH="LEFT">
+							<Size x="120" y="24" />
+							<Anchors>
+								<Anchor point="TOP" relativeTo="$parent_Dodge" relativePoint="BOTTOM">
+									<Offset x="0" y="-6" />
+								</Anchor>
+							</Anchors>
+						</FontString>
+						<FontString name="$parent_Average1" inherits="GameFontNormalSmall" text="10000">
+							<Size x="60" y="30" />
+							<Anchors>
+								<Anchor point="TOP" relativeTo="$parent_Average" relativePoint="BOTTOM">
+									<Offset x="-3" y="0" />
+								</Anchor>
+							</Anchors>
+							<Color r="1" g="1" b="1" />
+						</FontString>
+						<FontString name="$parent_Average2" inherits="GameFontNormalSmall" text="10000">
+							<Size x="60" y="30" />
+							<Anchors>
+								<Anchor point="TOP" relativeTo="$parent_Average1" relativePoint="BOTTOM" />
+							</Anchors>
+							<Color r="1" g="1" b="1" />
+						</FontString>
+						<FontString name="$parent_Average3" inherits="GameFontNormalSmall" text="10000">
+							<Size x="60" y="30" />
+							<Anchors>
+								<Anchor point="TOP" relativeTo="$parent_Average2" relativePoint="BOTTOM" />
+							</Anchors>
+							<Color r="1" g="1" b="1" />
+						</FontString>
+						<FontString name="$parent_Average4" inherits="GameFontNormalSmall" text="10000">
+							<Size x="60" y="30" />
+							<Anchors>
+								<Anchor point="TOP" relativeTo="$parent_Average3" relativePoint="BOTTOM" />
+							</Anchors>
+							<Color r="1" g="1" b="1" />
+						</FontString>
+						<FontString name="$parent_Average5" inherits="GameFontNormalSmall" text="10000">
+							<Size x="60" y="30" />
+							<Anchors>
+								<Anchor point="TOP" relativeTo="$parent_Average4" relativePoint="BOTTOM" />
+							</Anchors>
+							<Color r="1" g="1" b="1" />
+						</FontString>
+						<FontString name="$parent_Average6" inherits="GameFontNormalSmall" text="10000">
+							<Size x="60" y="30" />
+							<Anchors>
+								<Anchor point="TOP" relativeTo="$parent_Average5" relativePoint="BOTTOM" />
+							</Anchors>
+							<Color r="1" g="1" b="1" />
+						</FontString>
+						<FontString name="$parent_Average7" inherits="GameFontNormalSmall" text="10000">
+							<Size x="60" y="30" />
+							<Anchors>
+								<Anchor point="TOP" relativeTo="$parent_Average6" relativePoint="BOTTOM" />
+							</Anchors>
+							<Color r="1" g="1" b="1" />
+						</FontString>
+						<FontString name="$parent_Min1" inherits="GameFontNormalSmall" text="10000">
+							<Size x="60" y="30" />
+							<Anchors>
+								<Anchor point="TOP" relativeTo="$parent_Min" relativePoint="BOTTOM">
+									<Offset x="-3" y="0" />
+								</Anchor>
+							</Anchors>
+							<Color r="1" g="1" b="1" />
+						</FontString>
+						<FontString name="$parent_Min2" inherits="GameFontNormalSmall" text="10000">
+							<Size x="60" y="30" />
+							<Anchors>
+								<Anchor point="TOP" relativeTo="$parent_Min1" relativePoint="BOTTOM" />
+							</Anchors>
+							<Color r="1" g="1" b="1" />
+						</FontString>
+						<FontString name="$parent_Min3" inherits="GameFontNormalSmall" text="10000">
+							<Size x="60" y="30" />
+							<Anchors>
+								<Anchor point="TOP" relativeTo="$parent_Min2" relativePoint="BOTTOM" />
+							</Anchors>
+							<Color r="1" g="1" b="1" />
+						</FontString>
+						<FontString name="$parent_Min4" inherits="GameFontNormalSmall" text="10000">
+							<Size x="60" y="30" />
+							<Anchors>
+								<Anchor point="TOP" relativeTo="$parent_Min3" relativePoint="BOTTOM" />
+							</Anchors>
+							<Color r="1" g="1" b="1" />
+						</FontString>
+						<FontString name="$parent_Min5" inherits="GameFontNormalSmall" text="10000">
+							<Size x="60" y="30" />
+							<Anchors>
+								<Anchor point="TOP" relativeTo="$parent_Min4" relativePoint="BOTTOM" />
+							</Anchors>
+							<Color r="1" g="1" b="1" />
+						</FontString>
+						<FontString name="$parent_Min6" inherits="GameFontNormalSmall" text="10000">
+							<Size x="60" y="30" />
+							<Anchors>
+								<Anchor point="TOP" relativeTo="$parent_Min5" relativePoint="BOTTOM" />
+							</Anchors>
+							<Color r="1" g="1" b="1" />
+						</FontString>
+						<FontString name="$parent_Min7" inherits="GameFontNormalSmall" text="10000">
+							<Size x="60" y="30" />
+							<Anchors>
+								<Anchor point="TOP" relativeTo="$parent_Min6" relativePoint="BOTTOM" />
+							</Anchors>
+							<Color r="1" g="1" b="1" />
+						</FontString>
+						<FontString name="$parent_Max1" inherits="GameFontNormalSmall" text="10000">
+							<Size x="60" y="30" />
+							<Anchors>
+								<Anchor point="TOP" relativeTo="$parent_Max" relativePoint="BOTTOM">
+									<Offset x="-3" y="0" />
+								</Anchor>
+							</Anchors>
+							<Color r="1" g="1" b="1" />
+						</FontString>
+						<FontString name="$parent_Max2" inherits="GameFontNormalSmall" text="10000">
+							<Size x="60" y="30" />
+							<Anchors>
+								<Anchor point="TOP" relativeTo="$parent_Max1" relativePoint="BOTTOM" />
+							</Anchors>
+							<Color r="1" g="1" b="1" />
+						</FontString>
+						<FontString name="$parent_Max3" inherits="GameFontNormalSmall" text="10000">
+							<Size x="60" y="30" />
+							<Anchors>
+								<Anchor point="TOP" relativeTo="$parent_Max2" relativePoint="BOTTOM" />
+							</Anchors>
+							<Color r="1" g="1" b="1" />
+						</FontString>
+						<FontString name="$parent_Max4" inherits="GameFontNormalSmall" text="10000">
+							<Size x="60" y="30" />
+							<Anchors>
+								<Anchor point="TOP" relativeTo="$parent_Max3" relativePoint="BOTTOM" />
+							</Anchors>
+							<Color r="1" g="1" b="1" />
+						</FontString>
+						<FontString name="$parent_Max5" inherits="GameFontNormalSmall" text="10000">
+							<Size x="60" y="30" />
+							<Anchors>
+								<Anchor point="TOP" relativeTo="$parent_Max4" relativePoint="BOTTOM" />
+							</Anchors>
+							<Color r="1" g="1" b="1" />
+						</FontString>
+						<FontString name="$parent_Max6" inherits="GameFontNormalSmall" text="10000">
+							<Size x="60" y="30" />
+							<Anchors>
+								<Anchor point="TOP" relativeTo="$parent_Max5" relativePoint="BOTTOM" />
+							</Anchors>
+							<Color r="1" g="1" b="1" />
+						</FontString>
+						<FontString name="$parent_Max7" inherits="GameFontNormalSmall" text="10000">
+							<Size x="60" y="30" />
+							<Anchors>
+								<Anchor point="TOP" relativeTo="$parent_Max6" relativePoint="BOTTOM" />
+							</Anchors>
+							<Color r="1" g="1" b="1" />
+						</FontString>
+					</Layer>
+				</Layers>
+				<Scripts>
+					<OnLoad>
+						getglobal(this:GetName().."_Crush"):SetText(DPSMate.L["crush"])
+						getglobal(this:GetName().."_Hit"):SetText(DPSMate.L["hit"])
+						getglobal(this:GetName().."_Amount"):SetText(DPSMate.L["amount"])
+						getglobal(this:GetName().."_Average"):SetText(DPSMate.L["average"])
+						getglobal(this:GetName().."_Min"):SetText(DPSMate.L["min"])
+						getglobal(this:GetName().."_Max"):SetText(DPSMate.L["max"])
+						getglobal(this:GetName().."_Crit"):SetText(DPSMate.L["crit"])
+						getglobal(this:GetName().."_Miss"):SetText(DPSMate.L["miss"])
+						getglobal(this:GetName().."_Parry"):SetText(DPSMate.L["parry"])
+						getglobal(this:GetName().."_Dodge"):SetText(DPSMate.L["dodge"])
+						getglobal(this:GetName().."_Resist"):SetText(DPSMate.L["resist"])
+					</OnLoad>
+				</Scripts>
+				<Frames>
+					<Frame name="$parent_Amount1" inherits="DPSMateTableAmountTemplate">
+						<Anchors>
+							<Anchor point="TOP" relativeTo="$parent_Amount" relativePoint="BOTTOM" />
+						</Anchors>
+					</Frame>
+					<Frame name="$parent_Amount2" inherits="DPSMateTableAmountTemplate">
+						<Anchors>
+							<Anchor point="TOP" relativeTo="$parent_Amount1" relativePoint="BOTTOM" />
+						</Anchors>
+					</Frame>
+					<Frame name="$parent_Amount3" inherits="DPSMateTableAmountTemplate">
+						<Anchors>
+							<Anchor point="TOP" relativeTo="$parent_Amount2" relativePoint="BOTTOM" />
+						</Anchors>
+					</Frame>
+					<Frame name="$parent_Amount4" inherits="DPSMateTableAmountTemplate">
+						<Anchors>
+							<Anchor point="TOP" relativeTo="$parent_Amount3" relativePoint="BOTTOM" />
+						</Anchors>
+					</Frame>
+					<Frame name="$parent_Amount5" inherits="DPSMateTableAmountTemplate">
+						<Anchors>
+							<Anchor point="TOP" relativeTo="$parent_Amount4" relativePoint="BOTTOM" />
+						</Anchors>
+					</Frame>
+					<Frame name="$parent_Amount6" inherits="DPSMateTableAmountTemplate">
+						<Anchors>
+							<Anchor point="TOP" relativeTo="$parent_Amount5" relativePoint="BOTTOM" />
+						</Anchors>
+					</Frame>
+					<Frame name="$parent_Amount7" inherits="DPSMateTableAmountTemplate">
+						<Anchors>
+							<Anchor point="TOP" relativeTo="$parent_Amount6" relativePoint="BOTTOM" />
+						</Anchors>
+					</Frame>
+				</Frames>
+			</Frame>
+		</Frames>
+	</Frame>
+	
+	<Frame name="DPSMate_Details_CompareDamageTaken_Graph" parent="DPSMate_Details_DamageTaken" hidden="true" enableMouse="true">
+		<Size x="1800" y="250" />
+		<Anchors>
+			<Anchor point="BOTTOMRIGHT" relativeTo="$parent" relativePoint="TOPLEFT">
+				<Offset x="900" y="0" />
+			</Anchor>
+		</Anchors>
+		<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+			<BackgroundInsets left="6" right="6" top="6" bottom="6" />
+			<TileSize val="16" />
+			<EdgeSize val="16" />
+			<Color r="0.157" g="0.08" b="0.06" a="1" />
+		</Backdrop>
+		<Scripts>
+			<OnMouseDown>
+				this:GetParent():StartMoving()
+			</OnMouseDown>
+			<OnMouseUp>
+				this:GetParent():StopMovingOrSizing()
+			</OnMouseUp>
+		</Scripts>
+	</Frame>
+	
+	<Frame name="DPSMate_Details_CompareDamageTaken" parent="DPSMate_Details_DamageTaken" movable="true" hidden="true">
+		<Size x="900" y="600" />
+		<Anchors>
+			<Anchor point="RIGHT" relativeTo="$parent" relativePoint="LEFT" />
+		</Anchors>
+		<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+			<BackgroundInsets left="6" right="6" top="6" bottom="6" />
+			<TileSize val="16" />
+			<EdgeSize val="16" />
+			<Color r="0.157" g="0.08" b="0.06" a="1" />
+		</Backdrop>
+		<Layers>
+			<Layer level="ARTWORK">
+				<FontString name="$parent_Title" inherits="GameFontNormalHuge" justifyH="LEFT" justifyV="CENTER">
+					<Size x="900" y="40" />
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset x="20" y="-10" />
+						</Anchor>
+					</Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+		<Scripts>
+			<OnLoad>
+				getglobal(this:GetName().."_Title"):SetFont("Fonts\\FRIZQT__.TTF", 24)
+			</OnLoad>
+			<OnMouseDown>
+				this:GetParent():StartMoving()
+			</OnMouseDown>
+			<OnMouseUp>
+				this:GetParent():StopMovingOrSizing()
+			</OnMouseUp>
+		</Scripts>
+		<Frames>
+			<Button name="$parent_CloseButton">
+				<Size x="30" y="30" />
+				<Anchors>
+					<Anchor point="TOPRIGHT" relativeTo="$parent" relativePoint="TOPRIGHT">
+						<Offset>
+							<AbsDimension x="0" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnEnter>
+						GameTooltip:SetOwner(this, "ANCHOR_RIGHT")
+						GameTooltip:SetText(DPSMate.L["close"], nil, nil, nil, nil, 1)
+						GameTooltip:Show()
+					</OnEnter>
+					<OnLeave>
+						GameTooltip:Hide()
+					</OnLeave>
+					<OnClick>
+						DPSMate_Details_DamageTaken:Hide()
+						PlaySound("igMainMenuOptionCheckBoxOff")
+					</OnClick>
+				</Scripts>
+				<NormalTexture file="Interface\Buttons\UI-Panel-MinimizeButton-Up"/>
+				<PushedTexture file="Interface\Buttons\UI-Panel-MinimizeButton-Down"/>
+				<HighlightTexture file="Interface\Buttons\UI-Panel-MinimizeButton-Highlight" alphaMode="ADD"/>
+			</Button>
+			<Frame name="$parent_DiagramLine">
+				<Size x="870" y="250" />
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset x="15" y="-65" />
+					</Anchor>
+				</Anchors>
+				<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+					<BackgroundInsets left="6" right="6" top="6" bottom="6" />
+					<TileSize val="16" />
+					<EdgeSize val="16" />
+					<Color r="0.157" g="0.08" b="0.06" a="0.5" />
+				</Backdrop>
+			</Frame>
+			<Frame name="$parent_DiagramLegend">
+				<Size x="245" y="55" />
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parent_DiagramLine" relativePoint="BOTTOMLEFT" />
+				</Anchors>
+				<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+					<BackgroundInsets left="6" right="6" top="6" bottom="6" />
+					<TileSize val="16" />
+					<EdgeSize val="16" />
+					<Color r="0.157" g="0.08" b="0.06" a="0.5" />
+				</Backdrop>
+				<Frames>
+					<Frame name="$parent_Procs" inherits="UIDropDownMenuTemplate" id="1">
+						<Size x="200" y="24" />
+						<Anchors>
+							<Anchor point="TOP">
+								<Offset x="0" y="-18" />
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnEnter>
+								GameTooltip:SetOwner(this, "ANCHOR_RIGHT")
+								GameTooltip:SetText(DPSMate.L["procstooltip"], nil, nil, nil, nil, 1)
+							</OnEnter>
+							<OnLeave>
+								GameTooltip:Hide()
+							</OnLeave>
+							<OnLoad>
+								UIDropDownMenu_SetWidth(200)
+								getglobal(this:GetName().."_Text"):SetText(DPSMate.L["procs"])
+							</OnLoad>
+						</Scripts>
+						<Layers>
+							<Layer level="ARTWORK">
+								<FontString name="$parent_Text" inherits="GameFontNormalSmall" alphaMode="ADD">
+									<Size x="200" y="20" />
+									<Anchors>
+										<Anchor point="TOP">
+											<Offset x="0" y="15" />
+										</Anchor>
+									</Anchors>
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+				</Frames>
+			</Frame>
+			<Frame name="$parent_LogCreature">
+				<Size x="245" y="215" />
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parent_DiagramLegend" relativePoint="BOTTOMLEFT" />
+				</Anchors>
+				<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+					<BackgroundInsets left="6" right="6" top="6" bottom="6" />
+					<TileSize val="16" />
+					<EdgeSize val="16" />
+					<Color r="0.157" g="0.08" b="0.06" a="0.5" />
+				</Backdrop>
+				<Frames>
+					<ScrollFrame name="$parent_ScrollFrame" inherits="FauxScrollFrameTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="0" y="-5" />
+								</Offset>
+							</Anchor>
+							<Anchor point="BOTTOMRIGHT">
+								<Offset>
+								  <AbsDimension x="-27" y="4"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnMouseWheel>
+								DPSMate_Details_DamageTaken.LastScroll = "Compare"
+								if not this.oset then
+									this.oset = 0
+								end
+								this.oset = this.oset - arg1
+								FauxScrollFrame_OnVerticalScroll(24, DPSMate.Modules.DetailsDamageTaken.ScrollFrame_Update) 
+							</OnMouseWheel>
+					   </Scripts>
+					</ScrollFrame>
+					<Button name="$parent_ScrollButton1" inherits="DPSMate_Details_DamageTaken_ScrollButton" id="1">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset x="5" y="-5" />
+							</Anchor>
+						</Anchors>
+					</Button>
+					<Button name="$parent_ScrollButton2" inherits="DPSMate_Details_DamageTaken_ScrollButton"  id="2">
+						<Anchors>
+							<Anchor point="TOP" relativeTo="$parent_ScrollButton1" relativePoint="BOTTOM">
+								<Offset x="0" y="-2" />
+							</Anchor>
+						</Anchors>
+					</Button>
+					<Button name="$parent_ScrollButton3" inherits="DPSMate_Details_DamageTaken_ScrollButton"  id="3">
+						<Anchors>
+							<Anchor point="TOP" relativeTo="$parent_ScrollButton2" relativePoint="BOTTOM">
+								<Offset x="0" y="-2" />
+							</Anchor>
+						</Anchors>
+					</Button>
+					<Button name="$parent_ScrollButton4" inherits="DPSMate_Details_DamageTaken_ScrollButton"  id="4">
+						<Anchors>
+							<Anchor point="TOP" relativeTo="$parent_ScrollButton3" relativePoint="BOTTOM">
+								<Offset x="0" y="-2" />
+							</Anchor>
+						</Anchors>
+					</Button>
+					<Button name="$parent_ScrollButton5" inherits="DPSMate_Details_DamageTaken_ScrollButton"  id="5">
+						<Anchors>
+							<Anchor point="TOP" relativeTo="$parent_ScrollButton4" relativePoint="BOTTOM">
+								<Offset x="0" y="-2" />
+							</Anchor>
+						</Anchors>
+					</Button>
+					<Button name="$parent_ScrollButton6" inherits="DPSMate_Details_DamageTaken_ScrollButton"  id="6">
+						<Anchors>
+							<Anchor point="TOP" relativeTo="$parent_ScrollButton5" relativePoint="BOTTOM">
+								<Offset x="0" y="-2" />
+							</Anchor>
+						</Anchors>
+					</Button>
+					<Button name="$parent_ScrollButton7" inherits="DPSMate_Details_DamageTaken_ScrollButton"  id="7">
+						<Anchors>
+							<Anchor point="TOP" relativeTo="$parent_ScrollButton6" relativePoint="BOTTOM">
+								<Offset x="0" y="-2" />
+							</Anchor>
+						</Anchors>
+					</Button>
+					<Button name="$parent_ScrollButton8" inherits="DPSMate_Details_DamageTaken_ScrollButton"  id="8">
+						<Anchors>
+							<Anchor point="TOP" relativeTo="$parent_ScrollButton7" relativePoint="BOTTOM">
+								<Offset x="0" y="-2" />
+							</Anchor>
+						</Anchors>
+					</Button>
+				</Frames>
+			</Frame>
+			<Frame name="$parent_Log">
+				<Size x="245" y="270" />
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parent_DiagramLegend" relativePoint="TOPRIGHT" />
+				</Anchors>
+				<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+					<BackgroundInsets left="6" right="6" top="6" bottom="6" />
+					<TileSize val="16" />
+					<EdgeSize val="16" />
+					<Color r="0.157" g="0.08" b="0.06" a="0.5" />
+				</Backdrop>
+				<Scripts>
+					<OnLoad>
+						DPSMate.Modules.DetailsDamageTaken:CreateGraphTable("Compare")
+					</OnLoad>
+				</Scripts>
+				<Frames>
+					<ScrollFrame name="$parent_ScrollFrame" inherits="FauxScrollFrameTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="0" y="-5" />
+								</Offset>
+							</Anchor>
+							<Anchor point="BOTTOMRIGHT">
+								<Offset>
+								  <AbsDimension x="-27" y="4"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnMouseWheel>
+								DPSMate_Details_DamageTaken.LastScroll = "Compare"
+								if not this.oset then
+									this.oset = 0
+								end
+								this.oset = this.oset - arg1
+								FauxScrollFrame_OnVerticalScroll(24, DPSMate.Modules.DetailsDamageTaken.SelectCreatureButton) 
+							</OnMouseWheel>
 					   </Scripts>
 					</ScrollFrame>
 					<Button name="$parent_ScrollButton1" inherits="DPSMate_Details_DamageTaken_ScrollButton" id="1">
