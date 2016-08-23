@@ -140,7 +140,7 @@ function DPSMate.Modules.DetailsEDD:UpdateSumGraph()
 end
 
 function DPSMate.Modules.DetailsEDD:ScrollFrame_Update(comp)
-	if not comp then comp = DPSMate_Details_DamageTaken.LastScroll or "" end
+	if not comp then comp = DPSMate_Details_EDD.LastScroll or "" end
 	local line, lineplusoffset
 	local path = "DPSMate_Details_"..comp.."EDD_LogCreature"
 	local obj = _G(path.."_ScrollFrame")
@@ -191,7 +191,7 @@ function DPSMate.Modules.DetailsEDD:ScrollFrame_Update(comp)
 end
 
 function DPSMate.Modules.DetailsEDD:SelectCreatureButton(i, comp)
-	if not comp then comp = DPSMate_Details_DamageTaken.LastScroll or "" end
+	if not comp then comp = DPSMate_Details_EDD.LastScroll or "" end
 	local line, lineplusoffset
 	local path = "DPSMate_Details_"..comp.."EDD_Log"
 	local obj = _G(path.."_ScrollFrame")
@@ -258,7 +258,7 @@ function DPSMate.Modules.DetailsEDD:SelectCreatureButton(i, comp)
 end
 
 function DPSMate.Modules.DetailsEDD:SelectDetailsButton(p,i, comp, cname)
-	if not comp then comp = DPSMate_Details_DamageTaken.LastScroll or "" end
+	if not comp then comp = DPSMate_Details_EDD.LastScroll or "" end
 	local obj = _G("DPSMate_Details_"..comp.."EDD_Log_ScrollFrame")
 	local lineplusoffset = i + FauxScrollFrame_GetOffset(obj)
 	local uArr, dArr, dSel = DetailsArr, DmgArr, DetailsSelected

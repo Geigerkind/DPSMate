@@ -1491,7 +1491,8 @@ local hexClassColor = {
 }
 
 local CompareExcept = {
-	[DPSMate.L["enemydamagedone"]] = true
+	[DPSMate.L["enemydamagedone"]] = true,
+	[DPSMate.L["enemydamagetaken"]] = true
 }
 function DPSMate.Options:InializePlayerDewDrop(obj)
 	local channel, i = DPSMate.L["gchannel"], 1
