@@ -155,8 +155,12 @@ function DPSMate.Modules.LiftMagicReceived:ShowTooltip(user,k)
 	end
 end
 
-function DPSMate.Modules.LiftMagicReceived:OpenDetails(obj, key)
-	DPSMate.Modules.DetailsLiftMagicReceived:UpdateDetails(obj, key)
+function DPSMate.Modules.LiftMagicReceived:OpenDetails(obj, key, bool)
+	if bool then
+		DPSMate.Modules.DetailsLiftMagicReceived:UpdateCompare(obj, key, bool)
+	else
+		DPSMate.Modules.DetailsLiftMagicReceived:UpdateDetails(obj, key)
+	end
 end
 
 function DPSMate.Modules.LiftMagicReceived:OpenTotalDetails(obj, key)

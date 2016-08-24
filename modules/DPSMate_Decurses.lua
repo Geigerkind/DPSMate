@@ -124,8 +124,12 @@ function DPSMate.Modules.Decurses:ShowTooltip(user,k)
 	end
 end
 
-function DPSMate.Modules.Decurses:OpenDetails(obj, key)
-	DPSMate.Modules.DetailsDecurses:UpdateDetails(obj, key)
+function DPSMate.Modules.Decurses:OpenDetails(obj, key, bool)
+	if bool then
+		DPSMate.Modules.DetailsDecurses:UpdateCompare(obj, key, bool)
+	else
+		DPSMate.Modules.DetailsDecurses:UpdateDetails(obj, key)
+	end
 end
 
 function DPSMate.Modules.Decurses:OpenTotalDetails(obj, key)

@@ -26,10 +26,10 @@ end
 function DPSMate.Modules.DecursesReceived:GetSortedTable(arr,k)
 	local b, a, temp, total = {}, {}, {}, 0
 	for cat, val in pairs(arr) do -- 3 Owner
+		local user = DPSMate:GetUserById(cat)
 		for ca, va in pairs(val) do -- 42 Ability
 			if ca~="i" then
 				for c, v in pairs(va) do -- 3 Target
-					local user = DPSMate:GetUserById(c)
 					if DPSMate:ApplyFilter(k, user) then
 						for ce, ve in pairs(v) do -- 10 Cured Ability
 							if self:IsValid(DPSMate:GetAbilityById(ce), DPSMate:GetAbilityById(ca), DPSMateUser[user]) then
@@ -155,8 +155,12 @@ function DPSMate.Modules.DecursesReceived:ShowTooltip(user,k)
 	end
 end
 
-function DPSMate.Modules.DecursesReceived:OpenDetails(obj, key)
-	DPSMate.Modules.DetailsDecursesReceived:UpdateDetails(obj, key)
+function DPSMate.Modules.DecursesReceived:OpenDetails(obj, key, bool)
+	if bool then
+		DPSMate.Modules.DetailsDecursesReceived:UpdateCompare(obj, key, bool)
+	else
+		DPSMate.Modules.DetailsDecursesReceived:UpdateDetails(obj, key)
+	end
 end
 
 function DPSMate.Modules.DecursesReceived:OpenTotalDetails(obj, key)

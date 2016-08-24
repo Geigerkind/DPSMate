@@ -154,8 +154,12 @@ function DPSMate.Modules.CureDiseaseReceived:ShowTooltip(user,k)
 	end
 end
 
-function DPSMate.Modules.CureDiseaseReceived:OpenDetails(obj, key)
-	DPSMate.Modules.DetailsCureDiseaseReceived:UpdateDetails(obj, key)
+function DPSMate.Modules.CureDiseaseReceived:OpenDetails(obj, key, bool)
+	if bool then
+		DPSMate.Modules.DetailsCureDiseaseReceived:UpdateCompare(obj, key, bool)
+	else
+		DPSMate.Modules.DetailsCureDiseaseReceived:UpdateDetails(obj, key)
+	end
 end
 
 function DPSMate.Modules.CureDiseaseReceived:OpenTotalDetails(obj, key)
