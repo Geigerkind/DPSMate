@@ -100,8 +100,12 @@ function DPSMate.Modules.Dispels:ShowTooltip(user,k)
 	end
 end
 
-function DPSMate.Modules.Dispels:OpenDetails(obj, key)
-	DPSMate.Modules.DetailsDispels:UpdateDetails(obj, key)
+function DPSMate.Modules.Dispels:OpenDetails(obj, key, bool)
+	if bool then
+		DPSMate.Modules.DetailsDispels:UpdateCompare(obj, key, bool)
+	else
+		DPSMate.Modules.DetailsDispels:UpdateDetails(obj, key)
+	end
 end
 
 function DPSMate.Modules.Dispels:OpenTotalDetails(obj, key)
