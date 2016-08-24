@@ -42,6 +42,7 @@ local math_fmod = math.fmod
 local math_huge = math.huge
 local table_remove = table.remove
 local table_insert = table.insert
+local string_format = string.format
 
 local CreateFrame = CreateFrame
 local GetCursorPosition = GetCursorPosition
@@ -728,6 +729,7 @@ function GraphFunctions:AddPie(Percent, Color, label)
 			t:SetWidth(self:GetWidth())
 			t.name = self.name
 			t.label = label
+			t.percent = string_format("%.2f", Percent).."%"
 			
 			GraphFunctions:RotateTexture(t,CurAngle)
 			t:Show()
@@ -910,10 +912,11 @@ function GraphFunctions:PieChart_OnUpdate()
 							for _, t in pairs(Section.Textures) do
 								Color=Section.Color
 								--label=t.label
+								Percent = t.percent
 								t:SetVertexColor(Color[1],Color[2],Color[3],1.0)
 							end
 						end
-
+						
 						if this.SelectionFunc then
 							this:SelectionFunc(k)
 						end
@@ -928,7 +931,7 @@ function GraphFunctions:PieChart_OnUpdate()
 					
 					if label then
 						GameTooltip:SetOwner(this, "TOPLEFT")
-						GameTooltip:AddLine(label)
+						GameTooltip:AddLine(label..": "..(this.Sections[k].Textures[1].percent or ""))
 						GameTooltip:Show()
 					end
 					
