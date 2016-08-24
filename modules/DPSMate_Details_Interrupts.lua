@@ -3,6 +3,7 @@ DPSMate.Modules.DetailsInterrupts = {}
 
 -- Local variables
 local DetailsArr, DetailsTotal, DmgArr, DetailUser, DetailsSelected  = {}, 0, {}, "", 1
+local DetailsArrComp, DetailsTotalComp, DmgArrComp, DetailUserComp, DetailsSelectedComp  = {}, 0, {}, "", 1
 local g, g2
 local curKey = 1
 local db, cbt = {}, 0
@@ -13,17 +14,32 @@ function DPSMate.Modules.DetailsInterrupts:UpdateDetails(obj, key)
 	curKey = key
 	db, cbt = DPSMate:GetMode(key)
 	DetailsUser = obj.user
+	DetailUserComp = nil
 	DPSMate_Details_Interrupts_Title:SetText(DPSMate.L["interruptsby"]..obj.user)
-	DetailsArr, DetailsTotal, DmgArr = DPSMate.Modules.DetailsInterrupts:EvalTable()
+	DetailsArr, DetailsTotal, DmgArr = self:EvalTable()
 	DPSMate_Details_Interrupts:Show()
-	self:ScrollFrame_Update()
-	self:SelectCreatureButton(1)
-	self:SelectCreatureAbilityButton(1,1)
+	self:ScrollFrame_Update("")
+	self:SelectCreatureButton(1,"")
+	self:SelectCreatureAbilityButton(1,1, "")
+	
+	DPSMate_Details_CompareInterrupts:Hide()
 end
 
-function DPSMate.Modules.DetailsInterrupts:EvalTable()
+function DPSMate.Modules.DetailsInterrupts:UpdateCompare(obj, key, comp)
+	self:UpdateDetails(obj, key)
+
+	DetailsUserComp	= comp
+	DPSMate_Details_CompareInterrupts_Title:SetText(DPSMate.L["interruptsby"]..comp)
+	DetailsArrComp, DetailsTotalComp, DmgArrComp = self:EvalTable(comp)
+	DPSMate_Details_CompareInterrupts:Show()
+	self:ScrollFrame_Update("Compare")
+	self:SelectCreatureButton(1,"Compare")
+	self:SelectCreatureAbilityButton(1,1, "Compare")
+end
+
+function DPSMate.Modules.DetailsInterrupts:EvalTable(cname)
 	local a, b, total = {}, {}, 0
-	for cat, val in db[DPSMateUser[DetailsUser][1]] do -- 41 Ability
+	for cat, val in db[DPSMateUser[cname or DetailsUser][1]] do -- 41 Ability
 		if cat~="i" then
 			local CV, ta, tb = 0, {}, {}
 			for ca, va in val do
@@ -83,18 +99,26 @@ function DPSMate.Modules.DetailsInterrupts:EvalTable()
 	return a, total, b
 end
 
-function DPSMate.Modules.DetailsInterrupts:ScrollFrame_Update()
+function DPSMate.Modules.DetailsInterrupts:ScrollFrame_Update(comp)
+	comp = comp or DPSMate_Details_Interrupts.LastScroll
 	local line, lineplusoffset
-	local obj = DPSMate_Details_Interrupts_Log_ScrollFrame
-	local path = "DPSMate_Details_Interrupts_Log_ScrollButton"
-	local len = DPSMate:TableLength(DetailsArr)
+	local obj = _G("DPSMate_Details_"..comp.."Interrupts_Log_ScrollFrame")
+	local path = "DPSMate_Details_"..comp.."Interrupts_Log_ScrollButton"
+	local uArr, dArr, dTot, dSel = DetailsArr, DmgArr, DetailsTotal, DetailsSelected
+	if comp~="" and comp then
+		uArr = DetailsArrComp
+		dArr = DmgArrComp
+		dTot = DetailsTotalComp
+		dSel = DetailsSelectedComp
+	end
+	local len = DPSMate:TableLength(uArr)
 	FauxScrollFrame_Update(obj,len,14,24)
 	for line=1,14 do
 		lineplusoffset = line + FauxScrollFrame_GetOffset(obj)
-		if DetailsArr[lineplusoffset] ~= nil then
-			local ability = DPSMate:GetAbilityById(DetailsArr[lineplusoffset])
+		if uArr[lineplusoffset] ~= nil then
+			local ability = DPSMate:GetAbilityById(uArr[lineplusoffset])
 			_G(path..line.."_Name"):SetText(ability)
-			_G(path..line.."_Value"):SetText(DmgArr[lineplusoffset][1].." ("..string.format("%.2f", 100*DmgArr[lineplusoffset][1]/DetailsTotal).."%)")
+			_G(path..line.."_Value"):SetText(dArr[lineplusoffset][1].." ("..string.format("%.2f", 100*dArr[lineplusoffset][1]/dTot).."%)")
 			_G(path..line.."_Icon"):SetTexture(DPSMate.BabbleSpell:GetSpellIcon(strsub(ability, 1, (strfind(ability, "%(") or 0)-1) or ability))
 			if len < 14 then
 				_G(path..line):SetWidth(235)
@@ -108,24 +132,32 @@ function DPSMate.Modules.DetailsInterrupts:ScrollFrame_Update()
 			_G(path..line):Hide()
 		end
 		_G(path..line.."_selected"):Hide()
-		if DetailsSelected == lineplusoffset then
+		if dSel == lineplusoffset then
 			_G(path..line.."_selected"):Show()
 		end
 	end
 end
 
-function DPSMate.Modules.DetailsInterrupts:SelectCreatureButton(i)
+function DPSMate.Modules.DetailsInterrupts:SelectCreatureButton(i,comp)
+	comp = comp or DPSMate_Details_Interrupts.LastScroll
 	local line, lineplusoffset
-	local obj = DPSMate_Details_Interrupts_LogTwo_ScrollFrame
+	local obj =_G("DPSMate_Details_"..comp.."Interrupts_LogTwo_ScrollFrame")
 	obj.index = i
-	local path = "DPSMate_Details_Interrupts_LogTwo_ScrollButton"
-	local len = DPSMate:TableLength(DmgArr[i][2])
+	local path = "DPSMate_Details_"..comp.."Interrupts_LogTwo_ScrollButton"
+	local uArr, dArr, dTot, dSel = DetailsArr, DmgArr, DetailsTotal, DetailsSelected
+	if comp~="" and comp then
+		uArr = DetailsArrComp
+		dArr = DmgArrComp
+		dTot = DetailsTotalComp
+		dSel = DetailsSelectedComp
+	end
+	local len = DPSMate:TableLength(dArr[i][2])
 	FauxScrollFrame_Update(obj,len,14,24)
 	for line=1,14 do
 		lineplusoffset = line + FauxScrollFrame_GetOffset(obj)
-		if DmgArr[i][2][lineplusoffset] ~= nil then
-			_G(path..line.."_Name"):SetText(DPSMate:GetUserById(DmgArr[i][2][lineplusoffset]))
-			_G(path..line.."_Value"):SetText(DmgArr[i][3][lineplusoffset][1].." ("..string.format("%.2f", 100*DmgArr[i][3][lineplusoffset][1]/DmgArr[i][1]).."%)")
+		if dArr[i][2][lineplusoffset] ~= nil then
+			_G(path..line.."_Name"):SetText(DPSMate:GetUserById(dArr[i][2][lineplusoffset]))
+			_G(path..line.."_Value"):SetText(dArr[i][3][lineplusoffset][1].." ("..string.format("%.2f", 100*dArr[i][3][lineplusoffset][1]/dArr[i][1]).."%)")
 			_G(path..line.."_Icon"):SetTexture("Interface\\AddOns\\DPSMate\\images\\npc")
 			if len < 14 then
 				_G(path..line):SetWidth(235)
@@ -141,26 +173,34 @@ function DPSMate.Modules.DetailsInterrupts:SelectCreatureButton(i)
 		_G(path..line.."_selected"):Hide()
 	end
 	for p=1, 14 do
-		_G("DPSMate_Details_Interrupts_Log_ScrollButton"..p.."_selected"):Hide()
+		_G("DPSMate_Details_"..comp.."Interrupts_Log_ScrollButton"..p.."_selected"):Hide()
 	end
 	_G(path.."1_selected"):Show()
-	DPSMate.Modules.DetailsInterrupts:SelectCreatureAbilityButton(i, 1)
-	_G("DPSMate_Details_Interrupts_Log_ScrollButton"..i.."_selected"):Show()
+	DPSMate.Modules.DetailsInterrupts:SelectCreatureAbilityButton(i, 1, comp)
+	_G("DPSMate_Details_"..comp.."Interrupts_Log_ScrollButton"..i.."_selected"):Show()
 end
 
-function DPSMate.Modules.DetailsInterrupts:SelectCreatureAbilityButton(i, p)
+function DPSMate.Modules.DetailsInterrupts:SelectCreatureAbilityButton(i, p, comp)
+	comp = comp or DPSMate_Details_Interrupts.LastScroll
 	local line, lineplusoffset
-	local obj = DPSMate_Details_Interrupts_LogThree_ScrollFrame
+	local obj = _G("DPSMate_Details_"..comp.."Interrupts_LogThree_ScrollFrame")
 	obj.index = i
-	local path = "DPSMate_Details_Interrupts_LogThree_ScrollButton"
-	local len = DPSMate:TableLength(DmgArr[i][3][p][2])
+	local path = "DPSMate_Details_"..comp.."Interrupts_LogThree_ScrollButton"
+	local uArr, dArr, dTot, dSel = DetailsArr, DmgArr, DetailsTotal, DetailsSelected
+	if comp~="" and comp then
+		uArr = DetailsArrComp
+		dArr = DmgArrComp
+		dTot = DetailsTotalComp
+		dSel = DetailsSelectedComp
+	end
+	local len = DPSMate:TableLength(dArr[i][3][p][2])
 	FauxScrollFrame_Update(obj,len,14,24)
 	for line=1,14 do
 		lineplusoffset = line + FauxScrollFrame_GetOffset(obj)
-		if DmgArr[i][3][p][2][lineplusoffset] ~= nil then
-			local ability = DPSMate:GetAbilityById(DmgArr[i][3][p][2][lineplusoffset])
+		if dArr[i][3][p][2][lineplusoffset] ~= nil then
+			local ability = DPSMate:GetAbilityById(dArr[i][3][p][2][lineplusoffset])
 			_G(path..line.."_Name"):SetText(ability)
-			_G(path..line.."_Value"):SetText(DmgArr[i][3][p][3][lineplusoffset].." ("..string.format("%.2f", 100*DmgArr[i][3][p][3][lineplusoffset]/DmgArr[i][3][p][1]).."%)")
+			_G(path..line.."_Value"):SetText(dArr[i][3][p][3][lineplusoffset].." ("..string.format("%.2f", 100*dArr[i][3][p][3][lineplusoffset]/dArr[i][3][p][1]).."%)")
 			_G(path..line.."_Icon"):SetTexture(DPSMate.BabbleSpell:GetSpellIcon(strsub(ability, 1, (strfind(ability, "%(") or 0)-1) or ability))
 			if len < 14 then
 				_G(path..line):SetWidth(235)
@@ -176,7 +216,7 @@ function DPSMate.Modules.DetailsInterrupts:SelectCreatureAbilityButton(i, p)
 		_G(path..line.."_selected"):Hide()
 	end
 	for i=1, 14 do
-		_G("DPSMate_Details_Interrupts_LogTwo_ScrollButton"..i.."_selected"):Hide()
+		_G("DPSMate_Details_"..comp.."Interrupts_LogTwo_ScrollButton"..i.."_selected"):Hide()
 	end
-	_G("DPSMate_Details_Interrupts_LogTwo_ScrollButton"..p.."_selected"):Show()
+	_G("DPSMate_Details_"..comp.."Interrupts_LogTwo_ScrollButton"..p.."_selected"):Show()
 end
