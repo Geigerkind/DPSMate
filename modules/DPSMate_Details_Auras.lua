@@ -7,6 +7,7 @@ local g, g2
 local curKey = 1
 local db, cbt = {}, 0
 local Buffpos, Debuffpos = 0, 0
+local BuffposComp, DebuffposComp = 0, 0
 local t1, t2, t3, t4
 local t1TL, t2TL, t3TL, t4TL = 0, 0
 local _G = getglobal
@@ -337,7 +338,7 @@ function DPSMate.Modules.Auras:UpdateCompare(obj, key, comp)
 	t4, t3 = DPSMate.Modules.Auras:SortTable(comp)
 	t3TL = DPSMate:TableLength(t3)-6
 	t4TL = DPSMate:TableLength(t4)-6
-	Buffpos, Debuffpos = 0, 0
+	BuffposComp, DebuffposComp = 0, 0
 	
 	if not g2 then
 		g2 = DPSMate.Options.graph:CreateStackedGraph("AurasStackedGraphComp",DPSMate_Details_CompareAuras_DiagramLine,"CENTER","CENTER",0,0,660,170)
@@ -430,21 +431,32 @@ function DPSMate.Modules.Auras:UpdateBuffs(arg1, comp)
 		if Buffpos>t3TL then Buffpos = t3TL end
 		if t3TL<0 then Buffpos = 0 end
 		arr = t3
+		for i=1, 6 do
+			local pos = BuffposComp + i
+			if not arr[pos] then break end
+			_G(path..i).id = arr[pos][1]
+			_G(path..i.."_Icon"):SetTexture(DPSMate.BabbleSpell:GetSpellIcon(arr[pos][1]))
+			_G(path..i.."_Name"):SetText(arr[pos][1])
+			_G(path..i.."_Count"):SetText(arr[pos][3])
+			_G(path..i.."_CBT"):SetText(strformat("%.2f", arr[pos][2]*cbt/100).."s")
+			_G(path..i.."_CBTPerc"):SetText(arr[pos][2].."%")
+			_G(path..i.."_StatusBar"):SetValue(arr[pos][2])
+		end
 	else
 		if Buffpos<0 then Buffpos = 0 end
 		if Buffpos>t1TL then Buffpos = t1TL end
 		if t1TL<0 then Buffpos = 0 end
-	end
-	for i=1, 6 do
-		local pos = Buffpos + i
-		if not arr[pos] then break end
-		_G(path..i).id = arr[pos][1]
-		_G(path..i.."_Icon"):SetTexture(DPSMate.BabbleSpell:GetSpellIcon(arr[pos][1]))
-		_G(path..i.."_Name"):SetText(arr[pos][1])
-		_G(path..i.."_Count"):SetText(arr[pos][3])
-		_G(path..i.."_CBT"):SetText(strformat("%.2f", arr[pos][2]*DPSMateCombatTime["total"]/100).."s")
-		_G(path..i.."_CBTPerc"):SetText(arr[pos][2].."%")
-		_G(path..i.."_StatusBar"):SetValue(arr[pos][2])
+		for i=1, 6 do
+			local pos = Buffpos + i
+			if not arr[pos] then break end
+			_G(path..i).id = arr[pos][1]
+			_G(path..i.."_Icon"):SetTexture(DPSMate.BabbleSpell:GetSpellIcon(arr[pos][1]))
+			_G(path..i.."_Name"):SetText(arr[pos][1])
+			_G(path..i.."_Count"):SetText(arr[pos][3])
+			_G(path..i.."_CBT"):SetText(strformat("%.2f", arr[pos][2]*cbt/100).."s")
+			_G(path..i.."_CBTPerc"):SetText(arr[pos][2].."%")
+			_G(path..i.."_StatusBar"):SetValue(arr[pos][2])
+		end
 	end
 end
 
@@ -458,27 +470,38 @@ function DPSMate.Modules.Auras:UpdateDebuffs(arg1, comp)
 		if Debuffpos>t4TL then Debuffpos = t4TL end
 		if t4TL<0 then Debuffpos = 0 end
 		arr = t4
+		for i=1, 6 do
+			local pos = DebuffposComp + i
+			if not arr[pos] then break end
+			_G(path..i).id = arr[pos][1]
+			_G(path..i.."_Icon"):SetTexture(DPSMate.BabbleSpell:GetSpellIcon(arr[pos][1]))
+			_G(path..i.."_Name"):SetText(arr[pos][1])
+			_G(path..i.."_Count"):SetText(arr[pos][3])
+			_G(path..i.."_CBT"):SetText(strformat("%.2f", arr[pos][2]*cbt/100).."s")
+			_G(path..i.."_CBTPerc"):SetText(arr[pos][2].."%")
+			_G(path..i.."_StatusBar"):SetValue(arr[pos][2])
+		end
 	else
 		if Debuffpos<0 then Debuffpos = 0 end
 		if Debuffpos>t2TL then Debuffpos = t2TL end
 		if t2TL<0 then Debuffpos = 0 end
-	end
-	for i=1, 6 do
-		local pos = Debuffpos + i
-		if not arr[pos] then break end
-		_G(path..i).id = arr[pos][1]
-		_G(path..i.."_Icon"):SetTexture(DPSMate.BabbleSpell:GetSpellIcon(arr[pos][1]))
-		_G(path..i.."_Name"):SetText(arr[pos][1])
-		_G(path..i.."_Count"):SetText(arr[pos][3])
-		_G(path..i.."_CBT"):SetText(strformat("%.2f", arr[pos][2]*DPSMateCombatTime["total"]/100).."s")
-		_G(path..i.."_CBTPerc"):SetText(arr[pos][2].."%")
-		_G(path..i.."_StatusBar"):SetValue(arr[pos][2])
+		for i=1, 6 do
+			local pos = Debuffpos + i
+			if not arr[pos] then break end
+			_G(path..i).id = arr[pos][1]
+			_G(path..i.."_Icon"):SetTexture(DPSMate.BabbleSpell:GetSpellIcon(arr[pos][1]))
+			_G(path..i.."_Name"):SetText(arr[pos][1])
+			_G(path..i.."_Count"):SetText(arr[pos][3])
+			_G(path..i.."_CBT"):SetText(strformat("%.2f", arr[pos][2]*cbt/100).."s")
+			_G(path..i.."_CBTPerc"):SetText(arr[pos][2].."%")
+			_G(path..i.."_StatusBar"):SetValue(arr[pos][2])
+		end
 	end
 end
 
 function DPSMate.Modules.Auras:ShowTooltip(obj)
 	local user = DetailsUser
-	if string.find(obj:GetName(), "Compare") then
+	if obj and string.find(obj:GetName(), "Compare") then
 		user = DetailsUserComp
 	end
 	if obj.id and db[DPSMateUser[user][1]][DPSMateAbility[obj.id][1]] then

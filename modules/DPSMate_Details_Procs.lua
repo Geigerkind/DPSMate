@@ -2,14 +2,16 @@
 DPSMate.Modules.DetailsProcs = {}
 
 -- Local variables
-local DetailsUser = ""
+local DetailsUser, DetailsUserComp = "", ""
 local curKey = 1
 local db, cbt = {}, 0
 local Buffpos = 0
+local BuffposComp = 0
 local _G = getglobal
 local tinsert = table.insert
 local strformat = string.format
 local hits = 1
+local hitsComp = 1
 local mab = {[DPSMate.BabbleSpell:GetTranslation("AutoAttack")] = true, [DPSMate.BabbleSpell:GetTranslation("Sinister Strike")] = true, [DPSMate.BabbleSpell:GetTranslation("Eviscerate")] = true, [DPSMate.BabbleSpell:GetTranslation("Execute")] = true, [DPSMate.BabbleSpell:GetTranslation("Overpower")] = true, [DPSMate.BabbleSpell:GetTranslation("Bloodthirst")] = true, [DPSMate.BabbleSpell:GetTranslation("Mortal Strike")] = true, [DPSMate.BabbleSpell:GetTranslation("Heroic Strike")] = true, [DPSMate.BabbleSpell:GetTranslation("Cleave")] = true, [DPSMate.BabbleSpell:GetTranslation("Whirlwind")] = true, [DPSMate.BabbleSpell:GetTranslation("Backstab")] = true, [DPSMate.BabbleSpell:GetTranslation("Shield Slam")] = true, [DPSMate.BabbleSpell:GetTranslation("Revenge")] = true, [DPSMate.BabbleSpell:GetTranslation("Sunder Armor")] = true, [DPSMate.BabbleSpell:GetTranslation("Hamstring")] = true}
 local specialSnowflakes = {
 	[DPSMate.BabbleSpell:GetTranslation("Relentless Strikes Effect")] = {
@@ -141,34 +143,57 @@ local specialSnowflakesHealDone = {
 }
 
 function DPSMate.Modules.DetailsProcs:UpdateDetails(obj, key)
+	DPSMate_Details_CompareProcs:Hide()
 	curKey = key
 	db, cbt = DPSMate:GetMode(key)
 	DetailsUser = obj.user
+	DetailsUserComp = nil
 	DPSMate_Details_Procs_Title:SetText(DPSMate.L["procsof"]..obj.user)
 	Buffpos = 0
-	self:CleanTables()
+	self:CleanTables("")
+	hits = 1
 	hits = self:GetTotalHits()
-	self:UpdateBuffs()
+	self:UpdateBuffs(0, "")
 	DPSMate_Details_Procs:Show()
 end
 
-function DPSMate.Modules.DetailsProcs:GetTotalHits()
-	if hits == 1 then
-		for cat, val in DPSMateDamageDone[1][DPSMateUser[DetailsUser][1]] do
+function DPSMate.Modules.DetailsProcs:UpdateCompare(obj, key, comp)
+	self:UpdateDetails(obj, key)
+	
+	DetailsUserComp = comp
+	DPSMate_Details_CompareProcs_Title:SetText(DPSMate.L["procsof"]..comp)
+	BuffposComp = 0
+	self:CleanTables("Compare")
+	hitsComp = 1
+	hitsComp = self:GetTotalHits(comp)
+	self:UpdateBuffs(0, "Compare")
+	DPSMate_Details_CompareProcs:Show()
+end
+
+function DPSMate.Modules.DetailsProcs:GetTotalHits(cname)
+	if hits == 1 or (cname and hitsComp == 1) then
+		for cat, val in DPSMateDamageDone[1][DPSMateUser[cname or DetailsUser][1]] do
 			if cat~="i" then
 				if mab[DPSMate:GetAbilityById(cat)] then
-					hits = hits + val[1] + val[5]
+					if cname then
+						hitsComp = hitsComp + val[1] + val[5]
+					else
+						hits = hits + val[1] + val[5]
+					end
 				end
 			end
 		end
 	end
+	if cname then
+		return hitsComp
+	end
 	return hits
 end
 
-function DPSMate.Modules.DetailsProcs:GetSpecialSnowFlakeHits(ability)
+function DPSMate.Modules.DetailsProcs:GetSpecialSnowFlakeHits(ability, cname)
 	local num = 0;
 	if specialSnowflakes[ability] then
-		for cat, val in DPSMateDamageDone[1][DPSMateUser[DetailsUser][1]] do
+		for cat, val in DPSMateDamageDone[1][DPSMateUser[cname or DetailsUser][1]] do
 			if cat~="i" then
 				if specialSnowflakes[ability][DPSMate:GetAbilityById(cat)] then
 					num = num + val[1] + val[5]
@@ -176,7 +201,7 @@ function DPSMate.Modules.DetailsProcs:GetSpecialSnowFlakeHits(ability)
 			end
 		end
 	elseif specialSnowflakesDmgTaken[1][ability] then
-		for cat, val in DPSMateDamageTaken[1][DPSMateUser[DetailsUser][1]] do
+		for cat, val in DPSMateDamageTaken[1][DPSMateUser[cname or DetailsUser][1]] do
 			if cat~="i" then
 				for ca, va in val do
 					if ca~="i" then
@@ -188,7 +213,7 @@ function DPSMate.Modules.DetailsProcs:GetSpecialSnowFlakeHits(ability)
 			end
 		end
 	elseif specialSnowflakesDmgTaken[2][ability] then
-		for cat, val in DPSMateDamageTaken[1][DPSMateUser[DetailsUser][1]] do
+		for cat, val in DPSMateDamageTaken[1][DPSMateUser[cname or DetailsUser][1]] do
 			if cat~="i" then
 				for ca, va in val do
 					if ca~="i" then
@@ -200,7 +225,7 @@ function DPSMate.Modules.DetailsProcs:GetSpecialSnowFlakeHits(ability)
 			end
 		end
 	elseif specialSnowflakesHealTaken[ability] then
-		for cat, val in DPSMateHealingTaken[1][DPSMateUser[DetailsUser][1]] do
+		for cat, val in DPSMateHealingTaken[1][DPSMateUser[cname or DetailsUser][1]] do
 			if cat~="i" then
 				for ca, va in val do
 					if specialSnowflakesHealTaken[ability][DPSMate:GetAbilityById(ca)] then
@@ -210,7 +235,7 @@ function DPSMate.Modules.DetailsProcs:GetSpecialSnowFlakeHits(ability)
 			end
 		end
 	elseif specialSnowflakesHealDone[ability] then
-		for cat, val in DPSMateTHealing[1][DPSMateUser[DetailsUser][1]] do
+		for cat, val in DPSMateTHealing[1][DPSMateUser[cname or DetailsUser][1]] do
 			if cat~="i" then
 				if specialSnowflakesHealDone[ability][DPSMate:GetAbilityById(cat)] then
 					num = num + va[2] + va[3]
@@ -218,16 +243,19 @@ function DPSMate.Modules.DetailsProcs:GetSpecialSnowFlakeHits(ability)
 			end
 		end
 	elseif ability == DPSMate.BabbleSpell:GetTranslation("Vengeance") or ability == DPSMate.BabbleSpell:GetTranslation("Flurry") then
-		for cat, val in DPSMateDamageDone[1][DPSMateUser[DetailsUser][1]] do
+		for cat, val in DPSMateDamageDone[1][DPSMateUser[cname or DetailsUser][1]] do
 			if cat~="i" then
 				num = num + val[5]
 			end
 		end
 	else
+		if cname then
+			return hitsComp
+		end
 		return hits;
 	end
 	if ability == DPSMate.BabbleSpell:GetTranslation("Relentless Strikes Effect") then
-		for cat, val in DPSMateAurasGained[1][DPSMateUser[DetailsUser][1]] do
+		for cat, val in DPSMateAurasGained[1][DPSMateUser[cname or DetailsUser][1]] do
 			if specialSnowflakes[ability][DPSMate:GetAbilityById(cat)] then
 				num = num + DPSMate:TableLength(val[2])
 			end
@@ -247,8 +275,8 @@ function DPSMate.Modules.DetailsProcs:CreateGraphTable(obj)
 	DPSMate.Options.graph:DrawLine(obj, 300, 215, 300, 15, 20, {0.5,0.5,0.5,0.5}, "BACKGROUND")
 end
 
-function DPSMate.Modules.DetailsProcs:CleanTables()
-	local path = "DPSMate_Details_Procs_Buffs_Row"
+function DPSMate.Modules.DetailsProcs:CleanTables(comp)
+	local path = "DPSMate_Details_"..comp.."Procs_Buffs_Row"
 	for i=1, 6 do
 		_G(path..i.."_Icon"):SetTexture()
 		_G(path..i.."_Name"):SetText()
@@ -264,32 +292,56 @@ function DPSMate.Modules.DetailsProcs:RoundToH(val)
 	return val
 end
 
-function DPSMate.Modules.DetailsProcs:UpdateBuffs(arg1)
-	local a,b,c = DPSMate.Modules.Procs:EvalTable(DPSMateUser[DetailsUser], curKey)
+function DPSMate.Modules.DetailsProcs:UpdateBuffs(arg1, comp, cname)
+	if comp~="" and comp then
+		cname = DetailsUserComp
+	end
+	local a,b,c = DPSMate.Modules.Procs:EvalTable(DPSMateUser[cname or DetailsUser], curKey)
 	local t1TL = DPSMate:TableLength(a)-6
-	local path = "DPSMate_Details_Procs_Buffs_Row"
-	Buffpos=Buffpos-(arg1 or 0)
-	if Buffpos<0 then Buffpos = 0 end
-	if Buffpos>t1TL then Buffpos = t1TL end
-	if t1TL<0 then Buffpos = 0 end
-	for i=1, 6 do
-		local pos = Buffpos + i
-		if not a[pos] then break end
-		local ab = DPSMate:GetAbilityById(a[pos])
-		_G(path..i).id = a[pos]
-		_G(path..i.."_Icon"):SetTexture(DPSMate.BabbleSpell:GetSpellIcon(ab))
-		_G(path..i.."_Name"):SetText(ab)
-		_G(path..i.."_Count"):SetText(c[pos])
-		_G(path..i.."_Chance"):SetText(strformat("%.2f", self:RoundToH(100*c[pos]/self:GetSpecialSnowFlakeHits(ab))).."%")
+	local path = "DPSMate_Details_"..comp.."Procs_Buffs_Row"
+	if comp~="" and comp then
+		BuffposComp=BuffposComp-(arg1 or 0)
+		if BuffposComp<0 then BuffposComp = 0 end
+		if BuffposComp>t1TL then BuffposComp = t1TL end
+		if t1TL<0 then BuffposComp = 0 end
+		for i=1, 6 do
+			local pos = BuffposComp + i
+			if not a[pos] then break end
+			local ab = DPSMate:GetAbilityById(a[pos])
+			_G(path..i).id = a[pos]
+			_G(path..i.."_Icon"):SetTexture(DPSMate.BabbleSpell:GetSpellIcon(ab))
+			_G(path..i.."_Name"):SetText(ab)
+			_G(path..i.."_Count"):SetText(c[pos])
+			_G(path..i.."_Chance"):SetText(strformat("%.2f", self:RoundToH(100*c[pos]/self:GetSpecialSnowFlakeHits(ab, cname))).."%")
+		end
+	else
+		Buffpos=Buffpos-(arg1 or 0)
+		if Buffpos<0 then Buffpos = 0 end
+		if Buffpos>t1TL then Buffpos = t1TL end
+		if t1TL<0 then Buffpos = 0 end
+		for i=1, 6 do
+			local pos = Buffpos + i
+			if not a[pos] then break end
+			local ab = DPSMate:GetAbilityById(a[pos])
+			_G(path..i).id = a[pos]
+			_G(path..i.."_Icon"):SetTexture(DPSMate.BabbleSpell:GetSpellIcon(ab))
+			_G(path..i.."_Name"):SetText(ab)
+			_G(path..i.."_Count"):SetText(c[pos])
+			_G(path..i.."_Chance"):SetText(strformat("%.2f", self:RoundToH(100*c[pos]/self:GetSpecialSnowFlakeHits(ab))).."%")
+		end
 	end
 end
 
 function DPSMate.Modules.DetailsProcs:ShowTooltip(obj)
 	if obj.id then
-		if db[DPSMateUser[DetailsUser][1]][obj.id] then
+		local user = DetailsUser
+		if string.find(obj:GetName(), "Compare") then
+			user = DetailsUserComp
+		end
+		if db[DPSMateUser[user][1]][obj.id] then
 			GameTooltip:SetOwner(obj)
 			GameTooltip:AddLine(DPSMate:GetAbilityById(obj.id))
-			for cat, val in db[DPSMateUser[DetailsUser][1]][obj.id][3] do
+			for cat, val in db[DPSMateUser[user][1]][obj.id][3] do
 				GameTooltip:AddDoubleLine(DPSMate:GetUserById(cat),val,1,1,1,1,1,1)
 			end
 			GameTooltip:Show()

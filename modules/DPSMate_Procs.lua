@@ -145,8 +145,12 @@ function DPSMate.Modules.Procs:ShowTooltip(user,k)
 	end
 end
 
-function DPSMate.Modules.Procs:OpenDetails(obj, key)
-	DPSMate.Modules.DetailsProcs:UpdateDetails(obj, key)
+function DPSMate.Modules.Procs:OpenDetails(obj, key, bool)
+	if bool then
+		DPSMate.Modules.DetailsProcs:UpdateCompare(obj, key, bool)
+	else
+		DPSMate.Modules.DetailsProcs:UpdateDetails(obj, key)
+	end
 end
 
 function DPSMate.Modules.Procs:OpenTotalDetails(obj, key)
