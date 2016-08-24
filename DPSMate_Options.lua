@@ -1088,13 +1088,13 @@ function DPSMate.Options:ChannelDropDown()
     end
 	
 	-- Adding dynamic channel
-	while true do
+	for i=0,25 do
 		local id, name = GetChannelName(i);
-		if (not name) then break end
-		if not DPSMate:TContains(channel, name) then
-			tinsert(channel, name)
+		if name then
+			if not DPSMate:TContains(channel, name) then
+				tinsert(channel, name)
+			end
 		end
-		i=i+1
 	end
 	
 	-- Initializing channel
@@ -1512,13 +1512,13 @@ function DPSMate.Options:InializePlayerDewDrop(obj)
 	}
 	
 	-- Report channel
-	while true do
+	for i=0, 25 do
 		local id, name = GetChannelName(i);
-		if (not name) then break end
-		if not DPSMate:TContains(channel, name) then
-			tinsert(channel, name)
+		if name then
+			if not DPSMate:TContains(channel, name) then
+				tinsert(channel, name)
+			end
 		end
-		i=i+1
 	end
 	
 	for cat, val in channel do
