@@ -121,8 +121,12 @@ function DPSMate.Modules.Casts:ShowTooltip(user,k)
 	end
 end
 
-function DPSMate.Modules.Casts:OpenDetails(obj, key)
-	DPSMate.Modules.DetailsCasts:UpdateDetails(obj, key)
+function DPSMate.Modules.Casts:OpenDetails(obj, key, bool)
+	if bool then
+		DPSMate.Modules.DetailsCasts:UpdateCompare(obj, key, bool)
+	else
+		DPSMate.Modules.DetailsCasts:UpdateDetails(obj, key)
+	end
 end
 
 function DPSMate.Modules.Casts:OpenTotalDetails(obj, key)
