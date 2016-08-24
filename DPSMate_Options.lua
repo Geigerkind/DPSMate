@@ -1537,8 +1537,8 @@ function DPSMate.Options:InializePlayerDewDrop(obj)
 	local Key = obj:GetParent():GetParent():GetParent().Key
 	local db,cbt = DPSMate:GetMode(Key)
 	local temp = ''
-	for cat, _ in db do
-		local name = DPSMate:GetUserById(cat)
+	local a = DPSMate:GetSettingValues(db, cbt, Key, 0)
+	for cat, name in a do
 		if name and name ~= obj.user then
 			if DPSMateSettings["windows"][Key]["grouponly"] then
 				if DPSMate.Parser.TargetParty[name] then
