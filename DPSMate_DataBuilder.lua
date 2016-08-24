@@ -70,6 +70,7 @@ local tremove = table.remove
 local _G = getglobal
 local player = ""
 local GT = GetTime
+local strfind = string.find
 
 -- Begin Functions
 
@@ -1670,24 +1671,26 @@ function DPSMate.DB:ApplyRemainingDispels()
 end
 
 -- Deprecated time component
+local Restor = DPSMate.BabbleSpell:GetTranslation("Restoration")
 function DPSMate.DB:EvaluateDispel()
-	--DPSMate:SendMessage("Test 1")
 	for cat, val in ActiveHotDispel do
 		for ca, va in val do
 			if ConfirmedDispel[cat] then
-				local check = nil
-				for q, t in ConfirmedDispel[cat] do
-					if DPSMate.Parser.HotDispels[va[2]] then
-						if not check then
-							check = t[1]
-							tremove(ConfirmedDispel[cat], q)
+				if va[2]~=Restor or (va[2]==Restor and va[1]==cat) then
+					local check = nil
+					for q, t in ConfirmedDispel[cat] do
+						if DPSMate.Parser.HotDispels[va[2]] then
+							if not check then
+								check = t[1]
+								tremove(ConfirmedDispel[cat], q)
+							end
 						end
 					end
-				end
-				if check then
-					self:Dispels(va[1], va[2], cat, check)
-					lastDispel = nil;
-					return
+					if check then
+						self:Dispels(va[1], va[2], cat, check)
+						lastDispel = nil;
+						return
+					end
 				end
 			end
 		end
@@ -1696,14 +1699,16 @@ function DPSMate.DB:EvaluateDispel()
 		for ca, va in val do
 			if (GetTime()-(va[3] or 0))<=2 then
 				if ConfirmedDispel[cat] then
-					local q = DPSMate:TableLength(ConfirmedDispel[cat])
-					if q>0 then
-						self:Dispels(va[1], va[2], cat, ConfirmedDispel[cat][q][1])
-						tremove(ConfirmedDispel[cat], q)
-						self:EvaluateDispel()
-						--tremove(AwaitDispel[cat], ca)
-						--lastDispel = nil;
-						return
+					if va[2]~=Restor then
+						local q = DPSMate:TableLength(ConfirmedDispel[cat])
+						if q>0 then
+							self:Dispels(va[1], va[2], cat, ConfirmedDispel[cat][q][1])
+							tremove(ConfirmedDispel[cat], q)
+							self:EvaluateDispel()
+							--tremove(AwaitDispel[cat], ca)
+							--lastDispel = nil;
+							return
+						end
 					end
 				end
 				--DPSMate:SendMessage("Test 1")
@@ -1767,6 +1772,7 @@ end
 
 function DPSMate.DB:UnregisterDeath(target)
 	if self:BuildUser(target, nil) then return end
+	if strfind(target, "%s") then return end
 	for cat, val in pairs({[1]="total", [2]="current"}) do 
 		if DPSMateDeaths[cat][DPSMateUser[target][1]] then
 			DPSMateDeaths[cat][DPSMateUser[target][1]][1]["i"][1]=1
