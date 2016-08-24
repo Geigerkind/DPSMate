@@ -106,9 +106,12 @@ function DPSMate.Modules.Fails:ShowTooltip(user,k)
 	end
 end
 
-function DPSMate.Modules.Fails:OpenDetails(obj, key)
-	DPSMate.Modules.DetailsFails:UpdateDetails(obj, key)
-	--DPSMate:SendMessage("This feature will be added later.")
+function DPSMate.Modules.Fails:OpenDetails(obj, key, bool)
+	if bool then
+		DPSMate.Modules.DetailsFails:UpdateCompare(obj, key, bool)
+	else
+		DPSMate.Modules.DetailsFails:UpdateDetails(obj, key)
+	end
 end
 
 function DPSMate.Modules.Fails:OpenTotalDetails(obj, key)

@@ -97,9 +97,12 @@ function DPSMate.Modules.CCBreaker:ShowTooltip(user,k)
 	end
 end
 
-function DPSMate.Modules.CCBreaker:OpenDetails(obj, key)
-	DPSMate.Modules.DetailsCCBreaker:UpdateDetails(obj, key)
-	--DPSMate:SendMessage("This feature will be added later.")
+function DPSMate.Modules.CCBreaker:OpenDetails(obj, key, bool)
+	if bool then
+		DPSMate.Modules.DetailsCCBreaker:UpdateCompare(obj, key, bool)
+	else
+		DPSMate.Modules.DetailsCCBreaker:UpdateDetails(obj, key)
+	end
 end
 
 function DPSMate.Modules.CCBreaker:OpenTotalDetails(obj, key)
