@@ -17,7 +17,7 @@ local tinsert = table.insert
 local strformat = string.format
 
 function DPSMate.Modules.Decurses:IsValid(ab, cast, user)
-	if DPSMateAbility[ab][2]==DPSMate.L["curse"] or user[2] == "mage" or DPSMate.Parser.DeCurse[cast] then
+	if DPSMateAbility[ab][2]==DPSMate.L["curse"] or user[2] == "mage" or (DPSMate.Parser.DeDisease[cast] and not DPSMateAbility[ab][2]) or (DPSMate.Parser.DeDisease[cast] and DPSMateAbility[ab][2] and DPSMateAbility[ab][2]==DPSMate.L["curse"]) then
 		return true
 	end
 	return false

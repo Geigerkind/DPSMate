@@ -54,39 +54,43 @@ function DPSMate.Modules.DetailsDispelsReceived:EvalTable(cname)
 						for ce, ve in pairs(v) do
 							temp[cat][1]=temp[cat][1]+ve
 							CV = CV + ve
-							local i = 1
-							while true do
-								if (not tb[i]) then
-									tinsert(tb, i, ve)
-									tinsert(ta, i, ce)
-									break
-								else
-									if tb[i] < ve then
+							if ve>0 then
+								local i = 1
+								while true do
+									if (not tb[i]) then
 										tinsert(tb, i, ve)
 										tinsert(ta, i, ce)
 										break
+									else
+										if tb[i] < ve then
+											tinsert(tb, i, ve)
+											tinsert(ta, i, ce)
+											break
+										end
 									end
+									i=i+1
 								end
-								i=i+1
 							end
 						end
 						break
 					end
 				end
-				local i = 1
-				while true do
-					if (not temp[cat][3][i]) then
-						tinsert(temp[cat][3], i, {CV, ta, tb})
-						tinsert(temp[cat][2], i, ca)
-						break
-					else
-						if temp[cat][3][i][1] < CV then
+				if CV>0 then
+					local i = 1
+					while true do
+						if (not temp[cat][3][i]) then
 							tinsert(temp[cat][3], i, {CV, ta, tb})
 							tinsert(temp[cat][2], i, ca)
 							break
+						else
+							if temp[cat][3][i][1] < CV then
+								tinsert(temp[cat][3], i, {CV, ta, tb})
+								tinsert(temp[cat][2], i, ca)
+								break
+							end
 						end
+						i=i+1
 					end
-					i=i+1
 				end
 			end
 		end

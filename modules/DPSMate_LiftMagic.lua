@@ -17,7 +17,7 @@ local tinsert = table.insert
 local strformat = string.format
 
 function DPSMate.Modules.LiftMagic:IsValid(ab, cast)
-	if DPSMateAbility[ab][2]==DPSMate.L["magic"] or DPSMate.Parser.DeMagic[cast] then
+	if DPSMateAbility[ab][2]==DPSMate.L["magic"] or (DPSMate.Parser.DeDisease[cast] and not DPSMateAbility[ab][2]) or (DPSMate.Parser.DeDisease[cast] and DPSMateAbility[ab][2] and DPSMateAbility[ab][2]==DPSMate.L["magic"]) then
 		return true
 	end
 	return false

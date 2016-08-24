@@ -55,20 +55,22 @@ function DPSMate.Modules.DetailsLiftMagicReceived:EvalTable(cname)
 							if DPSMate.Modules.LiftMagic:IsValid(DPSMate:GetAbilityById(ce), DPSMate:GetAbilityById(ca)) then
 								temp[cat][1]=temp[cat][1]+ve
 								CV = CV + ve
-								local i = 1
-								while true do
-									if (not tb[i]) then
-										tinsert(tb, i, ve)
-										tinsert(ta, i, ce)
-										break
-									else
-										if tb[i] < ve then
+								if ve>0 then
+									local i = 1
+									while true do
+										if (not tb[i]) then
 											tinsert(tb, i, ve)
 											tinsert(ta, i, ce)
 											break
+										else
+											if tb[i] < ve then
+												tinsert(tb, i, ve)
+												tinsert(ta, i, ce)
+												break
+											end
 										end
+										i=i+1
 									end
-									i=i+1
 								end
 							end
 						end

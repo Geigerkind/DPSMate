@@ -174,6 +174,7 @@ DPSMate.Parser.procs = {
 
 DPSMate.Parser.BuffExceptions = {
 	[DPSMate.BabbleSpell:GetTranslation("Fury of Forgewright")] = true,
+	[DPSMate.BabbleSpell:GetTranslation("Bloodfang")] = true,
 }
 
 DPSMate.Parser.OtherExceptions = {
