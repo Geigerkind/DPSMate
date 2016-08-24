@@ -114,8 +114,12 @@ function DPSMate.Modules.AurasUptimers:ShowTooltip(user,k)
 	end
 end
 
-function DPSMate.Modules.AurasUptimers:OpenDetails(obj, key)
-	DPSMate.Modules.Auras:UpdateDetails(obj, key)
+function DPSMate.Modules.AurasUptimers:OpenDetails(obj, key, bool)
+	if bool then
+		DPSMate.Modules.Auras:UpdateCompare(obj, key, bool)
+	else
+		DPSMate.Modules.Auras:UpdateDetails(obj, key)
+	end
 end
 
 function DPSMate.Modules.AurasUptimers:OpenTotalDetails(obj, key)

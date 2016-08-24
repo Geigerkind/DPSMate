@@ -113,8 +113,12 @@ function DPSMate.Modules.AurasLost:ShowTooltip(user,k)
 	end
 end
 
-function DPSMate.Modules.AurasLost:OpenDetails(obj, key)
-	DPSMate.Modules.Auras:UpdateDetails(obj, key)
+function DPSMate.Modules.AurasLost:OpenDetails(obj, key, bool)
+	if bool then
+		DPSMate.Modules.Auras:UpdateCompare(obj, key, bool)
+	else
+		DPSMate.Modules.Auras:UpdateDetails(obj, key)
+	end
 end
 
 function DPSMate.Modules.AurasLost:OpenTotalDetails(obj, key)

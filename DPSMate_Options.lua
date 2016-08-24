@@ -1564,7 +1564,8 @@ function DPSMate.Options:InializePlayerDewDrop(obj)
 	local mode = _G(obj:GetParent():GetParent():GetParent():GetName().."_Head_Font"):GetText()
 	
 	for cat, val in temp do
-		if not strfind(val, "%s") or CompareExcept[mode] then -- Have to find another method later to enable comparing npcs?
+		if cat>100 then break end
+		if not strfind(val, "%s") or CompareExcept[mode] then
 			path["Arg"..cat] = {
 				order = 1,
 				type = "execute",
