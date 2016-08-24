@@ -135,8 +135,8 @@ function DPSMate.Modules.DetailsEDT:UpdateSumGraph()
 
 	--g7:AddDataSeries(ata,{{0.2,0.8,0.2,0.8}, {0.5,0.8,0.9,0.8}}, self:AddProcPoints(DPSMate_Details_CompareEDD.proc, ata, DetailsUserComp))
 	--g7:AddDataSeries(Data2,{{1.0,0.0,0.0,0.8}, {1.0,1.0,0.0,0.8}}, self:AddProcPoints(DPSMate_Details_EDD.proc, Data2))
-	g7:AddDataSeries(ata,{{0.2,0.8,0.2,0.8}, {0.5,0.8,0.9,0.8}}, {})
-	g7:AddDataSeries(Data2,{{1.0,0.0,0.0,0.8}, {1.0,1.0,0.0,0.8}}, {})
+	g7:AddDataSeries(ata,{{0.5,0.8,0.9,0.8}, {0.2,0.8,0.2,0.8}}, {})
+	g7:AddDataSeries(Data2,{{1.0,1.0,0.0,0.8}, {1.0,0.0,0.0,0.8}}, {})
 	g7:Show()
 end
 
@@ -405,6 +405,9 @@ function DPSMate.Modules.DetailsEDT:UpdateLineGraph(gg, comp, cname)
 		tinsert(Data1, {val[1],val[2], {}})
 	end
 	local colorT = {{1.0,0.0,0.0,0.8}, {1.0,0.0,0.0,0.8}}
+	if cname then
+		colorT = {{0.5,0.8,0.9,0.8}, {0.2,0.8,0.2,0.8}}
+	end
 	
 
 	gg:AddDataSeries(Data1,colorT, {})
