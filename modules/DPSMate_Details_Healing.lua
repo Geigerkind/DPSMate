@@ -92,9 +92,17 @@ function DPSMate.Modules.DetailsHealing:UpdateCompare(obj, key, comp)
 		self:Player_Update("Compare")
 		self:PlayerSpells_Update(1, "Compare")
 		self:SelectDetails_HealingButton(1, "Compare")
+		DPSMate_Details_CompareHealing_playerSpells:Show()
+		DPSMate_Details_CompareHealing_player:Show()
+		DPSMate_Details_CompareHealing_Diagram:Hide()
+		DPSMate_Details_CompareHealing_Log:Hide()
 	else
 		self:ScrollFrame_Update("Compare")
-		self:SelectDetails_HealingButton(1, "Compare", comp)
+		self:SelectDetails_HealingButton(1, "Compare")
+		DPSMate_Details_CompareHealing_playerSpells:Hide()
+		DPSMate_Details_CompareHealing_player:Hide()
+		DPSMate_Details_CompareHealing_Diagram:Show()
+		DPSMate_Details_CompareHealing_Log:Show()
 	end
 	self:UpdatePie(g4, comp)
 	if toggle2 then

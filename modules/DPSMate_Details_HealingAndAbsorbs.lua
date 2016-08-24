@@ -3,7 +3,8 @@ DPSMate.Modules.DetailsHealingAndAbsorbs = {}
 
 -- Local variables
 local DetailsArr, DetailsTotal, DmgArr, DetailsUser, DetailsSelected  = {}, 0, {}, "", 1
-local g, g2, g3
+local DetailsArrComp, DetailsTotalComp, DmgArrComp, DetailsUserComp, DetailsSelectedComp  = {}, 0, {}, "", 1
+local g, g2, g3, g4, g5, g6, g7
 local curKey = 1
 local db, cbt, db2 = {}, 0, {}
 local _G = getglobal
@@ -11,7 +12,10 @@ local tinsert = table.insert
 local strformat = string.format
 local toggle, toggle2, toggle3 = false, false, false
 local t1, t2, TTotal = {}, {}, 0
+local t1Comp, t2Comp, TTotalComp = {}, {}, 0
 local mode = {[1]="total",[2]="current"}
+local PSelected = 1
+local PSelected2 = 1
 
 function DPSMate.Modules.DetailsHealingAndAbsorbs:UpdateDetails(obj, key)
 	curKey = key
@@ -20,36 +24,160 @@ function DPSMate.Modules.DetailsHealingAndAbsorbs:UpdateDetails(obj, key)
 	DPSMate_Details_HealingAndAbsorbs.proc = "None"
 	UIDropDownMenu_SetSelectedValue(DPSMate_Details_HealingAndAbsorbs_DiagramLegend_Procs, "None")
 	DetailsUser = obj.user
+	DetailsUserComp = nil
 	DPSMate_Details_HealingAndAbsorbs_Title:SetText(DPSMate.L["habby"]..obj.user)
 	DPSMate_Details_HealingAndAbsorbs_SubTitle:SetText(DPSMate.L["activity"]..strformat("%.2f", DPSMateCombatTime["effective"][key][obj.user] or 0).."s "..DPSMate.L["of"].." "..strformat("%.2f", DPSMateCombatTime[mode[key]]).."s ("..strformat("%.2f", 100*(DPSMateCombatTime["effective"][key][obj.user] or 0)/DPSMateCombatTime[mode[key]]).."%)")
 	DPSMate_Details_HealingAndAbsorbs:Show()
 	UIDropDownMenu_Initialize(DPSMate_Details_HealingAndAbsorbs_DiagramLegend_Procs, DPSMate.Modules.DetailsHealingAndAbsorbs.ProcsDropDown)
 	DetailsArr, DetailsTotal, DmgArr = DPSMate.RegistredModules[DPSMateSettings["windows"][curKey]["CurMode"]]:EvalTable(DPSMateUser[DetailsUser], curKey)
 	t1, t2, TTotal = self:EvalToggleTable()
+	
+	if not g then
+		g=DPSMate.Options.graph:CreateGraphPieChart("HABPieChart", DPSMate_Details_HealingAndAbsorbs_Diagram, "CENTER", "CENTER", 0, 0, 200, 200)
+		g2=DPSMate.Options.graph:CreateGraphLine("HABLineGraph",DPSMate_Details_HealingAndAbsorbs_DiagramLine,"CENTER","CENTER",0,0,850,230)
+		g3=DPSMate.Options.graph:CreateStackedGraph("HABStackedGraph",DPSMate_Details_HealingAndAbsorbs_DiagramLine,"CENTER","CENTER",0,0,850,230)
+		g3:SetGridColor({0.5,0.5,0.5,0.5})
+		g3:SetAxisDrawing(true,true)
+		g3:SetAxisColor({1.0,1.0,1.0,1.0})
+		g3:SetAutoScale(true)
+		g3:SetYLabels(true, false)
+		g3:SetXLabels(true)
+	end
+	
 	if toggle then
-		self:Player_Update()
-		self:PlayerSpells_Update(1)
-		self:SelectDetails_HealingAndAbsorbsButton(1)
+		self:Player_Update("")
+		self:PlayerSpells_Update(1,"")
+		self:SelectDetails_HealingAndAbsorbsButton(1,"")
 	else
-		self:ScrollFrame_Update()
-		self:SelectDetails_HealingAndAbsorbsButton(1)
+		self:ScrollFrame_Update("")
+		self:SelectDetails_HealingAndAbsorbsButton(1,"")
 	end
-	self:UpdatePie()
+	self:UpdatePie(g)
 	if toggle2 then
-		self:UpdateStackedGraph()
+		self:UpdateStackedGraph(g3)
 	else
-		self:UpdateLineGraph()
+		self:UpdateLineGraph(g2, "")
 	end
+	
+	DPSMate_Details_CompareHealingAndAbsorbs:Hide()
+	DPSMate_Details_CompareHealingAndAbsorbs_Graph:Hide()
 end
 
-function DPSMate.Modules.DetailsHealingAndAbsorbs:EvalToggleTable()
+function DPSMate.Modules.DetailsHealingAndAbsorbs:UpdateCompare(obj, key, comp)
+	self:UpdateDetails(obj, key)
+	
+	DPSMate_Details_CompareHealingAndAbsorbs.proc = "None"
+	UIDropDownMenu_SetSelectedValue(DPSMate_Details_CompareHealingAndAbsorbs_DiagramLegend_Procs, "None")
+	DetailsUserComp = comp
+	DPSMate_Details_CompareHealingAndAbsorbs_Title:SetText(DPSMate.L["habby"]..comp)
+	DPSMate_Details_CompareHealingAndAbsorbs_SubTitle:SetText(DPSMate.L["activity"]..strformat("%.2f", DPSMateCombatTime["effective"][key][comp] or 0).."s "..DPSMate.L["of"].." "..strformat("%.2f", DPSMateCombatTime[mode[key]]).."s ("..strformat("%.2f", 100*(DPSMateCombatTime["effective"][key][comp] or 0)/DPSMateCombatTime[mode[key]]).."%)")
+	UIDropDownMenu_Initialize(DPSMate_Details_CompareHealingAndAbsorbs_DiagramLegend_Procs, DPSMate.Modules.DetailsHealingAndAbsorbs.ProcsDropDown_CompareHealingAndAbsorbs)
+	DetailsArrComp, DetailsTotalComp, DmgArrComp = DPSMate.RegistredModules[DPSMateSettings["windows"][curKey]["CurMode"]]:EvalTable(DPSMateUser[comp], curKey)
+	t1Comp, t2Comp, TTotalComp = self:EvalToggleTable(comp)
+	
+	if not g4 then
+		g4=DPSMate.Options.graph:CreateGraphPieChart("HABPieChartComp", DPSMate_Details_CompareHealingAndAbsorbs_Diagram, "CENTER", "CENTER", 0, 0, 200, 200)
+		g5=DPSMate.Options.graph:CreateGraphLine("HABLineGraphComp",DPSMate_Details_CompareHealingAndAbsorbs_DiagramLine,"CENTER","CENTER",0,0,850,230)
+		g6=DPSMate.Options.graph:CreateStackedGraph("HABStackedGraphComp",DPSMate_Details_CompareHealingAndAbsorbs_DiagramLine,"CENTER","CENTER",0,0,850,230)
+		g6:SetGridColor({0.5,0.5,0.5,0.5})
+		g6:SetAxisDrawing(true,true)
+		g6:SetAxisColor({1.0,1.0,1.0,1.0})
+		g6:SetAutoScale(true)
+		g6:SetYLabels(true, false)
+		g6:SetXLabels(true)
+		g7=DPSMate.Options.graph:CreateGraphLine("HABLineGraphSum",DPSMate_Details_CompareHealingAndAbsorbs_Graph,"CENTER","CENTER",0,0,1750,230)
+	end
+	
+	if toggle then
+		self:Player_Update("Compare")
+		self:PlayerSpells_Update(1, "Compare")
+		self:SelectDetails_HealingAndAbsorbsButton(1, "Compare")
+		DPSMate_Details_CompareHealingAndAbsorbs_playerSpells:Show()
+		DPSMate_Details_CompareHealingAndAbsorbs_player:Show()
+		DPSMate_Details_CompareHealingAndAbsorbs_Diagram:Hide()
+		DPSMate_Details_CompareHealingAndAbsorbs_Log:Hide()
+	else
+		self:ScrollFrame_Update("Compare")
+		self:SelectDetails_HealingAndAbsorbsButton(1, "Compare")
+		DPSMate_Details_CompareHealingAndAbsorbs_playerSpells:Hide()
+		DPSMate_Details_CompareHealingAndAbsorbs_player:Hide()
+		DPSMate_Details_CompareHealingAndAbsorbs_Diagram:Show()
+		DPSMate_Details_CompareHealingAndAbsorbs_Log:Show()
+	end
+	self:UpdatePie(g4, comp)
+	if toggle2 then
+		self:UpdateStackedGraph(g6, "Compare", comp)
+	else
+		self:UpdateLineGraph(g5, "Compare", comp)
+	end
+	self:UpdateSumGraph()
+	
+	DPSMate_Details_CompareHealingAndAbsorbs:Show()
+	DPSMate_Details_CompareHealingAndAbsorbs_Graph:Show()
+end
+
+function DPSMate.Modules.DetailsHealingAndAbsorbs:UpdateSumGraph()
+	-- Executing the sumGraph
+	local sumTable, sumTableTwo
+	if toggle3 then
+		sumTable = self:GetSummarizedTable(db2, t1Comp[PSelected2], DetailsUserComp)
+		sumTableTwo = self:GetSummarizedTable(db2, t1[PSelected])
+	else
+		sumTable = self:GetSummarizedTable(db, nil, DetailsUserComp)
+		sumTableTwo = self:GetSummarizedTable(db, nil)
+	end
+	
+	local max = DPSMate:GetMaxValue(sumTable, 2)
+	local time = DPSMate:GetMaxValue(sumTable, 1)
+	local min = DPSMate:GetMinValue(sumTable, 1)
+	local maxT = DPSMate:GetMaxValue(sumTableTwo, 2)
+	local timeT = DPSMate:GetMaxValue(sumTableTwo, 1)
+	local minT = DPSMate:GetMinValue(sumTableTwo, 1)
+	local smax, smin, stime = max, min, time
+	
+	if max<maxT then
+		smax = maxT
+	end
+	if min>minT then
+		smin = minT
+	end
+	if time<timeT then
+		stime = timeT
+	end
+	g7:ResetData()
+	g7:SetXAxis(0,stime-smin)
+	g7:SetYAxis(0,smax+200)
+	g7:SetGridSpacing((stime-smin)/20,smax/7)
+	g7:SetGridColor({0.5,0.5,0.5,0.5})
+	g7:SetAxisDrawing(true,true)
+	g7:SetAxisColor({1.0,1.0,1.0,1.0})
+	g7:SetAutoScale(true)
+	g7:SetYLabels(true, false)
+	g7:SetXLabels(true)
+	
+	local ata={{0,0}}
+	for cat, val in DPSMate:ScaleDown(sumTable, min) do
+		tinsert(ata, {val[1],val[2], self:CheckProcs(DPSMate_Details_CompareHealingAndAbsorbs.proc, val[1]+min, DetailsUserComp)})
+	end
+	
+	local Data2={{0,0}}
+	for cat, val in DPSMate:ScaleDown(sumTableTwo, minT) do
+		tinsert(Data2, {val[1],val[2], self:CheckProcs(DPSMate_Details_HealingAndAbsorbs.proc, val[1]+minT)})
+	end
+
+	g7:AddDataSeries(ata,{{0.2,0.8,0.2,0.8}, {0.5,0.8,0.9,0.8}}, self:AddProcPoints(DPSMate_Details_CompareHealingAndAbsorbs.proc, ata, DetailsUserComp))
+	g7:AddDataSeries(Data2,{{1.0,0.0,0.0,0.8}, {1.0,1.0,0.0,0.8}}, self:AddProcPoints(DPSMate_Details_HealingAndAbsorbs.proc, Data2))
+	g7:Show()
+end
+
+function DPSMate.Modules.DetailsHealingAndAbsorbs:EvalToggleTable(cname)
 	local a,b = {},{}
 	local d = 0
 	for cat, val in db2 do
-		if val[DPSMateUser[DetailsUser][1]] then
+		if val[DPSMateUser[cname or DetailsUser][1]] then
 			local CV = 0
 			local c = {[1] = 0,[2] = {},[3] = {}}
-			for p, v in val[DPSMateUser[DetailsUser][1]] do
+			for p, v in val[DPSMateUser[cname or DetailsUser][1]] do
 				CV = CV + v[1]
 				local i = 1
 				while true do
@@ -89,109 +217,234 @@ function DPSMate.Modules.DetailsHealingAndAbsorbs:EvalToggleTable()
 	
 	-- Absorbs
 	for cat, val in DPSMateAbsorbs[curKey] do
-		if val[DPSMateUser[DetailsUser][1]] then
-			for ca, va in val[DPSMateUser[DetailsUser][1]]["i"] do
-				local i, dmg = 1, 5
-				if va[4] then
-					dmg = va[4]
-				end
-				if DPSMateDamageTaken[1][DPSMateUser[DetailsUser][1]][va[2]] then
-					if DPSMateDamageTaken[1][DPSMateUser[DetailsUser][1]][va[2]][va[3]] then
-						dmg = DPSMateDamageTaken[1][DPSMateUser[DetailsUser][1]][va[2]][va[3]][14]
+		if val[DPSMateUser[cname or DetailsUser][1]] then
+			local CV = 0
+			local c = {[1] = 0,[2] = {},[3] = {}}
+			for ca, va in val[DPSMateUser[cname or DetailsUser][1]] do
+				local dmg = 5
+				local hit, hitav, hitmin, hitmax = 0, 0, 0, 0
+				
+				if ca~="i" then
+					for ce, ve in pairs(va) do -- 1
+						local PerShieldAbsorb = 0
+						for cet, vel in pairs(ve) do
+							if cet~="i" then
+								for qq,ss in vel do
+									local p = 5
+									if DPSMateDamageTaken[1][cat] then
+										if DPSMateDamageTaken[1][cat][cet] then
+											if DPSMateDamageTaken[1][cat][cet][qq] then
+												if DPSMateDamageTaken[1][cat][cet][qq][14]~=0 then
+													p=ceil(DPSMateDamageTaken[1][cat][cet][qq][14])
+												end
+											end
+										end
+									elseif DPSMateEDT[1][cat] then
+										if DPSMateEDT[1][cat][cet] then
+											if DPSMateEDT[1][cat][cet][qq] then
+												if DPSMateEDT[1][cat][cet][qq][4]~=0 then
+													p=ceil((DPSMateEDT[1][cat][cet][qq][4]+DPSMateEDT[1][cat][cet][qq][8])/2)
+												end
+											end
+										end
+									end
+									PerShieldAbsorb=PerShieldAbsorb+ss*p
+								end
+							end
+						end
+						if ve["i"][1]==1 then
+							PerShieldAbsorb=PerShieldAbsorb+ve["i"][2]
+						end
+						dmg = dmg+PerShieldAbsorb
+						if PerShieldAbsorb>hitmax then hitmax = PerShieldAbsorb end
+						if (PerShieldAbsorb<hitmin or hitmin == 0) and PerShieldAbsorb>0 then hitmin = PerShieldAbsorb end
+						hitav = DPSMate.DB:WeightedAverage(hitav, PerShieldAbsorb, hit, 1)
+						hit=hit+1
 					end
-				end
-				if dmg>0 then
+				
+					local temp ={
+						[1] = dmg,
+						[2] = hit,
+						[3] = 0,
+						[4] = hitav,
+						[5] = 0,
+						[6] = hitmin,
+						[7] = hitmax,
+						[8] = 0,
+						[9] = 0
+					}
+					
+					local i = 1
 					while true do
-						if (not newArr[i]) then
-							tinsert(newArr, i, {va[1], dmg})
+						if (not c[2][i]) then
+							tinsert(c[3], i, temp)
+							tinsert(c[2], i, ca)
 							break
 						else
-							if newArr[i][1] > va[1] then
-								tinsert(newArr, i, {va[1], dmg})
+							if c[3][i][1] < dmg then
+								tinsert(c[3], i, temp)
+								tinsert(c[2], i, ca)
 								break
 							end
 						end
 						i=i+1
 					end
+					CV = CV + dmg
 				end
+			end
+			if CV>0 then
+				c[1] = CV
+				local i = 1
+				while true do
+					if (not a[i]) then
+						tinsert(b, i, c)
+						tinsert(a, i, cat)
+						break
+					else
+						if b[i][1] < CV then
+							tinsert(b, i, c)
+							tinsert(a, i, cat)
+							break
+						end
+					end
+					i=i+1
+				end
+				d = d + CV
 			end
 		end
 	end
 	return a,b,d
 end
 
-function DPSMate.Modules.DetailsHealingAndAbsorbs:ScrollFrame_Update()
+function DPSMate.Modules.DetailsHealingAndAbsorbs:ScrollFrame_Update(comp)
+	if not comp then comp = DPSMate_Details_HealingAndAbsorbs.LastScroll or "" end
 	local line, lineplusoffset
-	local obj = DPSMate_Details_HealingAndAbsorbs_Log_ScrollFrame
-	local len = DPSMate:TableLength(DetailsArr)
+	local obj = _G("DPSMate_Details_"..comp.."HealingAndAbsorbs_Log_ScrollFrame")
+	local uArr, dArr, dTot, dSel = DetailsArr, DmgArr, DetailsTotal, DetailsSelected
+	if comp ~= "" and comp~=nil then
+		uArr = DetailsArrComp
+		dArr = DmgArrComp
+		dTot = DetailsTotalComp
+		dSel = DetailsSelectedComp
+	end
+	local len = DPSMate:TableLength(uArr)
+	if comp ~= "" and comp~=nil then
+		local coeff = len-10
+		if not obj.oset or obj.oset<0 then
+			obj.oset = 0
+		end
+		if coeff>0 then
+			if (coeff-obj.oset)<0 then
+				obj.oset = coeff
+			end
+			FauxScrollFrame_SetOffset(obj, obj.oset)
+		end
+	end
 	FauxScrollFrame_Update(obj,len,10,24)
 	for line=1,10 do
 		lineplusoffset = line + FauxScrollFrame_GetOffset(obj)
-		if DetailsArr[lineplusoffset] ~= nil then
-			local ability = DPSMate:GetAbilityById(DetailsArr[lineplusoffset])
-			_G("DPSMate_Details_HealingAndAbsorbs_Log_ScrollButton"..line.."_Name"):SetText(ability)
-			_G("DPSMate_Details_HealingAndAbsorbs_Log_ScrollButton"..line.."_Value"):SetText(DmgArr[lineplusoffset][1].." ("..strformat("%.2f", (DmgArr[lineplusoffset][1]*100/DetailsTotal)).."%)")
-			_G("DPSMate_Details_HealingAndAbsorbs_Log_ScrollButton"..line.."_Icon"):SetTexture(DPSMate.BabbleSpell:GetSpellIcon(strsub(ability, 1, (strfind(ability, "%(") or 0)-1) or ability))
+		if uArr[lineplusoffset] ~= nil then
+			local ability = DPSMate:GetAbilityById(uArr[lineplusoffset])
+			_G("DPSMate_Details_"..comp.."HealingAndAbsorbs_Log_ScrollButton"..line.."_Name"):SetText(ability)
+			_G("DPSMate_Details_"..comp.."HealingAndAbsorbs_Log_ScrollButton"..line.."_Value"):SetText(dArr[lineplusoffset][1].." ("..strformat("%.2f", (dArr[lineplusoffset][1]*100/dTot)).."%)")
+			_G("DPSMate_Details_"..comp.."HealingAndAbsorbs_Log_ScrollButton"..line.."_Icon"):SetTexture(DPSMate.BabbleSpell:GetSpellIcon(strsub(ability, 1, (strfind(ability, "%(") or 0)-1) or ability))
 			if len < 10 then
-				_G("DPSMate_Details_HealingAndAbsorbs_Log_ScrollButton"..line):SetWidth(235)
-				_G("DPSMate_Details_HealingAndAbsorbs_Log_ScrollButton"..line.."_Name"):SetWidth(125)
+				_G("DPSMate_Details_"..comp.."HealingAndAbsorbs_Log_ScrollButton"..line):SetWidth(235)
+				_G("DPSMate_Details_"..comp.."HealingAndAbsorbs_Log_ScrollButton"..line.."_Name"):SetWidth(125)
 			else
-				_G("DPSMate_Details_HealingAndAbsorbs_Log_ScrollButton"..line):SetWidth(220)
-				_G("DPSMate_Details_HealingAndAbsorbs_Log_ScrollButton"..line.."_Name"):SetWidth(110)
+				_G("DPSMate_Details_"..comp.."HealingAndAbsorbs_Log_ScrollButton"..line):SetWidth(220)
+				_G("DPSMate_Details_"..comp.."HealingAndAbsorbs_Log_ScrollButton"..line.."_Name"):SetWidth(110)
 			end
-			_G("DPSMate_Details_HealingAndAbsorbs_Log_ScrollButton"..line):Show()
+			_G("DPSMate_Details_"..comp.."HealingAndAbsorbs_Log_ScrollButton"..line):Show()
 		else
-			_G("DPSMate_Details_HealingAndAbsorbs_Log_ScrollButton"..line):Hide()
+			_G("DPSMate_Details_"..comp.."HealingAndAbsorbs_Log_ScrollButton"..line):Hide()
 		end
-		_G("DPSMate_Details_HealingAndAbsorbs_Log_ScrollButton"..line.."_selected"):Hide()
-		if DetailsSelected == lineplusoffset then
-			_G("DPSMate_Details_HealingAndAbsorbs_Log_ScrollButton"..line.."_selected"):Show()
+		_G("DPSMate_Details_"..comp.."HealingAndAbsorbs_Log_ScrollButton"..line.."_selected"):Hide()
+		if dSel == lineplusoffset then
+			_G("DPSMate_Details_"..comp.."HealingAndAbsorbs_Log_ScrollButton"..line.."_selected"):Show()
 		end
 	end
 end
 
-function DPSMate.Modules.DetailsHealingAndAbsorbs:SelectDetails_HealingAndAbsorbsButton(i)
+function DPSMate.Modules.DetailsHealingAndAbsorbs:SelectDetails_HealingAndAbsorbsButton(i, comp, cname)
+	if not comp then comp = DPSMate_Details_HealingAndAbsorbs.LastScroll or "" end
 	local pathh = ""
 	local path,obj,lineplusoffset
-	local user = DPSMateUser[DetailsUser][1]
+	local uArr, dSel, d2, dArr = DetailsArr, DetailsSelected, t2, DmgArr
 	local arr = DPSMateEHealing[curKey]
-	if toggle then
-		pathh = "DPSMate_Details_HealingAndAbsorbs_playerSpells"
-		obj = _G(pathh.."_ScrollFrame")
-		lineplusoffset = i + FauxScrollFrame_GetOffset(obj)
-		path = t2[obj.id][3][lineplusoffset]
-	else
-		pathh = "DPSMate_Details_HealingAndAbsorbs_Log"
-		obj = _G(pathh.."_ScrollFrame")
-		lineplusoffset = i + FauxScrollFrame_GetOffset(obj)
-		path = arr[user][tonumber(DetailsArr[lineplusoffset])]
+	if comp ~= "" and comp~=nil then
+		uArr = DetailsArrComp
+		dArr = DmgArrComp
+		dSel = DetailsSelectedComp
+		if not cname then
+			cname = DetailsUserComp
+		end
+		d2 = t2Comp
 	end
-	DetailsSelected = lineplusoffset
+	local user, pet = DPSMateUser[cname or DetailsUser][1], ""
+	if toggle then
+		pathh = "DPSMate_Details_"..comp.."HealingAndAbsorbs_playerSpells"
+		obj = _G(pathh.."_ScrollFrame")
+		lineplusoffset = i + FauxScrollFrame_GetOffset(obj)
+		path = d2[obj.id][3][lineplusoffset]
+	else
+		pathh = "DPSMate_Details_"..comp.."HealingAndAbsorbs_Log"
+		obj = _G(pathh.."_ScrollFrame")
+		lineplusoffset = i + FauxScrollFrame_GetOffset(obj)
+		path = arr[user][tonumber(uArr[lineplusoffset])]
+	end
+	if comp ~= "" and comp~=nil then
+		DetailsSelectedComp = lineplusoffset
+	else
+		DetailsSelected = lineplusoffset
+	end
 	for p=1, 10 do
 		_G(pathh.."_ScrollButton"..p.."_selected"):Hide()
 	end
 	_G(pathh.."_ScrollButton"..i.."_selected"):Show()
-	
-	local ability = tonumber(DetailsArr[lineplusoffset])
 	local hit, crit, hitav, critav, hitMin, hitMax, critMin, critMax, total, max = 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-	if DmgArr[lineplusoffset][2] then
-		for cat, val in db do 
+	if dArr[lineplusoffset][2] and not toggle then -- IsAbsorb
+		for cat, val in DPSMateAbsorbs[curKey] do 
 			for ca, va in val do
-				if ca == DPSMateUser[DetailsUser][1] then
-					for c, v in va[ability] do
-						for ce, ve in v do
-							local dmg = 5
-							if ce=="i" then
-								dmg = ve[2]
-							else
-								if DPSMateDamageTaken[1][cat][ce][ve[1]] then
-									dmg = ceil(DPSMateDamageTaken[1][cat][ce][ve[1]][14]*ve[2])
+				if ca == DPSMateUser[cname or DetailsUser][1] then -- Owner
+					for c, v in va do -- Every Ability
+						if c==tonumber(uArr[lineplusoffset]) then
+							for ce, ve in v do -- Every individual shield
+								local PerShieldAbsorb = 0
+								for cet, vel in ve do
+									if cet~="i" then
+										for qq,ss in vel do
+											local p = 5
+											if DPSMateDamageTaken[1][cat] then
+												if DPSMateDamageTaken[1][cat][cet] then
+													if DPSMateDamageTaken[1][cat][cet][qq] then
+														if DPSMateDamageTaken[1][cat][cet][qq][14]~=0 then
+															p=ceil(DPSMateDamageTaken[1][cat][cet][qq][14])
+														end
+													end
+												end
+											elseif DPSMateEDT[1][cat] then
+												if DPSMateEDT[1][cat][cet] then
+													if DPSMateEDT[1][cat][cet][qq] then
+														if DPSMateEDT[1][cat][cet][qq][4]~=0 then
+															p=ceil((DPSMateEDT[1][cat][cet][qq][4]+DPSMateEDT[1][cat][cet][qq][8])/2)
+														end
+													end
+												end
+											end
+											PerShieldAbsorb=PerShieldAbsorb+ss*p
+										end
+									end
 								end
+								if ve["i"][1]==1 then
+									PerShieldAbsorb=PerShieldAbsorb+ve["i"][2]
+								end
+								
+								if PerShieldAbsorb>hitMax then hitMax = PerShieldAbsorb end
+								if (PerShieldAbsorb<hitMin or hitMin == 0) and PerShieldAbsorb>0 then hitMin = PerShieldAbsorb end
+								hitav = DPSMate.DB:WeightedAverage(hitav, PerShieldAbsorb, hit, 1)
+								hit=hit+1
 							end
-							if dmg>hitMax then hitMax = dmg end
-							if dmg<hitMin or hitMin == 0 then hitMin = dmg end
-							hitav = (hitav+dmg)/2
-							hit=hit+1
 						end
 					end
 				end
@@ -204,39 +457,56 @@ function DPSMate.Modules.DetailsHealingAndAbsorbs:SelectDetails_HealingAndAbsorb
 	end
 	
 	-- Hit
-	_G("DPSMate_Details_HealingAndAbsorbs_LogDetails_HealingAndAbsorbs_Amount0_Amount"):SetText(hit)
-	_G("DPSMate_Details_HealingAndAbsorbs_LogDetails_HealingAndAbsorbs_Amount0_Percent"):SetText(strformat("%.1f", 100*hit/total).."%")
-	_G("DPSMate_Details_HealingAndAbsorbs_LogDetails_HealingAndAbsorbs_Amount0_StatusBar"):SetValue(ceil(100*hit/max))
-	_G("DPSMate_Details_HealingAndAbsorbs_LogDetails_HealingAndAbsorbs_Amount0_StatusBar"):SetStatusBarColor(0.3,0.7,1.0,1)
-	_G("DPSMate_Details_HealingAndAbsorbs_LogDetails_HealingAndAbsorbs_Average0"):SetText(ceil(hitav))
-	_G("DPSMate_Details_HealingAndAbsorbs_LogDetails_HealingAndAbsorbs_Min0"):SetText(hitMin)
-	_G("DPSMate_Details_HealingAndAbsorbs_LogDetails_HealingAndAbsorbs_Max0"):SetText(hitMax)
+	_G("DPSMate_Details_"..comp.."HealingAndAbsorbs_LogDetails_HealingAndAbsorbs_Amount0_Amount"):SetText(hit)
+	_G("DPSMate_Details_"..comp.."HealingAndAbsorbs_LogDetails_HealingAndAbsorbs_Amount0_Percent"):SetText(strformat("%.1f", 100*hit/total).."%")
+	_G("DPSMate_Details_"..comp.."HealingAndAbsorbs_LogDetails_HealingAndAbsorbs_Amount0_StatusBar"):SetValue(ceil(100*hit/max))
+	_G("DPSMate_Details_"..comp.."HealingAndAbsorbs_LogDetails_HealingAndAbsorbs_Amount0_StatusBar"):SetStatusBarColor(0.3,0.7,1.0,1)
+	_G("DPSMate_Details_"..comp.."HealingAndAbsorbs_LogDetails_HealingAndAbsorbs_Average0"):SetText(ceil(hitav))
+	_G("DPSMate_Details_"..comp.."HealingAndAbsorbs_LogDetails_HealingAndAbsorbs_Min0"):SetText(hitMin)
+	_G("DPSMate_Details_"..comp.."HealingAndAbsorbs_LogDetails_HealingAndAbsorbs_Max0"):SetText(hitMax)
 	
 	-- Crit
-	_G("DPSMate_Details_HealingAndAbsorbs_LogDetails_HealingAndAbsorbs_Amount1_Amount"):SetText(crit)
-	_G("DPSMate_Details_HealingAndAbsorbs_LogDetails_HealingAndAbsorbs_Amount1_Percent"):SetText(strformat("%.1f", 100*crit/total).."%")
-	_G("DPSMate_Details_HealingAndAbsorbs_LogDetails_HealingAndAbsorbs_Amount1_StatusBar"):SetValue(ceil(100*crit/max))
-	_G("DPSMate_Details_HealingAndAbsorbs_LogDetails_HealingAndAbsorbs_Amount1_StatusBar"):SetStatusBarColor(1.0,0.7,0.3,1)
-	_G("DPSMate_Details_HealingAndAbsorbs_LogDetails_HealingAndAbsorbs_Average1"):SetText(ceil(critav))
-	_G("DPSMate_Details_HealingAndAbsorbs_LogDetails_HealingAndAbsorbs_Min1"):SetText(critMin)
-	_G("DPSMate_Details_HealingAndAbsorbs_LogDetails_HealingAndAbsorbs_Max1"):SetText(critMax)
+	_G("DPSMate_Details_"..comp.."HealingAndAbsorbs_LogDetails_HealingAndAbsorbs_Amount1_Amount"):SetText(crit)
+	_G("DPSMate_Details_"..comp.."HealingAndAbsorbs_LogDetails_HealingAndAbsorbs_Amount1_Percent"):SetText(strformat("%.1f", 100*crit/total).."%")
+	_G("DPSMate_Details_"..comp.."HealingAndAbsorbs_LogDetails_HealingAndAbsorbs_Amount1_StatusBar"):SetValue(ceil(100*crit/max))
+	_G("DPSMate_Details_"..comp.."HealingAndAbsorbs_LogDetails_HealingAndAbsorbs_Amount1_StatusBar"):SetStatusBarColor(1.0,0.7,0.3,1)
+	_G("DPSMate_Details_"..comp.."HealingAndAbsorbs_LogDetails_HealingAndAbsorbs_Average1"):SetText(ceil(critav))
+	_G("DPSMate_Details_"..comp.."HealingAndAbsorbs_LogDetails_HealingAndAbsorbs_Min1"):SetText(critMin)
+	_G("DPSMate_Details_"..comp.."HealingAndAbsorbs_LogDetails_HealingAndAbsorbs_Max1"):SetText(critMax)
 end
 
-local PSelected = 1
-function DPSMate.Modules.DetailsHealingAndAbsorbs:Player_Update()
+function DPSMate.Modules.DetailsHealingAndAbsorbs:Player_Update(comp)
+	if not comp then comp = DPSMate_Details_HealingAndAbsorbs.LastScroll or "" end
 	local line, lineplusoffset
-	local path = "DPSMate_Details_HealingAndAbsorbs_player"
+	local path = "DPSMate_Details_"..comp.."HealingAndAbsorbs_player"
 	local obj = _G(path.."_ScrollFrame")
-	local len = DPSMate:TableLength(t1)
+	local d1,d2,d3,d4 = t1,t2,TTotal,PSelected
+	if comp ~= "" and comp~=nil then
+		d1 = t1Comp
+		d2 = t2Comp
+		d3 = TTotalComp
+		d4 = PSelected2
+	end
+	local len = DPSMate:TableLength(d1)
+	local coeff = len-8
+	if not obj.oset or obj.oset<0 then
+		obj.oset = 0
+	end
+	if coeff>0 then
+		if (coeff-obj.oset)<0 then
+			obj.oset = coeff
+		end
+		FauxScrollFrame_SetOffset(obj, obj.oset)
+	end
 	FauxScrollFrame_Update(obj,len,8,24)
 	for line=1,8 do
 		lineplusoffset = line + FauxScrollFrame_GetOffset(obj)
-		if t1[lineplusoffset] ~= nil then
-			local user = DPSMate:GetUserById(t1[lineplusoffset])
+		if d1[lineplusoffset] ~= nil then
+			local user = DPSMate:GetUserById(d1[lineplusoffset])
 			local r,g,b,img = DPSMate:GetClassColor(DPSMateUser[user][2])
 			_G(path.."_ScrollButton"..line.."_Name"):SetText(user)
 			_G(path.."_ScrollButton"..line.."_Name"):SetTextColor(r,g,b)
-			_G(path.."_ScrollButton"..line.."_Value"):SetText(t2[lineplusoffset][1].." ("..strformat("%.2f", (t2[lineplusoffset][1]*100/TTotal)).."%)")
+			_G(path.."_ScrollButton"..line.."_Value"):SetText(d2[lineplusoffset][1].." ("..strformat("%.2f", (d2[lineplusoffset][1]*100/d3)).."%)")
 			_G(path.."_ScrollButton"..line.."_Icon"):SetTexture("Interface\\AddOns\\DPSMate\\images\\class\\"..img)
 			if len < 8 then
 				_G(path.."_ScrollButton"..line):SetWidth(235)
@@ -250,25 +520,42 @@ function DPSMate.Modules.DetailsHealingAndAbsorbs:Player_Update()
 			_G(path.."_ScrollButton"..line):Hide()
 		end
 		_G(path.."_ScrollButton"..line.."_selected"):Hide()
-		if PSelected == lineplusoffset then
+		if d4 == lineplusoffset then
 			_G(path.."_ScrollButton"..line.."_selected"):Show()
 		end
 	end
 end
 
-function DPSMate.Modules.DetailsHealingAndAbsorbs:PlayerSpells_Update(i)
+function DPSMate.Modules.DetailsHealingAndAbsorbs:PlayerSpells_Update(i, comp)
+	if not comp then comp = DPSMate_Details_HealingAndAbsorbs.LastScroll or "" end
 	local line, lineplusoffset
-	local path = "DPSMate_Details_HealingAndAbsorbs_playerSpells"
+	local path = "DPSMate_Details_"..comp.."HealingAndAbsorbs_playerSpells"
 	local obj = _G(path.."_ScrollFrame")
-	obj.id = (i + FauxScrollFrame_GetOffset(DPSMate_Details_HealingAndAbsorbs_player_ScrollFrame)) or obj.id
-	local len = DPSMate:TableLength(t2[i][2])
+	obj.id = (i + FauxScrollFrame_GetOffset(_G("DPSMate_Details_"..comp.."HealingAndAbsorbs_player_ScrollFrame"))) or obj.id
+	local d1,d2,d3,d4 = t1,t2,TTotal,PSelected
+	if comp ~= "" and comp~=nil then
+		d2 = t2Comp
+		d4 = PSelected2
+	end
+	local len = DPSMate:TableLength(d2[i][2])
+	local coeff = len-8
+	if not obj.oset or obj.oset<0 then
+		obj.oset = 0
+	end
+	if coeff>0 then
+		if (coeff-obj.oset)<0 then
+			obj.oset = coeff
+		end
+		FauxScrollFrame_SetOffset(obj, obj.oset)
+	end
+
 	FauxScrollFrame_Update(obj,len,10,24)
 	for line=1,10 do
 		lineplusoffset = line + FauxScrollFrame_GetOffset(obj)
-		if t2[obj.id][2][lineplusoffset] ~= nil then
-			local ability = DPSMate:GetAbilityById(t2[obj.id][2][lineplusoffset])
+		if d2[obj.id][2][lineplusoffset] ~= nil then
+			local ability = DPSMate:GetAbilityById(d2[obj.id][2][lineplusoffset]) or "Sinister Strike"
 			_G(path.."_ScrollButton"..line.."_Name"):SetText(ability)
-			_G(path.."_ScrollButton"..line.."_Value"):SetText(t2[obj.id][3][lineplusoffset][1].." ("..strformat("%.2f", (t2[obj.id][3][lineplusoffset][1]*100/t2[obj.id][1])).."%)")
+			_G(path.."_ScrollButton"..line.."_Value"):SetText(d2[obj.id][3][lineplusoffset][1].." ("..strformat("%.2f", (d2[obj.id][3][lineplusoffset][1]*100/d2[obj.id][1])).."%)")
 			_G(path.."_ScrollButton"..line.."_Icon"):SetTexture(DPSMate.BabbleSpell:GetSpellIcon(strsub(ability, 1, (strfind(ability, "%(") or 0)-1) or ability))
 			if len < 10 then
 				_G(path.."_ScrollButton"..line):SetWidth(235)
@@ -282,84 +569,112 @@ function DPSMate.Modules.DetailsHealingAndAbsorbs:PlayerSpells_Update(i)
 			_G(path.."_ScrollButton"..line):Hide()
 		end
 		_G(path.."_ScrollButton"..line.."_selected"):Hide()
-		if DetailsSelected == lineplusoffset then
+		if d4 == lineplusoffset then
 			_G(path.."_ScrollButton"..line.."_selected"):Show()
 		end
 	end
-	PSelected = obj.id
-	for p=1, 8 do
-		_G("DPSMate_Details_HealingAndAbsorbs_player_ScrollButton"..p.."_selected"):Hide()
+	if comp ~= "" and comp~=nil then
+		PSelected2 = obj.id
+	else
+		PSelected = obj.id
 	end
-	_G("DPSMate_Details_HealingAndAbsorbs_player_ScrollButton"..i.."_selected"):Show()
+	for p=1, 8 do
+		_G("DPSMate_Details_"..comp.."HealingAndAbsorbs_player_ScrollButton"..p.."_selected"):Hide()
+	end
+	_G("DPSMate_Details_"..comp.."HealingAndAbsorbs_player_ScrollButton"..i.."_selected"):Show()
 	if toggle3 then
 		if toggle2 then
-			self:UpdateStackedGraph()
+			if comp ~= "" and comp~=nil then
+				self:UpdateStackedGraph(g6, comp, DetailsUserComp)
+			else
+				self:UpdateStackedGraph(g3)
+			end
 		else
-			self:UpdateLineGraph()
+			if comp ~= "" and comp~=nil then
+				self:UpdateLineGraph(g5, comp, DetailsUserComp)
+			else
+				self:UpdateLineGraph(g2, "")
+			end
+		end
+		if DetailsUserComp then
+			self:UpdateSumGraph()
 		end
 	end
 end
 
-function DPSMate.Modules.DetailsHealingAndAbsorbs:UpdatePie()
-	if not g then
-		g=DPSMate.Options.graph:CreateGraphPieChart("HABPieChart", DPSMate_Details_HealingAndAbsorbs_Diagram, "CENTER", "CENTER", 0, 0, 200, 200)
+function DPSMate.Modules.DetailsHealingAndAbsorbs:UpdatePie(gg, cname)
+	local dArr, dTot, uArr = DmgArr, DetailsTotal, DetailsArr
+	if cname then
+		dArr = DmgArrComp
+		uArr = DetailsArrComp
+		dTot = DetailsTotalComp
 	end
-	g:ResetPie()
-	for cat, val in pairs(DmgArr) do
-		g:AddPie(val[1]*100/DetailsTotal, 0, DPSMate:GetAbilityById(DetailsArr[cat]))
+	gg:ResetPie()
+	for cat, val in dArr do
+		gg:AddPie(val[1]*100/dTot, 0, DPSMate:GetAbilityById(uArr[cat]))
 	end
 end
 
-function DPSMate.Modules.DetailsHealingAndAbsorbs:UpdateLineGraph()
-	if not g2 then
-		g2=DPSMate.Options.graph:CreateGraphLine("HABLineGraph",DPSMate_Details_HealingAndAbsorbs_DiagramLine,"CENTER","CENTER",0,0,850,230)
-	end
+function DPSMate.Modules.DetailsHealingAndAbsorbs:UpdateLineGraph(gg, comp, cname)
+	if not comp then comp = DPSMate_Details_HealingAndAbsorbs.LastScroll or "" end
 	if g3 then
 		g3:Hide()
 	end
+	if g6 then
+		g6:Hide()
+	end
 	local sumTable
 	if toggle3 then
-		sumTable = self:GetSummarizedTable(db2, t1[PSelected])
+		if comp ~= "" and comp~=nil then
+			sumTable = self:GetSummarizedTable(db2, t1Comp[PSelected2], cname)
+		else
+			sumTable = self:GetSummarizedTable(db2, t1[PSelected])
+		end
 	else
-		sumTable = self:GetSummarizedTable(db, nil)
+		sumTable = self:GetSummarizedTable(db, nil, cname)
 	end
 	local max = DPSMate:GetMaxValue(sumTable, 2)
 	local time = DPSMate:GetMaxValue(sumTable, 1)
 	local min = DPSMate:GetMinValue(sumTable, 1)
-
-	g2:ResetData()
-	g2:SetXAxis(0,time-min)
-	g2:SetYAxis(0,max+200)
-	g2:SetGridSpacing((time-min)/10,max/7)
-	g2:SetGridColor({0.5,0.5,0.5,0.5})
-	g2:SetAxisDrawing(true,true)
-	g2:SetAxisColor({1.0,1.0,1.0,1.0})
-	g2:SetAutoScale(true)
-	g2:SetYLabels(true, false)
-	g2:SetXLabels(true)
+	
+	gg:ResetData()
+	gg:SetXAxis(0,time-min)
+	gg:SetYAxis(0,max+200)
+	gg:SetGridSpacing((time-min)/10,max/7)
+	gg:SetGridColor({0.5,0.5,0.5,0.5})
+	gg:SetAxisDrawing(true,true)
+	gg:SetAxisColor({1.0,1.0,1.0,1.0})
+	gg:SetAutoScale(true)
+	gg:SetYLabels(true, false)
+	gg:SetXLabels(true)
 
 	local Data1={{0,0}}
 	for cat, val in DPSMate:ScaleDown(sumTable, min) do
-		tinsert(Data1, {val[1],val[2], self:CheckProcs(DPSMate_Details_HealingAndAbsorbs.proc, val[1]+min)})
+		tinsert(Data1, {val[1],val[2], self:CheckProcs(_G("DPSMate_Details_"..comp.."HealingAndAbsorbs").proc, val[1]+min, cname)})
+	end
+	local colorT = {{1.0,0.0,0.0,0.8}, {1.0,1.0,0.0,0.8}}
+	if cname then
+		colorT = {{0.2,0.8,0.2,0.8}, {0.5,0.8,0.9,0.8}}
 	end
 
-	g2:AddDataSeries(Data1,{{1.0,0.0,0.0,0.8}, {1.0,1.0,0.0,0.8}}, self:AddProcPoints(DPSMate_Details_HealingAndAbsorbs.proc, Data1))
-	g2:Show()
-	toggle2 = false
+	gg:AddDataSeries(Data1,colorT, self:AddProcPoints(_G("DPSMate_Details_"..comp.."HealingAndAbsorbs").proc, Data1, cname))
+	gg:Show()
+	toggle2=false
 end
 
-function DPSMate.Modules.DetailsHealingAndAbsorbs:UpdateStackedGraph()
-	if not g3 then
-		g3=DPSMate.Options.graph:CreateStackedGraph("HABStackedGraph",DPSMate_Details_HealingAndAbsorbs_DiagramLine,"CENTER","CENTER",0,0,850,230)
-		g3:SetGridColor({0.5,0.5,0.5,0.5})
-		g3:SetAxisDrawing(true,true)
-		g3:SetAxisColor({1.0,1.0,1.0,1.0})
-		g3:SetAutoScale(true)
-		g3:SetYLabels(true, false)
-		g3:SetXLabels(true)
-	end
+function DPSMate.Modules.DetailsHealingAndAbsorbs:UpdateStackedGraph(gg, comp, cname)
 	if g2 then
 		g2:Hide()
+	end
+	if g5 then
+		g5:Hide()
+	end
+	
+	local d1,d2,d3,d4 = t1,t2,TTotal,PSelected
+	if comp ~= "" and comp~=nil then
+		d1 = t1Comp
+		d2 = t2Comp
+		d4 = PSelected2
 	end
 	
 	local Data1 = {}
@@ -369,82 +684,85 @@ function DPSMate.Modules.DetailsHealingAndAbsorbs:UpdateStackedGraph()
 	local maxY = 0
 	local maxX = 0
 	if toggle3 then
-		for cat, val in db2[t1[PSelected]][DPSMateUser[DetailsUser][1]] do
-			if cat~="i" and val["i"] then
-				local temp = {}
-				for c, v in val["i"] do
-					local key = tonumber(strformat("%.1f", c))
-					if p[key] then
-						p[key] = p[key] + v
-					else
-						p[key] = v
-					end
-					local i = 1
-					while true do
-						if not temp[i] then
-							tinsert(temp, i, {c,v})
-							break
-						elseif c<=temp[i][1] then
-							tinsert(temp, i, {c,v})
-							break
+		if db2[d1[d4]] then
+			if db2[d1[d4]][DPSMateUser[cname or DetailsUser][1]] then
+				for cat, val in db2[d1[d4]][DPSMateUser[cname or DetailsUser][1]] do
+					if cat~="i" and val["i"] then
+						local temp = {}
+						for c, v in val["i"] do
+							local key = tonumber(strformat("%.1f", c))
+							if p[key] then
+								p[key] = p[key] + v
+							else
+								p[key] = v
+							end
+							local i = 1
+							while true do
+								if not temp[i] then
+									tinsert(temp, i, {c,v})
+									break
+								elseif c<=temp[i][1] then
+									tinsert(temp, i, {c,v})
+									break
+								end
+								i = i + 1
+							end
+							maxY = math.max(p[key], maxY)
+							maxX = math.max(c, maxX)
 						end
-						i = i + 1
+						local i = 1
+						while true do
+							if not b[i] then
+								tinsert(b, i, val[1])
+								tinsert(label, i, DPSMate:GetAbilityById(cat))
+								tinsert(Data1, i, temp)
+								break
+							elseif b[i]>=val[1] then
+								tinsert(b, i, val[1])
+								tinsert(label, i, DPSMate:GetAbilityById(cat))
+								tinsert(Data1, i, temp)
+								break
+							end
+							i = i + 1
+						end
 					end
-					maxY = math.max(p[key], maxY)
-					maxX = math.max(c, maxX)
-				end
-				local i = 1
-				while true do
-					if not b[i] then
-						tinsert(b, i, val[1])
-						tinsert(label, i, DPSMate:GetAbilityById(cat))
-						tinsert(Data1, i, temp)
-						break
-					elseif b[i]>=val[1] then
-						tinsert(b, i, val[1])
-						tinsert(label, i, DPSMate:GetAbilityById(cat))
-						tinsert(Data1, i, temp)
-						break
-					end
-					i = i + 1
 				end
 			end
 		end
 		-- Add absorbs points
 		local temp = {}
-		if DPSMateAbsorbs[curKey][b] then
-			if DPSMateAbsorbs[curKey][b][DPSMateUser[DetailsUser][1]] then
-				for ca, va in DPSMateAbsorbs[curKey][t1[PSelected]][DPSMateUser[DetailsUser][1]]["i"] do
-					for ca, va in val[DPSMateUser[DetailsUser][1]]["i"] do
-						local i, dmg = 1, 5
-						if va[4] then
-							dmg = va[4]
+		if DPSMateAbsorbs[curKey][d1[d4]] then
+			if DPSMateAbsorbs[curKey][d1[d4]][DPSMateUser[cname or DetailsUser][1]] then
+				for ca, va in DPSMateAbsorbs[curKey][d1[d4]][DPSMateUser[cname or DetailsUser][1]]["i"] do
+					local i, dmg = 1, 5
+					if va[4] then
+						dmg = va[4]
+					end
+					if DPSMateDamageTaken[1][DPSMateUser[cname or DetailsUser][1]][va[2]] then
+						if DPSMateDamageTaken[1][DPSMateUser[cname or DetailsUser][1]][va[2]][va[3]] then
+							dmg = DPSMateDamageTaken[1][DPSMateUser[cname or DetailsUser][1]][va[2]][va[3]][14]
 						end
-						if DPSMateDamageTaken[1][DPSMateUser[DetailsUser][1]][va[2]] then
-							if DPSMateDamageTaken[1][DPSMateUser[DetailsUser][1]][va[2]][va[3]] then
-								dmg = DPSMateDamageTaken[1][DPSMateUser[DetailsUser][1]][va[2]][va[3]][14]
-							end
+					end
+					if dmg>0 then
+						if not temp[d1[d4]] then
+							temp[d1[d4]] = {}
 						end
-						if dmg>0 then
-							if not temp[va[3]] then
-								temp[va[3]] = {}
+						while true do
+							if (not temp[d1[d4]][i]) then
+								tinsert(temp[d1[d4]], i, {va[1], dmg})
+								break
+							elseif va[1]<=temp[d1[d4]][i][1] then
+								tinsert(temp[d1[d4]], i, {va[1], dmg})
+								break
 							end
-							while true do
-								if (not temp[va[3]][i]) then
-									tinsert(temp[va[3]], i, {va[1], dmg})
-									break
-								elseif va[1]<=temp[va[3]][i][1] then
-									tinsert(temp[va[3]], i, {va[1], dmg})
-									break
-								end
-								i=i+1
-							end
+							i=i+1
 						end
 					end
 				end
 			end
 		end
 		for cat, val in temp do
+			tinsert(label, 1, "Absorbs for "..DPSMate:GetUserById(cat))
 			tinsert(Data1, 1, val)
 		end
 		
@@ -459,75 +777,76 @@ function DPSMate.Modules.DetailsHealingAndAbsorbs:UpdateStackedGraph()
 			Data1[cat] = DPSMate:ScaleDown(val, min)
 		end
 		
-		g3:ResetData()
-		g3:SetGridSpacing((maxX-min)/7,maxY/7)	
+		gg:ResetData()
+		gg:SetGridSpacing((maxX-(min or 0))/7,maxY/7)	
 	else
-		for cat, val in DPSMateEHealing[curKey][DPSMateUser[DetailsUser][1]] do
-			if cat~="i" and val["i"] then
-				local temp = {}
-				for c, v in val["i"] do
-					local key = tonumber(strformat("%.1f", c))
-					if p[key] then
-						p[key] = p[key] + v
-					else
-						p[key] = v
+		if DPSMateEHealing[curKey][DPSMateUser[cname or DetailsUser][1]] then
+			for cat, val in DPSMateEHealing[curKey][DPSMateUser[cname or DetailsUser][1]] do
+				if cat~="i" and val["i"] then
+					local temp = {}
+					for c, v in val["i"] do
+						local key = tonumber(strformat("%.1f", c))
+						if p[key] then
+							p[key] = p[key] + v
+						else
+							p[key] = v
+						end
+						local i = 1
+						while true do
+							if not temp[i] then
+								tinsert(temp, i, {c,v})
+								break
+							elseif c<=temp[i][1] then
+								tinsert(temp, i, {c,v})
+								break
+							end
+							i = i + 1
+						end
+						maxY = math.max(p[key], maxY)
+						maxX = math.max(c, maxX)
 					end
 					local i = 1
 					while true do
-						if not temp[i] then
-							tinsert(temp, i, {c,v})
+						if not b[i] then
+							tinsert(b, i, val[1])
+							tinsert(label, i, DPSMate:GetAbilityById(cat))
+							tinsert(Data1, i, temp)
 							break
-						elseif c<=temp[i][1] then
-							tinsert(temp, i, {c,v})
+						elseif b[i]>=val[1] then
+							tinsert(b, i, val[1])
+							tinsert(label, i, DPSMate:GetAbilityById(cat))
+							tinsert(Data1, i, temp)
 							break
 						end
 						i = i + 1
 					end
-					maxY = math.max(p[key], maxY)
-					maxX = math.max(c, maxX)
-				end
-				temp = DPSMate.Sync:GetSummarizedTable(temp)
-				local i = 1
-				while true do
-					if not b[i] then
-						tinsert(b, i, val[1])
-						tinsert(label, i, DPSMate:GetAbilityById(cat))
-						tinsert(Data1, i, temp)
-						break
-					elseif b[i]>=val[1] then
-						tinsert(b, i, val[1])
-						tinsert(label, i, DPSMate:GetAbilityById(cat))
-						tinsert(Data1, i, temp)
-						break
-					end
-					i = i + 1
 				end
 			end
 		end
 		-- Add absorbs points
 		local temp = {}
 		for cat, val in DPSMateAbsorbs[curKey] do
-			if val[DPSMateUser[DetailsUser][1]] then
-				for ca, va in val[DPSMateUser[DetailsUser][1]]["i"] do
+			if val[DPSMateUser[cname or DetailsUser][1]] then
+				for ca, va in val[DPSMateUser[cname or DetailsUser][1]]["i"] do
 					local i, dmg = 1, 5
 					if va[4] then
 						dmg = va[4]
 					end
-					if DPSMateDamageTaken[1][DPSMateUser[DetailsUser][1]][va[2]] then
-						if DPSMateDamageTaken[1][DPSMateUser[DetailsUser][1]][va[2]][va[3]] then
-							dmg = DPSMateDamageTaken[1][DPSMateUser[DetailsUser][1]][va[2]][va[3]][14]
+					if DPSMateDamageTaken[1][DPSMateUser[cname or DetailsUser][1]][va[2]] then
+						if DPSMateDamageTaken[1][DPSMateUser[cname or DetailsUser][1]][va[2]][va[3]] then
+							dmg = DPSMateDamageTaken[1][DPSMateUser[cname or DetailsUser][1]][va[2]][va[3]][14]
 						end
 					end
 					if dmg>0 then
-						if not temp[va[3]] then
-							temp[va[3]] = {}
+						if not temp[cat] then
+							temp[cat] = {}
 						end
 						while true do
-							if (not temp[va[3]][i]) then
-								tinsert(temp[va[3]], i, {va[1], dmg})
+							if (not temp[cat][i]) then
+								tinsert(temp[cat], i, {va[1], dmg})
 								break
-							elseif va[1]<=temp[va[3]][i][1] then
-								tinsert(temp[va[3]], i, {va[1], dmg})
+							elseif va[1]<=temp[cat][i][1] then
+								tinsert(temp[cat], i, {va[1], dmg})
 								break
 							end
 							i=i+1
@@ -537,52 +856,38 @@ function DPSMate.Modules.DetailsHealingAndAbsorbs:UpdateStackedGraph()
 			end
 		end
 		for cat, val in temp do
-			tinsert(newArr, 1, val)
+			tinsert(label, 1, "Absorbs for "..DPSMate:GetUserById(cat))
+			tinsert(Data1, 1, val)
 		end
 		
-		-- Fill zero numbers
-		for cat, val in Data1 do
-			local alpha = 0
-			for ca, va in pairs(val) do
-				if alpha == 0 then
-					alpha = va[1]
-				else
-					if (va[1]-alpha)>3 then
-						tinsert(Data1[cat], ca, {alpha+1, 0})
-						tinsert(Data1[cat], ca+1, {va[1]-1, 0})
-					end
-					alpha = va[1]
-				end
-			end
-		end
-		
-		g3:ResetData()
-		g3:SetGridSpacing(maxX/7,maxY/7)
+		gg:ResetData()
+		gg:SetGridSpacing(maxX/7,maxY/7)
 	end
 	
-	g3:AddDataSeries(Data1,{1.0,0.0,0.0,0.8}, {}, label)
-	g3:Show()
+	gg:AddDataSeries(Data1,{1.0,0.0,0.0,0.8}, {}, label)
+	gg:Show()
 	toggle2 = true
 end
 
-function DPSMate.Modules.DetailsHealingAndAbsorbs:CreateGraphTable(obj)
+function DPSMate.Modules.DetailsHealingAndAbsorbs:CreateGraphTable(comp)
 	local lines = {}
+	comp = comp or ""
 	for i=1, 8 do
 		-- Horizontal
-		lines[i] = DPSMate.Options.graph:DrawLine(obj, 10, 270-i*30, 370, 270-i*30, 20, {0.5,0.5,0.5,0.5}, "BACKGROUND")
+		lines[i] = DPSMate.Options.graph:DrawLine(_G("DPSMate_Details_"..comp.."HealingAndAbsorbs_LogDetails_HealingAndAbsorbs"), 10, 270-i*30, 370, 270-i*30, 20, {0.5,0.5,0.5,0.5}, "BACKGROUND")
 		lines[i]:Show()
 	end
 	-- Vertical
-	lines[9] = DPSMate.Options.graph:DrawLine(obj, 57, 260, 57, 15, 20, {0.5,0.5,0.5,0.5}, "BACKGROUND")
+	lines[9] = DPSMate.Options.graph:DrawLine(_G("DPSMate_Details_"..comp.."HealingAndAbsorbs_LogDetails_HealingAndAbsorbs"), 57, 260, 57, 15, 20, {0.5,0.5,0.5,0.5}, "BACKGROUND")
 	lines[9]:Show()
 	
-	lines[10] = DPSMate.Options.graph:DrawLine(obj, 192, 260, 192, 15, 20, {0.5,0.5,0.5,0.5}, "BACKGROUND")
+	lines[10] = DPSMate.Options.graph:DrawLine(_G("DPSMate_Details_"..comp.."HealingAndAbsorbs_LogDetails_HealingAndAbsorbs"), 192, 260, 192, 15, 20, {0.5,0.5,0.5,0.5}, "BACKGROUND")
 	lines[10]:Show()
 	
-	lines[11] = DPSMate.Options.graph:DrawLine(obj, 252, 260, 252, 15, 20, {0.5,0.5,0.5,0.5}, "BACKGROUND")
+	lines[11] = DPSMate.Options.graph:DrawLine(_G("DPSMate_Details_"..comp.."HealingAndAbsorbs_LogDetails_HealingAndAbsorbs"), 252, 260, 252, 15, 20, {0.5,0.5,0.5,0.5}, "BACKGROUND")
 	lines[11]:Show()
 	
-	lines[12] = DPSMate.Options.graph:DrawLine(obj, 312, 260, 312, 15, 20, {0.5,0.5,0.5,0.5}, "BACKGROUND")
+	lines[12] = DPSMate.Options.graph:DrawLine(_G("DPSMate_Details_"..comp.."HealingAndAbsorbs_LogDetails_HealingAndAbsorbs"), 312, 260, 312, 15, 20, {0.5,0.5,0.5,0.5}, "BACKGROUND")
 	lines[12]:Show()
 end
 
@@ -593,7 +898,12 @@ function DPSMate.Modules.DetailsHealingAndAbsorbs:ProcsDropDown()
     local function on_click()
         UIDropDownMenu_SetSelectedValue(DPSMate_Details_HealingAndAbsorbs_DiagramLegend_Procs, this.value)
 		DPSMate_Details_HealingAndAbsorbs.proc = this.value
-		DPSMate.Modules.DetailsHealingAndAbsorbs:UpdateLineGraph()
+		if not toggle2 then
+			DPSMate.Modules.DetailsHealingAndAbsorbs:UpdateLineGraph(g2, "")
+		end
+		if DetailsUserComp then
+			DPSMate.Modules.DetailsHealingAndAbsorbs:UpdateSumGraph()
+		end
     end
 	
 	UIDropDownMenu_AddButton{
@@ -622,12 +932,53 @@ function DPSMate.Modules.DetailsHealingAndAbsorbs:ProcsDropDown()
 	DPSMate_Details_HealingAndAbsorbs.LastUser = DetailsUser
 end
 
-function DPSMate.Modules.DetailsHealingAndAbsorbs:SortLineTable(arr, b)
+function DPSMate.Modules.DetailsHealingAndAbsorbs:ProcsDropDown_CompareHealingAndAbsorbs()
+	local arr = DPSMate.Modules.DetailsHealingAndAbsorbs:GetAuraGainedArr(curKey)
+	DPSMate_Details_CompareHealingAndAbsorbs.proc = "None"
+	
+    local function on_click()
+        UIDropDownMenu_SetSelectedValue(DPSMate_Details_CompareHealingAndAbsorbs_DiagramLegend_Procs, this.value)
+		DPSMate_Details_CompareHealingAndAbsorbs.proc = this.value
+		if not toggle2 then
+			DPSMate.Modules.DetailsHealingAndAbsorbs:UpdateLineGraph(g5, "Compare", DetailsUserComp)
+		end
+		if DetailsUserComp then
+			DPSMate.Modules.DetailsHealingAndAbsorbs:UpdateSumGraph()
+		end
+    end
+	
+	UIDropDownMenu_AddButton{
+		text = "None",
+		value = "None",
+		func = on_click,
+	}
+	
+	-- Adding dynamic channel
+	if arr[DPSMateUser[DetailsUserComp][1]] then
+		for cat, val in pairs(arr[DPSMateUser[DetailsUserComp][1]]) do
+			local ability = DPSMate:GetAbilityById(cat)
+			if DPSMate:TContains(DPSMate.Parser.procs, ability) then
+				UIDropDownMenu_AddButton{
+					text = ability,
+					value = cat,
+					func = on_click,
+				}
+			end
+		end
+	end
+	
+	if DPSMate_Details_CompareHealingAndAbsorbs.LastUser~=DetailsUserComp then
+		UIDropDownMenu_SetSelectedValue(DPSMate_Details_CompareHealingAndAbsorbs_DiagramLegend_Procs, "None")
+	end
+	DPSMate_Details_CompareHealingAndAbsorbs.LastUser = DetailsUserComp
+end
+
+function DPSMate.Modules.DetailsHealingAndAbsorbs:SortLineTable(arr, b, cname)
 	local newArr = {}
 	if b then
 		if DPSMateAbsorbs[curKey][b] then
-			if DPSMateAbsorbs[curKey][b][DPSMateUser[DetailsUser][1]] then
-				for ca, va in DPSMateAbsorbs[curKey][b][DPSMateUser[DetailsUser][1]]["i"] do
+			if DPSMateAbsorbs[curKey][b][DPSMateUser[cname or DetailsUser][1]] then
+				for ca, va in DPSMateAbsorbs[curKey][b][DPSMateUser[cname or DetailsUser][1]]["i"] do
 					local i, dmg = 1, 5
 					if va[4] then
 						dmg = va[4]
@@ -654,28 +1005,32 @@ function DPSMate.Modules.DetailsHealingAndAbsorbs:SortLineTable(arr, b)
 				end
 			end
 		end
-		for cat, val in arr[b][DPSMateUser[DetailsUser][1]] do
-			if cat~="i" and val["i"] then
-				for ca, va in val["i"] do
-					local i=1
-					while true do
-						if (not newArr[i]) then 
-							tinsert(newArr, i, {ca, va})
-							break
+		if arr[b] then
+			if arr[b][DPSMateUser[cname or DetailsUser][1]] then
+				for cat, val in arr[b][DPSMateUser[cname or DetailsUser][1]] do
+					if cat~="i" and val["i"] then
+						for ca, va in val["i"] do
+							local i=1
+							while true do
+								if (not newArr[i]) then 
+									tinsert(newArr, i, {ca, va})
+									break
+								end
+								if ca<=newArr[i][1] then
+									tinsert(newArr, i, {ca, va})
+									break
+								end
+								i=i+1
+							end
 						end
-						if ca<=newArr[i][1] then
-							tinsert(newArr, i, {ca, va})
-							break
-						end
-						i=i+1
 					end
-				end
+				end	
 			end
-		end	
+		end
 	else
 		for cat, val in DPSMateAbsorbs[curKey] do
-			if val[DPSMateUser[DetailsUser][1]] then
-				for ca, va in val[DPSMateUser[DetailsUser][1]]["i"] do
+			if val[DPSMateUser[cname or DetailsUser][1]] then
+				for ca, va in val[DPSMateUser[cname or DetailsUser][1]]["i"] do
 					local i, dmg = 1, 5
 					if va[4] then
 						dmg = va[4]
@@ -702,20 +1057,22 @@ function DPSMate.Modules.DetailsHealingAndAbsorbs:SortLineTable(arr, b)
 				end
 			end
 		end
-		for cat, val in DPSMateEHealing[curKey][DPSMateUser[DetailsUser][1]] do
-			if cat~="i" and val["i"] then
-				for ca, va in val["i"] do
-					local i=1
-					while true do
-						if (not newArr[i]) then 
-							tinsert(newArr, i, {ca, va})
-							break
+		if DPSMateEHealing[curKey][DPSMateUser[cname or DetailsUser][1]] then
+			for cat, val in DPSMateEHealing[curKey][DPSMateUser[cname or DetailsUser][1]] do
+				if cat~="i" and val["i"] then
+					for ca, va in val["i"] do
+						local i=1
+						while true do
+							if (not newArr[i]) then 
+								tinsert(newArr, i, {ca, va})
+								break
+							end
+							if ca<=newArr[i][1] then
+								tinsert(newArr, i, {ca, va})
+								break
+							end
+							i=i+1
 						end
-						if ca<=newArr[i][1] then
-							tinsert(newArr, i, {ca, va})
-							break
-						end
-						i=i+1
 					end
 				end
 			end
@@ -724,8 +1081,8 @@ function DPSMate.Modules.DetailsHealingAndAbsorbs:SortLineTable(arr, b)
 	return newArr
 end
 
-function DPSMate.Modules.DetailsHealingAndAbsorbs:GetSummarizedTable(arr, b)
-	return DPSMate.Sync:GetSummarizedTable(self:SortLineTable(arr, b))
+function DPSMate.Modules.DetailsHealingAndAbsorbs:GetSummarizedTable(arr, b, cname)
+	return DPSMate.Sync:GetSummarizedTable(self:SortLineTable(arr, b, cname))
 end
 
 function DPSMate.Modules.DetailsHealingAndAbsorbs:GetAuraGainedArr(k)
@@ -742,13 +1099,13 @@ function DPSMate.Modules.DetailsHealingAndAbsorbs:GetAuraGainedArr(k)
 	end
 end
 
-function DPSMate.Modules.DetailsHealingAndAbsorbs:CheckProcs(name, val)
+function DPSMate.Modules.DetailsHealingAndAbsorbs:CheckProcs(name, val, cname)
 	local arr = self:GetAuraGainedArr(curKey)
-	if arr[DPSMateUser[DetailsUser][1]] then
-		if arr[DPSMateUser[DetailsUser][1]][name] then
-			for i=1, DPSMate:TableLength(arr[DPSMateUser[DetailsUser][1]][name][1]) do
-				if not arr[DPSMateUser[DetailsUser][1]][name][1][i] or not arr[DPSMateUser[DetailsUser][1]][name][2][i] or arr[DPSMateUser[DetailsUser][1]][name][4] then return false end
-				if val > arr[DPSMateUser[DetailsUser][1]][name][1][i] and val < arr[DPSMateUser[DetailsUser][1]][name][2][i] then
+	if arr[DPSMateUser[cname or DetailsUser][1]] then
+		if arr[DPSMateUser[cname or DetailsUser][1]][name] then
+			for i=1, DPSMate:TableLength(arr[DPSMateUser[cname or DetailsUser][1]][name][1]) do
+				if not arr[DPSMateUser[cname or DetailsUser][1]][name][1][i] or not arr[DPSMateUser[cname or DetailsUser][1]][name][2][i] or arr[DPSMateUser[cname or DetailsUser][1]][name][4] then return false end
+				if val > arr[DPSMateUser[cname or DetailsUser][1]][name][1][i] and val < arr[DPSMateUser[cname or DetailsUser][1]][name][2][i] then
 					return true
 				end
 			end
@@ -757,25 +1114,25 @@ function DPSMate.Modules.DetailsHealingAndAbsorbs:CheckProcs(name, val)
 	return false
 end
 
-function DPSMate.Modules.DetailsHealingAndAbsorbs:AddProcPoints(name, dat)
+function DPSMate.Modules.DetailsHealingAndAbsorbs:AddProcPoints(name, dat, cname)
 	local bool, data, LastVal = false, {}, 0
 	local arr = self:GetAuraGainedArr(curKey)
-	if arr[DPSMateUser[DetailsUser][1]] then
-		if arr[DPSMateUser[DetailsUser][1]][name] then
-			if arr[DPSMateUser[DetailsUser][1]][name][4] then
+	if arr[DPSMateUser[cname or DetailsUser][1]] then
+		if arr[DPSMateUser[cname or DetailsUser][1]][name] then
+			if arr[DPSMateUser[cname or DetailsUser][1]][name][4] then
 				for cat, val in pairs(dat) do
-					for i=1, DPSMate:TableLength(arr[DPSMateUser[DetailsUser][1]][name][1]) do
-						if arr[DPSMateUser[DetailsUser][1]][name][1][i]<=val[1] then
+					for i=1, DPSMate:TableLength(arr[DPSMateUser[cname or DetailsUser][1]][name][1]) do
+						if arr[DPSMateUser[cname or DetailsUser][1]][name][1][i]<=val[1] then
 							local tempbool = true
 							for _, va in pairs(data) do
-								if va[1] == arr[DPSMateUser[DetailsUser][1]][name][1][i] then
+								if va[1] == arr[DPSMateUser[cname or DetailsUser][1]][name][1][i] then
 									tempbool = false
 									break
 								end
 							end
 							if tempbool then	
 								bool = true
-								tinsert(data, {arr[DPSMateUser[DetailsUser][1]][name][1][i], LastVal, {val[1], val[2]}})
+								tinsert(data, {arr[DPSMateUser[cname or DetailsUser][1]][name][1][i], LastVal, {val[1], val[2]}})
 							end
 						end
 					end
@@ -790,30 +1147,53 @@ end
 function DPSMate.Modules.DetailsHealingAndAbsorbs:ToggleMode(bool)
 	if bool then
 		if toggle2 then
-			self:UpdateLineGraph()
-			toggle2 = false
+			self:UpdateLineGraph(g2,"")
+			if DetailsUserComp then
+				self:UpdateLineGraph(g5,"Compare", DetailsUserComp)
+			end
 		else
-			self:UpdateStackedGraph()
-			toggle2 = true
+			self:UpdateStackedGraph(g3)
+			if DetailsUserComp then
+				self:UpdateStackedGraph(g6,"Compare", DetailsUserComp)
+			end
 		end
 	else
 		if toggle then
 			toggle = false
-			self:ScrollFrame_Update()
-			self:SelectDetails_HealingAndAbsorbsButton(1)
+			self:ScrollFrame_Update("")
+			self:SelectDetails_HealingAndAbsorbsButton(1,"")
 			DPSMate_Details_HealingAndAbsorbs_playerSpells:Hide()
 			DPSMate_Details_HealingAndAbsorbs_player:Hide()
 			DPSMate_Details_HealingAndAbsorbs_Diagram:Show()
 			DPSMate_Details_HealingAndAbsorbs_Log:Show()
+			
+			if DetailsUserComp then
+				self:ScrollFrame_Update("Compare")
+				self:SelectDetails_HealingAndAbsorbsButton(1, "Compare")
+				DPSMate_Details_CompareHealingAndAbsorbs_playerSpells:Hide()
+				DPSMate_Details_CompareHealingAndAbsorbs_player:Hide()
+				DPSMate_Details_CompareHealingAndAbsorbs_Diagram:Show()
+				DPSMate_Details_CompareHealingAndAbsorbs_Log:Show()
+			end
 		else
 			toggle = true
-			self:Player_Update()
-			self:PlayerSpells_Update(1)
-			self:SelectDetails_HealingAndAbsorbsButton(1)
+			self:Player_Update("")
+			self:PlayerSpells_Update(1,"")
+			self:SelectDetails_HealingAndAbsorbsButton(1,"")
 			DPSMate_Details_HealingAndAbsorbs_playerSpells:Show()
 			DPSMate_Details_HealingAndAbsorbs_player:Show()
 			DPSMate_Details_HealingAndAbsorbs_Diagram:Hide()
 			DPSMate_Details_HealingAndAbsorbs_Log:Hide()
+			
+			if DetailsUserComp then
+				self:Player_Update("Compare")
+				self:PlayerSpells_Update(1, "Compare")
+				self:SelectDetails_HealingAndAbsorbsButton(1, "Compare")
+				DPSMate_Details_CompareHealingAndAbsorbs_playerSpells:Show()
+				DPSMate_Details_CompareHealingAndAbsorbs_player:Show()
+				DPSMate_Details_CompareHealingAndAbsorbs_Diagram:Hide()
+				DPSMate_Details_CompareHealingAndAbsorbs_Log:Hide()
+			end
 		end
 	end
 end
@@ -825,8 +1205,17 @@ function DPSMate.Modules.DetailsHealingAndAbsorbs:ToggleIndividual()
 		toggle3 = true
 	end
 	if toggle2 then
-		self:UpdateStackedGraph()
+		self:UpdateStackedGraph(g3)
+		if DetailsUserComp then 
+			self:UpdateStackedGraph(g6,"Compare", DetailsUserComp)
+		end
 	else
-		self:UpdateLineGraph()
+		self:UpdateLineGraph(g2,"")
+		if DetailsUserComp then
+			self:UpdateLineGraph(g5,"Compare", DetailsUserComp)
+		end
+	end
+	if DetailsUserComp then
+		self:UpdateSumGraph()
 	end
 end

@@ -33,17 +33,27 @@ function DPSMate.Modules.HealingAndAbsorbs:GetSortedTable(arr, k)
 								local PerShieldAbsorb = 0
 								for cet, vel in pairs(ve) do
 									if cet~="i" then
-										local p = 5
-										if DPSMateDamageTaken[1][cat] then
-											if DPSMateDamageTaken[1][cat][cet] then
-												if DPSMateDamageTaken[1][cat][cet][vel[1]] then
-													if DPSMateDamageTaken[1][cat][cet][vel[1]][14]~=0 then
-														p=ceil(DPSMateDamageTaken[1][cat][cet][vel[1]][14])
+										for qq,ss in vel do
+											local p = 5
+											if DPSMateDamageTaken[1][cat] then
+												if DPSMateDamageTaken[1][cat][cet] then
+													if DPSMateDamageTaken[1][cat][cet][qq] then
+														if DPSMateDamageTaken[1][cat][cet][qq][14]~=0 then
+															p=ceil(DPSMateDamageTaken[1][cat][cet][qq][14])
+														end
+													end
+												end
+											elseif DPSMateEDT[1][cat] then
+												if DPSMateEDT[1][cat][cet] then
+													if DPSMateEDT[1][cat][cet][qq] then
+														if DPSMateEDT[1][cat][cet][qq][4]~=0 then
+															p=ceil((DPSMateEDT[1][cat][cet][qq][4]+DPSMateEDT[1][cat][cet][qq][8])/2)
+														end
 													end
 												end
 											end
+											PerShieldAbsorb=PerShieldAbsorb+ss*p
 										end
-										PerShieldAbsorb=PerShieldAbsorb+vel[2]*p
 									end
 								end
 								if ve["i"][1]==1 then
@@ -55,7 +65,11 @@ function DPSMate.Modules.HealingAndAbsorbs:GetSortedTable(arr, k)
 						end
 					end
 					PerPlayerAbsorb = PerPlayerAbsorb+PerOwnerAbsorb
-					b[ca] = PerOwnerAbsorb
+					if b[ca] then
+						b[ca] = b[ca] + PerOwnerAbsorb
+					else
+						b[ca] = PerOwnerAbsorb
+					end
 				end
 			end
 			total = total+PerPlayerAbsorb
@@ -73,15 +87,19 @@ function DPSMate.Modules.HealingAndAbsorbs:GetSortedTable(arr, k)
 		
 		-- Merge tables
 		total=total+total2
-		for cat, val in pairs(b) do
+		for cat, val in b do
 			g[cat] = val
-			if d[cat] then g[cat] = g[cat] + d[cat] end
+			--if d[cat] then g[cat] = g[cat] + d[cat] end
 		end
-		for cat, val in pairs(d) do
-			g[cat] = val
-			if b[cat] then g[cat] = g[cat] + b[cat] end
+		for cat, val in d do
+			if g[cat] then
+				g[cat] = g[cat] + val
+			else
+				g[cat] = val
+			end
+			--if b[cat] then g[cat] = g[cat] + b[cat] end
 		end
-		for cat, val in pairs(g) do
+		for cat, val in g do
 			local i = 1
 			while true do
 				if (not f[i]) then
@@ -115,11 +133,29 @@ function DPSMate.Modules.HealingAndAbsorbs:EvalTable(user, k)
 							local PerShieldAbsorb = 0
 							for cet, vel in pairs(ve) do
 								if cet~="i" then
-									local p = 5
-									if DPSMateDamageTaken[1][cat][cet][vel[1]][14]~=0 then
-										p=ceil(DPSMateDamageTaken[1][cat][cet][vel[1]][14])
+									for qq,ss in vel do
+										local p = 5
+										if DPSMateDamageTaken[1][cat] then
+											if DPSMateDamageTaken[1][cat][cet] then
+												if DPSMateDamageTaken[1][cat][cet][qq] then
+													if DPSMateDamageTaken[1][cat][cet][qq][14]~=0 then
+														p=ceil(DPSMateDamageTaken[1][cat][cet][qq][14])
+													end
+												end
+											end
+										elseif DPSMateEDT[1][cat] then
+											if DPSMateEDT[1][cat][cet] then
+												if DPSMateEDT[1][cat][cet][qq] then
+													if DPSMateEDT[1][cat][cet][qq][4]~=0 then
+														p=ceil((DPSMateEDT[1][cat][cet][qq][4]+DPSMateEDT[1][cat][cet][qq][8])/2)
+													end
+												end
+											end
+										end
+										PerShieldAbsorb=PerShieldAbsorb+ss*p
+										if not temp[cet] then temp[cet] = {} end
+										if not temp[cet][qq] then temp[cet][qq] = ss*p else temp[cet][qq] =temp[cet][qq]+ss*p end
 									end
-									PerShieldAbsorb=PerShieldAbsorb+vel[2]*p
 								end
 							end
 							if ve["i"][1]==1 then
@@ -217,8 +253,12 @@ function DPSMate.Modules.HealingAndAbsorbs:ShowTooltip(user, k)
 	end
 end
 
-function DPSMate.Modules.HealingAndAbsorbs:OpenDetails(obj, key)
-	DPSMate.Modules.DetailsHealingAndAbsorbs:UpdateDetails(obj, key)
+function DPSMate.Modules.HealingAndAbsorbs:OpenDetails(obj, key, bool)
+	if bool then
+		DPSMate.Modules.DetailsHealingAndAbsorbs:UpdateCompare(obj, key, bool)
+	else
+		DPSMate.Modules.DetailsHealingAndAbsorbs:UpdateDetails(obj, key)
+	end
 end
 
 function DPSMate.Modules.HealingAndAbsorbs:OpenTotalDetails(obj, key)

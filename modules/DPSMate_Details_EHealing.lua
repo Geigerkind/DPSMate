@@ -92,9 +92,17 @@ function DPSMate.Modules.DetailsEHealing:UpdateCompare(obj, key, comp)
 		self:Player_Update("Compare")
 		self:PlayerSpells_Update(1, "Compare")
 		self:SelectDetails_EHealingButton(1, "Compare")
+		DPSMate_Details_CompareEHealing_playerSpells:Show()
+		DPSMate_Details_CompareEHealing_player:Show()
+		DPSMate_Details_CompareEHealing_Diagram:Hide()
+		DPSMate_Details_CompareEHealing_Log:Hide()
 	else
 		self:ScrollFrame_Update("Compare")
-		self:SelectDetails_EHealingButton(1, "Compare", comp)
+		self:SelectDetails_EHealingButton(1, "Compare")
+		DPSMate_Details_CompareEHealing_playerSpells:Hide()
+		DPSMate_Details_CompareEHealing_player:Hide()
+		DPSMate_Details_CompareEHealing_Diagram:Show()
+		DPSMate_Details_CompareEHealing_Log:Show()
 	end
 	self:UpdatePie(g4, comp)
 	if toggle2 then

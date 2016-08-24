@@ -125,7 +125,6 @@ function DPSMate.Modules.Threat:OpenDetails(obj, key,bool)
 	else
 		DPSMate.Modules.DetailsThreat:UpdateDetails(obj, key)
 	end
-	--DPSMate:SendMessage("This feature will be added later.")
 end
 
 function DPSMate.Modules.Threat:OpenTotalDetails(obj, key)

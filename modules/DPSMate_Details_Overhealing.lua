@@ -92,9 +92,17 @@ function DPSMate.Modules.DetailsOverhealing:UpdateCompare(obj, key, comp)
 		self:Player_Update("Compare")
 		self:PlayerSpells_Update(1, "Compare")
 		self:SelectDetails_OverhealingButton(1, "Compare")
+		DPSMate_Details_CompareOverhealing_playerSpells:Show()
+		DPSMate_Details_CompareOverhealing_player:Show()
+		DPSMate_Details_CompareOverhealing_Diagram:Hide()
+		DPSMate_Details_CompareOverhealing_Log:Hide()
 	else
 		self:ScrollFrame_Update("Compare")
-		self:SelectDetails_OverhealingButton(1, "Compare", comp)
+		self:SelectDetails_OverhealingButton(1, "Compare")
+		DPSMate_Details_CompareOverhealing_playerSpells:Hide()
+		DPSMate_Details_CompareOverhealing_player:Hide()
+		DPSMate_Details_CompareOverhealing_Diagram:Show()
+		DPSMate_Details_CompareOverhealing_Log:Show()
 	end
 	self:UpdatePie(g4, comp)
 	if toggle2 then

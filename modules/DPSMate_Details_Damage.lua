@@ -92,9 +92,17 @@ function DPSMate.Modules.DetailsDamage:UpdateCompare(obj, key, comp)
 		self:Player_Update("_CompareDamage")
 		self:PlayerSpells_Update(1, "_CompareDamage")
 		self:SelectDetailsButton(1, "_CompareDamage")
+		DPSMate_Details_CompareDamage_playerSpells:Show()
+		DPSMate_Details_CompareDamage_player:Show()
+		DPSMate_Details_CompareDamage_Diagram:Hide()
+		DPSMate_Details_CompareDamage_Log:Hide()
 	else
 		self:ScrollFrame_Update("_CompareDamage")
-		self:SelectDetailsButton(1, "_CompareDamage", comp)
+		self:SelectDetailsButton(1,"_CompareDamage")
+		DPSMate_Details_CompareDamage_playerSpells:Hide()
+		DPSMate_Details_CompareDamage_player:Hide()
+		DPSMate_Details_CompareDamage_Diagram:Show()
+		DPSMate_Details_CompareDamage_Log:Show()
 	end
 	self:UpdatePie(g4, comp)
 	if toggle2 then
