@@ -193,7 +193,7 @@ function DPSMate.Modules.DetailsDamageTaken:SelectCreatureButton(i, comp, cname)
 	local line, lineplusoffset
 	local path = "DPSMate_Details_"..comp.."DamageTaken_Log"
 	local obj = _G(path.."_ScrollFrame")
-	i = i or obj.index
+	i = i + FauxScrollFrame_GetOffset(_G("DPSMate_Details_"..comp.."DamageTaken_LogCreature_ScrollFrame")) or obj.index
 	obj.index = i
 	local uArr, dArr, dTot, dSel = DetailsArr, DmgArr, DetailsTotal, DetailsSelected
 	if comp ~= "" and comp~=nil then
@@ -242,7 +242,7 @@ function DPSMate.Modules.DetailsDamageTaken:SelectCreatureButton(i, comp, cname)
 	for p=1, 8 do
 		_G("DPSMate_Details_"..comp.."DamageTaken_LogCreature_ScrollButton"..p.."_selected"):Hide()
 	end
-	_G("DPSMate_Details_"..comp.."DamageTaken_LogCreature_ScrollButton"..i.."_selected"):Show()
+	_G("DPSMate_Details_"..comp.."DamageTaken_LogCreature_ScrollButton"..(i-FauxScrollFrame_GetOffset(_G("DPSMate_Details_"..comp.."DamageTaken_LogCreature_ScrollFrame"))).."_selected"):Show()
 	self:SelectDetailsButton(i,1, comp, cname)
 	if toggle3 then
 		if toggle then

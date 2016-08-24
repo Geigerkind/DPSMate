@@ -119,8 +119,12 @@ function DPSMate.Modules.Threat:ShowTooltip(user,k)
 	end
 end
 
-function DPSMate.Modules.Threat:OpenDetails(obj, key)
-	DPSMate.Modules.DetailsThreat:UpdateDetails(obj, key)
+function DPSMate.Modules.Threat:OpenDetails(obj, key,bool)
+	if bool then
+		DPSMate.Modules.DetailsThreat:UpdateCompare(obj, key, bool)
+	else
+		DPSMate.Modules.DetailsThreat:UpdateDetails(obj, key)
+	end
 	--DPSMate:SendMessage("This feature will be added later.")
 end
 

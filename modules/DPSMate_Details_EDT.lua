@@ -201,10 +201,10 @@ function DPSMate.Modules.DetailsEDT:SelectCreatureButton(i, comp)
 		uArr = DetailsArrComp
 		dArr = DmgArrComp
 		dTot = DetailsTotalComp
-		DetailsSelectedComp = i+FauxScrollFrame_GetOffset(_G("DPSMate_Details_"..comp.."EDD_LogCreature_ScrollFrame"))
+		DetailsSelectedComp = i+FauxScrollFrame_GetOffset(_G("DPSMate_Details_"..comp.."EDT_LogCreature_ScrollFrame"))
 		dSel = DetailsSelectedComp
 	else
-		DetailsSelected = i+FauxScrollFrame_GetOffset(_G("DPSMate_Details_"..comp.."EDD_LogCreature_ScrollFrame"))
+		DetailsSelected = i+FauxScrollFrame_GetOffset(_G("DPSMate_Details_"..comp.."EDT_LogCreature_ScrollFrame"))
 		dSel = DetailsSelected
 	end
 	local len = DPSMate:TableLength(dArr[i][2])
