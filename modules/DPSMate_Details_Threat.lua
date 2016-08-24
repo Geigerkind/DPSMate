@@ -363,13 +363,14 @@ function DPSMate.Modules.DetailsThreat:UpdateStackedGraph(gg, comp, cname)
 	local maxX = 0
 	local temp = {}
 	local temp2 = {}
-	local dSel, uArr = DetailsSelected, DetailsArr
+	local dSel, uArr, dArr = DetailsSelected, DetailsArr, DmgArr
 	if comp ~= "" and comp then
 		uArr = DetailsArrComp
+		dArr = DmgArrComp
 		dSel = DetailsSelectedComp
 	end
 	if toggle3 then
-		for cat, val in db[DPSMateUser[cname or DetailsUser][1]][uArr[dSel]] do
+		for cat, val in db[DPSMateUser[cname or DetailsUser][1]][dArr[dSel][1]] do
 			if val["i"] then
 				for c, v in val["i"] do
 					local key = tonumber(strformat("%.1f", c))
@@ -393,7 +394,7 @@ function DPSMate.Modules.DetailsThreat:UpdateStackedGraph(gg, comp, cname)
 						end
 						i = i + 1
 					end
-					temp2[cat] = temp2[cat] + val[13]
+					temp2[cat] = temp2[cat] + val[1]
 					maxY = math.max(p[key], maxY)
 					maxX = math.max(c, maxX)
 				end
@@ -456,7 +457,7 @@ function DPSMate.Modules.DetailsThreat:UpdateStackedGraph(gg, comp, cname)
 								end
 								i = i + 1
 							end
-							temp2[ca] = temp2[ca] + va[13]
+							temp2[ca] = temp2[ca] + va[1]
 							maxY = math.max(p[key], maxY)
 							maxX = math.max(c, maxX)
 						end
@@ -720,7 +721,7 @@ function DPSMate.Modules.DetailsThreat:ToggleMode()
 	end
 end
 
-function DPSMate.Modules.DetailsDamageTaken:ToggleIndividual()
+function DPSMate.Modules.DetailsThreat:ToggleIndividual()
 	if toggle3 then
 		toggle3 = false
 	else
