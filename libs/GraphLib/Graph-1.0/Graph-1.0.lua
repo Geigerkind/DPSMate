@@ -1539,7 +1539,6 @@ function GraphFunctions:RefreshLineGraph()
 	for k1, series in pairs(self.Data) do
 		local LastPoint
 		LastPoint=nil
-
 		for k2, point in pairs(series.Points) do
 			if LastPoint then
 				local TPoint={x=point[1];y=point[2]}
@@ -2241,28 +2240,37 @@ function GraphFunctions:RefreshStackedBarGraph()
 		mN = CAP
 	end
 	space = (mX-1)/mN
+	local taken = {}
 	for k1, series in pairs(self.Data) do
 		if not DataTable[k1] then
 			DataTable[k1] = {}
+			taken[k1] = {}
 		end
 		for c,v in series.Points do
 			if not DataTable[k1][c] then
 				DataTable[k1][c] = {}
+				taken[k1][c] = {}
 			end
 			for i=1,mN do
 				DataTable[k1][c][i] = {i*space+1,0}
 			end
 			for k2, point in pairs(v) do
-				local taken = false
 				for i=1,mN do
-					if point[1]>=((i-1)*space+1) and point[1]<(i*space+1) and not taken then
+					if point[1]>=((i-1)*space+1) and point[1]<(i*space+1) and not taken[k1][c][k2] then
 						DataTable[k1][c][i] = {i*space+1, DataTable[k1][c][i][2] + point[2]}
-						taken = true
+						taken[k1][c][k2] = true
 					end
+				end
+			end
+			for k2, point in pairs(v) do
+				if not taken[k1][c][k2] then
+					DataTable[k1][c][mN] = {mN*space+1, DataTable[k1][c][mN][2] + point[2]}
+					taken[k1][c][k2] = true
 				end
 			end
 		end
 	end
+	taken = nil
 	
 	local Width=self:GetWidth()
 	local Height=self:GetHeight()
@@ -2314,9 +2322,9 @@ function GraphFunctions:RefreshStackedBarGraph()
 	for k1, series in DataTable do
 		for c,v in series do
 			if v[1] then
-				local LastPoint = {x=Width*(v[1][1]-self.XMin)/(self.XMax-self.XMin),y=0}
+				local LastPoint = {x=50,y=0}
 				local num = getn(v)
-				for i=2,num do
+				for i=1,num do
 					local point = v[i]
 					local TPoint={x=point[1];y=point[2]}
 					TPoint.x=Width*(TPoint.x-self.XMin)/(self.XMax-self.XMin)
@@ -2451,6 +2459,7 @@ function TestStackedGraph()
 	local g=Graph:CreateStackedGraph("TestStackedGraph",UIParent,"CENTER","CENTER",90,90,800,350)
 	
 	local Data1={{{1,100},{1.2,110},{1.4,120},{1.6,130},{1.8,140},{2,150},{2.2,160},{2.4,170},{2.6,180},{2.8,190},{3,200},{3.2,190},{3.4,180},{3.6,170},{3.8,160},{4,150}},{{1,100},{1.2,110},{1.4,120},{1.6,130},{1.8,140},{2,150},{2.2,160},{2.4,170},{2.6,180},{2.8,190},{3,200},{3.2,190},{3.4,180},{3.6,170},{3.8,160},{4,150}}}
+	local label = {"a", "b","c", "d","e", "f","g", "h","i", "j","k", "l","m", "n","o", "p","q", "r","s", "t","u", "v","w", "x","y", "z","", "","", "","", "","", "","", "","", "","", "","", "","", "","", "","", "","", "","", "","", "","", "","", "","", ""}
 	g:SetXAxis(0,4)
 	g:SetYAxis(0,500)
 	g:SetGridSpacing(0.5,50)

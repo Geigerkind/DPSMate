@@ -126,12 +126,12 @@ function DPSMate.Modules.DetailsThreat:UpdateSumGraph()
 	
 	local ata={{0,0}}
 	for cat, val in DPSMate:ScaleDown(sumTable, min) do
-		tinsert(ata, {val[1],val[2], self:CheckProcs(DPSMate_Details_CompareThreat.proc, val[1]+min, DetailsUserComp)})
+		tinsert(ata, {val[1],val[2], self:CheckProcs(DPSMate_Details_CompareThreat.proc, val[1]+min+1, DetailsUserComp)})
 	end
 	
 	local Data2={{0,0}}
 	for cat, val in DPSMate:ScaleDown(sumTableTwo, minT) do
-		tinsert(Data2, {val[1],val[2], self:CheckProcs(DPSMate_Details_Threat.proc, val[1]+minT)})
+		tinsert(Data2, {val[1],val[2], self:CheckProcs(DPSMate_Details_Threat.proc, val[1]+minT+1)})
 	end
 
 	g7:AddDataSeries(ata,{{0.2,0.8,0.2,0.8}, {0.5,0.8,0.9,0.8}}, self:AddProcPoints(DPSMate_Details_CompareThreat.proc, ata, DetailsUserComp))
@@ -334,7 +334,7 @@ function DPSMate.Modules.DetailsThreat:UpdateLineGraph(gg, comp, cname)
 
 	local Data1={{0,0}}
 	for cat, val in DPSMate:ScaleDown(sumTable, min) do
-		tinsert(Data1, {val[1],val[2], self:CheckProcs(_G("DPSMate_Details_"..comp.."Threat").proc, val[1]+min, cname)})
+		tinsert(Data1, {val[1],val[2], self:CheckProcs(_G("DPSMate_Details_"..comp.."Threat").proc, val[1]+min+1, cname)})
 	end
 	
 	local colorT = {{1.0,0.0,0.0,0.8}, {1.0,1.0,0.0,0.8}}

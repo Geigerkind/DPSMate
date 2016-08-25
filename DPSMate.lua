@@ -382,7 +382,7 @@ end
 function DPSMate:ScaleDown(arr, start)
 	local t = {}
 	for cat, val in arr do
-		t[cat] = {(val[1]-start), val[2]}
+		t[cat] = {(val[1]-start+1), val[2]}
 	end
 	return t
 end
