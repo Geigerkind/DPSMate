@@ -223,12 +223,16 @@ function DPSMate.Modules.DetailsHealingAndAbsorbs:EvalToggleTable(cname)
 			for ca, va in val[DPSMateUser[cname or DetailsUser][1]] do
 				local dmg = 5
 				local hit, hitav, hitmin, hitmax = 0, 0, 0, 0
-				
+				local shieldname = DPSMate:GetAbilityById(ca)
 				if ca~="i" then
 					for ce, ve in pairs(va) do -- 1
 						local PerShieldAbsorb = 0
 						for cet, vel in pairs(ve) do
 							if cet~="i" then
+								local totalHits = 0
+								for qq,ss in vel do
+									totalHits = totalHits + ss
+								end
 								for qq,ss in vel do
 									local p = 5
 									if DPSMateDamageTaken[1][cat] then
@@ -247,6 +251,9 @@ function DPSMate.Modules.DetailsHealingAndAbsorbs:EvalToggleTable(cname)
 												end
 											end
 										end
+									end
+									if p==5 or p==0 then
+										p = ceil((1/totalHits)*((DPSMateUser[cname or DetailsUser][8] or 60)/60)*DPSMate.DB.FixedShieldAmounts[shieldname]*0.33)
 									end
 									PerShieldAbsorb=PerShieldAbsorb+ss*p
 								end
@@ -747,9 +754,11 @@ function DPSMate.Modules.DetailsHealingAndAbsorbs:UpdateStackedGraph(gg, comp, c
 			if DPSMateAbsorbs[curKey][d1[d4]][DPSMateUser[cname or DetailsUser][1]] then
 				for ca, va in DPSMateAbsorbs[curKey][d1[d4]][DPSMateUser[cname or DetailsUser][1]]["i"] do
 					local i, dmg = 1, 5
-					if DPSMateDamageTaken[1][DPSMateUser[cname or DetailsUser][1]][va[2]] then
-						if DPSMateDamageTaken[1][DPSMateUser[cname or DetailsUser][1]][va[2]][va[3]] then
-							dmg = DPSMateDamageTaken[1][DPSMateUser[cname or DetailsUser][1]][va[2]][va[3]][14]
+					if DPSMateDamageTaken[1][d1[d4]] then
+						if DPSMateDamageTaken[1][d1[d4]][va[2]] then
+							if DPSMateDamageTaken[1][d1[d4]][va[2]][va[3]] then
+								dmg = DPSMateDamageTaken[1][d1[d4]][va[2]][va[3]][14]
+							end
 						end
 					end
 					if dmg==5 or dmg==0 then
@@ -844,9 +853,11 @@ function DPSMate.Modules.DetailsHealingAndAbsorbs:UpdateStackedGraph(gg, comp, c
 			if val[DPSMateUser[cname or DetailsUser][1]] then
 				for ca, va in val[DPSMateUser[cname or DetailsUser][1]]["i"] do
 					local i, dmg = 1, 5
-					if DPSMateDamageTaken[1][DPSMateUser[cname or DetailsUser][1]][va[2]] then
-						if DPSMateDamageTaken[1][DPSMateUser[cname or DetailsUser][1]][va[2]][va[3]] then
-							dmg = DPSMateDamageTaken[1][DPSMateUser[cname or DetailsUser][1]][va[2]][va[3]][14]
+					if DPSMateDamageTaken[1][cat] then
+						if DPSMateDamageTaken[1][cat][va[2]] then
+							if DPSMateDamageTaken[1][cat][va[2]][va[3]] then
+								dmg = DPSMateDamageTaken[1][cat][va[2]][va[3]][14]
+							end
 						end
 					end
 					if dmg==5 or dmg==0 then
@@ -998,9 +1009,11 @@ function DPSMate.Modules.DetailsHealingAndAbsorbs:SortLineTable(arr, b, cname)
 			if DPSMateAbsorbs[curKey][b][DPSMateUser[cname or DetailsUser][1]] then
 				for ca, va in DPSMateAbsorbs[curKey][b][DPSMateUser[cname or DetailsUser][1]]["i"] do
 					local i, dmg = 1, 5
-					if DPSMateDamageTaken[1][b][va[2]] then
-						if DPSMateDamageTaken[1][b][va[2]][va[3]] then
-							dmg = DPSMateDamageTaken[1][b][va[2]][va[3]][14]
+					if DPSMateDamageTaken[1][b] then
+						if DPSMateDamageTaken[1][b][va[2]] then
+							if DPSMateDamageTaken[1][b][va[2]][va[3]] then
+								dmg = DPSMateDamageTaken[1][b][va[2]][va[3]][14]
+							end
 						end
 					end
 					if dmg==5 or dmg==0 then
@@ -1053,9 +1066,11 @@ function DPSMate.Modules.DetailsHealingAndAbsorbs:SortLineTable(arr, b, cname)
 			if val[DPSMateUser[cname or DetailsUser][1]] then
 				for ca, va in val[DPSMateUser[cname or DetailsUser][1]]["i"] do
 					local i, dmg = 1, 5
-					if DPSMateDamageTaken[1][cat][va[2]] then
-						if DPSMateDamageTaken[1][cat][va[2]][va[3]] then
-							dmg = DPSMateDamageTaken[1][cat][va[2]][va[3]][14]
+					if DPSMateDamageTaken[1][cat] then
+						if DPSMateDamageTaken[1][cat][va[2]] then
+							if DPSMateDamageTaken[1][cat][va[2]][va[3]] then
+								dmg = DPSMateDamageTaken[1][cat][va[2]][va[3]][14]
+							end
 						end
 					end
 					if dmg==5 or dmg==0 then

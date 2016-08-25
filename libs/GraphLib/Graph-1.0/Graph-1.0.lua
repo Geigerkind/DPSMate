@@ -2236,6 +2236,10 @@ function GraphFunctions:RefreshStackedBarGraph()
 		end
 	end
 	-- Step 2: Compare with CAP and create dummy table
+	if not mN then
+		return
+	end
+	
 	if mN>CAP then
 		mN = CAP
 	end

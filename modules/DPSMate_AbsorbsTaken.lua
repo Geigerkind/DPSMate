@@ -23,14 +23,20 @@ function DPSMate.Modules.AbsorbsTaken:GetSortedTable(arr,k)
 		if DPSMate:ApplyFilter(k, DPSMate:GetUserById(cat)) then
 			local PerPlayerAbsorb = 0
 			for ca, va in pairs(val) do -- 28 Owner
+				local ownername = DPSMate:GetUserById(ca)
 				local PerOwnerAbsorb = 0
 				for c, v in pairs(va) do -- Power Word: Shield
 					if c~="i" then
+						local shieldname = DPSMate:GetAbilityById(c)
 						local PerAbilityAbsorb = 0
 						for ce, ve in pairs(v) do -- 1
 							local PerShieldAbsorb = 0
 							for cet, vel in pairs(ve) do
 								if cet~="i" then
+									local totalHits = 0
+									for qq,ss in vel do
+										totalHits = totalHits + ss
+									end
 									for qq,ss in vel do
 										local p = 5
 										if DPSMateDamageTaken[1][cat] then
@@ -46,7 +52,7 @@ function DPSMate.Modules.AbsorbsTaken:GetSortedTable(arr,k)
 												end
 											end
 										end
-										if DPSMateEDT[1][cat] and p==5 then
+										if DPSMateEDT[1][cat] and p==5 or p==0 then
 											if DPSMateEDT[1][cat][cet] then
 													--DPSMate:SendMessage("ZERO TEST BEFORE//"..DPSMate:GetAbilityById(qq))
 												if DPSMateEDT[1][cat][cet][qq] then
@@ -56,6 +62,9 @@ function DPSMate.Modules.AbsorbsTaken:GetSortedTable(arr,k)
 													end
 												end
 											end
+										end
+										if p==5 or p==0 then
+											p = ceil((1/totalHits)*((DPSMateUser[ownername][8] or 60)/60)*DPSMate.DB.FixedShieldAmounts[shieldname]*0.33)
 										end
 										PerShieldAbsorb=PerShieldAbsorb+ss*p
 									end
@@ -96,14 +105,20 @@ function DPSMate.Modules.AbsorbsTaken:EvalTable(user, k)
 	local arr = DPSMate:GetMode(k)
 	local b, a, total = {}, {}, 0
 	for cat, val in arr[user[1]] do -- 28 Target
+		local ownername = DPSMate:GetUserById(cat)
 		local PerTargetAbsorb, ta, tb = 0, {}, {}
 		for ca, va in pairs(val) do -- Power Word Shield
 			if ca~="i" then
+				local shieldname = DPSMate:GetAbilityById(ca)
 				local PerAbilityAbsorb, taa, tbb, temp = 0, {}, {}, {}
 				for c, v in pairs(va) do -- 1
 					local PerShieldAbsorb = 0
 					for ce, ve in pairs(v) do
 						if ce~="i" then
+							local totalHits = 0
+							for qq,ss in ve do
+								totalHits = totalHits + ss
+							end
 							for qq,ss in ve do
 								local p = 5
 								if DPSMateDamageTaken[1][user[1]] then
@@ -122,6 +137,9 @@ function DPSMate.Modules.AbsorbsTaken:EvalTable(user, k)
 											end
 										end
 									end
+								end
+								if p==5 or p==0 then
+									p = ceil((1/totalHits)*((DPSMateUser[ownername][8] or 60)/60)*DPSMate.DB.FixedShieldAmounts[shieldname]*0.33)
 								end
 								PerShieldAbsorb=PerShieldAbsorb+ss*p
 								if not temp[ce] then temp[ce] = {} end
