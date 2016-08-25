@@ -1436,10 +1436,6 @@ function DPSMate.Options:ReportUserDetails(obj, channel, name)
 	local Key, user = obj:GetParent():GetParent():GetParent().Key, obj.user
 	local _, cbt = DPSMate:GetMode(Key)
 	local a,b,c = DPSMate.RegistredModules[DPSMateSettings["windows"][Key]["CurMode"]]:EvalTable(DPSMateUser[user], Key, cbt)
-	if DPSMateSettings["windows"][Key]["CurMode"] == "threat" or DPSMateSettings["windows"][Key]["CurMode"] == "tps" then
-		DPSMate:SendMessage(DPSMate.L["nodetailserror"])
-		return
-	end
 	local chn, index
 	if (channel == DPSMate.L["whisper"]) then
 		chn = "WHISPER"; index = name;
