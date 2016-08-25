@@ -22,7 +22,7 @@ function DPSMate.Modules.DetailsThreat:UpdateDetails(obj, key)
 	DetailsUserComp = nil
 	DPSMate_Details_Threat_Title:SetText(DPSMate.L["threatdoneby"]..obj.user)
 	DPSMate_Details_Threat:Show()
-	DetailsArr, DetailsTotal, DmgArr = DPSMate.RegistredModules[DPSMateSettings["windows"][curKey]["CurMode"]]:EvalTable(DPSMateUser[DetailsUser], curKey)
+	DetailsArr, DetailsTotal, DmgArr = DPSMate.Modules.Threat:EvalTable(DPSMateUser[DetailsUser], curKey)
 	DPSMate_Details_Threat.proc = "None"
 	UIDropDownMenu_SetSelectedValue(DPSMate_Details_Threat_DiagramLegend_Procs, "None")
 	UIDropDownMenu_Initialize(DPSMate_Details_Threat_DiagramLegend_Procs, self.ProcsDropDown)

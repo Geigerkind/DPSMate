@@ -43,20 +43,21 @@ end
 
 function DPSMate.Modules.HPS:EvalTable(user, k, cbt)
 	local a, d = {}, {}
-	local arr = DPSMate:GetMode(k)
+	local arr, cbet = DPSMate:GetMode(k)
 	if not arr[user[1]] then return end
+	cbt = cbt or cbet
 	for cat, val in pairs(arr[user[1]]) do
 		if cat~="i" then
 			local i = 1
 			while true do
 				if (not d[i]) then
 					tinsert(a, i, cat)
-					tinsert(d, i, val[1])
+					tinsert(d, i, val[1]/cbt)
 					break
 				else
-					if (d[i] < val[1]) then
+					if (d[i] < val[1]/cbt) then
 						tinsert(a, i, cat)
-						tinsert(d, i, val[1])
+						tinsert(d, i, val[1]/cbt)
 						break
 					end
 				end
@@ -64,7 +65,7 @@ function DPSMate.Modules.HPS:EvalTable(user, k, cbt)
 			end
 		end
 	end
-	return a, strformat("%.1f", arr[user[1]]["i"]/(cbt or 1)), d
+	return a, arr[user[1]]["i"]/(cbt or 1), d
 end
 
 function DPSMate.Modules.HPS:GetSettingValues(arr, cbt, k,ecbt)
@@ -92,7 +93,7 @@ function DPSMate.Modules.HPS:ShowTooltip(user, k)
 	if DPSMateSettings["informativetooltips"] then
 		for i=1, DPSMateSettings["subviewrows"] do
 			if not a[i] then break end
-			GameTooltip:AddDoubleLine(i..". "..DPSMate:GetAbilityById(a[i]),c[i].." ("..strformat("%.2f", 100*c[i]/b).."%)",1,1,1,1,1,1)
+			GameTooltip:AddDoubleLine(i..". "..DPSMate:GetAbilityById(a[i]),strformat("%.2f", c[i]).." ("..strformat("%.2f", 100*c[i]/b).."%)",1,1,1,1,1,1)
 		end
 	end
 end

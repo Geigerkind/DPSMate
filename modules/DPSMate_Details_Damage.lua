@@ -29,7 +29,7 @@ function DPSMate.Modules.DetailsDamage:UpdateDetails(obj, key)
 	DPSMate_Details_SubTitle:SetText(DPSMate.L["activity"]..strformat("%.2f", DPSMateCombatTime["effective"][key][obj.user] or 0).."s "..DPSMate.L["of"].." "..strformat("%.2f", DPSMateCombatTime[mode[key]]).."s ("..strformat("%.2f", 100*(DPSMateCombatTime["effective"][key][obj.user] or 0)/DPSMateCombatTime[mode[key]]).."%)")
 	DPSMate_Details:Show()
 	UIDropDownMenu_Initialize(DPSMate_Details_DiagramLegend_Procs, DPSMate.Modules.DetailsDamage.ProcsDropDown)
-	DetailsArr, DetailsTotal, DmgArr = DPSMate.RegistredModules[DPSMateSettings["windows"][curKey]["CurMode"]]:EvalTable(DPSMateUser[DetailsUser], curKey)
+	DetailsArr, DetailsTotal, DmgArr = DPSMate.Modules.Damage:EvalTable(DPSMateUser[DetailsUser], curKey)
 	t1, t2, TTotal = self:EvalToggleTable()
 	
 	if not g then

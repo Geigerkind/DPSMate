@@ -43,7 +43,8 @@ end
 
 function DPSMate.Modules.DTPS:EvalTable(user, k, cbt)
 	local a, d = {}, {}
-	local arr = DPSMate:GetMode(k)
+	local arr, cbet = DPSMate:GetMode(k)
+	cbt = cbt or cbet
 	if not arr[user[1]] then return end
 	for cat, val in pairs(arr[user[1]]) do
 		if cat~="i" then
@@ -55,12 +56,12 @@ function DPSMate.Modules.DTPS:EvalTable(user, k, cbt)
 					while true do
 						if (not tb[i]) then
 							tinsert(ta, i, ca)
-							tinsert(tb, i, va[13])
+							tinsert(tb, i, va[13]/cbt)
 							break
 						else
-							if (tb[i] < va[13]) then
+							if (tb[i] < va[13]/cbt) then
 								tinsert(ta, i, ca)
-								tinsert(tb, i, va[13])
+								tinsert(tb, i, va[13]/cbt)
 								break
 							end
 						end
@@ -72,12 +73,12 @@ function DPSMate.Modules.DTPS:EvalTable(user, k, cbt)
 			while true do
 				if (not d[i]) then
 					tinsert(a, i, cat)
-					tinsert(d, i, {CV, ta, tb})
+					tinsert(d, i, {CV/cbt, ta, tb})
 					break
 				else
-					if (d[i][1] < CV) then
+					if (d[i][1] < CV/cbt) then
 						tinsert(a, i, cat)
-						tinsert(d, i, {CV, ta, tb})
+						tinsert(d, i, {CV/cbt, ta, tb})
 						break
 					end
 				end
@@ -85,7 +86,7 @@ function DPSMate.Modules.DTPS:EvalTable(user, k, cbt)
 			end
 		end
 	end
-	return a, strformat("%.1f", arr[user[1]]["i"]/(cbt or 1)), d
+	return a, arr[user[1]]["i"]/(cbt or 1), d
 end
 
 function DPSMate.Modules.DTPS:GetSettingValues(arr, cbt, k,ecbt)
@@ -113,10 +114,10 @@ function DPSMate.Modules.DTPS:ShowTooltip(user, k)
 	if DPSMateSettings["informativetooltips"] then
 		for i=1, DPSMateSettings["subviewrows"] do
 			if not a[i] then break end
-			GameTooltip:AddDoubleLine(i..". "..DPSMate:GetUserById(a[i]),c[i][1].." ("..strformat("%.2f", 100*c[i][1]/b).."%)",1,1,1,1,1,1)
+			GameTooltip:AddDoubleLine(i..". "..DPSMate:GetUserById(a[i]),strformat("%.2f", c[i][1]).." ("..strformat("%.2f", 100*c[i][1]/b).."%)",1,1,1,1,1,1)
 			for p=1, 3 do 
 				if not c[i][2][p] or c[i][3][p]==0 then break end
-				GameTooltip:AddDoubleLine("       "..p..". "..DPSMate:GetAbilityById(c[i][2][p]),c[i][3][p].." ("..strformat("%.2f", 100*c[i][3][p]/c[i][1]).."%)",0.5,0.5,0.5,0.5,0.5,0.5)
+				GameTooltip:AddDoubleLine("       "..p..". "..DPSMate:GetAbilityById(c[i][2][p]),strformat("%.2f", c[i][3][p]).." ("..strformat("%.2f", 100*c[i][3][p]/c[i][1]).."%)",0.5,0.5,0.5,0.5,0.5,0.5)
 			end
 		end
 	end

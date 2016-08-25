@@ -53,7 +53,8 @@ end
 
 function DPSMate.Modules.DPS:EvalTable(user, k, cbt)
 	local a, u, p, d, total, pet = {}, {}, {}, {}, 0, false
-	local arr = DPSMate:GetMode(k)
+	local arr, cbet = DPSMate:GetMode(k)
+	cbt = cbt or cbet
 	if not arr[user[1]] then return end
 	if (user[5] and user[5] ~= DPSMate.L["unknown"] and arr[DPSMateUser[user[5]][1]]) and DPSMateSettings["mergepets"] then u={user[1],DPSMateUser[user[5]][1]} else u={user[1]} end
 	for _, v in pairs(u) do
@@ -65,12 +66,12 @@ function DPSMate.Modules.DPS:EvalTable(user, k, cbt)
 					while true do
 						if (not d[i]) then
 							tinsert(a, i, cat)
-							tinsert(d, i, {val[13], pet})
+							tinsert(d, i, {val[13]/cbt, pet})
 							break
 						else
-							if (d[i][1] < val[13]) then
+							if (d[i][1] < val[13]/cbt) then
 								tinsert(a, i, cat)
-								tinsert(d, i, {val[13], pet})
+								tinsert(d, i, {val[13]/cbt, pet})
 								break
 							end
 						end
@@ -81,7 +82,7 @@ function DPSMate.Modules.DPS:EvalTable(user, k, cbt)
 		end
 		total=total+arr[v]["i"]
 	end
-	return a, strformat("%.1f", total/(cbt or 1)), d
+	return a, total/(cbt or 1), d
 end
 
 function DPSMate.Modules.DPS:GetSettingValues(arr, cbt, k, ecbt)
@@ -111,7 +112,7 @@ function DPSMate.Modules.DPS:ShowTooltip(user,k)
 		for i=1, DPSMateSettings["subviewrows"] do
 			if not a[i] then break end
 			if c[i][2] then pet="(Pet)" else pet="" end
-			GameTooltip:AddDoubleLine(i..". "..DPSMate:GetAbilityById(a[i])..pet,c[i][1].." ("..strformat("%.2f", 100*c[i][1]/b).."%)",1,1,1,1,1,1)
+			GameTooltip:AddDoubleLine(i..". "..DPSMate:GetAbilityById(a[i])..pet,strformat("%.2f", c[i][1]).." ("..strformat("%.2f", 100*c[i][1]/b).."%)",1,1,1,1,1,1)
 		end
 	end
 end

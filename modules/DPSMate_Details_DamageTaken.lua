@@ -22,7 +22,7 @@ function DPSMate.Modules.DetailsDamageTaken:UpdateDetails(obj, key)
 	DetailsUserComp = nil
 	DPSMate_Details_DamageTaken_Title:SetText(DPSMate.L["dmgtakenby"]..obj.user)
 	DPSMate_Details_DamageTaken:Show()
-	DetailsArr, DetailsTotal, DmgArr = DPSMate.RegistredModules[DPSMateSettings["windows"][curKey]["CurMode"]]:EvalTable(DPSMateUser[DetailsUser], curKey)
+	DetailsArr, DetailsTotal, DmgArr = DPSMate.Modules.DamageTaken:EvalTable(DPSMateUser[DetailsUser], curKey)
 	DPSMate_Details_DamageTaken.proc = "None"
 	UIDropDownMenu_SetSelectedValue(DPSMate_Details_DamageTaken_DiagramLegend_Procs, "None")
 	UIDropDownMenu_Initialize(DPSMate_Details_DamageTaken_DiagramLegend_Procs, self.ProcsDropDown)

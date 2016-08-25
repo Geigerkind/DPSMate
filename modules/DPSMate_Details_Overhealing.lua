@@ -29,7 +29,7 @@ function DPSMate.Modules.DetailsOverhealing:UpdateDetails(obj, key)
 	DPSMate_Details_Overhealing_SubTitle:SetText(DPSMate.L["activity"]..strformat("%.2f", DPSMateCombatTime["effective"][key][obj.user] or 0).."s "..DPSMate.L["of"].." "..strformat("%.2f", DPSMateCombatTime[mode[key]]).."s ("..strformat("%.2f", 100*(DPSMateCombatTime["effective"][key][obj.user] or 0)/DPSMateCombatTime[mode[key]]).."%)")
 	DPSMate_Details_Overhealing:Show()
 	UIDropDownMenu_Initialize(DPSMate_Details_Overhealing_DiagramLegend_Procs, DPSMate.Modules.DetailsOverhealing.ProcsDropDown)
-	DetailsArr, DetailsTotal, DmgArr = DPSMate.RegistredModules[DPSMateSettings["windows"][curKey]["CurMode"]]:EvalTable(DPSMateUser[DetailsUser], curKey)
+	DetailsArr, DetailsTotal, DmgArr = DPSMate.Modules.Overhealing:EvalTable(DPSMateUser[DetailsUser], curKey)
 	t1, t2, TTotal = self:EvalToggleTable()
 	
 	if not g then

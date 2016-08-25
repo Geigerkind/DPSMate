@@ -377,6 +377,7 @@ local SelectedChannel = DPSMate.L["raid"]
 local _G = getglobal
 local tinsert = table.insert
 local tremove = tremove
+local strformat = string.format
 
 -- Begin Functions
 
@@ -1430,7 +1431,7 @@ function DPSMate.Options:Report()
 	DPSMate_Report:Hide()
 end
 
-local AbilityModes = {"damage", "dps", "healing", "hps", "overhealing", "effectivehealing", "effectivehps", "deaths", "interrupts", "dispels", "decurses", "curedisease", "curepoison", "liftmagic", "aurasgained", "auraslost", "aurasuptime", "procs", "casts", "ccbreaker"}
+local AbilityModes = {"damage", "dps", "healing", "hps", "OHPS", "overhealing", "effectivehealing", "effectivehps", "deaths", "interrupts", "dispels", "decurses", "curedisease", "curepoison", "liftmagic", "aurasgained", "auraslost", "aurasuptime", "procs", "casts", "ccbreaker"}
 function DPSMate.Options:ReportUserDetails(obj, channel, name)
 	local Key, user = obj:GetParent():GetParent():GetParent().Key, obj.user
 	local _, cbt = DPSMate:GetMode(Key)
@@ -1449,13 +1450,13 @@ function DPSMate.Options:ReportUserDetails(obj, channel, name)
 	end
 	local bb = ""
 	if b~=0 then
-		bb = " - "..b
+		bb = " - "..strformat("%.2f", b)
 	end
 	SendChatMessage(DPSMate.L["name"].." - "..DPSMate.L["reportof"].." "..user.."'s ".._G("DPSMate_"..DPSMateSettings["windows"][Key]["name"].."_Head_Font"):GetText().." - "..DPSMate:GetModeName(Key)..bb, chn, nil, index)
 	for i=1, 10 do
 		if (not a[i]) then break end
 		local p
-		if type(c[i])=="table" then p = c[i][1] else p = c[i] end
+		if type(c[i])=="table" then p = strformat("%.2f", c[i][1]).." ("..strformat("%.2f", 100*c[i][1]/b).."%)" else p = strformat("%.2f", c[i]).." ("..strformat("%.2f", 100*c[i]/b).."%)" end
 		if DPSMateSettings["windows"][Key]["CurMode"] == "deaths" then
 			local type = " (HIT)"
 			if c[i][3]==1 then type=" (CRIT)" elseif c[i][3]==2 then type=" (CRUSH)" end
