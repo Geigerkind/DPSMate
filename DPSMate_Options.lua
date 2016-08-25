@@ -1452,7 +1452,11 @@ function DPSMate.Options:ReportUserDetails(obj, channel, name)
 	for i=1, 10 do
 		if (not a[i]) then break end
 		local p
-		if type(c[i])=="table" then p = strformat("%.2f", c[i][1]).." ("..strformat("%.2f", 100*c[i][1]/b).."%)" else p = strformat("%.2f", c[i]).." ("..strformat("%.2f", 100*c[i]/b).."%)" end
+		if type(a[i])=="number" then
+			p = strformat("%.2f", a[i]).." ("..strformat("%.2f", 100*a[i]/b).."%)"
+		else
+			if type(c[i])=="table" then p = strformat("%.2f", c[i][1]).." ("..strformat("%.2f", 100*c[i][1]/b).."%)" else p = strformat("%.2f", c[i]).." ("..strformat("%.2f", 100*c[i]/b).."%)" end
+		end
 		if DPSMateSettings["windows"][Key]["CurMode"] == "deaths" then
 			local type = " (HIT)"
 			if c[i][3]==1 then type=" (CRIT)" elseif c[i][3]==2 then type=" (CRUSH)" end
@@ -1468,7 +1472,11 @@ function DPSMate.Options:ReportUserDetails(obj, channel, name)
 				if DPSMate:TContains(AbilityModes, DPSMateSettings["windows"][Key]["CurMode"]) then
 					SendChatMessage(i..". "..DPSMate:GetAbilityById(a[i]).." - "..p, chn, nil, index)
 				else
-					SendChatMessage(i..". "..DPSMate:GetUserById(a[i]).." - "..p, chn, nil, index)
+					if type(a[i])=="number" then
+						SendChatMessage(i..". "..DPSMate:GetUserById(c[i][1]).." - "..p, chn, nil, index)
+					else
+						SendChatMessage(i..". "..DPSMate:GetUserById(a[i]).." - "..p, chn, nil, index)
+					end
 				end
 			end
 		end
