@@ -246,6 +246,35 @@ DPSMate.Parser.FailDT = {
 	[DPSMate.BabbleSpell:GetTranslation("Frost Burn")] = true,
 	[DPSMate.BabbleSpell:GetTranslation("Ignite Flesh")] = true,
 	[DPSMate.BabbleSpell:GetTranslation("Time Lapse")] = true,
+	
+	-- Zul Gurub
+	[DPSMate.BabbleSpell:GetTranslation("Whirlwind")] = true,
+	[DPSMate.BabbleSpell:GetTranslation("Charge")] = true,
+	[DPSMate.BabbleSpell:GetTranslation("Poison Cloud")] = true,
+	
+	-- AQ 20
+	[DPSMate.BabbleSpell:GetTranslation("Arcane Eruption")] = true,
+	[DPSMate.BabbleSpell:GetTranslation("Harsh Winds")] = true,
+	[DPSMate.BabbleSpell:GetTranslation("Sand Trap")] = true,
+	
+	-- AQ 40
+	[DPSMate.BabbleSpell:GetTranslation("Toxin Cloud")] = true,
+	[DPSMate.BabbleSpell:GetTranslation("Arcane Burst")] = true,
+	[DPSMate.BabbleSpell:GetTranslation("Eye Beam")] = true,
+	[DPSMate.BabbleSpell:GetTranslation("Dark Glare")] = true,
+	
+	-- Naxx
+	[DPSMate.BabbleSpell:GetTranslation("Negative Charge")] = true,
+	[DPSMate.BabbleSpell:GetTranslation("Positive Charge")] = true,
+	[DPSMate.BabbleSpell:GetTranslation("Impale")] = true, -- Assuming you can dodge it
+	[DPSMate.BabbleSpell:GetTranslation("Void Zone")] = true,
+	[DPSMate.BabbleSpell:GetTranslation("Plague Cloud")] = true,
+	[DPSMate.BabbleSpell:GetTranslation("Blizzard")] = true,
+	[DPSMate.BabbleSpell:GetTranslation("Chill")] = true,
+	[DPSMate.BabbleSpell:GetTranslation("Frost Breath")] = true,
+	[DPSMate.BabbleSpell:GetTranslation("Mana Detonation")] = true,
+	[DPSMate.BabbleSpell:GetTranslation("Shadow Fissure")] = true,
+	
 }
 DPSMate.Parser.FailDB = {
 	-- Molten Core
