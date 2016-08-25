@@ -343,6 +343,12 @@ DPSMate.Parser.Kicks = {
 	-- Mage
 	[DPSMate.BabbleSpell:GetTranslation("Counterspell")] = true,
 	
+	-- Shaman
+	[DPSMate.BabbleSpell:GetTranslation("Earth Shock")] = true,
+	
+	-- Priest
+	[DPSMate.BabbleSpell:GetTranslation("Silence")] = true,
+	
 	-- Stuns
 	-- Rogue
 	[DPSMate.BabbleSpell:GetTranslation("Gouge")] = true,
@@ -351,11 +357,37 @@ DPSMate.Parser.Kicks = {
 	
 	-- Hunter
 	[DPSMate.BabbleSpell:GetTranslation("Scatter Shot")] = true,
+	[DPSMate.BabbleSpell:GetTranslation("Improved Concussive Shot")] = true,
+	[DPSMate.BabbleSpell:GetTranslation("Wyvern Sting")] = true,
+	[DPSMate.BabbleSpell:GetTranslation("Intimidation")] = true,
 	
 	-- Warrior
 	[DPSMate.BabbleSpell:GetTranslation("Charge Stun")] = true,
 	[DPSMate.BabbleSpell:GetTranslation("Intercept Stun")] = true,
 	[DPSMate.BabbleSpell:GetTranslation("Concussion Blow")] = true,
+	
+	-- Druid
+	[DPSMate.BabbleSpell:GetTranslation("Feral Charge")] = true,
+	[DPSMate.BabbleSpell:GetTranslation("Feral Charge Effect")] = true,
+	[DPSMate.BabbleSpell:GetTranslation("Bash")] = true,
+	[DPSMate.BabbleSpell:GetTranslation("Pounce")] = true,
+	
+	-- Mage
+	[DPSMate.BabbleSpell:GetTranslation("Impact")] = true,
+	
+	-- Paladin
+	[DPSMate.BabbleSpell:GetTranslation("Repentance")] = true,
+	
+	-- Warlock
+	[DPSMate.BabbleSpell:GetTranslation("Pyroclasm")] = true,
+	[DPSMate.BabbleSpell:GetTranslation("Death Coil")] = true,
+	
+	-- Priest
+	[DPSMate.BabbleSpell:GetTranslation("Blackout")] = true,
+	
+	-- General
+	[DPSMate.BabbleSpell:GetTranslation("Tidal Charm")] = true,
+	[DPSMate.BabbleSpell:GetTranslation("Reckless Charge")] = true,
 }
 DPSMate.Parser.player = UnitName("player")
 DPSMate.Parser.playerclass = nil
