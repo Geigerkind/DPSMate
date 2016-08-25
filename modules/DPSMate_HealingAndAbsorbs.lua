@@ -24,15 +24,21 @@ function DPSMate.Modules.HealingAndAbsorbs:GetSortedTable(arr, k)
 		for cat, val in pairs(arr) do -- 28 Target
 			local PerPlayerAbsorb = 0
 			for ca, va in pairs(val) do -- 28 Owner
-				if DPSMate:ApplyFilter(k, DPSMate:GetUserById(ca)) then
+				local ownername = DPSMate:GetUserById(ca)
+				if DPSMate:ApplyFilter(k, ownername) then
 					local PerOwnerAbsorb = 0
 					for c, v in pairs(va) do -- Power Word: Shield
 						if c~="i" then
+							local shieldname = DPSMate:GetAbilityById(c)
 							local PerAbilityAbsorb = 0
 							for ce, ve in pairs(v) do -- 1
 								local PerShieldAbsorb = 0
 								for cet, vel in pairs(ve) do
 									if cet~="i" then
+										local totalHits = 0
+										for qq,ss in vel do
+											totalHits = totalHits + ss
+										end
 										for qq,ss in vel do
 											local p = 5
 											if DPSMateDamageTaken[1][cat] then
@@ -51,6 +57,9 @@ function DPSMate.Modules.HealingAndAbsorbs:GetSortedTable(arr, k)
 														end
 													end
 												end
+											end
+											if p==5 or p==0 then
+												p = ceil((1/totalHits)*((DPSMateUser[ownername][8] or 60)/60)*DPSMate.DB.FixedShieldAmounts[shieldname]*0.33)
 											end
 											PerShieldAbsorb=PerShieldAbsorb+ss*p
 										end
@@ -124,15 +133,21 @@ function DPSMate.Modules.HealingAndAbsorbs:EvalTable(user, k)
 	local b, total = {}, 0
 	local temp = {}
 	local arr = DPSMate:GetModeByArr(DPSMateAbsorbs, k)
+	local ownername = DPSMate:GetUserById(user[1])
 	for cat, val in pairs(arr) do -- 28 Target
 		for ca, va in pairs(val) do -- 28 Owner
 			if ca==user[1] then
 				for c, v in pairs(va) do -- Power Word: Shield
 					if c~="i" then
+						local shieldname = DPSMate:GetAbilityById(c)
 						for ce, ve in pairs(v) do -- 1
 							local PerShieldAbsorb = 0
 							for cet, vel in pairs(ve) do
 								if cet~="i" then
+									local totalHits = 0
+									for qq,ss in vel do
+										totalHits = totalHits + ss
+									end
 									for qq,ss in vel do
 										local p = 5
 										if DPSMateDamageTaken[1][cat] then
@@ -151,6 +166,9 @@ function DPSMate.Modules.HealingAndAbsorbs:EvalTable(user, k)
 													end
 												end
 											end
+										end
+										if p==5 or p==0 then
+											p = ceil((1/totalHits)*((DPSMateUser[ownername][8] or 60)/60)*DPSMate.DB.FixedShieldAmounts[shieldname]*0.33)
 										end
 										PerShieldAbsorb=PerShieldAbsorb+ss*p
 										if not temp[cet] then temp[cet] = {} end

@@ -23,6 +23,25 @@ DPSMate.DB.ShieldFlags = {
 	[DPSMate.BabbleSpell:GetTranslation("Arcane Protection")] = 6, -- Arcane
 	[DPSMate.BabbleSpell:GetTranslation("Holy Protection")] = 7, -- Holy
 }
+DPSMate.DB.FixedShieldAmounts = {
+	[DPSMate.BabbleSpell:GetTranslation("Power Word: Shield")] = 1000, -- All
+	[DPSMate.BabbleSpell:GetTranslation("Ice Barrier")] = 818, -- All
+	[DPSMate.BabbleSpell:GetTranslation("The Burrower's Shell")] = 900, -- All
+	[DPSMate.BabbleSpell:GetTranslation("Aura of Protection")] = 1000, -- All
+	[DPSMate.BabbleSpell:GetTranslation("Damage Absorb")] = 550, -- All
+	[DPSMate.BabbleSpell:GetTranslation("Physical Protection")] = 500, -- Meele
+	[DPSMate.BabbleSpell:GetTranslation("Harm Prevention Belt")] = 500, -- All
+	[DPSMate.BabbleSpell:GetTranslation("Mana Shield")] = 570, -- Meele
+	[DPSMate.BabbleSpell:GetTranslation("Frost Protection")] = 2500, -- Frost
+	[DPSMate.BabbleSpell:GetTranslation("Frost Resistance")] = 600, -- Frost
+	[DPSMate.BabbleSpell:GetTranslation("Frost Ward")] = 920, -- Frost
+	[DPSMate.BabbleSpell:GetTranslation("Fire Protection")] = 2500, -- Fire
+	[DPSMate.BabbleSpell:GetTranslation("Fire Ward")] = 920, -- Fire
+	[DPSMate.BabbleSpell:GetTranslation("Nature Protection")] = 2500, -- Nature
+	[DPSMate.BabbleSpell:GetTranslation("Shadow Protection")] = 2500, -- Shadow
+	[DPSMate.BabbleSpell:GetTranslation("Arcane Protection")] = 2500, -- Arcane
+	[DPSMate.BabbleSpell:GetTranslation("Holy Protection")] = 2500, -- Holy
+}
 local AbilityFlags = {
 	["Magic"] = 0,
 	["Fire"] = 3,
@@ -71,6 +90,7 @@ local _G = getglobal
 local player = ""
 local GT = GetTime
 local strfind = string.find
+local UL = UnitLevel
 
 -- Begin Functions
 
@@ -647,6 +667,7 @@ function DPSMate.DB:OnGroupUpdate()
 		if (gname and gname ~= "") then
 			DPSMateUser[name][7] = gname
 		end
+		DPSMateUser[name][8] = UL(type..i)
 	end
 	local pet = UnitName("pet")
 	local name = UnitName("player")
@@ -692,6 +713,7 @@ function DPSMate.DB:PlayerTargetChanged()
 		elseif fac == DPSMate.L["horde"] then
 			DPSMateUser[name][3] = -1
 		end
+		DPSMateUser[name][8] = UL("target")
 	end
 end
 
@@ -1437,7 +1459,7 @@ function DPSMate.DB:UnregisterAbsorb(ability, abilityTarget)
 				path[2] = broken[2]
 				path[3] = broken[3]
 				path[4] = broken[4]
-				if (broken[2] or 0)>0 then tinsert(DPSMateAbsorbs[cat][DPSMateUser[abilityTarget][1]][AbsorbingAbility[1]]["i"], {DPSMateCombatTime[val], broken[4], broken[3], broken[2]}) end
+				if (broken[2] or 0)>0 then tinsert(DPSMateAbsorbs[cat][DPSMateUser[abilityTarget][1]][AbsorbingAbility[1]]["i"], {DPSMateCombatTime[val], broken[4], broken[3], broken[2], AbsorbingAbility[2]}) end
 			end
 		end
 	end
@@ -1564,7 +1586,7 @@ function DPSMate.DB:Absorb(ability, abilityTarget, incTarget)
 			else
 				path[DPSMateAbility[ability][1]] = 1
 			end
-			tinsert(DPSMateAbsorbs[cat][DPSMateUser[abilityTarget][1]][AbsorbingAbility[1]]["i"], {DPSMateCombatTime[val], DPSMateUser[incTarget][1], DPSMateAbility[ability][1]})
+			tinsert(DPSMateAbsorbs[cat][DPSMateUser[abilityTarget][1]][AbsorbingAbility[1]]["i"], {DPSMateCombatTime[val], DPSMateUser[incTarget][1], DPSMateAbility[ability][1], 0, AbsorbingAbility[2][1]})
 		end
 	end
 end

@@ -34,6 +34,14 @@ BabbleSpell:RegisterTranslations("enUS", function()
 		["Flesh Rot"] = true,
 		["Slime"] = true,
 		["Test Sunder Armor"] = true,
+		["Toxin Cloud"] = true,
+		["Negative Charge"] = true,
+		["Positive Charge"] = true,
+		["Void Zone"] = true,
+		["Plague Cloud"] = true,
+		["Mana Detonation"] = true,
+		["Shadow Fissure"] = true,
+		["Tidal Charm"] = true,
 		
 		["Powerful Anti-Venom"] = true,
 		["Wildvine Potion"] = true,
@@ -2079,6 +2087,14 @@ end)
 BabbleSpell:RegisterTranslations("deDE", function()
 	return {
 		-- Translation by Bambustrepp
+		["Negative Charge"] = "Negative Aufladung",
+		["Positive Charge"] = "Positive Aufladung",
+		["Void Zone"] = "Zone der Leere",
+		["Plague Cloud"] = "Seuchenwolke",
+		["Mana Detonation"] = "Manadetonation",
+		["Shadow Fissure"] = "Schattenspalt",
+		["Tidal Charm"] = "Gezeitenglücksbringer",
+		["Toxin Cloud"] = "Giftwolke",
 		["Unholy Frenzy"] = "Unheilige Raserei",
 		["Harvest Soul"] = "Seele ernten",
 		["Stomp"] = "Stampfen",
@@ -4116,6 +4132,15 @@ end)
 
 BabbleSpell:RegisterTranslations("frFR", function()
 	return {
+		["Negative Charge"] = "Charge négative",
+		["Positive Charge"] = "Charge positive",
+		["Void Zone"] = "Zone de Vide",
+		["Plague Cloud"] = "Nuée de peste",
+		["Mana Detonation"] = "Détonation de mana",
+		["Shadow Fissure"] = "Fissure d'ombre",
+		["Tidal Charm"] = "Charme des flots",
+
+		["Toxin Cloud"] = "Toxin Cloud",
 		["Unholy Frenzy"] = "Frénésie impie",
 		["Harvest Soul"] = "Moisson d'âme",
 		["Stomp"] = "Piétinement",
@@ -10093,6 +10118,14 @@ end)
 
 local spellIcons = {
 	-- Costum Icons
+	["Negative Charge"] = "spell_chargenegative",
+	["Positive Charge"] = "spell_chargepositive",
+	["Void Zone"] = "spell_frost_icestorm",
+	["Plague Cloud"] = "ability_creature_disease_02",
+	["Mana Detonation"] = "spell_nature_wispsplode",
+	["Shadow Fissure"] = "spell_shadow_creepingplague",
+	["Tidal Charm"] = "spell_frost_summonwaterelemental",
+	["Toxin Cloud"] = "spell_nature_abolishmagic",
 	["Unholy Frenzy"] = "spell_nature_bloodlust",
 	["Harvest Soul"] = "spell_shadow_curseofachimonde",
 	["Stomp"] = "ability_warstomp",

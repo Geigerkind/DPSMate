@@ -427,6 +427,7 @@ local _,playerclass = UnitClass("player")
 local DB = DPSMate.DB
 local _G = getfenv(0)
 local string_find = string.find
+local UL = UnitLevel
 
 -- Begin Functions
 
@@ -437,6 +438,7 @@ function DPSMate.Parser:OnLoad()
 			[2] = strlower(playerclass),
 		}
 	end
+	DPSMateUser[self.player][8] = UL("player")
 	-- Prevent this addon from causing issues
 	if SW_FixLogStrings then
 		DPSMate:SendMessage("Please disable SW_StatsFixLogStrings and SW_Stats. Those addons causes issues.")
