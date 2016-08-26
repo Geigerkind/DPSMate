@@ -166,9 +166,9 @@ function DPSMate.Modules.DetailsThreat:ScrollFrame_Update(comp, cname)
 	for line=1,8 do
 		lineplusoffset = line + FauxScrollFrame_GetOffset(obj)
 		if uArr[lineplusoffset] ~= nil then
-			local user = DPSMate:GetUserById(dArr[lineplusoffset][1])
+			local user = DPSMate:GetUserById(uArr[lineplusoffset])
 			_G(path.."_ScrollButton"..line.."_Name"):SetText(user)
-			_G(path.."_ScrollButton"..line.."_Value"):SetText(strformat("%.2f", uArr[lineplusoffset]).." ("..strformat("%.2f", (uArr[lineplusoffset]*100/dTot)).."%)")
+			_G(path.."_ScrollButton"..line.."_Value"):SetText(strformat("%.2f", dArr[lineplusoffset][1]).." ("..strformat("%.2f", (dArr[lineplusoffset][1]*100/dTot)).."%)")
 			_G(path.."_ScrollButton"..line.."_Icon"):SetTexture("Interface\\AddOns\\DPSMate\\images\\npc")
 			if len < 8 then
 				_G(path.."_ScrollButton"..line):SetWidth(235)
@@ -283,7 +283,7 @@ function DPSMate.Modules.DetailsThreat:SelectDetailsButton(p,i,comp,cname)
 	end
 	-- Performance?
 	local ability = tonumber(dArr[p][2][lineplusoffset])
-	local creature = tonumber(dArr[p][1])
+	local creature = tonumber(uArr[p])
 	_G("DPSMate_Details_"..comp.."Threat_Log_ScrollButton"..i.."_selected"):Show()
 	
 	local path = db[DPSMateUser[cname or DetailsUser][1]][creature][ability]
@@ -370,7 +370,7 @@ function DPSMate.Modules.DetailsThreat:UpdateStackedGraph(gg, comp, cname)
 		dSel = DetailsSelectedComp
 	end
 	if toggle3 then
-		for cat, val in db[DPSMateUser[cname or DetailsUser][1]][dArr[dSel][1]] do
+		for cat, val in db[DPSMateUser[cname or DetailsUser][1]][uArr[dSel]] do
 			if val["i"] then
 				for c, v in val["i"] do
 					local key = tonumber(strformat("%.1f", c))

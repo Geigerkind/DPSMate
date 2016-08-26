@@ -72,12 +72,12 @@ function DPSMate.Modules.TPS:EvalTable(user, k, cbt)
 		local i = 1
 		while true do
 			if not a[i] then
-				tinsert(a, i, CV/cbt)
-				tinsert(d, i, {cat, q, e})
+				tinsert(a, i, cat)
+				tinsert(d, i, {CV/cbt, q, e})
 				break
-			elseif a[i]<CV/cbt then
-				tinsert(a, i, CV/cbt)
-				tinsert(d, i, {cat, q, e})
+			elseif d[i][1]<CV/cbt then
+				tinsert(a, i, cat)
+				tinsert(d, i, {CV/cbt, q, e})
 				break
 			end
 			i = i + 1
@@ -95,7 +95,7 @@ function DPSMate.Modules.TPS:GetSettingValues(arr, cbt, k,ecbt)
 		local dmg, tot, sort = DPSMate:FormatNumbers(val, total, sortedTable[1], k)
 		if dmg==0 then break end
 		local str = {[1]="",[2]="",[3]="",[4]=""}
-		if DPSMateSettings["columnstps"][1] then str[1] = "("..dmg..p..")"; strt[1] = "("..tot..p..")" end
+		if DPSMateSettings["columnstps"][1] then str[1] = "("..strformat("%.2f", dmg)..p..")"; strt[1] = "("..strformat("%.2f", tot)..p..")" end
 		if DPSMateSettings["columnstps"][2] then str[2] = " "..strformat("%.1f", (dmg/cbt))..p; strt[2] = " "..strformat("%.1f", (tot/cbt))..p end
 		if DPSMateSettings["columnstps"][3] then str[3] = " ("..strformat("%.1f", 100*dmg/tot).."%)" end
 		if DPSMateSettings["columnstps"][4] then str[4] = " ("..strformat("%.1f", dmg/(ecbt[a[cat]] or cbt))..p..")" end
@@ -111,7 +111,7 @@ function DPSMate.Modules.TPS:ShowTooltip(user,k)
 	if DPSMateSettings["informativetooltips"] then
 		for i=1, DPSMateSettings["subviewrows"] do
 			if not a[i] then break end
-			GameTooltip:AddDoubleLine(i..". "..DPSMate:GetUserById(c[i][1]),strformat("%.2f", a[i]).." ("..strformat("%.2f", 100*a[i]/b).."%)",1,1,1,1,1,1)
+			GameTooltip:AddDoubleLine(i..". "..DPSMate:GetUserById(a[i]),strformat("%.2f", c[i][1]).." ("..strformat("%.2f", 100*c[i][1]/b).."%)",1,1,1,1,1,1)
 			for p=1, 3 do
 				if not c[i][2][p] or c[i][3][p]==0 then break end
 				GameTooltip:AddDoubleLine("       "..p..". "..DPSMate:GetAbilityById(c[i][2][p]),strformat("%.2f", c[i][3][p]).." ("..strformat("%.2f", 100*c[i][3][p]/a[i]).."%)",0.5,0.5,0.5,0.5,0.5,0.5)

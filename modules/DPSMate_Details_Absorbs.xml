@@ -42,13 +42,24 @@
 		</Layers>
 		<Scripts>
 			<OnClick>
-				local pa, pt = DPSMate_Details_Absorbs_Log_ScrollFrame, DPSMate_Details_Absorbs_LogTwo_ScrollFrame
-				if this:GetParent():GetName()=="DPSMate_Details_Absorbs_LogCreature" then
-					DPSMate.Modules.DetailsAbsorbs:SelectCreatureButton(this:GetID())
-				elseif this:GetParent():GetName()=="DPSMate_Details_Absorbs_Log" then
-					DPSMate.Modules.DetailsAbsorbs:SelectCauseButton(pa.index, this:GetID())
-				elseif this:GetParent():GetName()=="DPSMate_Details_Absorbs_LogTwo" then
-					DPSMate.Modules.DetailsAbsorbs:SelectCauseABButton(pa.index, pt.index, this:GetID())
+				if this:GetParent():GetParent():GetName()=="DPSMate_Details_Absorbs" then
+					local pa, pt = DPSMate_Details_Absorbs_Log_ScrollFrame, DPSMate_Details_Absorbs_LogTwo_ScrollFrame
+					if this:GetParent():GetName()=="DPSMate_Details_Absorbs_LogCreature" then
+						DPSMate.Modules.DetailsAbsorbs:SelectCreatureButton(this:GetID(), "")
+					elseif this:GetParent():GetName()=="DPSMate_Details_Absorbs_Log" then
+						DPSMate.Modules.DetailsAbsorbs:SelectCauseButton(pa.index, this:GetID(), "")
+					elseif this:GetParent():GetName()=="DPSMate_Details_Absorbs_LogTwo" then
+						DPSMate.Modules.DetailsAbsorbs:SelectCauseABButton(pa.index, pt.index, this:GetID(), "")
+					end
+				else
+					local pa, pt = DPSMate_Details_CompareAbsorbs_Log_ScrollFrame, DPSMate_Details_CompareAbsorbs_LogTwo_ScrollFrame
+					if this:GetParent():GetName()=="DPSMate_Details_CompareAbsorbs_LogCreature" then
+						DPSMate.Modules.DetailsAbsorbs:SelectCreatureButton(this:GetID(), "Compare")
+					elseif this:GetParent():GetName()=="DPSMate_Details_CompareAbsorbs_Log" then
+						DPSMate.Modules.DetailsAbsorbs:SelectCauseButton(pa.index, this:GetID(), "Compare")
+					elseif this:GetParent():GetName()=="DPSMate_Details_CompareAbsorbs_LogTwo" then
+						DPSMate.Modules.DetailsAbsorbs:SelectCauseABButton(pa.index, pt.index, this:GetID(), "Compare")
+					end
 				end
 			</OnClick>
 		</Scripts>
@@ -212,6 +223,7 @@
 						</Anchors>
 						<Scripts>
 							<OnVerticalScroll>
+								DPSMate_Details_Absorbs.LastScroll=""
 								FauxScrollFrame_OnVerticalScroll(24, DPSMate.Modules.DetailsAbsorbs.ScrollFrame_Update) 
 							</OnVerticalScroll>
 					   </Scripts>
@@ -315,6 +327,7 @@
 						</Anchors>
 						<Scripts>
 							<OnVerticalScroll>
+								DPSMate_Details_Absorbs.LastScroll=""
 								FauxScrollFrame_OnVerticalScroll(24, DPSMate.Modules.DetailsAbsorbs.SelectCreatureButton) 
 							</OnVerticalScroll>
 					   </Scripts>
@@ -418,6 +431,7 @@
 						</Anchors>
 						<Scripts>
 							<OnVerticalScroll>
+								DPSMate_Details_Absorbs.LastScroll=""
 								FauxScrollFrame_OnVerticalScroll(24, DPSMate.Modules.DetailsAbsorbs.SelectCauseButton) 
 							</OnVerticalScroll>
 					   </Scripts>
@@ -521,6 +535,7 @@
 						</Anchors>
 						<Scripts>
 							<OnVerticalScroll>
+								DPSMate_Details_Absorbs.LastScroll=""
 								FauxScrollFrame_OnVerticalScroll(24, DPSMate.Modules.DetailsAbsorbs.SelectCauseABButton) 
 							</OnVerticalScroll>
 					   </Scripts>
@@ -598,6 +613,29 @@
 				</Frames>
 			</Frame>
 		</Frames>
+	</Frame>
+	
+	<Frame name="DPSMate_Details_CompareAbsorbs_Graph" parent="DPSMate_Details_Absorbs" hidden="true" enableMouse="true">
+		<Size x="2020" y="250" />
+		<Anchors>
+			<Anchor point="BOTTOMRIGHT" relativeTo="$parent" relativePoint="TOPLEFT">
+				<Offset x="1010" y="0" />
+			</Anchor>
+		</Anchors>
+		<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+			<BackgroundInsets left="6" right="6" top="6" bottom="6" />
+			<TileSize val="16" />
+			<EdgeSize val="16" />
+			<Color r="0.157" g="0.08" b="0.06" a="1" />
+		</Backdrop>
+		<Scripts>
+			<OnMouseDown>
+				this:GetParent():StartMoving()
+			</OnMouseDown>
+			<OnMouseUp>
+				this:GetParent():StopMovingOrSizing()
+			</OnMouseUp>
+		</Scripts>
 	</Frame>
 	
 	<Frame name="DPSMate_Details_CompareAbsorbs" parent="DPSMate_Details_Absorbs" movable="true" hidden="true">
@@ -703,6 +741,7 @@
 						</Anchors>
 						<Scripts>
 							<OnVerticalScroll>
+								DPSMate_Details_Absorbs.LastScroll="Compare"
 								FauxScrollFrame_OnVerticalScroll(24, DPSMate.Modules.DetailsAbsorbs.ScrollFrame_Update) 
 							</OnVerticalScroll>
 					   </Scripts>
@@ -806,6 +845,7 @@
 						</Anchors>
 						<Scripts>
 							<OnVerticalScroll>
+								DPSMate_Details_Absorbs.LastScroll="Compare"
 								FauxScrollFrame_OnVerticalScroll(24, DPSMate.Modules.DetailsAbsorbs.SelectCreatureButton) 
 							</OnVerticalScroll>
 					   </Scripts>
@@ -909,6 +949,7 @@
 						</Anchors>
 						<Scripts>
 							<OnVerticalScroll>
+								DPSMate_Details_Absorbs.LastScroll="Compare"
 								FauxScrollFrame_OnVerticalScroll(24, DPSMate.Modules.DetailsAbsorbs.SelectCauseButton) 
 							</OnVerticalScroll>
 					   </Scripts>
@@ -1012,6 +1053,7 @@
 						</Anchors>
 						<Scripts>
 							<OnVerticalScroll>
+								DPSMate_Details_Absorbs.LastScroll="Compare"
 								FauxScrollFrame_OnVerticalScroll(24, DPSMate.Modules.DetailsAbsorbs.SelectCauseABButton) 
 							</OnVerticalScroll>
 					   </Scripts>

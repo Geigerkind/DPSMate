@@ -156,52 +156,58 @@ function DPSMate.Modules.Absorbs:EvalTable(user, k)
 							local CVV, qa, qd = 0, {}, {}
 							for qt, qtt in utt do
 								CVV = CVV + qtt
-								local i = 1
-								while true do
-									if (not qd[i]) then
-										tinsert(qd, i, qtt)
-										tinsert(qa, i, qt)
-										break
-									else
-										if qd[i] < qtt then
+								if qtt>0 then
+									local i = 1
+									while true do
+										if (not qd[i]) then
 											tinsert(qd, i, qtt)
 											tinsert(qa, i, qt)
+											break
+										else
+											if qd[i] < qtt then
+												tinsert(qd, i, qtt)
+												tinsert(qa, i, qt)
+												break
+											end
+										end
+										i=i+1
+									end
+								end
+							end
+							if CVV>0 then
+								local i = 1
+								while true do
+									if (not tdd[i]) then
+										tinsert(tdd, i, {CVV, qa, qd})
+										tinsert(taa, i, ut)
+										break
+									else
+										if tdd[i][1] < CVV then
+											tinsert(tdd, i, {CVV, qa, qd})
+											tinsert(taa, i, ut)
 											break
 										end
 									end
 									i=i+1
 								end
 							end
+						end
+						if PerAbilityAbsorb>0 then
 							local i = 1
 							while true do
-								if (not tdd[i]) then
-									tinsert(tdd, i, {CVV, qa, qd})
-									tinsert(taa, i, ut)
+								if (not td[i]) then
+									tinsert(td, i, {PerAbilityAbsorb, taa, tdd})
+									tinsert(ta, i, c)
 									break
 								else
-									if tdd[i][1] < CVV then
-										tinsert(tdd, i, {CVV, qa, qd})
-										tinsert(taa, i, ut)
+									if td[i][1] < PerAbilityAbsorb then
+										tinsert(td, i, {PerAbilityAbsorb, taa, tdd})
+										tinsert(ta, i, c)
 										break
 									end
 								end
 								i=i+1
 							end
-						end
-						local i = 1
-						while true do
-							if (not td[i]) then
-								tinsert(td, i, {PerAbilityAbsorb, taa, tdd})
-								tinsert(ta, i, c)
-								break
-							else
-								if td[i][1] < PerAbilityAbsorb then
-									tinsert(td, i, {PerAbilityAbsorb, taa, tdd})
-									tinsert(ta, i, c)
-									break
-								end
-							end
-							i=i+1
 						end
 						CV = CV + PerAbilityAbsorb
 					end
@@ -265,8 +271,12 @@ function DPSMate.Modules.Absorbs:ShowTooltip(user, k)
 	end
 end
 
-function DPSMate.Modules.Absorbs:OpenDetails(obj, key)
-	DPSMate.Modules.DetailsAbsorbs:UpdateDetails(obj, key)
+function DPSMate.Modules.Absorbs:OpenDetails(obj, key, bool)
+	if bool then
+		DPSMate.Modules.DetailsAbsorbs:UpdateCompare(obj, key, bool)
+	else
+		DPSMate.Modules.DetailsAbsorbs:UpdateDetails(obj, key)
+	end
 end
 
 function DPSMate.Modules.Absorbs:OpenTotalDetails(obj, key)

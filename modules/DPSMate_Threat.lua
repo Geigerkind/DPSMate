@@ -71,12 +71,12 @@ function DPSMate.Modules.Threat:EvalTable(user, k)
 		local i = 1
 		while true do
 			if not a[i] then
-				tinsert(a, i, CV)
-				tinsert(d, i, {cat, q, e})
+				tinsert(a, i, cat)
+				tinsert(d, i, {CV, q, e})
 				break
-			elseif a[i]<CV then
-				tinsert(a, i, CV)
-				tinsert(d, i, {cat, q, e})
+			elseif d[i][1]<CV then
+				tinsert(a, i, cat)
+				tinsert(d, i, {CV, q, e})
 				break
 			end
 			i = i + 1
@@ -94,7 +94,7 @@ function DPSMate.Modules.Threat:GetSettingValues(arr, cbt, k,ecbt)
 		local dmg, tot, sort = DPSMate:FormatNumbers(val, total, sortedTable[1], k)
 		if dmg==0 then break end
 		local str = {[1]="",[2]="",[3]="",[4]=""}
-		if DPSMateSettings["columnsthreat"][1] then str[1] = " "..dmg..p; strt[2] = tot..p end
+		if DPSMateSettings["columnsthreat"][1] then str[1] = " "..strformat("%.2f", dmg)..p; strt[2] = strformat("%.2f", tot)..p end
 		if DPSMateSettings["columnsthreat"][2] then str[2] = "("..strformat("%.1f", (dmg/cbt))..p..")"; strt[1] = "("..strformat("%.1f", (tot/cbt))..p..") " end
 		if DPSMateSettings["columnsthreat"][3] then str[3] = " ("..strformat("%.1f", 100*dmg/tot).."%)" end
 		if DPSMateSettings["columnsthreat"][4] then str[4] = " ("..strformat("%.1f", dmg/(ecbt[a[cat]] or cbt))..p..")" end
@@ -110,7 +110,7 @@ function DPSMate.Modules.Threat:ShowTooltip(user,k)
 	if DPSMateSettings["informativetooltips"] then
 		for i=1, DPSMateSettings["subviewrows"] do
 			if not a[i] then break end
-			GameTooltip:AddDoubleLine(i..". "..DPSMate:GetUserById(c[i][1]),a[i].." ("..strformat("%.2f", 100*a[i]/b).."%)",1,1,1,1,1,1)
+			GameTooltip:AddDoubleLine(i..". "..DPSMate:GetUserById(a[i]),c[i][1].." ("..strformat("%.2f", 100*c[i][1]/b).."%)",1,1,1,1,1,1)
 			for p=1, 3 do
 				if not c[i][2][p] or c[i][3][p]==0 then break end
 				GameTooltip:AddDoubleLine("       "..p..". "..DPSMate:GetAbilityById(c[i][2][p]),c[i][3][p].." ("..strformat("%.2f", 100*c[i][3][p]/a[i]).."%)",0.5,0.5,0.5,0.5,0.5,0.5)

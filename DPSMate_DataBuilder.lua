@@ -647,6 +647,7 @@ function DPSMate.DB:OnGroupUpdate()
 		local _,classEng = UnitClass(type..i)
 		local fac = UnitFactionGroup(type..i)
 		local gname, _, _ = GetGuildInfo(type..i)
+		local level = UL(type..i)
 		self:BuildUser(name, strlower(classEng or ""))
 		self:BuildUser(pet)
 		if classEng then
@@ -667,7 +668,9 @@ function DPSMate.DB:OnGroupUpdate()
 		if (gname and gname ~= "") then
 			DPSMateUser[name][7] = gname
 		end
-		DPSMateUser[name][8] = UL(type..i)
+		if level and level>0 then
+			DPSMateUser[name][8] = level
+		end
 	end
 	local pet = UnitName("pet")
 	local name = UnitName("player")
@@ -703,6 +706,7 @@ function DPSMate.DB:PlayerTargetChanged()
 		local name = UnitName("target")
 		local a, class = UnitClass("target")
 		local fac = UnitFactionGroup("target") or ""
+		local level = UL("target")
 		if DPSMateUser[name] then
 			DPSMateUser[name][2] = strlower(class)
 		else
@@ -713,7 +717,9 @@ function DPSMate.DB:PlayerTargetChanged()
 		elseif fac == DPSMate.L["horde"] then
 			DPSMateUser[name][3] = -1
 		end
-		DPSMateUser[name][8] = UL("target")
+		if level and level>0 then
+			DPSMateUser[name][8] = level
+		end
 	end
 end
 

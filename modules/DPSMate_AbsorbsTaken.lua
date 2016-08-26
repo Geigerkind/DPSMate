@@ -159,69 +159,77 @@ function DPSMate.Modules.AbsorbsTaken:EvalTable(user, k)
 					local CVV, qa, qd = 0, {}, {}
 					for qt, qtt in utt do
 						CVV = CVV + qtt
-						local i = 1
-						while true do
-							if (not qd[i]) then
-								tinsert(qd, i, qtt)
-								tinsert(qa, i, qt)
-								break
-							else
-								if qd[i] < qtt then
+						if qtt>0 then
+							local i = 1
+							while true do
+								if (not qd[i]) then
 									tinsert(qd, i, qtt)
 									tinsert(qa, i, qt)
+									break
+								else
+									if qd[i] < qtt then
+										tinsert(qd, i, qtt)
+										tinsert(qa, i, qt)
+										break
+									end
+								end
+								i=i+1
+							end
+						end
+					end
+					if CVV>0 then
+						local i = 1
+						while true do
+							if (not tbb[i]) then
+								tinsert(tbb, i, {CVV, qa, qd})
+								tinsert(taa, i, ut)
+								break
+							else
+								if tbb[i][1] < CVV then
+									tinsert(tbb, i, {CVV, qa, qd})
+									tinsert(taa, i, ut)
 									break
 								end
 							end
 							i=i+1
 						end
 					end
+				end
+				if PerAbilityAbsorb>0 then
 					local i = 1
 					while true do
-						if (not tbb[i]) then
-							tinsert(tbb, i, {CVV, qa, qd})
-							tinsert(taa, i, ut)
+						if (not tb[i]) then
+							tinsert(tb, i, {PerAbilityAbsorb, taa, tbb})
+							tinsert(ta, i, ca)
 							break
 						else
-							if tbb[i][1] < CVV then
-								tinsert(tbb, i, {CVV, qa, qd})
-								tinsert(taa, i, ut)
+							if tb[i][1] < PerAbilityAbsorb then
+								tinsert(tb, i, {PerAbilityAbsorb, taa, tbb})
+								tinsert(ta, i, ca)
 								break
 							end
 						end
 						i=i+1
 					end
 				end
-				local i = 1
-				while true do
-					if (not tb[i]) then
-						tinsert(tb, i, {PerAbilityAbsorb, taa, tbb})
-						tinsert(ta, i, ca)
-						break
-					else
-						if tb[i][1] < PerAbilityAbsorb then
-							tinsert(tb, i, {PerAbilityAbsorb, taa, tbb})
-							tinsert(ta, i, ca)
-							break
-						end
-					end
-					i=i+1
-				end
 			end
 		end
-		local i = 1
-		while true do
-			if (not b[i]) then
-				tinsert(b, i, {PerTargetAbsorb, ta, tb})
-				tinsert(a, i, cat)
-				break
-			else
-				if b[i][1] < PerTargetAbsorb then
+		if PerTargetAbsorb>0 then
+			local i = 1
+			while true do
+				if (not b[i]) then
 					tinsert(b, i, {PerTargetAbsorb, ta, tb})
 					tinsert(a, i, cat)
 					break
+				else
+					if b[i][1] < PerTargetAbsorb then
+						tinsert(b, i, {PerTargetAbsorb, ta, tb})
+						tinsert(a, i, cat)
+						break
+					end
 				end
+				i=i+1
 			end
-			i=i+1
 		end
 		total=total+PerTargetAbsorb
 	end
@@ -262,8 +270,12 @@ function DPSMate.Modules.AbsorbsTaken:ShowTooltip(user, k)
 	end
 end
 
-function DPSMate.Modules.AbsorbsTaken:OpenDetails(obj, key)
-	DPSMate.Modules.DetailsAbsorbsTaken:UpdateDetails(obj, key)
+function DPSMate.Modules.AbsorbsTaken:OpenDetails(obj, key, bool)
+	if bool then
+		DPSMate.Modules.DetailsAbsorbsTaken:UpdateCompare(obj, key, bool)
+	else
+		DPSMate.Modules.DetailsAbsorbsTaken:UpdateDetails(obj, key)
+	end
 end
 
 function DPSMate.Modules.AbsorbsTaken:OpenTotalDetails(obj, key)
