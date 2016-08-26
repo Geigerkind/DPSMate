@@ -266,7 +266,6 @@ DPSMate.Parser.FailDT = {
 	-- Naxx
 	[DPSMate.BabbleSpell:GetTranslation("Negative Charge")] = true,
 	[DPSMate.BabbleSpell:GetTranslation("Positive Charge")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Impale")] = true, -- Assuming you can dodge it
 	[DPSMate.BabbleSpell:GetTranslation("Void Zone")] = true,
 	[DPSMate.BabbleSpell:GetTranslation("Plague Cloud")] = true,
 	[DPSMate.BabbleSpell:GetTranslation("Blizzard")] = true,

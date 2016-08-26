@@ -9,7 +9,6 @@
 
 -- Global Variables
 DPSMate.Sync.Async = false
-DPSMate.Sync.LU = 0
 
 -- Local Variables
 local player = UnitName("player")
@@ -49,6 +48,7 @@ local Arrays = {
 }
 local tra = DPSMate.BabbleSpell
 local npctra = DPSMate.NPCDB
+local UpTime = 0
 
 -- Beginn Functions
 
@@ -65,7 +65,7 @@ local ccount = 0;
 local cctime = 0;
 function NewSDM(prefix, message, type)
 	--DPSMate:SendMessage(ccount)
-	if (GT()-cctime)>=2.1 then
+	if (GT()-cctime)>=2.3 then
 		cctime = GT()
 		ccount = 0
 	end
@@ -91,14 +91,14 @@ function DPSMate.Sync:GetSyncDelay(elapsed)
 	if lastRefresh>=5 then
 		local _,_,ping = GetNetStats();
 		lastRefresh = 0;
-		delay = 2.1 + 2*ping/1000
+		delay = 2.3 + 2*ping/1000
 	end
 	return delay
 end
 
 function DPSMate.Sync:GetMessageState()
 	--if sname ~= "Kronos" and sname ~= "Kronos II" then return true end 
-	if ccount<=550 then
+	if ccount<=450 then
 		return true
 	end
 	return false
@@ -107,22 +107,16 @@ end
 local co, cou = 1, 1
 function DPSMate.Sync:SendAddonMessages(elapsed)
 	if DPSMateSettings["sync"] then
-		self.LU = self.LU + elapsed
-		if self.LU > 1.6 then
-			if self:GetMessageState() then
-				--DPSMate:SendMessage("SENDED!")
-				for i=1, 60 do
-					--SDM("Test"..co, "Test"..co, "RAID")
-					if not Buffer[co] then break end
+		UpTime = UpTime + elapsed
+		if self:GetMessageState() then
+			if UpTime>0.05 then
+				if Buffer[co] then
 					SendAddonMessage(Buffer[co][1]..DPSMate.SYNCVERSION, Buffer[co][2], "RAID")
-					--SDM(Buffer[co][1].."NOTSYNC", Buffer[co][2], "RAID")
 					Buffer[co] = nil
 					co = co + 1
 				end
+				UpTime=0
 			end
-			--DPSMate:SendMessage(co)
-			--co = co + 1
-			self.LU = 0
 		end
 	end
 end
