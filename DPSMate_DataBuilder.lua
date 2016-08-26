@@ -43,13 +43,21 @@ DPSMate.DB.FixedShieldAmounts = {
 	[DPSMate.BabbleSpell:GetTranslation("Holy Protection")] = 2500, -- Holy
 }
 local AbilityFlags = {
-	["Magic"] = 0,
-	["Fire"] = 3,
-	["Holy"] = 7,
-	["Shadow"] = 5,
-	["Nature"] = 4,
-	["Frost"] = 2,
-	["Physical"] = 1
+	["fire"] = 3,
+	["holy"] = 7,
+	["arcane"] = 6,
+	["shadow"] = 5,
+	["nature"] = 4,
+	["frost"] = 2,
+	["physical"] = 1,
+	
+	["feuer"] = 3,
+	["heilig"] = 7,
+	["arkan"] = 6,
+	["schatten"] = 5,
+	["natur"] = 4,
+	["frost"] = 2,
+	["physisch"] = 1
 }
 DPSMate.DB.NeedUpdate = false
 DPSMate.DB.UserData = {}
@@ -91,6 +99,7 @@ local player = ""
 local GT = GetTime
 local strfind = string.find
 local UL = UnitLevel
+local slower = strlower
 
 -- Begin Functions
 
@@ -759,12 +768,13 @@ function DPSMate.DB:BuildUser(Dname, Dclass)
 end
 
 -- Performance
-function DPSMate.DB:BuildAbility(name, school)
+function DPSMate.DB:BuildAbility(name, kind, school)
 	if not name then return true end
 	if not DPSMateAbility[name] then
 		DPSMateAbility[name] = {
 			[1] = DPSMate:TableLength(DPSMateAbility)+1,
-			[2] = school,
+			[2] = kind,
+			[3] = school,
 		}
 		DPSMate.AbilityId = nil
 	end
@@ -927,6 +937,43 @@ end
 
 function DPSMate.DB:WeightedAverage(a, b, c, d)
 	return a*(c/(c+d))+b*(d/(c+d))
+end
+
+local spellSchoolNames = {
+	["fire"] = true,
+	["nature"] = true,
+	["shadow"] = true,
+	["holy"] = true,
+	["frost"] = true,
+	["arcane"] = true,
+	
+	["feuer"] = true,
+	["natur"] = true,
+	["schatten"] = true,
+	["arkan"] = true,
+	["frost"] = true,
+	["heilig"] = true
+}
+function DPSMate.DB:AddSpellSchool(ab, school)
+	school = slower(school)
+	local sc
+	if spellSchoolNames[school] then
+		sc = school
+	else
+		for c, _ in spellSchoolNames do
+			if strfind(school, c) then
+				sc = c
+				break
+			end
+		end
+	end
+	if sc then
+		if DPSMateAbility[ab] then
+			DPSMateAbility[ab][3] = sc
+		else
+			self:BuildAbility(ab,nil,sc)
+		end
+	end
 end
 
 -- First crit/hit av value will be half if it is not the first hit actually. Didnt want to add an exception for it though. Maybe later :/
@@ -1524,10 +1571,10 @@ function DPSMate.DB:GetAbsorbingShield(ability, abilityTarget, cat)
 			if self.ShieldFlags[DPSMate:GetAbilityById(val[1])]==0 then
 				AAS[cat] = {val[1],val[2]}
 				--DPSMate:SendMessage("Fired! 3")
-			elseif AbilityFlags[DPSMateAbility[ability][2]]==0 or self.ShieldFlags[DPSMate:GetAbilityById(val[1])]==AbilityFlags[DPSMateAbility[ability][2]] then
+			elseif self.ShieldFlags[DPSMate:GetAbilityById(val[1])]==AbilityFlags[DPSMateAbility[ability][3]] then
 				ASS[cat] = {val[1],val[2]}
 				--DPSMate:SendMessage("Fired! 2")
-			elseif not DPSMateAbility[ability][2] or not AbilityFlags[DPSMateAbility[ability][2]] then
+			elseif not DPSMateAbility[ability][3] or not AbilityFlags[DPSMateAbility[ability][3]] then
 				ASS[cat] = {val[1],val[2]}
 				--DPSMate:SendMessage("Fired!")
 			end

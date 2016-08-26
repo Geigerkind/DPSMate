@@ -27,13 +27,13 @@ if (GetLocale() == "deDE") then
 			if c == "(gestreift)" then t[3]=1;t[1]=0 elseif c ~= "" then t[4]=1;t[1]=0; end
 			DB:EnemyDamage(true, DPSMateEDT, self.player, "Angreifen", t[1] or 1, 0, 0, 0, 0, 0, tnbr(b), a, t[4] or 0, t[3] or 0)
 			DB:DamageDone(self.player, "Angreifen", t[1] or 1, 0, 0, 0, 0, 0, tnbr(b), t[3] or 0, t[4] or 0)
-			if self.TargetParty[a] then DB:BuildFail(1, a, self.player, "Angreifen", tnbr(b)) end
+			if self.TargetParty[a] then DB:BuildFail(1, a, self.player, "Angreifen", tnbr(b));DB:DeathHistory(a, self.player, "Angreifen", tnbr(b), 1, 0, 0, 0) end
 			return
 		end
 		for a,b in strgfind(msg, "Ihr trefft (.+) kritisch für (%d+) Schaden%.") do
 			DB:EnemyDamage(true, DPSMateEDT, self.player, "Angreifen", 0, 1, 0, 0, 0, 0, tnbr(b), a, t[4] or 0, t[3] or 0)
 			DB:DamageDone(self.player, "Angreifen", 0, 1, 0, 0, 0, 0, tnbr(b), t[3] or 0, t[4] or 0)
-			if self.TargetParty[a] then DB:BuildFail(1, a, self.player, "Angreifen", tnbr(b)) end
+			if self.TargetParty[a] then DB:BuildFail(1, a, self.player, "Angreifen", tnbr(b));DB:DeathHistory(a, self.player, "Angreifen", tnbr(b), 0, 1, 0, 0) end
 			return
 		end
 		for a in strgfind(msg, "Ihr fallt und verliert (%d+) Gesundheit%.") do
@@ -44,6 +44,7 @@ if (GetLocale() == "deDE") then
 		for a in strgfind(msg, "Ihr verliert (%d+) Gesundheit durch Berührung mit Lava%.") do
 			DB:DamageTaken(self.player, "Lava", 1, 0, 0, 0, 0, 0, tnbr(a), "Umgebung", 0)
 			DB:DeathHistory(self.player, "Umgebung", "Lava", tnbr(a), 1, 0, 0, 0)
+			DB:AddSpellSchool("Lava","feuer")
 			return
 		end
 		for a in strgfind(msg, "Ihr ertrinkt und verliert (%d+) Gesundheit%.") do
@@ -98,7 +99,8 @@ if (GetLocale() == "deDE") then
 			if DPSMate.Parser.DmgProcs[a] then DB:BuildBuffs(self.player, self.player, a, true) end
 			DB:EnemyDamage(true, DPSMateEDT, self.player, a,  t[2] or 1, 0, 0, 0, 0, 0, t[1], b, t[4] or 0, 0)
 			DB:DamageDone(self.player, a, t[2] or 1, 0, 0, 0, 0, 0, t[1], 0, t[4] or 0)
-			if self.TargetParty[c] then DB:BuildFail(1, c, self.player, a, t[1]) end
+			if self.TargetParty[c] then DB:BuildFail(1, c, self.player, a, t[1]);DB:DeathHistory(c, self.player, a, t[1], 1, 0, 0, 0) end
+			DB:AddSpellSchool(a,d)
 			return
 		end
 		for a,b,c,d,e,f in strgfind(msg, "(.+) trifft (.+)%s?(.*)%. Schaden: (%d+)(.*)\.%s?(.*)") do 
@@ -108,7 +110,8 @@ if (GetLocale() == "deDE") then
 			if DPSMate.Parser.DmgProcs[a] then DB:BuildBuffs(self.player, self.player, a, true) end
 			DB:EnemyDamage(true, DPSMateEDT, self.player, a,  t[3] or 1, t[2] or 0, 0, 0, 0, 0, t[1], b, 0, 0)
 			DB:DamageDone(self.player, a, t[3] or 1, t[2] or 0, 0, 0, 0, 0, t[1], 0, 0)
-			if self.TargetParty[b] then DB:BuildFail(1, b, self.player, a, t[1]) end
+			if self.TargetParty[b] then DB:BuildFail(1, b, self.player, a, t[1]);DB:DeathHistory(b, self.player, a, t[1], t[2] or 0, t[3] or 1, 0, 0) end
+			DB:AddSpellSchool(a,e)
 			return
 		end
 		for a,b,c,d,e in strgfind(msg, "(.+) trifft (.+) kritisch: (%d+)(.*)\.%s?(.*)") do 
@@ -118,7 +121,8 @@ if (GetLocale() == "deDE") then
 			if DPSMate.Parser.DmgProcs[a] then DB:BuildBuffs(self.player, self.player, a, true) end
 			DB:EnemyDamage(true, DPSMateEDT, self.player, a,  0, t[2] or 1, 0, 0, 0, 0, t[1], b, t[4] or 0, 0)
 			DB:DamageDone(self.player, a, 0, t[2] or 1, 0, 0, 0, 0, t[1], 0, t[4] or 0)
-			if self.TargetParty[b] then DB:BuildFail(1, b, self.player, a, t[1]) end
+			if self.TargetParty[b] then DB:BuildFail(1, b, self.player, a, t[1]);DB:DeathHistory(b, self.player, a, t[1], 0, 1, 0, 0) end
+			DB:AddSpellSchool(a,d)
 			return
 		end
 		for a,b in strgfind(msg, "(.+) ist (.+) ausgewichen%.") do 
@@ -163,7 +167,8 @@ if (GetLocale() == "deDE") then
 			end
 			DB:EnemyDamage(true, DPSMateEDT, d, e.."(Periodisch)", 1, 0, 0, 0, 0, 0, t[1], a, 0, 0)
 			DB:DamageDone(d, e.."(Periodisch)", 1, 0, 0, 0, 0, 0, t[1], 0, 0)
-			if self.TargetParty[a] and self.TargetParty[d] then DB:BuildFail(1, a, d, e.."(Periodisch)", t[1]) end
+			if self.TargetParty[a] and self.TargetParty[d] then DB:BuildFail(1, a, d, e.."(Periodisch)", t[1]);DB:DeathHistory(a, d, e.."(Periodisch)", t[1], 1, 0, 0, 0) end
+			DB:AddSpellSchool(e.."(Periodisch)",c)
 			return
 		end
 		for a,b,c,d,f in strgfind(msg, "(.+) erleidet (%d+) (.-) %(durch (.+)%)%.(.*)") do
@@ -173,7 +178,8 @@ if (GetLocale() == "deDE") then
 			end
 			DB:EnemyDamage(true, DPSMateEDT, self.player, d.."(Periodisch)", 1, 0, 0, 0, 0, 0, t[1], a, 0, 0)
 			DB:DamageDone(self.player, d.."(Periodisch)", 1, 0, 0, 0, 0, 0, t[1], 0, 0)
-			if self.TargetParty[a] then DB:BuildFail(1, a, self.player, d.."(Periodisch)", t[1]) end
+			if self.TargetParty[a] then DB:BuildFail(1, a, self.player, d.."(Periodisch)", t[1]);DB:DeathHistory(a, self.player, d.."(Periodisch)", t[1], 1, 0, 0, 0) end
+			DB:AddSpellSchool(d.."(Periodisch)",c)
 			return
 		end
 		for f,a,b in strgfind(msg, "(.-%s*)'?s (.+) wurde von (.+) absorbiert%.") do -- To Test
@@ -195,6 +201,7 @@ if (GetLocale() == "deDE") then
 		t = {}
 		for k,a,b,c,d,f in strgfind(msg, "(.-%s*)'?s (.+) trifft (.+) kritisch für (%d+)(.*)%. %((%d+) absorbiert%)") do 
 			k = self:ReplaceSwString(k)
+			DB:AddSpellSchool(a,d)
 			DB:SetUnregisterVariables(tnbr(f), b, k)
 		end
 		for f,a,b,c,d,e in strgfind(msg, "(.-%s*)'?s (.+) trifft (.+) kritisch für (%d+)(.*)\.%s?(.*)") do 
@@ -205,7 +212,8 @@ if (GetLocale() == "deDE") then
 			if DPSMate.Parser.DmgProcs[a] then DB:BuildBuffs(f, f, a, true) end
 			DB:EnemyDamage(true, DPSMateEDT, f, a,  0, t[2] or 1, 0, 0, 0, 0, t[1], b, t[4] or 0, 0)
 			DB:DamageDone(f, a, 0, t[2] or 1, 0, 0, 0, 0, t[1], 0, t[4] or 0)
-			if self.TargetParty[b] and self.TargetParty[f] then DB:BuildFail(1, b, f, a, t[1]) end
+			if self.TargetParty[b] and self.TargetParty[f] then DB:BuildFail(1, b, f, a, t[1]);DB:DeathHistory(b, f, a, t[1], 0, 1, 0, 0) end
+			DB:AddSpellSchool(a,d)
 			return
 		end
 		for f,a,b,c,d,e in strgfind(msg, "(.-%s*)'?s (.+) trifft (.+) für (%d+)(.*)\.%s?(.*)") do 
@@ -216,7 +224,8 @@ if (GetLocale() == "deDE") then
 			if DPSMate.Parser.DmgProcs[a] then DB:BuildBuffs(f, f, a, true) end
 			DB:EnemyDamage(true, DPSMateEDT, f, a,  t[2] or 1, 0, 0, 0, 0, 0, t[1], b, t[4] or 0, 0)
 			DB:DamageDone(f, a, t[2] or 1, 0, 0, 0, 0, 0, t[1], 0, t[4] or 0)
-			if self.TargetParty[b] and self.TargetParty[f] then DB:BuildFail(1, b, f, a, t[1]) end
+			if self.TargetParty[b] and self.TargetParty[f] then DB:BuildFail(1, b, f, a, t[1]);DB:DeathHistory(b, f, a, t[1], 1, 0, 0, 0) end
+			DB:AddSpellSchool(a,d)
 			return
 		end
 		for a,b,f in strgfind(msg, "(.+) ist (.+) von (.+) ausgewichen%.") do 
@@ -262,7 +271,7 @@ if (GetLocale() == "deDE") then
 			t[5] = tnbr(c)
 			DB:EnemyDamage(true, DPSMateEDT, a, "Angreifen", 0, t[3] or 1, 0, 0, 0, 0, t[5], b, t[2] or 0, t[1] or 0)
 			DB:DamageDone(a, "Angreifen", 0, t[3] or 1, 0, 0, 0, 0, t[5], t[1] or 0, t[2] or 0)
-			if self.TargetParty[a] and self.TargetParty[b] then DB:BuildFail(1, b, a, "Angreifen", t[5]) end
+			if self.TargetParty[a] and self.TargetParty[b] then DB:BuildFail(1, b, a, "Angreifen", t[5]);DB:DeathHistory(b, a, "Angreifen", t[5], 0, 1, 0, 0) end
 			return
 		end
 		for a,b,c,d in strgfind(msg, "(.-) trifft (.+) für (%d+) Schaden\.%s?(.*)") do
@@ -271,7 +280,7 @@ if (GetLocale() == "deDE") then
 			t[5] = tnbr(c)
 			DB:EnemyDamage(true, DPSMateEDT, a, "Angreifen", t[3] or 1, 0, 0, 0, 0, 0, t[5], b, t[2] or 0, t[1] or 0)
 			DB:DamageDone(a, "Angreifen", t[3] or 1, 0, 0, 0, 0, 0, t[5], t[1] or 0, t[2] or 0)
-			if self.TargetParty[a] and self.TargetParty[b] then DB:BuildFail(1, b, a, "Angreifen", t[5]) end
+			if self.TargetParty[a] and self.TargetParty[b] then DB:BuildFail(1, b, a, "Angreifen", t[5]);DB:DeathHistory(b, a, "Angreifen", t[5], 1, 0, 0, 0) end
 			return
 		end
 		for a,c,d in strgfind(msg, "(.-) trifft Euch kritisch: (%d+) Schaden\.%s?(.*)") do
@@ -279,13 +288,14 @@ if (GetLocale() == "deDE") then
 			t[5] = tnbr(c)
 			DB:EnemyDamage(true, DPSMateEDT, a, "Angreifen", 0, t[3] or 1, 0, 0, 0, 0, t[5], self.player, t[2] or 0, t[1] or 0)
 			DB:DamageDone(a, "Angreifen", 0, t[3] or 1, 0, 0, 0, 0, t[5], t[1] or 0, t[2] or 0)
-			if self.TargetParty[a] then DB:BuildFail(1, self.player, a, "Angreifen", t[5]) end
+			if self.TargetParty[a] then DB:BuildFail(1, self.player, a, "Angreifen", t[5]);DB:DeathHistory(self.player, a, "Angreifen", t[5], 0, 1, 0, 0) end
 			return
 		end
 		-- (...). (608 absorbed/resisted) -> Therefore here some loss
 		for a,b in strgfind(msg, "(.-) verliert (%d+) Gesundheit durch Berührung mit Lava%.") do
 			DB:DamageTaken(a, "Lava", 1, 0, 0, 0, 0, 0, tnbr(b), "Umgebung", 0)
 			DB:DeathHistory(a, "Umgebung", "Lava", tnbr(b), 1, 0, 0, 0)
+			DB:AddSpellSchool("Lava","feuer")
 			return
 		end
 		for a,b in strgfind(msg, "(.-) fällt und verliert (%d+) Gesundheit%.") do
@@ -476,6 +486,7 @@ if (GetLocale() == "deDE") then
 			DB:DamageTaken(self.player, c, t[1] or 0, t[2] or 1, 0, 0, 0, 0, t[3], a, 0)
 			DB:DeathHistory(self.player, a, c, t[3], t[1] or 0, t[2] or 1, 0, 0)
 			if self.FailDT[b] then DB:BuildFail(2, a, self.player, c, t[3]) end
+			DB:AddSpellSchool(c,e)
 			return
 		end
 		for a,b,c,d in strgfind(msg, "(.+) trifft Euch mit %'(.+)%' für (%d+)(.*)") do -- Potential here to track school and resisted damage
@@ -487,6 +498,7 @@ if (GetLocale() == "deDE") then
 			DB:DamageTaken(self.player, b, t[1] or 1, 0, 0, 0, 0, 0, t[3], a, 0)
 			DB:DeathHistory(self.player, a, b, t[3], t[1] or 1, 0, 0, 0)
 			if self.FailDT[b] then DB:BuildFail(2, a, self.player, b, t[3]) end
+			DB:AddSpellSchool(b,d)
 			return
 		end
 		for a,b,c,d in strgfind(msg, "(.-%s*)'?s (.+) trifft Euch kritisch für (%d+)(.*)") do -- Potential here to track school and resisted damage
@@ -499,6 +511,7 @@ if (GetLocale() == "deDE") then
 			DB:DamageTaken(self.player, b, 0, 1, 0, 0, 0, 0, t[3], a, 0)
 			DB:DeathHistory(self.player, a, b, t[3], 0, 1, 0, 0)
 			if self.FailDT[b] then DB:BuildFail(2, a, self.player, b, t[3]) end
+			DB:AddSpellSchool(b,d)
 			return
 		end
 		for a,b in strgfind(msg, "(.+) greift an %(mit (.+)%) und verfehlt Euch%.") do
@@ -544,6 +557,7 @@ if (GetLocale() == "deDE") then
 			DB:DamageTaken(self.player, d.."(Periodisch)", 1, 0, 0, 0, 0, 0, t[1], c, 0)
 			DB:DeathHistory(self.player, c, d.."(Periodisch)", t[1], 1, 0, 0, 0)
 			if self.FailDT[d] then DB:BuildFail(2, c, self.player, d, t[1]) end
+			DB:AddSpellSchool(d.."(Periodisch)",b)
 			return
 		end
 		for a in strgfind(msg, "Ihr seid von (.+) betroffen%.") do
@@ -557,6 +571,7 @@ if (GetLocale() == "deDE") then
 			DB:EnemyDamage(false, DPSMateEDD, self.player, d.."(Periodisch)", 1, 0, 0, 0, 0, 0, t[1], self.player, 0, 0)
 			DB:DamageTaken(self.player, d.."(Periodisch)", 1, 0, 0, 0, 0, 0, t[1], self.player, 0)
 			DB:DeathHistory(self.player, self.player, d.."(Periodisch)", t[1], 1, 0, 0, 0)
+			DB:AddSpellSchool(d.."(Periodisch)",b)
 			return
 		end
 		for a,b in strgfind(msg, "Ihr absorbiert (.-%s*)'?s (.+)%.") do
@@ -613,6 +628,7 @@ if (GetLocale() == "deDE") then
 			DB:DamageTaken(a, e.."(Periodisch)", 1, 0, 0, 0, 0, 0, t[1], d, 0)
 			DB:DeathHistory(a, d, e.."(Periodisch)", t[1], 1, 0, 0, 0)
 			if self.FailDT[e] then DB:BuildFail(2, d, a, e, t[1]) end
+			DB:AddSpellSchool(e.."(Periodisch)",c)
 			return
 		end
 		for a, b in strgfind(msg, "(.+) ist von (.+) betroffen%.") do
@@ -641,6 +657,7 @@ if (GetLocale() == "deDE") then
 			DB:DamageTaken(d, b, 0, t[2] or 1, 0, 0, 0, 0, t[3], a, 0)
 			DB:DeathHistory(d, a, b, t[3], 0, t[2] or 1, 0, 0)
 			if self.FailDT[b] then DB:BuildFail(2, a, d, b, t[3]) end
+			DB:AddSpellSchool(b,f)
 			return
 		end
 		-- Ragnaross Zorn des
@@ -653,6 +670,7 @@ if (GetLocale() == "deDE") then
 			DB:DamageTaken(d, b, t[1] or 1, 0, 0, 0, 0, 0, t[3], a, 0)
 			DB:DeathHistory(d, a, b, t[3], t[1] or 1, 0, 0, 0)
 			if self.FailDT[b] then DB:BuildFail(2, a, d, b, t[3]) end
+			DB:AddSpellSchool(b,f)
 			return
 		end
 		for c,b,a in strgfind(msg, "(.+) ist (.+) von (.+) ausgewichen%.") do

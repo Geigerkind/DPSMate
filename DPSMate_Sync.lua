@@ -1476,7 +1476,7 @@ function DPSMate.Sync:ThreatIn(arg2,arg4)
 	for cat, val in loadstring("return {"..arg2.."}")() do
 		for ca, va in val do
 			for c,v in va do
-				DB:Threat(arg4, tra:GetTranslation(cat) or cat, npctra:GetTranslation(ca) or ca, v, 1)
+				DB:Threat(arg4, cat, ca, v, 1)
 			end
 		end
 	end
@@ -1579,8 +1579,8 @@ DPSMate.Sync.Exec = {
 		DB:AwaitingAbsorbConfirmation(arg4, t[1], t[2], t[3])
 		--DPSMate:SendMessage(arg2)
 	end,
-	["DPSMate_HelloWorld"..DPSMate.SYNCVERSION] = function() DPSMate.Sync:GreetBack() end,
-	["DPSMate_Greet"..DPSMate.SYNCVERSION] = function(arg2,arg4) DPSMate.Sync:ReceiveGreet(arg2, arg4) end,
+	["DPSMate_HelloWorld"] = function() DPSMate.Sync:GreetBack() end,
+	["DPSMate_Greet"] = function(arg2,arg4) DPSMate.Sync:ReceiveGreet(arg2, arg4) end,
 	["DPSMate_DMGDoneAll"..DPSMate.SYNCVERSION] = function(arg2,arg4) DPSMate.Sync:DMGDoneAllIn(arg2, arg4) end,
 	["DPSMate_DMGDoneStat"..DPSMate.SYNCVERSION] = function(arg2,arg4) DPSMate.Sync:DMGDoneStatIn(arg2, arg4) end,
 	["DPSMate_DMGDoneAbility"..DPSMate.SYNCVERSION] = function(arg2,arg4) DPSMate.Sync:DMGDoneAbilityIn(arg2, arg4) end,
@@ -1623,11 +1623,11 @@ DPSMate.Sync.Exec = {
 	["DPSMate_AurasStart"..DPSMate.SYNCVERSION] = function(arg2,arg4) DPSMate.Sync:AurasStartEndIn(arg2, arg4, 1) end,
 	["DPSMate_AurasEnd"..DPSMate.SYNCVERSION] = function(arg2,arg4) DPSMate.Sync:AurasStartEndIn(arg2, arg4, 2) end,
 	["DPSMate_AurasCause"..DPSMate.SYNCVERSION] = function(arg2,arg4) DPSMate.Sync:AurasCauseIn(arg2, arg4) end,
-	["DPSMate_Vote"..DPSMate.SYNCVERSION] = function() DPSMate.Sync:CountVote() end,
-	["DPSMate_StartVote"..DPSMate.SYNCVERSION] = function() DPSMate.Sync:ReceiveStartVote() end,
-	["DPSMate_VoteSuccess"..DPSMate.SYNCVERSION] = function() DPSMate.Sync:VoteSuccess() end,
-	["DPSMate_VoteFail"..DPSMate.SYNCVERSION] = function() DPSMate:SendMessage(DPSMate.L["votefailederror"]) end,
-	["DPSMate_Participate"..DPSMate.SYNCVERSION] = function() DPSMate.Sync:CountParticipants() end,
+	["DPSMate_Vote"] = function() DPSMate.Sync:CountVote() end,
+	["DPSMate_StartVote"] = function() DPSMate.Sync:ReceiveStartVote() end,
+	["DPSMate_VoteSuccess"] = function() DPSMate.Sync:VoteSuccess() end,
+	["DPSMate_VoteFail"] = function() DPSMate:SendMessage(DPSMate.L["votefailederror"]) end,
+	["DPSMate_Participate"] = function() DPSMate.Sync:CountParticipants() end,
 	["DPSMate_SyncTimer"..DPSMate.SYNCVERSION] = function(arg2) DPSMate.Sync:SetTimer(arg2) end,
 	["DPSMate_SyncStatus"..DPSMate.SYNCVERSION] = function(arg2,arg4) DPSMate.Sync:SyncStatus(arg2, arg4) end,
 	["DPSMate_Threat"..DPSMate.SYNCVERSION] = function(arg2,arg4) DPSMate.Sync:ThreatAllIn(arg2, arg4) end,

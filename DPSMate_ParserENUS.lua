@@ -20,7 +20,7 @@ function DPSMate.Parser:SelfHits(msg)
 		if d == "(glancing)" then t[3]=1;t[1]=0;t[2]=0 elseif d ~= "" then t[4]=1;t[1]=0;t[2]=0 end
 		DB:EnemyDamage(true, DPSMateEDT, self.player, "AutoAttack", t[1] or 0, t[2] or 1, 0, 0, 0, 0, tnbr(c), b, t[4] or 0, t[3] or 0)
 		DB:DamageDone(self.player, "AutoAttack", t[1] or 0, t[2] or 1, 0, 0, 0, 0, tnbr(c), t[3] or 0, t[4] or 0)
-		if self.TargetParty[b] then DB:BuildFail(1, b, self.player, "AutoAttack", tnbr(c)) end
+		if self.TargetParty[b] then DB:BuildFail(1, b, self.player, "AutoAttack", tnbr(c));DB:DeathHistory(b, self.player, "AutoAttack", tnbr(c), t[1] or 0, t[2] or 1, 0, 0) end
 		return
 	end
 	for a in strgfind(msg, "You fall and lose (%d+) health%.") do
@@ -31,6 +31,7 @@ function DPSMate.Parser:SelfHits(msg)
 	for a in strgfind(msg, "You lose (%d+) health for swimming in lava%.") do
 		DB:DamageTaken(self.player, "Lava", 1, 0, 0, 0, 0, 0, tnbr(a), "Environment", 0)
 		DB:DeathHistory(self.player, "Environment", "Lava", tnbr(a), 1, 0, 0, 0)
+		DB:AddSpellSchool("Lava","fire")
 		return
 	end
 	for a in strgfind(msg, "You are drowning and lose (%d+) health%.") do
@@ -63,6 +64,7 @@ function DPSMate.Parser:SelfSpellDMG(msg)
 	-- Filter out immune message -> using them?
 	t = {}
 	for a,b,c,d,e,f in strgfind(msg, "Your (.+) (%a%a?)\its (.+) for (%d+)(.*)%. %((%d+) absorbed%)") do 
+		DB:AddSpellSchool(a,e)
 		DB:SetUnregisterVariables(tnbr(f), a, self.player)
 	end
 	for a,b,c,d,e,f in strgfind(msg, "Your (.+) (%a%a?)\its (.+) for (%d+)(.*)\.%s?(.*)") do 
@@ -73,7 +75,8 @@ function DPSMate.Parser:SelfSpellDMG(msg)
 		if DPSMate.Parser.DmgProcs[a] then DB:BuildBuffs(self.player, self.player, a, true) end
 		DB:EnemyDamage(true, DPSMateEDT, self.player, a,  t[2] or 0, t[3] or 1, 0, 0, 0, 0, t[1], c, t[4] or 0, 0)
 		DB:DamageDone(self.player, a, t[2] or 0, t[3] or 1, 0, 0, 0, 0, t[1], 0, t[4] or 0)
-		if self.TargetParty[c] then DB:BuildFail(1, c, self.player, a, t[1]) end
+		if self.TargetParty[c] then DB:BuildFail(1, c, self.player, a, t[1]);DB:DeathHistory(c, self.player, a, t[1], t[2] or 0, t[3] or 1, 0, 0) end
+		DB:AddSpellSchool(a,e)
 		return
 	end
 	for a,b,c in strgfind(msg, "Your (.+) was (.-) by (.+)%.") do 
@@ -111,7 +114,8 @@ function DPSMate.Parser:PeriodicDamage(msg)
 		end
 		DB:EnemyDamage(true, DPSMateEDT, d, e.."(Periodic)", 1, 0, 0, 0, 0, 0, t[1], a, 0, 0)
 		DB:DamageDone(d, e.."(Periodic)", 1, 0, 0, 0, 0, 0, t[1], 0, 0)
-		if self.TargetParty[a] and self.TargetParty[d] then DB:BuildFail(1, a, d, e.."(Periodic)", t[1]) end
+		if self.TargetParty[a] and self.TargetParty[d] then DB:BuildFail(1, a, d, e.."(Periodic)", t[1]);DB:DeathHistory(a, d, e.."(Periodic)", t[1], 1, 0, 0, 0) end
+		DB:AddSpellSchool(e.."(Periodic)",c)
 		return
 	end
 	for a,b,c,d,e in strgfind(msg, "(.+) suffers (%d+) (%a-) damage from your (.+)%.(.*)") do
@@ -121,7 +125,8 @@ function DPSMate.Parser:PeriodicDamage(msg)
 		end
 		DB:EnemyDamage(true, DPSMateEDT, self.player, d.."(Periodic)", 1, 0, 0, 0, 0, 0, t[1], a, 0, 0)
 		DB:DamageDone(self.player, d.."(Periodic)", 1, 0, 0, 0, 0, 0, t[1], 0, 0)
-		if self.TargetParty[a] then DB:BuildFail(1, a, self.player, d.."(Periodic)", t[1]) end
+		if self.TargetParty[a] then DB:BuildFail(1, a, self.player, d.."(Periodic)", t[1]);DB:DeathHistory(a, self.player, d.."(Periodic)", t[1], 1, 0, 0, 0) end
+		DB:AddSpellSchool(d.."(Periodic)",c)
 		return
 	end
 	for f,a,b in strgfind(msg, "(.+)'s (.+) is absorbed by (.+)%.") do
@@ -138,6 +143,7 @@ end
 function DPSMate.Parser:FriendlyPlayerDamage(msg)
 	t = {}
 	for k,a,b,c,d,e,f in strgfind(msg, "(.-)'s (.+) (%a%a?)\its (.+) for (%d+)(.*)%. %((%d+) absorbed%)") do 
+		DB:AddSpellSchool(a,e)
 		DB:SetUnregisterVariables(tnbr(f), a, k)
 	end
 	for f,a,b,c,d,e in strgfind(msg, "(.-)'s (.+) (%a%a?)\its (.+) for (%d+)(.*)\.%s?(.*)") do 
@@ -149,7 +155,8 @@ function DPSMate.Parser:FriendlyPlayerDamage(msg)
 		if DPSMate.Parser.DmgProcs[a] then DB:BuildBuffs(f, f, a, true) end
 		DB:EnemyDamage(true, DPSMateEDT, f, a,  t[2] or 0, t[3] or 1, 0, 0, 0, 0, t[1], c, t[4] or 0, 0)
 		DB:DamageDone(f, a, t[2] or 0, t[3] or 1, 0, 0, 0, 0, t[1], 0, t[4] or 0)
-		if self.TargetParty[f] and self.TargetParty[c] then DB:BuildFail(1, c, f, a, t[1]) end
+		if self.TargetParty[f] and self.TargetParty[c] then DB:BuildFail(1, c, f, a, t[1]);DB:DeathHistory(c, f, a, t[1], t[2] or 0, t[3] or 1, 0, 0) end
+		DB:AddSpellSchool(a,e)
 		return
 	end
 	for f,a,b,c in strgfind(msg, "(.-)'s (.+) was (.-) by (.+)%.") do 
@@ -198,13 +205,14 @@ function DPSMate.Parser:FriendlyPlayerHits(msg)
 		t[5] = tnbr(d)
 		DB:EnemyDamage(true, DPSMateEDT, a, "AutoAttack", t[3] or 0, t[4] or 1, 0, 0, 0, 0, t[5], c, t[2] or 0, t[1] or 0)
 		DB:DamageDone(a, "AutoAttack", t[3] or 0, t[4] or 1, 0, 0, 0, 0, t[5], t[1] or 0, t[2] or 0)
-		if self.TargetParty[a] and self.TargetParty[c] then DB:BuildFail(1, c, a, "AutoAttack", t[5]) end
+		if self.TargetParty[a] and self.TargetParty[c] then DB:BuildFail(1, c, a, "AutoAttack", t[5]);DB:DeathHistory(c, a, "AutoAttack", t[5], t[3] or 0, t[4] or 1, 0, 0) end
 		return
 	end
 	-- (...). (608 absorbed/resisted) -> Therefore here some loss
 	for a,b in strgfind(msg, "(.-) loses (%d+) health for swimming in lava%.") do
 		DB:DamageTaken(a, "Lava", 1, 0, 0, 0, 0, 0, tnbr(b), "Environment", 0)
 		DB:DeathHistory(a, "Environment", "Lava", tnbr(b), 1, 0, 0, 0)
+		DB:AddSpellSchool("Lava","fire")
 		return
 	end
 	for a,b in strgfind(msg, "(.-) falls and loses (%d+) health%.") do
@@ -354,6 +362,7 @@ function DPSMate.Parser:CreatureVsSelfSpellDamage(msg)
 		DB:DamageTaken(self.player, b, t[1] or 0, t[2] or 1, 0, 0, 0, 0, t[3], a, 0)
 		DB:DeathHistory(self.player, a, b, t[3], t[1] or 0, t[2] or 1, 0, 0)
 		if self.FailDT[b] then DB:BuildFail(2, a, self.player, b, t[3]) end
+		DB:AddSpellSchool(b,e)
 		return
 	end
 	for a,b in strgfind(msg, "(.+)'s (.+) misses you.") do
@@ -393,6 +402,7 @@ function DPSMate.Parser:PeriodicSelfDamage(msg)
 		DB:DamageTaken(self.player, d.."(Periodic)", 1, 0, 0, 0, 0, 0, t[1], c, 0)
 		DB:DeathHistory(self.player, c, d.."(Periodic)", t[1], 1, 0, 0, 0)
 		if self.FailDT[d] then DB:BuildFail(2, c, self.player, d, t[1]) end
+		DB:AddSpellSchool(d.."(Periodic)",b)
 		return
 	end
 	for a in strgfind(msg, "You are afflicted by (.+)%.") do
@@ -406,6 +416,7 @@ function DPSMate.Parser:PeriodicSelfDamage(msg)
 		DB:EnemyDamage(false, DPSMateEDD, self.player, d.."(Periodic)", 1, 0, 0, 0, 0, 0, t[1], self.player, 0, 0)
 		DB:DamageTaken(self.player, d.."(Periodic)", 1, 0, 0, 0, 0, 0, t[1], self.player, 0)
 		DB:DeathHistory(self.player, self.player, d.."(Periodic)", t[1], 1, 0, 0, 0)
+		DB:AddSpellSchool(d.."(Periodic)",b)
 		return
 	end
 	for a,b in strgfind(msg, "You absorb (.+)'s (.+)%.") do
@@ -458,6 +469,7 @@ function DPSMate.Parser:SpellPeriodicDamageTaken(msg)
 		DB:DamageTaken(a, e.."(Periodic)", 1, 0, 0, 0, 0, 0, t[1], d, 0)
 		DB:DeathHistory(a, d, e.."(Periodic)", t[1], 1, 0, 0, 0)
 		if self.FailDT[e] then DB:BuildFail(2, d, a, e, t[1]) end
+		DB:AddSpellSchool(e.."(Periodic)",c)
 		return
 	end
 	for a, b in strgfind(msg, "(.+) is afflicted by (.+)%.") do
@@ -485,6 +497,7 @@ function DPSMate.Parser:CreatureVsCreatureSpellDamage(msg)
 		DB:DamageTaken(d, b, t[1] or 0, t[2] or 1, 0, 0, 0, 0, t[3], a, 0)
 		DB:DeathHistory(d, a, b, t[3], t[1] or 0, t[2] or 1, 0, 0)
 		if self.FailDT[b] then DB:BuildFail(2, a, d, b, t[3]) end
+		DB:AddSpellSchool(b,f)
 		return
 	end
 	for a,b,c in strgfind(msg, "(.+)'s (.+) was dodged by (.+)%.") do
