@@ -106,7 +106,6 @@ function DPSMate.Modules.EffectiveHealing:OpenDetails(obj, key, bool)
 end
 
 function DPSMate.Modules.EffectiveHealing:OpenTotalDetails(obj, key)
-	--DPSMate.Modules.DetailsDamageTotal:UpdateDetails(obj, key)
-	DPSMate:SendMessage("This feature will be added soon!")
+	DPSMate.Modules.DetailsEHealingTotal:UpdateDetails(obj, key)
 end
 

@@ -434,4 +434,10 @@ if (GetLocale() == "deDE") then
 	DPSMate.L["targetscaleTooltip"] = "Verändere die Größe von den analyse Fenster."
 	DPSMate.L["eddsum"] = "Gesamtschaden von Gegnern"
 	DPSMate.L["edtsum"] = "Gesamtschaden an Gegnern"
+	DPSMate.L["ehpssum"] = "Gesamt effektive Heilung"
+	DPSMate.L["tehealing"] = " effektive Heilung"
+	DPSMate.L["hpssum"] = "Gesamtheilung"
+	DPSMate.L["thealing"] = " heilung"
+	DPSMate.L["ohpssum"] = "Gesamtüberheilung"
+	DPSMate.L["tohealing"] = " Überheilung"
 end

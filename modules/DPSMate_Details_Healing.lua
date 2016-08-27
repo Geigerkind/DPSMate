@@ -24,7 +24,7 @@ function DPSMate.Modules.DetailsHealing:UpdateDetails(obj, key)
 	DPSMate_Details_Healing.proc = "None"
 	UIDropDownMenu_SetSelectedValue(DPSMate_Details_Healing_DiagramLegend_Procs, "None")
 	DetailsUser = obj.user
-	DetailsUserComp = obj.user
+	DetailsUserComp = nil
 	DPSMate_Details_Healing_Title:SetText(DPSMate.L["healdoneby"]..obj.user)
 	DPSMate_Details_Healing_SubTitle:SetText(DPSMate.L["activity"]..strformat("%.2f", DPSMateCombatTime["effective"][key][obj.user] or 0).."s "..DPSMate.L["of"].." "..strformat("%.2f", DPSMateCombatTime[mode[key]]).."s ("..strformat("%.2f", 100*(DPSMateCombatTime["effective"][key][obj.user] or 0)/DPSMateCombatTime[mode[key]]).."%)")
 	DPSMate_Details_Healing:Show()

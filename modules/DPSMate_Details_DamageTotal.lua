@@ -250,14 +250,10 @@ function DPSMate.Modules.DetailsDamageTotal:GetTableValues()
 		local name = DPSMate:GetUserById(cat)
 		for ca, va in val do
 			if ca~="i" then
-				if va[5]>0 then
-					totCrit=totCrit+va[1]+va[5]+va[9]+va[10]+va[11]+va[12]+va[14]
-					crit=crit+va[5]
-				end
-				if va[9]>0 or va[10]>0 or va[11]>0 or va[12]>0 then
-					totMiss=totMiss+va[1]+va[5]+va[9]+va[10]+va[11]+va[12]+va[14]
-					miss=miss+va[9]+va[10]+va[11]+va[12]
-				end
+				totCrit=totCrit+va[1]+va[5]+va[9]+va[10]+va[11]+va[12]+va[14]
+				crit=crit+va[5]
+				totMiss=totMiss+va[1]+va[5]+va[9]+va[10]+va[11]+va[12]+va[14]
+				miss=miss+va[9]+va[10]+va[11]+va[12]
 			else
 				time = tonumber(strformat("%.2f", DPSMateCombatTime["effective"][curKey][name] or 0))
 			end
@@ -445,7 +441,7 @@ function DPSMate.Modules.DetailsDamageTotal:LoadTable()
 		else
 			if (cat-i)>30 then break end
 			local r,g,b = DPSMate:GetClassColor(DPSMateUser[val[1]][2])
-			_G("DPSMate_Details_DamageTotal_PlayerList_Child"):SetHeight((cat-i)*30-210)
+			_G("DPSMate_Details_DamageTotal_PlayerList_Child"):SetHeight((cat-i)*30)
 			_G("DPSMate_Details_DamageTotal_PlayerList_Child_R"..(cat-i).."_Name"):SetText(val[1])
 			_G("DPSMate_Details_DamageTotal_PlayerList_Child_R"..(cat-i).."_Name"):SetTextColor(r,g,b)
 			_G("DPSMate_Details_DamageTotal_PlayerList_Child_R"..(cat-i).."_Amount"):SetText(val[2])
