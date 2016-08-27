@@ -131,7 +131,6 @@ function DPSMate.Modules.HealingTaken:OpenDetails(obj, key, bool)
 end
 
 function DPSMate.Modules.HealingTaken:OpenTotalDetails(obj, key)
-	--DPSMate.Modules.DetailsDamageTotal:UpdateDetails(obj, key)
-	DPSMate:SendMessage("This feature will be added soon!")
+	DPSMate.Modules.DetailsHealingTakenTotal:UpdateDetails(obj, key)
 end
 

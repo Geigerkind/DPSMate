@@ -440,4 +440,10 @@ if (GetLocale() == "deDE") then
 	DPSMate.L["thealing"] = " heilung"
 	DPSMate.L["ohpssum"] = "Gesamtüberheilung"
 	DPSMate.L["tohealing"] = " Überheilung"
+	DPSMate.L["tehealingtaken"] = " effektive Heilung bekommen"
+	DPSMate.L["ehpstsum"] = "Gesamt effektive Heilung bekommen"
+	DPSMate.L["thealingtaken"] = " Heilung bekommen"
+	DPSMate.L["hpstsum"] = "Gesamtheilung bekommen"
+	DPSMate.L["tohealingtaken"] = " Überheilung bekommen"
+	DPSMate.L["ohpstsum"] = "Gesamtüberheilung bekommen"
 end

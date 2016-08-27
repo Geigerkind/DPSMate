@@ -106,10 +106,16 @@ modules\DPSMate_Details_OverhealingTotal.lua
 modules\DPSMate_Details_OverhealingTotal.xml
 modules\DPSMate_Details_HealingTaken.lua
 modules\DPSMate_Details_HealingTaken.xml
+modules\DPSMate_Details_HealingTakenTotal.lua
+modules\DPSMate_Details_HealingTakenTotal.xml
 modules\DPSMate_Details_EHealingTaken.lua
 modules\DPSMate_Details_EHealingTaken.xml
+modules\DPSMate_Details_EHealingTakenTotal.lua
+modules\DPSMate_Details_EHealingTakenTotal.xml
 modules\DPSMate_Details_OHealingTaken.lua
 modules\DPSMate_Details_OHealingTaken.xml
+modules\DPSMate_Details_OverhealingTakenTotal.lua
+modules\DPSMate_Details_OverhealingTakenTotal.xml
 modules\DPSMate_Details_Absorbs.lua
 modules\DPSMate_Details_Absorbs.xml
 modules\DPSMate_Details_AbsorbsTaken.lua
