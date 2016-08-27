@@ -86,8 +86,12 @@ modules\DPSMate_Details_DamageTakenTotal.lua
 modules\DPSMate_Details_DamageTakenTotal.xml
 modules\DPSMate_Details_EDD.lua
 modules\DPSMate_Details_EDD.xml
+modules\DPSMate_Details_EDDTotal.lua
+modules\DPSMate_Details_EDDTotal.xml
 modules\DPSMate_Details_EDT.lua
 modules\DPSMate_Details_EDT.xml
+modules\DPSMate_Details_EDTTotal.lua
+modules\DPSMate_Details_EDTTotal.xml
 modules\DPSMate_Details_Healing.lua
 modules\DPSMate_Details_Healing.xml
 modules\DPSMate_Details_EHealing.lua
