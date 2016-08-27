@@ -22,7 +22,7 @@ function DPSMate.Modules.DetailsCCBreaker:UpdateDetails(obj, key)
 	self:UpdateBuffs(0, "")
 	DPSMate_Details_CCBreaker:Show()
 	
-	DPSMate_Details_CCBreaker:SetScale(0.58/UIParent:GetScale())
+	DPSMate_Details_CCBreaker:SetScale((DPSMateSettings["targetscale"] or 0.58)/UIParent:GetScale())
 end
 
 function DPSMate.Modules.DetailsCCBreaker:UpdateCompare(obj, key, comp)

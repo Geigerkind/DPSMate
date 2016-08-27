@@ -2845,6 +2845,30 @@
 							</OnLoad>
 						</Scripts>
 					</Slider>
+					<Slider name="$parent_TargetScale" inherits="DPSMate_Template_Slider">
+						<Anchors>
+							<Anchor point="LEFT" relativeTo="$parent_Segments" relativePoint="RIGHT">
+								<Offset x="15" y="0" />
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								this.aide = DPSMate.L["targetscaleTooltip"]
+								local frames = {"", "_Absorbs", "_AbsorbsTaken", "_Auras", "_Casts", "_CCBreaker", "_CureDisease", "_CureDiseaseReceived", "_CurePoison", "_CurePoisonReceived", "_DamageTaken", "_DamageTakenTotal", "_DamageTotal", "_Deaths", "_Decurses", "_DecursesReceived", "_Dispels", "_DispelsReceived", "_EDD", "_EDT", "_EHealing", "_EHealingTaken", "_Fails", "_FF", "_FFT", "_Healing", "_HealingTaken", "_Interrupts", "_LiftMagic", "_LiftMagicReceived", "_OHealingTaken", "_Overhealing", "_Procs", "_Threat"}
+								this.func = function() 
+									DPSMateSettings["targetscale"] = this:GetValue()
+									for _, name in frames do
+										getglobal("DPSMate_Details"..name):SetScale(DPSMateSettings["targetscale"]/UIParent:GetScale())
+									end
+								end
+								this:SetMinMaxValues(0.3,2.0)
+								this:SetValueStep(0.01)
+								getglobal(this:GetName().."Text"):SetText(DPSMate.L["targetscale"])
+								getglobal(this:GetName().."Low"):SetText("0.3")
+								getglobal(this:GetName().."High"):SetText("2.0")
+							</OnLoad>
+						</Scripts>
+					</Slider>
 				</Frames>
 			</Frame>
 			

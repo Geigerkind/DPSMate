@@ -25,7 +25,7 @@ function DPSMate.Modules.DetailsCureDisease:UpdateDetails(obj, key)
 	self:SelectCreatureButton(1,"")
 	self:SelectCreatureAbilityButton(1,1,"")
 	
-	DPSMate_Details_CureDisease:SetScale(0.58/UIParent:GetScale())
+	DPSMate_Details_CureDisease:SetScale((DPSMateSettings["targetscale"] or 0.58)/UIParent:GetScale())
 end
 
 function DPSMate.Modules.DetailsCureDisease:UpdateCompare(obj, key, comp)

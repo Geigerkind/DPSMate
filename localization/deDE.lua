@@ -430,4 +430,6 @@ if (GetLocale() == "deDE") then
 	DPSMate.L["of"] = "von"
 	DPSMate.L["comparewith"] = "Vergleichen mit"
 	DPSMate.L["comparewithdesc"] = "Wähle einen Spieler, mit dem du diesen Spieler vergleichen willst."
+	DPSMate.L["targetscale"] = "Ziel e-frame Größe"
+	DPSMate.L["targetscaleTooltip"] = "Verändere die Größe von den analyse Fenster."
 end

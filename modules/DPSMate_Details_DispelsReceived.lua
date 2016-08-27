@@ -24,7 +24,7 @@ function DPSMate.Modules.DetailsDispelsReceived:UpdateDetails(obj, key)
 	self:ScrollFrame_Update("")
 	self:SelectCreatureButton(1,"")
 	self:SelectCreatureAbilityButton(1,1,"")
-	DPSMate_Details_DispelsReceived:SetScale(0.58/UIParent:GetScale())
+	DPSMate_Details_DispelsReceived:SetScale((DPSMateSettings["targetscale"] or 0.58)/UIParent:GetScale())
 end
 
 function DPSMate.Modules.DetailsDispelsReceived:UpdateCompare(obj, key, comp)

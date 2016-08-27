@@ -43,7 +43,7 @@ function DPSMate.Modules.DetailsEHealingTaken:UpdateDetails(obj, key)
 	else
 		self:UpdateLineGraph(g2,"")
 	end
-	DPSMate_Details_EHealingTaken:SetScale(0.58/UIParent:GetScale())
+	DPSMate_Details_EHealingTaken:SetScale((DPSMateSettings["targetscale"] or 0.58)/UIParent:GetScale())
 end
 
 function DPSMate.Modules.DetailsEHealingTaken:UpdateCompare(obj, key, comp)

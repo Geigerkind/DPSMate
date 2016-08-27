@@ -61,7 +61,7 @@ function DPSMate.Modules.DetailsEHealing:UpdateDetails(obj, key)
 	
 	DPSMate_Details_CompareEHealing:Hide()
 	DPSMate_Details_CompareEHealing_Graph:Hide()
-	DPSMate_Details_EHealing:SetScale(0.58/UIParent:GetScale())
+	DPSMate_Details_EHealing:SetScale((DPSMateSettings["targetscale"] or 0.58)/UIParent:GetScale())
 end
 
 function DPSMate.Modules.DetailsEHealing:UpdateCompare(obj, key, comp)

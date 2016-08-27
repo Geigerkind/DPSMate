@@ -405,6 +405,7 @@ function DPSMate.DB:OnEvent(event)
 				bckb = false,
 				bcfail = false,
 				bcrw = false,
+				targetscale=0.58,
 			}
 		end
 		if DPSMateHistory == nil then 
@@ -564,6 +565,9 @@ function DPSMate.DB:OnEvent(event)
 				[3] = true,
 				[4] = false
 			}
+		end
+		if not DPSMateSettings["targetscale"] then
+			DPSMateSettings["targetscale"] = 0.58
 		end
 		
 		if DPSMateCombatTime == nil then
