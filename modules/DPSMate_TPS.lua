@@ -129,6 +129,5 @@ function DPSMate.Modules.TPS:OpenDetails(obj, key, bool)
 end
 
 function DPSMate.Modules.TPS:OpenTotalDetails(obj, key)
-	--DPSMate.Modules.DetailsTPSTotal:UpdateDetails(obj, key)
-	DPSMate:SendMessage("This feature will be added later.")
+	DPSMate.Modules.DetailsThreatTotal:UpdateDetails(obj, key)
 end

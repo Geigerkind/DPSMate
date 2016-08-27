@@ -164,6 +164,8 @@ modules\DPSMate_Details_FriendlyFireTaken.lua
 modules\DPSMate_Details_FriendlyFireTaken.xml
 modules\DPSMate_Details_Threat.lua
 modules\DPSMate_Details_Threat.xml
+modules\DPSMate_Details_ThreatTotal.lua
+modules\DPSMate_Details_ThreatTotal.xml
 
 DPSMate_Frame.xml
 DPSMate_Options.xml
