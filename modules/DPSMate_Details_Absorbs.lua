@@ -44,6 +44,7 @@ function DPSMate.Modules.DetailsAbsorbs:UpdateDetails(obj, key)
 	else
 		self:UpdateLineGraph(g2,"")
 	end
+	DPSMate_Details_Absorbs:SetScale(0.58/UIParent:GetScale())
 end
 
 function DPSMate.Modules.DetailsAbsorbs:UpdateCompare(obj, key, comp)

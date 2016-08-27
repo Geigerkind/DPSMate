@@ -23,6 +23,7 @@ function DPSMate.Modules.DetailsInterrupts:UpdateDetails(obj, key)
 	self:SelectCreatureAbilityButton(1,1, "")
 	
 	DPSMate_Details_CompareInterrupts:Hide()
+	DPSMate_Details_Interrupts:SetScale(0.58/UIParent:GetScale())
 end
 
 function DPSMate.Modules.DetailsInterrupts:UpdateCompare(obj, key, comp)

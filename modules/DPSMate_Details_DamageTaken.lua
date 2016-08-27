@@ -46,6 +46,7 @@ function DPSMate.Modules.DetailsDamageTaken:UpdateDetails(obj, key)
 	else
 		self:UpdateLineGraph(g2, "")
 	end
+	DPSMate_Details_DamageTaken:SetScale(0.58/UIParent:GetScale())
 end
 
 function DPSMate.Modules.DetailsDamageTaken:UpdateCompare(obj, key, comp)

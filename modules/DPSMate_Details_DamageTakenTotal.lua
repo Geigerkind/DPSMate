@@ -76,6 +76,7 @@ function DPSMate.Modules.DetailsDamageTakenTotal:UpdateDetails(obj, key)
 		self:UpdateLineGraph()
 	end
 	DPSMate_Details_DamageTakenTotal:Show()
+	DPSMate_Details_DamageTakenTotal:SetScale(0.58/UIParent:GetScale())
 end
 
 function DPSMate.Modules.DetailsDamageTakenTotal:ToggleMode()

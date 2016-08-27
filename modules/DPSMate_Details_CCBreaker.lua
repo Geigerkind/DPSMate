@@ -21,6 +21,8 @@ function DPSMate.Modules.DetailsCCBreaker:UpdateDetails(obj, key)
 	self:CleanTables("")
 	self:UpdateBuffs(0, "")
 	DPSMate_Details_CCBreaker:Show()
+	
+	DPSMate_Details_CCBreaker:SetScale(0.58/UIParent:GetScale())
 end
 
 function DPSMate.Modules.DetailsCCBreaker:UpdateCompare(obj, key, comp)

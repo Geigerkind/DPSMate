@@ -155,6 +155,7 @@ function DPSMate.Modules.DetailsProcs:UpdateDetails(obj, key)
 	hits = self:GetTotalHits()
 	self:UpdateBuffs(0, "")
 	DPSMate_Details_Procs:Show()
+	DPSMate_Details_Procs:SetScale(0.58/UIParent:GetScale())
 end
 
 function DPSMate.Modules.DetailsProcs:UpdateCompare(obj, key, comp)

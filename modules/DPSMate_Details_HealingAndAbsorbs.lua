@@ -61,6 +61,7 @@ function DPSMate.Modules.DetailsHealingAndAbsorbs:UpdateDetails(obj, key)
 	
 	DPSMate_Details_CompareHealingAndAbsorbs:Hide()
 	DPSMate_Details_CompareHealingAndAbsorbs_Graph:Hide()
+	DPSMate_Details_HealingAndAbsorbs:SetScale(0.58/UIParent:GetScale())
 end
 
 function DPSMate.Modules.DetailsHealingAndAbsorbs:UpdateCompare(obj, key, comp)

@@ -61,6 +61,7 @@ function DPSMate.Modules.DetailsOverhealing:UpdateDetails(obj, key)
 	
 	DPSMate_Details_CompareOverhealing:Hide()
 	DPSMate_Details_CompareOverhealing_Graph:Hide()
+	DPSMate_Details_Overhealing:SetScale(0.58/UIParent:GetScale())
 end
 
 function DPSMate.Modules.DetailsOverhealing:UpdateCompare(obj, key, comp)

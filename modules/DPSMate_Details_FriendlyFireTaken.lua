@@ -43,6 +43,7 @@ function DPSMate.Modules.DetailsFFT:UpdateDetails(obj, key)
 	else
 		self:UpdateLineGraph(g2, "")
 	end
+	DPSMate_Details_FFT:SetScale(0.58/UIParent:GetScale())
 end
 
 function DPSMate.Modules.DetailsFFT:UpdateCompare(obj, key, comp)

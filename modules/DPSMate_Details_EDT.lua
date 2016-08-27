@@ -43,6 +43,7 @@ function DPSMate.Modules.DetailsEDT:UpdateDetails(obj, key)
 	else
 		self:UpdateLineGraph(g2, "")
 	end
+	DPSMate_Details_EDT:SetScale(0.58/UIParent:GetScale())
 end
 
 function DPSMate.Modules.DetailsEDT:UpdateCompare(obj, key, comp)

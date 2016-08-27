@@ -22,6 +22,7 @@ function DPSMate.Modules.DetailsDeaths:UpdateDetails(obj, key)
 	DPSMate_Details_Deaths:Show()
 	self:ScrollFrame_Update("")
 	self:SelectDetailsButton(1,"")
+	DPSMate_Details_Deaths:SetScale(0.58/UIParent:GetScale())
 end
 
 function DPSMate.Modules.DetailsDeaths:UpdateCompare(obj, key, comp)

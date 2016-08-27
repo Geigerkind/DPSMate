@@ -328,6 +328,7 @@ function DPSMate.Modules.Auras:UpdateDetails(obj, key)
 	self:UpdateDebuffs(0, "")
 	self:UpdateStackedGraph(g)
 	DPSMate_Details_Auras:Show()
+	DPSMate_Details_Auras:SetScale(0.58/UIParent:GetScale())
 end
 
 function DPSMate.Modules.Auras:UpdateCompare(obj, key, comp)

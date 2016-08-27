@@ -24,6 +24,7 @@ function DPSMate.Modules.DetailsLiftMagic:UpdateDetails(obj, key)
 	self:ScrollFrame_Update("")
 	self:SelectCreatureButton(1,"")
 	self:SelectCreatureAbilityButton(1,1,"")
+	DPSMate_Details_LiftMagic:SetScale(0.58/UIParent:GetScale())
 end
 
 function DPSMate.Modules.DetailsLiftMagic:UpdateCompare(obj, key, comp)

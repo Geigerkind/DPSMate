@@ -21,6 +21,7 @@ function DPSMate.Modules.DetailsFails:UpdateDetails(obj, key)
 	self:CleanTables("")
 	self:UpdateBuffs(0, "")
 	DPSMate_Details_Fails:Show()
+	DPSMate_Details_Fails:SetScale(0.58/UIParent:GetScale())
 end
 
 function DPSMate.Modules.DetailsFails:UpdateCompare(obj, key, comp)

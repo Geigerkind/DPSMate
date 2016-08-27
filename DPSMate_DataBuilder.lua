@@ -2054,7 +2054,7 @@ function DPSMate.DB:BuildBuffs(cause, target, ability, bool)
 		if not path[3][DPSMateUser[cause][1]] then
 			path[3][DPSMateUser[cause][1]] = 0
 		end
-		for i=0, (path[5]-path[6]) do
+		for i=1, (path[5]-path[6]) do
 			tinsert(path[2], path[1][path[6]+1])
 			path[6] = path[6] + 1
 		end

@@ -46,6 +46,7 @@ function DPSMate.Modules.DetailsThreat:UpdateDetails(obj, key)
 	else
 		self:UpdateLineGraph(g2, "")
 	end
+	DPSMate_Details_Threat:SetScale(0.58/UIParent:GetScale())
 end
 
 function DPSMate.Modules.DetailsThreat:UpdateCompare(obj, key, comp)

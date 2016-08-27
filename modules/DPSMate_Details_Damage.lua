@@ -61,6 +61,9 @@ function DPSMate.Modules.DetailsDamage:UpdateDetails(obj, key)
 	
 	DPSMate_Details_CompareDamage:Hide()
 	DPSMate_Details_CompareDamage_Graph:Hide()
+	
+	DPSMate_Details:SetScale(0.58/UIParent:GetScale())
+	
 end
 
 function DPSMate.Modules.DetailsDamage:UpdateCompare(obj, key, comp)
