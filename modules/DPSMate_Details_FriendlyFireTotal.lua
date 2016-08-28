@@ -120,7 +120,7 @@ function DPSMate.Modules.DetailsFFTotal:UpdateStackedGraph()
 		for q, s in val do
 			local catName = DPSMate:GetUserById(q)
 			local temp = {}
-			if DPSMate:ApplyFilter(k, catName) and  DPSMateUser[catName] and  DPSMateUser[name] then
+			if DPSMate:ApplyFilter(curKey, catName) and  DPSMateUser[catName] and  DPSMateUser[name] then
 				if DPSMateUser[name][3] == DPSMateUser[catName][3] and DPSMateUser[catName][3] and DPSMateUser[name][3] then
 					for ca, va in s do
 						if ca~="i" and va["i"] then

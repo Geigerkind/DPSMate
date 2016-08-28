@@ -53,53 +53,55 @@ function DPSMate.Modules.DetailsDeathsTotal:EvalTable()
 	for cat, val in db do -- user
 		local temp = {}
 		local name = DPSMate:GetUserById(cat)
-		for ca, va in val do -- individual death
-			if va["i"][1]==1 then
-				if not temp[ca] then
-					temp[ca] = {}
-				end
-				temp[ca][1] = cat
-				temp[ca][2] = name
-				temp[ca][3] = va["i"][2] -- Time
-				temp[ca][4] = va[1][6] -- CBT time of last event
-				if va[3] and (va[1][6] - va[3][6])<=20 and va[3][5]==0 then
-					temp[ca][5] = va[1][6] - va[3][6]
-				elseif va[2] and (va[1][6] - va[2][6])<=20 and va[2][5]==0 then
-					temp[ca][5] = va[1][6] - va[2][6]
-				else
-					temp[ca][5] = 0
-				end
-				temp[ca][7] = 0
-				temp[ca][8] = 0
-				temp[ca][9] = DPSMate:GetUserById(va[1][1])
-				temp[ca][10] = ca
-				for p=1, 3 do
-					if va[p] then
-						if temp[ca][6] then
-							temp[ca][6] = temp[ca][6]..", "..DPSMate:GetAbilityById(va[p][2])
-						else
-							temp[ca][6] = DPSMate:GetAbilityById(va[p][2])
-						end
-						if va[p][5]==1 then
-							temp[ca][7] = temp[ca][7]+va[p][3]
-						else
-							temp[ca][8] = temp[ca][8]+va[p][3]
+		if DPSMate:ApplyFilter(curKey, name) then
+			for ca, va in val do -- individual death
+				if va["i"][1]==1 then
+					if not temp[ca] then
+						temp[ca] = {}
+					end
+					temp[ca][1] = cat
+					temp[ca][2] = name
+					temp[ca][3] = va["i"][2] -- Time
+					temp[ca][4] = va[1][6] -- CBT time of last event
+					if va[3] and (va[1][6] - va[3][6])<=20 and va[3][5]==0 then
+						temp[ca][5] = va[1][6] - va[3][6]
+					elseif va[2] and (va[1][6] - va[2][6])<=20 and va[2][5]==0 then
+						temp[ca][5] = va[1][6] - va[2][6]
+					else
+						temp[ca][5] = 0
+					end
+					temp[ca][7] = 0
+					temp[ca][8] = 0
+					temp[ca][9] = DPSMate:GetUserById(va[1][1])
+					temp[ca][10] = ca
+					for p=1, 3 do
+						if va[p] then
+							if temp[ca][6] then
+								temp[ca][6] = temp[ca][6]..", "..DPSMate:GetAbilityById(va[p][2])
+							else
+								temp[ca][6] = DPSMate:GetAbilityById(va[p][2])
+							end
+							if va[p][5]==1 then
+								temp[ca][7] = temp[ca][7]+va[p][3]
+							else
+								temp[ca][8] = temp[ca][8]+va[p][3]
+							end
 						end
 					end
 				end
 			end
-		end
-		for ca,va in temp do
-			local i=1
-			while true do
-				if not a[i] then
-					tinsert(a, i, va)
-					break
-				elseif a[i][4]<va[4] then
-					tinsert(a, i, va)
-					break
+			for ca,va in temp do
+				local i=1
+				while true do
+					if not a[i] then
+						tinsert(a, i, va)
+						break
+					elseif a[i][4]<va[4] then
+						tinsert(a, i, va)
+						break
+					end
+					i = i + 1
 				end
-				i = i + 1
 			end
 		end
 	end
