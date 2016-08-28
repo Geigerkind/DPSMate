@@ -133,7 +133,6 @@ function DPSMate.Modules.Decurses:OpenDetails(obj, key, bool)
 end
 
 function DPSMate.Modules.Decurses:OpenTotalDetails(obj, key)
-	--DPSMate.Modules.DetailsDamageTotal:UpdateDetails(obj, key)
-	DPSMate:SendMessage("This feature will be added soon!")
+	DPSMate.Modules.DetailsDecursesTotal:UpdateDetails(obj, key)
 end
 

@@ -65,8 +65,10 @@
 		</Layers>
 		<Scripts>
 			<OnEnter>
+				if this.user then 
 				getglobal(this:GetName().."_Hover"):Show()
 				DPSMate.Modules.DetailsInterruptsTotal:ShowTooltip(this.user, this, this.id)
+				end
 			</OnEnter>
 			<OnLeave>
 				getglobal(this:GetName().."_Hover"):Hide()

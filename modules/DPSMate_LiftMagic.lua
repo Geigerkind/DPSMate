@@ -133,7 +133,6 @@ function DPSMate.Modules.LiftMagic:OpenDetails(obj, key,bool)
 end
 
 function DPSMate.Modules.LiftMagic:OpenTotalDetails(obj, key)
-	--DPSMate.Modules.DetailsDamageTotal:UpdateDetails(obj, key)
-	DPSMate:SendMessage("This feature will be added soon!")
+	DPSMate.Modules.DetailsLiftMagicTotal:UpdateDetails(obj, key)
 end
 

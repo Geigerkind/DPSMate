@@ -151,7 +151,7 @@ function DPSMate.Modules.DispelsReceived:OpenDetails(obj, key,bool)
 	end
 end
 
-function DPSMate.Modules.Damage:OpenTotalDetails(obj, key)
-	DPSMate.Modules.DetailsDamageTotal:UpdateDetails(obj, key)
+function DPSMate.Modules.DispelsReceived:OpenTotalDetails(obj, key)
+	DPSMate.Modules.DetailsDispelsTotal:UpdateDetails(obj, key)
 end
 

@@ -3,15 +3,15 @@
     xsi:schemaLocation="http://www.blizzard.com/wow/ui/
     ..\..\..\FrameXML\UI.xsd">
 	
-	<Frame name="DPSMate_Details_Deaths_Total_Row" virtual="true">
-		<Size x="895" y="30" />
+	<Frame name="DPSMate_Details_Decurses_Total_Row" virtual="true">
+		<Size x="595" y="30" />
 		<Layers>
 			<Layer level="BACKGROUND">
 				<Texture name="$parent_Hover" hidden="true">
-					<Size x="860" y="25"/>
+					<Size x="567" y="25"/>
 					<Anchors>
 						<Anchor point="TOPLEFT">
-							<Offset x="15" y="-3" />
+							<Offset x="7" y="-3" />
 						</Anchor>
 					</Anchors>
 					<Color r="0.95" g="0.9" b="0.5" a="0.5"/>
@@ -34,7 +34,7 @@
 					</Anchors>
 					<Color r="0.8" g="0.8" b="0.8" a="1" />
 				</FontString>
-				<FontString name="$parent_Victim" inherits="GameFontNormalSmall" justifyH="LEFT">
+				<FontString name="$parent_Cause" inherits="GameFontNormalSmall" justifyH="LEFT">
 					<Size x="80" y="30" />
 					<Anchors>
 						<Anchor point="TOPLEFT">
@@ -43,7 +43,7 @@
 					</Anchors>
 					<Color r="0.8" g="0.8" b="0.8" a="1" />
 				</FontString>
-				<FontString name="$parent_Cause" inherits="GameFontNormalSmall" justifyH="LEFT">
+				<FontString name="$parent_Target" inherits="GameFontNormalSmall" justifyH="LEFT">
 					<Size x="80" y="30" />
 					<Anchors>
 						<Anchor point="TOPLEFT">
@@ -52,41 +52,14 @@
 					</Anchors>
 					<Color r="0.8" g="0.8" b="0.8" a="1" />
 				</FontString>
-				<FontString name="$parent_Over" inherits="GameFontNormalSmall" justifyH="CENTER">
-					<Size x="50" y="30" />
+				<FontString name="$parent_Ability" inherits="GameFontNormalSmall" justifyH="LEFT">
+					<Size x="175" y="30" />
 					<Anchors>
 						<Anchor point="TOPLEFT">
 							<Offset x="340" y="0" />
 						</Anchor>
 					</Anchors>
-					<Color r="1" g="0.6" b="0" a="1" />
-				</FontString>
-				<FontString name="$parent_Ability" inherits="GameFontNormalSmall" justifyH="LEFT">
-					<Size x="275" y="30" />
-					<Anchors>
-						<Anchor point="TOPLEFT">
-							<Offset x="410" y="0" />
-						</Anchor>
-					</Anchors>
 					<Color r="0.8" g="0.8" b="0.8" a="1" />
-				</FontString>
-				<FontString name="$parent_HealIn" inherits="GameFontNormalSmall" justifyH="CENTER">
-					<Size x="90" y="30" />
-					<Anchors>
-						<Anchor point="TOPLEFT">
-							<Offset x="685" y="0" />
-						</Anchor>
-					</Anchors>
-					<Color r="0" g="1" b="0" a="1" />
-				</FontString>
-				<FontString name="$parent_DamageIn" inherits="GameFontNormalSmall" justifyH="CENTER">
-					<Size x="90" y="30" />
-					<Anchors>
-						<Anchor point="TOPLEFT">
-							<Offset x="775" y="0" />
-						</Anchor>
-					</Anchors>
-					<Color r="1" g="0" b="0" a="1" />
 				</FontString>
 			</Layer>
 		</Layers>
@@ -94,7 +67,7 @@
 			<OnEnter>
 				if this.user and this.user~="" then 
 				getglobal(this:GetName().."_Hover"):Show()
-				DPSMate.Modules.DetailsDeathsTotal:ShowTooltip(this.user, this, this.id)
+				DPSMate.Modules.DetailsDecursesTotal:ShowTooltip(this.user, this, this.id)
 				end
 			</OnEnter>
 			<OnLeave>
@@ -104,8 +77,8 @@
 		</Scripts>
 	</Frame>
 	
-	<Frame name="DPSMate_Details_Deaths_Total" parent="UIParent" movable="true" hidden="true">
-		<Size x="900" y="450" />
+	<Frame name="DPSMate_Details_Decurses_Total" parent="UIParent" movable="true" hidden="true">
+		<Size x="600" y="450" />
 		<Anchors>
 			<Anchor point="RIGHT" />
 		</Anchors>
@@ -159,7 +132,7 @@
 						GameTooltip:Hide()
 					</OnLeave>
 					<OnClick>
-						DPSMate_Details_Deaths_Total:Hide()
+						DPSMate_Details_Decurses_Total:Hide()
 						PlaySound("igMainMenuOptionCheckBoxOff")
 					</OnClick>
 				</Scripts>
@@ -168,7 +141,7 @@
 				<HighlightTexture file="Interface\Buttons\UI-Panel-MinimizeButton-Highlight" alphaMode="ADD"/>
 			</Button>
 			<ScrollFrame name="$parent_LogDetails">
-				<Size x="880" y="380" />
+				<Size x="580" y="380" />
 				<Anchors>
 					<Anchor point="TOPLEFT">
 						<Offset x="10" y="-60" />
@@ -182,19 +155,16 @@
 				</Backdrop>
 				<Scripts>
 					<OnLoad>
-						DPSMate.Modules.DetailsDeathsTotal:CreateGraphTable(this)
+						DPSMate.Modules.DetailsDecursesTotal:CreateGraphTable(this)
 						getglobal(this:GetName().."_Time"):SetText(DPSMate.L["time"])
 						getglobal(this:GetName().."_CombatTime"):SetText(DPSMate.L["cbt"])
 						getglobal(this:GetName().."_Cause"):SetText(DPSMate.L["cause"])
-						getglobal(this:GetName().."_Victim"):SetText(DPSMate.L["victim"])
-						getglobal(this:GetName().."_Ability"):SetText(DPSMate.L["lastability"])
-						getglobal(this:GetName().."_Over"):SetText(DPSMate.L["over"])
-						getglobal(this:GetName().."_HealIn"):SetText(DPSMate.L["healin"])
-						getglobal(this:GetName().."_DamageIn"):SetText(DPSMate.L["damagein"])
+						getglobal(this:GetName().."_Target"):SetText(DPSMate.L["target"])
+						getglobal(this:GetName().."_Ability"):SetText(DPSMate.L["ability"])
 						this:SetVerticalScroll(0)
 					</OnLoad>
 					<OnMouseWheel>
-						DPSMate.Modules.DetailsDeathsTotal:ScrollFrameUpdate(arg1)
+						DPSMate.Modules.DetailsDecursesTotal:ScrollFrameUpdate(arg1)
 					</OnMouseWheel>
 				</Scripts>
 				<HitRectInsets left="0" right="0" top="35" bottom="15"/>
@@ -216,7 +186,7 @@
 								</Anchor>
 							</Anchors>
 						</FontString>
-						<FontString name="$parent_Victim" inherits="GameFontNormal" justifyH="LEFT">
+						<FontString name="$parent_Cause" inherits="GameFontNormal" justifyH="LEFT">
 							<Size x="80" y="24" />
 							<Anchors>
 								<Anchor point="LEFT" relativeTo="$parent_Time" relativePoint="RIGHT">
@@ -224,7 +194,7 @@
 								</Anchor>
 							</Anchors>
 						</FontString>
-						<FontString name="$parent_Cause" inherits="GameFontNormal" justifyH="LEFT">
+						<FontString name="$parent_Target" inherits="GameFontNormal" justifyH="LEFT">
 							<Size x="80" y="24" />
 							<Anchors>
 								<Anchor point="LEFT" relativeTo="$parent_Time" relativePoint="RIGHT">
@@ -232,94 +202,70 @@
 								</Anchor>
 							</Anchors>
 						</FontString>
-						<FontString name="$parent_Over" inherits="GameFontNormal" justifyH="LEFT">
-							<Size x="80" y="24" />
+						<FontString name="$parent_Ability" inherits="GameFontNormal" justifyH="LEFT">
+							<Size x="200" y="24" />
 							<Anchors>
 								<Anchor point="LEFT" relativeTo="$parent_Time" relativePoint="RIGHT">
 									<Offset x="255" y="0" />
 								</Anchor>
 							</Anchors>
 						</FontString>
-						<FontString name="$parent_Ability" inherits="GameFontNormal" justifyH="LEFT">
-							<Size x="200" y="24" />
-							<Anchors>
-								<Anchor point="LEFT" relativeTo="$parent_Time" relativePoint="RIGHT">
-									<Offset x="315" y="0" />
-								</Anchor>
-							</Anchors>
-						</FontString>
-						<FontString name="$parent_HealIn" inherits="GameFontNormal" justifyH="LEFT">
-							<Size x="80" y="24" />
-							<Anchors>
-								<Anchor point="LEFT" relativeTo="$parent_Time" relativePoint="RIGHT">
-									<Offset x="611" y="0" />
-								</Anchor>
-							</Anchors>
-						</FontString>
-						<FontString name="$parent_DamageIn" inherits="GameFontNormal" justifyH="LEFT">
-							<Size x="80" y="24" />
-							<Anchors>
-								<Anchor point="LEFT" relativeTo="$parent_Time" relativePoint="RIGHT">
-									<Offset x="695" y="0" />
-								</Anchor>
-							</Anchors>
-						</FontString>
 					</Layer>
 				</Layers>
 				<Frames>
-					<Frame name="$parent_Row1" inherits="DPSMate_Details_Deaths_Total_Row">
+					<Frame name="$parent_Row1" inherits="DPSMate_Details_Decurses_Total_Row">
 						<Anchors>
 							<Anchor point="TOPLEFT">
 								<Offset x="0" y="-35" />
 							</Anchor>
 						</Anchors>
 					</Frame>
-					<Frame name="$parent_Row2" inherits="DPSMate_Details_Deaths_Total_Row">
+					<Frame name="$parent_Row2" inherits="DPSMate_Details_Decurses_Total_Row">
 						<Anchors>
 							<Anchor point="TOP" relativeTo="$parent_Row1" relativePoint="BOTTOM" />
 						</Anchors>
 					</Frame>
-					<Frame name="$parent_Row3" inherits="DPSMate_Details_Deaths_Total_Row">
+					<Frame name="$parent_Row3" inherits="DPSMate_Details_Decurses_Total_Row">
 						<Anchors>
 							<Anchor point="TOP" relativeTo="$parent_Row2" relativePoint="BOTTOM" />
 						</Anchors>
 					</Frame>
-					<Frame name="$parent_Row4" inherits="DPSMate_Details_Deaths_Total_Row">
+					<Frame name="$parent_Row4" inherits="DPSMate_Details_Decurses_Total_Row">
 						<Anchors>
 							<Anchor point="TOP" relativeTo="$parent_Row3" relativePoint="BOTTOM" />
 						</Anchors>
 					</Frame>
-					<Frame name="$parent_Row5" inherits="DPSMate_Details_Deaths_Total_Row">
+					<Frame name="$parent_Row5" inherits="DPSMate_Details_Decurses_Total_Row">
 						<Anchors>
 							<Anchor point="TOP" relativeTo="$parent_Row4" relativePoint="BOTTOM" />
 						</Anchors>
 					</Frame>
-					<Frame name="$parent_Row6" inherits="DPSMate_Details_Deaths_Total_Row">
+					<Frame name="$parent_Row6" inherits="DPSMate_Details_Decurses_Total_Row">
 						<Anchors>
 							<Anchor point="TOP" relativeTo="$parent_Row5" relativePoint="BOTTOM" />
 						</Anchors>
 					</Frame>
-					<Frame name="$parent_Row7" inherits="DPSMate_Details_Deaths_Total_Row">
+					<Frame name="$parent_Row7" inherits="DPSMate_Details_Decurses_Total_Row">
 						<Anchors>
 							<Anchor point="TOP" relativeTo="$parent_Row6" relativePoint="BOTTOM" />
 						</Anchors>
 					</Frame>
-					<Frame name="$parent_Row8" inherits="DPSMate_Details_Deaths_Total_Row">
+					<Frame name="$parent_Row8" inherits="DPSMate_Details_Decurses_Total_Row">
 						<Anchors>
 							<Anchor point="TOP" relativeTo="$parent_Row7" relativePoint="BOTTOM" />
 						</Anchors>
 					</Frame>
-					<Frame name="$parent_Row9" inherits="DPSMate_Details_Deaths_Total_Row">
+					<Frame name="$parent_Row9" inherits="DPSMate_Details_Decurses_Total_Row">
 						<Anchors>
 							<Anchor point="TOP" relativeTo="$parent_Row8" relativePoint="BOTTOM" />
 						</Anchors>
 					</Frame>
-					<Frame name="$parent_Row10" inherits="DPSMate_Details_Deaths_Total_Row">
+					<Frame name="$parent_Row10" inherits="DPSMate_Details_Decurses_Total_Row">
 						<Anchors>
 							<Anchor point="TOP" relativeTo="$parent_Row9" relativePoint="BOTTOM" />
 						</Anchors>
 					</Frame>
-					<Frame name="$parent_Row11" inherits="DPSMate_Details_Deaths_Total_Row">
+					<Frame name="$parent_Row11" inherits="DPSMate_Details_Decurses_Total_Row">
 						<Anchors>
 							<Anchor point="TOP" relativeTo="$parent_Row10" relativePoint="BOTTOM" />
 						</Anchors>

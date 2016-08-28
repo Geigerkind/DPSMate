@@ -1844,7 +1844,7 @@ function DPSMate.DB:Dispels(cause, Dname, target, ability)
 		end
 		DPSMateDispels[cat][DPSMateUser[cause][1]][DPSMateAbility[Dname][1]][DPSMateUser[target][1]][DPSMateAbility[ability][1]] = DPSMateDispels[cat][DPSMateUser[cause][1]][DPSMateAbility[Dname][1]][DPSMateUser[target][1]][DPSMateAbility[ability][1]]+1
 		DPSMateDispels[cat][DPSMateUser[cause][1]]["i"][1] = DPSMateDispels[cat][DPSMateUser[cause][1]]["i"][1]+1
-		tinsert(DPSMateDispels[cat][DPSMateUser[cause][1]]["i"][2], {DPSMateCombatTime[val], DPSMateAbility[ability][1], DPSMateUser[target][1]})
+		tinsert(DPSMateDispels[cat][DPSMateUser[cause][1]]["i"][2], {DPSMateCombatTime[val], DPSMateAbility[ability][1], DPSMateUser[target][1], GameTime_GetTime()})
 	end
 	self.NeedUpdate = true
 end

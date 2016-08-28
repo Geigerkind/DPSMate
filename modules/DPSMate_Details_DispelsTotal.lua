@@ -1,5 +1,5 @@
 -- Global Variables
-DPSMate.Modules.DetailsInterruptsTotal = {}
+DPSMate.Modules.DetailsDispelsTotal = {}
 
 -- Local variables
 local curKey = 1
@@ -23,32 +23,32 @@ local hexClassColor = {
 	shaman = "0070DE",
 }
 
-function DPSMate.Modules.DetailsInterruptsTotal:UpdateDetails(obj, key)
+function DPSMate.Modules.DetailsDispelsTotal:UpdateDetails(obj, key)
 	curKey = key
 	db, cbt = DPSMate:GetMode(key)
 	DetailsArr = self:EvalTable()
 	Offset = 0
 	TL = DPSMate:TableLength(DetailsArr)
 	self:ScrollFrameUpdate(0)
-	DPSMate_Details_Interrupts_Total_Title:SetText(DPSMate.L["intersum"])
-	DPSMate_Details_Interrupts_Total:Show()
-	DPSMate_Details_Interrupts_Total:SetScale((DPSMateSettings["targetscale"] or 0.58)/UIParent:GetScale())
+	DPSMate_Details_Dispels_Total_Title:SetText(DPSMate.L["dispelssum"])
+	DPSMate_Details_Dispels_Total:Show()
+	DPSMate_Details_Dispels_Total:SetScale((DPSMateSettings["targetscale"] or 0.58)/UIParent:GetScale())
 end
 
-function DPSMate.Modules.DetailsInterruptsTotal:UpdateRow(row, a, b, c, d, e)
-	_G("DPSMate_Details_Interrupts_Total_LogDetails_Row"..row).user = c
-	_G("DPSMate_Details_Interrupts_Total_LogDetails_Row"..row.."_Time"):SetText(a)
+function DPSMate.Modules.DetailsDispelsTotal:UpdateRow(row, a, b, c, d, e)
+	_G("DPSMate_Details_Dispels_Total_LogDetails_Row"..row).user = c
+	_G("DPSMate_Details_Dispels_Total_LogDetails_Row"..row.."_Time"):SetText(a or "Unknown")
 	if b~=0 then
-		_G("DPSMate_Details_Interrupts_Total_LogDetails_Row"..row.."_CombatTime"):SetText(strformat("%.2f", b).."s")
+		_G("DPSMate_Details_Dispels_Total_LogDetails_Row"..row.."_CombatTime"):SetText(strformat("%.2f", b).."s")
 	else
-		_G("DPSMate_Details_Interrupts_Total_LogDetails_Row"..row.."_CombatTime"):SetText("")
+		_G("DPSMate_Details_Dispels_Total_LogDetails_Row"..row.."_CombatTime"):SetText("")
 	end
-	_G("DPSMate_Details_Interrupts_Total_LogDetails_Row"..row.."_Cause"):SetText("|cFF"..hexClassColor[DPSMateUser[c][2] or "warrior"]..c.."|r")
-	_G("DPSMate_Details_Interrupts_Total_LogDetails_Row"..row.."_Target"):SetText("|cFF"..hexClassColor[DPSMateUser[d][2] or "warrior"]..d.."|r")
-	_G("DPSMate_Details_Interrupts_Total_LogDetails_Row"..row.."_Ability"):SetText(e)
+	_G("DPSMate_Details_Dispels_Total_LogDetails_Row"..row.."_Cause"):SetText("|cFF"..hexClassColor[DPSMateUser[c][2] or "warrior"]..c.."|r")
+	_G("DPSMate_Details_Dispels_Total_LogDetails_Row"..row.."_Target"):SetText("|cFF"..hexClassColor[DPSMateUser[d][2] or "warrior"]..d.."|r")
+	_G("DPSMate_Details_Dispels_Total_LogDetails_Row"..row.."_Ability"):SetText(e)
 end
 
-function DPSMate.Modules.DetailsInterruptsTotal:EvalTable()
+function DPSMate.Modules.DetailsDispelsTotal:EvalTable()
 	local a = {}
 	for cat, val in db do -- user
 		local name = DPSMate:GetUserById(cat)
@@ -57,10 +57,10 @@ function DPSMate.Modules.DetailsInterruptsTotal:EvalTable()
 				local i=1
 				while true do
 					if not a[i] then
-						tinsert(a, i, {va[2], va[1], DPSMate:GetUserById(cat), DPSMate:GetUserById(va[4]), DPSMate:GetAbilityById(va[3]), cat})
+						tinsert(a, i, {va[4], va[1], name, DPSMate:GetUserById(va[3]), DPSMate:GetAbilityById(va[2]), cat})
 						break
 					elseif a[i][2]<va[1] then
-						tinsert(a, i, {va[2], va[1], DPSMate:GetUserById(cat), DPSMate:GetUserById(va[4]), DPSMate:GetAbilityById(va[3]), cat})
+						tinsert(a, i, {va[4], va[1], name, DPSMate:GetUserById(va[3]), DPSMate:GetAbilityById(va[2]), cat})
 						break
 					end
 					i=i+1
@@ -71,7 +71,7 @@ function DPSMate.Modules.DetailsInterruptsTotal:EvalTable()
 	return a
 end
 
-function DPSMate.Modules.DetailsInterruptsTotal:ScrollFrameUpdate(direction)
+function DPSMate.Modules.DetailsDispelsTotal:ScrollFrameUpdate(direction)
 	Offset = Offset - direction
 	if (Offset+11)>TL then
 		Offset = TL-11
@@ -89,7 +89,7 @@ function DPSMate.Modules.DetailsInterruptsTotal:ScrollFrameUpdate(direction)
 	end
 end
 
-function DPSMate.Modules.DetailsInterruptsTotal:CreateGraphTable(obj)
+function DPSMate.Modules.DetailsDispelsTotal:CreateGraphTable(obj)
 	local lines = {}
 	comp = comp or ""
 	for i=1, 11 do
@@ -111,17 +111,13 @@ function DPSMate.Modules.DetailsInterruptsTotal:CreateGraphTable(obj)
 	lines[15]:Show()
 end
 
-function DPSMate.Modules.DetailsInterruptsTotal:ShowTooltip(user, obj, id)
-	local a,b,c = DPSMate.Modules.Interrupts:EvalTable(DPSMateUser[user], curKey, id)
+function DPSMate.Modules.DetailsDispelsTotal:ShowTooltip(user, obj, id)
+	local a,b,c = DPSMate.Modules.Dispels:EvalTable(DPSMateUser[user], curKey, id)
 	GameTooltip:SetOwner(obj, "TOPLEFT")
-	GameTooltip:AddLine(user.."'s "..strlower(DPSMate.L["interrupts"]), 1,1,1)
+	GameTooltip:AddLine(user.."'s "..strlower(DPSMate.L["dispels"]), 1,1,1)
 	for i=1, DPSMateSettings["subviewrows"] do
 		if not a[i] then break end
-		GameTooltip:AddDoubleLine(i..". "..DPSMate:GetAbilityById(a[i]),c[i][1].." ("..strformat("%.2f", 100*c[i][1]/b).."%)",1,1,1,1,1,1)
-		for p=1, 3 do
-			if not c[i][2][p] or c[i][3][p]==0 then break end
-			GameTooltip:AddDoubleLine("       "..p..". "..DPSMate:GetUserById(c[i][2][p]),c[i][3][p].." ("..strformat("%.2f", 100*c[i][3][p]/a[i]).."%)",0.5,0.5,0.5,0.5,0.5,0.5)
-		end
+		GameTooltip:AddDoubleLine(i..". "..DPSMate:GetAbilityById(a[i]),c[i].." ("..strformat("%.2f", 100*c[i]/b).."%)",1,1,1,1,1,1)
 	end
 	GameTooltip:Show()
 end

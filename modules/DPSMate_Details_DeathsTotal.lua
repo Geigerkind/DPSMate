@@ -39,7 +39,11 @@ function DPSMate.Modules.DetailsDeathsTotal:UpdateRow(row, a, b, c, d, e, f, g, 
 	_G("DPSMate_Details_Deaths_Total_LogDetails_Row"..row).user = c
 	_G("DPSMate_Details_Deaths_Total_LogDetails_Row"..row).id = i
 	_G("DPSMate_Details_Deaths_Total_LogDetails_Row"..row.."_Time"):SetText(a)
-	_G("DPSMate_Details_Deaths_Total_LogDetails_Row"..row.."_CombatTime"):SetText(strformat("%.2f", b).."s")
+	if b~=0 then
+		_G("DPSMate_Details_Deaths_Total_LogDetails_Row"..row.."_CombatTime"):SetText(strformat("%.2f", b).."s")
+	else
+		_G("DPSMate_Details_Deaths_Total_LogDetails_Row"..row.."_CombatTime"):SetText("")
+	end
 	_G("DPSMate_Details_Deaths_Total_LogDetails_Row"..row.."_Victim"):SetText("|cFF"..hexClassColor[DPSMateUser[c][2] or "warrior"]..c.."|r")
 	_G("DPSMate_Details_Deaths_Total_LogDetails_Row"..row.."_Cause"):SetText("|cFF"..hexClassColor[DPSMateUser[h][2] or "warrior"]..h.."|r")
 	_G("DPSMate_Details_Deaths_Total_LogDetails_Row"..row.."_Over"):SetText(strformat("%.2f", d).."s")

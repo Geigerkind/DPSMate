@@ -457,4 +457,7 @@ if (GetLocale() == "deDE") then
 	DPSMate.L["victim"] = "Opfer"
 	DPSMate.L["deathhistory"] = "Ereignisse"
 	DPSMate.L["intersum"] = "Gesamtunterbrechungen"
+	DPSMate.L["dispelssum"] = "Gesamtdispels"
+	DPSMate.L["dispels"] = "Dispels"
+	DPSMate.L["decursessum"] = "Gesamtentfluchungen"
 end

@@ -132,7 +132,6 @@ function DPSMate.Modules.CurePoison:OpenDetails(obj, key,bool)
 end
 
 function DPSMate.Modules.CurePoison:OpenTotalDetails(obj, key)
-	--DPSMate.Modules.DetailsDamageTotal:UpdateDetails(obj, key)
-	DPSMate:SendMessage("This feature will be added soon!")
+	DPSMate.Modules.DetailsCurePoisonTotal:UpdateDetails(obj, key)
 end
 
