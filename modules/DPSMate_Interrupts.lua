@@ -48,20 +48,38 @@ function DPSMate.Modules.Interrupts:EvalTable(user, k)
 	for cat, val in pairs(arr[user[1]]) do -- 41 Ability
 		if cat~="i" then
 			local CV = 0
+			local d,e = {}, {}
 			for ca, va in pairs(val) do
+				local CVV = 0
 				for c, v in pairs(va) do
 					CV = CV + v
+					CVV = CVV + v
+				end
+				local i = 1
+				while true do
+					if (not d[i]) then
+						tinsert(d, i, CVV)
+						tinsert(e, i, ca)
+						break
+					else
+						if d[i] < CVV then
+							tinsert(d, i, CVV)
+							tinsert(e, i, ca)
+							break
+						end
+					end
+					i=i+1
 				end
 			end
 			local i = 1
 			while true do
 				if (not b[i]) then
-					tinsert(b, i, CV)
+					tinsert(b, i, {CV, e, d})
 					tinsert(a, i, cat)
 					break
 				else
-					if b[i] < CV then
-						tinsert(b, i, CV)
+					if b[i][1] < CV then
+						tinsert(b, i, {CV, e, d})
 						tinsert(a, i, cat)
 						break
 					end
@@ -95,7 +113,11 @@ function DPSMate.Modules.Interrupts:ShowTooltip(user,k)
 	if DPSMateSettings["informativetooltips"] then
 		for i=1, DPSMateSettings["subviewrows"] do
 			if not a[i] then break end
-			GameTooltip:AddDoubleLine(i..". "..DPSMate:GetAbilityById(a[i]),c[i].." ("..strformat("%.2f", 100*c[i]/b).."%)",1,1,1,1,1,1)
+			GameTooltip:AddDoubleLine(i..". "..DPSMate:GetAbilityById(a[i]),c[i][1].." ("..strformat("%.2f", 100*c[i][1]/b).."%)",1,1,1,1,1,1)
+			for p=1, 3 do
+				if not c[i][2][p] or c[i][3][p]==0 then break end
+				GameTooltip:AddDoubleLine("       "..p..". "..DPSMate:GetUserById(c[i][2][p]),c[i][3][p].." ("..strformat("%.2f", 100*c[i][3][p]/a[i]).."%)",0.5,0.5,0.5,0.5,0.5,0.5)
+			end
 		end
 	end
 end
@@ -109,7 +131,6 @@ function DPSMate.Modules.Interrupts:OpenDetails(obj, key, bool)
 end
 
 function DPSMate.Modules.Interrupts:OpenTotalDetails(obj, key)
-	--DPSMate.Modules.DetailsDamageTotal:UpdateDetails(obj, key)
-	DPSMate:SendMessage("This feature will be added soon!")
+	DPSMate.Modules.DetailsInterruptsTotal:UpdateDetails(obj, key)
 end
 

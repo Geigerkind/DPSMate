@@ -130,6 +130,8 @@ modules\DPSMate_Details_DeathsTotal.lua
 modules\DPSMate_Details_DeathsTotal.xml
 modules\DPSMate_Details_Interrupts.lua
 modules\DPSMate_Details_Interrupts.xml
+modules\DPSMate_Details_InterruptsTotal.lua
+modules\DPSMate_Details_InterruptsTotal.xml
 modules\DPSMate_Details_Dispels.lua
 modules\DPSMate_Details_Dispels.xml
 modules\DPSMate_Details_DispelsReceived.lua
