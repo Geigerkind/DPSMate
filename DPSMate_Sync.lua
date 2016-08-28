@@ -109,8 +109,8 @@ function DPSMate.Sync:SendAddonMessages(elapsed)
 	if DPSMateSettings["sync"] then
 		UpTime = UpTime + elapsed
 		if self:GetMessageState() then
-			if UpTime>5 then
-				for i=1,120 do
+			if UpTime>2 then
+				for i=1,101 do
 					if not Buffer[co] then break end
 					SendAddonMessage(Buffer[co][1]..DPSMate.SYNCVERSION, Buffer[co][2], "RAID")
 					Buffer[co] = nil

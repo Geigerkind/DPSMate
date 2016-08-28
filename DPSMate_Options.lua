@@ -1011,15 +1011,7 @@ end
 function DPSMate.Options:DropDownStyleReset()
 	for i=1, 20 do
 		local button = _G("DropDownList1Button"..i)
-		if not button.font then
-			local a,b,c = _G("DropDownList1Button"..i.."NormalText"):GetFont()
-			button.font = {
-				[1] = a,
-				[2] = b,
-				[3] = c
-			}
-		end
-		_G("DropDownList1Button"..i.."NormalText"):SetFont(button.font[1],button.font[2],button.font[3])
+		_G("DropDownList1Button"..i.."NormalText"):SetFont(STANDARD_TEXT_FONT, UIDROPDOWNMENU_DEFAULT_TEXT_HEIGHT)
 		button:SetScript("OnEnter", function()
 			 if ( this.hasArrow ) then
 			  ToggleDropDownMenu(this:GetParent():GetID() + 1, this.value);
