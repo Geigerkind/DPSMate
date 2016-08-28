@@ -172,6 +172,8 @@ modules\DPSMate_Details_Fails.lua
 modules\DPSMate_Details_Fails.xml
 modules\DPSMate_Details_CCBreaker.lua
 modules\DPSMate_Details_CCBreaker.xml
+modules\DPSMate_Details_CCBreakerTotal.lua
+modules\DPSMate_Details_CCBreakerTotal.xml
 modules\DPSMate_Details_FriendlyFire.lua
 modules\DPSMate_Details_FriendlyFire.xml
 modules\DPSMate_Details_FriendlyFireTotal.lua

@@ -106,6 +106,5 @@ function DPSMate.Modules.CCBreaker:OpenDetails(obj, key, bool)
 end
 
 function DPSMate.Modules.CCBreaker:OpenTotalDetails(obj, key)
-	--DPSMate.Modules.DetailsCCBreakerTotal:UpdateDetails(obj, key)
-	DPSMate:SendMessage("This feature will be added later.")
+	DPSMate.Modules.DetailsCCBreakerTotal:UpdateDetails(obj, key)
 end
