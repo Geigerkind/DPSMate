@@ -126,6 +126,8 @@ modules\DPSMate_Details_HealingAndAbsorbsTotal.lua
 modules\DPSMate_Details_HealingAndAbsorbsTotal.xml
 modules\DPSMate_Details_Deaths.lua
 modules\DPSMate_Details_Deaths.xml
+modules\DPSMate_Details_DeathsTotal.lua
+modules\DPSMate_Details_DeathsTotal.xml
 modules\DPSMate_Details_Interrupts.lua
 modules\DPSMate_Details_Interrupts.xml
 modules\DPSMate_Details_Dispels.lua

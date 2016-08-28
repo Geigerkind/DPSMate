@@ -50,15 +50,15 @@ function DPSMate.Modules.Deaths:GetSortedTable(arr,k)
 end
 
 -- Needs improvement, but kinda all tooltips need that
-function DPSMate.Modules.Deaths:EvalTable(user, k)
+function DPSMate.Modules.Deaths:EvalTable(user, k, id)
 	local a, b, total = {}, {}, 0
 	local arr = DPSMate:GetMode(k)
 	local p = 1
 	if not arr[user[1]] then return end
 	if arr[user[1]][1] then 
 		if arr[user[1]][1]["i"][1]~=1 then p=2 else p=1 end 
-		if arr[user[1]][p] then 
-			for ca, va in pairs(arr[user[1]][p]) do -- 1 (Death)
+		if arr[user[1]][id or p] then 
+			for ca, va in pairs(arr[user[1]][id or p]) do -- 1 (Death)
 				if ca~="i" then
 					tinsert(b, ca, {va[3], va[5], va[4]})
 					tinsert(a, ca, va[2])
@@ -111,7 +111,6 @@ function DPSMate.Modules.Deaths:OpenDetails(obj, key, bool)
 end
 
 function DPSMate.Modules.Deaths:OpenTotalDetails(obj, key)
-	--DPSMate.Modules.DetailsDamageTotal:UpdateDetails(obj, key)
-	DPSMate:SendMessage("This feature will be added soon!")
+	DPSMate.Modules.DetailsDeathsTotal:UpdateDetails(obj, key)
 end
 
