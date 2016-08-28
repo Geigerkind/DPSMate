@@ -450,4 +450,5 @@ if (GetLocale() == "deDE") then
 	DPSMate.L["threatdone"] = "Aggro"
 	DPSMate.L["threatsum"] = "Gesamtaggro"
 	DPSMate.L["ffsum"] = "Gesamt friendly fire"
+	DPSMate.L["fftsum"] = "Gesamt friendly fire bekommen"
 end

@@ -146,7 +146,6 @@ function DPSMate.Modules.FriendlyFireTaken:OpenDetails(obj, key, bool)
 end
 
 function DPSMate.Modules.FriendlyFireTaken:OpenTotalDetails(obj, key)
-	--DPSMate.Modules.DetailsDamageTotal:UpdateDetails(obj, key)
-	DPSMate:SendMessage("This feature will be added soon!")
+	DPSMate.Modules.DetailsFFTTotal:UpdateDetails(obj, key)
 end
 
