@@ -39,7 +39,7 @@ function DPSMate.Modules.DetailsFails:CreateGraphTable(obj)
 	local lines = {}
 	for i=1, 6 do
 		-- Horizontal
-		DPSMate.Options.graph:DrawLine(obj, 5, 223-i*30, 655, 223-i*30, 20, {0.5,0.5,0.5,0.5}, "BACKGROUND")
+		DPSMate.Options.graph:DrawLine(obj, 5, 223-i*30, 670, 223-i*30, 20, {0.5,0.5,0.5,0.5}, "BACKGROUND")
 	end
 	-- Vertical
 	DPSMate.Options.graph:DrawLine(obj, 235, 215, 235, 15, 20, {0.5,0.5,0.5,0.5}, "BACKGROUND")

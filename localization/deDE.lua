@@ -461,4 +461,5 @@ if (GetLocale() == "deDE") then
 	DPSMate.L["dispels"] = "Dispels"
 	DPSMate.L["decursessum"] = "Gesamtentfluchungen"
 	DPSMate.L["ccbreakersum"] = "Gesamt CCBreaker"
+	DPSMate.L["failssum"] = "Fails Übersicht"
 end
