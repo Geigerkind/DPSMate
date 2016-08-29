@@ -115,6 +115,5 @@ function DPSMate.Modules.Fails:OpenDetails(obj, key, bool)
 end
 
 function DPSMate.Modules.Fails:OpenTotalDetails(obj, key)
-	--DPSMate.Modules.DetailsFailsTotal:UpdateDetails(obj, key)
-	DPSMate:SendMessage("This feature will be added later.")
+	DPSMate.Modules.DetailsFailsTotal:UpdateDetails(obj, key)
 end

@@ -72,7 +72,7 @@ function DPSMate.Modules.Casts:EvalTable(user, k)
 		end
 	end
 	for cat, val in temp do
-		if cat~=DPSMateAbility["AutoAttack"][1] then
+		if cat~=DPSMateAbility[DPSMate.L["AutoAttack"]][1] then
 			local i = 1
 			while true do
 				if (not b[i]) then
@@ -130,6 +130,5 @@ function DPSMate.Modules.Casts:OpenDetails(obj, key, bool)
 end
 
 function DPSMate.Modules.Casts:OpenTotalDetails(obj, key)
-	--DPSMate.Modules.DetailsCastsTotal:UpdateDetails(obj, key)
-	DPSMate:SendMessage("This feature will be added later.")
+	DPSMate.Modules.DetailsCastsTotal:UpdateDetails(obj, key)
 end

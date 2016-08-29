@@ -168,8 +168,12 @@ modules\DPSMate_Details_Procs.lua
 modules\DPSMate_Details_Procs.xml
 modules\DPSMate_Details_Casts.lua
 modules\DPSMate_Details_Casts.xml
+modules\DPSMate_Details_CastsTotal.lua
+modules\DPSMate_Details_CastsTotal.xml
 modules\DPSMate_Details_Fails.lua
 modules\DPSMate_Details_Fails.xml
+modules\DPSMate_Details_FailsTotal.lua
+modules\DPSMate_Details_FailsTotal.xml
 modules\DPSMate_Details_CCBreaker.lua
 modules\DPSMate_Details_CCBreaker.xml
 modules\DPSMate_Details_CCBreakerTotal.lua

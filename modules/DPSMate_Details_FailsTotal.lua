@@ -48,15 +48,29 @@ function DPSMate.Modules.DetailsFailsTotal:EvalTable()
 				a[va[1]][va[2]] = {}
 			end
 			if a[va[1]][va[2]][va[3]] then
-				a[va[1]][va[2]][va[3]] = 1
-			else
 				a[va[1]][va[2]][va[3]] = a[va[1]][va[2]][va[3]] + 1
+			else
+				a[va[1]][va[2]][va[3]] = 1
 			end
 		end
 	end
 	local b = {}
-	for _, val in a do
-		tinsert(b, 1, val)
+	for cat, val in a do
+		for ca, va in val do
+			for c,v in va do
+				local i=1
+				while true do
+					if not b[i] then
+						tinsert(b, i, {v,cat,ca,c})
+						break
+					elseif b[i][1]<v then
+						tinsert(b, i, {v,cat,ca,c})
+						break
+					end
+					i=i+1
+				end
+			end
+		end
 	end
 	a = nil
 	return b
@@ -69,20 +83,19 @@ function DPSMate.Modules.DetailsFailsTotal:CreateGraphTable(obj)
 		DPSMate.Options.graph:DrawLine(obj, 5, 223-i*30, 670, 223-i*30, 20, {0.5,0.5,0.5,0.5}, "BACKGROUND")
 	end
 	-- Vertical
-	DPSMate.Options.graph:DrawLine(obj, 70, 215, 70, 15, 20, {0.5,0.5,0.5,0.5}, "BACKGROUND")
-	DPSMate.Options.graph:DrawLine(obj, 150, 215, 150, 15, 20, {0.5,0.5,0.5,0.5}, "BACKGROUND")
-	DPSMate.Options.graph:DrawLine(obj, 400, 215, 400, 15, 20, {0.5,0.5,0.5,0.5}, "BACKGROUND")
+	DPSMate.Options.graph:DrawLine(obj, 235, 215, 235, 15, 20, {0.5,0.5,0.5,0.5}, "BACKGROUND")
+	DPSMate.Options.graph:DrawLine(obj, 480, 215, 480, 15, 20, {0.5,0.5,0.5,0.5}, "BACKGROUND")
+	DPSMate.Options.graph:DrawLine(obj, 570, 215, 570, 15, 20, {0.5,0.5,0.5,0.5}, "BACKGROUND")
 end
 
 function DPSMate.Modules.DetailsFailsTotal:CleanTables()
 	local path = "DPSMate_Details_FailsTotal_Buffs_Row"
 	for i=1, 6 do
-		_G(path..i).user = nil
 		_G(path..i.."_Icon"):SetTexture()
 		_G(path..i.."_Ability"):SetText()
-		_G(path..i.."_Target"):SetText()
-		_G(path..i.."_Time"):SetText()
-		_G(path..i.."_CBT"):SetText()
+		_G(path..i.."_Victim"):SetText()
+		_G(path..i.."_Type"):SetText()
+		_G(path..i.."_Amount"):SetText()
 	end
 end
 
@@ -113,12 +126,12 @@ function DPSMate.Modules.DetailsFailsTotal:UpdateBuffs(arg1)
 	for i=1, 6 do
 		local pos = Buffpos + i
 		if not DetailsArr[pos] then break end
-		_G(path..i).user = DetailsArr[pos][6]
-		_G(path..i.."_Icon"):SetTexture(DetailsArr[pos][2])
-		_G(path..i.."_Ability"):SetText(DetailsArr[pos][1])
-		_G(path..i.."_Target"):SetText("|cFF"..hexClassColor[DPSMateUser[DetailsArr[pos][3]][2] or "warrior"]..DetailsArr[pos][3].."|r")
-		_G(path..i.."_Time"):SetText(DetailsArr[pos][4])
-		_G(path..i.."_CBT"):SetText(strformat("%.2f", DetailsArr[pos][5]).."s")
+		local ab = DPSMate:GetAbilityById(DetailsArr[pos][4])
+		_G(path..i.."_Icon"):SetTexture(DPSMate.BabbleSpell:GetSpellIcon(self:Replace(ab)))
+		_G(path..i.."_Ability"):SetText(ab)
+		_G(path..i.."_Victim"):SetText(DPSMate:GetUserById(DetailsArr[pos][3]))
+		_G(path..i.."_Type"):SetText(self:Type(DetailsArr[pos][2]))
+		_G(path..i.."_Amount"):SetText(DetailsArr[pos][1])
 	end
 end
 
