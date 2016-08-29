@@ -243,7 +243,7 @@ end
 function DPSMate.Modules.DetailsHABTotal:AddTotalDataSeries()
 	local sumTable, newArr = {[0]=0}, {}
 	local tl = DPSMate:TableLength(DPSMateEHealing)
-	tl = floor(tl-0.3*tl)
+	tl = ceil(tl-0.3*tl)
 	
 	for cat, val in DPSMateEHealing[curKey] do
 		for ca, va in val do

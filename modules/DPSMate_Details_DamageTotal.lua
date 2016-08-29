@@ -202,7 +202,7 @@ end
 function DPSMate.Modules.DetailsDamageTotal:AddTotalDataSeries()
 	local sumTable, newArr = {[0]=0}, {}
 	local tl = DPSMate:TableLength(db)
-	tl = floor(tl-0.3*tl)
+	tl = ceil(tl-0.3*tl)
 	
 	for cat, val in db do
 		for ca, va in val do
