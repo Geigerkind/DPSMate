@@ -3,6 +3,7 @@ local strgfind = string.gfind
 local DB = DPSMate.DB
 local tnbr = tonumber
 local npcdb = DPSMate.NPCDB
+local GT = GetTime
 
 ----------------------------------------------------------------------------------
 --------------                    Damage Done                       --------------                                  
@@ -475,7 +476,7 @@ function DPSMate.Parser:SpellPeriodicDamageTaken(msg)
 	end
 	for a, b in strgfind(msg, "(.+) is afflicted by (.+)%.") do
 		if strfind(b, "%(") then b=strsub(b, 1, strfind(b, "%(")-2) end
-		DB:BuildBuffs("Unknown", a, b, false)
+		DB:BuildBuffs("Unknown", a,b, false)
 		if self.CC[b] then DB:BuildActiveCC(a, b) end
 		return
 	end

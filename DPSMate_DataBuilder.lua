@@ -1938,11 +1938,9 @@ function DPSMate.DB:ConfirmAfflicted(target, ability, time)
 		--DPSMate:SendMessage(val[2].."=="..(ability or "").." and "..val[3].."=="..(target or "").." AND "..val[4].."<="..(time or ""))
 		if val[2]==ability and val[3]==target and val[4]<=time then
 			if DPSMate.Parser.Kicks[ability] then self:AssignPotentialKick(val[1], val[2], val[3], time) end
-			--self:DamageDone(player, ability, 1,0,0,0,0,0,0,0,0)
-			self:EnemyDamage(true, DPSMateEDT, target, ability, 1, 0, 0, 0, 0, 0, 0, player, 0, 0)
-			--DPSMate:SendMessage("Confirmed afflicted Stun: "..ability)
+			self:EnemyDamage(true, DPSMateEDT, val[1], ability, 1, 0, 0,0,0, 0,0, target, 0, 0)
 			tremove(AfflictedStun, cat)
-			break
+			return 
 		end
 	end
 end

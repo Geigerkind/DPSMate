@@ -72,7 +72,7 @@ function DPSMate.Modules.Casts:EvalTable(user, k)
 		end
 	end
 	for cat, val in temp do
-		if cat~=DPSMateAbility[DPSMate.L["AutoAttack"]][1] then
+		if not DPSMateAbility[DPSMate.L["AutoAttack"]] or cat~=DPSMateAbility[DPSMate.L["AutoAttack"]][1] then
 			local i = 1
 			while true do
 				if (not b[i]) then
