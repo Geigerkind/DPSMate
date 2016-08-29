@@ -280,8 +280,7 @@ function DPSMate.Modules.Absorbs:OpenDetails(obj, key, bool)
 end
 
 function DPSMate.Modules.Absorbs:OpenTotalDetails(obj, key)
-	--DPSMate.Modules.DetailsDamageTotal:UpdateDetails(obj, key)
-	DPSMate:SendMessage("This feature will be added soon!")
+	DPSMate.Modules.DetailsAbsorbsTotal:UpdateDetails(obj, key)
 end
 
 

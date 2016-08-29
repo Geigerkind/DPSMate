@@ -118,6 +118,8 @@ modules\DPSMate_Details_OverhealingTakenTotal.lua
 modules\DPSMate_Details_OverhealingTakenTotal.xml
 modules\DPSMate_Details_Absorbs.lua
 modules\DPSMate_Details_Absorbs.xml
+modules\DPSMate_Details_AbsorbsTotal.lua
+modules\DPSMate_Details_AbsorbsTotal.xml
 modules\DPSMate_Details_AbsorbsTaken.lua
 modules\DPSMate_Details_AbsorbsTaken.xml
 modules\DPSMate_Details_HealingAndAbsorbs.lua

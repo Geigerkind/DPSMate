@@ -1,4 +1,4 @@
-DPSMate.Modules.DetailsHABTotal = {}
+DPSMate.Modules.DetailsAbsorbsTotal = {}
 
 local g, g2 = nil,nil
 local curKey = 1
@@ -14,7 +14,7 @@ local totSumTable = {}
 local totMax = 0
 local totTime = 0
 
-function DPSMate.Modules.DetailsHABTotal:UpdateDetails(obj, key)
+function DPSMate.Modules.DetailsAbsorbsTotal:UpdateDetails(obj, key)
 	curKey = key
 	db, cbt = DPSMate:GetMode(key)
 	buttons = {}
@@ -55,8 +55,8 @@ function DPSMate.Modules.DetailsHABTotal:UpdateDetails(obj, key)
 		{0.75,0.0,0.5},
 	}
 	if not g then
-		g=DPSMate.Options.graph:CreateGraphLine("HABTLineGraph",DPSMate_Details_HABTotal_DiagramLine,"CENTER","CENTER",0,0,740,220)
-		g2=DPSMate.Options.graph:CreateStackedGraph("HABTStackedGraph",DPSMate_Details_HABTotal_DiagramLine,"CENTER","CENTER",0,0,850,220)
+		g=DPSMate.Options.graph:CreateGraphLine("ABSORBSTTLineGraph",DPSMate_Details_AbsorbsTotal_DiagramLine,"CENTER","CENTER",0,0,740,220)
+		g2=DPSMate.Options.graph:CreateStackedGraph("ABSORBSTTStackedGraph",DPSMate_Details_AbsorbsTotal_DiagramLine,"CENTER","CENTER",0,0,850,220)
 		g2:SetGridColor({0.5,0.5,0.5,0.5})
 		g2:SetAxisDrawing(true,true)
 		g2:SetAxisColor({1.0,1.0,1.0,1.0})
@@ -64,11 +64,10 @@ function DPSMate.Modules.DetailsHABTotal:UpdateDetails(obj, key)
 		g2:SetYLabels(true, false)
 		g2:SetXLabels(true)
 		g2:Hide()
-		DPSMate.Modules.DetailsHABTotal:CreateGraphTable()
 	end
-	DPSMate_Details_HABTotal_PlayerList_CB:SetChecked(false)
-	DPSMate_Details_HABTotal_PlayerList_CB.act = false
-	DPSMate_Details_HABTotal_Title:SetText(DPSMate.L["habsum"])
+	DPSMate_Details_AbsorbsTotal_PlayerList_CB:SetChecked(false)
+	DPSMate_Details_AbsorbsTotal_PlayerList_CB.act = false
+	DPSMate_Details_AbsorbsTotal_Title:SetText(DPSMate.L["absorbssum"])
 	self:LoadTable()
 	self:LoadLegendButtons()
 	if toggle then
@@ -76,11 +75,11 @@ function DPSMate.Modules.DetailsHABTotal:UpdateDetails(obj, key)
 	else
 		self:UpdateLineGraph()
 	end
-	DPSMate_Details_HABTotal:Show()
-	DPSMate_Details_HABTotal:SetScale((DPSMateSettings["targetscale"] or 0.58)/UIParent:GetScale())
+	DPSMate_Details_AbsorbsTotal:Show()
+	DPSMate_Details_AbsorbsTotal:SetScale((DPSMateSettings["targetscale"] or 0.58)/UIParent:GetScale())
 end
 
-function DPSMate.Modules.DetailsHABTotal:UpdateLineGraph()	
+function DPSMate.Modules.DetailsAbsorbsTotal:UpdateLineGraph()	
 	g:ResetData()
 	g:SetGridColor({0.5,0.5,0.5,0.5})
 	g:SetAxisDrawing(true,true)
@@ -89,8 +88,8 @@ function DPSMate.Modules.DetailsHABTotal:UpdateLineGraph()
 	g:SetYLabels(true, false)
 	g:SetXLabels(true)
 	g2:Hide()
-	DPSMate_Details_HABTotal_DiagramLine:SetWidth(770)
-	DPSMate_Details_HABTotal_DiagramLegend:Show()
+	DPSMate_Details_AbsorbsTotal_DiagramLine:SetWidth(770)
+	DPSMate_Details_AbsorbsTotal_DiagramLegend:Show()
 	g:Show()
 	toggle=false
 	self:AddTotalDataSeries()
@@ -105,46 +104,15 @@ function DPSMate.Modules.DetailsHABTotal:UpdateLineGraph()
 	g:SetGridSpacing(totTime/10,Max/7)
 end
 
-function DPSMate.Modules.DetailsHABTotal:UpdateStackedGraph()
+function DPSMate.Modules.DetailsAbsorbsTotal:UpdateStackedGraph()
 	g:Hide()
-	DPSMate_Details_HABTotal_DiagramLine:SetWidth(870)
-	DPSMate_Details_HABTotal_DiagramLegend:Hide()
+	DPSMate_Details_AbsorbsTotal_DiagramLine:SetWidth(870)
+	DPSMate_Details_AbsorbsTotal_DiagramLegend:Hide()
 	
 	local Data1 = {}
 	local label = {}
 	local maxX, maxY = 0,0
 	local p = {}
-	for cat, val in DPSMateEHealing[curKey] do
-		local temp = {}
-		for ca, va in val do
-			if ca~="i" then
-				for c,v in va["i"] do
-					local i = 1
-					while true do
-						if not temp[i] then
-							tinsert(temp, i, {c,v})
-							break
-						elseif c<=temp[i][1] then
-							tinsert(temp, i, {c,v})
-							break
-						end
-						i=i+1
-					end
-					if p[c] then
-						p[c] = p[c] + v
-					else
-						p[c] = v
-					end
-					if maxX == 0 or maxX<c then
-						maxX = c
-					end
-				end
-			end
-		end
-		tinsert(label, 1, DPSMate:GetUserById(cat))
-		tinsert(Data1, 1, temp)
-	end
-	
 	for cat, val in db do
 		for qq, uu in val do
 			local temp = {}
@@ -182,9 +150,6 @@ function DPSMate.Modules.DetailsHABTotal:UpdateStackedGraph()
 			tinsert(Data1, 1, temp)
 		end
 	end
-	
-	
-	
 	for cat, val in p do
 		if maxY<val then
 			maxY = val
@@ -199,7 +164,7 @@ function DPSMate.Modules.DetailsHABTotal:UpdateStackedGraph()
 	toggle=true
 end
 
-function DPSMate.Modules.DetailsHABTotal:ToggleMode()
+function DPSMate.Modules.DetailsAbsorbsTotal:ToggleMode()
 	if toggle then
 		self:UpdateLineGraph()
 		toggle=false
@@ -209,58 +174,51 @@ function DPSMate.Modules.DetailsHABTotal:ToggleMode()
 	end
 end
 
-function DPSMate.Modules.DetailsHABTotal:GetSummarizedTable(arr)
+function DPSMate.Modules.DetailsAbsorbsTotal:GetSummarizedTable(arr)
 	return DPSMate.Sync:GetSummarizedTable(arr)
 end
 
-function DPSMate.Modules.DetailsHABTotal:CreateGraphTable()
+function DPSMate.Modules.DetailsAbsorbsTotal:CreateGraphTable()
 	local lines = {}
 	for i=1, 8 do
 		-- Horizontal
-		lines[i] = DPSMate.Options.graph:DrawLine(DPSMate_Details_HABTotal_PlayerList, 10, 270-i*30, 860, 270-i*30, 20, {0.5,0.5,0.5,0.5}, "BACKGROUND")
+		lines[i] = DPSMate.Options.graph:DrawLine(DPSMate_Details_AbsorbsTotal_PlayerList, 10, 270-i*30, 860, 270-i*30, 20, {0.5,0.5,0.5,0.5}, "BACKGROUND")
 		lines[i]:Show()
 	end
 	-- Vertical
-	lines[9] = DPSMate.Options.graph:DrawLine(DPSMate_Details_HABTotal_PlayerList, 40, 260, 40, 10, 20, {0.5,0.5,0.5,0.5}, "BACKGROUND")
+	lines[9] = DPSMate.Options.graph:DrawLine(DPSMate_Details_AbsorbsTotal_PlayerList, 40, 260, 40, 10, 20, {0.5,0.5,0.5,0.5}, "BACKGROUND")
 	lines[9]:Show()
 	
-	lines[10] = DPSMate.Options.graph:DrawLine(DPSMate_Details_HABTotal_PlayerList, 170, 260, 170, 10, 20, {0.5,0.5,0.5,0.5}, "BACKGROUND")
+	lines[10] = DPSMate.Options.graph:DrawLine(DPSMate_Details_AbsorbsTotal_PlayerList, 170, 260, 170, 10, 20, {0.5,0.5,0.5,0.5}, "BACKGROUND")
 	lines[10]:Show()
 	
-	lines[11] = DPSMate.Options.graph:DrawLine(DPSMate_Details_HABTotal_PlayerList, 540, 260, 540, 10, 20, {0.5,0.5,0.5,0.5}, "BACKGROUND")
+	lines[11] = DPSMate.Options.graph:DrawLine(DPSMate_Details_AbsorbsTotal_PlayerList, 510, 260, 510, 10, 20, {0.5,0.5,0.5,0.5}, "BACKGROUND")
 	lines[11]:Show()
 	
-	lines[12] = DPSMate.Options.graph:DrawLine(DPSMate_Details_HABTotal_PlayerList, 600, 260, 600, 10, 20, {0.5,0.5,0.5,0.5}, "BACKGROUND")
+	lines[12] = DPSMate.Options.graph:DrawLine(DPSMate_Details_AbsorbsTotal_PlayerList, 570, 260, 570, 10, 20, {0.5,0.5,0.5,0.5}, "BACKGROUND")
 	lines[12]:Show()
 	
-	lines[13] = DPSMate.Options.graph:DrawLine(DPSMate_Details_HABTotal_PlayerList, 660, 260, 660, 10, 20, {0.5,0.5,0.5,0.5}, "BACKGROUND")
+	lines[13] = DPSMate.Options.graph:DrawLine(DPSMate_Details_AbsorbsTotal_PlayerList, 630, 260, 630, 10, 20, {0.5,0.5,0.5,0.5}, "BACKGROUND")
 	lines[13]:Show()
 	
-	lines[13] = DPSMate.Options.graph:DrawLine(DPSMate_Details_HABTotal_PlayerList, 740, 260, 740, 10, 20, {0.5,0.5,0.5,0.5}, "BACKGROUND")
-	lines[13]:Show()
+	lines[14] = DPSMate.Options.graph:DrawLine(DPSMate_Details_AbsorbsTotal_PlayerList, 690, 260, 690, 10, 20, {0.5,0.5,0.5,0.5}, "BACKGROUND")
+	lines[14]:Show()
+	
+	lines[15] = DPSMate.Options.graph:DrawLine(DPSMate_Details_AbsorbsTotal_PlayerList, 750, 260, 750, 10, 20, {0.5,0.5,0.5,0.5}, "BACKGROUND")
+	lines[15]:Show()
+	
+	lines[16] = DPSMate.Options.graph:DrawLine(DPSMate_Details_AbsorbsTotal_PlayerList, 810, 260, 810, 10, 20, {0.5,0.5,0.5,0.5}, "BACKGROUND")
+	lines[16]:Show()
 end
 
-function DPSMate.Modules.DetailsHABTotal:AddTotalDataSeries()
+function DPSMate.Modules.DetailsAbsorbsTotal:AddTotalDataSeries()
 	local sumTable, newArr = {[0]=0}, {}
-	local tl = DPSMate:TableLength(DPSMateEHealing)
-	tl = floor(tl-0.3*tl)
+	local temp = {}
 	
-	for cat, val in DPSMateEHealing[curKey] do
-		for ca, va in val do
-			if ca~="i" and va["i"] then
-				for c,v in va["i"] do
-					if sumTable[c] then
-						sumTable[c] = sumTable[c] + v
-					else
-						sumTable[c] = v
-					end
-				end
-			end
-		end
-	end
 	for cat, val in db do
 		for qq, uu in val do
 			local ownername = DPSMate:GetUserById(qq)
+			temp[ownername] = true
 			for ca, va in uu["i"] do
 				local i, dmg = 1, 5
 				if DPSMateDamageTaken[1][cat] then
@@ -286,6 +244,11 @@ function DPSMate.Modules.DetailsHABTotal:AddTotalDataSeries()
 			end
 		end
 	end
+	
+	local tl = DPSMate:TableLength(temp)
+	tl = ceil(tl-0.3*tl)
+	temp = nil
+	
 	for cat, val in sumTable do
 		local i=1
 		while true do
@@ -312,25 +275,8 @@ function DPSMate.Modules.DetailsHABTotal:AddTotalDataSeries()
 	g:AddDataSeries(totSumTable,{{1.0,0.0,0.0,0.8}, {1.0,1.0,0.0,0.8}}, {})
 end
 
-function DPSMate.Modules.DetailsHABTotal:GetTableValues()
+function DPSMate.Modules.DetailsAbsorbsTotal:GetTableValues()
 	local arr, total = {}, 0
-	for cat, val in DPSMateEHealing[curKey] do
-		local crit, totCrit, miss, totMiss, time, last = 0, 0.000001, 0, 0.000001, 0, 0
-		local name = DPSMate:GetUserById(cat)
-		for ca, va in val do
-			if ca~="i" then
-				totCrit=totCrit+va[3]+va[2]
-				totMiss=totMiss+va[2]+va[3]
-				crit=crit+va[3]
-				miss=miss+va[2]
-			else
-				time = tonumber(strformat("%.2f", DPSMateCombatTime["effective"][curKey][name] or 0))
-			end
-		end
-		tinsert(arr, {name, val["i"], crit, miss, time, totCrit, totMiss, cat})
-		total = total + val["i"]
-	end
-	
 	local temp = {}
 	for cat, val in db do -- 28 Target
 		local PerPlayerAbsorb = 0
@@ -339,6 +285,7 @@ function DPSMate.Modules.DetailsHABTotal:GetTableValues()
 			local ownername = DPSMate:GetUserById(ca)
 			if DPSMate:ApplyFilter(k, ownername) then
 				local PerOwnerAbsorb = 0
+				local abAbsorb = {}
 				for c, v in pairs(va) do -- Power Word: Shield
 					if c~="i" then
 						local shieldname = DPSMate:GetAbilityById(c)
@@ -384,31 +331,26 @@ function DPSMate.Modules.DetailsHABTotal:GetTableValues()
 							PerAbilityAbsorb = PerAbilityAbsorb+PerShieldAbsorb
 						end
 						PerOwnerAbsorb = PerOwnerAbsorb+PerAbilityAbsorb
+						if abAbsorb[DPSMate.DB.ShieldFlags[shieldname] or 0] then
+							abAbsorb[DPSMate.DB.ShieldFlags[shieldname] or 0] = abAbsorb[DPSMate.DB.ShieldFlags[shieldname] or 0] + PerAbilityAbsorb
+						else
+							abAbsorb[DPSMate.DB.ShieldFlags[shieldname] or 0] = PerAbilityAbsorb
+						end
 					end
 				end
 				PerPlayerAbsorb = PerPlayerAbsorb+PerOwnerAbsorb
 				if temp[ownername] then
 					temp[ownername][2] = temp[ownername][2] + PerOwnerAbsorb
-					temp[ownername][4] = temp[ownername][4] + totHits
-					temp[ownername][6] = temp[ownername][6] + totHits
-					temp[ownername][7] = temp[ownername][7] + totHits
+					temp[ownername][3] = temp[ownername][3] + ((abAbsorb[0] or 0)+(abAbsorb[1] or 0))
+					temp[ownername][4] = temp[ownername][4] + (abAbsorb[3] or 0)
+					temp[ownername][5] = temp[ownername][5] + (abAbsorb[2] or 0)
+					temp[ownername][6] = temp[ownername][6] + (abAbsorb[4] or 0)
+					temp[ownername][7] = temp[ownername][7] + (abAbsorb[5] or 0)
+					temp[ownername][8] = temp[ownername][8] + (abAbsorb[6] or 0)
+					temp[ownername][9] = temp[ownername][9] + (abAbsorb[7] or 0)
 				else
-					temp[ownername] = {ownername, PerPlayerAbsorb, 0, totHits, DPSMateCombatTime["effective"][curKey][ownername] or 0, totHits, totHits, ca}
+					temp[ownername] = {ownername, PerPlayerAbsorb, (abAbsorb[0] or 0)+(abAbsorb[1] or 0), abAbsorb[3] or 0, abAbsorb[2] or 0, abAbsorb[4] or 0, abAbsorb[5] or 0, abAbsorb[6] or 0, abAbsorb[7] or 0}
 				end
-			end
-		end
-	end
-	
-	-- Merging!
-	for ca, va in temp do
-		for c, v in arr do
-			if v[1]==ca and temp[ca] then
-				arr[c][2] = arr[c][2] + va[2]
-				arr[c][4] = arr[c][4] + va[4]
-				arr[c][6] = arr[c][6] + va[4]
-				arr[c][7] = arr[c][7] + va[4]  
-				total = total + va[2]
-				temp[ca] = nil
 			end
 		end
 	end
@@ -423,68 +365,47 @@ function DPSMate.Modules.DetailsHABTotal:GetTableValues()
 	
 	local newArr = {}
 	for cat, val in arr do
-		if val[2]>0 then
-			local i = 1
-			while true do
-				if (not newArr[i]) then
+		local i = 1
+		while true do
+			if (not newArr[i]) then
+				tinsert(newArr, i, val)
+				break
+			else
+				if newArr[i][2] < val[2] then
 					tinsert(newArr, i, val)
 					break
-				else
-					if newArr[i][2] < val[2] then
-						tinsert(newArr, i, val)
-						break
-					end
 				end
-				i=i+1
 			end
+			i=i+1
 		end
 	end
 	return newArr, total
 end
 
-function DPSMate.Modules.DetailsHABTotal:CheckButtonCheckAll(obj)
+function DPSMate.Modules.DetailsAbsorbsTotal:CheckButtonCheckAll(obj)
 	if obj.act then
 		obj.act = false
 		for i=1, 30 do 
-			local ob = _G("DPSMate_Details_HABTotal_PlayerList_Child_R"..i)
+			local ob = _G("DPSMate_Details_AbsorbsTotal_PlayerList_Child_R"..i)
 			if ob.user then
 				self:RemoveLinesButton(ob.user, ob)
-				_G("DPSMate_Details_HABTotal_PlayerList_Child_R"..i.."_CB"):SetChecked(obj.act)
+				_G("DPSMate_Details_AbsorbsTotal_PlayerList_Child_R"..i.."_CB"):SetChecked(obj.act)
 			end
 		end
 	else
 		obj.act = true
 		for i=1, 30 do 
-			local ob = _G("DPSMate_Details_HABTotal_PlayerList_Child_R"..i)
+			local ob = _G("DPSMate_Details_AbsorbsTotal_PlayerList_Child_R"..i)
 			if ob.user then
 				self:AddLinesButton(ob.user, ob)
-				_G("DPSMate_Details_HABTotal_PlayerList_Child_R"..i.."_CB"):SetChecked(obj.act)
+				_G("DPSMate_Details_AbsorbsTotal_PlayerList_Child_R"..i.."_CB"):SetChecked(obj.act)
 			end
 		end
 	end
 end
 
-function DPSMate.Modules.DetailsHABTotal:SortLineTable(uid)
+function DPSMate.Modules.DetailsAbsorbsTotal:SortLineTable(uid)
 	local newArr = {}
-	-- user
-	for cat, val in DPSMateEHealing[curKey][uid] do
-		if cat~="i" and val["i"] then
-			for c,v in val["i"] do
-				local i = 1
-				while true do
-					if not newArr[i] then
-						tinsert(newArr, i, {c,v})
-						break
-					elseif c<=newArr[i][1] then
-						tinsert(newArr, i, {c,v})
-						break
-					end
-					i = i+1
-				end
-			end
-		end
-	end
-	
 	local ownername = DPSMate:GetUserById(uid)
 	for cat, val in db do
 		if val[uid] then
@@ -523,7 +444,7 @@ function DPSMate.Modules.DetailsHABTotal:SortLineTable(uid)
 	return newArr
 end
 
-function DPSMate.Modules.DetailsHABTotal:AddLinesButton(uid, obj)
+function DPSMate.Modules.DetailsAbsorbsTotal:AddLinesButton(uid, obj)
 	local sumTable = self:SortLineTable(uid)
 	
 	sumTable = self:GetSummarizedTable(sumTable)
@@ -537,15 +458,15 @@ function DPSMate.Modules.DetailsHABTotal:AddLinesButton(uid, obj)
 	tinsert(buttons, {ColorTable[1], uid, sumTable})
 	tremove(ColorTable, 1)
 	g2:Hide()
-	DPSMate_Details_HABTotal_DiagramLine:SetWidth(770)
-	DPSMate_Details_HABTotal_DiagramLegend:Show()
+	DPSMate_Details_AbsorbsTotal_DiagramLine:SetWidth(770)
+	DPSMate_Details_AbsorbsTotal_DiagramLegend:Show()
 	g:Show()
 	toggle=false
 	obj.act = true
 	self:LoadLegendButtons()
 end
 
-function DPSMate.Modules.DetailsHABTotal:RemoveLinesButton(uid, obj)
+function DPSMate.Modules.DetailsAbsorbsTotal:RemoveLinesButton(uid, obj)
 	obj.act = false
 	g:ResetData()
 	for cat, val in pairs(buttons) do
@@ -567,48 +488,48 @@ function DPSMate.Modules.DetailsHABTotal:RemoveLinesButton(uid, obj)
 	end
 	g:SetGridSpacing(totTime/10,Max/7)
 	g2:Hide()
-	DPSMate_Details_HABTotal_DiagramLine:SetWidth(770)
-	DPSMate_Details_HABTotal_DiagramLegend:Show()
+	DPSMate_Details_AbsorbsTotal_DiagramLine:SetWidth(770)
+	DPSMate_Details_AbsorbsTotal_DiagramLegend:Show()
 	g:Show()
 	toggle = false
 	self:LoadLegendButtons()
 end
 
-function DPSMate.Modules.DetailsHABTotal:LoadLegendButtons()
+function DPSMate.Modules.DetailsAbsorbsTotal:LoadLegendButtons()
 	for i=1, 30 do
-		_G("DPSMate_Details_HABTotal_DiagramLegend_Child_C"..i):Hide()
+		_G("DPSMate_Details_AbsorbsTotal_DiagramLegend_Child_C"..i):Hide()
 	end
 	for cat, val in buttons do
 		local name = DPSMate:GetUserById(val[2])
-		local font = _G("DPSMate_Details_HABTotal_DiagramLegend_Child_C"..cat.."_Font")
+		local font = _G("DPSMate_Details_AbsorbsTotal_DiagramLegend_Child_C"..cat.."_Font")
 		font:SetText(name)
 		font:SetTextColor(DPSMate:GetClassColor(DPSMateUser[name][2]))
-		_G("DPSMate_Details_HABTotal_DiagramLegend_Child_C"..cat.."_SwatchBg"):SetTexture(val[1][1],val[1][2],val[1][3],1)
-		_G("DPSMate_Details_HABTotal_DiagramLegend_Child_C"..cat):Show()
+		_G("DPSMate_Details_AbsorbsTotal_DiagramLegend_Child_C"..cat.."_SwatchBg"):SetTexture(val[1][1],val[1][2],val[1][3],1)
+		_G("DPSMate_Details_AbsorbsTotal_DiagramLegend_Child_C"..cat):Show()
 	end
 end
 
-function DPSMate.Modules.DetailsHABTotal:RoundToH(val)
+function DPSMate.Modules.DetailsAbsorbsTotal:RoundToH(val)
 	if val>100 then
 		return 100
 	end
 	return val
 end
 
-function DPSMate.Modules.DetailsHABTotal:CompareVal(x,y)
+function DPSMate.Modules.DetailsAbsorbsTotal:CompareVal(x,y)
 	if x>y then
 		return y
 	end
 	return x
 end
 
-function DPSMate.Modules.DetailsHABTotal:LoadTable()
+function DPSMate.Modules.DetailsAbsorbsTotal:LoadTable()
 	local arr, total = self:GetTableValues()
 	local i = 0
 	for i=1, 30 do
-		_G("DPSMate_Details_HABTotal_PlayerList_Child_R"..i):Hide()
-		_G("DPSMate_Details_HABTotal_PlayerList_Child_R"..i.."_CB"):SetChecked(false)
-		_G("DPSMate_Details_HABTotal_PlayerList_Child_R"..i.."_CB").act = false
+		_G("DPSMate_Details_AbsorbsTotal_PlayerList_Child_R"..i):Hide()
+		_G("DPSMate_Details_AbsorbsTotal_PlayerList_Child_R"..i.."_CB"):SetChecked(false)
+		_G("DPSMate_Details_AbsorbsTotal_PlayerList_Child_R"..i.."_CB").act = false
 	end
 	for cat, val in arr do
 		if DPSMateUser[val[1]][4] then
@@ -616,32 +537,36 @@ function DPSMate.Modules.DetailsHABTotal:LoadTable()
 		else
 			if (cat-i)>30 then break end
 			local r,g,b = DPSMate:GetClassColor(DPSMateUser[val[1]][2])
-			_G("DPSMate_Details_HABTotal_PlayerList_Child"):SetHeight((cat-i)*30)
-			_G("DPSMate_Details_HABTotal_PlayerList_Child_R"..(cat-i).."_Name"):SetText(val[1])
-			_G("DPSMate_Details_HABTotal_PlayerList_Child_R"..(cat-i).."_Name"):SetTextColor(r,g,b)
-			_G("DPSMate_Details_HABTotal_PlayerList_Child_R"..(cat-i).."_Amount"):SetText(val[2])
-			_G("DPSMate_Details_HABTotal_PlayerList_Child_R"..(cat-i).."_StatusBar"):SetValue(100*val[2]/arr[1][2])
-			_G("DPSMate_Details_HABTotal_PlayerList_Child_R"..(cat-i).."_StatusBar"):SetStatusBarColor(r,g,b, 1)
-			_G("DPSMate_Details_HABTotal_PlayerList_Child_R"..(cat-i).."_AmountPerc"):SetText(strformat("%.1f", 100*val[2]/total).."%")
-			_G("DPSMate_Details_HABTotal_PlayerList_Child_R"..(cat-i).."_Crit"):SetText(strformat("%.1f", 100*val[3]/val[6]).."%")
-			_G("DPSMate_Details_HABTotal_PlayerList_Child_R"..(cat-i).."_Hit"):SetText(strformat("%.1f", 100*val[4]/val[7]).."%")
-			_G("DPSMate_Details_HABTotal_PlayerList_Child_R"..(cat-i).."_HPS"):SetText(strformat("%.1f", val[2]/cbt))
-			_G("DPSMate_Details_HABTotal_PlayerList_Child_R"..(cat-i).."_ActiveTime"):SetText(self:CompareVal(ceil(val[5]), ceil(cbt)).."s | "..strformat("%.1f", self:RoundToH(100*val[5]/cbt)).."%")
-			_G("DPSMate_Details_HABTotal_PlayerList_Child_R"..(cat-i)).user = val[8]
-			_G("DPSMate_Details_HABTotal_PlayerList_Child_R"..(cat-i)):Show()
+			_G("DPSMate_Details_AbsorbsTotal_PlayerList_Child"):SetHeight((cat-i)*30)
+			_G("DPSMate_Details_AbsorbsTotal_PlayerList_Child_R"..(cat-i).."_Name"):SetText(val[1])
+			_G("DPSMate_Details_AbsorbsTotal_PlayerList_Child_R"..(cat-i).."_Name"):SetTextColor(r,g,b)
+			_G("DPSMate_Details_AbsorbsTotal_PlayerList_Child_R"..(cat-i).."_Amount"):SetText(val[2])
+			_G("DPSMate_Details_AbsorbsTotal_PlayerList_Child_R"..(cat-i).."_StatusBar"):SetValue(100*val[2]/arr[1][2])
+			_G("DPSMate_Details_AbsorbsTotal_PlayerList_Child_R"..(cat-i).."_StatusBar"):SetStatusBarColor(r,g,b, 1)
+			_G("DPSMate_Details_AbsorbsTotal_PlayerList_Child_R"..(cat-i).."_AmountPerc"):SetText(strformat("%.1f", 100*val[2]/total).."%")
+			_G("DPSMate_Details_AbsorbsTotal_PlayerList_Child_R"..(cat-i).."_All"):SetText(strformat("%.1f", 100*val[3]/val[2]).."%")
+			_G("DPSMate_Details_AbsorbsTotal_PlayerList_Child_R"..(cat-i).."_FIR"):SetText(strformat("%.1f", 100*val[4]/val[2]).."%")
+			_G("DPSMate_Details_AbsorbsTotal_PlayerList_Child_R"..(cat-i).."_FRR"):SetText(strformat("%.1f", 100*val[5]/val[2]).."%")
+			_G("DPSMate_Details_AbsorbsTotal_PlayerList_Child_R"..(cat-i).."_NAR"):SetText(strformat("%.1f", 100*val[6]/val[2]).."%")
+			_G("DPSMate_Details_AbsorbsTotal_PlayerList_Child_R"..(cat-i).."_SHR"):SetText(strformat("%.1f", 100*val[7]/val[2]).."%")
+			_G("DPSMate_Details_AbsorbsTotal_PlayerList_Child_R"..(cat-i).."_ARR"):SetText(strformat("%.1f", 100*val[8]/val[2]).."%")
+			_G("DPSMate_Details_AbsorbsTotal_PlayerList_Child_R"..(cat-i)).user = val[1]
+			_G("DPSMate_Details_AbsorbsTotal_PlayerList_Child_R"..(cat-i)):Show()
 		end
 	end
 end
 
-function DPSMate.Modules.DetailsHABTotal:ShowTooltip(user, obj)
-	local name = DPSMate:GetUserById(user)
-	local a,b,c = DPSMate.Modules.HealingAndAbsorbs:EvalTable(DPSMateUser[name], curKey)
+function DPSMate.Modules.DetailsAbsorbsTotal:ShowTooltip(user, obj)
+	local a,b,c = DPSMate.Modules.Absorbs:EvalTable(DPSMateUser[user], curKey)
+	local pet = ""
 	GameTooltip:SetOwner(obj, "TOPLEFT")
-	GameTooltip:AddLine(name.."'s "..strlower(DPSMate.L["tehealing"]), 1,1,1)
-	if DPSMateSettings["informativetooltips"] then
-		for i=1, DPSMateSettings["subviewrows"] do
-			if not a[i] then break end
-			GameTooltip:AddDoubleLine(i..". "..DPSMate:GetAbilityById(a[i]),c[i][1].." ("..strformat("%.2f", 100*c[i][1]/b).."%)",1,1,1,1,1,1)
+	GameTooltip:AddLine(user.."'s "..strlower(DPSMate.L["absorbeddmg"]), 1,1,1)
+	for i=1, DPSMateSettings["subviewrows"] do
+		if not a[i] then break end
+		GameTooltip:AddDoubleLine(i..". "..DPSMate:GetUserById(a[i]),c[i][1].." ("..strformat("%2.f", 100*c[i][1]/b).."%)",1,1,1,1,1,1)
+		for p=1, 3 do
+			if not c[i][2][p] then break end
+			GameTooltip:AddDoubleLine("      "..p..". "..DPSMate:GetAbilityById(c[i][2][p]),c[i][3][p][1].." ("..strformat("%.2f", 100*c[i][3][p][1]/c[i][1]).."%)",0.5,0.5,0.5,0.5,0.5,0.5)
 		end
 	end
 	GameTooltip:Show()
