@@ -166,6 +166,8 @@ modules\DPSMate_Details_Auras.lua
 modules\DPSMate_Details_Auras.xml
 modules\DPSMate_Details_Procs.lua
 modules\DPSMate_Details_Procs.xml
+modules\DPSMate_Details_ProcsTotal.lua
+modules\DPSMate_Details_ProcsTotal.xml
 modules\DPSMate_Details_Casts.lua
 modules\DPSMate_Details_Casts.xml
 modules\DPSMate_Details_CastsTotal.lua

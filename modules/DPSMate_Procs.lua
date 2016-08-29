@@ -154,8 +154,7 @@ function DPSMate.Modules.Procs:OpenDetails(obj, key, bool)
 end
 
 function DPSMate.Modules.Procs:OpenTotalDetails(obj, key)
-	--DPSMate.Modules.DetailsDamageTotal:UpdateDetails(obj, key)
-	DPSMate:SendMessage("This feature will be added soon!")
+	DPSMate.Modules.DetailsProcsTotal:UpdateDetails(obj, key)
 end
 
 
