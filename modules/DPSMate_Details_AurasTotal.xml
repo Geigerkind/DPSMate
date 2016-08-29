@@ -1,0 +1,285 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+    ..\..\..\FrameXML\UI.xsd">
+	
+	<Frame name="DPSMate_Template_AurasTotal_Box_Row" virtual="true">
+		<Size x="680" y="30" />
+		<Layers>
+			<Layer level="ARTWORK">
+				<Texture name="$parent_Icon" file="Interface\AddOns\DPSMate\images\dummy">
+					<Size x="24" y="24" />
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset x="4" y="0" />
+						</Anchor>
+					</Anchors>
+				</Texture>
+				<FontString name="$parent_Name" inherits="GameFontNormalSmall" justifyH="LEFT">
+					<Size x="200" y="30" />
+					<Anchors>
+						<Anchor point="LEFT" relativeTo="$parent_Icon" relativePoint="RIGHT">
+							<Offset x="5" y="0" />
+						</Anchor>
+					</Anchors>
+					<Color r="1" g="1" b="1" />
+				</FontString>
+				<FontString name="$parent_Count" inherits="GameFontNormalSmall">
+					<Size x="75" y="30" />
+					<Anchors>
+						<Anchor point="LEFT" relativeTo="$parent_Name" relativePoint="RIGHT">
+							<Offset x="-5" y="0" />
+						</Anchor>
+					</Anchors>
+					<Color r="1" g="1" b="1" />
+				</FontString>
+				<FontString name="$parent_CBT" inherits="GameFontNormalSmall">
+					<Size x="75" y="30" />
+					<Anchors>
+						<Anchor point="LEFT" relativeTo="$parent_Count" relativePoint="RIGHT">
+							<Offset x="-5" y="0" />
+						</Anchor>
+					</Anchors>
+					<Color r="1" g="1" b="1" />
+				</FontString>
+				<FontString name="$parent_CBTPerc" inherits="GameFontNormalSmall">
+					<Size x="50" y="30" />
+					<Anchors>
+						<Anchor point="LEFT" relativeTo="$parent_CBT" relativePoint="RIGHT">
+							<Offset x="245" y="0" />
+						</Anchor>
+					</Anchors>
+					<Color r="1" g="1" b="1" />
+				</FontString>
+			</Layer>
+		</Layers>
+		<Frames>
+			<StatusBar name="$parent_StatusBar">
+				<Size x="250" y="12" />
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="$parent_CBT" relativePoint="RIGHT" />
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						this:SetMinMaxValues(1,100)
+						this:SetStatusBarTexture("Interface\\AddOns\\DPSMate\\images\\statusbar\\Healbot")
+						this:SetValue(100)
+					</OnLoad>
+				</Scripts>
+			</StatusBar>
+		</Frames>
+	</Frame>
+	
+	<ScrollFrame name="DPSMate_Template_AurasTotal_Box" virtual="true">
+		<Size x="680" y="225" />
+		<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+			<BackgroundInsets left="6" right="6" top="6" bottom="6" />
+			<TileSize val="16" />
+			<EdgeSize val="16" />
+			<Color r="0.157" g="0.08" b="0.06" a="0.5" />
+		</Backdrop>
+		<Layers>
+			<Layer level="ARTWORK">
+				<FontString name="$parent_Title" inherits="GameFontNormalHuge" justifyH="LEFT">
+					<Size x="870" y="30" />
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset x="10" y="30" />
+						</Anchor>
+					</Anchors>
+					<Color r="1" g="1" b="1" />
+				</FontString>
+				<FontString name="$parent_Name" inherits="GameFontNormal">
+					<Size x="230" y="30" />
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset x="-5" y="-5" />
+						</Anchor>
+					</Anchors>
+				</FontString>
+				<FontString name="$parent_Count" inherits="GameFontNormal">
+					<Size x="75" y="30" />
+					<Anchors>
+						<Anchor point="LEFT" relativeTo="$parent_Name" relativePoint="RIGHT">
+							<Offset x="5" y="0" />
+						</Anchor>
+					</Anchors>
+				</FontString>
+				<FontString name="$parent_CBT" inherits="GameFontNormal">
+					<Size x="375" y="30" />
+					<Anchors>
+						<Anchor point="LEFT" relativeTo="$parent_Count" relativePoint="RIGHT">
+							<Offset x="0" y="0" />
+						</Anchor>
+					</Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+		<Frames>
+			<Frame name="$parent_Row1" inherits="DPSMate_Template_AurasTotal_Box_Row">
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset x="5" y="-35" />
+					</Anchor>
+				</Anchors>
+			</Frame>
+			<Frame name="$parent_Row2" inherits="DPSMate_Template_AurasTotal_Box_Row">
+				<Anchors>
+					<Anchor point="TOP" relativeTo="$parent_Row1" relativePoint="BOTTOM" />
+				</Anchors>
+			</Frame>
+			<Frame name="$parent_Row3" inherits="DPSMate_Template_AurasTotal_Box_Row">
+				<Anchors>
+					<Anchor point="TOP" relativeTo="$parent_Row2" relativePoint="BOTTOM" />
+				</Anchors>
+			</Frame>
+			<Frame name="$parent_Row4" inherits="DPSMate_Template_AurasTotal_Box_Row">
+				<Anchors>
+					<Anchor point="TOP" relativeTo="$parent_Row3" relativePoint="BOTTOM" />
+				</Anchors>
+			</Frame>
+			<Frame name="$parent_Row5" inherits="DPSMate_Template_AurasTotal_Box_Row">
+				<Anchors>
+					<Anchor point="TOP" relativeTo="$parent_Row4" relativePoint="BOTTOM" />
+				</Anchors>
+			</Frame>
+			<Frame name="$parent_Row6" inherits="DPSMate_Template_AurasTotal_Box_Row">
+				<Anchors>
+					<Anchor point="TOP" relativeTo="$parent_Row5" relativePoint="BOTTOM" />
+				</Anchors>
+			</Frame>
+		</Frames>
+	</ScrollFrame>
+	
+	<Frame name="DPSMate_Details_AurasTotal" parent="UIParent" movable="true" hidden="true">
+		<Size x="710" y="800" />
+		<Anchors>
+			<Anchor point="CENTER" />
+		</Anchors>
+		<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+			<BackgroundInsets left="6" right="6" top="6" bottom="6" />
+			<TileSize val="16" />
+			<EdgeSize val="16" />
+			<Color r="0.157" g="0.08" b="0.06" a="1" />
+		</Backdrop>
+		<Layers>
+			<Layer level="ARTWORK">
+				<FontString name="$parent_Title" inherits="GameFontNormalHuge" justifyH="LEFT" justifyV="CENTER">
+					<Size x="900" y="40" />
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset x="20" y="-10" />
+						</Anchor>
+					</Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+		<Scripts>
+			<OnLoad>
+				this:SetClampedToScreen()
+				getglobal(this:GetName().."_Title"):SetFont("Fonts\\FRIZQT__.TTF", 24)
+			</OnLoad>
+			<OnMouseDown>
+				this:StartMoving()
+			</OnMouseDown>
+			<OnMouseUp>
+				this:StopMovingOrSizing()
+			</OnMouseUp>
+		</Scripts>
+		<Frames>
+			<Button name="$parent_CloseButton">
+				<Size x="30" y="30" />
+				<Anchors>
+					<Anchor point="TOPRIGHT" relativeTo="$parent" relativePoint="TOPRIGHT">
+						<Offset>
+							<AbsDimension x="0" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnEnter>
+						GameTooltip:SetOwner(this, "ANCHOR_RIGHT")
+						GameTooltip:SetText(DPSMate.L["close"], nil, nil, nil, nil, 1)
+						GameTooltip:Show()
+					</OnEnter>
+					<OnLeave>
+						GameTooltip:Hide()
+					</OnLeave>
+					<OnClick>
+						DPSMate_Details_AurasTotal:Hide()
+						PlaySound("igMainMenuOptionCheckBoxOff")
+					</OnClick>
+				</Scripts>
+				<NormalTexture file="Interface\Buttons\UI-Panel-MinimizeButton-Up"/>
+				<PushedTexture file="Interface\Buttons\UI-Panel-MinimizeButton-Down"/>
+				<HighlightTexture file="Interface\Buttons\UI-Panel-MinimizeButton-Highlight" alphaMode="ADD"/>
+			</Button>
+			<Frame name="$parent_DiagramLine">
+				<Size x="680" y="200" />
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset x="15" y="-65" />
+					</Anchor>
+				</Anchors>
+				<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+					<BackgroundInsets left="6" right="6" top="6" bottom="6" />
+					<TileSize val="16" />
+					<EdgeSize val="16" />
+					<Color r="0.157" g="0.08" b="0.06" a="0.5" />
+				</Backdrop>
+			</Frame>
+			<ScrollFrame name="$parent_Buffs" inherits="DPSMate_Template_AurasTotal_Box">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parent_DiagramLine" relativePoint="BOTTOMLEFT">
+						<Offset x="0" y="-35" />
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						getglobal(this:GetName().."_Title"):SetText(DPSMate.L["buffs"])
+						getglobal(this:GetName().."_Name"):SetText(DPSMate.L["bname"])
+						getglobal(this:GetName().."_Count"):SetText(DPSMate.L["count"])
+						getglobal(this:GetName().."_CBT"):SetText(DPSMate.L["uptime"])
+						getglobal(this:GetName().."_Row1_StatusBar"):SetStatusBarColor(1,0,0)
+						getglobal(this:GetName().."_Row2_StatusBar"):SetStatusBarColor(0,1,0)
+						getglobal(this:GetName().."_Row3_StatusBar"):SetStatusBarColor(0,0,1)
+						getglobal(this:GetName().."_Row4_StatusBar"):SetStatusBarColor(0.5,0,0)
+						getglobal(this:GetName().."_Row5_StatusBar"):SetStatusBarColor(0,0.5,0)
+						getglobal(this:GetName().."_Row6_StatusBar"):SetStatusBarColor(0,0,0.5)
+						DPSMate.Modules.DetailsAurasTotal:CreateGraphTable(this)
+						this:SetVerticalScroll(0)
+					</OnLoad>
+					<OnMouseWheel>
+						DPSMate.Modules.DetailsAurasTotal:UpdateBuffs(arg1)
+					</OnMouseWheel>
+				</Scripts>
+			</ScrollFrame>
+			<ScrollFrame name="$parent_Debuffs" inherits="DPSMate_Template_AurasTotal_Box">
+				<Anchors>
+					<Anchor point="TOP" relativeTo="$parent_Buffs" relativePoint="BOTTOM">
+						<Offset x="0" y="-35" />
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						getglobal(this:GetName().."_Title"):SetText(DPSMate.L["debuffs"])
+						getglobal(this:GetName().."_Name"):SetText(DPSMate.L["bname"])
+						getglobal(this:GetName().."_Count"):SetText(DPSMate.L["count"])
+						getglobal(this:GetName().."_CBT"):SetText(DPSMate.L["uptime"])
+						getglobal(this:GetName().."_Row1_StatusBar"):SetStatusBarColor(1,0,0)
+						getglobal(this:GetName().."_Row2_StatusBar"):SetStatusBarColor(0,1,0)
+						getglobal(this:GetName().."_Row3_StatusBar"):SetStatusBarColor(0,0,1)
+						getglobal(this:GetName().."_Row4_StatusBar"):SetStatusBarColor(0.5,0,0)
+						getglobal(this:GetName().."_Row5_StatusBar"):SetStatusBarColor(0,0.5,0)
+						getglobal(this:GetName().."_Row6_StatusBar"):SetStatusBarColor(0,0,0.5)
+						DPSMate.Modules.DetailsAurasTotal:CreateGraphTable(this)
+						this:SetVerticalScroll(0)
+					</OnLoad>
+					<OnMouseWheel>
+						DPSMate.Modules.DetailsAurasTotal:UpdateDebuffs(arg1)
+					</OnMouseWheel>
+				</Scripts>
+			</ScrollFrame>
+		</Frames>
+	</Frame>
+</Ui>

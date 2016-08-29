@@ -465,4 +465,5 @@ if (GetLocale() == "deDE") then
 	DPSMate.L["AutoAttack"] = "Angreifen"
 	DPSMate.L["castssum"] = "Zauberübersicht"
 	DPSMate.L["procssum"] "Procsübersicht"
+	DPSMate.L["aurassum"] = "Aura Übersicht"
 end

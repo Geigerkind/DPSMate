@@ -164,6 +164,8 @@ modules\DPSMate_Details_LiftMagicReceived.lua
 modules\DPSMate_Details_LiftMagicReceived.xml
 modules\DPSMate_Details_Auras.lua
 modules\DPSMate_Details_Auras.xml
+modules\DPSMate_Details_AurasTotal.lua
+modules\DPSMate_Details_AurasTotal.xml
 modules\DPSMate_Details_Procs.lua
 modules\DPSMate_Details_Procs.xml
 modules\DPSMate_Details_ProcsTotal.lua

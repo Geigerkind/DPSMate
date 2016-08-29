@@ -123,7 +123,6 @@ function DPSMate.Modules.AurasUptimers:OpenDetails(obj, key, bool)
 end
 
 function DPSMate.Modules.AurasUptimers:OpenTotalDetails(obj, key)
-	--DPSMate.Modules.DetailsDamageTotal:UpdateDetails(obj, key)
-	DPSMate:SendMessage("This feature will be added soon!")
+	DPSMate.Modules.DetailsAurasTotal:UpdateDetails(obj, key)
 end
 
