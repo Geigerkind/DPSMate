@@ -116,33 +116,36 @@ function DPSMate.Modules.DetailsDamageTotal:UpdateStackedGraph()
 	local p = {}
 	for cat, val in db do
 		local temp = {}
-		for ca, va in val do
-			if ca~="i" then
-				for c,v in va["i"] do
-					local i = 1
-					while true do
-						if not temp[i] then
-							tinsert(temp, i, {c,v})
-							break
-						elseif c<=temp[i][1] then
-							tinsert(temp, i, {c,v})
-							break
+		local user =DPSMate:GetUserById(cat)
+		if DPSMate:ApplyFilter(curKey, user) then
+			for ca, va in val do
+				if ca~="i" then
+					for c,v in va["i"] do
+						local i = 1
+						while true do
+							if not temp[i] then
+								tinsert(temp, i, {c,v})
+								break
+							elseif c<=temp[i][1] then
+								tinsert(temp, i, {c,v})
+								break
+							end
+							i=i+1
 						end
-						i=i+1
-					end
-					if p[c] then
-						p[c] = p[c] + v
-					else
-						p[c] = v
-					end
-					if maxX == 0 or maxX<c then
-						maxX = c
+						if p[c] then
+							p[c] = p[c] + v
+						else
+							p[c] = v
+						end
+						if maxX == 0 or maxX<c then
+							maxX = c
+						end
 					end
 				end
 			end
+			tinsert(label, 1, user)
+			tinsert(Data1, 1, temp)
 		end
-		tinsert(label, 1, DPSMate:GetUserById(cat))
-		tinsert(Data1, 1, temp)
 	end
 	for cat, val in p do
 		if maxY<val then
@@ -201,22 +204,29 @@ end
 
 function DPSMate.Modules.DetailsDamageTotal:AddTotalDataSeries()
 	local sumTable, newArr = {[0]=0}, {}
-	local tl = DPSMate:TableLength(db)
-	tl = ceil(tl-0.3*tl)
 	
+	local temp = {}
 	for cat, val in db do
-		for ca, va in val do
-			if ca~="i" and va["i"] then
-				for c,v in va["i"] do
-					if sumTable[c] then
-						sumTable[c] = sumTable[c] + v
-					else
-						sumTable[c] = v
+		local user = DPSMate:GetUserById(cat)
+		if DPSMate:ApplyFilter(curKey, user) then
+			temp[user] = true
+			for ca, va in val do
+				if ca~="i" and va["i"] then
+					for c,v in va["i"] do
+						if sumTable[c] then
+							sumTable[c] = sumTable[c] + v
+						else
+							sumTable[c] = v
+						end
 					end
 				end
 			end
 		end
 	end
+	
+	local tl = DPSMate:TableLength(temp)
+	tl = ceil(tl-0.3*tl)
+	
 	for cat, val in sumTable do
 		local i=1
 		while true do
@@ -246,20 +256,22 @@ end
 function DPSMate.Modules.DetailsDamageTotal:GetTableValues()
 	local arr, total = {}, 0
 	for cat, val in db do
-		local crit, totCrit, miss, totMiss, time, last = 0, 0.000001, 0, 0.000001, 0, 0
 		local name = DPSMate:GetUserById(cat)
-		for ca, va in val do
-			if ca~="i" then
-				totCrit=totCrit+va[1]+va[5]+va[9]+va[10]+va[11]+va[12]+va[14]
-				crit=crit+va[5]
-				totMiss=totMiss+va[1]+va[5]+va[9]+va[10]+va[11]+va[12]+va[14]
-				miss=miss+va[9]+va[10]+va[11]+va[12]
-			else
-				time = tonumber(strformat("%.2f", DPSMateCombatTime["effective"][curKey][name] or 0))
+		if DPSMate:ApplyFilter(curKey, name) then
+			local crit, totCrit, miss, totMiss, time, last = 0, 0.000001, 0, 0.000001, 0, 0
+			for ca, va in val do
+				if ca~="i" then
+					totCrit=totCrit+va[1]+va[5]+va[9]+va[10]+va[11]+va[12]+va[14]
+					crit=crit+va[5]
+					totMiss=totMiss+va[1]+va[5]+va[9]+va[10]+va[11]+va[12]+va[14]
+					miss=miss+va[9]+va[10]+va[11]+va[12]
+				else
+					time = tonumber(strformat("%.2f", DPSMateCombatTime["effective"][curKey][name] or 0))
+				end
 			end
+			tinsert(arr, {name, val["i"], crit, miss, time, totCrit, totMiss, cat})
+			total = total + val["i"]
 		end
-		tinsert(arr, {name, val["i"], crit, miss, time, totCrit, totMiss, cat})
-		total = total + val["i"]
 	end
 	local newArr = {}
 	for cat, val in arr do

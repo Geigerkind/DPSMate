@@ -125,35 +125,38 @@ function DPSMate.Modules.DetailsDamageTakenTotal:UpdateStackedGraph()
 	local p = {}
 	for cat, val in db do
 		local temp = {}
-		for ca, va in val do
-			if ca~="i" then
-				for q,s in va do
-					for c,v in s["i"] do
-						local i = 1
-						while true do
-							if not temp[i] then
-								tinsert(temp, i, {c,v})
-								break
-							elseif c<=temp[i][1] then
-								tinsert(temp, i, {c,v})
-								break
+		local user = DPSMate:GetUserById(cat)
+		if DPSMate:ApplyFilter(curKey, user) then
+			for ca, va in val do
+				if ca~="i" then
+					for q,s in va do
+						for c,v in s["i"] do
+							local i = 1
+							while true do
+								if not temp[i] then
+									tinsert(temp, i, {c,v})
+									break
+								elseif c<=temp[i][1] then
+									tinsert(temp, i, {c,v})
+									break
+								end
+								i=i+1
 							end
-							i=i+1
-						end
-						if p[c] then
-							p[c] = p[c] + v
-						else
-							p[c] = v
-						end
-						if maxX == 0 or maxX<c then
-							maxX = c
+							if p[c] then
+								p[c] = p[c] + v
+							else
+								p[c] = v
+							end
+							if maxX == 0 or maxX<c then
+								maxX = c
+							end
 						end
 					end
 				end
 			end
+			tinsert(label, 1, user)
+			tinsert(Data1, 1, temp)
 		end
-		tinsert(label, 1, DPSMate:GetUserById(cat))
-		tinsert(Data1, 1, temp)
 	end
 	for cat, val in p do
 		if maxY<val then
@@ -205,19 +208,22 @@ end
 
 function DPSMate.Modules.DetailsDamageTakenTotal:AddTotalDataSeries()
 	local sumTable, newArr = {[0]=0}, {}
-	local tl = DPSMate:TableLength(db)
-	tl = floor(tl-0.5*tl)
 	
+	local temp = {}
 	for cat, val in db do
-		for ca, va in val do
-			if ca~="i" then
-				for c,v in va do
-					if v["i"] then
-						for q,s in v["i"] do
-							if sumTable[q] then
-								sumTable[q] = sumTable[q] + s
-							else
-								sumTable[q] = s
+		local user = DPSMate:GetUserById(cat)
+		if DPSMate:ApplyFilter(curKey, user) then
+			temp[user] = true
+			for ca, va in val do
+				if ca~="i" then
+					for c,v in va do
+						if v["i"] then
+							for q,s in v["i"] do
+								if sumTable[q] then
+									sumTable[q] = sumTable[q] + s
+								else
+									sumTable[q] = s
+								end
 							end
 						end
 					end
@@ -225,6 +231,10 @@ function DPSMate.Modules.DetailsDamageTakenTotal:AddTotalDataSeries()
 			end
 		end
 	end
+	
+	local tl = DPSMate:TableLength(temp)
+	tl = floor(tl-0.5*tl)
+	
 	for cat, val in sumTable do
 		local i=1
 		while true do
@@ -254,33 +264,35 @@ end
 function DPSMate.Modules.DetailsDamageTakenTotal:GetTableValues()
 	local arr, total = {}, 0
 	for cat, val in db do
-		local CV, crit, totCrit, miss, totMiss, hit, totHit, crush, totOverall = 0, 0, 0.000001, 0, 0.000001, 0, 0.000001, 0, 0
 		local name = DPSMate:GetUserById(cat)
-		for ca, va in pairs(val) do
-			if ca~="i" then
-				for c, v in pairs(va) do
-					if c~="i" then
-						if v[1]>0 or v[15]>0 then
-							totHit=totHit+v[1]+v[5]+v[9]+v[10]+v[11]+v[12]+v[15]
-							hit=hit+v[1]
-							crush=crush+v[15]
+		if DPSMate:ApplyFilter(curKey, name) then
+			local CV, crit, totCrit, miss, totMiss, hit, totHit, crush, totOverall = 0, 0, 0.000001, 0, 0.000001, 0, 0.000001, 0, 0
+			for ca, va in pairs(val) do
+				if ca~="i" then
+					for c, v in pairs(va) do
+						if c~="i" then
+							if v[1]>0 or v[15]>0 then
+								totHit=totHit+v[1]+v[5]+v[9]+v[10]+v[11]+v[12]+v[15]
+								hit=hit+v[1]
+								crush=crush+v[15]
+							end
+							if v[5]>0 then
+								totCrit=totCrit+v[1]+v[5]+v[9]+v[10]+v[11]+v[12]+v[15]
+								crit=crit+v[5]
+							end
+							if v[9]>0 or v[10]>0 or v[11]>0 or v[12]>0 then
+								totMiss=totMiss+v[1]+v[5]+v[9]+v[10]+v[11]+v[12]+v[15]
+								miss=miss+v[9]+v[10]+v[11]+v[12]
+							end
+							CV = CV + v[13]
+							totOverall = totOverall+v[1]+v[5]+v[9]+v[10]+v[11]+v[12]+v[15]
 						end
-						if v[5]>0 then
-							totCrit=totCrit+v[1]+v[5]+v[9]+v[10]+v[11]+v[12]+v[15]
-							crit=crit+v[5]
-						end
-						if v[9]>0 or v[10]>0 or v[11]>0 or v[12]>0 then
-							totMiss=totMiss+v[1]+v[5]+v[9]+v[10]+v[11]+v[12]+v[15]
-							miss=miss+v[9]+v[10]+v[11]+v[12]
-						end
-						CV = CV + v[13]
-						totOverall = totOverall+v[1]+v[5]+v[9]+v[10]+v[11]+v[12]+v[15]
 					end
 				end
 			end
+			tinsert(arr, {name, CV, crit, miss, totCrit, totMiss, cat, hit, totHit, crush,totOverall})
+			total = total + CV
 		end
-		tinsert(arr, {name, CV, crit, miss, totCrit, totMiss, cat, hit, totHit, crush,totOverall})
-		total = total + CV
 	end
 	local newArr = {}
 	for cat, val in arr do

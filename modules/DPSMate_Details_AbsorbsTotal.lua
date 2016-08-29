@@ -117,37 +117,39 @@ function DPSMate.Modules.DetailsAbsorbsTotal:UpdateStackedGraph()
 		for qq, uu in val do
 			local temp = {}
 			local ownername = DPSMate:GetUserById(qq)
-			for ca, va in uu["i"] do
-				local i, dmg = 1, 5
-				if DPSMateDamageTaken[1][cat] then
-					if DPSMateDamageTaken[1][cat][va[2]] then
-						if DPSMateDamageTaken[1][cat][va[2]][va[3]] then
-							dmg = DPSMateDamageTaken[1][cat][va[2]][va[3]][14]
+			if DPSMate:ApplyFilter(curKey, ownername) then
+				for ca, va in uu["i"] do
+					local i, dmg = 1, 5
+					if DPSMateDamageTaken[1][cat] then
+						if DPSMateDamageTaken[1][cat][va[2]] then
+							if DPSMateDamageTaken[1][cat][va[2]][va[3]] then
+								dmg = DPSMateDamageTaken[1][cat][va[2]][va[3]][14]
+							end
+						end
+					end
+					if dmg==5 or dmg==0 then
+						dmg = ceil((1/15)*((DPSMateUser[ownername][8] or 60)/60)*DPSMate.DB.FixedShieldAmounts[DPSMate:GetAbilityById(va[5])]*0.33)
+					end
+					if va[4] then
+						dmg = dmg + va[4]
+					end
+					if dmg>0 then
+						local i = 1
+						while true do
+							if not temp[i] then
+								tinsert(temp, i, {va[1], dmg})
+								break
+							elseif va[1]<=temp[i][1] then
+								tinsert(temp, i, {va[1], dmg})
+								break
+							end
+							i=i+1
 						end
 					end
 				end
-				if dmg==5 or dmg==0 then
-					dmg = ceil((1/15)*((DPSMateUser[ownername][8] or 60)/60)*DPSMate.DB.FixedShieldAmounts[DPSMate:GetAbilityById(va[5])]*0.33)
-				end
-				if va[4] then
-					dmg = dmg + va[4]
-				end
-				if dmg>0 then
-					local i = 1
-					while true do
-						if not temp[i] then
-							tinsert(temp, i, {va[1], dmg})
-							break
-						elseif va[1]<=temp[i][1] then
-							tinsert(temp, i, {va[1], dmg})
-							break
-						end
-						i=i+1
-					end
-				end
+				tinsert(label, 1, ownername)
+				tinsert(Data1, 1, temp)
 			end
-			tinsert(label, 1, ownername)
-			tinsert(Data1, 1, temp)
 		end
 	end
 	for cat, val in p do
@@ -218,27 +220,29 @@ function DPSMate.Modules.DetailsAbsorbsTotal:AddTotalDataSeries()
 	for cat, val in db do
 		for qq, uu in val do
 			local ownername = DPSMate:GetUserById(qq)
-			temp[ownername] = true
-			for ca, va in uu["i"] do
-				local i, dmg = 1, 5
-				if DPSMateDamageTaken[1][cat] then
-					if DPSMateDamageTaken[1][cat][va[2]] then
-						if DPSMateDamageTaken[1][cat][va[2]][va[3]] then
-							dmg = DPSMateDamageTaken[1][cat][va[2]][va[3]][14]
+			if DPSMate:ApplyFilter(curKey, ownername) then
+				temp[ownername] = true
+				for ca, va in uu["i"] do
+					local i, dmg = 1, 5
+					if DPSMateDamageTaken[1][cat] then
+						if DPSMateDamageTaken[1][cat][va[2]] then
+							if DPSMateDamageTaken[1][cat][va[2]][va[3]] then
+								dmg = DPSMateDamageTaken[1][cat][va[2]][va[3]][14]
+							end
 						end
 					end
-				end
-				if dmg==5 or dmg==0 then
-					dmg = ceil((1/15)*((DPSMateUser[ownername][8] or 60)/60)*DPSMate.DB.FixedShieldAmounts[DPSMate:GetAbilityById(va[5])]*0.33)
-				end
-				if va[4] then
-					dmg = dmg + va[4]
-				end
-				if dmg>0 then
-					if sumTable[va[1]] then
-						sumTable[va[1]] = sumTable[va[1]] + dmg
-					else
-						sumTable[va[1]] = dmg
+					if dmg==5 or dmg==0 then
+						dmg = ceil((1/15)*((DPSMateUser[ownername][8] or 60)/60)*DPSMate.DB.FixedShieldAmounts[DPSMate:GetAbilityById(va[5])]*0.33)
+					end
+					if va[4] then
+						dmg = dmg + va[4]
+					end
+					if dmg>0 then
+						if sumTable[va[1]] then
+							sumTable[va[1]] = sumTable[va[1]] + dmg
+						else
+							sumTable[va[1]] = dmg
+						end
 					end
 				end
 			end
@@ -283,7 +287,7 @@ function DPSMate.Modules.DetailsAbsorbsTotal:GetTableValues()
 		local totHits = 0
 		for ca, va in pairs(val) do -- 28 Owner
 			local ownername = DPSMate:GetUserById(ca)
-			if DPSMate:ApplyFilter(k, ownername) then
+			if DPSMate:ApplyFilter(curKey, ownername) then
 				local PerOwnerAbsorb = 0
 				local abAbsorb = {}
 				for c, v in pairs(va) do -- Power Word: Shield

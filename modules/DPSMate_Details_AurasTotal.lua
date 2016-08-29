@@ -344,15 +344,18 @@ function DPSMate.Modules.DetailsAurasTotal:UpdateStackedGraph(gg, cname)
 	local temp = {}
 	
 	for cat, val in db do -- ability
-		for ca,va in val do
-			local abname = DPSMate:GetAbilityById(ca)
-			if not temp[abname] then temp[abname]={} end
-			for c, v in va[1] do
-				local time = floor(v) -- Performance
-				if temp[abname][time] then 
-					temp[abname][time]=temp[abname][time]+1
-				else
-					temp[abname][time]=0
+		local user = DPSMate:GetUserById(cat)
+		if DPSMate:ApplyFilter(curKey, user) then
+			for ca,va in val do 
+				local abname = DPSMate:GetAbilityById(ca)
+				if not temp[abname] then temp[abname]={} end
+				for c, v in va[1] do
+					local time = floor(v) -- Performance
+					if temp[abname][time] then 
+						temp[abname][time]=temp[abname][time]+1
+					else
+						temp[abname][time]=0
+					end
 				end
 			end
 		end
@@ -377,22 +380,25 @@ end
 function DPSMate.Modules.DetailsAurasTotal:SortTable()
 	local t, u = {}, {}
 	for cat, _ in db do
-		local a,_,b,c = DPSMate.Modules.AurasUptimers:EvalTable(DPSMateUser[DPSMate:GetUserById(cat)], curKey)
-		for ca,va in a do
-			local name = DPSMate:GetAbilityById(va)
-			if Debuffs[name] then
-				if t[name] then
-					t[name][2] = DPSMate.DB:WeightedAverage(t[name][2], b[ca], t[name][3], c[ca])
-					t[name][3] = t[name][3] + c[ca]
+		local user = DPSMate:GetUserById(cat)
+		if DPSMate:ApplyFilter(curKey, user) then
+			local a,_,b,c = DPSMate.Modules.AurasUptimers:EvalTable(DPSMateUser[user], curKey)
+			for ca,va in a do
+				local name = DPSMate:GetAbilityById(va)
+				if Debuffs[name] then
+					if t[name] then
+						t[name][2] = DPSMate.DB:WeightedAverage(t[name][2], b[ca], t[name][3], c[ca])
+						t[name][3] = t[name][3] + c[ca]
+					else
+						t[name] = {name, b[ca], c[ca]}
+					end
 				else
-					t[name] = {name, b[ca], c[ca]}
-				end
-			else
-				if u[name] then
-					u[name][2] = DPSMate.DB:WeightedAverage(u[name][2], b[ca], u[name][3], c[ca])
-					u[name][3] = u[name][3] + c[ca]
-				else
-					u[name] = {name, b[ca], c[ca]}
+					if u[name] then
+						u[name][2] = DPSMate.DB:WeightedAverage(u[name][2], b[ca], u[name][3], c[ca])
+						u[name][3] = u[name][3] + c[ca]
+					else
+						u[name] = {name, b[ca], c[ca]}
+					end
 				end
 			end
 		end

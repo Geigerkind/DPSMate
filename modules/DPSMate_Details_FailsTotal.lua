@@ -40,17 +40,19 @@ function DPSMate.Modules.DetailsFailsTotal:EvalTable()
 	local a = {}
 	for cat, val in db do -- each user
 		local user = DPSMate:GetUserById(cat)
-		for ca, va in val do -- each ab?
-			if not a[va[1]] then
-				a[va[1]] = {}
-			end
-			if not a[va[1]][va[2]] then
-				a[va[1]][va[2]] = {}
-			end
-			if a[va[1]][va[2]][va[3]] then
-				a[va[1]][va[2]][va[3]] = a[va[1]][va[2]][va[3]] + 1
-			else
-				a[va[1]][va[2]][va[3]] = 1
+		if DPSMate:ApplyFilter(curKey, user) then
+			for ca, va in val do -- each ab?
+				if not a[va[1]] then
+					a[va[1]] = {}
+				end
+				if not a[va[1]][va[2]] then
+					a[va[1]][va[2]] = {}
+				end
+				if a[va[1]][va[2]][va[3]] then
+					a[va[1]][va[2]][va[3]] = a[va[1]][va[2]][va[3]] + 1
+				else
+					a[va[1]][va[2]][va[3]] = 1
+				end
 			end
 		end
 	end

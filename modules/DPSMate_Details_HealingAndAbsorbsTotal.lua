@@ -116,70 +116,75 @@ function DPSMate.Modules.DetailsHABTotal:UpdateStackedGraph()
 	local p = {}
 	for cat, val in DPSMateEHealing[curKey] do
 		local temp = {}
-		for ca, va in val do
-			if ca~="i" then
-				for c,v in va["i"] do
-					local i = 1
-					while true do
-						if not temp[i] then
-							tinsert(temp, i, {c,v})
-							break
-						elseif c<=temp[i][1] then
-							tinsert(temp, i, {c,v})
-							break
+		local user = DPSMate:GetUserById(cat)
+		if DPSMate:ApplyFilter(curKey, user) then
+			for ca, va in val do
+				if ca~="i" then
+					for c,v in va["i"] do
+						local i = 1
+						while true do
+							if not temp[i] then
+								tinsert(temp, i, {c,v})
+								break
+							elseif c<=temp[i][1] then
+								tinsert(temp, i, {c,v})
+								break
+							end
+							i=i+1
 						end
-						i=i+1
-					end
-					if p[c] then
-						p[c] = p[c] + v
-					else
-						p[c] = v
-					end
-					if maxX == 0 or maxX<c then
-						maxX = c
+						if p[c] then
+							p[c] = p[c] + v
+						else
+							p[c] = v
+						end
+						if maxX == 0 or maxX<c then
+							maxX = c
+						end
 					end
 				end
 			end
+			tinsert(label, 1, user)
+			tinsert(Data1, 1, temp)
 		end
-		tinsert(label, 1, DPSMate:GetUserById(cat))
-		tinsert(Data1, 1, temp)
 	end
 	
 	for cat, val in db do
 		for qq, uu in val do
 			local temp = {}
 			local ownername = DPSMate:GetUserById(qq)
-			for ca, va in uu["i"] do
-				local i, dmg = 1, 5
-				if DPSMateDamageTaken[1][cat] then
-					if DPSMateDamageTaken[1][cat][va[2]] then
-						if DPSMateDamageTaken[1][cat][va[2]][va[3]] then
-							dmg = DPSMateDamageTaken[1][cat][va[2]][va[3]][14]
+			if DPSMate:ApplyFilter(curKey, ownername) then
+				for ca, va in uu["i"] do
+					local i, dmg = 1, 5
+					if DPSMateDamageTaken[1][cat] then
+						if DPSMateDamageTaken[1][cat][va[2]] then
+							if DPSMateDamageTaken[1][cat][va[2]][va[3]] then
+								dmg = DPSMateDamageTaken[1][cat][va[2]][va[3]][14]
+							end
+						end
+					end
+					if dmg==5 or dmg==0 then
+						dmg = ceil((1/15)*((DPSMateUser[ownername][8] or 60)/60)*DPSMate.DB.FixedShieldAmounts[DPSMate:GetAbilityById(va[5])]*0.33)
+					end
+					if va[4] then
+						dmg = dmg + va[4]
+					end
+					if dmg>0 then
+						local i = 1
+						while true do
+							if not temp[i] then
+								tinsert(temp, i, {va[1], dmg})
+								break
+							elseif va[1]<=temp[i][1] then
+								tinsert(temp, i, {va[1], dmg})
+								break
+							end
+							i=i+1
 						end
 					end
 				end
-				if dmg==5 or dmg==0 then
-					dmg = ceil((1/15)*((DPSMateUser[ownername][8] or 60)/60)*DPSMate.DB.FixedShieldAmounts[DPSMate:GetAbilityById(va[5])]*0.33)
-				end
-				if va[4] then
-					dmg = dmg + va[4]
-				end
-				if dmg>0 then
-					local i = 1
-					while true do
-						if not temp[i] then
-							tinsert(temp, i, {va[1], dmg})
-							break
-						elseif va[1]<=temp[i][1] then
-							tinsert(temp, i, {va[1], dmg})
-							break
-						end
-						i=i+1
-					end
-				end
+				tinsert(label, 1, ownername)
+				tinsert(Data1, 1, temp)
 			end
-			tinsert(label, 1, ownername)
-			tinsert(Data1, 1, temp)
 		end
 	end
 	
@@ -242,17 +247,17 @@ end
 
 function DPSMate.Modules.DetailsHABTotal:AddTotalDataSeries()
 	local sumTable, newArr = {[0]=0}, {}
-	local tl = DPSMate:TableLength(DPSMateEHealing)
-	tl = ceil(tl-0.3*tl)
 	
 	for cat, val in DPSMateEHealing[curKey] do
-		for ca, va in val do
-			if ca~="i" and va["i"] then
-				for c,v in va["i"] do
-					if sumTable[c] then
-						sumTable[c] = sumTable[c] + v
-					else
-						sumTable[c] = v
+		if DPSMate:ApplyFilter(curKey, DPSMate:GetUserById(cat)) then
+			for ca, va in val do
+				if ca~="i" and va["i"] then
+					for c,v in va["i"] do
+						if sumTable[c] then
+							sumTable[c] = sumTable[c] + v
+						else
+							sumTable[c] = v
+						end
 					end
 				end
 			end
@@ -261,31 +266,37 @@ function DPSMate.Modules.DetailsHABTotal:AddTotalDataSeries()
 	for cat, val in db do
 		for qq, uu in val do
 			local ownername = DPSMate:GetUserById(qq)
-			for ca, va in uu["i"] do
-				local i, dmg = 1, 5
-				if DPSMateDamageTaken[1][cat] then
-					if DPSMateDamageTaken[1][cat][va[2]] then
-						if DPSMateDamageTaken[1][cat][va[2]][va[3]] then
-							dmg = DPSMateDamageTaken[1][cat][va[2]][va[3]][14]
+			if DPSMate:ApplyFilter(curKey, ownername) then
+				for ca, va in uu["i"] do
+					local i, dmg = 1, 5
+					if DPSMateDamageTaken[1][cat] then
+						if DPSMateDamageTaken[1][cat][va[2]] then
+							if DPSMateDamageTaken[1][cat][va[2]][va[3]] then
+								dmg = DPSMateDamageTaken[1][cat][va[2]][va[3]][14]
+							end
 						end
 					end
-				end
-				if dmg==5 or dmg==0 then
-					dmg = ceil((1/15)*((DPSMateUser[ownername][8] or 60)/60)*DPSMate.DB.FixedShieldAmounts[DPSMate:GetAbilityById(va[5])]*0.33)
-				end
-				if va[4] then
-					dmg = dmg + va[4]
-				end
-				if dmg>0 then
-					if sumTable[va[1]] then
-						sumTable[va[1]] = sumTable[va[1]] + dmg
-					else
-						sumTable[va[1]] = dmg
+					if dmg==5 or dmg==0 then
+						dmg = ceil((1/15)*((DPSMateUser[ownername][8] or 60)/60)*DPSMate.DB.FixedShieldAmounts[DPSMate:GetAbilityById(va[5])]*0.33)
+					end
+					if va[4] then
+						dmg = dmg + va[4]
+					end
+					if dmg>0 then
+						if sumTable[va[1]] then
+							sumTable[va[1]] = sumTable[va[1]] + dmg
+						else
+							sumTable[va[1]] = dmg
+						end
 					end
 				end
 			end
 		end
 	end
+	
+	local tl = DPSMate:TableLength(sumTable)
+	tl = ceil(tl-0.3*tl)
+	
 	for cat, val in sumTable do
 		local i=1
 		while true do
@@ -315,20 +326,22 @@ end
 function DPSMate.Modules.DetailsHABTotal:GetTableValues()
 	local arr, total = {}, 0
 	for cat, val in DPSMateEHealing[curKey] do
-		local crit, totCrit, miss, totMiss, time, last = 0, 0.000001, 0, 0.000001, 0, 0
 		local name = DPSMate:GetUserById(cat)
-		for ca, va in val do
-			if ca~="i" then
-				totCrit=totCrit+va[3]+va[2]
-				totMiss=totMiss+va[2]+va[3]
-				crit=crit+va[3]
-				miss=miss+va[2]
-			else
-				time = tonumber(strformat("%.2f", DPSMateCombatTime["effective"][curKey][name] or 0))
+		if DPSMate:ApplyFilter(curKey, name) then
+			local crit, totCrit, miss, totMiss, time, last = 0, 0.000001, 0, 0.000001, 0, 0
+			for ca, va in val do
+				if ca~="i" then
+					totCrit=totCrit+va[3]+va[2]
+					totMiss=totMiss+va[2]+va[3]
+					crit=crit+va[3]
+					miss=miss+va[2]
+				else
+					time = tonumber(strformat("%.2f", DPSMateCombatTime["effective"][curKey][name] or 0))
+				end
 			end
+			tinsert(arr, {name, val["i"], crit, miss, time, totCrit, totMiss, cat})
+			total = total + val["i"]
 		end
-		tinsert(arr, {name, val["i"], crit, miss, time, totCrit, totMiss, cat})
-		total = total + val["i"]
 	end
 	
 	local temp = {}
@@ -337,7 +350,7 @@ function DPSMate.Modules.DetailsHABTotal:GetTableValues()
 		local totHits = 0
 		for ca, va in pairs(val) do -- 28 Owner
 			local ownername = DPSMate:GetUserById(ca)
-			if DPSMate:ApplyFilter(k, ownername) then
+			if DPSMate:ApplyFilter(curKey, ownername) then
 				local PerOwnerAbsorb = 0
 				for c, v in pairs(va) do -- Power Word: Shield
 					if c~="i" then

@@ -116,40 +116,42 @@ function DPSMate.Modules.DetailsAbsorbsTakenTotal:UpdateStackedGraph()
 	for cat, val in db do
 		local tarname = DPSMate:GetUserById(cat)
 		local temp = {}
-		for qq, uu in val do
-			local ownername = DPSMate:GetUserById(qq)
-			for ca, va in uu["i"] do
-				local i, dmg = 1, 5
-				if DPSMateDamageTaken[1][cat] then
-					if DPSMateDamageTaken[1][cat][va[2]] then
-						if DPSMateDamageTaken[1][cat][va[2]][va[3]] then
-							dmg = DPSMateDamageTaken[1][cat][va[2]][va[3]][14]
+		if DPSMate:ApplyFilter(curKey, tarname) then
+			for qq, uu in val do
+				local ownername = DPSMate:GetUserById(qq)
+				for ca, va in uu["i"] do
+					local i, dmg = 1, 5
+					if DPSMateDamageTaken[1][cat] then
+						if DPSMateDamageTaken[1][cat][va[2]] then
+							if DPSMateDamageTaken[1][cat][va[2]][va[3]] then
+								dmg = DPSMateDamageTaken[1][cat][va[2]][va[3]][14]
+							end
 						end
 					end
-				end
-				if dmg==5 or dmg==0 then
-					dmg = ceil((1/15)*((DPSMateUser[ownername][8] or 60)/60)*DPSMate.DB.FixedShieldAmounts[DPSMate:GetAbilityById(va[5])]*0.33)
-				end
-				if va[4] then
-					dmg = dmg + va[4]
-				end
-				if dmg>0 then
-					local i = 1
-					while true do
-						if not temp[i] then
-							tinsert(temp, i, {va[1], dmg})
-							break
-						elseif va[1]<=temp[i][1] then
-							tinsert(temp, i, {va[1], dmg})
-							break
+					if dmg==5 or dmg==0 then
+						dmg = ceil((1/15)*((DPSMateUser[ownername][8] or 60)/60)*DPSMate.DB.FixedShieldAmounts[DPSMate:GetAbilityById(va[5])]*0.33)
+					end
+					if va[4] then
+						dmg = dmg + va[4]
+					end
+					if dmg>0 then
+						local i = 1
+						while true do
+							if not temp[i] then
+								tinsert(temp, i, {va[1], dmg})
+								break
+							elseif va[1]<=temp[i][1] then
+								tinsert(temp, i, {va[1], dmg})
+								break
+							end
+							i=i+1
 						end
-						i=i+1
 					end
 				end
 			end
+			tinsert(label, 1, tarname)
+			tinsert(Data1, 1, temp)
 		end
-		tinsert(label, 1, tarname)
-		tinsert(Data1, 1, temp)
 	end
 	for cat, val in p do
 		if maxY<val then
@@ -215,37 +217,41 @@ end
 function DPSMate.Modules.DetailsAbsorbsTakenTotal:AddTotalDataSeries()
 	local sumTable, newArr = {[0]=0}, {}
 	local temp = {}
-	
+	local tempDat = {}
 	for cat, val in db do
-		for qq, uu in val do
-			local ownername = DPSMate:GetUserById(qq)
-			for ca, va in uu["i"] do
-				local i, dmg = 1, 5
-				if DPSMateDamageTaken[1][cat] then
-					if DPSMateDamageTaken[1][cat][va[2]] then
-						if DPSMateDamageTaken[1][cat][va[2]][va[3]] then
-							dmg = DPSMateDamageTaken[1][cat][va[2]][va[3]][14]
+		local user = DPSMate:GetUserById(cat)
+		if DPSMate:ApplyFilter(curKey, user) then
+			tempDat[user] = true
+			for qq, uu in val do
+				local ownername = DPSMate:GetUserById(qq)
+				for ca, va in uu["i"] do
+					local i, dmg = 1, 5
+					if DPSMateDamageTaken[1][cat] then
+						if DPSMateDamageTaken[1][cat][va[2]] then
+							if DPSMateDamageTaken[1][cat][va[2]][va[3]] then
+								dmg = DPSMateDamageTaken[1][cat][va[2]][va[3]][14]
+							end
 						end
 					end
-				end
-				if dmg==5 or dmg==0 then
-					dmg = ceil((1/15)*((DPSMateUser[ownername][8] or 60)/60)*DPSMate.DB.FixedShieldAmounts[DPSMate:GetAbilityById(va[5])]*0.33)
-				end
-				if va[4] then
-					dmg = dmg + va[4]
-				end
-				if dmg>0 then
-					if sumTable[va[1]] then
-						sumTable[va[1]] = sumTable[va[1]] + dmg
-					else
-						sumTable[va[1]] = dmg
+					if dmg==5 or dmg==0 then
+						dmg = ceil((1/15)*((DPSMateUser[ownername][8] or 60)/60)*DPSMate.DB.FixedShieldAmounts[DPSMate:GetAbilityById(va[5])]*0.33)
+					end
+					if va[4] then
+						dmg = dmg + va[4]
+					end
+					if dmg>0 then
+						if sumTable[va[1]] then
+							sumTable[va[1]] = sumTable[va[1]] + dmg
+						else
+							sumTable[va[1]] = dmg
+						end
 					end
 				end
 			end
 		end
 	end
 	
-	local tl = DPSMate:TableLength(db)
+	local tl = DPSMate:TableLength(tempDat)
 	tl = ceil(tl-0.3*tl)
 	temp = nil
 	
@@ -283,9 +289,9 @@ function DPSMate.Modules.DetailsAbsorbsTakenTotal:GetTableValues()
 		local abAbsorb = {}
 		local totHits = 0
 		local tarname = DPSMate:GetUserById(cat)
-		for ca, va in pairs(val) do -- 28 Owner
-			local ownername = DPSMate:GetUserById(ca)
-			if DPSMate:ApplyFilter(k, ownername) then
+		if DPSMate:ApplyFilter(curKey, tarname) then
+			for ca, va in pairs(val) do -- 28 Owner
+				local ownername = DPSMate:GetUserById(ca)
 				local PerOwnerAbsorb = 0
 				for c, v in pairs(va) do -- Power Word: Shield
 					if c~="i" then
@@ -341,19 +347,19 @@ function DPSMate.Modules.DetailsAbsorbsTakenTotal:GetTableValues()
 				end
 				PerPlayerAbsorb = PerPlayerAbsorb+PerOwnerAbsorb
 			end
-		end
-		if PerPlayerAbsorb>0 then
-			if temp[tarname] then
-				temp[tarname][2] = temp[tarname][2] + PerPlayerAbsorb
-				temp[tarname][3] = temp[tarname][3] + ((abAbsorb[0] or 0)+(abAbsorb[1] or 0))
-				temp[tarname][4] = temp[tarname][4] + (abAbsorb[3] or 0)
-				temp[tarname][5] = temp[tarname][5] + (abAbsorb[2] or 0)
-				temp[tarname][6] = temp[tarname][6] + (abAbsorb[4] or 0)
-				temp[tarname][7] = temp[tarname][7] + (abAbsorb[5] or 0)
-				temp[tarname][8] = temp[tarname][8] + (abAbsorb[6] or 0)
-				temp[tarname][9] = temp[tarname][9] + (abAbsorb[7] or 0)
-			else
-				temp[tarname] = {tarname, PerPlayerAbsorb, (abAbsorb[0] or 0)+(abAbsorb[1] or 0), abAbsorb[3] or 0, abAbsorb[2] or 0, abAbsorb[4] or 0, abAbsorb[5] or 0, abAbsorb[6] or 0, abAbsorb[7] or 0}
+			if PerPlayerAbsorb>0 then
+				if temp[tarname] then
+					temp[tarname][2] = temp[tarname][2] + PerPlayerAbsorb
+					temp[tarname][3] = temp[tarname][3] + ((abAbsorb[0] or 0)+(abAbsorb[1] or 0))
+					temp[tarname][4] = temp[tarname][4] + (abAbsorb[3] or 0)
+					temp[tarname][5] = temp[tarname][5] + (abAbsorb[2] or 0)
+					temp[tarname][6] = temp[tarname][6] + (abAbsorb[4] or 0)
+					temp[tarname][7] = temp[tarname][7] + (abAbsorb[5] or 0)
+					temp[tarname][8] = temp[tarname][8] + (abAbsorb[6] or 0)
+					temp[tarname][9] = temp[tarname][9] + (abAbsorb[7] or 0)
+				else
+					temp[tarname] = {tarname, PerPlayerAbsorb, (abAbsorb[0] or 0)+(abAbsorb[1] or 0), abAbsorb[3] or 0, abAbsorb[2] or 0, abAbsorb[4] or 0, abAbsorb[5] or 0, abAbsorb[6] or 0, abAbsorb[7] or 0}
+				end
 			end
 		end
 	end

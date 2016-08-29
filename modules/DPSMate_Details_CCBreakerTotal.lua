@@ -40,18 +40,20 @@ function DPSMate.Modules.DetailsCCBreakerTotal:EvalTable()
 	local a = {}
 	for cat, val in db do -- each user
 		local user = DPSMate:GetUserById(cat)
-		for ca, va in val do -- each ab?
-			local ab = DPSMate:GetAbilityById(va[1])
-			local i=1
-			while true do
-				if not a[i] then
-					tinsert(a, i, {ab, DPSMate.BabbleSpell:GetSpellIcon(self:Replace(ab)), DPSMate:GetUserById(va[2]), va[4], va[3], user})
-					break
-				elseif a[i][5]<va[3] then
-					tinsert(a, i, {ab, DPSMate.BabbleSpell:GetSpellIcon(self:Replace(ab)), DPSMate:GetUserById(va[2]), va[4], va[3], user})
-					break
+		if DPSMate:ApplyFilter(curKey, user) then
+			for ca, va in val do -- each ab?
+				local ab = DPSMate:GetAbilityById(va[1])
+				local i=1
+				while true do
+					if not a[i] then
+						tinsert(a, i, {ab, DPSMate.BabbleSpell:GetSpellIcon(self:Replace(ab)), DPSMate:GetUserById(va[2]), va[4], va[3], user})
+						break
+					elseif a[i][5]<va[3] then
+						tinsert(a, i, {ab, DPSMate.BabbleSpell:GetSpellIcon(self:Replace(ab)), DPSMate:GetUserById(va[2]), va[4], va[3], user})
+						break
+					end
+					i = i +1
 				end
-				i = i +1
 			end
 		end
 	end

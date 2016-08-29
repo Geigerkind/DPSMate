@@ -220,7 +220,7 @@ function DPSMate.Modules.DetailsFFTTotal:AddTotalDataSeries()
 		local name = DPSMate:GetUserById(cat)
 		for q, s in val do
 			local catName = DPSMate:GetUserById(q)
-			if DPSMate:ApplyFilter(k, catName) and  DPSMateUser[catName] and  DPSMateUser[name] then
+			if DPSMate:ApplyFilter(curKey, catName) and  DPSMateUser[catName] and  DPSMateUser[name] then
 				if DPSMateUser[name][3] == DPSMateUser[catName][3] and DPSMateUser[catName][3] and DPSMateUser[name][3] then
 					temp[name] = true
 					for ca, va in s do
@@ -277,7 +277,7 @@ function DPSMate.Modules.DetailsFFTTotal:GetTableValues()
 		for q, s in val do
 			local CV = 0
 			local catName = DPSMate:GetUserById(q)
-			if DPSMate:ApplyFilter(k, catName) and  DPSMateUser[catName] and  DPSMateUser[name] then
+			if DPSMate:ApplyFilter(curKey, catName) and  DPSMateUser[catName] and  DPSMateUser[name] then
 				if DPSMateUser[name][3] == DPSMateUser[catName][3] and DPSMateUser[catName][3] and DPSMateUser[name][3] then
 					for ca, va in s do
 						if ca~="i" then
@@ -352,7 +352,7 @@ function DPSMate.Modules.DetailsFFTTotal:SortLineTable(uid)
 		if cat~="i" then
 			local name = DPSMate:GetUserById(cat)
 			for q, s in val do
-				if q==uid and q~="i" and DPSMate:ApplyFilter(k, user) and  DPSMateUser[user] and  DPSMateUser[name] then
+				if q==uid and q~="i" and DPSMate:ApplyFilter(curKey, user) and  DPSMateUser[user] and  DPSMateUser[name] then
 					if DPSMateUser[name][3] == DPSMateUser[user][3] and DPSMateUser[user][3] and DPSMateUser[name][3] then
 						for ca, va in s do
 							if ca~="i" and va["i"] then
