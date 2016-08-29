@@ -122,6 +122,8 @@ modules\DPSMate_Details_AbsorbsTotal.lua
 modules\DPSMate_Details_AbsorbsTotal.xml
 modules\DPSMate_Details_AbsorbsTaken.lua
 modules\DPSMate_Details_AbsorbsTaken.xml
+modules\DPSMate_Details_AbsorbsTakenTotal.lua
+modules\DPSMate_Details_AbsorbsTakenTotal.xml
 modules\DPSMate_Details_HealingAndAbsorbs.lua
 modules\DPSMate_Details_HealingAndAbsorbs.xml
 modules\DPSMate_Details_HealingAndAbsorbsTotal.lua

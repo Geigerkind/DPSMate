@@ -393,7 +393,7 @@ function DPSMate.Modules.DetailsHABTotal:GetTableValues()
 					temp[ownername][6] = temp[ownername][6] + totHits
 					temp[ownername][7] = temp[ownername][7] + totHits
 				else
-					temp[ownername] = {ownername, PerPlayerAbsorb, 0, totHits, DPSMateCombatTime["effective"][curKey][ownername] or 0, totHits, totHits, ca}
+					temp[ownername] = {ownername, PerOwnerAbsorb, 0, totHits, DPSMateCombatTime["effective"][curKey][ownername] or 0, totHits, totHits, ca}
 				end
 			end
 		end
