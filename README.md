@@ -47,7 +47,7 @@ Misc:
 4. Remove DPSMate.lua and DPSMate.lua.bak in your WTF/Account/YOUR ACC NAME/Kronos/YOUR CHAR NAME/SavedVariables/ (if you had DPSMate installed before)
 5. I recommend to disable SW_Stats.
 
-#**Legacy Logs!**#   
+#**Legacy Logs!**#   http://legacy-logs.com/#
 Legacy Logs is an world of logs-like evaluation site, using DPSMate to give you an indeph analyzation of your raid.   
 It looks like this: (Link)   
 ![img](https://gyazo.com/31527f36b405dcd131ff495a4f96201b.png)  
