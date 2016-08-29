@@ -7,27 +7,28 @@ DPSMate is not only a meter which shows numbers of the raid, such as damage done
 ![img](http://i.imgur.com/UWEgLn9.png)
 
 #Mentionable features of DPSMate#
-Frame:
-- Several frames, allowing to show different modes at the same time
-- Resizable, allowing to adjust it to the interface
-- Fully costumizable by using the configuration menu
+Frame:   
+- Several frames, allowing to show different modes at the same time   
+- Resizable, allowing to adjust it to the interface   
+- Fully costumizable by using the configuration menu   
 
-Modes:
-- 32 different modes and more are planed 
-Some of them are:
-- Healing and Absorbs (Effective healing and **Absorbs**)
-- Deaths, recall your or someones death
-- Dispells, showing everyones dispells **including hot dispells** such as Abolish Poison
-- Interrupts, including stuns and silences
-- Auras (Gained, Lost and Uptime)
-- etc.
+Modes:   
+- ~40 different modes   
+Some of them are:   
+- Healing and Absorbs (Effective healing and Absorbs)   
+- Deaths, recall your or someones death   
+- Dispells, showing everyones dispells including hot dispells such as Abolish Poison   
+- Interrupts, including stuns and silences   
+- Auras (Gained, Lost and Uptime)   
+- Compare mode      
+- etc.   
 
-Misc:
-- Several Segments (Total, **Current, and previous fights**)
-- Synchronizing, to guarantee accurate data
-- Report function for every mode and everys player data
-- Cooperating with Realmplayers (Still in work)
-- And many more...
+Misc:   
+- Several Segments (Total, Current, and previous fights)   
+- Synchronizing, to guarantee accurate data   
+- Report function for every mode and everys player data   
+- An own evaluation site to compare to revamp the raid and compare to other guilds: Legacy Logs (http://legacy-logs.com/#)  
+- And many more...   
 
 #But pictures tell more than words:#  
 ![img](http://i.imgur.com/gG3fHSR.png)  
