@@ -1663,23 +1663,45 @@ end
 -- /script DPSMate.DB:ConfirmDispel("Frostbolt", "Shino", 1.2)
 
 local AwaitHotDispel = {}
+local Restor = DPSMate.BabbleSpell:GetTranslation("Restoration")
+local RPotion = DPSMate.BabbleSpell:GetTranslation("Restorative Potion")
+local PFication = DPSMate.BabbleSpell:GetTranslation("Purification")
+local PPotion = DPSMate.BabbleSpell:GetTranslation("Purification Potion")
 function DPSMate.DB:AwaitHotDispel(ability, target, cause, time)
+	if ability == RPotion then
+		ability = Restor
+		target = cause
+	end
+	if ability == PPotion then
+		ability = PFication
+		target = cause
+	end
 	tinsert(AwaitHotDispel, {cause, target, ability, time})
 	--DPSMate:SendMessage("Awaiting Dispel! - "..cause.." - "..target.." - "..ability.." - "..time)
+end
+
+function DPSMate.DB:RemoveActiveHotDispel(target, ability)
+	if ActiveHotDispel[target] then
+		for ca, va in ActiveHotDispel[target] do -- Overwriting old active hot dispel
+			if va[2]==ability then
+				tremove(ActiveHotDispel[target], ca)
+				self:RemoveActiveHotDispel(target, ability)
+				break
+			end
+		end
+	end
 end
 
 local ActiveHotDispel = {}
 local lastDispel = nil;
 function DPSMate.DB:RegisterHotDispel(target, ability)
 	for cat, val in AwaitHotDispel do
-		--DPSMate:SendMessage(val[2].."="..target)
-		--DPSMate:SendMessage(val[3].."="..ability)
 		if val[2]==target and val[3]==ability then
 			if not ActiveHotDispel[val[2]] then ActiveHotDispel[val[2]] = {} end
 			lastDispel = target;
+			self:RemoveActiveHotDispel(val[2], val[3]) -- Overwrite active dispels
 			tinsert(ActiveHotDispel[val[2]], {val[1], val[3]})
 			self:EvaluateDispel()
-			--DPSMate:SendMessage("Confirmed")
 			break
 		end
  	end
@@ -1700,7 +1722,6 @@ function DPSMate.DB:ConfirmRealDispel(ability, target, time)
 	lastDispel = target;
 	self:EvaluateDispel()
 	NextTotemDispel = true
-	--self:Dispels("Unknown", "Unknown", target, ability)
 end
 
 function DPSMate.DB:ApplyRemainingDispels()
@@ -1750,7 +1771,6 @@ function DPSMate.DB:ApplyRemainingDispels()
 end
 
 -- Deprecated time component
-local Restor = DPSMate.BabbleSpell:GetTranslation("Restoration")
 function DPSMate.DB:EvaluateDispel()
 	for cat, val in ActiveHotDispel do
 		for ca, va in val do

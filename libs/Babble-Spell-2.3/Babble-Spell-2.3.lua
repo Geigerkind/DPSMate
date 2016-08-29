@@ -42,6 +42,8 @@ BabbleSpell:RegisterTranslations("enUS", function()
 		["Mana Detonation"] = true,
 		["Shadow Fissure"] = true,
 		["Tidal Charm"] = true,
+		["Purification Potion"] = true,
+		["Restorative Potion"] = true,
 		
 		["Powerful Anti-Venom"] = true,
 		["Wildvine Potion"] = true,
@@ -2087,6 +2089,8 @@ end)
 BabbleSpell:RegisterTranslations("deDE", function()
 	return {
 		-- Translation by Bambustrepp
+		["Purification Potion"] = "Läuterungstrank",
+		["Restorative Potion"] = "Regenerationstrank",
 		["Negative Charge"] = "Negative Aufladung",
 		["Positive Charge"] = "Positive Aufladung",
 		["Void Zone"] = "Zone der Leere",
@@ -10118,6 +10122,8 @@ end)
 
 local spellIcons = {
 	-- Costum Icons
+	["Purification Potion"] = "inv_potion_01",
+	["Restorative Potion"] = "inv_potion_01",
 	["Negative Charge"] = "spell_chargenegative",
 	["Positive Charge"] = "spell_chargepositive",
 	["Void Zone"] = "spell_frost_icestorm",

@@ -323,6 +323,8 @@ DPSMate.Parser.Dispels = {
 	[DPSMate.BabbleSpell:GetTranslation("Powerful Anti-Venom")] = true,
 	[DPSMate.BabbleSpell:GetTranslation("Restoration")] = true,
 	[DPSMate.BabbleSpell:GetTranslation("Purification")] = true,
+	[DPSMate.BabbleSpell:GetTranslation("Purification Potion")] = true,
+	[DPSMate.BabbleSpell:GetTranslation("Restorative Potion")] = true,
 }
 DPSMate.Parser.DeCurse = {
 	[DPSMate.BabbleSpell:GetTranslation("Remove Curse")] = true,

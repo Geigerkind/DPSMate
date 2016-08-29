@@ -65,7 +65,7 @@ local ccount = 0;
 local cctime = 0;
 function NewSDM(prefix, message, type)
 	--DPSMate:SendMessage(ccount)
-	if (GT()-cctime)>=5 then
+	if (GT()-cctime)>=1.5 then
 		cctime = GT()
 		ccount = 0
 	end
@@ -84,21 +84,9 @@ function DPSMate.Sync:OnLoad()
 	pid = DPSMateUser[player][1]
 end
 
-local lastRefresh = 6;
-local delay = 3.1
-function DPSMate.Sync:GetSyncDelay(elapsed)
-	lastRefresh = lastRefresh + elapsed
-	if lastRefresh>=5 then
-		local _,_,ping = GetNetStats();
-		lastRefresh = 0;
-		delay = 2.3 + 2*ping/1000
-	end
-	return delay
-end
-
 function DPSMate.Sync:GetMessageState()
 	--if sname ~= "Kronos" and sname ~= "Kronos II" then return true end 
-	if ccount<=350 then
+	if ccount<=550 then
 		return true
 	end
 	return false
@@ -109,8 +97,8 @@ function DPSMate.Sync:SendAddonMessages(elapsed)
 	if DPSMateSettings["sync"] then
 		UpTime = UpTime + elapsed
 		if self:GetMessageState() then
-			if UpTime>2 then
-				for i=1,101 do
+			if UpTime>1 then
+				for i=1,80 do
 					if not Buffer[co] then break end
 					SendAddonMessage(Buffer[co][1]..DPSMate.SYNCVERSION, Buffer[co][2], "RAID")
 					Buffer[co] = nil
