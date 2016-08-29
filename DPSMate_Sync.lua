@@ -972,6 +972,13 @@ local AbsorbAbilities = {
 	[DPSMate.BabbleSpell:GetTranslation("Arcane Protection")] = true,
 	[DPSMate.BabbleSpell:GetTranslation("Holy Protection")] = true,
 }
+local OtherAbilities = {
+	[DPSMate.BabbleSpell:GetTranslation("Banish")] = true,
+	[DPSMate.BabbleSpell:GetTranslation("Curse of Recklessness")] = true,
+	[DPSMate.BabbleSpell:GetTranslation("Curse of the Elements")] = true,
+	[DPSMate.BabbleSpell:GetTranslation("Curse of Tongues")] = true,
+	[DPSMate.BabbleSpell:GetTranslation("Curse of Shadow")] = true,
+}
 DPSMate.Parser.SendSpell = {}
 local oldUseAction = UseAction
 DPSMate.Parser.UseAction = function(slot, checkCursor, onSelf)
@@ -980,7 +987,7 @@ DPSMate.Parser.UseAction = function(slot, checkCursor, onSelf)
 	DPSMate_Tooltip:SetAction(slot)
 	local aura = DPSMate_TooltipTextLeft1:GetText()
 	local target = DPSMate.Parser:GetTarget()
-	if aura and target and (OverTimeDispels[aura] or AbsorbAbilities[aura]) and not DPSMate.Parser.SendSpell[aura] then
+	if aura and target and (OverTimeDispels[aura] or AbsorbAbilities[aura] or OtherAbilities[aura]) and not DPSMate.Parser.SendSpell[aura] then
 	--if aura and target and not DPSMate.Parser.SendSpell[aura] then
 		--DPSMate:SendMessage("Send:"..aura.." with target: "..target)
 		SDM("DPSMate"..DPSMate.SYNCVERSION, aura..","..target..",", "RAID")
@@ -1001,7 +1008,7 @@ UseAction = DPSMate.Parser.UseAction
 local oldCastSpellByName = CastSpellByName
 DPSMate.Parser.CastSpellByName = function(spellName, onSelf)
 	local target = DPSMate.Parser:GetTarget()
-	if target and (OverTimeDispels[spellName] or AbsorbAbilities[spellName]) and not DPSMate.Parser.SendSpell[spellName] then 
+	if target and (OverTimeDispels[spellName] or AbsorbAbilities[spellName] or OtherAbilities[spellName]) and not DPSMate.Parser.SendSpell[spellName] then 
 		SDM("DPSMate"..DPSMate.SYNCVERSION, spellName..","..target..",", "RAID")
 		DPSMate.Parser.SendSpell[spellName] = true
 	end
@@ -1019,7 +1026,7 @@ local oldCastSpell = CastSpell
 DPSMate.Parser.CastSpell = function(spellID, spellbookType)
 	local spellName, spellRank = GetSpellName(spellID, spellbookType)
 	local target = DPSMate.Parser:GetTarget()
-	if target and (OverTimeDispels[spellName] or AbsorbAbilities[spellName]) and not DPSMate.Parser.SendSpell[spellName] then 
+	if target and (OverTimeDispels[spellName] or AbsorbAbilities[spellName] or OtherAbilities[spellName]) and not DPSMate.Parser.SendSpell[spellName] then 
 		SDM("DPSMate"..DPSMate.SYNCVERSION, spellName..","..target..",", "RAID")
 		DPSMate.Parser.SendSpell[spellName] = true
 	end
@@ -1562,7 +1569,7 @@ DPSMate.Sync.Exec = {
 		t[3] = GetTime()
 	
 		--t[2] = npctra:GetTranslation(t[2]) or t[2]
-		if DPSMate.Parser.Kicks[t[1]] then DB:AwaitAfflictedStun(arg4, t[1], t[2], t[3]) end
+		DB:AwaitAfflictedStun(arg4, t[1], t[2], t[3])
 		if DPSMate.Parser.HotDispels[t[1]] then DB:AwaitHotDispel(t[1], t[2], arg4, t[3]) end
 		DB:AwaitingBuff(arg4, t[1], t[2], t[3])
 		DB:AwaitingAbsorbConfirmation(arg4, t[1], t[2], t[3])
