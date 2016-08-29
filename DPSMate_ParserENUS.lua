@@ -250,6 +250,7 @@ function DPSMate.Parser:SpellDamageShieldsOnSelf(msg)
 	t = {}
 	for a,b,c in strgfind(msg, "You reflect (%d+) (%a-) damage to (.+)%.") do 
 		local am = tnbr(a)
+		if c == "you" then c=self.player end
 		DB:EnemyDamage(true, DPSMateEDT, self.player, "Reflection", 1, 0, 0, 0, 0, 0, am, c, 0, 0)
 		DB:DamageDone(self.player, "Reflection", 1, 0, 0, 0, 0, 0, am, 0, 0)
 	end
@@ -754,6 +755,10 @@ function DPSMate.Parser:SpellHostilePlayerBuff(msg)
 		if self.procs[b] and not self.OtherExceptions[b] then
 			DB:BuildBuffs(a, c, b, true)
 		end
+		return
+	end
+	for a,b in strgfind(msg, "(.+) begins to cast (.+)%.")  do
+		DB:RegisterPotentialKick(a, b, GetTime())
 		return
 	end
 	for a,b,c,d in strgfind(msg, "(.+) gains (%d+) Energy from (.+)'s (.+)%.") do

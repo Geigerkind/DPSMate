@@ -346,6 +346,7 @@ if (GetLocale() == "deDE") then
 		t = {}
 		for a,b,c in strgfind(msg, "Ihr reflektiert (%d+) (%a-) auf (.+)%.") do 
 			local am = tnbr(a)
+			if c == "Euch" then c=self.player end
 			DB:EnemyDamage(true, DPSMateEDT, self.player, "Reflektieren", 1, 0, 0, 0, 0, 0, am, c, 0, 0)
 			DB:DamageDone(self.player, "Reflektieren", 1, 0, 0, 0, 0, 0, am, 0, 0)
 		end
@@ -921,6 +922,10 @@ if (GetLocale() == "deDE") then
 			end
 			DB:Healing(1, DPSMateTHealing, a, b, 1, 0, t[1], self.player)
 			DB:DeathHistory(self.player, a, b, t[1], 1, 0, 1, 0)
+			return
+		end
+		for a,b in strgfind(msg, "(.+) beginnt (.+) zu wirken%.")  do
+			DB:RegisterPotentialKick(a, b, GetTime())
 			return
 		end
 		for a,b,c,d in strgfind(msg, "(.+) bekommt (%d+) Energie durch (.-%s*)'?s (.+)%.") do

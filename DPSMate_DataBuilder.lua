@@ -887,7 +887,7 @@ function DPSMate.DB:UpdateThreat()
 end
 
 function DPSMate.DB:Threat(cause, spellname, target, value, amount)
-	if self:BuildUser(target, nil) or self:BuildUser(cause, nil) or self:BuildAbility(spellname, nil) or value==0 then return end
+	if self:BuildUser(target, nil) or self:BuildUser(cause, nil) or self:BuildAbility(spellname, nil) or value==0 or cause=="" or spellname=="" or target=="" then return end
 	for cat, val in pairs({[1]="total", [2]="current"}) do
 		if not DPSMateThreat[cat][DPSMateUser[cause][1]] then
 			DPSMateThreat[cat][DPSMateUser[cause][1]] = {}
