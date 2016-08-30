@@ -10,7 +10,7 @@ Description: Allows for easy creation of graphs
 
 --Thanks to Nelson Minar for catching several errors where width was being used instead of height (damn copy and paste >_>)
 
-local major, minor = "Graph-1.0", "$Revision: 36224 $"
+local major, minor = "DPSGraph-1.0", "$Revision: 36224 $"
 
 if not AceLibrary then error(major .. " requires AceLibrary.") end
 if not AceLibrary:IsNewVersion(major, minor) then return end

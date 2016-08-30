@@ -1,6 +1,6 @@
 -- Global Variables
 DPSMate = {}
-DPSMate.VERSION = 62
+DPSMate.VERSION = 63
 DPSMate.LOCALE = GetLocale()
 DPSMate.SYNCVERSION = DPSMate.VERSION..DPSMate.LOCALE
 DPSMate.Parser = {}
@@ -72,8 +72,8 @@ DPSMate.Events = {
 DPSMate.Registered = true
 DPSMate.RegistredModules = {}
 DPSMate.ModuleNames = {}
-DPSMate.BabbleSpell = AceLibrary("Babble-Spell-2.3")
-DPSMate.BabbleBoss = AceLibrary("Babble-Boss-2.3")
+DPSMate.BabbleSpell = AceLibrary("DPSBabble-Spell-2.3")
+DPSMate.BabbleBoss = AceLibrary("DPSBabble-Boss-2.3")
 DPSMate.NPCDB = AceLibrary("NPCDB-1.0")
 DPSMate.UserId = nil
 DPSMate.AbilityId = nil

@@ -51,8 +51,8 @@ DPSMate.Options.bgtexture = {
 	["Solid Background"] = "Interface\\CHATFRAME\\CHATFRAMEBACKGROUND",
 	["UI-Tooltip-Background"] = "Interface\\Tooltips\\UI-Tooltip-Background",
 }
-DPSMate.Options.Dewdrop = AceLibrary("Dewdrop-2.0")
-DPSMate.Options.graph = AceLibrary("Graph-1.0")
+DPSMate.Options.Dewdrop = AceLibrary("DPSDewdrop-2.0")
+DPSMate.Options.graph = AceLibrary("DPSGraph-1.0")
 DPSMate.Options.Options = {
 	[1] = {
 		type = 'group',

@@ -9,7 +9,7 @@ Description: A library to provide localizations for bosses.
 Dependencies: AceLibrary, AceLocale-2.2
 ]]
 
-local MAJOR_VERSION = "Babble-Boss-2.3"
+local MAJOR_VERSION = "DPSBabble-Boss-2.3"
 local MINOR_VERSION = tonumber(string.sub("$Revision: 17545 $", 12, -3))
 
 if not AceLibrary then error(MAJOR_VERSION .. " requires AceLibrary") end

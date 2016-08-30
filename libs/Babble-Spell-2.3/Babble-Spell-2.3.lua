@@ -9,7 +9,7 @@ Description: A library to provide localizations for spells.
 Dependencies: AceLibrary, AceLocale-2.2
 ]]
 
-local MAJOR_VERSION = "Babble-Spell-2.3"
+local MAJOR_VERSION = "DPSBabble-Spell-2.3"
 local MINOR_VERSION = tonumber(string.sub("$Revision: 15059 $", 12, -3))
 
 if not AceLibrary then error(MAJOR_VERSION .. " requires AceLibrary") end

@@ -9,7 +9,7 @@ Description: A library to provide a clean dropdown menu interface.
 Dependencies: AceLibrary
 ]]
 
-local MAJOR_VERSION = "Dewdrop-2.0"
+local MAJOR_VERSION = "DPSDewdrop-2.0"
 local MINOR_VERSION = "$Revision: 11598 $"
 
 if not AceLibrary then error(MAJOR_VERSION .. " requires AceLibrary") end
