@@ -44,14 +44,6 @@
 				</FontString>
 			</Layer>
 		</Layers>
-		<Scripts>
-			<OnEnter>
-				DPSMate.Modules.DetailsProcs:ShowTooltip(this)
-			</OnEnter>
-			<OnLeave>
-				GameTooltip:Hide()
-			</OnLeave>
-		</Scripts>
 	</Frame>
 	
 	<ScrollFrame name="DPSMate_Template_Procs_Box" virtual="true">
