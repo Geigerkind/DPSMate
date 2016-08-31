@@ -1569,7 +1569,7 @@ DPSMate.Sync.Exec = {
 		t[3] = GT()
 	
 		--t[2] = npctra:GetTranslation(t[2]) or t[2]
-		DB:AwaitAfflictedStun(arg4, t[1], t[2], t[3])
+		DB:AwaitAfflicted(arg4, t[1], t[2], t[3])
 		if DPSMate.Parser.HotDispels[t[1]] then DB:AwaitHotDispel(t[1], t[2], arg4, t[3]) end
 		DB:AwaitingBuff(arg4, t[1], t[2], t[3])
 		DB:AwaitingAbsorbConfirmation(arg4, t[1], t[2], t[3])
