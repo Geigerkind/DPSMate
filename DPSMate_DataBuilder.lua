@@ -1680,6 +1680,8 @@ function DPSMate.DB:AwaitHotDispel(ability, target, cause, time)
 	--DPSMate:SendMessage("Awaiting Dispel! - "..cause.." - "..target.." - "..ability.." - "..time)
 end
 
+local ActiveHotDispel = {}
+local lastDispel = nil;
 function DPSMate.DB:RemoveActiveHotDispel(target, ability)
 	if ActiveHotDispel[target] then
 		for ca, va in ActiveHotDispel[target] do -- Overwriting old active hot dispel
@@ -1692,8 +1694,6 @@ function DPSMate.DB:RemoveActiveHotDispel(target, ability)
 	end
 end
 
-local ActiveHotDispel = {}
-local lastDispel = nil;
 function DPSMate.DB:RegisterHotDispel(target, ability)
 	for cat, val in AwaitHotDispel do
 		if val[2]==target and val[3]==ability then

@@ -39,62 +39,68 @@ function DPSMate.Modules.DetailsInterrupts:UpdateCompare(obj, key, comp)
 end
 
 function DPSMate.Modules.DetailsInterrupts:EvalTable(cname)
-	local a, b, total = {}, {}, 0
-	for cat, val in db[DPSMateUser[cname or DetailsUser][1]] do -- 41 Ability
-		if cat~="i" then
-			local CV, ta, tb = 0, {}, {}
-			for ca, va in val do
-				local taa, tbb = {}, {}
-				for c, v in va do
-					CV = CV + v
-					local i = 1
-					while true do
-						if (not tbb[i]) then
-							tinsert(tbb, i, v)
-							tinsert(taa, i, c)
-							break
-						else
-							if tbb[i] < v then
+	local a, b, total, u, pet = {}, {}, 0, {}, false
+	if (DPSMateUser[cname or DetailsUser][5] and DPSMateUser[cname or DetailsUser][5] ~= DPSMate.L["unknown"] and arr[DPSMateUser[DPSMateUser[cname or DetailsUser][5]][1]]) and DPSMateSettings["mergepets"] then u={DPSMateUser[cname or DetailsUser][1],DPSMateUser[DPSMateUser[cname or DetailsUser][5]][1]} else u={DPSMateUser[cname or DetailsUser][1]} end
+	for _, vvv in pairs(u) do
+		for cat, val in db[vvv] do -- 41 Ability
+			if cat~="i" then
+				local CV, ta, tb = 0, {}, {}
+				if (DPSMateUser[DPSMate:GetUserById(vvv)][4]) then pet=true; else pet=false; end
+				for ca, va in val do
+					local taa, tbb = {}, {}
+					for c, v in va do
+						CV = CV + v
+						local i = 1
+						while true do
+							if (not tbb[i]) then
 								tinsert(tbb, i, v)
 								tinsert(taa, i, c)
+								break
+							else
+								if tbb[i] < v then
+									tinsert(tbb, i, v)
+									tinsert(taa, i, c)
+									break
+								end
+							end
+							i=i+1
+						end
+					end
+					local i = 1
+					while true do
+						if (not tb[i]) then
+							tinsert(tb, i, {CV, taa, tbb})
+							tinsert(ta, i, ca)
+							break
+						else
+							if tb[i][1] < CV then
+								tinsert(tb, i, {CV, taa, tbb})
+								tinsert(ta, i, ca)
 								break
 							end
 						end
 						i=i+1
 					end
 				end
-				local i = 1
-				while true do
-					if (not tb[i]) then
-						tinsert(tb, i, {CV, taa, tbb})
-						tinsert(ta, i, ca)
-						break
-					else
-						if tb[i][1] < CV then
-							tinsert(tb, i, {CV, taa, tbb})
-							tinsert(ta, i, ca)
+				if CV>0 then
+					local i = 1
+					while true do
+						if (not b[i]) then
+							tinsert(b, i, {CV, ta, tb})
+							tinsert(a, i, {cat, pet})
 							break
+						else
+							if b[i][1] < CV then
+								tinsert(b, i, {CV, ta, tb})
+								tinsert(a, i, {cat, pet})
+								break
+							end
 						end
-					end
-					i=i+1
-				end
-			end
-			local i = 1
-			while true do
-				if (not b[i]) then
-					tinsert(b, i, {CV, ta, tb})
-					tinsert(a, i, cat)
-					break
-				else
-					if b[i][1] < CV then
-						tinsert(b, i, {CV, ta, tb})
-						tinsert(a, i, cat)
-						break
+						i=i+1
 					end
 				end
-				i=i+1
+				total = total + CV
 			end
-			total = total + CV
 		end
 	end
 	return a, total, b
@@ -106,6 +112,7 @@ function DPSMate.Modules.DetailsInterrupts:ScrollFrame_Update(comp)
 	local obj = _G("DPSMate_Details_"..comp.."Interrupts_Log_ScrollFrame")
 	local path = "DPSMate_Details_"..comp.."Interrupts_Log_ScrollButton"
 	local uArr, dArr, dTot, dSel = DetailsArr, DmgArr, DetailsTotal, DetailsSelected
+	local pet = ""
 	if comp~="" and comp then
 		uArr = DetailsArrComp
 		dArr = DmgArrComp
@@ -117,8 +124,9 @@ function DPSMate.Modules.DetailsInterrupts:ScrollFrame_Update(comp)
 	for line=1,14 do
 		lineplusoffset = line + FauxScrollFrame_GetOffset(obj)
 		if uArr[lineplusoffset] ~= nil then
-			local ability = DPSMate:GetAbilityById(uArr[lineplusoffset])
-			_G(path..line.."_Name"):SetText(ability)
+			if uArr[lineplusoffset][2] then pet = "(Pet)" else pet = "" end
+			local ability = DPSMate:GetAbilityById(uArr[lineplusoffset][1])
+			_G(path..line.."_Name"):SetText(ability..pet)
 			_G(path..line.."_Value"):SetText(dArr[lineplusoffset][1].." ("..string.format("%.2f", 100*dArr[lineplusoffset][1]/dTot).."%)")
 			_G(path..line.."_Icon"):SetTexture(DPSMate.BabbleSpell:GetSpellIcon(strsub(ability, 1, (strfind(ability, "%(") or 0)-1) or ability))
 			if len < 14 then

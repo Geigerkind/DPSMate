@@ -122,7 +122,7 @@ function DPSMate.Parser:PeriodicDamage(msg)
 	for a,b,c,d,e in strgfind(msg, "(.+) suffers (%d+) (%a-) damage from your (.+)%.(.*)") do
 		t[1] = tnbr(b)
 		if e~="" then
-			DB:SetUnregisterVariables(tnbr(strsub(e, strfind(e, "%d+"))), d, self.player)
+			DB:SetUnregisterVariables(tnbr(strsub(e, strfind(e, "%d+"))), d.."(Periodic)", self.player)
 		end
 		DB:EnemyDamage(true, DPSMateEDT, self.player, d.."(Periodic)", 1, 0, 0, 0, 0, 0, t[1], a, 0, 0)
 		DB:DamageDone(self.player, d.."(Periodic)", 1, 0, 0, 0, 0, 0, t[1], 0, 0)
@@ -197,7 +197,7 @@ end
 function DPSMate.Parser:FriendlyPlayerHits(msg)
 	t = {}
 	for a,b,c,d,e in strgfind(msg, "(.-) (%a%a?)\its (.+) for (%d+)%. %((%d+) absorbed%)") do
-		DB:SetUnregisterVariables(tnbr(e), c, a)
+		DB:SetUnregisterVariables(tnbr(e), "AutoAttack", a)
 	end
 	for a,b,c,d,e in strgfind(msg, "(.-) (%a%a?)\its (.+) for (%d+)\.%s?(.*)") do
 		if b=="h" then t[3]=1;t[4]=0 end

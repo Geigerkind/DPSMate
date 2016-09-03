@@ -18,10 +18,10 @@ if (GetLocale() == "deDE") then
 	DPSMate.Parser.SelfHits = function(self, msg)
 		t = {}
 		for a,b,c,d in strgfind(msg, "Ihr trefft (.+)%. Schaden: (%d+)\.%s?(.*)%. %((%d+) absorbed%)") do -- To Test
-			DB:SetUnregisterVariables(tnbr(d), "AutoAttack", self.player)
+			DB:SetUnregisterVariables(tnbr(d), "Angreifen", self.player)
 		end
 		for a,b,d in strgfind(msg, "Ihr trefft (.+) kritisch für (%d+) Schaden%. %((%d+) absorbed%)") do -- To Test
-			DB:SetUnregisterVariables(tnbr(d), "AutoAttack", self.player)
+			DB:SetUnregisterVariables(tnbr(d), "Angreifen", self.player)
 		end
 		for a,b,c in strgfind(msg, "Ihr trefft (.+)%. Schaden: (%d+)\.%s?(.*)") do
 			if c == "(gestreift)" then t[3]=1;t[1]=0 elseif c ~= "" then t[4]=1;t[1]=0; end
@@ -199,7 +199,7 @@ if (GetLocale() == "deDE") then
 	-- X von Z wurde von Y pariert.
 	DPSMate.Parser.FriendlyPlayerDamage = function(self, msg)
 		t = {}
-		for k,a,b,c,d,f in strgfind(msg, "(.-%s*)'?s (.+) trifft (.+) kritisch für (%d+)(.*)%. %((%d+) absorbiert%)") do 
+		for k,a,b,c,d,f in strgfind(msg, "(.-%s*)'?s (.+) trifft (.+) für (%d+)(.*)%. %((%d+) absorbiert%)") do 
 			k = self:ReplaceSwString(k)
 			DB:AddSpellSchool(a,d)
 			DB:SetUnregisterVariables(tnbr(f), b, k)
@@ -263,8 +263,8 @@ if (GetLocale() == "deDE") then
 	-- X fällt und verliert d+ Gesundheit.
 	DPSMate.Parser.FriendlyPlayerHits = function(self, msg)
 		t = {}
-		for a,b,c,e in strgfind(msg, "(.-) trifft (.+) kritisch für (%d+) Schaden%. %((%d+) absorbiert%)") do
-			DB:SetUnregisterVariables(tnbr(e), b, a)
+		for a,b,c,e in strgfind(msg, "(.-) trifft (.+) für (%d+) Schaden%. %((%d+) absorbiert%)") do
+			DB:SetUnregisterVariables(tnbr(e), "Angreifen", a)
 		end
 		for a,b,c,d in strgfind(msg, "(.-) trifft (.+) kritisch für (%d+) Schaden\.%s?(.*)") do
 			if d=="(gestreift)" then t[1]=1;t[3]=0 elseif d~="" then t[2]=1;t[3]=0 end

@@ -26,7 +26,7 @@ function DPSMate.Modules.DetailsHealingAndAbsorbs:UpdateDetails(obj, key)
 	DetailsUser = obj.user
 	DetailsUserComp = nil
 	DPSMate_Details_HealingAndAbsorbs_Title:SetText(DPSMate.L["habby"]..obj.user)
-	DPSMate_Details_HealingAndAbsorbs_SubTitle:SetText(DPSMate.L["activity"]..strformat("%.2f", DPSMateCombatTime["effective"][key][obj.user] or 0).."s "..DPSMate.L["of"].." "..strformat("%.2f", DPSMateCombatTime[mode[key]]).."s ("..strformat("%.2f", 100*(DPSMateCombatTime["effective"][key][obj.user] or 0)/DPSMateCombatTime[mode[key]]).."%)")
+	DPSMate_Details_HealingAndAbsorbs_SubTitle:SetText(DPSMate.L["activity"]..strformat("%.2f", (DPSMateCombatTime["effective"][key][obj.user] or 0)+1).."s "..DPSMate.L["of"].." "..strformat("%.2f", DPSMateCombatTime[mode[key]]).."s ("..strformat("%.2f", 100*((DPSMateCombatTime["effective"][key][obj.user] or 0)+1)/DPSMateCombatTime[mode[key]]).."%)")
 	DPSMate_Details_HealingAndAbsorbs:Show()
 	UIDropDownMenu_Initialize(DPSMate_Details_HealingAndAbsorbs_DiagramLegend_Procs, DPSMate.Modules.DetailsHealingAndAbsorbs.ProcsDropDown)
 	DetailsArr, DetailsTotal, DmgArr = DPSMate.RegistredModules[DPSMateSettings["windows"][curKey]["CurMode"]]:EvalTable(DPSMateUser[DetailsUser], curKey)
@@ -253,6 +253,9 @@ function DPSMate.Modules.DetailsHealingAndAbsorbs:EvalToggleTable(cname)
 											end
 										end
 									end
+									if p>DPSMate.DB.FixedShieldAmounts[shieldname] then
+										p = DPSMate.DB.FixedShieldAmounts[shieldname]
+									end
 									if p==5 or p==0 then
 										p = ceil((1/totalHits)*((DPSMateUser[cname or DetailsUser][8] or 60)/60)*DPSMate.DB.FixedShieldAmounts[shieldname]*0.33)
 									end
@@ -448,6 +451,9 @@ function DPSMate.Modules.DetailsHealingAndAbsorbs:SelectDetails_HealingAndAbsorb
 														end
 													end
 												end
+											end
+											if p>DPSMate.DB.FixedShieldAmounts[abString] then
+												p = DPSMate.DB.FixedShieldAmounts[abString]
 											end
 											if p==5 or dmg==0 then
 												p = ceil((1/totalHits)*((DPSMateUser[cname or DetailsUser][8] or 60)/60)*DPSMate.DB.FixedShieldAmounts[abString]*0.33)
@@ -759,6 +765,9 @@ function DPSMate.Modules.DetailsHealingAndAbsorbs:UpdateStackedGraph(gg, comp, c
 						if DPSMateDamageTaken[1][d1[d4]][va[2]] then
 							if DPSMateDamageTaken[1][d1[d4]][va[2]][va[3]] then
 								dmg = DPSMateDamageTaken[1][d1[d4]][va[2]][va[3]][14]
+								if dmg>DPSMate.DB.FixedShieldAmounts[DPSMate:GetAbilityById(va[5])] then
+									dmg = DPSMate.DB.FixedShieldAmounts[DPSMate:GetAbilityById(va[5])]
+								end
 							end
 						end
 					end
@@ -858,6 +867,9 @@ function DPSMate.Modules.DetailsHealingAndAbsorbs:UpdateStackedGraph(gg, comp, c
 						if DPSMateDamageTaken[1][cat][va[2]] then
 							if DPSMateDamageTaken[1][cat][va[2]][va[3]] then
 								dmg = DPSMateDamageTaken[1][cat][va[2]][va[3]][14]
+								if dmg>DPSMate.DB.FixedShieldAmounts[DPSMate:GetAbilityById(va[5])] then
+									dmg = DPSMate.DB.FixedShieldAmounts[DPSMate:GetAbilityById(va[5])]
+								end
 							end
 						end
 					end
@@ -1014,6 +1026,9 @@ function DPSMate.Modules.DetailsHealingAndAbsorbs:SortLineTable(arr, b, cname)
 						if DPSMateDamageTaken[1][b][va[2]] then
 							if DPSMateDamageTaken[1][b][va[2]][va[3]] then
 								dmg = DPSMateDamageTaken[1][b][va[2]][va[3]][14]
+								if dmg>DPSMate.DB.FixedShieldAmounts[DPSMate:GetAbilityById(va[5])] then
+									dmg = DPSMate.DB.FixedShieldAmounts[DPSMate:GetAbilityById(va[5])]
+								end
 							end
 						end
 					end
@@ -1071,6 +1086,9 @@ function DPSMate.Modules.DetailsHealingAndAbsorbs:SortLineTable(arr, b, cname)
 						if DPSMateDamageTaken[1][cat][va[2]] then
 							if DPSMateDamageTaken[1][cat][va[2]][va[3]] then
 								dmg = DPSMateDamageTaken[1][cat][va[2]][va[3]][14]
+								if dmg>DPSMate.DB.FixedShieldAmounts[DPSMate:GetAbilityById(va[5])] then
+									dmg = DPSMate.DB.FixedShieldAmounts[DPSMate:GetAbilityById(va[5])]
+								end
 							end
 						end
 					end

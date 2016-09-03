@@ -22,7 +22,7 @@ function DPSMate.Modules.DetailsThreat:UpdateDetails(obj, key)
 	DetailsUser = obj.user
 	DetailsUserComp = nil
 	DPSMate_Details_Threat_Title:SetText(DPSMate.L["threatdoneby"]..obj.user)
-	DPSMate_Details_Threat_SubTitle:SetText(DPSMate.L["activity"]..strformat("%.2f", DPSMateCombatTime["effective"][key][obj.user] or 0).."s "..DPSMate.L["of"].." "..strformat("%.2f", DPSMateCombatTime[mode[key]]).."s ("..strformat("%.2f", 100*(DPSMateCombatTime["effective"][key][obj.user] or 0)/DPSMateCombatTime[mode[key]]).."%)")
+	DPSMate_Details_Threat_SubTitle:SetText(DPSMate.L["activity"]..strformat("%.2f", (DPSMateCombatTime["effective"][key][obj.user] or 0)+1).."s "..DPSMate.L["of"].." "..strformat("%.2f", DPSMateCombatTime[mode[key]]).."s ("..strformat("%.2f", 100*((DPSMateCombatTime["effective"][key][obj.user] or 0)+1)/DPSMateCombatTime[mode[key]]).."%)")
 	DPSMate_Details_Threat:Show()
 	DetailsArr, DetailsTotal, DmgArr = DPSMate.Modules.Threat:EvalTable(DPSMateUser[DetailsUser], curKey)
 	DPSMate_Details_Threat.proc = "None"

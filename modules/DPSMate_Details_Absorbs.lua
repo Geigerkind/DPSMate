@@ -442,6 +442,9 @@ function DPSMate.Modules.DetailsAbsorbs:UpdateStackedGraph(gg, comp, cname)
 						if DPSMateDamageTaken[1][uArr[dSel]][va[2]] then
 							if DPSMateDamageTaken[1][uArr[dSel]][va[2]][va[3]] then
 								dmg = DPSMateDamageTaken[1][uArr[dSel]][va[2]][va[3]][14]
+								if dmg>DPSMate.DB.FixedShieldAmounts[DPSMate:GetAbilityById(va[5])] then
+									dmg = DPSMate.DB.FixedShieldAmounts[DPSMate:GetAbilityById(va[5])]
+								end
 							end
 						end
 					end
@@ -497,6 +500,9 @@ function DPSMate.Modules.DetailsAbsorbs:UpdateStackedGraph(gg, comp, cname)
 						if DPSMateDamageTaken[1][cat][va[2]] then
 							if DPSMateDamageTaken[1][cat][va[2]][va[3]] then
 								dmg = DPSMateDamageTaken[1][cat][va[2]][va[3]][14]
+								if dmg>DPSMate.DB.FixedShieldAmounts[DPSMate:GetAbilityById(va[5])] then
+									dmg = DPSMate.DB.FixedShieldAmounts[DPSMate:GetAbilityById(va[5])]
+								end
 							end
 						end
 					end
@@ -549,6 +555,9 @@ function DPSMate.Modules.DetailsAbsorbs:SortLineTable(arr, b, cname)
 						if DPSMateDamageTaken[1][b][va[2]] then
 							if DPSMateDamageTaken[1][b][va[2]][va[3]] then
 								dmg = DPSMateDamageTaken[1][b][va[2]][va[3]][14]
+								if dmg>DPSMate.DB.FixedShieldAmounts[DPSMate:GetAbilityById(va[5])] then
+									dmg = DPSMate.DB.FixedShieldAmounts[DPSMate:GetAbilityById(va[5])]
+								end
 							end
 						end
 					end
@@ -584,6 +593,9 @@ function DPSMate.Modules.DetailsAbsorbs:SortLineTable(arr, b, cname)
 						if DPSMateDamageTaken[1][cat][va[2]] then
 							if DPSMateDamageTaken[1][cat][va[2]][va[3]] then
 								dmg = DPSMateDamageTaken[1][cat][va[2]][va[3]][14]
+								if dmg>DPSMate.DB.FixedShieldAmounts[DPSMate:GetAbilityById(va[5])] then
+									dmg = DPSMate.DB.FixedShieldAmounts[DPSMate:GetAbilityById(va[5])]
+								end
 							end
 						end
 					end

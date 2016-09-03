@@ -407,6 +407,7 @@ DPSMate.Parser.Kicks = {
 	
 	-- Paladin
 	[DPSMate.BabbleSpell:GetTranslation("Repentance")] = true,
+	[DPSMate.BabbleSpell:GetTranslation("Hammer of Justice")] = true,
 	
 	-- Warlock
 	[DPSMate.BabbleSpell:GetTranslation("Pyroclasm")] = true,

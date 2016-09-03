@@ -1,13 +1,11 @@
 ## Interface: 11200
 ## Title: DPSMate |cFFFF8080-Shino-|r
-## Title-deDE: DPSMate |cFFFF8080-Shino-|r
-## Notes: DPSMate tracks the fight and provides statistics [TO BE EDITED]
-## Notes-deDE: [TO BE EDITED]
+## Notes: DPSMate is an advanced combat analyzation tool, providing helpful graphs and statistics to evaluate the fight.
+## Notes-deDE: DPSMate ist ein Analysewerkzeug, das hilfreiche Graphen und Statistiken bereitstellt, um den Kampf zu evaluieren.
 ## Author: Shino <Synced> - Kronos
 ## SavedVariables: DPSMateSettings
 ## SavedVariablesPerCharacter: DPSMateUser, DPSMateAbility, DPSMateDamageDone, DPSMateEDT, DPSMateEDD, DPSMateDamageTaken, DPSMateDispels, DPSMateInterrupts, DPSMateDeaths, DPSMateEHealing, DPSMateTHealing, DPSMateHealingTaken, DPSMateEHealingTaken, DPSMateOverhealing, DPSMateOverhealingTaken, DPSMateAbsorbs, DPSMateThreat, DPSMateAurasGained, DPSMateCombatTime, DPSMateHistory, DPSMateAttempts, DPSMatePlayer, DPSMateLoot, DPSMateFails, DPSMateCCBreaker
 ## OptionalDeps: KLHThreatMeter
-## Version: 23
 
 libs\AceLibrary\AceLibrary.lua
 libs\Dewdrop-2.0\Dewdrop-2.0.lua

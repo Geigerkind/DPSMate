@@ -443,6 +443,9 @@ function DPSMate.Modules.DetailsAbsorbsTaken:UpdateStackedGraph(gg, comp, cname)
 						if DPSMateDamageTaken[1][DPSMateUser[cname or DetailsUser][1]][va[2]] then
 							if DPSMateDamageTaken[1][DPSMateUser[cname or DetailsUser][1]][va[2]][va[3]] then
 								dmg = DPSMateDamageTaken[1][DPSMateUser[cname or DetailsUser][1]][va[2]][va[3]][14]
+								if dmg>DPSMate.DB.FixedShieldAmounts[DPSMate:GetAbilityById(va[5])] then
+									dmg = DPSMate.DB.FixedShieldAmounts[DPSMate:GetAbilityById(va[5])]
+								end
 							end
 						end
 					end
@@ -498,6 +501,9 @@ function DPSMate.Modules.DetailsAbsorbsTaken:UpdateStackedGraph(gg, comp, cname)
 					if DPSMateDamageTaken[1][DPSMateUser[cname or DetailsUser][1]][va[2]] then
 						if DPSMateDamageTaken[1][DPSMateUser[cname or DetailsUser][1]][va[2]][va[3]] then
 							dmg = DPSMateDamageTaken[1][DPSMateUser[cname or DetailsUser][1]][va[2]][va[3]][14]
+							if dmg>DPSMate.DB.FixedShieldAmounts[DPSMate:GetAbilityById(va[5])] then
+								dmg = DPSMate.DB.FixedShieldAmounts[DPSMate:GetAbilityById(va[5])]
+							end
 						end
 					end
 				end
@@ -547,6 +553,9 @@ function DPSMate.Modules.DetailsAbsorbsTaken:SortLineTable(arr, b, cname)
 				if DPSMateDamageTaken[1][DPSMateUser[cname or DetailsUser][1]][va[2]] then
 					if DPSMateDamageTaken[1][DPSMateUser[cname or DetailsUser][1]][va[2]][va[3]] then
 						dmg = DPSMateDamageTaken[1][DPSMateUser[cname or DetailsUser][1]][va[2]][va[3]][14]
+						if dmg>DPSMate.DB.FixedShieldAmounts[DPSMate:GetAbilityById(va[5])] then
+							dmg = DPSMate.DB.FixedShieldAmounts[DPSMate:GetAbilityById(va[5])]
+						end
 					end
 				end
 			end
@@ -580,6 +589,9 @@ function DPSMate.Modules.DetailsAbsorbsTaken:SortLineTable(arr, b, cname)
 					if DPSMateDamageTaken[1][DPSMateUser[cname or DetailsUser][1]][va[2]] then
 						if DPSMateDamageTaken[1][DPSMateUser[cname or DetailsUser][1]][va[2]][va[3]] then
 							dmg = DPSMateDamageTaken[1][DPSMateUser[cname or DetailsUser][1]][va[2]][va[3]][14]
+							if dmg>DPSMate.DB.FixedShieldAmounts[DPSMate:GetAbilityById(va[5])] then
+								dmg = DPSMate.DB.FixedShieldAmounts[DPSMate:GetAbilityById(va[5])]
+							end
 						end
 					end
 				end

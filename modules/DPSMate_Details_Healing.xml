@@ -73,10 +73,10 @@
 					<Color r="1" g="1" b="1" />
 				</FontString>
 				<FontString name="$parent_Percent" inherits="GameFontNormalSmall" text="100%">
-					<Size x="40" y="24" />
+					<Size x="42" y="24" />
 					<Anchors>
 						<Anchor point="RIGHT">
-							<Offset x="-3" y="0" />
+							<Offset x="-5" y="0" />
 						</Anchor>
 					</Anchors>
 					<Color r="1" g="1" b="1" />
@@ -85,7 +85,7 @@
 		</Layers>
 		<Frames>
 			<StatusBar name="$parent_StatusBar">
-				<Size x="65" y="12" />
+				<Size x="58" y="12" />
 				<Anchors>
 					<Anchor point="LEFT" relativeTo="$parent_Amount" relativePoint="RIGHT" />
 				</Anchors>

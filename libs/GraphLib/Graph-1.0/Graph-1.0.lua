@@ -2156,7 +2156,10 @@ function lib:DrawBarNew(C, sx, sy, ex, ey, color, level, label)
 
 	if level then
 		if type(C.GraphLib_Frames[level]) == "nil" then
-			local newLevel = 1000 - level
+			local newLevel = 100-level
+			if newLevel<0 then
+				newLevel = 0
+			end
 			C.GraphLib_Frames[level] = CreateFrame("Frame", nil, C)
 			C.GraphLib_Frames[level]:SetFrameLevel(newLevel)
 			C.GraphLib_Frames[level]:SetAllPoints(C)

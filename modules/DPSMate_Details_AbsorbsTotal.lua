@@ -124,6 +124,9 @@ function DPSMate.Modules.DetailsAbsorbsTotal:UpdateStackedGraph()
 						if DPSMateDamageTaken[1][cat][va[2]] then
 							if DPSMateDamageTaken[1][cat][va[2]][va[3]] then
 								dmg = DPSMateDamageTaken[1][cat][va[2]][va[3]][14]
+								if dmg>DPSMate.DB.FixedShieldAmounts[DPSMate:GetAbilityById(va[5])] then
+									dmg = DPSMate.DB.FixedShieldAmounts[DPSMate:GetAbilityById(va[5])]
+								end
 							end
 						end
 					end
@@ -228,6 +231,9 @@ function DPSMate.Modules.DetailsAbsorbsTotal:AddTotalDataSeries()
 						if DPSMateDamageTaken[1][cat][va[2]] then
 							if DPSMateDamageTaken[1][cat][va[2]][va[3]] then
 								dmg = DPSMateDamageTaken[1][cat][va[2]][va[3]][14]
+								if dmg>DPSMate.DB.FixedShieldAmounts[DPSMate:GetAbilityById(va[5])] then
+									dmg = DPSMate.DB.FixedShieldAmounts[DPSMate:GetAbilityById(va[5])]
+								end
 							end
 						end
 					end
@@ -320,6 +326,9 @@ function DPSMate.Modules.DetailsAbsorbsTotal:GetTableValues()
 													end
 												end
 											end
+										end
+										if p>DPSMate.DB.FixedShieldAmounts[shieldname] then
+											p = DPSMate.DB.FixedShieldAmounts[shieldname]
 										end
 										if p==5 or p==0 then
 											p = ceil((1/totalHits)*((DPSMateUser[ownername][8] or 60)/60)*DPSMate.DB.FixedShieldAmounts[shieldname]*0.33)
@@ -419,6 +428,9 @@ function DPSMate.Modules.DetailsAbsorbsTotal:SortLineTable(uid)
 					if DPSMateDamageTaken[1][cat][va[2]] then
 						if DPSMateDamageTaken[1][cat][va[2]][va[3]] then
 							dmg = DPSMateDamageTaken[1][cat][va[2]][va[3]][14]
+							if dmg>DPSMate.DB.FixedShieldAmounts[DPSMate:GetAbilityById(va[5])] then
+								dmg = DPSMate.DB.FixedShieldAmounts[DPSMate:GetAbilityById(va[5])]
+							end
 						end
 					end
 				end
