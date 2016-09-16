@@ -415,6 +415,7 @@ function DPSMate.Modules.DetailsAbsorbsTakenTotal:CheckButtonCheckAll(obj)
 		for i=1, 30 do 
 			local ob = _G("DPSMate_Details_AbsorbsTakenTotal_PlayerList_Child_R"..i)
 			if ob.user then
+				self:RemoveLinesButton(ob.user, ob)
 				self:AddLinesButton(ob.user, ob)
 				_G("DPSMate_Details_AbsorbsTakenTotal_PlayerList_Child_R"..i.."_CB"):SetChecked(obj.act)
 			end

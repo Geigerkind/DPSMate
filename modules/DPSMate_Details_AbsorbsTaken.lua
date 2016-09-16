@@ -240,7 +240,7 @@ function DPSMate.Modules.DetailsAbsorbsTaken:SelectCreatureButton(i, comp)
 				DPSMate.Modules.DetailsAbsorbsTaken:UpdateLineGraph(g2, comp)
 			end
 		end
-		if DPSMateUser then
+		if DPSMateUserComp then
 			DPSMate.Modules.DetailsAbsorbsTaken:UpdateSumGraph()
 		end
 	end

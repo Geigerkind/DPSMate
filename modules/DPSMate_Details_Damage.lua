@@ -176,10 +176,10 @@ end
 function DPSMate.Modules.DetailsDamage:EvalToggleTable(comp)
 	local a,b = {},{}
 	local d = 0
-	for cat, val in db2 do
+	for cat, val in pairs(db2) do
 		if val[DPSMateUser[comp or DetailsUser][1]] then
 			local c = {[1] = 0,[2] = {},[3] = {}}
-			for p, v in val[DPSMateUser[comp or DetailsUser][1]] do
+			for p, v in pairs(val[DPSMateUser[comp or DetailsUser][1]]) do
 				if p ~= "i" then
 					local i = 1
 					while true do
@@ -199,6 +199,31 @@ function DPSMate.Modules.DetailsDamage:EvalToggleTable(comp)
 				end
 			end
 			c[1] = val[DPSMateUser[comp or DetailsUser][1]]["i"]
+			-- pet
+			if DPSMateUser[cname or DetailsUser][5] and DPSMateSettings["mergepets"] then
+				if val[DPSMateUser[DPSMateUser[cname or DetailsUser][5]][1]] then
+					for p, v in pairs(val[DPSMateUser[DPSMateUser[cname or DetailsUser][5]][1]]) do
+						if p ~= "i" then
+							local i = 1
+							while true do
+								if (not c[2][i]) then
+									tinsert(c[3], i, v)
+									tinsert(c[2], i, p)
+									break
+								else
+									if c[3][i][13] < v[13] then
+										tinsert(c[3], i, v)
+										tinsert(c[2], i, p)
+										break
+									end
+								end
+								i=i+1
+							end
+						end
+					end
+					c[1] = c[1] + val[DPSMateUser[DPSMateUser[cname or DetailsUser][5]][1]]["i"]
+				end
+			end
 			local i = 1
 			while true do
 				if (not a[i]) then
@@ -597,9 +622,9 @@ function DPSMate.Modules.DetailsDamage:UpdateStackedGraph(gg, comp, cname)
 	local temp = {}
 	local temp2 = {}
 	if toggle3 then
-		for cat, val in db2[d1[d4]][DPSMateUser[cname or DetailsUser][1]] do
+		for cat, val in pairs(db2[d1[d4]][DPSMateUser[cname or DetailsUser][1]]) do
 			if cat~="i" and val["i"] then
-				for c, v in val["i"] do
+				for c, v in pairs(val["i"]) do
 					local key = tonumber(strformat("%.1f", c))
 					if not temp[cat] then
 						temp[cat] = {}
@@ -627,14 +652,51 @@ function DPSMate.Modules.DetailsDamage:UpdateStackedGraph(gg, comp, cname)
 				end
 			end
 		end
+		
+		-- pet
+		if DPSMateUser[cname or DetailsUser][5] and DPSMateSettings["mergepets"] then
+			if db2[d1[d4]][DPSMateUser[DPSMateUser[cname or DetailsUser][5]][1]] then
+				for cat, val in pairs(db2[d1[d4]][DPSMateUser[DPSMateUser[cname or DetailsUser][5]][1]]) do
+					if cat~="i" and val["i"] then
+						for c, v in pairs(val["i"]) do
+							local key = tonumber(strformat("%.1f", c))
+							if not temp[cat] then
+								temp[cat] = {}
+								temp2[cat] = 0
+							end
+							if p[key] then
+								p[key] = p[key] + v
+							else
+								p[key] = v
+							end
+							local i = 1
+							while true do
+								if not temp[cat][i] then
+									tinsert(temp[cat], i, {c,v})
+									break
+								elseif c<=temp[cat][i][1] then
+									tinsert(temp[cat], i, {c,v})
+									break
+								end
+								i = i + 1
+							end
+							temp2[cat] = temp2[cat] + val[13]
+							maxY = math.max(p[key], maxY)
+							maxX = math.max(c, maxX)
+						end
+					end
+				end
+			end
+		end
+		
 		local min
-		for cat, val in temp do
+		for cat, val in pairs(temp) do
 			local pmin = DPSMate:GetMinValue(val, 1)
 			if not min or pmin<min then
 				min = pmin
 			end
 		end
-		for cat, val in temp do
+		for cat, val in pairs(temp) do
 			local i = 1
 			while true do
 				if not b[i] then
@@ -651,17 +713,17 @@ function DPSMate.Modules.DetailsDamage:UpdateStackedGraph(gg, comp, cname)
 				i = i + 1
 			end
 		end
-		for cat, val in Data1 do
+		for cat, val in pairs(Data1) do
 			Data1[cat] = DPSMate:ScaleDown(val, min)
 		end
 	
 		gg:ResetData()
 		gg:SetGridSpacing((maxX-min)/7,maxY/7)
 	else
-		for cat, val in db[DPSMateUser[cname or DetailsUser][1]] do
+		for cat, val in pairs(db[DPSMateUser[cname or DetailsUser][1]]) do
 			if cat~="i" and val["i"] then
 				local temp = {}
-				for c, v in val["i"] do
+				for c, v in pairs(val["i"]) do
 					local key = tonumber(strformat("%.1f", c))
 					if p[key] then
 						p[key] = p[key] + v
@@ -696,6 +758,52 @@ function DPSMate.Modules.DetailsDamage:UpdateStackedGraph(gg, comp, cname)
 						break
 					end
 					i = i + 1
+				end
+			end
+		end
+		-- Pet
+		if DPSMateUser[cname or DetailsUser][5] and DPSMateSettings["mergepets"] then
+			if db[DPSMateUser[DPSMateUser[cname or DetailsUser][5]][1]] then
+				for cat, val in pairs(db[DPSMateUser[DPSMateUser[cname or DetailsUser][5]][1]]) do
+					if cat~="i" and val["i"] then
+						local temp = {}
+						for c, v in pairs(val["i"]) do
+							local key = tonumber(strformat("%.1f", c))
+							if p[key] then
+								p[key] = p[key] + v
+							else
+								p[key] = v
+							end
+							local i = 1
+							while true do
+								if not temp[i] then
+									tinsert(temp, i, {c,v})
+									break
+								elseif c<temp[i][1] then
+									tinsert(temp, i, {c,v})
+									break
+								end
+								i = i + 1
+							end
+							maxY = math.max(p[key], maxY)
+							maxX = math.max(c, maxX)
+						end
+						local i = 1
+						while true do
+							if not b[i] then
+								tinsert(b, i, val[13])
+								tinsert(label, i, DPSMate:GetAbilityById(cat))
+								tinsert(Data1, i, temp)
+								break
+							elseif b[i]>=val[13] then
+								tinsert(b, i, val[13])
+								tinsert(label, i, DPSMate:GetAbilityById(cat))
+								tinsert(Data1, i, temp)
+								break
+							end
+							i = i + 1
+						end
+					end
 				end
 			end
 		end

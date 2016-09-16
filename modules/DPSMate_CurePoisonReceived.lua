@@ -125,10 +125,10 @@ end
 
 function DPSMate.Modules.CurePoisonReceived:GetSettingValues(arr, cbt, k)
 	local name, value, perc, sortedTable, total, a, p, strt = {}, {}, {}, {}, 0, 0, "", {[1]="",[2]=""}
-	if DPSMateSettings["windows"][k]["numberformat"] == 2 then p = "K" end
+	
 	sortedTable, total, a = DPSMate.Modules.CurePoisonReceived:GetSortedTable(arr,k)
 	for cat, val in pairs(sortedTable) do
-		local dmg, tot, sort = DPSMate:FormatNumbers(val, total, sortedTable[1], k)
+		local dmg, tot, sort = val, total, sortedTable[1]
 		if dmg==0 then break end
 		local str = {[1]="",[2]="",[3]=""}
 		if DPSMateSettings["columnspoisonreceived"][1] then str[1] = " "..dmg..p; strt[2] = " "..tot..p end

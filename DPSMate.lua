@@ -434,6 +434,7 @@ end
 function DPSMate:ApplyFilter(key, name)
 	if not key or not name or not DPSMateUser[name] then return true end
 	local class = DPSMateUser[name][2] or "warrior"
+	if class == "" then class = "warrior" end
 	local path = DPSMateSettings["windows"][key]
 	t = {}
 	if path["grouponly"] then
@@ -443,22 +444,24 @@ function DPSMate:ApplyFilter(key, name)
 	end
 	-- Certain people
 	strgsub(path["filterpeople"], "(.-),", func)
-	for cat, val in t do
+	for cat, val in pairs(t) do
 		if name == val then
 			return true
 		end
 	end
 	if path["filterpeople"] == "" then
 		-- classes
-		for cat, val in path["filterclasses"] do
-			if val then
+		for cat, val in pairs(path["filterclasses"]) do
+			if not val then
 				if cat == class then
-					return true
+					return false
 				end
 			end
 		end
+	else
+		return false
 	end
-	return false
+	return true
 end
 
 function DPSMate:GetSettingValues(arr, cbt, k, ecbt)

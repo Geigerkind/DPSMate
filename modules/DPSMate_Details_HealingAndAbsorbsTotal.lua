@@ -301,6 +301,9 @@ function DPSMate.Modules.DetailsHABTotal:AddTotalDataSeries()
 	end
 	
 	local tl = DPSMate:TableLength(sumTable)
+	if tl>50 then -- Hackfix.
+		tl=50
+	end
 	tl = ceil(tl-0.3*tl)
 	
 	for cat, val in sumTable do
@@ -479,6 +482,7 @@ function DPSMate.Modules.DetailsHABTotal:CheckButtonCheckAll(obj)
 		for i=1, 30 do 
 			local ob = _G("DPSMate_Details_HABTotal_PlayerList_Child_R"..i)
 			if ob.user then
+				self:RemoveLinesButton(ob.user, ob)
 				self:AddLinesButton(ob.user, ob)
 				_G("DPSMate_Details_HABTotal_PlayerList_Child_R"..i.."_CB"):SetChecked(obj.act)
 			end

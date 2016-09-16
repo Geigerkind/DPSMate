@@ -57,7 +57,7 @@ function DPSMate.Modules.Procs:GetSortedTable(arr,k)
 			local CV = 0
 			for ca, va in pairs(val) do -- 3 ability
 				local name = DPSMate:GetAbilityById(ca)
-				if va[4] or nonProcProcs[name] or DPSMate.Parser.DmgProcs[name] then
+				if (DPSMate.Parser.procs[name] and va[4]) or nonProcProcs[name] or DPSMate.Parser.DmgProcs[name] then
 					for c, v in va[1] do -- 1 Ability
 						CV=CV+1
 					end
@@ -89,7 +89,7 @@ function DPSMate.Modules.Procs:EvalTable(user, k)
 	local arr = DPSMate:GetMode(k)
 	for cat, val in pairs(arr[user[1]]) do -- 3 Ability
 		local name = DPSMate:GetAbilityById(cat)
-		if val[4] or nonProcProcs[name] or DPSMate.Parser.DmgProcs[name] then
+		if (DPSMate.Parser.procs[name] and val[4]) or nonProcProcs[name] or DPSMate.Parser.DmgProcs[name] then
 			local CV = 0
 			for c, v in val[1] do -- 1 Ability
 				CV=CV+1
@@ -120,10 +120,10 @@ end
 
 function DPSMate.Modules.Procs:GetSettingValues(arr, cbt, k)
 	local name, value, perc, sortedTable, total, a, p, strt = {}, {}, {}, {}, 0, 0, "", {[1]="",[2]=""}
-	if DPSMateSettings["windows"][k]["numberformat"] == 2 then p = "K" end
+	
 	sortedTable, total, a = DPSMate.Modules.Procs:GetSortedTable(arr,k)
 	for cat, val in pairs(sortedTable) do
-		local dmg, tot, sort = DPSMate:FormatNumbers(val, total, sortedTable[1], k)
+		local dmg, tot, sort = val, total, sortedTable[1]
 		if dmg==0 then break end
 		local str = {[1]="",[2]="",[3]=""}
 		if DPSMateSettings["columnsprocs"][1] then str[1] = " "..dmg..p; strt[2] = tot..p end

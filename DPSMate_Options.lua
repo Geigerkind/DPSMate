@@ -21,6 +21,7 @@ DPSMate.Options.fonts = {
 	["Ultima_Campagnoli"] = "Interface\\AddOns\\DPSMate\\fonts\\Ultima_Campagnoli.TTF",
 	["VeraSe"] = "Interface\\AddOns\\DPSMate\\fonts\\VeraSe.TTF",
 	["Yellowjacket"] = "Interface\\AddOns\\DPSMate\\fonts\\Yellowjacket.TTF",
+	["visitor2"] = "Interface\\AddOns\\DPSMate\\fonts\\visitor2.TTF",
 }
 DPSMate.Options.fontflags = {
 	["None"] = "NONE",
@@ -686,7 +687,7 @@ function DPSMate.Options:OnEvent(event)
 						LastPopUp = GetTime()
 					end
 				elseif DPSMateSettings["dataresetsjoinparty"] == 1 then
-					DPSMate.Options:PopUpAccept(true)
+					DPSMate.Options:PopUpAccept(true, true)
 				end
 				DPSMate.DB:OnGroupUpdate()
 			elseif LastPartyNum ~= PartyNum	then
@@ -1414,9 +1415,9 @@ end
 function DPSMate.Options:Report()
 	local channel = UIDropDownMenu_GetSelectedValue(DPSMate_Report_Channel)
 	SelectedChannel = channel
-	local arr, cbt = DPSMate:GetMode(DPSMate_Report.PaKey)
+	local arr, cbt, ecbt = DPSMate:GetMode(DPSMate_Report.PaKey)
 	local chn, index, name, value, perc = nil, nil, nil, nil, nil
-	name, value, perc, b = DPSMate:GetSettingValues(arr, cbt, DPSMate_Report.PaKey)
+	name, value, perc, b = DPSMate:GetSettingValues(arr, cbt, DPSMate_Report.PaKey, ecbt)
 	if (channel == DPSMate.L["whisper"]) then
 		chn = "WHISPER"; index = DPSMate_Report_Editbox:GetText();
 	elseif DPSMate:TContains(DPSMate.L["gchannel"], channel) then
@@ -1435,8 +1436,13 @@ end
 local AbilityModes = {"damage", "dps", "healing", "hps", "OHPS", "overhealing", "effectivehealing", "effectivehps", "deaths", "interrupts", "dispels", "decurses", "curedisease", "curepoison", "liftmagic", "aurasgained", "auraslost", "aurasuptime", "procs", "casts", "ccbreaker"}
 function DPSMate.Options:ReportUserDetails(obj, channel, name)
 	local Key, user = obj:GetParent():GetParent():GetParent().Key, obj.user
-	local _, cbt = DPSMate:GetMode(Key)
-	local a,b,c = DPSMate.RegistredModules[DPSMateSettings["windows"][Key]["CurMode"]]:EvalTable(DPSMateUser[user], Key, cbt)
+	local _, cbt, ecbt = DPSMate:GetMode(Key)
+	local a,b,c
+	if DPSMateSettings["windows"][Key]["CurMode"] == "deaths" then
+		a,b,c = DPSMate.RegistredModules[DPSMateSettings["windows"][Key]["CurMode"]]:EvalTable(DPSMateUser[user], Key)
+	else
+		a,b,c = DPSMate.RegistredModules[DPSMateSettings["windows"][Key]["CurMode"]]:EvalTable(DPSMateUser[user], Key, cbt, ecbt)
+	end
 	local chn, index
 	if (channel == DPSMate.L["whisper"]) then
 		chn = "WHISPER"; index = name;
@@ -1690,7 +1696,7 @@ function DPSMate.Options:OnVerticalScroll(obj, arg1, pre, spec)
 	if spec then maxScroll = maxScroll + 100 end
 	local Scroll = obj:GetVerticalScroll()
 	local toScroll = (Scroll - (pre*arg1))
-	if toScroll < 0 then
+	if toScroll < 0 or maxScroll < 0 then
 		obj:SetVerticalScroll(0)
 	elseif toScroll > maxScroll then
 		obj:SetVerticalScroll(maxScroll)
