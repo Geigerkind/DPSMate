@@ -1735,7 +1735,7 @@ function DPSMate.DB:ApplyRemainingDispels()
 	for cat, val in ConfirmedDispel do
 		for ca, va in val do
 			num = num + 1
-			if (GetTime()-va[2])>2 then
+			if (GetTime()-va[2])>10 then
 				local type = "party"
 				local num = GetNumPartyMembers()
 				if num <= 0 then
@@ -1802,13 +1802,12 @@ function DPSMate.DB:EvaluateDispel()
 	end
 	for cat, val in AwaitDispel do
 		for ca, va in val do
-			if (GetTime()-(va[3] or 0))<=2 then
+			if (GetTime()-(va[3] or 0))<=10 then
 				if ConfirmedDispel[cat] then
 					if va[2]~=Restor then
-						local q = DPSMate:TableLength(ConfirmedDispel[cat])
-						if q>0 then
-							self:Dispels(va[1], va[2], cat, ConfirmedDispel[cat][q][1])
-							tremove(ConfirmedDispel[cat], q)
+						if ConfirmedDispel[cat][1] then
+							self:Dispels(va[1], va[2], cat, ConfirmedDispel[cat][1][1])
+							tremove(ConfirmedDispel[cat], 1)
 							self:EvaluateDispel()
 							--tremove(AwaitDispel[cat], ca)
 							--lastDispel = nil;
@@ -1820,10 +1819,9 @@ function DPSMate.DB:EvaluateDispel()
 				if cat == DPSMate.L["unknown"] and lastDispel then
 					--DPSMate:SendMessage("Test 2")
 					if ConfirmedDispel[lastDispel] then
-						local q = DPSMate:TableLength(ConfirmedDispel[lastDispel])
-						if q>0 then
-							self:Dispels(va[1], va[2], lastDispel, ConfirmedDispel[lastDispel][q][1])
-							tremove(ConfirmedDispel[lastDispel], q)
+						if ConfirmedDispel[lastDispel][1] then
+							self:Dispels(va[1], va[2], lastDispel, ConfirmedDispel[lastDispel][1][1])
+							tremove(ConfirmedDispel[lastDispel], 1)
 							self:EvaluateDispel()
 							--tremove(AwaitDispel[cat], ca)
 							--lastDispel = nil;
@@ -2296,10 +2294,12 @@ function DPSMate.DB:Attempt(mode, check, tar)
 			if DPSMateAttempts[zone][1] and not DPSMateAttempts[zone][1][4] then
 				local _,_,a = DPSMate.Modules.EDT:GetSortedTable(DPSMateEDT[2])
 				local name = DPSMate:GetUserById(a[1])
-				if name == "" then
-					DPSMateAttempts[zone][1][1] = DPSMate.L["unknown"]
-				else
-					DPSMateAttempts[zone][1][1] = name or DPSMate.L["unknown"]
+				if DPSMateAttempts[zone][1][1]=="" or DPSMateAttempts[zone][1][1]==DPSMate.L["unknown"] then
+					if name == "" then
+						DPSMateAttempts[zone][1][1] = DPSMate.L["unknown"]
+					else
+						DPSMateAttempts[zone][1][1] = name or DPSMate.L["unknown"]
+					end
 				end
 				DPSMateAttempts[zone][1][4] = DPSMateCombatTime["total"]
 				DPSMateAttempts[zone][1][5] = check
