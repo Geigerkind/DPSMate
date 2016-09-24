@@ -25,7 +25,7 @@ function DPSMate.Modules.Casts:GetSortedTable(arr, k)
 			for ca, va in v do
 				if ca~="i" then
 					local abna = DPSMate:GetAbilityById(ca)
-					if abna~="AutoAttack" and abna~="Auto Shot" then
+					if abna~=DPSMate.L["AutoAttack"] and abna~=DPSMate.L["AutoShot"] then
 						CV = CV + va[1] + va[5] + va[9] + va[10] + va[11] + va[12] + va[14] + va[18]
 					end
 				end
@@ -72,7 +72,7 @@ function DPSMate.Modules.Casts:EvalTable(user, k)
 		end
 	end
 	for cat, val in temp do
-		if not DPSMateAbility[DPSMate.L["AutoAttack"]] or cat~=DPSMateAbility[DPSMate.L["AutoAttack"]][1] then
+		if (not DPSMateAbility[DPSMate.L["AutoAttack"]] or cat~=DPSMateAbility[DPSMate.L["AutoAttack"]][1]) and (not DPSMateAbility[DPSMate.L["AutoShot"]] or cat~=DPSMateAbility[DPSMate.L["AutoShot"]][1]) then
 			local i = 1
 			while true do
 				if (not b[i]) then
