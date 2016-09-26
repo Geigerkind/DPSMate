@@ -2279,7 +2279,11 @@ end
 
 local oldRepopMe = RepopMe
 function NewRepopMe()
-	DPSMate.DB:Attempt(true, true, nil)
+	if CombatState then
+		DPSMate.DB:Attempt(true, true, nil)
+	else
+		DPSMate.DB:Attempt(true, DPSMate.DB:IsWipe(), nil)
+	end
 	oldRepopMe()
 end
 RepopMe = NewRepopMe
