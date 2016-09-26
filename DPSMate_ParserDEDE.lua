@@ -1064,17 +1064,14 @@ if (GetLocale() == "deDE") then
 	}
 	DPSMate.Parser.Loot = function(self, msg)
 		for a,b,c,d,e in strgfind(msg, "(.-) bekommt Beute: |cff(.-)|Hitem:(%d+)(.+)%[(.+)%]|h|r") do
-			DPSMate:SendMessage(a.."/"..b.."/"..c.."/"..d.."/"..e)
 			DB:Loot(a, linkQuality[b], tnbr(c), e)
 			return
 		end
 		for a,b,c,d,e in strgfind(msg, "(.-) erhält Beute: |cff(.-)|Hitem:(%d+)(.+)%[(.+)%]|h|r") do
-			DPSMate:SendMessage(a.."/"..b.."/"..c.."/"..d.."/"..e)
 			DB:Loot(a, linkQuality[b], tnbr(c), e)
 			return
 		end
 		for a,b,c,d in strgfind(msg, "Ihr erhaltet Beute: |cff(.-)|Hitem:(%d+)(.+)%[(.+)%]|h|r") do
-		DPSMate:SendMessage(a.."/"..b.."/"..c.."/"..d)
 			DB:Loot(self.player, linkQuality[a], tnbr(b), d)
 			return
 		end
