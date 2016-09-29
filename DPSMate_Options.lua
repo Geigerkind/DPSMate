@@ -246,7 +246,7 @@ DPSMate.Options.Options = {
 						name = DPSMate.L["whisper"],
 						desc = DPSMate.L["whisperdesc"],
 						get = function() return "" end,
-						set = function(name) DPSMate.Options:ReportUserDetails(DPSMate.Options.Dewdrop:GetOpenedParent(), "Whisper", name); DPSMate.Options.Dewdrop:Close() end,
+						set = function(name) DPSMate.Options:ReportUserDetails(DPSMate.Options.Dewdrop:GetOpenedParent(), DPSMate.L["whisper"], name); DPSMate.Options.Dewdrop:Close() end,
 						usage = "<name>",
 					},
 				},
