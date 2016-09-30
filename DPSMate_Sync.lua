@@ -740,7 +740,7 @@ function DPSMate.Sync:AbsorbsStatIn(arg2, arg4)
 	else
 		tinsert(Arrays[10][userid][userid2]["i"], {t[2], tnbr(t[3]), tnbr(t[4])})
 	end
-	if t[1]>DPSMateCombatTime["total"] then DPSMateCombatTime["total"]=t[1] end
+	if t[2]>DPSMateCombatTime["total"] then DPSMateCombatTime["total"]=t[2] end
 end
 
 function DPSMate.Sync:AbsorbsIn(arg2, arg4) 

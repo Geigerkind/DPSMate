@@ -174,6 +174,7 @@ end
 function DPSMate.Modules.DetailsHealingAndAbsorbs:EvalToggleTable(cname)
 	local a,b = {},{}
 	local d = 0
+	local hackTemp = {}
 	for cat, val in db2 do
 		if val[DPSMateUser[cname or DetailsUser][1]] then
 			local CV = 0
@@ -197,21 +198,8 @@ function DPSMate.Modules.DetailsHealingAndAbsorbs:EvalToggleTable(cname)
 				end
 			end
 			c[1] = CV
-			local i = 1
-			while true do
-				if (not a[i]) then
-					tinsert(b, i, c)
-					tinsert(a, i, cat)
-					break
-				else
-					if b[i][1] < CV then
-						tinsert(b, i, c)
-						tinsert(a, i, cat)
-						break
-					end
-				end
-				i=i+1
-			end
+			hackTemp[cat] = {}
+			tinsert(hackTemp[cat], c)
 			d = d + CV
 		end
 	end
@@ -305,23 +293,51 @@ function DPSMate.Modules.DetailsHealingAndAbsorbs:EvalToggleTable(cname)
 			end
 			if CV>0 then
 				c[1] = CV
-				local i = 1
-				while true do
-					if (not a[i]) then
-						tinsert(b, i, c)
-						tinsert(a, i, cat)
-						break
-					else
-						if b[i][1] < CV then
-							tinsert(b, i, c)
-							tinsert(a, i, cat)
-							break
-						end
-					end
-					i=i+1
+				if not hackTemp[cat] then
+					hackTemp[cat] = {}
 				end
+				tinsert(hackTemp[cat], c)
 				d = d + CV
 			end
+		end
+	end
+	-- Summing same player together
+	for cat, val in pairs(hackTemp) do
+		local totVal = 0;
+		local newAbArr = {[1] = 0,[2] = {},[3] = {}}
+		for ca, va in pairs(val) do
+			for c, v in pairs(va[3]) do
+				local p=1;
+				while true do
+					if (not newAbArr[2][p]) then
+						tinsert(newAbArr[3], p, v)
+						tinsert(newAbArr[2], p, va[2][c])
+						break
+					elseif newAbArr[3][p][1]<v[1] then
+						tinsert(newAbArr[3], p, v)
+						tinsert(newAbArr[2], p, va[2][c])
+						break
+					end
+					p = p + 1
+				end
+			end
+			newAbArr[1] = newAbArr[1] + va[1]
+			totVal = totVal + va[1]
+		end
+		local i = 1
+		while true do
+			if (not a[i]) then
+				tinsert(b, i, newAbArr)
+				tinsert(a, i, cat)
+				break
+			else
+				if b[i][1] < totVal then
+					tinsert(b, i, newAbArr)
+					tinsert(a, i, cat)
+					break
+				end
+			end
+			i=i+1
 		end
 	end
 	return a,b,d

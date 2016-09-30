@@ -2309,6 +2309,7 @@ function GraphFunctions:RefreshStackedBarGraph()
 		self.YBorder = YBorder
 		self.YGridInterval = MaxY/7
 		self.XGridInterval = MaxX/7
+		MinX=0+XBorder
 		
 		if not self.LockOnXMin then
 			self.XMin=MinX-XBorder

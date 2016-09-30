@@ -1,6 +1,6 @@
 -- Global Variables
 DPSMate = {}
-DPSMate.VERSION = 70
+DPSMate.VERSION = 71
 DPSMate.LOCALE = GetLocale()
 DPSMate.SYNCVERSION = DPSMate.VERSION..DPSMate.LOCALE
 DPSMate.Parser = {}
@@ -400,6 +400,7 @@ function DPSMate:SetStatusBarValue()
 		end
 		--DPSMate:SendMessage(c["name"])
 		if (user[1]) then
+			_G("DPSMate_"..c["name"].."_ScrollFrame_Child_Total"):Show()
 			for i=1, 40 do
 				--DPSMate:SendMessage("Test 1")
 				if (not user[i]) then break end -- To prevent visual issues
@@ -418,6 +419,8 @@ function DPSMate:SetStatusBarValue()
 				statusbar.user = user[i]
 				statusbar:Show()
 			end
+		else
+			_G("DPSMate_"..c["name"].."_ScrollFrame_Child_Total"):Hide()
 		end
 	end
 end

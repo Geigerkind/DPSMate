@@ -1592,7 +1592,6 @@ function DPSMate.Options:NewSegment(segname)
 		if not segname then
 			name = DPSMate:GetUserById(a[1]) or DPSMate.L["unknown"]
 		end
-		DPSMate.DB:Attempt(false)
 		if DPSMateSettings["onlybossfights"] then
 			if DPSMate.BabbleBoss:Contains(name) then
 				DPSMate.Options:CreateSegment(name)
@@ -1623,6 +1622,7 @@ function DPSMate.Options:NewSegment(segname)
 		DPSMateCombatTime["effective"][2] = {}
 		DPSMate:SetStatusBarValue()
 	end
+	DPSMate.DB:Attempt(false)
 end
 
 function DPSMate.Options:CreateSegment(name)

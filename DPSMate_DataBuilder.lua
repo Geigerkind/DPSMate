@@ -1531,11 +1531,11 @@ function DPSMate.DB:UnregisterAbsorb(ability, abilityTarget)
 	self.NeedUpdate = true
 end
 
-function DPSMate.DB:GetActiveAbsorbAbilityByPlayer(ability, abilityTarget, cat)
+function DPSMate.DB:GetActiveAbsorbAbilityByPlayer(ability, abilityTarget, cate)
 	if self:BuildAbility(ability, nil) or self:BuildUser(abilityTarget, nil) then return end
 	local ActiveShield = {}
-	if DPSMateAbsorbs[cat][DPSMateUser[abilityTarget][1]] then
-		for cat, val in pairs(DPSMateAbsorbs[cat][DPSMateUser[abilityTarget][1]]) do
+	if DPSMateAbsorbs[cate][DPSMateUser[abilityTarget][1]] then
+		for cat, val in pairs(DPSMateAbsorbs[cate][DPSMateUser[abilityTarget][1]]) do
 			for ca, va in pairs(val) do
 				if ca~="i" then
 					for c, v in pairs(va) do
@@ -1553,12 +1553,12 @@ function DPSMate.DB:GetActiveAbsorbAbilityByPlayer(ability, abilityTarget, cat)
 	return ActiveShield
 end
 
-function DPSMate.DB:GetAbsorbingShield(ability, abilityTarget, cat)
+function DPSMate.DB:GetAbsorbingShield(ability, abilityTarget, cate)
 	-- Checking for active Shields
 	local AbsorbingAbility = {}	
 	local activeShields = {}
-	if DPSMateAbsorbs[cat][DPSMateUser[abilityTarget][1]] then
-		for cat, val in pairs(DPSMateAbsorbs[cat][DPSMateUser[abilityTarget][1]]) do
+	if DPSMateAbsorbs[cate][DPSMateUser[abilityTarget][1]] then
+		for cat, val in pairs(DPSMateAbsorbs[cate][DPSMateUser[abilityTarget][1]]) do
 			for ca, va in pairs(val) do
 				if ca~="i" then
 					for c, v in pairs(va) do
@@ -2292,8 +2292,8 @@ RepopMe = NewRepopMe
 -- No idea how this error occours.
 function DPSMate.DB:Attempt(mode, check, tar)
 	local zone = GetRealZoneText()
-	if not DPSMateAttempts[zone] then DPSMateAttempts[zone] = {} end
 	if self.Zones[zone] then -- Need to find a solution for world bosses.
+		if not DPSMateAttempts[zone] then DPSMateAttempts[zone] = {} end
 		if mode then
 			if DPSMateAttempts[zone][1] and not DPSMateAttempts[zone][1][4] then
 				local _,_,a = DPSMate.Modules.EDT:GetSortedTable(DPSMateEDT[2])
