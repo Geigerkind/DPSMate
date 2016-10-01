@@ -470,4 +470,5 @@ if (GetLocale() == "deDE") then
 	DPSMate.L["absorbssum"] = "Absorbübersicht"
 	DPSMate.L["absorbeddmg"] = "Absorbierungen"
 	DPSMate.L["absorbstakensum"] = "Absorbierungen bekommen Übersicht"
+	DPSMate.L["activity"] = "Aktivität"
 end
