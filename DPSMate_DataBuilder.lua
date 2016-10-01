@@ -498,6 +498,7 @@ function DPSMate.DB:OnEvent(event)
 		DPSMate.Modules.CCBreaker.DB = DPSMateCCBreaker
 		DPSMate.Modules.OHPS.DB = DPSMateOverhealing
 		DPSMate.Modules.OHealingTaken.DB = DPSMateOverhealingTaken
+		DPSMate.Modules.Activity.DB = DPSMateCombatTime
 		
 		if not DPSMateSettings["columnsprocs"] then
 			DPSMateSettings["columnsprocs"] = {
