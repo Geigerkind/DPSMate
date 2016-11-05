@@ -4,6 +4,7 @@ local DB = DPSMate.DB
 local tnbr = tonumber
 local npcdb = DPSMate.NPCDB
 local GT = GetTime
+local strsub = string.sub
 
 ----------------------------------------------------------------------------------
 --------------                    Damage Done                       --------------                                  
@@ -555,18 +556,26 @@ function DPSMate.Parser:SpellSelfBuff(msg)
 		return
 	end
 	for a,b,c in strgfind(msg, "Your (.+) heals (.+) for (%d+)%.") do 
+		t[3] = 0
+		t[4] = 1
 		if b=="you" then t[1]=self.player end
+		local ka,kb = strfind(b, " critically")
+		if (ka and kb) then
+			b = strsub(b, 1, ka-1)
+			t[3] = 1
+			t[4] = 0
+		end
 		t[2] = tnbr(c)
 		overheal = self:GetOverhealByName(t[2], t[1] or b)
-		DB:HealingTaken(DPSMateHealingTaken, t[1] or b, a, 1, 0, t[2], self.player)
-		DB:HealingTaken(DPSMateEHealingTaken, t[1] or b, a, 1, 0, t[2]-overheal, self.player)
-		DB:Healing(0, DPSMateEHealing, self.player, a, 1, 0, t[2]-overheal, t[1] or b)
+		DB:HealingTaken(DPSMateHealingTaken, t[1] or b, a, t[4], t[3], t[2], self.player)
+		DB:HealingTaken(DPSMateEHealingTaken, t[1] or b, a, t[4], t[3], t[2]-overheal, self.player)
+		DB:Healing(0, DPSMateEHealing, self.player, a, t[4], t[3], t[2]-overheal, t[1] or b)
 		if overheal>0 then 
-			DB:Healing(2, DPSMateOverhealing, self.player, a, 1, 0, overheal, t[1] or b) 
-			DB:HealingTaken(DPSMateOverhealingTaken, t[1] or b, a, 1, 0, overheal, self.player)
+			DB:Healing(2, DPSMateOverhealing, self.player, a, t[4], t[3], overheal, t[1] or b) 
+			DB:HealingTaken(DPSMateOverhealingTaken, t[1] or b, a, t[4], t[3], overheal, self.player)
 		end
-		DB:Healing(1, DPSMateTHealing, self.player, a, 1, 0, t[2], t[1] or b)
-		DB:DeathHistory(t[1] or b, self.player, a, t[2], 1, 0, 1, 0)
+		DB:Healing(1, DPSMateTHealing, self.player, a, t[4], t[3], t[2], t[1] or b)
+		DB:DeathHistory(t[1] or b, self.player, a, t[2], t[4], t[3], 1, 0)
 		if self.procs[a] and not self.OtherExceptions[a] then
 			DB:BuildBuffs(self.player, self.player, a, true)
 		end
@@ -742,17 +751,25 @@ function DPSMate.Parser:SpellHostilePlayerBuff(msg)
 	end
 	for a,b,c,d in strgfind(msg, "(.-)'s (.+) heals (.+) for (%d+)%.") do 
 		t[1] = tnbr(d)
+		t[4] = 1
+		t[3] = 0
 		if c=="you" then t[2]=self.player end
-		overheal = self:GetOverhealByName(t[1], t[2] or c)
-		DB:HealingTaken(DPSMateHealingTaken, t[2] or c, b, 1, 0, t[1], a)
-		DB:HealingTaken(DPSMateEHealingTaken, t[2] or c, b, 1, 0, t[1]-overheal, a)
-		DB:Healing(0, DPSMateEHealing, a, b, 1, 0, t[1]-overheal, t[2] or c)
-		if overheal>0 then 
-			DB:Healing(2, DPSMateOverhealing, a, b, 1, 0, overheal, t[2] or c)
-			DB:HealingTaken(DPSMateOverhealingTaken, t[2] or c, b, 1, 0, overheal, a)
+		local ka,kb = strfind(b, " critically")
+		if (ka and kb) then
+			b = strsub(b, 1, ka-1)
+			t[3] = 1
+			t[4] = 0
 		end
-		DB:Healing(1, DPSMateTHealing, a, b, 1, 0, t[1], t[2] or c)
-		DB:DeathHistory(t[2] or c, a, b, t[1], 1, 0, 1, 0)
+		overheal = self:GetOverhealByName(t[1], t[2] or c)
+		DB:HealingTaken(DPSMateHealingTaken, t[2] or c, b, t[4], t[3], t[1], a)
+		DB:HealingTaken(DPSMateEHealingTaken, t[2] or c, b, t[4], t[3], t[1]-overheal, a)
+		DB:Healing(0, DPSMateEHealing, a, b, t[4], t[3], t[1]-overheal, t[2] or c)
+		if overheal>0 then 
+			DB:Healing(2, DPSMateOverhealing, a, b, t[4], t[3], overheal, t[2] or c)
+			DB:HealingTaken(DPSMateOverhealingTaken, t[2] or c, b, t[4], t[3], overheal, a)
+		end
+		DB:Healing(1, DPSMateTHealing, a, b, t[4], t[3], t[1], t[2] or c)
+		DB:DeathHistory(t[2] or c, a, b, t[1], t[4], t[3], 1, 0)
 		if self.procs[b] and not self.OtherExceptions[b] then
 			DB:BuildBuffs(a, c, b, true)
 		end
@@ -851,21 +868,21 @@ end
 
 -- Is it really "yourself"?
 function DPSMate.Parser:SpellSelfBuffDispels(msg)
-	for ab, tar in strgfind(msg, "You cast (.+) on (.+)%.") do if DPSMate.Parser.Dispels[ab] then DB:AwaitDispel(ab, tar, self.player, GetTime()) end; if self.RCD[ab] then DPSMate:Broadcast(2, self.player, tar, ab) end; return end
-	for ab in strgfind(msg, "You cast (.+)%.") do if DPSMate.Parser.Dispels[ab] then DB:AwaitDispel(ab, "Unknown", self.player, GetTime()) end; return end
+	for ab, tar in strgfind(msg, "You cast (.+) on (.-)%.") do if DPSMate.Parser.Dispels[ab] then DB:AwaitDispel(ab, tar, self.player, GetTime()) end; if self.RCD[ab] then DPSMate:Broadcast(2, self.player, tar, ab) end; return end
+	for ab in strgfind(msg, "You cast (.+)%.") do if DPSMate.Parser.Dispels[ab] then DB:AwaitDispel(ab, self.player, self.player, GetTime()) end; return end
 end
 
 -- Avrora casts Remove Curse on you.
 -- Avrora casts Remove Curse on Avrora.
 function DPSMate.Parser:SpellHostilePlayerBuffDispels(msg)
-	for c, ab, ta in strgfind(msg, "(.+) casts (.+) on (.+)%.") do if ta=="you" then ta = self.player end; if DPSMate.Parser.Dispels[ab] then DB:AwaitDispel(ab, ta, c, GetTime()) end; if self.RCD[ab] then DPSMate:Broadcast(2, c, ta, ab) end; return end
+	for c, ab, ta in strgfind(msg, "(.+) casts (.+) on (.-)%.") do if ta=="you" then ta = self.player end; if DPSMate.Parser.Dispels[ab] then DB:AwaitDispel(ab, ta, c, GetTime()) end; if self.RCD[ab] then DPSMate:Broadcast(2, c, ta, ab) end; return end
 	for c, ab in strgfind(msg, "(.+) casts (.+)%.") do if DPSMate.Parser.Dispels[ab] then DB:AwaitDispel(ab, "Unknown", c, GetTime()) end; return end
 end
 
 -- Avrora's Curse of Agony is removed.
 -- Your Curse of Agony is removed.
 function DPSMate.Parser:SpellBreakAura(msg) 
-	for ta, ab in strgfind(msg, "(.+)'s (.+) is removed.") do DB:ConfirmRealDispel(ab, ta, GetTime()); return end
+	for ta, ab in strgfind(msg, "(.-)'s (.+) is removed.") do DB:ConfirmRealDispel(ab, ta, GetTime()); return end
 	for ab in strgfind(msg, "Your (.+) is removed.") do DB:ConfirmRealDispel(ab, self.player, GetTime()); return end
 end
 
