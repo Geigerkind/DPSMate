@@ -2047,8 +2047,8 @@ end
 -- Sometimes the fade event is not fired.
 -- What if the fade event is fired after a gain event for some reason
 local windfuryab = {
-	[DPSMate.BabbleSpell:GetTranslation("Windfury Weapon")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Windfury Totem")] = true,
+	--[DPSMate.BabbleSpell:GetTranslation("Windfury Weapon")] = true,
+	--[DPSMate.BabbleSpell:GetTranslation("Windfury Totem")] = true,
 }
 
 function DPSMate.DB:BuildBuffs(cause, target, ability, bool)
