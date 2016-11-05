@@ -988,6 +988,7 @@ end
 -- First crit/hit av value will be half if it is not the first hit actually. Didnt want to add an exception for it though. Maybe later :/
 local CastsBuffer = {[1]={[1]={},[2]={}},[2]={[1]={},[2]={}},[3]={[1]={},[2]={}}}
 local AAttack = DPSMate.BabbleSpell:GetTranslation("AutoAttack")
+local hackOrder, hackOrder2 = {}, {}
 function DPSMate.DB:DamageDone(Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, Ddodge, Dresist, Damount, Dglance, Dblock)
 	if self:BuildUser(Duser, nil) or self:BuildAbility(Dname, nil) then return end -- Attempt to fix this problem?
 	
@@ -998,9 +999,13 @@ function DPSMate.DB:DamageDone(Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, Ddodge,
 	
 	-- Part to take extra swings as abilities into account
 	if self.NextSwing[Duser] then
-		if Dname == AAttack and self.NextSwing[Duser][1]>0 then
+		if Dname == AAttack and self.NextSwing[Duser][1]>0 and hackOrder[Duser] then
 			Dname = self.NextSwing[Duser][2]
 			self.NextSwing[Duser][1] = self.NextSwing[Duser][1] - 1
+		elseif Dname == AAttack and self.NextSwing[Duser][1]>0 and not hackOrder[Duser] then
+			hackOrder[Duser] = true
+		else
+			hackOrder[Duser] = false
 		end
 	end
 	
@@ -1193,9 +1198,13 @@ function DPSMate.DB:EnemyDamage(mode, arr, Duser, Dname, Dhit, Dcrit, Dmiss, Dpa
 	if mode then
 		-- Part to take extra swings as abilities into account
 		if self.NextSwingEDD[Duser] then
-			if Dname == AAttack and self.NextSwingEDD[Duser][1]>0 then
+			if Dname == AAttack and self.NextSwingEDD[Duser][1]>0 and hackOrder2[Duser] then
 				Dname = self.NextSwingEDD[Duser][2]
 				self.NextSwingEDD[Duser][1] = self.NextSwingEDD[Duser][1] - 1
+			elseif Dname == AAttack and self.NextSwingEDD[Duser][1]>0 and not hackOrder2[Duser] then
+				hackOrder2[Duser] = true
+			else
+				hackOrder[Duser] = false
 			end
 		end
 	end
