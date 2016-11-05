@@ -1570,6 +1570,9 @@ function DPSMate.Options:InializePlayerDewDrop(obj)
 	sort(temp)
 	
 	local mode = _G(obj:GetParent():GetParent():GetParent():GetName().."_Head_Font"):GetText()
+	for mo, ti in strgfind(mode, "(.+) %[(.+)%]") do
+		mode = mo
+	end
 	
 	for cat, val in temp do
 		if cat>100 then break end

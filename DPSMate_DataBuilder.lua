@@ -100,6 +100,10 @@ local GT = GetTime
 local strfind = string.find
 local UL = UnitLevel
 local slower = strlower
+local windfuryab = {
+	[DPSMate.BabbleSpell:GetTranslation("Windfury Weapon")] = true,
+	[DPSMate.BabbleSpell:GetTranslation("Windfury Totem")] = true,
+}
 
 -- Begin Functions
 
@@ -999,10 +1003,11 @@ function DPSMate.DB:DamageDone(Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, Ddodge,
 	
 	-- Part to take extra swings as abilities into account
 	if self.NextSwing[Duser] then
-		if Dname == AAttack and self.NextSwing[Duser][1]>0 and hackOrder[Duser] then
+		if Dname == AAttack and self.NextSwing[Duser][1]>0 and ((hackOrder[Duser] and windfuryab[self.NextSwing[Duser][2]]) or not windfuryab[self.NextSwing[Duser][2]]) then
 			Dname = self.NextSwing[Duser][2]
 			self.NextSwing[Duser][1] = self.NextSwing[Duser][1] - 1
-		elseif Dname == AAttack and self.NextSwing[Duser][1]>0 and not hackOrder[Duser] then
+			hackOrder[Duser] = true
+		elseif Dname == AAttack and self.NextSwing[Duser][1]>0 and not hackOrder[Duser] and windfuryab[self.NextSwing[Duser][2]] then
 			hackOrder[Duser] = true
 		else
 			hackOrder[Duser] = false
@@ -2055,23 +2060,19 @@ end
 
 -- Sometimes the fade event is not fired.
 -- What if the fade event is fired after a gain event for some reason
-local windfuryab = {
-	--[DPSMate.BabbleSpell:GetTranslation("Windfury Weapon")] = true,
-	--[DPSMate.BabbleSpell:GetTranslation("Windfury Totem")] = true,
-}
 
 function DPSMate.DB:BuildBuffs(cause, target, ability, bool)
 	if self:BuildUser(target, nil) or self:BuildUser(cause, nil) or self:BuildAbility(ability, nil) then return end
-	if windfuryab[ability] then
-		self.NextSwing[target] = {
-			[1] = 1,
-			[2] = ability
-		}
-		self.NextSwingEDD[target] = {
-			[1] = 1,
-			[2] = ability
-		}
-	end
+	--if windfuryab[ability] then
+	--	self.NextSwing[target] = {
+	--		[1] = 1,
+	--		[2] = ability
+	--	}
+	--	self.NextSwingEDD[target] = {
+	--		[1] = 1,
+	--		[2] = ability
+	--	}
+	--end
 	for cat, val in pairs({[1]="total", [2]="current"}) do 
 		if not DPSMateAurasGained[cat][DPSMateUser[target][1]] then
 			DPSMateAurasGained[cat][DPSMateUser[target][1]] = {}
