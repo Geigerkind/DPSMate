@@ -1585,6 +1585,18 @@ function DPSMate.Options:InializePlayerDewDrop(obj)
 	end
 end
 
+function DPSMate.Options:FormatTime(time)
+	if time>60 then
+		local rest = ceil(mod(time, 60))
+		if rest<10 then
+			rest = "0"..rest
+		end
+		return floor(time/60)..":"..rest.."m"
+	else
+		return strformat("%.2f", time).."s"
+	end
+end
+
 function DPSMate.Options:NewSegment(segname)
 	-- Get name of this session
 	local _,_,a = DPSMate.Modules.EDT:GetSortedTable(DPSMateEDT[2])
@@ -1592,6 +1604,7 @@ function DPSMate.Options:NewSegment(segname)
 		local name = segname
 		if not segname then
 			name = DPSMate:GetUserById(a[1]) or DPSMate.L["unknown"]
+			name = name.." - CBT: "..self:FormatTime(DPSMateCombatTime["current"])
 		end
 		if DPSMateSettings["onlybossfights"] then
 			if DPSMate.BabbleBoss:Contains(name) then
