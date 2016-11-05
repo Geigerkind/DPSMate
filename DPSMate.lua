@@ -1,6 +1,6 @@
 -- Global Variables
 DPSMate = {}
-DPSMate.VERSION = 72
+DPSMate.VERSION = 74
 DPSMate.LOCALE = GetLocale()
 DPSMate.SYNCVERSION = DPSMate.VERSION..DPSMate.LOCALE
 DPSMate.Parser = {}
@@ -77,6 +77,7 @@ DPSMate.BabbleBoss = AceLibrary("DPSBabble-Boss-2.3")
 DPSMate.NPCDB = AceLibrary("NPCDB-1.0")
 DPSMate.UserId = nil
 DPSMate.AbilityId = nil
+DPSMate.Key = 1
 
 -- Local Variables
 local _G = getglobal
@@ -427,9 +428,9 @@ end
 
 function DPSMate:FormatNumbers(dmg,total,sort,k)
 	if DPSMateSettings["windows"][k]["numberformat"] == 2 then
-		dmg = strformat("%.1f", (dmg/1000))
-		total = strformat("%.1f", (total/1000))
-		sort = strformat("%.1f", (sort/1000))
+		dmg = strformat("%.0f", (dmg/1000))
+		total = strformat("%.0f", (total/1000))
+		sort = strformat("%.0f", (sort/1000))
 	end
 	return dmg, total, sort
 end

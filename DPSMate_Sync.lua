@@ -272,8 +272,27 @@ function DPSMate.Sync:VoteSuccess()
 	DPSMate:SendMessage(DPSMate.L["votesuccess"])
 	DPSMate.DB.MainUpdate = 75
 	self.Async, iterator, time = false, 1, 0
+	UpTime = -5
 	Buffer = {}
 	co, cou = 1, 1
+	Arrays = {
+		[1] = {}, -- Damage
+		[2] = {}, -- Damage Taken
+		[3] = {}, -- EDD
+		[4] = {}, -- EDT
+		[5] = {}, -- Healing done
+		[6] = {}, -- E Healing done
+		[7] = {}, -- Healing taken
+		[8] = {}, -- E Healing taken
+		[9] = {}, -- Overhealing done
+		[10] = {}, -- Absorbs
+		[11] = {}, -- Deaths
+		[12] = {}, -- Interrupts
+		[13] = {}, -- Dispels
+		[14] = {}, -- Auras
+		[15] = {}, -- O Healing taken
+		[16] = {} -- Threat
+	}
 	DPSMate.Options:PopUpAccept(true, true)
 end
 
