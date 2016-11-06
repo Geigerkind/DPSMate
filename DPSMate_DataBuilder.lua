@@ -1203,13 +1203,13 @@ function DPSMate.DB:EnemyDamage(mode, arr, Duser, Dname, Dhit, Dcrit, Dmiss, Dpa
 	if mode then
 		-- Part to take extra swings as abilities into account
 		if self.NextSwingEDD[Duser] then
-			if Dname == AAttack and self.NextSwingEDD[Duser][1]>0 and hackOrder2[Duser] then
+			if Dname == AAttack and self.NextSwingEDD[Duser][1]>0 and ((hackOrder2[Duser] and windfuryab[self.NextSwingEDD[Duser][2]]) or not windfuryab[self.NextSwingEDD[Duser][2]]) then
 				Dname = self.NextSwingEDD[Duser][2]
 				self.NextSwingEDD[Duser][1] = self.NextSwingEDD[Duser][1] - 1
-			elseif Dname == AAttack and self.NextSwingEDD[Duser][1]>0 and not hackOrder2[Duser] then
+			elseif Dname == AAttack and self.NextSwingEDD[Duser][1]>0 and not hackOrder2[Duser] and windfuryab[self.NextSwingEDD[Duser][2]] then
 				hackOrder2[Duser] = true
 			else
-				hackOrder[Duser] = false
+				hackOrder2[Duser] = false
 			end
 		end
 	end
