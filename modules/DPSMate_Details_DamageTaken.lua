@@ -288,72 +288,81 @@ function DPSMate.Modules.DetailsDamageTaken:SelectDetailsButton(p,i,comp,cname)
 	_G("DPSMate_Details_"..comp.."DamageTaken_Log_ScrollButton"..i.."_selected"):Show()
 	
 	local path = db[DPSMateUser[cname or DetailsUser][1]][creature][ability]
-	local hit, crit, miss, parry, dodge, resist, hitMin, hitMax, critMin, critMax, hitav, critav, crush, crushMin, crushMax, crushav = path[1], path[5], path[9], path[10], path[11], path[12], path[2], path[3], path[6], path[7], path[4], path[8], path[15], path[16], path[17], path[18]
-	local total, max = hit+crit+miss+parry+dodge+resist+crush, DPSMate:TMax({hit, crit, miss, parry, dodge, resist, crush})
+	local hit, crit, miss, parry, dodge, resist, hitMin, hitMax, critMin, critMax, hitav, critav, crush, crushMin, crushMax, crushav, block, blockMin, blockMax, blockav = path[1], path[5], path[9], path[10], path[11], path[12], path[2], path[3], path[6], path[7], path[4], path[8], path[15], path[16], path[17], path[18], path[20], path[21], path[22], path[23]
+	local total, max = hit+crit+miss+parry+dodge+resist+crush+block, DPSMate:TMax({hit, crit, miss, parry, dodge, resist, crush, block})
 	
 	_G("DPSMate_Details_"..comp.."DamageTaken_LogDetails_Casts"):SetText("C: "..path[19])
+	-- Block
+	_G("DPSMate_Details_"..comp.."DamageTaken_LogDetails_Amount1_Amount"):SetText(block)
+	_G("DPSMate_Details_"..comp.."DamageTaken_LogDetails_Amount1_Percent"):SetText(strformat("%.1f", 100*block/total).."%")
+	_G("DPSMate_Details_"..comp.."DamageTaken_LogDetails_Amount1_StatusBar"):SetValue(ceil(100*block/max))
+	_G("DPSMate_Details_"..comp.."DamageTaken_LogDetails_Amount1_StatusBar"):SetStatusBarColor(0.5,0.7,0.3,1)
+	_G("DPSMate_Details_"..comp.."DamageTaken_LogDetails_Average1"):SetText(ceil(blockav))
+	_G("DPSMate_Details_"..comp.."DamageTaken_LogDetails_Min1"):SetText(blockMin)
+	_G("DPSMate_Details_"..comp.."DamageTaken_LogDetails_Max1"):SetText(blockMax)
+	
 	-- Crush
-	_G("DPSMate_Details_"..comp.."DamageTaken_LogDetails_Amount1_Amount"):SetText(crush)
-	_G("DPSMate_Details_"..comp.."DamageTaken_LogDetails_Amount1_Percent"):SetText(strformat("%.1f", 100*crush/total).."%")
-	_G("DPSMate_Details_"..comp.."DamageTaken_LogDetails_Amount1_StatusBar"):SetValue(ceil(100*crush/max))
-	_G("DPSMate_Details_"..comp.."DamageTaken_LogDetails_Amount1_StatusBar"):SetStatusBarColor(1.0,0.7,0.3,1)
-	_G("DPSMate_Details_"..comp.."DamageTaken_LogDetails_Average1"):SetText(ceil(crushav))
-	_G("DPSMate_Details_"..comp.."DamageTaken_LogDetails_Min1"):SetText(crushMin)
-	_G("DPSMate_Details_"..comp.."DamageTaken_LogDetails_Max1"):SetText(crushMax)
+	_G("DPSMate_Details_"..comp.."DamageTaken_LogDetails_Amount2_Amount"):SetText(crush)
+	_G("DPSMate_Details_"..comp.."DamageTaken_LogDetails_Amount2_Percent"):SetText(strformat("%.1f", 100*crush/total).."%")
+	_G("DPSMate_Details_"..comp.."DamageTaken_LogDetails_Amount2_StatusBar"):SetValue(ceil(100*crush/max))
+	_G("DPSMate_Details_"..comp.."DamageTaken_LogDetails_Amount2_StatusBar"):SetStatusBarColor(1.0,0.7,0.3,1)
+	_G("DPSMate_Details_"..comp.."DamageTaken_LogDetails_Average2"):SetText(ceil(crushav))
+	_G("DPSMate_Details_"..comp.."DamageTaken_LogDetails_Min2"):SetText(crushMin)
+	_G("DPSMate_Details_"..comp.."DamageTaken_LogDetails_Max2"):SetText(crushMax)
 	
 	-- Hit
-	_G("DPSMate_Details_"..comp.."DamageTaken_LogDetails_Amount2_Amount"):SetText(hit)
-	_G("DPSMate_Details_"..comp.."DamageTaken_LogDetails_Amount2_Percent"):SetText(strformat("%.1f", 100*hit/total).."%")
-	_G("DPSMate_Details_"..comp.."DamageTaken_LogDetails_Amount2_StatusBar"):SetValue(ceil(100*hit/max))
-	_G("DPSMate_Details_"..comp.."DamageTaken_LogDetails_Amount2_StatusBar"):SetStatusBarColor(0.9,0.0,0.0,1)
-	_G("DPSMate_Details_"..comp.."DamageTaken_LogDetails_Average2"):SetText(ceil(hitav))
-	_G("DPSMate_Details_"..comp.."DamageTaken_LogDetails_Min2"):SetText(hitMin)
-	_G("DPSMate_Details_"..comp.."DamageTaken_LogDetails_Max2"):SetText(hitMax)
+	_G("DPSMate_Details_"..comp.."DamageTaken_LogDetails_Amount3_Amount"):SetText(hit)
+	_G("DPSMate_Details_"..comp.."DamageTaken_LogDetails_Amount3_Percent"):SetText(strformat("%.1f", 100*hit/total).."%")
+	_G("DPSMate_Details_"..comp.."DamageTaken_LogDetails_Amount3_StatusBar"):SetValue(ceil(100*hit/max))
+	_G("DPSMate_Details_"..comp.."DamageTaken_LogDetails_Amount3_StatusBar"):SetStatusBarColor(0.9,0.0,0.0,1)
+	_G("DPSMate_Details_"..comp.."DamageTaken_LogDetails_Average3"):SetText(ceil(hitav))
+	_G("DPSMate_Details_"..comp.."DamageTaken_LogDetails_Min3"):SetText(hitMin)
+	_G("DPSMate_Details_"..comp.."DamageTaken_LogDetails_Max3"):SetText(hitMax)
 	
 	-- Crit
-	_G("DPSMate_Details_"..comp.."DamageTaken_LogDetails_Amount3_Amount"):SetText(crit)
-	_G("DPSMate_Details_"..comp.."DamageTaken_LogDetails_Amount3_Percent"):SetText(strformat("%.1f", 100*crit/total).."%")
-	_G("DPSMate_Details_"..comp.."DamageTaken_LogDetails_Amount3_StatusBar"):SetValue(ceil(100*crit/max))
-	_G("DPSMate_Details_"..comp.."DamageTaken_LogDetails_Amount3_StatusBar"):SetStatusBarColor(0.0,0.9,0.0,1)
-	_G("DPSMate_Details_"..comp.."DamageTaken_LogDetails_Average3"):SetText(ceil(critav))
-	_G("DPSMate_Details_"..comp.."DamageTaken_LogDetails_Min3"):SetText(critMin)
-	_G("DPSMate_Details_"..comp.."DamageTaken_LogDetails_Max3"):SetText(critMax)
+	_G("DPSMate_Details_"..comp.."DamageTaken_LogDetails_Amount4_Amount"):SetText(crit)
+	_G("DPSMate_Details_"..comp.."DamageTaken_LogDetails_Amount4_Percent"):SetText(strformat("%.1f", 100*crit/total).."%")
+	_G("DPSMate_Details_"..comp.."DamageTaken_LogDetails_Amount4_StatusBar"):SetValue(ceil(100*crit/max))
+	_G("DPSMate_Details_"..comp.."DamageTaken_LogDetails_Amount4_StatusBar"):SetStatusBarColor(0.0,0.9,0.0,1)
+	_G("DPSMate_Details_"..comp.."DamageTaken_LogDetails_Average4"):SetText(ceil(critav))
+	_G("DPSMate_Details_"..comp.."DamageTaken_LogDetails_Min4"):SetText(critMin)
+	_G("DPSMate_Details_"..comp.."DamageTaken_LogDetails_Max4"):SetText(critMax)
 	
 	-- Miss
-	_G("DPSMate_Details_"..comp.."DamageTaken_LogDetails_Amount4_Amount"):SetText(miss)
-	_G("DPSMate_Details_"..comp.."DamageTaken_LogDetails_Amount4_Percent"):SetText(strformat("%.1f", 100*miss/total).."%")
-	_G("DPSMate_Details_"..comp.."DamageTaken_LogDetails_Amount4_StatusBar"):SetValue(ceil(100*miss/max))
-	_G("DPSMate_Details_"..comp.."DamageTaken_LogDetails_Amount4_StatusBar"):SetStatusBarColor(0.0,0.0,1.0,1)
-	_G("DPSMate_Details_"..comp.."DamageTaken_LogDetails_Average4"):SetText("-")
-	_G("DPSMate_Details_"..comp.."DamageTaken_LogDetails_Min4"):SetText("-")
-	_G("DPSMate_Details_"..comp.."DamageTaken_LogDetails_Max4"):SetText("-")
-	
-	-- Parry
-	_G("DPSMate_Details_"..comp.."DamageTaken_LogDetails_Amount5_Amount"):SetText(parry)
-	_G("DPSMate_Details_"..comp.."DamageTaken_LogDetails_Amount5_Percent"):SetText(strformat("%.1f", 100*parry/total).."%")
-	_G("DPSMate_Details_"..comp.."DamageTaken_LogDetails_Amount5_StatusBar"):SetValue(ceil(100*parry/max))
-	_G("DPSMate_Details_"..comp.."DamageTaken_LogDetails_Amount5_StatusBar"):SetStatusBarColor(1.0,1.0,0.0,1)
+	_G("DPSMate_Details_"..comp.."DamageTaken_LogDetails_Amount5_Amount"):SetText(miss)
+	_G("DPSMate_Details_"..comp.."DamageTaken_LogDetails_Amount5_Percent"):SetText(strformat("%.1f", 100*miss/total).."%")
+	_G("DPSMate_Details_"..comp.."DamageTaken_LogDetails_Amount5_StatusBar"):SetValue(ceil(100*miss/max))
+	_G("DPSMate_Details_"..comp.."DamageTaken_LogDetails_Amount5_StatusBar"):SetStatusBarColor(0.0,0.0,1.0,1)
 	_G("DPSMate_Details_"..comp.."DamageTaken_LogDetails_Average5"):SetText("-")
 	_G("DPSMate_Details_"..comp.."DamageTaken_LogDetails_Min5"):SetText("-")
 	_G("DPSMate_Details_"..comp.."DamageTaken_LogDetails_Max5"):SetText("-")
 	
-	-- Dodge
-	_G("DPSMate_Details_"..comp.."DamageTaken_LogDetails_Amount6_Amount"):SetText(dodge)
-	_G("DPSMate_Details_"..comp.."DamageTaken_LogDetails_Amount6_Percent"):SetText(strformat("%.1f", 100*dodge/total).."%")
-	_G("DPSMate_Details_"..comp.."DamageTaken_LogDetails_Amount6_StatusBar"):SetValue(ceil(100*dodge/max))
-	_G("DPSMate_Details_"..comp.."DamageTaken_LogDetails_Amount6_StatusBar"):SetStatusBarColor(1.0,0.0,1.0,1)
+	-- Parry
+	_G("DPSMate_Details_"..comp.."DamageTaken_LogDetails_Amount6_Amount"):SetText(parry)
+	_G("DPSMate_Details_"..comp.."DamageTaken_LogDetails_Amount6_Percent"):SetText(strformat("%.1f", 100*parry/total).."%")
+	_G("DPSMate_Details_"..comp.."DamageTaken_LogDetails_Amount6_StatusBar"):SetValue(ceil(100*parry/max))
+	_G("DPSMate_Details_"..comp.."DamageTaken_LogDetails_Amount6_StatusBar"):SetStatusBarColor(1.0,1.0,0.0,1)
 	_G("DPSMate_Details_"..comp.."DamageTaken_LogDetails_Average6"):SetText("-")
 	_G("DPSMate_Details_"..comp.."DamageTaken_LogDetails_Min6"):SetText("-")
 	_G("DPSMate_Details_"..comp.."DamageTaken_LogDetails_Max6"):SetText("-")
 	
-	-- Resist
-	_G("DPSMate_Details_"..comp.."DamageTaken_LogDetails_Amount7_Amount"):SetText(resist)
-	_G("DPSMate_Details_"..comp.."DamageTaken_LogDetails_Amount7_Percent"):SetText(strformat("%.1f", 100*resist/total).."%")
-	_G("DPSMate_Details_"..comp.."DamageTaken_LogDetails_Amount7_StatusBar"):SetValue(ceil(100*resist/max))
-	_G("DPSMate_Details_"..comp.."DamageTaken_LogDetails_Amount7_StatusBar"):SetStatusBarColor(0.0,1.0,1.0,1)
+	-- Dodge
+	_G("DPSMate_Details_"..comp.."DamageTaken_LogDetails_Amount7_Amount"):SetText(dodge)
+	_G("DPSMate_Details_"..comp.."DamageTaken_LogDetails_Amount7_Percent"):SetText(strformat("%.1f", 100*dodge/total).."%")
+	_G("DPSMate_Details_"..comp.."DamageTaken_LogDetails_Amount7_StatusBar"):SetValue(ceil(100*dodge/max))
+	_G("DPSMate_Details_"..comp.."DamageTaken_LogDetails_Amount7_StatusBar"):SetStatusBarColor(1.0,0.0,1.0,1)
 	_G("DPSMate_Details_"..comp.."DamageTaken_LogDetails_Average7"):SetText("-")
 	_G("DPSMate_Details_"..comp.."DamageTaken_LogDetails_Min7"):SetText("-")
 	_G("DPSMate_Details_"..comp.."DamageTaken_LogDetails_Max7"):SetText("-")
+	
+	-- Resist
+	_G("DPSMate_Details_"..comp.."DamageTaken_LogDetails_Amount8_Amount"):SetText(resist)
+	_G("DPSMate_Details_"..comp.."DamageTaken_LogDetails_Amount8_Percent"):SetText(strformat("%.1f", 100*resist/total).."%")
+	_G("DPSMate_Details_"..comp.."DamageTaken_LogDetails_Amount8_StatusBar"):SetValue(ceil(100*resist/max))
+	_G("DPSMate_Details_"..comp.."DamageTaken_LogDetails_Amount8_StatusBar"):SetStatusBarColor(0.0,1.0,1.0,1)
+	_G("DPSMate_Details_"..comp.."DamageTaken_LogDetails_Average8"):SetText("-")
+	_G("DPSMate_Details_"..comp.."DamageTaken_LogDetails_Min8"):SetText("-")
+	_G("DPSMate_Details_"..comp.."DamageTaken_LogDetails_Max8"):SetText("-")
 end
 
 function DPSMate.Modules.DetailsDamageTaken:UpdateLineGraph(gg, comp, cname)

@@ -950,7 +950,7 @@ function DPSMate.DB:GetAlpha(k)
 end
 
 function DPSMate.DB:WeightedAverage(a, b, c, d)
-	return a*(c/(c+d))+b*(d/(c+d))
+	return (a*(c/(c+d))+b*(d/(c+d))) or 0
 end
 
 local spellSchoolNames = {
@@ -1107,7 +1107,7 @@ function DPSMate.DB:DamageDone(Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, Ddodge,
 end
 
 -- Fall damage
-function DPSMate.DB:DamageTaken(Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, Ddodge, Dresist, Damount, cause, Dcrush)
+function DPSMate.DB:DamageTaken(Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, Ddodge, Dresist, Damount, cause, Dcrush, Dblock)
 	if self:BuildUser(Duser, nil) or self:BuildUser(cause, nil) or self:BuildAbility(Dname, nil) then return end
 	for cat, val in pairs({[1]="total", [2]="current"}) do 
 		if not DPSMateDamageTaken[cat][DPSMateUser[Duser][1]] then
@@ -1139,6 +1139,10 @@ function DPSMate.DB:DamageTaken(Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, Ddodge
 				[17] = 0,
 				[18] = 0,
 				[19] = 0,
+				[20] = 0,
+				[21] = 0,
+				[22] = 0,
+				[23] = 0,
 				["i"] = {}
 			}
 		end
@@ -1164,6 +1168,7 @@ function DPSMate.DB:DamageTaken(Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, Ddodge
 		path[5] = path[5] + Dcrit
 		path[9] = path[9] + Dmiss
 		path[15] = path[15] + Dcrush
+		path[20] = path[20] + Dblock
 		path[10] = path[10] + Dparry
 		path[11] = path[11] + Ddodge
 		path[12] = path[12] + Dresist
@@ -1180,6 +1185,10 @@ function DPSMate.DB:DamageTaken(Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, Ddodge
 			if (Damount < path[16] or path[16] == 0) then path[16] = Damount end
 			if Damount > path[17] then path[17] = Damount end
 			path[18] = self:WeightedAverage(path[18], Damount, path[15]-Dcrush, Dcrush)
+		elseif Dblock == 1 then
+			if (Damount < path[21] or path[21] == 0) then path[21] = Damount end
+			if Damount > path[22] then path[22] = Damount end
+			path[23] = self:WeightedAverage(path[23], Damount, path[20]-Dblock, Dblock)
 		end
 		DPSMateDamageTaken[cat][DPSMateUser[Duser][1]]["i"] = DPSMateDamageTaken[cat][DPSMateUser[Duser][1]]["i"] + Damount
 		if Damount > 0 then 

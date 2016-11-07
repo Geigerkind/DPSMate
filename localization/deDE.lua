@@ -471,4 +471,5 @@ if (GetLocale() == "deDE") then
 	DPSMate.L["absorbeddmg"] = "Absorbierungen"
 	DPSMate.L["absorbstakensum"] = "Absorbierungen bekommen Übersicht"
 	DPSMate.L["activity"] = "Aktivität"
+	DPSMate.L["cbtdisplay"] = "Deaktiviere CBT-Anzeige"
 end

@@ -253,6 +253,7 @@
 							DPSMate_ConfigMenu_Tab_TitleBar_Box1_Sync:SetChecked(DPSMateSettings["windows"][this:GetParent().Key]["titlebarsync"])
 							DPSMate_ConfigMenu_Tab_TitleBar_Box1_Enable:SetChecked(DPSMateSettings["windows"][this:GetParent().Key]["titlebarenable"])
 							DPSMate_ConfigMenu_Tab_TitleBar_Box1_Filter:SetChecked(DPSMateSettings["windows"][this:GetParent().Key]["titlebarfilter"])
+							DPSMate_ConfigMenu_Tab_TitleBar_Box1_CBTDisplay:SetChecked(DPSMateSettings["windows"][this:GetParent().Key]["cbtdisplay"])
 							DPSMate_ConfigMenu_Tab_TitleBar_BGColorNormalTexture:SetVertexColor(DPSMateSettings["windows"][this:GetParent().Key]["titlebarbgcolor"][1], DPSMateSettings["windows"][this:GetParent().Key]["titlebarbgcolor"][2], DPSMateSettings["windows"][this:GetParent().Key]["titlebarbgcolor"][3])
 							DPSMate_ConfigMenu_Tab_TitleBar_BGColor_SwatchBg.r = DPSMateSettings["windows"][this:GetParent().Key]["titlebarbgcolor"][1]
 							DPSMate_ConfigMenu_Tab_TitleBar_BGColor_SwatchBg.g = DPSMateSettings["windows"][this:GetParent().Key]["titlebarbgcolor"][2]
@@ -2353,6 +2354,28 @@
 											DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["titlebarfilter"] = true
 										end
 										DPSMate.Options:ToggleTitleBarButtonState()
+									</OnClick>
+								</Scripts>
+							</CheckButton>
+							<CheckButton name="$parent_CBTDisplay" inherits="DPSMate_Template_CheckButton">
+								<Anchors>
+									<Anchor point="LEFT" relativeTo="$Parent_Filter" relativePoint="RIGHT">
+										<Offset x="67" y="0" />
+									</Anchor>
+								</Anchors>
+								<Scripts>
+									<OnLoad>
+										this.aide = DPSMate.L["buttonshowtooltip"]
+										getglobal(this:GetName().."_Title"):SetText(DPSMate.L["cbtdisplay"])
+									</OnLoad>
+									<OnClick>
+										if DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["cbtdisplay"] then
+											DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["cbtdisplay"] = false
+											DPSMate:SetStatusBarValue()
+										else
+											DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["cbtdisplay"] = true
+											getglobal("DPSMate_"..DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["name"].."_Head_Font"):SetText(DPSMate.Options.Options[1]["args"][DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["CurMode"]].name)
+										end
 									</OnClick>
 								</Scripts>
 							</CheckButton>

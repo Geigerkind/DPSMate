@@ -26,18 +26,18 @@ function DPSMate.Parser:SelfHits(msg)
 		return
 	end
 	for a in strgfind(msg, "You fall and lose (%d+) health%.") do
-		DB:DamageTaken(self.player, "Falling", 1, 0, 0, 0, 0, 0, tnbr(a), "Environment", 0)
+		DB:DamageTaken(self.player, "Falling", 1, 0, 0, 0, 0, 0, tnbr(a), "Environment", 0, 0)
 		DB:DeathHistory(self.player, "Environment", "Falling", tnbr(a), 1, 0, 0, 0)
 		return
 	end
 	for a in strgfind(msg, "You lose (%d+) health for swimming in lava%.") do
-		DB:DamageTaken(self.player, "Lava", 1, 0, 0, 0, 0, 0, tnbr(a), "Environment", 0)
+		DB:DamageTaken(self.player, "Lava", 1, 0, 0, 0, 0, 0, tnbr(a), "Environment", 0, 0)
 		DB:DeathHistory(self.player, "Environment", "Lava", tnbr(a), 1, 0, 0, 0)
 		DB:AddSpellSchool("Lava","fire")
 		return
 	end
 	for a in strgfind(msg, "You are drowning and lose (%d+) health%.") do
-		DB:DamageTaken(self.player, "Drowning", 1, 0, 0, 0, 0, 0, tnbr(a), "Environment", 0)
+		DB:DamageTaken(self.player, "Drowning", 1, 0, 0, 0, 0, 0, tnbr(a), "Environment", 0, 0)
 		DB:DeathHistory(self.player, "Environment", "Drowning", tnbr(a), 1, 0, 0, 0)
 		return
 	end
@@ -212,18 +212,18 @@ function DPSMate.Parser:FriendlyPlayerHits(msg)
 	end
 	-- (...). (608 absorbed/resisted) -> Therefore here some loss
 	for a,b in strgfind(msg, "(.-) loses (%d+) health for swimming in lava%.") do
-		DB:DamageTaken(a, "Lava", 1, 0, 0, 0, 0, 0, tnbr(b), "Environment", 0)
+		DB:DamageTaken(a, "Lava", 1, 0, 0, 0, 0, 0, tnbr(b), "Environment", 0, 0)
 		DB:DeathHistory(a, "Environment", "Lava", tnbr(b), 1, 0, 0, 0)
 		DB:AddSpellSchool("Lava","fire")
 		return
 	end
 	for a,b in strgfind(msg, "(.-) falls and loses (%d+) health%.") do
-		DB:DamageTaken(a, "Falling", 1, 0, 0, 0, 0, 0, tnbr(b), "Environment", 0)
+		DB:DamageTaken(a, "Falling", 1, 0, 0, 0, 0, 0, tnbr(b), "Environment", 0, 0)
 		DB:DeathHistory(a, "Environment", "Falling", tnbr(b), 1, 0, 0, 0)
 		return
 	end
 	for a,b in strgfind(msg, "(.-) is drowning and loses (%d+) health%.") do
-		DB:DamageTaken(a, "Drowning", 1, 0, 0, 0, 0, 0, tnbr(b), "Environment", 0)
+		DB:DamageTaken(a, "Drowning", 1, 0, 0, 0, 0, 0, tnbr(b), "Environment", 0, 0)
 		DB:DeathHistory(a, "Environment", "Drowning", tnbr(b), 1, 0, 0, 0)
 		return
 	end
@@ -285,7 +285,7 @@ function DPSMate.Parser:SpellDamageShieldsOnOthers(msg)
 		if d == "you" then ta=self.player end
 		if npcdb:Contains(a) or strfind(a, "%s") then
 			DB:EnemyDamage(false, DPSMateEDD, d, "Reflection", 1, 0, 0, 0, 0, 0, 0, a, 0, 0)
-			DB:DamageTaken(d, "Reflection", 1, 0, 0, 0, 0, 0, 0, a, 0)
+			DB:DamageTaken(d, "Reflection", 1, 0, 0, 0, 0, 0, 0, a, 0, 0)
 			DB:DeathHistory(d, a, "Reflection", 0, 1, 0, 0, 0)
 		else
 			DB:EnemyDamage(true, DPSMateEDT, a, "Reflection", 1, 0, 0, 0, 0, 0, am, ta or d, 0, 0)
@@ -325,7 +325,7 @@ function DPSMate.Parser:CreatureVsSelfHits(msg)
 		if strfind(d, "crushing") then t[3]=1;t[1]=0;t[2]=0 elseif strfind(d, "blocked") then t[4]=1;t[1]=0;t[2]=0 end
 		t[5] = tnbr(c)
 		DB:EnemyDamage(false, DPSMateEDD, self.player, "AutoAttack", t[1] or 0, t[2] or 1, 0, 0, 0, 0, t[5], a, t[4] or 0, t[3] or 0)
-		DB:DamageTaken(self.player, "AutoAttack", t[1] or 0, t[2] or 1, 0, 0, 0, 0, t[5], a, t[3] or 0)
+		DB:DamageTaken(self.player, "AutoAttack", t[1] or 0, t[2] or 1, 0, 0, 0, 0, t[5], a, t[3] or 0, t[4] or 0)
 		DB:DeathHistory(self.player, a, "AutoAttack", t[5], t[1] or 0, t[2] or 1, 0, t[3] or 0)
 		return
 	end
@@ -339,13 +339,13 @@ function DPSMate.Parser:CreatureVsSelfMisses(msg)
 	for ta in strgfind(msg, "(.+) attacks%. You absorb all the damage%.") do DB:Absorb("AutoAttack", self.player, ta); return end
 	for a in strgfind(msg, "(.+) misses you%.") do 
 		DB:EnemyDamage(false, DPSMateEDD, self.player, "AutoAttack", 0, 0, 1, 0, 0, 0, 0, a, 0, 0)
-		DB:DamageTaken(self.player, "AutoAttack", 0, 0, 1, 0, 0, 0, 0, a, 0)
+		DB:DamageTaken(self.player, "AutoAttack", 0, 0, 1, 0, 0, 0, 0, a, 0, 0)
 		return
 	end
 	for a,b in strgfind(msg, "(.+) attacks. You (.+)%.") do 
 		if b=="parry" then t[1]=1 elseif b=="dodge" then t[2]=1 else t[3]=1 end 
 		DB:EnemyDamage(false, DPSMateEDD, self.player, "AutoAttack", 0, 0, 0, t[1] or 0, t[2] or 0, 0, 0, a, t[3] or 0, 0)
-		DB:DamageTaken(self.player, "AutoAttack", 0, 0, 0, t[1] or 0, t[2] or 0, 0, 0, a, 0)
+		DB:DamageTaken(self.player, "AutoAttack", 0, 0, 0, t[1] or 0, t[2] or 0, 0, 0, a, 0, t[3] or 0)
 		return
 	end
 end 
@@ -362,7 +362,7 @@ function DPSMate.Parser:CreatureVsSelfSpellDamage(msg)
 		t[3] = tnbr(d)
 		DB:UnregisterPotentialKick(self.player, b, GetTime())
 		DB:EnemyDamage(false, DPSMateEDD, self.player, b, t[1] or 0, t[2] or 1, 0, 0, 0, 0, t[3], a, t[4] or 0, 0)
-		DB:DamageTaken(self.player, b, t[1] or 0, t[2] or 1, 0, 0, 0, 0, t[3], a, 0)
+		DB:DamageTaken(self.player, b, t[1] or 0, t[2] or 1, 0, 0, 0, 0, t[3], a, 0, t[4] or 0)
 		DB:DeathHistory(self.player, a, b, t[3], t[1] or 0, t[2] or 1, 0, 0)
 		if self.FailDT[b] then DB:BuildFail(2, a, self.player, b, t[3]) end
 		DB:AddSpellSchool(b,e)
@@ -370,22 +370,22 @@ function DPSMate.Parser:CreatureVsSelfSpellDamage(msg)
 	end
 	for a,b in strgfind(msg, "(.+)'s (.+) misses you.") do
 		DB:EnemyDamage(false, DPSMateEDD, self.player, b, 0, 0, 1, 0, 0, 0, 0, a, 0, 0)
-		DB:DamageTaken(self.player, b, 0, 0, 1, 0, 0, 0, 0, a, 0)
+		DB:DamageTaken(self.player, b, 0, 0, 1, 0, 0, 0, 0, a, 0, 0)
 		return
 	end
 	for a,b in strgfind(msg, "(.+)'s (.+) was parried.") do
 		DB:EnemyDamage(false, DPSMateEDD, self.player, b, 0, 0, 0, 1, 0, 0, 0, a, 0, 0)
-		DB:DamageTaken(self.player, b, 0, 0, 0, 1, 0, 0, 0, a, 0)
+		DB:DamageTaken(self.player, b, 0, 0, 0, 1, 0, 0, 0, a, 0, 0)
 		return
 	end
 	for a,b in strgfind(msg, "(.+)'s (.+) was dodged.") do
 		DB:EnemyDamage(false, DPSMateEDD, self.player, b, 0, 0, 0, 0, 1, 0, 0, a, 0, 0)
-		DB:DamageTaken(self.player, b, 0, 0, 0, 0, 1, 0, 0, a, 0)
+		DB:DamageTaken(self.player, b, 0, 0, 0, 0, 1, 0, 0, a, 0, 0)
 		return
 	end
 	for a,b in strgfind(msg, "(.+)'s (.+) was resisted.") do
 		DB:EnemyDamage(false, DPSMateEDD, self.player, b, 0, 0, 0, 0, 0, 1, 0, a, 0, 0)
-		DB:DamageTaken(self.player, b, 0, 0, 0, 0, 0, 1, 0, a, 0)
+		DB:DamageTaken(self.player, b, 0, 0, 0, 0, 0, 1, 0, a, 0, 0)
 		return
 	end
 	for a,b in strgfind(msg, "You absorb (.+)'s (.+)%.") do
@@ -402,7 +402,7 @@ function DPSMate.Parser:PeriodicSelfDamage(msg)
 	for a,b,c,d,e in strgfind(msg, "You suffer (%d+) (%a+) damage from (.+)'s (.+)%.(.*)") do -- Potential to track school and resisted damage
 		t[1] = tnbr(a)
 		DB:EnemyDamage(false, DPSMateEDD, self.player, d.."(Periodic)", 1, 0, 0, 0, 0, 0, t[1], c, 0, 0)
-		DB:DamageTaken(self.player, d.."(Periodic)", 1, 0, 0, 0, 0, 0, t[1], c, 0)
+		DB:DamageTaken(self.player, d.."(Periodic)", 1, 0, 0, 0, 0, 0, t[1], c, 0, 0)
 		DB:DeathHistory(self.player, c, d.."(Periodic)", t[1], 1, 0, 0, 0)
 		if self.FailDT[d] then DB:BuildFail(2, c, self.player, d, t[1]) end
 		DB:AddSpellSchool(d.."(Periodic)",b)
@@ -417,7 +417,7 @@ function DPSMate.Parser:PeriodicSelfDamage(msg)
 	for a,b,d,e in strgfind(msg, "You suffer (%d+) (%a+) damage from your (.+)%.(.*)") do -- Potential to track school and resisted damage
 		t[1] = tnbr(a)
 		DB:EnemyDamage(false, DPSMateEDD, self.player, d.."(Periodic)", 1, 0, 0, 0, 0, 0, t[1], self.player, 0, 0)
-		DB:DamageTaken(self.player, d.."(Periodic)", 1, 0, 0, 0, 0, 0, t[1], self.player, 0)
+		DB:DamageTaken(self.player, d.."(Periodic)", 1, 0, 0, 0, 0, 0, t[1], self.player, 0, 0)
 		DB:DeathHistory(self.player, self.player, d.."(Periodic)", t[1], 1, 0, 0, 0)
 		DB:AddSpellSchool(d.."(Periodic)",b)
 		return
@@ -436,7 +436,7 @@ function DPSMate.Parser:CreatureVsCreatureHits(msg)
 		if strfind(e, "crushing") then t[3]=1;t[1]=0;t[2]=0 elseif strfind(e, "blocked") then t[4]=1;t[1]=0;t[2]=0 end
 		t[5] = tnbr(d)
 		DB:EnemyDamage(false, DPSMateEDD, c, "AutoAttack", t[1] or 0, t[2] or 1, 0, 0, 0, 0, t[5], a, t[4] or 0, t[3] or 0)
-		DB:DamageTaken(c, "AutoAttack", t[1] or 0, t[2] or 1, 0, 0, 0, 0, t[5], a, t[3] or 0)
+		DB:DamageTaken(c, "AutoAttack", t[1] or 0, t[2] or 1, 0, 0, 0, 0, t[5], a, t[3] or 0, t[4] or 0)
 		DB:DeathHistory(c, a, "AutoAttack", t[5], t[1] or 0, t[2] or 1, 0, t[3] or 0)
 		return
 	end
@@ -452,12 +452,12 @@ function DPSMate.Parser:CreatureVsCreatureMisses(msg)
 	for a,b,c in strgfind(msg, "(.+) attacks%. (.-) (.+)%.") do 
 		if c=="parries" then t[1]=1 elseif c=="dodges" then t[2]=1 else t[3]=1 end 
 		DB:EnemyDamage(false, DPSMateEDD, b, "AutoAttack", 0, 0, 0, t[1] or 0, t[2] or 0, 0, 0, a, t[3] or 0, 0)
-		DB:DamageTaken(b, "AutoAttack", 0, 0, 0, t[1] or 0, t[2] or 0, 0, 0, a, 0)
+		DB:DamageTaken(b, "AutoAttack", 0, 0, 0, t[1] or 0, t[2] or 0, 0, 0, a, 0, t[3] or 0)
 		return
 	end
 	for a,b in strgfind(msg, "(.+) misses (.+)%.") do 
 		DB:EnemyDamage(false, DPSMateEDD, b, "AutoAttack", 0, 0, 1, 0, 0, 0, 0, a, 0, 0)
-		DB:DamageTaken(b, "AutoAttack", 0, 0, 1, 0, 0, 0, 0, a, 0)
+		DB:DamageTaken(b, "AutoAttack", 0, 0, 1, 0, 0, 0, 0, a, 0, 0)
 		return 
 	end
 end
@@ -469,7 +469,7 @@ function DPSMate.Parser:SpellPeriodicDamageTaken(msg)
 	for a,b,c,d,e,f in strgfind(msg, "(.+) suffers (%d+) (%a+) damage from (.+)'s (.+)%.(.*)") do -- Potential to track resisted damage and school
 		t[1] = tnbr(b)
 		DB:EnemyDamage(false, DPSMateEDD, a, e.."(Periodic)", 1, 0, 0, 0, 0, 0, t[1], d, 0, 0)
-		DB:DamageTaken(a, e.."(Periodic)", 1, 0, 0, 0, 0, 0, t[1], d, 0)
+		DB:DamageTaken(a, e.."(Periodic)", 1, 0, 0, 0, 0, 0, t[1], d, 0, 0)
 		DB:DeathHistory(a, d, e.."(Periodic)", t[1], 1, 0, 0, 0)
 		if self.FailDT[e] then DB:BuildFail(2, d, a, e, t[1]) end
 		DB:AddSpellSchool(e.."(Periodic)",c)
@@ -497,7 +497,7 @@ function DPSMate.Parser:CreatureVsCreatureSpellDamage(msg)
 		t[3] = tnbr(e)
 		DB:UnregisterPotentialKick(d, b, GetTime())
 		DB:EnemyDamage(false, DPSMateEDD, d, b, t[1] or 0, t[2] or 1, 0, 0, 0, 0, t[3], a, t[4] or 0, 0)
-		DB:DamageTaken(d, b, t[1] or 0, t[2] or 1, 0, 0, 0, 0, t[3], a, 0)
+		DB:DamageTaken(d, b, t[1] or 0, t[2] or 1, 0, 0, 0, 0, t[3], a, 0, t[4] or 0)
 		DB:DeathHistory(d, a, b, t[3], t[1] or 0, t[2] or 1, 0, 0)
 		if self.FailDT[b] then DB:BuildFail(2, a, d, b, t[3]) end
 		DB:AddSpellSchool(b,f)
@@ -505,22 +505,22 @@ function DPSMate.Parser:CreatureVsCreatureSpellDamage(msg)
 	end
 	for a,b,c in strgfind(msg, "(.+)'s (.+) was dodged by (.+)%.") do
 		DB:EnemyDamage(false, DPSMateEDD, c, b, 0, 0, 0, 0, 1, 0, 0, a, 0, 0)
-		DB:DamageTaken(c, b, 0, 0, 0, 0, 1, 0, 0, a, 0)
+		DB:DamageTaken(c, b, 0, 0, 0, 0, 1, 0, 0, a, 0, 0)
 		return
 	end
 	for a,b,c in strgfind(msg, "(.+)'s (.+) was parried by (.+)%.") do
 		DB:EnemyDamage(false, DPSMateEDD, c, b, 0, 0, 0, 1, 0, 0, 0, a, 0, 0)
-		DB:DamageTaken(c, b, 0, 0, 0, 1, 0, 0, 0, a, 0)
+		DB:DamageTaken(c, b, 0, 0, 0, 1, 0, 0, 0, a, 0, 0)
 		return
 	end
 	for a,b,c in strgfind(msg, "(.+)'s (.+) missed (.+)%.") do
 		DB:EnemyDamage(false, DPSMateEDD, c, b, 0, 0, 1, 0, 0, 0, 0, a, 0, 0)
-		DB:DamageTaken(c, b, 0, 0, 1, 0, 0, 0, 0, a, 0)
+		DB:DamageTaken(c, b, 0, 0, 1, 0, 0, 0, 0, a, 0, 0)
 		return
 	end
 	for a,b,c in strgfind(msg, "(.+)'s (.+) was resisted by (.+)%.") do
 		DB:EnemyDamage(false, DPSMateEDD, c, b, 0, 0, 0, 0, 0, 1, 0, a, 0, 0)
-		DB:DamageTaken(c, b, 0, 0, 0, 0, 0, 1, 0, a, 0)
+		DB:DamageTaken(c, b, 0, 0, 0, 0, 0, 1, 0, a, 0, 0)
 		return
 	end
 	for f,a,b in strgfind(msg, "(.+)'s (.+) is absorbed by (.+)%.") do

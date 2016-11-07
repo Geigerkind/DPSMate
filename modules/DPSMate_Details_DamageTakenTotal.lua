@@ -272,20 +272,20 @@ function DPSMate.Modules.DetailsDamageTakenTotal:GetTableValues()
 					for c, v in pairs(va) do
 						if c~="i" then
 							if v[1]>0 or v[15]>0 then
-								totHit=totHit+v[1]+v[5]+v[9]+v[10]+v[11]+v[12]+v[15]
+								totHit=totHit+v[1]+v[5]+v[9]+v[10]+v[11]+v[12]+v[15]+v[20]
 								hit=hit+v[1]
 								crush=crush+v[15]
 							end
 							if v[5]>0 then
-								totCrit=totCrit+v[1]+v[5]+v[9]+v[10]+v[11]+v[12]+v[15]
+								totCrit=totCrit+v[1]+v[5]+v[9]+v[10]+v[11]+v[12]+v[15]+v[20]
 								crit=crit+v[5]
 							end
 							if v[9]>0 or v[10]>0 or v[11]>0 or v[12]>0 then
-								totMiss=totMiss+v[1]+v[5]+v[9]+v[10]+v[11]+v[12]+v[15]
-								miss=miss+v[9]+v[10]+v[11]+v[12]
+								totMiss=totMiss+v[1]+v[5]+v[9]+v[10]+v[11]+v[12]+v[15]+v[20]
+								miss=miss+v[9]+v[10]+v[11]+v[12]+v[20]
 							end
 							CV = CV + v[13]
-							totOverall = totOverall+v[1]+v[5]+v[9]+v[10]+v[11]+v[12]+v[15]
+							totOverall = totOverall+v[1]+v[5]+v[9]+v[10]+v[11]+v[12]+v[15]+v[20]
 						end
 					end
 				end

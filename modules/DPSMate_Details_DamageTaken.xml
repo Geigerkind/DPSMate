@@ -496,7 +496,7 @@
 				</Backdrop>
 				<Layers>
 					<Layer level="ARTWORK">
-						<FontString name="$parent_Crush" inherits="GameFontNormal" text="Crush" justifyH="LEFT">
+						<FontString name="$parent_Block" inherits="GameFontNormal" text="Block" justifyH="LEFT">
 							<Size x="50" y="24" />
 							<Anchors>
 								<Anchor point="TOPLEFT">
@@ -512,6 +512,14 @@
 								</Anchor>
 							</Anchors>
 						</FontString>
+						<FontString name="$parent_Crush" inherits="GameFontNormal" text="Crush" justifyH="LEFT">
+							<Size x="50" y="24" />
+							<Anchors>
+								<Anchor point="TOP" relativeTo="$parent_Block" relativePoint="BOTTOM">
+									<Offset x="0" y="-6" />
+								</Anchor>
+							</Anchors>
+						</FontString>
 						<FontString name="$parent_Hit" inherits="GameFontNormal" text="Hit" justifyH="LEFT">
 							<Size x="50" y="24" />
 							<Anchors>
@@ -523,7 +531,7 @@
 						<FontString name="$parent_Amount" inherits="GameFontNormal" text="Amount" justifyH="LEFT">
 							<Size x="135" y="24" />
 							<Anchors>
-								<Anchor point="LEFT" relativeTo="$parent_Crush" relativePoint="RIGHT">
+								<Anchor point="LEFT" relativeTo="$parent_Block" relativePoint="RIGHT">
 									<Offset x="0" y="32" />
 								</Anchor>
 							</Anchors>
@@ -637,6 +645,13 @@
 							</Anchors>
 							<Color r="1" g="1" b="1" />
 						</FontString>
+						<FontString name="$parent_Average8" inherits="GameFontNormalSmall" text="10000">
+							<Size x="60" y="30" />
+							<Anchors>
+								<Anchor point="TOP" relativeTo="$parent_Average7" relativePoint="BOTTOM" />
+							</Anchors>
+							<Color r="1" g="1" b="1" />
+						</FontString>
 						<FontString name="$parent_Min1" inherits="GameFontNormalSmall" text="10000">
 							<Size x="60" y="30" />
 							<Anchors>
@@ -685,6 +700,13 @@
 							<Size x="60" y="30" />
 							<Anchors>
 								<Anchor point="TOP" relativeTo="$parent_Min6" relativePoint="BOTTOM" />
+							</Anchors>
+							<Color r="1" g="1" b="1" />
+						</FontString>
+						<FontString name="$parent_Min8" inherits="GameFontNormalSmall" text="10000">
+							<Size x="60" y="30" />
+							<Anchors>
+								<Anchor point="TOP" relativeTo="$parent_Min7" relativePoint="BOTTOM" />
 							</Anchors>
 							<Color r="1" g="1" b="1" />
 						</FontString>
@@ -739,10 +761,18 @@
 							</Anchors>
 							<Color r="1" g="1" b="1" />
 						</FontString>
+						<FontString name="$parent_Max8" inherits="GameFontNormalSmall" text="10000">
+							<Size x="60" y="30" />
+							<Anchors>
+								<Anchor point="TOP" relativeTo="$parent_Max7" relativePoint="BOTTOM" />
+							</Anchors>
+							<Color r="1" g="1" b="1" />
+						</FontString>
 					</Layer>
 				</Layers>
 				<Scripts>
 					<OnLoad>
+						getglobal(this:GetName().."_Block"):SetText(DPSMate.L["block"])
 						getglobal(this:GetName().."_Crush"):SetText(DPSMate.L["crush"])
 						getglobal(this:GetName().."_Hit"):SetText(DPSMate.L["hit"])
 						getglobal(this:GetName().."_Amount"):SetText(DPSMate.L["amount"])
@@ -790,6 +820,11 @@
 					<Frame name="$parent_Amount7" inherits="DPSMateTableAmountTemplate">
 						<Anchors>
 							<Anchor point="TOP" relativeTo="$parent_Amount6" relativePoint="BOTTOM" />
+						</Anchors>
+					</Frame>
+					<Frame name="$parent_Amount8" inherits="DPSMateTableAmountTemplate">
+						<Anchors>
+							<Anchor point="TOP" relativeTo="$parent_Amount7" relativePoint="BOTTOM" />
 						</Anchors>
 					</Frame>
 				</Frames>
