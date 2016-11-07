@@ -535,7 +535,11 @@ function DPSMate.Sync:DMGTakenAbilityIn(arg2, arg4)
 		[16] = tnbr(t[18]),
 		[17] = tnbr(t[19]),
 		[18] = tnbr(t[20]),
-		[19] = tnbr(t[19]),
+		[19] = tnbr(t[21]),
+		[20] = tnbr(t[22]),
+		[21] = tnbr(t[23]),
+		[22] = tnbr(t[24]),
+		[23] = tnbr(t[25]),
 		["i"] = {}
 	}
 end
@@ -1161,7 +1165,7 @@ function DPSMate.Sync:DMGTakenAbilityOut()
 	for cat, val in (DPSMateDamageTaken[1][pid]) do
 		if cat~="i" then
 			for ca, va in pairs(val) do
-				Buffer[cou] = {"DPSMate_DMGTakenAbility", DPSMate:GetUserById(cat)..","..DPSMate:GetAbilityById(ca)..","..va[1]..","..va[2]..","..va[3]..","..ceil(va[4])..","..va[5]..","..va[6]..","..va[7]..","..ceil(va[8])..","..va[9]..","..va[10]..","..va[11]..","..va[12]..","..va[13]..","..ceil(va[14])..","..va[15]..","..va[16]..","..va[17]..","..ceil(va[18])..","..va[19]..","}
+				Buffer[cou] = {"DPSMate_DMGTakenAbility", DPSMate:GetUserById(cat)..","..DPSMate:GetAbilityById(ca)..","..va[1]..","..va[2]..","..va[3]..","..ceil(va[4])..","..va[5]..","..va[6]..","..va[7]..","..ceil(va[8])..","..va[9]..","..va[10]..","..va[11]..","..va[12]..","..va[13]..","..ceil(va[14])..","..va[15]..","..va[16]..","..va[17]..","..ceil(va[18])..","..va[19]..","..va[20]..","..va[21]..","..va[22]..","..ceil(va[23])..","}
 				cou = cou + 1
 				--SDM("DPSMate_DMGTakenAbility", DPSMate:GetUserById(cat)..","..DPSMate:GetAbilityById(ca)..","..va[1]..","..va[2]..","..va[3]..","..ceil(va[4])..","..va[5]..","..va[6]..","..va[7]..","..ceil(va[8])..","..va[9]..","..va[10]..","..va[11]..","..va[12]..","..va[13]..","..ceil(va[14])..","..va[15]..","..va[16]..","..va[17]..","..ceil(va[18])..",", "RAID")
 			end
