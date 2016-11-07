@@ -1784,7 +1784,8 @@ function DPSMate.Options:CreateWindow()
 			},
 			filterpeople = "",
 			grouponly = false,
-			realtime = false
+			realtime = false,
+			cbtdisplay = false,
 		})
 		local TL = DPSMate:TableLength(DPSMateSettings["windows"])
 		if not _G("DPSMate_"..na) then
