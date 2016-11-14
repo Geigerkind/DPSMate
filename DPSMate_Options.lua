@@ -1288,9 +1288,9 @@ function DPSMate.Options:TitleBarFontFlagsDropDown()
 	
 	local function on_click()
         UIDropDownMenu_SetSelectedValue(DPSMate_ConfigMenu_Tab_TitleBar_BarFontFlag, this.value)
-		DPSMate_ConfigMenu_Tab_TitleBar_BarFontFlagText:SetFont(DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["titlebarfont"], 12, DPSMate.Options.fontflags[this.value])
+		DPSMate_ConfigMenu_Tab_TitleBar_BarFontFlagText:SetFont(DPSMate.Options.fonts["FRIZQT"], 12, DPSMate.Options.fontflags[this.value])
 		DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["titlebarfontflag"] = this.value
-		_G("DPSMate_"..DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["name"].."_Head_Font"):SetFont(DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["titlebarfont"], 12, DPSMate.Options.fontflags[this.value])
+		_G("DPSMate_"..DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["name"].."_Head_Font"):SetFont(DPSMate.Options.fonts[DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["titlebarfont"]], 12, DPSMate.Options.fontflags[this.value])
     end
 	
 	for name, flag in pairs(DPSMate.Options.fontflags) do
@@ -1977,7 +1977,7 @@ function DPSMate.Options:OpenColorPicker(obj, var, func)
 
 	ColorPickerFrame:SetPoint("TOPLEFT", obj, "TOPRIGHT", 0, 0)
 	
-	ColorPickerFrame:SetTopLevel(true)
+	ColorPickerFrame:SetFrameStrata("TOOLTIP")
 	
 	ColorPickerFrame:Show()
 end
