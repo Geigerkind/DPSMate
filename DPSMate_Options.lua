@@ -379,6 +379,7 @@ local _G = getglobal
 local tinsert = table.insert
 local tremove = tremove
 local strformat = string.format
+local strgfind = string.gfind
 
 -- Begin Functions
 
