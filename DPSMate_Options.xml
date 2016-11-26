@@ -212,6 +212,8 @@
 							DPSMate_ConfigMenu_Tab_Bars_ClassIcons:SetChecked(DPSMateSettings["windows"][this:GetParent().Key]["classicons"])
 							DPSMate_ConfigMenu_Tab_Bars_ClassIcons:SetChecked(DPSMateSettings["windows"][this:GetParent().Key]["classicons"])
 							DPSMate_ConfigMenu_Tab_Bars_Ranks:SetChecked(DPSMateSettings["windows"][this:GetParent().Key]["ranks"])
+							DPSMate_ConfigMenu_Tab_Bars_DisableBG:SetChecked(DPSMateSettings["windows"][this:GetParent().Key]["barbg"])
+							DPSMate_ConfigMenu_Tab_Bars_TotalAlpha:SetValue(DPSMateSettings["windows"][this:GetParent().Key]["totopacity"] or 1)
 							UIDropDownMenu_SetSelectedValue(DPSMate_ConfigMenu_Tab_Bars_BarFont, DPSMateSettings["windows"][this:GetParent().Key]["barfont"])
 							DPSMate_ConfigMenu_Tab_Bars_BarFontText:SetFont(DPSMate.Options.fonts[DPSMateSettings["windows"][this:GetParent().Key]["barfont"]], 12)
 							DPSMate_ConfigMenu_Tab_Bars_BarFontText:SetText(DPSMateSettings["windows"][this:GetParent().Key]["barfont"])
@@ -943,10 +945,17 @@
 			<OnMouseUp>
 				this:StopMovingOrSizing()
 			</OnMouseUp>
+			<OnShow>
+				if IsPartyLeader() or IsRaidOfficer() or IsRaidLeader() then
+					DPSMate_Vote_Abort:Show()
+				else
+					DPSMate_Vote_Abort:Hide()
+				end
+			</OnShow>
 			<OnLoad>
 				DPSMate_Vote_Text:SetText(DPSMate.L["popup"])
-				DPSMate_Vote_AcceptText:SetText(DPSMate.L["accept"])
-				DPSMate_Vote_CancelText:SetText(DPSMate.L["decline"])
+				DPSMate_Vote_AcceptText:SetText(DPSMate.L["vreset"])
+				DPSMate_Vote_CancelText:SetText(DPSMate.L["vdreset"])
 				this:SetClampedToScreen()
 			</OnLoad>
 		</Scripts>
@@ -1006,6 +1015,28 @@
 				<NormalTexture file="Interface\Buttons\UI-DialogBox-Button-Up"/>
 				<PushedTexture file="Interface\Buttons\UI-DialogBox-Button-Down"/>
 				<HighlightTexture file="Interface\Buttons\UI-DialogBox-Button-Highlight" alphaMode="ADD"/>
+			</Button>
+			<Button name="$parent_Abort">
+				<Size x="20" y="20" />
+				<Anchors>
+					<Anchor point="TOPRIGHT" />
+				</Anchors>
+				<Scripts>
+					<OnEnter>
+						GameTooltip:SetOwner(this, "ANCHOR_RIGHT")
+						GameTooltip:SetText(DPSMate.L["abortvote"], nil, nil, nil, nil, 1)
+					</OnEnter>
+					<OnLeave>
+						GameTooltip:Hide()
+					</OnLeave>
+					<OnClick>
+						DPSMate.Sync:AbortVote()
+						DPSMate_Vote:Hide()
+					</OnClick>
+				</Scripts>
+				<NormalTexture file="Interface\Buttons\UI-Panel-MinimizeButton-Up"/>
+				<PushedTexture file="Interface\Buttons\UI-Panel-MinimizeButton-Down"/>
+				<HighlightTexture file="Interface\Buttons\UI-Panel-MinimizeButton-Highlight" alphaMode="ADD"/>
 			</Button>
 		</Frames>
 	</Frame>
@@ -2002,6 +2033,52 @@
 							</OnClick>
 						</Scripts>
 					</CheckButton>
+					<CheckButton name="$parent_DisableBG" inherits="DPSMate_Template_CheckButton">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$Parent_Ranks" relativePoint="BOTTOMLEFT" />
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								this.aide = DPSMate.L["disablebarbgtooltip"]
+								getglobal(this:GetName().."_Title"):SetText(DPSMate.L["disablebarbg"])
+							</OnLoad>
+							<OnClick>
+								if DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["barbg"] then
+									DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["barbg"] = false
+									for i=1, 40 do
+										getglobal("DPSMate_"..DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["name"].."_ScrollFrame_Child_StatusBar"..i.."_BG"):SetAlpha(0.5)
+									end
+								else
+									DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["barbg"] = true
+									for i=1, 40 do
+										getglobal("DPSMate_"..DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["name"].."_ScrollFrame_Child_StatusBar"..i.."_BG"):SetAlpha(0)
+									end
+								end
+							</OnClick>
+						</Scripts>
+					</CheckButton>
+					<Slider name="$parent_TotalAlpha" inherits="DPSMate_Template_Slider">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent_DisableBG" relativePoint="BOTTOMLEFT">
+								<Offset x="0" y="-15" />
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								this.aide = DPSMate.L["totalbaropacitytooltip"]
+								this.func = function()
+									DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["totopacity"] = this:GetValue() 
+									getglobal("DPSMate_"..DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["name"].."_ScrollFrame_Child_Total_BG"):SetAlpha(this:GetValue()) 
+									getglobal("DPSMate_"..DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["name"].."_ScrollFrame_Child_Total"):SetStatusBarColor(1,1,1,this:GetValue()) 
+								end
+								this:SetMinMaxValues(0,1)
+								this:SetValueStep(0.1)
+								getglobal(this:GetName().."Text"):SetText(DPSMate.L["totalbaropacity"])
+								getglobal(this:GetName().."Low"):SetText("0")
+								getglobal(this:GetName().."High"):SetText("1")
+							</OnLoad>
+						</Scripts>
+					</Slider>
 				</Frames>
 			</Frame>
 			
@@ -2679,6 +2756,7 @@
 										getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar1"):SetPoint("TOPLEFT", getglobal("DPSMate_"..val["name"].."_ScrollFrame_Child_Total"), "BOTTOMLEFT", 0, -1*val["barspacing"])
 									end
 								end
+								DPSMate:SetStatusBarValue()
 							</OnClick>
 						</Scripts>
 					</CheckButton>
@@ -2733,6 +2811,24 @@
 								end
 								DPSMate.Options:HideInPvP()
 								DPSMate.Options:HideWhenSolo()
+							</OnClick>
+						</Scripts>
+					</CheckButton>
+					<CheckButton name="$parent_Login" inherits="DPSMate_Template_CheckButton">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent_Combat" relativePoint="BOTTOMLEFT" />
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								this.aide = DPSMate.L["loginhidetooltip"]
+								getglobal(this:GetName().."_Title"):SetText(DPSMate.L["loginhide"])
+							</OnLoad>
+							<OnClick>
+								if DPSMateSettings["hideonlogin"] then
+									DPSMateSettings["hideonlogin"] = false
+								else
+									DPSMateSettings["hideonlogin"] = true
+								end
 							</OnClick>
 						</Scripts>
 					</CheckButton>
@@ -2819,7 +2915,7 @@
 					</CheckButton>
 					<Slider name="$parent_Segments" inherits="DPSMate_Template_Slider">
 						<Anchors>
-							<Anchor point="TOPLEFT" relativeTo="$parent_Combat" relativePoint="BOTTOMLEFT">
+							<Anchor point="TOPLEFT" relativeTo="$parent_Login" relativePoint="BOTTOMLEFT">
 								<Offset x="3" y="-15" />
 							</Anchor>
 						</Anchors>
@@ -2933,6 +3029,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["damage"])
 											</OnLoad>
 											<OnClick>
@@ -2948,6 +3045,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["dps"])
 											</OnLoad>
 											<OnClick>
@@ -2963,6 +3061,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["percent"])
 											</OnLoad>
 											<OnClick>
@@ -2978,6 +3077,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["edps"])
 											</OnLoad>
 											<OnClick>
@@ -3007,6 +3107,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["damage"])
 											</OnLoad>
 											<OnClick>
@@ -3022,6 +3123,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["dps"])
 											</OnLoad>
 											<OnClick>
@@ -3037,6 +3139,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["percent"])
 											</OnLoad>
 											<OnClick>
@@ -3052,6 +3155,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["edps"])
 											</OnLoad>
 											<OnClick>
@@ -3081,6 +3185,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["damage"])
 											</OnLoad>
 											<OnClick>
@@ -3096,6 +3201,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["dtps"])
 											</OnLoad>
 											<OnClick>
@@ -3111,6 +3217,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["percent"])
 											</OnLoad>
 											<OnClick>
@@ -3126,6 +3233,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["edtps"])
 											</OnLoad>
 											<OnClick>
@@ -3155,6 +3263,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["damage"])
 											</OnLoad>
 											<OnClick>
@@ -3170,6 +3279,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["dtps"])
 											</OnLoad>
 											<OnClick>
@@ -3185,6 +3295,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["percent"])
 											</OnLoad>
 											<OnClick>
@@ -3200,6 +3311,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["edtps"])
 											</OnLoad>
 											<OnClick>
@@ -3229,6 +3341,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["damage"])
 											</OnLoad>
 											<OnClick>
@@ -3244,6 +3357,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["dps"])
 											</OnLoad>
 											<OnClick>
@@ -3259,6 +3373,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["percent"])
 											</OnLoad>
 											<OnClick>
@@ -3274,6 +3389,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["edps"])
 											</OnLoad>
 											<OnClick>
@@ -3303,6 +3419,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["damage"])
 											</OnLoad>
 											<OnClick>
@@ -3318,6 +3435,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["dtps"])
 											</OnLoad>
 											<OnClick>
@@ -3333,6 +3451,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["percent"])
 											</OnLoad>
 											<OnClick>
@@ -3348,6 +3467,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["edtps"])
 											</OnLoad>
 											<OnClick>
@@ -3377,6 +3497,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["healing"])
 											</OnLoad>
 											<OnClick>
@@ -3392,6 +3513,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["hps"])
 											</OnLoad>
 											<OnClick>
@@ -3407,6 +3529,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["percent"])
 											</OnLoad>
 											<OnClick>
@@ -3422,6 +3545,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["ehps"])
 											</OnLoad>
 											<OnClick>
@@ -3451,6 +3575,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["healing"])
 											</OnLoad>
 											<OnClick>
@@ -3466,6 +3591,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["hps"])
 											</OnLoad>
 											<OnClick>
@@ -3481,6 +3607,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["percent"])
 											</OnLoad>
 											<OnClick>
@@ -3496,6 +3623,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["ehps"])
 											</OnLoad>
 											<OnClick>
@@ -3525,6 +3653,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["healing"])
 											</OnLoad>
 											<OnClick>
@@ -3540,6 +3669,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["hps"])
 											</OnLoad>
 											<OnClick>
@@ -3555,6 +3685,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["percent"])
 											</OnLoad>
 											<OnClick>
@@ -3570,6 +3701,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["ehps"])
 											</OnLoad>
 											<OnClick>
@@ -3599,6 +3731,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["healing"])
 											</OnLoad>
 											<OnClick>
@@ -3614,6 +3747,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["hps"])
 											</OnLoad>
 											<OnClick>
@@ -3629,6 +3763,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["percent"])
 											</OnLoad>
 											<OnClick>
@@ -3644,6 +3779,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["ehps"])
 											</OnLoad>
 											<OnClick>
@@ -3673,6 +3809,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["healing"])
 											</OnLoad>
 											<OnClick>
@@ -3688,6 +3825,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["hps"])
 											</OnLoad>
 											<OnClick>
@@ -3703,6 +3841,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["percent"])
 											</OnLoad>
 											<OnClick>
@@ -3718,6 +3857,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["ehps"])
 											</OnLoad>
 											<OnClick>
@@ -3747,6 +3887,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["healing"])
 											</OnLoad>
 											<OnClick>
@@ -3762,6 +3903,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["hps"])
 											</OnLoad>
 											<OnClick>
@@ -3777,6 +3919,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["percent"])
 											</OnLoad>
 											<OnClick>
@@ -3792,6 +3935,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["ehps"])
 											</OnLoad>
 											<OnClick>
@@ -3821,6 +3965,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["healing"])
 											</OnLoad>
 											<OnClick>
@@ -3836,6 +3981,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["hps"])
 											</OnLoad>
 											<OnClick>
@@ -3851,6 +3997,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["percent"])
 											</OnLoad>
 											<OnClick>
@@ -3866,6 +4013,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["ehps"])
 											</OnLoad>
 											<OnClick>
@@ -3895,6 +4043,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["absorbs"])
 											</OnLoad>
 											<OnClick>
@@ -3910,6 +4059,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["percent"])
 											</OnLoad>
 											<OnClick>
@@ -3925,6 +4075,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["hps"])
 											</OnLoad>
 											<OnClick>
@@ -3940,6 +4091,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["ehps"])
 											</OnLoad>
 											<OnClick>
@@ -3969,6 +4121,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["absorbs"])
 											</OnLoad>
 											<OnClick>
@@ -3984,6 +4137,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["percent"])
 											</OnLoad>
 											<OnClick>
@@ -3999,6 +4153,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["hps"])
 											</OnLoad>
 											<OnClick>
@@ -4014,6 +4169,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["ehps"])
 											</OnLoad>
 											<OnClick>
@@ -4043,6 +4199,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["amount"])
 											</OnLoad>
 											<OnClick>
@@ -4058,6 +4215,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["hps"])
 											</OnLoad>
 											<OnClick>
@@ -4073,6 +4231,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["percent"])
 											</OnLoad>
 											<OnClick>
@@ -4088,6 +4247,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["ehps"])
 											</OnLoad>
 											<OnClick>
@@ -4117,6 +4277,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["amount"])
 											</OnLoad>
 											<OnClick>
@@ -4132,6 +4293,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["percent"])
 											</OnLoad>
 											<OnClick>
@@ -4161,6 +4323,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["amount"])
 											</OnLoad>
 											<OnClick>
@@ -4176,6 +4339,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["percent"])
 											</OnLoad>
 											<OnClick>
@@ -4205,6 +4369,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["amount"])
 											</OnLoad>
 											<OnClick>
@@ -4220,6 +4385,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["percent"])
 											</OnLoad>
 											<OnClick>
@@ -4249,6 +4415,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["amount"])
 											</OnLoad>
 											<OnClick>
@@ -4264,6 +4431,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["percent"])
 											</OnLoad>
 											<OnClick>
@@ -4293,6 +4461,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["amount"])
 											</OnLoad>
 											<OnClick>
@@ -4308,6 +4477,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["percent"])
 											</OnLoad>
 											<OnClick>
@@ -4337,6 +4507,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["amount"])
 											</OnLoad>
 											<OnClick>
@@ -4352,6 +4523,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["percent"])
 											</OnLoad>
 											<OnClick>
@@ -4381,6 +4553,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["amount"])
 											</OnLoad>
 											<OnClick>
@@ -4396,6 +4569,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["percent"])
 											</OnLoad>
 											<OnClick>
@@ -4425,6 +4599,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["amount"])
 											</OnLoad>
 											<OnClick>
@@ -4440,6 +4615,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["percent"])
 											</OnLoad>
 											<OnClick>
@@ -4469,6 +4645,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["amount"])
 											</OnLoad>
 											<OnClick>
@@ -4484,6 +4661,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["percent"])
 											</OnLoad>
 											<OnClick>
@@ -4513,6 +4691,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["amount"])
 											</OnLoad>
 											<OnClick>
@@ -4528,6 +4707,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["percent"])
 											</OnLoad>
 											<OnClick>
@@ -4557,6 +4737,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["amount"])
 											</OnLoad>
 											<OnClick>
@@ -4572,6 +4753,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["percent"])
 											</OnLoad>
 											<OnClick>
@@ -4601,6 +4783,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["amount"])
 											</OnLoad>
 											<OnClick>
@@ -4616,6 +4799,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["percent"])
 											</OnLoad>
 											<OnClick>
@@ -4645,6 +4829,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["amount"])
 											</OnLoad>
 											<OnClick>
@@ -4660,6 +4845,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["percent"])
 											</OnLoad>
 											<OnClick>
@@ -4689,6 +4875,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["amount"])
 											</OnLoad>
 											<OnClick>
@@ -4704,6 +4891,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["percent"])
 											</OnLoad>
 											<OnClick>
@@ -4733,6 +4921,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["amount"])
 											</OnLoad>
 											<OnClick>
@@ -4748,6 +4937,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["percent"])
 											</OnLoad>
 											<OnClick>
@@ -4777,6 +4967,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["damage"])
 											</OnLoad>
 											<OnClick>
@@ -4792,6 +4983,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["dps"])
 											</OnLoad>
 											<OnClick>
@@ -4807,6 +4999,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["percent"])
 											</OnLoad>
 											<OnClick>
@@ -4822,6 +5015,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["edps"])
 											</OnLoad>
 											<OnClick>
@@ -4851,6 +5045,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["amount"])
 											</OnLoad>
 											<OnClick>
@@ -4866,6 +5061,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["percent"])
 											</OnLoad>
 											<OnClick>
@@ -4895,6 +5091,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["amount"])
 											</OnLoad>
 											<OnClick>
@@ -4910,6 +5107,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["percent"])
 											</OnLoad>
 											<OnClick>
@@ -4939,6 +5137,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["amount"])
 											</OnLoad>
 											<OnClick>
@@ -4954,6 +5153,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["tps"])
 											</OnLoad>
 											<OnClick>
@@ -4969,6 +5169,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["percent"])
 											</OnLoad>
 											<OnClick>
@@ -4984,6 +5185,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["etps"])
 											</OnLoad>
 											<OnClick>
@@ -5013,6 +5215,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["amount"])
 											</OnLoad>
 											<OnClick>
@@ -5028,6 +5231,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["tps"])
 											</OnLoad>
 											<OnClick>
@@ -5043,6 +5247,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["percent"])
 											</OnLoad>
 											<OnClick>
@@ -5058,6 +5263,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["etps"])
 											</OnLoad>
 											<OnClick>
@@ -5087,6 +5293,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["amount"])
 											</OnLoad>
 											<OnClick>
@@ -5102,6 +5309,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["percent"])
 											</OnLoad>
 											<OnClick>
@@ -5131,6 +5339,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["amount"])
 											</OnLoad>
 											<OnClick>
@@ -5146,6 +5355,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["percent"])
 											</OnLoad>
 											<OnClick>
@@ -5175,6 +5385,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["healing"])
 											</OnLoad>
 											<OnClick>
@@ -5190,6 +5401,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["OHPS"])
 											</OnLoad>
 											<OnClick>
@@ -5205,6 +5417,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["percent"])
 											</OnLoad>
 											<OnClick>
@@ -5220,6 +5433,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["eohps"])
 											</OnLoad>
 											<OnClick>
@@ -5249,6 +5463,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["healing"])
 											</OnLoad>
 											<OnClick>
@@ -5264,6 +5479,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["OHPS"])
 											</OnLoad>
 											<OnClick>
@@ -5279,6 +5495,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["percent"])
 											</OnLoad>
 											<OnClick>
@@ -5294,6 +5511,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["eohps"])
 											</OnLoad>
 											<OnClick>
@@ -5323,6 +5541,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["damage"])
 											</OnLoad>
 											<OnClick>
@@ -5338,6 +5557,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["dps"])
 											</OnLoad>
 											<OnClick>
@@ -5353,6 +5573,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["percent"])
 											</OnLoad>
 											<OnClick>
@@ -5368,6 +5589,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
+												this.aide = DPSMate.L["columnstooltip"]
 												getglobal(this:GetName().."_Title"):SetText(DPSMate.L["edps"])
 											</OnLoad>
 											<OnClick>

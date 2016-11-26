@@ -464,6 +464,7 @@ function DPSMate.Options:InitializeConfigMenu()
 	DPSMate_ConfigMenu_Tab_GeneralOptions_BossFights:SetChecked(DPSMateSettings["onlybossfights"])
 	DPSMate_ConfigMenu_Tab_GeneralOptions_Solo:SetChecked(DPSMateSettings["hidewhensolo"])
 	DPSMate_ConfigMenu_Tab_GeneralOptions_Combat:SetChecked(DPSMateSettings["hideincombat"])
+	DPSMate_ConfigMenu_Tab_GeneralOptions_Login:SetChecked(DPSMateSettings["hideonlogin"])
 	DPSMate_ConfigMenu_Tab_GeneralOptions_PVP:SetChecked(DPSMateSettings["hideinpvp"])
 	DPSMate_ConfigMenu_Tab_GeneralOptions_Disable:SetChecked(DPSMateSettings["disablewhilehidden"])
 	DPSMate_ConfigMenu_Tab_GeneralOptions_MergePets:SetChecked(DPSMateSettings["mergepets"])
@@ -724,6 +725,11 @@ function DPSMate.Options:OnEvent(event)
 			self:PopUpAccept(true)
 		end
 		self:HideInPvP()
+		if DPSMateSettings["hideonlogin"] then
+			for _, val in pairs(DPSMateSettings["windows"]) do
+				DPSMate.Options:Hide(_G("DPSMate_"..val["name"]))
+			end
+		end
 	elseif event == "ZONE_CHANGED_NEW_AREA" then
 		DPSMate.DB:OnGroupUpdate()
 	end
@@ -1374,7 +1380,7 @@ function DPSMate.Options:DataResetsDropDown()
 end
 
 function DPSMate.Options:NumberFormatDropDown()
-	local btns = {DPSMate.L["normal"], DPSMate.L["condensed"]}
+	local btns = {DPSMate.L["normal"], DPSMate.L["condensed"], DPSMate.L["commas"], DPSMate.L["semicondensed"]}
 	
 	local function on_click()
 		DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["numberformat"] = this.value
@@ -1786,6 +1792,8 @@ function DPSMate.Options:CreateWindow()
 			grouponly = false,
 			realtime = false,
 			cbtdisplay = false,
+			barbg = false,
+			totopacity = 1.0,
 		})
 		local TL = DPSMate:TableLength(DPSMateSettings["windows"])
 		if not _G("DPSMate_"..na) then

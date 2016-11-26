@@ -323,6 +323,20 @@ function DPSMate.Sync:ReceiveStartVote()
 	end
 end
 
+function DPSMate.Sync:AbortVote()
+	if IsPartyLeader() or IsRaidOfficer() or IsRaidLeader() then
+		SDM("DPSMate_AbortVote", "NaN", "RAID")
+		DPSMate:SendMessage(DPSMate.L["resetaborted"])
+	end
+end
+
+function DPSMate.Sync:ReceiveAbort()
+	DPSMate:SendMessage(DPSMate.L["resetaborted"])
+	abort = GetTime()
+	participants = 1000000
+	voteCount = 1
+end
+
 local bc, am = 0, 1
 function DPSMate.Sync:HelloWorld()
 	if (GetTime()-bc)>=3 then
@@ -336,10 +350,19 @@ function DPSMate.Sync:GreetBack()
 	SDM("DPSMate_Greet", DPSMate.SYNCVERSION, "RAID")
 end
 
+local old = 0
 function DPSMate.Sync:ReceiveGreet(arg2, arg4)
 	if (GetTime()-bc)<=3 then
 		DPSMate:SendMessage(am..". "..arg4.." (v"..arg2..")")
 		am = am + 1
+	else
+		if (GetTime()-old)>=3 then
+			local ver = tnbr(arg2:match("%d+") or 0)
+			if ver>DPSMate.VERSION then
+				DPSMate:SendMessage(DPSMate.L["versionisold"])
+				old = GetTime()
+			end
+		end
 	end
 end
 
@@ -1644,6 +1667,7 @@ DPSMate.Sync.Exec = {
 	["DPSMate_AurasStart"..DPSMate.SYNCVERSION] = function(arg2,arg4) DPSMate.Sync:AurasStartEndIn(arg2, arg4, 1) end,
 	["DPSMate_AurasEnd"..DPSMate.SYNCVERSION] = function(arg2,arg4) DPSMate.Sync:AurasStartEndIn(arg2, arg4, 2) end,
 	["DPSMate_AurasCause"..DPSMate.SYNCVERSION] = function(arg2,arg4) DPSMate.Sync:AurasCauseIn(arg2, arg4) end,
+	["DPSMate_AbortVote"] = function() DPSMate.Sync:ReceiveAbort() end,
 	["DPSMate_Vote"] = function() DPSMate.Sync:CountVote() end,
 	["DPSMate_StartVote"] = function() DPSMate.Sync:ReceiveStartVote() end,
 	["DPSMate_VoteSuccess"] = function() DPSMate.Sync:VoteSuccess() end,

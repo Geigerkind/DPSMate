@@ -1,6 +1,6 @@
 -- Global Variables
 DPSMate = {}
-DPSMate.VERSION = 82
+DPSMate.VERSION = 83
 DPSMate.LOCALE = GetLocale()
 DPSMate.SYNCVERSION = DPSMate.VERSION..DPSMate.LOCALE
 DPSMate.Parser = {}
@@ -97,6 +97,8 @@ local tinsert = table.insert
 local strgsub = string.gsub
 local func = function(c) tinsert(t, c) end
 local strformat = string.format
+local strgfind = string.gfind
+local strgsub = string.gsub
 
 -- Begin functions
 
@@ -164,6 +166,8 @@ function DPSMate:InitializeFrames()
 		end
 		local frame = _G("DPSMate_"..val["name"])
 			
+		frame:SetToplevel(true)
+		
 		DPSMate.Options:ToggleDrewDrop(1, DPSMate.DB:GetOptionsTrue(1, k), frame)
 		DPSMate.Options:ToggleDrewDrop(2, DPSMate.DB:GetOptionsTrue(2, k), frame)
 		
@@ -207,6 +211,7 @@ function DPSMate:InitializeFrames()
 			_G("DPSMate_"..val["name"].."_ScrollFrame_Child_Total"):SetHeight(0.00001)
 		end
 		_G("DPSMate_"..val["name"].."_ScrollFrame_Child_Total"):SetStatusBarTexture(DPSMate.Options.statusbars[val["bartexture"]])
+		_G("DPSMate_"..val["name"].."_ScrollFrame_Child_Total"):SetStatusBarColor(1,1,1,val["totopacity"] or 1)
 		_G("DPSMate_"..val["name"].."_ScrollFrame_Child_Total_BG"):SetTexture(DPSMate.Options.statusbars[val["bartexture"]])
 		_G("DPSMate_"..val["name"].."_ScrollFrame_Child_Total_Name"):SetFont(DPSMate.Options.fonts[val["barfont"]], val["barfontsize"], DPSMate.Options.fontflags[val["barfontflag"]])
 		_G("DPSMate_"..val["name"].."_ScrollFrame_Child_Total_Value"):SetFont(DPSMate.Options.fonts[val["barfont"]], val["barfontsize"], DPSMate.Options.fontflags[val["barfontflag"]])
@@ -245,8 +250,12 @@ function DPSMate:InitializeFrames()
 			bar.value:SetTextColor(val["barfontcolor"][1],val["barfontcolor"][2],val["barfontcolor"][3])
 			bar:SetStatusBarTexture(DPSMate.Options.statusbars[val["bartexture"]])
 			bar.bg:SetTexture(DPSMate.Options.statusbars[val["bartexture"]])
-			bar.bg:SetVertexColor(val["bgbarcolor"][1],val["bgbarcolor"][2],val["bgbarcolor"][3], 0.5)
 			bar:SetHeight(val["barheight"])
+			if val["barbg"] then
+				bar.bg:SetVertexColor(val["bgbarcolor"][1],val["bgbarcolor"][2],val["bgbarcolor"][3], 0)
+			else
+				bar.bg:SetVertexColor(val["bgbarcolor"][1],val["bgbarcolor"][2],val["bgbarcolor"][3], 0.5)
+			end
 		end
 		DPSMate.Options:SelectRealtime(frame, val["realtime"])
 	end
@@ -255,6 +264,17 @@ function DPSMate:InitializeFrames()
 	if not DPSMateSettings["enable"] then
 		self:Disable()
 	end
+	
+	local frames = {"", "_Absorbs", "_AbsorbsTaken", "_Auras", "_Casts", "_CCBreaker", "_CureDisease", "_CureDiseaseReceived", "_CurePoison", "_CurePoisonReceived", "_DamageTaken", "_DamageTakenTotal", "_DamageTotal", "_Deaths", "_Decurses", "_DecursesReceived", "_Dispels", "_DispelsReceived", "_EDD", "_EDT", "_EHealing", "_EHealingTaken", "_Fails", "_FF", "_FFT", "_Healing", "_HealingTaken", "_Interrupts", "_LiftMagic", "_LiftMagicReceived", "_OHealingTaken", "_Overhealing", "_Procs", "_AbsorbsTakenTotal", "_AbsorbsTotal", "_AurasTotal", "_CastsTotal", "_CCBreakerTotal", "_CureDisease_Total", "_CurePoison_Total", "_Deaths_Total", "_Decurses_Total", "_Dispels_Total", "_EDDTotal", "_EDTTotal", "_EHealingTakenTotal", "_EHealingTotal", "_FailsTotal", "_FFTotal", "_FFTTotal", "_HABTotal", "_HealingTakenTotal", "_HealingTotal", "_Interrupts_Total", "_LiftMagic_Total", "_OverhealingTakenTotal", "_OverhealingTotal", "_ProcsTotal"}
+	for cat, val in pairs(frames) do
+		_G("DPSMate_Details"..val):SetToplevel(true)
+	end
+	DPSMate_MiniMap:SetToplevel(true)
+	DPSMate_PopUp:SetToplevel(true)
+	DPSMate_Vote:SetToplevel(true)
+	DPSMate_Logout:SetToplevel(true)
+	DPSMate_Report:SetToplevel(true)
+	DPSMate_ConfigMenu:SetToplevel(true)
 end
 
 function DPSMate:WindowsExist()
@@ -429,13 +449,50 @@ function DPSMate:SetStatusBarValue()
 	end
 end
 
-function DPSMate:FormatNumbers(dmg,total,sort,k)
-	if DPSMateSettings["windows"][k]["numberformat"] == 2 then
-		dmg = strformat("%.0f", (dmg/1000))
-		total = strformat("%.0f", (total/1000))
-		sort = strformat("%.0f", (sort/1000))
+function DPSMate:strrev(str)
+	local res = "";
+	local len = strlen(str) 
+	for i=0, len-1 do
+		res = res..strsub(str, len-i, len-i)
 	end
-	return dmg, total, sort
+	return res;
+end
+
+function DPSMate:Commas(n,k)
+	if DPSMateSettings["windows"][k]["numberformat"] == 3 then 
+		n = strformat("%.0f", n)
+		for left, num, right in strgfind(n, '([^%d]*%d)(%d+)') do
+			return left and left..self:strrev(strgsub(self:strrev(num), '(%d%d%d)','%1,')) or n
+		end
+	else
+		return n;
+	end
+end
+
+function DPSMate:FormatNumbers(dmg,total,sort,k)
+	local oldd, oldt, olds = dmg, total, sort
+	if DPSMateSettings["windows"][k]["numberformat"] == 2 then
+		if dmg>10000 then
+			dmg = strformat("%.0f", (dmg/1000))
+		end
+		if total>10000 then
+			total = strformat("%.0f", (total/1000))
+		end
+		if sort>10000 then
+			sort = strformat("%.0f", (sort/1000))
+		end
+	elseif DPSMateSettings["windows"][k]["numberformat"] == 4 then
+		if dmg>10000 then
+			dmg = strformat("%.1f", (dmg/1000))
+		end
+		if total>10000 then
+			total = strformat("%.1f", (total/1000))
+		end
+		if sort>10000 then
+			sort = strformat("%.1f", (sort/1000))
+		end
+	end
+	return dmg, total, sort, oldd, oldt, olds
 end
 
 function DPSMate:ApplyFilter(key, name)

@@ -70,20 +70,20 @@ end
 
 function DPSMate.Modules.OHPS:GetSettingValues(arr, cbt, k,ecbt)
 	local name, value, perc, sortedTable, total, a, p, strt = {}, {}, {}, {}, 0, 0, "", {[1]="",[2]=""}
-	if DPSMateSettings["windows"][k]["numberformat"] == 2 then p = "K" end
+	if DPSMateSettings["windows"][k]["numberformat"] == 2 or DPSMateSettings["windows"][k]["numberformat"] == 4 then p = "K" end
 	sortedTable, total, a = self:GetSortedTable(arr,k)
 	for cat, val in pairs(sortedTable) do
-		local va, tot, sort = DPSMate:FormatNumbers(val, total, sortedTable[1], k)
-		if va==0 then break end
+		local va, tot, sort, varea, totr, sortr = DPSMate:FormatNumbers(val, total, sortedTable[1], k)
+		if varea==0 then break end; if varea<=10000 then p = "" end
 		local str = {[1]="",[2]="",[3]="",[4]=""}
 		local pname = DPSMate:GetUserById(a[cat])
 		if DPSMateSettings["columnsohps"][2] then str[1] = " "..strformat("%.1f", va/cbt)..p; strt[2] = " "..strformat("%.1f", tot/cbt)..p end
-		if DPSMateSettings["columnsohps"][3] then str[2] = " ("..strformat("%.1f", 100*va/tot).."%)" end
-		if DPSMateSettings["columnsohps"][1] then str[3] = "("..va..p..")"; strt[1] = "("..tot..p..")" end
+		if DPSMateSettings["columnsohps"][3] then str[2] = " ("..strformat("%.1f", 100*varea/totr).."%)" end
+		if DPSMateSettings["columnsohps"][1] then str[3] = "("..DPSMate:Commas(va, k)..p..")"; strt[1] = "("..DPSMate:Commas(tot, k)..p..")" end
 		if DPSMateSettings["columnsohps"][4] then str[4] = " ("..strformat("%.1f", va/(ecbt[pname] or cbt))..p..")" end
 		tinsert(name, pname)
 		tinsert(value, str[3]..str[1]..str[4]..str[2])
-		tinsert(perc, 100*(va/sort))
+		tinsert(perc, 100*(varea/sortr))
 	end
 	return name, value, perc, strt
 end

@@ -305,7 +305,7 @@
 				<Size y="84" />
 				<Anchors>
 					<Anchor point="TOPLEFT" relativeTo="$parent_Head" relativePoint="BOTTOMLEFT">
-						<Offset x="0.5" y="-1" />
+						<Offset x="0.5" y="0" />
 					</Anchor>
 					<Anchor point="TOPRIGHT" relativeTo="$parent_Head" relativePoint="BOTTOMRIGHT" />
 				</Anchors>

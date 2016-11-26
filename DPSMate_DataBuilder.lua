@@ -171,6 +171,8 @@ function DPSMate.DB:OnEvent(event)
 						grouponly = false,
 						realtime = false,
 						cbtdisplay = false,
+						barbg = false,
+						totopacity = 1.0,
 					}
 				},
 				lock = false,
@@ -411,6 +413,7 @@ function DPSMate.DB:OnEvent(event)
 				bcfail = false,
 				bcrw = false,
 				targetscale=0.58,
+				hideonlogin = false,
 			}
 		end
 		if DPSMateHistory == nil then 

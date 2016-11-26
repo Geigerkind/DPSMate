@@ -69,7 +69,7 @@ function DPSMate.Modules.Activity:GetSettingValues(arr, cbt, k)
 	sortedTable, a, total = DPSMate.Modules.Activity:GetSortedTable(arr, k)
 	for cat, val in pairs(sortedTable) do
 		local dmg, tot, sort = val, total, sortedTable[1]
-		if dmg==0 then break end
+		if dmg==0 then break end;
 		local str = {[1]="",[2]="",[3]=""}
 		str[1] = strformat("%.2f", val).."s"; strt[2] = strformat("%.2f", total).."s"
 		tinsert(name, a[cat])
