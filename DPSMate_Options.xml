@@ -295,6 +295,7 @@
 							})
 							DPSMate_ConfigMenu_Tab_Content_Scale:SetValue(DPSMateSettings["windows"][this:GetParent().Key]["scale"])
 							DPSMate_ConfigMenu_Tab_Content_Opacity:SetValue(DPSMateSettings["windows"][this:GetParent().Key]["opacity"])
+							DPSMate_ConfigMenu_Tab_Content_BorderOpacity:SetValue(DPSMateSettings["windows"][this:GetParent().Key]["borderopacity"] or 0)
 							DPSMate_ConfigMenu_Tab_Content_BGOpacity:SetValue(DPSMateSettings["windows"][this:GetParent().Key]["bgopacity"] or 1)
 							DPSMate_ConfigMenu_Tab_Content_BGDropDown_Texture:SetBackdropColor(DPSMateSettings["windows"][this:GetParent().Key]["contentbgcolor"][1], DPSMateSettings["windows"][this:GetParent().Key]["contentbgcolor"][2], DPSMateSettings["windows"][this:GetParent().Key]["contentbgcolor"][3])
 							DPSMate_ConfigMenu_Tab_Content_BGColorNormalTexture:SetVertexColor(DPSMateSettings["windows"][this:GetParent().Key]["contentbgcolor"][1], DPSMateSettings["windows"][this:GetParent().Key]["contentbgcolor"][2], DPSMateSettings["windows"][this:GetParent().Key]["contentbgcolor"][3])
@@ -303,7 +304,14 @@
 							DPSMate_ConfigMenu_Tab_Content_BGColor_SwatchBg.b = DPSMateSettings["windows"][this:GetParent().Key]["contentbgcolor"][3]
 							UIDropDownMenu_SetSelectedValue(DPSMate_ConfigMenu_Tab_Content_NumberFormat, DPSMateSettings["windows"][this:GetParent().Key]["numberformat"])
 							UIDropDownMenu_SetSelectedValue(DPSMate_ConfigMenu_Tab_Content_BGDropDown, DPSMateSettings["windows"][this:GetParent().Key]["contentbgtexture"])
+							UIDropDownMenu_SetSelectedValue(DPSMate_ConfigMenu_Tab_Content_BorderTexture, DPSMateSettings["windows"][this:GetParent().Key]["bordertexture"] or "UI-Tooltip-Border")
+							DPSMate_ConfigMenu_Tab_Content_BorderTextureText:SetText(DPSMateSettings["windows"][this:GetParent().Key]["bordertexture"] or "UI-Tooltip-Border")
+							UIDropDownMenu_SetSelectedValue(DPSMate_ConfigMenu_Tab_Content_BorderStrata, DPSMateSettings["windows"][this:GetParent().Key]["borderstrata"] or 1)
 							DPSMate_ConfigMenu_Tab_Content_BGDropDownText:SetText(DPSMateSettings["windows"][this:GetParent().Key]["contentbgtexture"])
+							DPSMate_ConfigMenu_Tab_Content_BorderColorNormalTexture:SetVertexColor(DPSMateSettings["windows"][this:GetParent().Key]["contentbordercolor"][1], DPSMateSettings["windows"][this:GetParent().Key]["contentbordercolor"][2], DPSMateSettings["windows"][this:GetParent().Key]["contentbordercolor"][3])
+							DPSMate_ConfigMenu_Tab_Content_BorderColor_SwatchBg.r = DPSMateSettings["windows"][this:GetParent().Key]["contentbordercolor"][1]
+							DPSMate_ConfigMenu_Tab_Content_BorderColor_SwatchBg.g = DPSMateSettings["windows"][this:GetParent().Key]["contentbordercolor"][2]
+							DPSMate_ConfigMenu_Tab_Content_BorderColor_SwatchBg.b = DPSMateSettings["windows"][this:GetParent().Key]["contentbordercolor"][3]
 						end
 					</OnLoad>
 				</Scripts>
@@ -2553,6 +2561,27 @@
 							</OnLoad>
 						</Scripts>
 					</Slider>
+					<Slider name="$parent_BorderOpacity" inherits="DPSMate_Template_Slider">
+						<Anchors>
+							<Anchor point="TOP" relativeTo="$parent_BGOpacity" relativePoint="BOTTOM">
+								<Offset x="0" y="-30" />
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								this.aide = DPSMate.L["borderOpacityTooltip"]
+								this.func = function() 
+									DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["borderopacity"] = this:GetValue()
+									getglobal("DPSMate_"..DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["name"].."_Border"):SetAlpha(DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["borderopacity"])
+								end
+								this:SetMinMaxValues(0.0,1.0)
+								this:SetValueStep(0.1)
+								getglobal(this:GetName().."Text"):SetText(DPSMate.L["borderOpacity"])
+								getglobal(this:GetName().."Low"):SetText("0.0")
+								getglobal(this:GetName().."High"):SetText("1.0")
+							</OnLoad>
+						</Scripts>
+					</Slider>
 					<Button name="$parent_BGColor" inherits="DPSMate_Template_Colorpicker">
 						<Anchors>
 							<Anchor point="LEFT" relativeTo="$parent_Scale" relativePoint="RIGHT">
@@ -2591,6 +2620,60 @@
 							</OnLoad>
 						</Scripts>
 					</Frame>
+					<Frame name="$parent_BorderTexture" inherits="DPSMate_Template_DropDown">
+						<Size x="120" y="24" />
+						<Anchors>
+							<Anchor point="LEFT" relativeTo="$parent_BGOpacity" relativePoint="RIGHT">
+								<Offset x="0" y="0" />
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								this.aide = DPSMate.L["bordertextureTooltip"]
+								this.func = DPSMate.Options.BorderTextureDropDown
+								this.title = DPSMate.L["bordertexture"]
+								UIDropDownMenu_SetWidth(120)
+								getglobal(this:GetName().."_Text"):SetText(this.title)
+							</OnLoad>
+						</Scripts>
+					</Frame>
+					<Frame name="$parent_BorderStrata" inherits="DPSMate_Template_DropDown">
+						<Size x="120" y="24" />
+						<Anchors>
+							<Anchor point="LEFT" relativeTo="$parent_BorderOpacity" relativePoint="RIGHT">
+								<Offset x="0" y="0" />
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								this.aide = DPSMate.L["borderstrataTooltip"]
+								this.func = DPSMate.Options.BorderStrataDropDown
+								this.title = DPSMate.L["borderstrata"]
+								UIDropDownMenu_SetWidth(120)
+								getglobal(this:GetName().."_Text"):SetText(this.title)
+							</OnLoad>
+						</Scripts>
+					</Frame>
+					<Button name="$parent_BorderColor" inherits="DPSMate_Template_Colorpicker">
+						<Anchors>
+							<Anchor point="LEFT" relativeTo="$parent_BorderOpacity" relativePoint="RIGHT">
+								<Offset x="30" y="-25" />
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								getglobal(this:GetName().."_Font"):SetText(DPSMate.L["bordercolor"])
+								getglobal(this:GetName().."_SwatchBg").r = 1
+								getglobal(this:GetName().."_SwatchBg").g = 1
+								getglobal(this:GetName().."_SwatchBg").b = 1
+								this.aide=DPSMate.L["bordercolorTooltip"]
+								this.var = "contentbordercolor"
+								this.func = function()
+									getglobal("DPSMate_"..DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["name"].."_Border"):SetBackdropBorderColor(DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["contentbordercolor"][1], DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["contentbordercolor"][2], DPSMateSettings["windows"][DPSMate_ConfigMenu_Menu.Key]["contentbordercolor"][3])
+								end
+							</OnLoad>
+						</Scripts>
+					</Button>
 				</Frames>
 			</Frame>
 			

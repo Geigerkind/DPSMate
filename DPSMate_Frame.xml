@@ -103,6 +103,28 @@
 			</OnSizeChanged>
 		</Scripts>
 		<Frames>
+			<Frame name="$parent_Border" frameStrata="BACKGROUND">
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset x="-4" y="4" />
+					</Anchor>
+					<Anchor point="TOPRIGHT">
+						<Offset x="4" y="4" />
+					</Anchor>
+					<Anchor point="BOTTOMLEFT">
+						<Offset x="-4" y="-4" />
+					</Anchor>
+					<Anchor point="BOTTOMRIGHT">
+						<Offset x="4" y="-4" />
+					</Anchor>
+				</Anchors>
+				<Backdrop edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+					<BackgroundInsets left="5" right="5" top="3" bottom="1" />
+					<TileSize val="12" />
+					<EdgeSize val="4" />
+					<Color r="0.157" g="0.08" b="0.06" a="1" />
+				</Backdrop>
+			</Frame>
 			<Button name="$parent_Resize" frameStrata="HIGH">
 				<Size x="14" y="14" />
 				<Anchors>

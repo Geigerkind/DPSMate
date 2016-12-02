@@ -495,4 +495,12 @@ if (GetLocale() == "deDE") then
 	DPSMate.L["cbtdisplay"] = "Deaktiviere CBT-Anzeige"
 	DPSMate.L["semicondensed"] = "Semi-Verdichtet"
 	DPSMate.L["loginhide"] = "Verstecke beim einloggen"
+	DPSMate.L["borderOpacityTooltip"] = "Verändere die Sichtbarkeit des Randes."
+	DPSMate.L["borderOpacity"] = "Rand-Transparenz"
+	DPSMate.L["bordertextureTooltip"] = "Wähle eine Textur für den Rand."
+	DPSMate.L["bordertexture"] = "Randtextur"
+	DPSMate.L["borderstrataTooltip"] = "Wähle die Ebene des Randes aus."
+	DPSMate.L["borderstrata"] = "Randebene"
+	DPSMate.L["bordercolor"] = "Randfarbe"
+	DPSMate.L["bordercolorTooltip"] = "Gestalte die Randfarbe."
 end
