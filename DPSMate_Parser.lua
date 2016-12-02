@@ -87,6 +87,7 @@ DPSMate.Parser.procs = {
 	[DPSMate.BabbleSpell:GetTranslation("Cold Snap")] = true,
 	[DPSMate.BabbleSpell:GetTranslation("Presence of Mind")] = true,
 	[DPSMate.BabbleSpell:GetTranslation("Ice Block")] = true,
+	[DPSMate.BabbleSpell:GetTranslation("Evocation")] = true,
 	
 	-- Priest
 	[DPSMate.BabbleSpell:GetTranslation("Power Infusion")] = true,
@@ -131,6 +132,7 @@ DPSMate.Parser.procs = {
 	[DPSMate.BabbleSpell:GetTranslation("Vampirism")] = true,
 	[DPSMate.BabbleSpell:GetTranslation("Nightfall")] = true,
 	[DPSMate.BabbleSpell:GetTranslation("Soul Link")] = true,
+	[DPSMate.BabbleSpell:GetTranslation("Life Tap")] = true,
 	
 	-- Warrior
 	[DPSMate.BabbleSpell:GetTranslation("Cheat Death")] = true,
