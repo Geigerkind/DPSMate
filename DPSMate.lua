@@ -1,6 +1,6 @@
 -- Global Variables
 DPSMate = {}
-DPSMate.VERSION = 85
+DPSMate.VERSION = 86
 DPSMate.LOCALE = GetLocale()
 DPSMate.SYNCVERSION = DPSMate.VERSION..DPSMate.LOCALE
 DPSMate.Parser = {}
@@ -166,7 +166,7 @@ function DPSMate:InitializeFrames()
 		end
 		local frame = _G("DPSMate_"..val["name"])
 		frame.fborder = _G("DPSMate_"..val["name"].."_Border")
-			
+		DPSMateSettings["windows"][k]["hidden"] = false
 		frame:SetToplevel(true)
 		
 		DPSMate.Options:ToggleDrewDrop(1, DPSMate.DB:GetOptionsTrue(1, k), frame)

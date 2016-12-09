@@ -1,0 +1,5 @@
+<Bindings>
+	<Binding name="DPSMATE_RESET" header="DPSMATE">DPSMate_PopUp:Show()</Binding>
+	<Binding name="DPSMATE_TOGGLE">DPSMate.Options:ToggleVisibility()</Binding>
+	<Binding name="DPSMATE_REPORT">if not DPSMate_Report:IsVisible() then DPSMate_Report:Show() else DPSMate_Report:Hide() end</Binding>
+</Bindings>

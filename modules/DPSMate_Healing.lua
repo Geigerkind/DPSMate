@@ -75,7 +75,7 @@ function DPSMate.Modules.Healing:GetSettingValues(arr, cbt, k,ecbt)
 		local va, tot, sort, varea, totr, sortr = DPSMate:FormatNumbers(val, total, sortedTable[1], k)
 		if varea==0 then break end; if varea<=10000 then p = "" end
 		local str = {[1]="",[2]="",[3]="",[4]=""}
-		local pname = DPSMate:GetUserById(a[cat])
+		local pname = a[cat]
 		if DPSMateSettings["columnshealing"][1] then str[1] = " "..DPSMate:Commas(va, k)..p; strt[2] = DPSMate:Commas(tot, k)..p end
 		if DPSMateSettings["columnshealing"][3] then str[2] = " ("..strformat("%.1f", 100*varea/totr).."%)" end
 		if DPSMateSettings["columnshealing"][2] then str[3] = "("..strformat("%.1f", va/cbt)..p..")"; strt[1] = "("..strformat("%.1f", tot/cbt)..p..")" end

@@ -76,7 +76,7 @@ function DPSMate.Modules.OHPS:GetSettingValues(arr, cbt, k,ecbt)
 		local va, tot, sort, varea, totr, sortr = DPSMate:FormatNumbers(val, total, sortedTable[1], k)
 		if varea==0 then break end; if varea<=10000 then p = "" end
 		local str = {[1]="",[2]="",[3]="",[4]=""}
-		local pname = DPSMate:GetUserById(a[cat])
+		local pname = a[cat]
 		if DPSMateSettings["columnsohps"][2] then str[1] = " "..strformat("%.1f", va/cbt)..p; strt[2] = " "..strformat("%.1f", tot/cbt)..p end
 		if DPSMateSettings["columnsohps"][3] then str[2] = " ("..strformat("%.1f", 100*varea/totr).."%)" end
 		if DPSMateSettings["columnsohps"][1] then str[3] = "("..DPSMate:Commas(va, k)..p..")"; strt[1] = "("..DPSMate:Commas(tot, k)..p..")" end
