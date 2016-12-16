@@ -76,12 +76,12 @@ function DPSMate.Modules.HPS:GetSettingValues(arr, cbt, k,ecbt)
 		local va, tot, sort, varea, totr, sortr = DPSMate:FormatNumbers(val, total, sortedTable[1], k)
 		if varea==0 then break end; if varea<=10000 then p = "" end
 		local str = {[1]="",[2]="",[3]="",[4]=""}
-		local pname = a[cat]
+		local pname = DPSMate:GetUserById(a[cat])
 		if DPSMateSettings["columnshps"][2] then str[1] = " "..strformat("%.1f", va/cbt)..p; strt[2] = " "..strformat("%.1f", tot/cbt)..p end
 		if DPSMateSettings["columnshps"][3] then str[2] = " ("..strformat("%.1f", 100*varea/totr).."%)" end
 		if DPSMateSettings["columnshps"][1] then str[3] = "("..DPSMate:Commas(va, k)..p..")"; strt[1] = "("..DPSMate:Commas(tot, k)..p..")" end
 		if DPSMateSettings["columnshps"][4] then str[4] = " ("..strformat("%.1f", va/(ecbt[pname] or cbt))..p..")" end
-		tinsert(name, pname)
+		tinsert(name, pname) 
 		tinsert(value, str[3]..str[1]..str[4]..str[2])
 		tinsert(perc, 100*(varea/sortr))
 	end
