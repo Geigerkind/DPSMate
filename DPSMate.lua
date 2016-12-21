@@ -1,6 +1,6 @@
 -- Global Variables
 DPSMate = {}
-DPSMate.VERSION = 88
+DPSMate.VERSION = 89
 DPSMate.LOCALE = GetLocale()
 DPSMate.SYNCVERSION = DPSMate.VERSION..DPSMate.LOCALE
 DPSMate.Parser = {}
@@ -168,6 +168,15 @@ function DPSMate:InitializeFrames()
 		frame.fborder = _G("DPSMate_"..val["name"].."_Border")
 		DPSMateSettings["windows"][k]["hidden"] = false
 		frame:SetToplevel(true)
+		
+		if (val["position"] and val["position"][1]) then
+			frame:ClearAllPoints()
+			frame:SetPoint(val["position"][1], UIParent, val["position"][1], val["position"][2], val["position"][3])
+		end
+		if (val["savsize"] and val["savsize"][1]) then
+			frame:SetWidth(val["savsize"][1])
+			frame:SetHeight(val["savsize"][2])
+		end
 		
 		DPSMate.Options:ToggleDrewDrop(1, DPSMate.DB:GetOptionsTrue(1, k), frame)
 		DPSMate.Options:ToggleDrewDrop(2, DPSMate.DB:GetOptionsTrue(2, k), frame)

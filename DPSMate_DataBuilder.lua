@@ -177,6 +177,8 @@ function DPSMate.DB:OnEvent(event)
 						contentbordercolor = {0,0,0},
 						borderstrata = 1,
 						bordertexture = "UI-Tooltip-Border",
+						position = {"CENTER",0,0},
+						savsize = {150,100},
 					}
 				},
 				lock = false,

@@ -136,6 +136,9 @@
 					</OnMouseDown>
 					<OnMouseUp>
 						this:GetParent():StopMovingOrSizing()
+						DPSMateSettings["windows"][this:GetParent().Key]["savsize"] = {}
+						DPSMateSettings["windows"][this:GetParent().Key]["savsize"][1] = this:GetParent():GetWidth()
+						DPSMateSettings["windows"][this:GetParent().Key]["savsize"][2] = this:GetParent():GetHeight()
 					</OnMouseUp>
 				</Scripts>
 				<NormalTexture file="Interface\AddOns\DPSMate\images\UI-ChatIM-SizeGrabber-Up"/>
@@ -186,6 +189,11 @@
 							DPSMate.Options:OpenMenu(1, this:GetParent())
 						else
 							this:GetParent():StopMovingOrSizing()
+							local point, _, _, xOfs, yOfs = this:GetParent():GetPoint()
+							DPSMateSettings["windows"][this:GetParent().Key]["position"] = {}
+							DPSMateSettings["windows"][this:GetParent().Key]["position"][1] = point
+							DPSMateSettings["windows"][this:GetParent().Key]["position"][2] = xOfs
+							DPSMateSettings["windows"][this:GetParent().Key]["position"][3] = yOfs
 						end
 					</OnMouseUp>
 				</Scripts>
