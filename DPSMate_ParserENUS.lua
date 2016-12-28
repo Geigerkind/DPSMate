@@ -177,18 +177,6 @@ function DPSMate.Parser:FriendlyPlayerDamage(msg)
 		DB:DamageDone(f, a, 0, 0, 1, 0, 0, 0, 0, 0, 0)
 		return
 	end
-	-- Hostile Player vs you
-	--for f,a,b in strgfind(msg, "(.-)'s (.+) was (.-)%.") do 
-		--if b=="dodged" then t[1]=1 elseif b=="blocked" then t[2]=1 elseif b=="parried" then t[4]=1 else t[3]=1 end
-	---	DB:EnemyDamage(true, DPSMateEDT, f, a, 0, 0, 0, t[4] or 0, t[1] or 0, t[3] or 0, 0, self.player, t[2] or 0, 0) -- Here is the error?
-	--	DB:DamageDone(f, a, 0, 0, 0, t[4] or 0, t[1] or 0, t[3] or 0, 0, 0, t[2] or 0)
-	--	return
-	--end
-	--for f,a in strgfind(msg, "(.-)'s (.+) misses you%.") do 
-	--	DB:EnemyDamage(true, DPSMateEDT, f, a, 0, 0, 1, 0, 0, 0, 0, self.player, 0, 0)
-	--	DB:DamageDone(f, a, 0, 0, 1, 0, 0, 0, 0, 0, 0)
-	--	return
-	--end
 	for a,b in strgfind(msg, "You absorb (.+)'s (.+)%.") do
 		DB:Absorb(b, self.player, a)
 		return
@@ -281,14 +269,14 @@ end
 function DPSMate.Parser:SpellDamageShieldsOnOthers(msg)
 	t = {}
 	for a,b,c,d in strgfind(msg, "(.+) reflects (%d+) (%a-) damage to (.+)%.") do
-		local am,ta = tnbr(b)
-		if d == "you" then ta=self.player end
+		local am = tnbr(b)
+		if d == "you" then d=self.player end
 		if npcdb:Contains(a) or strfind(a, "%s") then
-			DB:EnemyDamage(false, DPSMateEDD, d, "Reflection", 1, 0, 0, 0, 0, 0, 0, a, 0, 0)
-			DB:DamageTaken(d, "Reflection", 1, 0, 0, 0, 0, 0, 0, a, 0, 0)
-			DB:DeathHistory(d, a, "Reflection", 0, 1, 0, 0, 0)
+			DB:EnemyDamage(false, DPSMateEDD, d, "Reflection", 1, 0, 0, 0, 0, 0, am, a, 0, 0)
+			DB:DamageTaken(d, "Reflection", 1, 0, 0, 0, 0, 0, am, a, 0, 0)
+			DB:DeathHistory(d, a, "Reflection", am, 1, 0, 0, 0)
 		else
-			DB:EnemyDamage(true, DPSMateEDT, a, "Reflection", 1, 0, 0, 0, 0, 0, am, ta or d, 0, 0)
+			DB:EnemyDamage(true, DPSMateEDT, a, "Reflection", 1, 0, 0, 0, 0, 0, am, d, 0, 0)
 			DB:DamageDone(a, "Reflection", 1, 0, 0, 0, 0, 0, am, 0, 0)
 		end
 	end
@@ -555,16 +543,10 @@ function DPSMate.Parser:SpellSelfBuff(msg)
 		DB:DeathHistory(t[1] or b, self.player, a, t[2], 0, 1, 1, 0)
 		return
 	end
-	for a,b,c in strgfind(msg, "Your (.+) heals (.+) for (%d+)%.") do 
+	for a,b,c in strgfind(msg, "Your (.+) heals (.+) for (%d+)%.") do
 		t[3] = 0
 		t[4] = 1
 		if b=="you" then t[1]=self.player end
-		local ka,kb = strfind(b, " critically")
-		if (ka and kb) then
-			b = strsub(b, 1, ka-1)
-			t[3] = 1
-			t[4] = 0
-		end
 		t[2] = tnbr(c)
 		overheal = self:GetOverhealByName(t[2], t[1] or b)
 		DB:HealingTaken(DPSMateHealingTaken, t[1] or b, a, t[4], t[3], t[2], self.player)
@@ -754,12 +736,6 @@ function DPSMate.Parser:SpellHostilePlayerBuff(msg)
 		t[4] = 1
 		t[3] = 0
 		if c=="you" then t[2]=self.player end
-		local ka,kb = strfind(b, " critically")
-		if (ka and kb) then
-			b = strsub(b, 1, ka-1)
-			t[3] = 1
-			t[4] = 0
-		end
 		overheal = self:GetOverhealByName(t[1], t[2] or c)
 		DB:HealingTaken(DPSMateHealingTaken, t[2] or c, b, t[4], t[3], t[1], a)
 		DB:HealingTaken(DPSMateEHealingTaken, t[2] or c, b, t[4], t[3], t[1]-overheal, a)
@@ -980,13 +956,13 @@ function DPSMate.Parser:PetSpellDamage(msg)
 		t[1] = tnbr(d)
 		if b=="h" then t[2]=1;t[3]=0 end
 		if strfind(e, "blocked") then t[4]=1;t[2]=0;t[3]=0 end
-		if d=="you" then d=self.player end
+		if c=="you" then c=self.player end
 		DB:EnemyDamage(true, DPSMateEDT, f, a,  t[2] or 0, t[3] or 1, 0, 0, 0, 0, t[1], c, t[4] or 0, 0)
 		DB:DamageDone(f, a, t[2] or 0, t[3] or 1, 0, 0, 0, 0, t[1], 0, t[4] or 0)
 		return
 	end
 	for a,b,c in strgfind(msg, "(.-)'s (.+) was resisted by (.+)%.") do 
-		if d=="you" then d=self.player end
+		if c=="you" then c=self.player end
 		DB:EnemyDamage(true, DPSMateEDT, a, b,  0, 0, 0, 0, 0, 1, 0, c, t[4] or 0, 0)
 		DB:DamageDone(a, c, 0, 0, 0, 0, 0, 1, 0, 0, 0)
 		return

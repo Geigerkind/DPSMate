@@ -869,7 +869,9 @@ if klhtm then
 
 	local oldModHeal = klhtm.combat.registerheal
 	klhtm.combat.registerheal = function(spellname, spellid, amount, target)
-		oldModNormalAttack(spellname, spellid, amount, target)
+		local ka, kb = strfind(spellname, " critically")
+		if (ka and kb) then spellname = strsub(spellname, 1, ka-1) end
+		oldModHeal(spellname, spellid, amount, target)
 		if not DPSMate.DB.KTMHOOK[spellname] then
 			DPSMate.DB.KTMHOOK[spellname] = {}
 		end
