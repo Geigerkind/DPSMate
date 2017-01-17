@@ -420,6 +420,7 @@ function DPSMate.DB:OnEvent(event)
 				bcrw = false,
 				targetscale=0.58,
 				hideonlogin = false,
+				reportdelay = false,
 			}
 		end
 		if DPSMateHistory == nil then 
@@ -2231,10 +2232,21 @@ function DPSMate.DB:UpdatePlayerCBT(cbt)
 	return notInCombat
 end
 
+local reportdelay = 0.5
+local reportuptime = 0
 function DPSMate.DB:CombatTime()
 	if not CombatFrame then
 		local f = CreateFrame("Frame", "CombatFrame", UIParent)
 		f:SetScript("OnUpdate", function(self, elapsed)
+			-- Adding a small part for delayed posting
+			if DPSMateSettings["reportdelay"] and DPSMate.DelayMsg[1] then
+				reportuptime = reportuptime + arg1
+				if reportuptime>reportdelay then
+					SendChatMessage(DPSMate.DelayMsg[1][1], DPSMate.DelayMsg[1][2], nil, DPSMate.DelayMsg[1][3])
+					tremove(DPSMate.DelayMsg, 1)
+					reportuptime = 0
+				end
+			end
 			if (CombatState) then
 				local notInCombat = false
 				LastUpdate = LastUpdate + arg1

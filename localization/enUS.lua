@@ -505,3 +505,5 @@ DPSMate.L["borderstrataTooltip"] = "Select the border strata. This pushes the bo
 DPSMate.L["borderstrata"] = "Border strata"
 DPSMate.L["bordercolor"] = "Border color"
 DPSMate.L["bordercolorTooltip"] = "Adjust the border color."
+DPSMate.L["reportdelaytooltip"] = "Add a delay to prevent chat mutes on some servers."
+DPSMate.L["delay"] = "Delay"

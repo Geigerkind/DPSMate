@@ -78,6 +78,7 @@ DPSMate.NPCDB = AceLibrary("NPCDB-1.0")
 DPSMate.UserId = nil
 DPSMate.AbilityId = nil
 DPSMate.Key = 1
+DPSMate.DelayMsg = {}
 
 -- Local Variables
 local _G = getglobal
@@ -284,6 +285,9 @@ function DPSMate:InitializeFrames()
 	if not DPSMateSettings["enable"] then
 		self:Disable()
 	end
+	
+	-- Report delay button
+	DPSMate_Report_Delay:SetChecked(DPSMateSettings["reportdelay"])
 	
 	local frames = {"", "_Absorbs", "_AbsorbsTaken", "_Auras", "_Casts", "_CCBreaker", "_CureDisease", "_CureDiseaseReceived", "_CurePoison", "_CurePoisonReceived", "_DamageTaken", "_DamageTakenTotal", "_DamageTotal", "_Deaths", "_Decurses", "_DecursesReceived", "_Dispels", "_DispelsReceived", "_EDD", "_EDT", "_EHealing", "_EHealingTaken", "_Fails", "_FF", "_FFT", "_Healing", "_HealingTaken", "_Interrupts", "_LiftMagic", "_LiftMagicReceived", "_OHealingTaken", "_Overhealing", "_Procs", "_AbsorbsTakenTotal", "_AbsorbsTotal", "_AurasTotal", "_CastsTotal", "_CCBreakerTotal", "_CureDisease_Total", "_CurePoison_Total", "_Deaths_Total", "_Decurses_Total", "_Dispels_Total", "_EDDTotal", "_EDTTotal", "_EHealingTakenTotal", "_EHealingTotal", "_FailsTotal", "_FFTotal", "_FFTTotal", "_HABTotal", "_HealingTakenTotal", "_HealingTotal", "_Interrupts_Total", "_LiftMagic_Total", "_OverhealingTakenTotal", "_OverhealingTotal", "_ProcsTotal"}
 	for cat, val in pairs(frames) do

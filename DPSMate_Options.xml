@@ -1254,6 +1254,23 @@
 					</Layer>
 				</Layers>
 			</Frame>
+			<CheckButton name="$parent_Delay" inherits="DPSMate_Template_CheckButton" frameStrata="TOOLTIP">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="$Parent_Channel" relativePoint="RIGHT">
+						<Offset x="-18" y="0" />
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						this.aide = DPSMate.L["reportdelaytooltip"]
+						getglobal(this:GetName().."_Title"):SetText(DPSMate.L["delay"])
+					</OnLoad>
+					<OnClick>
+						DPSMateSettings["reportdelay"] = not DPSMateSettings["reportdelay"]
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+			
 			<Slider name="$parent_Lines" inherits="OptionsSliderTemplate">
 				<Size>
 					<AbsDimension x="160" y="14" />

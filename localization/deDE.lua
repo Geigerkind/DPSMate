@@ -503,4 +503,7 @@ if (GetLocale() == "deDE") then
 	DPSMate.L["borderstrata"] = "Randebene"
 	DPSMate.L["bordercolor"] = "Randfarbe"
 	DPSMate.L["bordercolorTooltip"] = "Gestalte die Randfarbe."
+	
+	DPSMate.L["reportdelaytooltip"] = "Füge eine Verzögerung hinzu, um mutes auf manchen Servern zu entgehen."
+	DPSMate.L["delay"] = "Delay"
 end
