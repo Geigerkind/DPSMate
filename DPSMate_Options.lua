@@ -562,6 +562,18 @@ function DPSMate.Options:Logout()
 	DPSMate.Options.OldLogout()
 end
 Logout = function() 
+	-- Saving positions to prevent a potential crash
+	for key, val in DPSMateSettings["windows"] do
+		local point, _, _, xOfs, yOfs = _G("DPSMate_"..val["name"]):GetPoint()
+		DPSMateSettings["windows"][key]["position"] = {}
+		DPSMateSettings["windows"][key]["position"][1] = point
+		DPSMateSettings["windows"][key]["position"][2] = xOfs
+		DPSMateSettings["windows"][key]["position"][3] = yOfs
+		DPSMateSettings["windows"][key]["savsize"] = {}
+		DPSMateSettings["windows"][key]["savsize"][1] = _G("DPSMate_"..val["name"]):GetWidth()
+		DPSMateSettings["windows"][key]["savsize"][2] = _G("DPSMate_"..val["name"]):GetHeight()
+	end
+
 	if DPSMateSettings["dataresetslogout"] == 3 then
 		DPSMate_Logout:Show() 
 	elseif DPSMateSettings["dataresetslogout"] == 2 then
@@ -741,17 +753,6 @@ function DPSMate.Options:OnEvent(event)
 		end
 	elseif event == "ZONE_CHANGED_NEW_AREA" then
 		DPSMate.DB:OnGroupUpdate()
-	elseif event == "PLAYER_LOGOUT" then
-		for key, val in DPSMateSettings["windows"] do
-			local point, _, _, xOfs, yOfs = _G("DPSMate_"..val["name"]):GetPoint()
-			DPSMateSettings["windows"][key]["position"] = {}
-			DPSMateSettings["windows"][key]["position"][1] = point
-			DPSMateSettings["windows"][key]["position"][2] = xOfs
-			DPSMateSettings["windows"][key]["position"][3] = yOfs
-			DPSMateSettings["windows"][key]["savsize"] = {}
-			DPSMateSettings["windows"][key]["savsize"][1] = _G("DPSMate_"..val["name"]):GetWidth()
-			DPSMateSettings["windows"][key]["savsize"][2] = _G("DPSMate_"..val["name"]):GetHeight()
-		end
 	end
 end
 
