@@ -563,21 +563,6 @@ function DPSMate.Options:Logout()
 	DPSMate.Options.OldLogout()
 end
 Logout = function() 
-	-- Saving positions to prevent a potential crash
-	local point, _, _, xOfs, yOfs;
-	for key, val in DPSMateSettings["windows"] do
-		if _G("DPSMate_"..val["name"]) then
-			point, _, _, xOfs, yOfs = _G("DPSMate_"..val["name"]):GetPoint()
-			DPSMateSettings["windows"][key]["position"] = {}
-			DPSMateSettings["windows"][key]["position"][1] = point
-			DPSMateSettings["windows"][key]["position"][2] = xOfs
-			DPSMateSettings["windows"][key]["position"][3] = yOfs
-			DPSMateSettings["windows"][key]["savsize"] = {}
-			DPSMateSettings["windows"][key]["savsize"][1] = _G("DPSMate_"..val["name"]):GetWidth()
-			DPSMateSettings["windows"][key]["savsize"][2] = _G("DPSMate_"..val["name"]):GetHeight()
-		end
-	end
-
 	if DPSMateSettings["dataresetslogout"] == 3 then
 		DPSMate_Logout:Show() 
 	elseif DPSMateSettings["dataresetslogout"] == 2 then
@@ -1966,6 +1951,20 @@ function DPSMate.Options:Lock()
 	DPSMateSettings.lock = true
 	for _,val in pairs(DPSMateSettings["windows"]) do
 		_G("DPSMate_"..val["name"].."_Resize"):Hide()
+	end
+	-- Saving positions to prevent a potential crash
+	local point, _, _, xOfs, yOfs;
+	for key, val in DPSMateSettings["windows"] do
+		if _G("DPSMate_"..val["name"]) then
+			point, _, _, xOfs, yOfs = _G("DPSMate_"..val["name"]):GetPoint()
+			DPSMateSettings["windows"][key]["position"] = {}
+			DPSMateSettings["windows"][key]["position"][1] = point
+			DPSMateSettings["windows"][key]["position"][2] = xOfs
+			DPSMateSettings["windows"][key]["position"][3] = yOfs
+			DPSMateSettings["windows"][key]["savsize"] = {}
+			DPSMateSettings["windows"][key]["savsize"][1] = _G("DPSMate_"..val["name"]):GetWidth()
+			DPSMateSettings["windows"][key]["savsize"][2] = _G("DPSMate_"..val["name"]):GetHeight()
+		end
 	end
 	DPSMate:SendMessage(DPSMate.L["lockedallw"])
 end
