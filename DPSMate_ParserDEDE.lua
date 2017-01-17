@@ -150,6 +150,15 @@ if (GetLocale() == "deDE") then
 			DB:DamageDone(self.player, a, 0, 0, 0, 0, 0, 0, 0, 0, 1)
 			return
 		end
+		for what, whom in strgfind(msg, "Ihr unterbrecht (.+) von (.+)%.") do
+			local causeAbility = "Gegenzauber"
+			if DPSMateUser[self.player] then
+				if DPSMateUser[self.player][2] == "priest" then
+					causeAbility = "Stille"
+				end
+			end
+			DPSMate.DB:Kick(self.player, whom, causeAbility, what)
+		end
 	end
 	
 	-- X ist von Y betroffen.
@@ -253,6 +262,23 @@ if (GetLocale() == "deDE") then
 			DB:EnemyDamage(true, DPSMateEDT, f, a, 0, 0, 0, 0, 0, 0, 0, b, 1, 0)
 			DB:DamageDone(f, a, 0, 0, 0, 0, 0, 0, 0, 0, 1)
 			return
+		end
+		for who, what, whom in strgfind(msg, "(.-) unterbricht (.+) von (.+)%.") do
+			local causeAbility = "Gegenzauber"
+			if DPSMateUser[who] then
+				if DPSMateUser[who][2] == "priest" then
+					causeAbility = "Stille"
+				end
+				-- Account for felhunter silence
+				if DPSMateUser[who][4] and DPSMateUser[who][6] then
+					local owner = DPSMate:GetUserById(DPSMateUser[who][6])
+					if owner and DPSMateUser[owner] then
+						causeAbility = "Zaubersperre"
+						who = owner
+					end
+				end
+			end
+			DPSMate.DB:Kick(who, whom, causeAbility, what)
 		end
 	end
 	

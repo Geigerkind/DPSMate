@@ -504,7 +504,7 @@ end
 
 function DPSMate.Parser:OnEvent(event)
 	if Execute[event] then
-	--	DPSMate:SendMessage(event..": "..arg1)
+		--DPSMate:SendMessage(event..": "..arg1)
 		Execute[event](arg1)
 	end
 end

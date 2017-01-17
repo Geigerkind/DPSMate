@@ -177,6 +177,23 @@ function DPSMate.Parser:FriendlyPlayerDamage(msg)
 		DB:DamageDone(f, a, 0, 0, 1, 0, 0, 0, 0, 0, 0)
 		return
 	end
+	for who, whom, what in strgfind(msg, "(.-) interrupts (.+)'s (.+)%.") do
+		local causeAbility = "Counterspell"
+		if DPSMateUser[who] then
+			if DPSMateUser[who][2] == "priest" then
+				causeAbility = "Silence"
+			end
+			-- Account for felhunter silence
+			if DPSMateUser[who][4] and DPSMateUser[who][6] then
+				local owner = DPSMate:GetUserById(DPSMateUser[who][6])
+				if owner and DPSMateUser[owner] then
+					causeAbility = "Spell Lock"
+					who = owner
+				end
+			end
+		end
+		DPSMate.DB:Kick(who, whom, causeAbility, what)
+	end
 	for a,b in strgfind(msg, "You absorb (.+)'s (.+)%.") do
 		DB:Absorb(b, self.player, a)
 		return
@@ -375,6 +392,15 @@ function DPSMate.Parser:CreatureVsSelfSpellDamage(msg)
 		DB:EnemyDamage(false, DPSMateEDD, self.player, b, 0, 0, 0, 0, 0, 1, 0, a, 0, 0)
 		DB:DamageTaken(self.player, b, 0, 0, 0, 0, 0, 1, 0, a, 0, 0)
 		return
+	end
+	for whom, what in strgfind(msg, "You interrupt (.+)'s (.+)%.") do
+		local causeAbility = "Counterspell"
+		if DPSMateUser[self.player] then
+			if DPSMateUser[self.player][2] == "priest" then
+				causeAbility = "Silence"
+			end
+		end
+		DPSMate.DB:Kick(self.player, whom, causeAbility, what)
 	end
 	for a,b in strgfind(msg, "You absorb (.+)'s (.+)%.") do
 		DB:Absorb(b, self.player, a)
