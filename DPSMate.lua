@@ -397,17 +397,6 @@ function DPSMate:GetAbilityById(id)
 	return self.AbilityId[id]
 end
 
-function DPSMate:PlayerExist(arr, name)
-	if DPSMateSettings["mergepets"] then
-		for cat, val in pairs(arr) do
-			if (cat == name) then
-				return true
-			end
-		end
-	end
-	return false
-end
-
 function DPSMate:GetMaxValue(arr, key)
 	local max = 0
 	for _, val in arr do

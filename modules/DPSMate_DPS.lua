@@ -24,7 +24,7 @@ function DPSMate.Modules.DPS:GetSortedTable(arr,k)
 			if (not DPSMateUser[name][4] or (DPSMateUser[name][4] and not DPSMateSettings["mergepets"])) then
 				if DPSMate:ApplyFilter(k, name) then
 					local CV = val["i"]
-					if DPSMate:PlayerExist(DPSMateUser, DPSMateUser[name][5]) and arr[DPSMateUser[DPSMateUser[name][5]][1]] then
+					if DPSMateSettings["mergepets"] and DPSMateUser[DPSMateUser[name][5]] and arr[DPSMateUser[DPSMateUser[name][5]][1]] and name~=DPSMateUser[name][5] then
 						CV=CV+arr[DPSMateUser[DPSMateUser[name][5]][1]]["i"]
 					end
 					a[CV] = name
@@ -56,7 +56,7 @@ function DPSMate.Modules.DPS:EvalTable(user, k, cbt)
 	local arr, cbet = DPSMate:GetMode(k)
 	cbt = cbt or cbet
 	if not arr[user[1]] then return end
-	if (user[5] and user[5] ~= DPSMate.L["unknown"] and arr[DPSMateUser[user[5]][1]]) and DPSMateSettings["mergepets"] then u={user[1],DPSMateUser[user[5]][1]} else u={user[1]} end
+	if (user[5] and user[5] ~= DPSMate.L["unknown"] and arr[DPSMateUser[user[5]][1]]) and DPSMateSettings["mergepets"] and DPSMateUser[user[5]][1]~=user[1] then u={user[1],DPSMateUser[user[5]][1]} else u={user[1]} end
 	for _, v in pairs(u) do
 		for cat, val in pairs(arr[v]) do
 			if (type(val) == "table" and cat~="i") then

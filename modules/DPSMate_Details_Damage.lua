@@ -200,7 +200,7 @@ function DPSMate.Modules.DetailsDamage:EvalToggleTable(comp)
 			end
 			c[1] = val[DPSMateUser[comp or DetailsUser][1]]["i"]
 			-- pet
-			if DPSMateUser[cname or DetailsUser][5] and DPSMateSettings["mergepets"] then
+			if DPSMateUser[cname or DetailsUser][5] and DPSMateUser[DPSMateUser[cname or DetailsUser][5]] and DPSMateSettings["mergepets"] and DPSMateUser[cname or DetailsUser][5] ~= (cname or DetailsUser) then
 				if val[DPSMateUser[DPSMateUser[cname or DetailsUser][5]][1]] then
 					for p, v in pairs(val[DPSMateUser[DPSMateUser[cname or DetailsUser][5]][1]]) do
 						if p ~= "i" then
@@ -446,7 +446,7 @@ function DPSMate.Modules.DetailsDamage:SelectDetailsButton(i, comp, cname)
 		obj = _G(pathh.."_ScrollFrame")
 		lineplusoffset = i + (FauxScrollFrame_GetOffset(obj) or 0)
 		local ability = tonumber(uArr[lineplusoffset])
-		if (db[DPSMateUser[cname or DetailsUser][1]][ability]) then user=DPSMateUser[cname or DetailsUser][1]; pet=0; else if DPSMateUser[cname or DetailsUser][5] then user=DPSMateUser[DPSMateUser[cname or DetailsUser][5]][1]; pet=5; else user=DPSMateUser[cname or DetailsUser][1]; pet=0; end end
+		if (db[DPSMateUser[cname or DetailsUser][1]][ability]) then user=DPSMateUser[cname or DetailsUser][1]; pet=0; else if DPSMateUser[cname or DetailsUser][5] and DPSMateUser[cname or DetailsUser][5]~=(cname or DetailsUser) then user=DPSMateUser[DPSMateUser[cname or DetailsUser][5]][1]; pet=5; else user=DPSMateUser[cname or DetailsUser][1]; pet=0; end end
 		path = db[user][tonumber(uArr[lineplusoffset])]
 	end
 	if comp ~= "" and comp~=nil then
@@ -654,7 +654,7 @@ function DPSMate.Modules.DetailsDamage:UpdateStackedGraph(gg, comp, cname)
 		end
 		
 		-- pet
-		if DPSMateUser[cname or DetailsUser][5] and DPSMateSettings["mergepets"] then
+		if DPSMateUser[cname or DetailsUser][5] and DPSMateUser[DPSMateUser[cname or DetailsUser][5]] and DPSMateSettings["mergepets"] and DPSMateUser[cname or DetailsUser][5] ~= (cname or DetailsUser) then
 			if db2[d1[d4]][DPSMateUser[DPSMateUser[cname or DetailsUser][5]][1]] then
 				for cat, val in pairs(db2[d1[d4]][DPSMateUser[DPSMateUser[cname or DetailsUser][5]][1]]) do
 					if cat~="i" and val["i"] then
@@ -762,7 +762,7 @@ function DPSMate.Modules.DetailsDamage:UpdateStackedGraph(gg, comp, cname)
 			end
 		end
 		-- Pet
-		if DPSMateUser[cname or DetailsUser][5] and DPSMateSettings["mergepets"] then
+		if DPSMateUser[cname or DetailsUser][5] and DPSMateUser[DPSMateUser[cname or DetailsUser][5]] and DPSMateSettings["mergepets"] and DPSMateUser[cname or DetailsUser][5] ~= (cname or DetailsUser) then
 			if db[DPSMateUser[DPSMateUser[cname or DetailsUser][5]][1]] then
 				for cat, val in pairs(db[DPSMateUser[DPSMateUser[cname or DetailsUser][5]][1]]) do
 					if cat~="i" and val["i"] then
@@ -940,7 +940,7 @@ function DPSMate.Modules.DetailsDamage:SortLineTable(t, b, cname)
 			end
 		end
 		-- Pet
-		if DPSMateUser[cname or DetailsUser][5] then
+		if DPSMateUser[cname or DetailsUser][5] and DPSMateUser[DPSMateUser[cname or DetailsUser][5]] and DPSMateUser[cname or DetailsUser][5] ~= (cname or DetailsUser) then
 			if t[DPSMateUser[DPSMateUser[cname or DetailsUser][5]][1]] then
 				for cat, val in t[b][DPSMateUser[DPSMateUser[cname or DetailsUser][5]][1]] do
 					if cat~="i" and val["i"] then
@@ -982,7 +982,7 @@ function DPSMate.Modules.DetailsDamage:SortLineTable(t, b, cname)
 			end
 		end
 		-- Pet
-		if DPSMateUser[cname or DetailsUser][5] then
+		if DPSMateUser[cname or DetailsUser][5] and DPSMateUser[DPSMateUser[cname or DetailsUser][5]] and DPSMateUser[cname or DetailsUser][5] ~= (cname or DetailsUser) then
 			if t[DPSMateUser[DPSMateUser[cname or DetailsUser][5]][1]] then
 				for cat, val in t[DPSMateUser[DPSMateUser[cname or DetailsUser][5]][1]] do
 					if cat~="i" and val["i"] then
