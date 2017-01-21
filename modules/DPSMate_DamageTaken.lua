@@ -111,7 +111,7 @@ end
 function DPSMate.Modules.DamageTaken:ShowTooltip(user, k)
 	if DPSMateSettings["informativetooltips"] then
 		local a,b,c = DPSMate.Modules.DamageTaken:EvalTable(DPSMateUser[user], k)
-		local ab, p, i = {}, 1, 1
+		local ab, abn, p, i = {}, {}, 1, 1
 		
 		while a[i] do
 			p = 1
@@ -126,11 +126,27 @@ function DPSMate.Modules.DamageTaken:ShowTooltip(user, k)
 			i = i + 1
 		end
 		
-		GameTooltip:AddLine(DPSMate.L["tttop"]..DPSMateSettings["subviewrows"]..DPSMate.L["ttdamage"]..DPSMate.L["ttabilities"])
-		i=1;
 		for cat, val in pairs(ab) do
-			GameTooltip:AddDoubleLine(i..". "..DPSMate:GetAbilityById(cat), val.." ("..strformat("%.2f", 100*val/b).."%)", 1,1,1,1,1,1)
-			i = i + 1
+			i = 1
+			while true do
+				if (not abn[i]) then
+					tinsert(abn, i, {cat, val})
+					break
+				else
+					if (abn[i][2] < val) then
+						tinsert(abn, i, {cat, val})
+						break
+					end
+				end
+				i = i + 1
+			end
+		end
+		ab = nil
+		
+		GameTooltip:AddLine(DPSMate.L["tttop"]..DPSMateSettings["subviewrows"]..DPSMate.L["ttdamage"]..DPSMate.L["ttabilities"])
+		for i=1, DPSMateSettings["subviewrows"] do
+			if not abn[i] then break end
+			GameTooltip:AddDoubleLine(i..". "..DPSMate:GetAbilityById(abn[i][1]), abn[i][2].." ("..strformat("%.2f", 100*abn[i][2]/b).."%)", 1,1,1,1,1,1)
 		end
 		
 		GameTooltip:AddLine(DPSMate.L["tttop"]..DPSMateSettings["subviewrows"]..DPSMate.L["ttattacked"])

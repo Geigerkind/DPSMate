@@ -511,7 +511,6 @@ DPSMate.L["delay"] = "Delay"
 -- Newly added:
 DPSMate.L["tttop"] = "Top "
 DPSMate.L["ttdamage"] = " Damage"
-DPSMate.L["ttdps"] = " DPS"
 DPSMate.L["ttpet"] = " Pet"
 DPSMate.L["ttpet2"] = "Pet: "
 DPSMate.L["ttabilities"] = " Abilities"
