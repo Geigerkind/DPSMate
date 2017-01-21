@@ -507,3 +507,12 @@ DPSMate.L["bordercolor"] = "Border color"
 DPSMate.L["bordercolorTooltip"] = "Adjust the border color."
 DPSMate.L["reportdelaytooltip"] = "Add a delay to prevent chat mutes on some servers."
 DPSMate.L["delay"] = "Delay"
+
+-- Newly added:
+DPSMate.L["tttop"] = "Top "
+DPSMate.L["ttdamage"] = " Damage"
+DPSMate.L["ttdps"] = " DPS"
+DPSMate.L["ttpet"] = " Pet"
+DPSMate.L["ttpet2"] = "Pet: "
+DPSMate.L["ttabilities"] = " Abilities"
+DPSMate.L["ttattacked"] = " Attacked"

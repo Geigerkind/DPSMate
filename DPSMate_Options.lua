@@ -2099,11 +2099,11 @@ function DPSMate.Options:ShowTooltip()
 		elseif DPSMateSettings["tooltipanchor"] == 5 then
 			GameTooltip:SetOwner(this:GetParent():GetParent():GetParent(), "TOPRIGHT")
 		end
-		GameTooltip:AddLine(this.user.."'s ".._G(this:GetParent():GetParent():GetParent():GetName().."_Head_Font"):GetText(), 1,1,1)
+		GameTooltip:AddLine(this.user.."'s ".._G(this:GetParent():GetParent():GetParent():GetName().."_Head_Font"):GetText(), 1,0.82,0,1)
 		DPSMate.RegistredModules[DPSMateSettings["windows"][DPSMate_Details.PaKey]["CurMode"]]:ShowTooltip(this.user, DPSMate_Details.PaKey)
 		GameTooltip:AddLine(" ")
-		GameTooltip:AddLine(DPSMate.L["leftclickopend"])
-		GameTooltip:AddLine(DPSMate.L["rightclickopenm"])
+		GameTooltip:AddLine(DPSMate.L["leftclickopend"], 0,1,0,1)
+		GameTooltip:AddLine(DPSMate.L["rightclickopenm"], 0,1,0,1)
 		GameTooltip:Show()
 	end
 end

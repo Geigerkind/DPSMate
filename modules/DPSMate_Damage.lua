@@ -103,13 +103,56 @@ end
 
 function DPSMate.Modules.Damage:ShowTooltip(user,k)
 	local a,b,c = DPSMate.Modules.Damage:EvalTable(DPSMateUser[user], k)
-	local pet = ""
+	local edtaken = DPSMate:GetModeByArr(DPSMateEDT, k, "EDTaken")
+	local i, p = 1, 0
+	local pet = 0
 	if DPSMateSettings["informativetooltips"] then
-		GameTooltip:AddLine("Top "..DPSMateSettings["subviewrows"].." damage abilities")
+		-- Getting the value of the pet
+		while a[i] do
+			if c[i][2] then
+				pet = pet + c[i][1]
+			end
+			i = i + 1
+		end
+	
+		GameTooltip:AddLine(DPSMate.L["tttop"]..DPSMateSettings["subviewrows"]..DPSMate.L["ttdamage"]..DPSMate.L["ttabilities"])
 		for i=1, DPSMateSettings["subviewrows"] do
 			if not a[i] then break end
-			if c[i][2] then pet="(Pet)" else pet="" end
-			GameTooltip:AddDoubleLine(i..". "..DPSMate:GetAbilityById(a[i])..pet,c[i][1].." ("..strformat("%.2f", 100*c[i][1]/b).."%)",1,1,1,1,1,1)
+			if not c[i][2] then 
+				GameTooltip:AddDoubleLine(i..". "..DPSMate:GetAbilityById(a[i]),c[i][1].." ("..strformat("%.2f", 100*c[i][1]/(b-pet)).."%)",1,1,1,1,1,1)
+			end
+		end
+		
+		GameTooltip:AddLine(DPSMate.L["tttop"]..DPSMateSettings["subviewrows"]..DPSMate.L["ttattacked"])
+		i=1;
+		for cat, val in pairs(edtaken) do
+			if val[DPSMateUser[user][1]] then
+				GameTooltip:AddDoubleLine(i..". "..DPSMate:GetUserById(cat), val[DPSMateUser[user][1]]["i"].." ("..strformat("%.2f", 100*val[DPSMateUser[user][1]]["i"]/(b-pet)).."%)", 1,1,1,1,1,1)
+				i = i + 1
+			end
+		end
+		
+		if pet~=0 and DPSMateUser[user][5] then
+			GameTooltip:AddLine(" ")
+			GameTooltip:AddDoubleLine(DPSMate.L["ttpet2"],DPSMateUser[user][5].."<"..user.."> ("..strformat("%.2f", 100*pet/b).."%)",1,0.82,0,1,1,1)
+			GameTooltip:AddLine(DPSMate.L["tttop"]..DPSMateSettings["subviewrows"]..DPSMate.L["ttpet"]..DPSMate.L["ttdamage"]..DPSMate.L["ttabilities"])
+			i, p = 1,1
+			while DPSMateSettings["subviewrows"]>=p do
+				if not a[i] then break end
+				if c[i][2] then 
+					GameTooltip:AddDoubleLine(p..". "..DPSMate:GetAbilityById(a[i]),c[i][1].." ("..strformat("%.2f", 100*c[i][1]/pet).."%)",1,1,1,1,1,1)
+					p = p + 1
+				end
+				i = i + 1
+			end
+			GameTooltip:AddLine(DPSMate.L["tttop"]..DPSMateSettings["subviewrows"]..DPSMate.L["ttpet"]..DPSMate.L["ttattacked"])
+			i=1;
+			for cat, val in pairs(edtaken) do
+				if val[DPSMateUser[DPSMateUser[user][5]][1]] then
+					GameTooltip:AddDoubleLine(i..". "..DPSMate:GetUserById(cat), val[DPSMateUser[DPSMateUser[user][5]][1]]["i"].." ("..strformat("%.2f", 100*val[DPSMateUser[DPSMateUser[user][5]][1]]["i"]/pet).."%)", 1,1,1,1,1,1)
+					i = i + 1
+				end
+			end
 		end
 	end
 end
