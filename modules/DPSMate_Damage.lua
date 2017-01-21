@@ -105,6 +105,7 @@ function DPSMate.Modules.Damage:ShowTooltip(user,k)
 	local a,b,c = DPSMate.Modules.Damage:EvalTable(DPSMateUser[user], k)
 	local pet = ""
 	if DPSMateSettings["informativetooltips"] then
+		GameTooltip:AddLine("Top "..DPSMateSettings["subviewrows"].." damage abilities")
 		for i=1, DPSMateSettings["subviewrows"] do
 			if not a[i] then break end
 			if c[i][2] then pet="(Pet)" else pet="" end
