@@ -102,11 +102,11 @@ function DPSMate.Modules.Damage:GetSettingValues(arr, cbt, k,ecbt)
 end
 
 function DPSMate.Modules.Damage:ShowTooltip(user,k)
-	local a,b,c = DPSMate.Modules.Damage:EvalTable(DPSMateUser[user], k)
-	local edtaken = DPSMate:GetModeByArr(DPSMateEDT, k, "EDTaken")
-	local i, p = 1, 0
-	local pet = 0
 	if DPSMateSettings["informativetooltips"] then
+		local a,b,c = DPSMate.Modules.Damage:EvalTable(DPSMateUser[user], k)
+		local edtaken = DPSMate:GetModeByArr(DPSMateEDT, k, "EDTaken")
+		local i, p = 1, 0
+		local pet = 0
 		-- Getting the value of the pet
 		while a[i] do
 			if c[i][2] then
