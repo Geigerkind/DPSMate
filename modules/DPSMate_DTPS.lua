@@ -128,18 +128,20 @@ function DPSMate.Modules.DTPS:ShowTooltip(user, k)
 		end
 		
 		for cat, val in pairs(ab) do
-			i = 1
-			while true do
-				if (not abn[i]) then
-					tinsert(abn, i, {cat, val})
-					break
-				else
-					if (abn[i][2] < val) then
+			if val>0 then
+				i = 1
+				while true do
+					if (not abn[i]) then
 						tinsert(abn, i, {cat, val})
 						break
+					else
+						if (abn[i][2] < val) then
+							tinsert(abn, i, {cat, val})
+							break
+						end
 					end
+					i = i + 1
 				end
-				i = i + 1
 			end
 		end
 		ab = nil

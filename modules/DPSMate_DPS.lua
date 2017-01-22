@@ -124,33 +124,37 @@ function DPSMate.Modules.DPS:ShowTooltip(user,k)
 		-- Getting edt values
 		for cat, val in pairs(db) do
 			if val[DPSMateUser[user][1]] then
-				i = 1
-				while true do
-					if (not edtaken[i]) then
-						tinsert(edtaken, i, {cat, val[DPSMateUser[user][1]]["i"]})
-						break
-					else
-						if (edtaken[i][2] < val) then
+				if val[DPSMateUser[user][1]]["i"]>0 then
+					i = 1
+					while true do
+						if (not edtaken[i]) then
 							tinsert(edtaken, i, {cat, val[DPSMateUser[user][1]]["i"]})
 							break
+						else
+							if (edtaken[i][2] < val[DPSMateUser[user][1]]["i"]) then
+								tinsert(edtaken, i, {cat, val[DPSMateUser[user][1]]["i"]})
+								break
+							end
 						end
+						i = i + 1
 					end
-					i = i + 1
 				end
 			end
 			if DPSMateUser[DPSMateUser[user][5]] and val[DPSMateUser[DPSMateUser[user][5]][1]] then
-				i = 1
-				while true do
-					if (not edtakenPet[i]) then
-						tinsert(edtakenPet, i, {cat, val[DPSMateUser[DPSMateUser[user][5]][1]]["i"]})
-						break
-					else
-						if (edtakenPet[i][2] < val) then
+				if val[DPSMateUser[DPSMateUser[user][5]][1]]["i"]>0 then
+					i = 1
+					while true do
+						if (not edtakenPet[i]) then
 							tinsert(edtakenPet, i, {cat, val[DPSMateUser[DPSMateUser[user][5]][1]]["i"]})
 							break
+						else
+							if (edtakenPet[i][2] < val[DPSMateUser[DPSMateUser[user][5]][1]]["i"]) then
+								tinsert(edtakenPet, i, {cat, val[DPSMateUser[DPSMateUser[user][5]][1]]["i"]})
+								break
+							end
 						end
+						i = i + 1
 					end
-					i = i + 1
 				end
 			end
 		end
