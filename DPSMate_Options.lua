@@ -862,8 +862,8 @@ function DPSMate.Options:PopUpAccept(bool, bypass)
 				CCBreaker = {}
 			}
 			DPSMateCombatTime = {
-				total = 1,
-				current = 1,
+				total = 0.0001,
+				current = 0.0001,
 				segments = {},
 				effective = {
 					[1] = {},

@@ -506,4 +506,20 @@ if (GetLocale() == "deDE") then
 	
 	DPSMate.L["reportdelaytooltip"] = "Füge eine Verzögerung hinzu, um mutes auf manchen Servern zu entgehen."
 	DPSMate.L["delay"] = "Delay"
+	
+	-- Newly added:
+	DPSMate.L["tttop"] = "Top "
+	DPSMate.L["ttdamage"] = " Damage"
+	DPSMate.L["tthealing"] = " Healing"
+	DPSMate.L["ttpet"] = " Pet"
+	DPSMate.L["ttpet2"] = "Pet: "
+	DPSMate.L["ttabilities"] = " Fähigkeiten"
+	DPSMate.L["ttattacked"] = " Angegriffen"
+	DPSMate.L["tthealed"] = " Geheilt"
+	DPSMate.L["ttinterrupt"] = " Unterbrich"
+	DPSMate.L["ttinterrupted"] = " Unterbrochen"
+	DPSMate.L["ttdispelled"] = " Entzaubert"
+	DPSMate.L["ttabsorbed"] = " Absorbiert"
+	DPSMate.L["ttabsorb"] = " Absorb"
+	DPSMate.L["ttthreat"] = " Bedrohung"
 end

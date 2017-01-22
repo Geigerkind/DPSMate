@@ -53,6 +53,7 @@ function DPSMate.Parser:SelfMisses(msg)
 	end
 	for ta in strgfind(msg, "You attack%. (.+) absorbs all the damage%.") do DB:Absorb("AutoAttack", ta, self.player); return end
 	for a,b in strgfind(msg, "You attack%. (.+) (%a-)%.") do 
+		if b=="damage" then return end
 		if b=="parries" then t[1]=1 elseif b=="dodges" then t[2]=1 else t[3]=1 end
 		DB:EnemyDamage(true, DPSMateEDT, self.player, "AutoAttack", 0, 0, 0, t[1] or 0, t[2] or 0, 0, 0, a, t[3] or 0, 0)
 		DB:DamageDone(self.player, "AutoAttack", 0, 0, 0, t[1] or 0, t[2] or 0, 0, 0, 0, t[3] or 0)
@@ -244,6 +245,7 @@ function DPSMate.Parser:FriendlyPlayerMisses(msg)
 	end
 	for c,ta in strgfind(msg, "(.+) attack\s?%. (.+) absorb\s? all the damage%.") do if ta=="You" then ta=self.player end; DB:Absorb("AutoAttack", ta, c); return end
 	for a,b,c in strgfind(msg, "(.-) attacks%. (.+) (%a-)%.") do 
+		if c=="damage" then return end
 		if c=="parries" or c=="parry" then t[1]=1 elseif c=="dodges" or c=="dodge" then t[2]=1 else t[3]=1 end 
 		if b=="You" then b=self.player end
 		DB:EnemyDamage(true, DPSMateEDT, a, "AutoAttack", 0, 0, 0, t[1] or 0, t[2] or 0, 0, 0, b, t[3] or 0, 0)
