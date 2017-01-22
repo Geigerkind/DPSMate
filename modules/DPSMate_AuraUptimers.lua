@@ -105,8 +105,9 @@ function DPSMate.Modules.AurasUptimers:GetSettingValues(arr, cbt, k)
 end
 
 function DPSMate.Modules.AurasUptimers:ShowTooltip(user,k)
-	local a,b,c = DPSMate.Modules.AurasUptimers:EvalTable(DPSMateUser[user], k)
 	if DPSMateSettings["informativetooltips"] then
+		local a,b,c = DPSMate.Modules.AurasUptimers:EvalTable(DPSMateUser[user], k)
+		GameTooltip:AddLine(DPSMate.L["tttop"]..DPSMateSettings["subviewrows"]..DPSMate.L["ttabilities"])
 		for i=1, DPSMateSettings["subviewrows"] do
 			if not a[i] then break end
 			GameTooltip:AddDoubleLine(i..". "..DPSMate:GetAbilityById(a[i]),c[i].."%",1,1,1,1,1,1)

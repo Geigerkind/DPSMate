@@ -112,8 +112,9 @@ function DPSMate.Modules.Casts:GetSettingValues(arr, cbt, k)
 end
 
 function DPSMate.Modules.Casts:ShowTooltip(user,k)
-	local a,b,c = DPSMate.Modules.Casts:EvalTable(DPSMateUser[user], k)
 	if DPSMateSettings["informativetooltips"] then
+		local a,b,c = DPSMate.Modules.Casts:EvalTable(DPSMateUser[user], k)
+		GameTooltip:AddLine(DPSMate.L["tttop"]..DPSMateSettings["subviewrows"]..DPSMate.L["ttabilities"])
 		for i=1, DPSMateSettings["subviewrows"] do
 			if not c[i] then break end
 			GameTooltip:AddDoubleLine(i..". "..DPSMate:GetAbilityById(c[i]),a[i].." ("..strformat("%.2f", 100*a[i]/b).."%)",1,1,1,1,1,1)

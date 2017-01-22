@@ -104,8 +104,9 @@ function DPSMate.Modules.AurasGained:GetSettingValues(arr, cbt, k)
 end
 
 function DPSMate.Modules.AurasGained:ShowTooltip(user,k)
-	local a,b,c = DPSMate.Modules.AurasGained:EvalTable(DPSMateUser[user], k)
 	if DPSMateSettings["informativetooltips"] then
+		local a,b,c = DPSMate.Modules.AurasGained:EvalTable(DPSMateUser[user], k)
+		GameTooltip:AddLine(DPSMate.L["tttop"]..DPSMateSettings["subviewrows"]..DPSMate.L["ttabilities"])
 		for i=1, DPSMateSettings["subviewrows"] do
 			if not a[i] then break end
 			GameTooltip:AddDoubleLine(i..". "..DPSMate:GetAbilityById(a[i]),c[i].." ("..strformat("%.2f", 100*c[i]/b).."%)",1,1,1,1,1,1)
