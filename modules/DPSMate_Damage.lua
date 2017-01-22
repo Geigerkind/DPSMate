@@ -183,7 +183,7 @@ function DPSMate.Modules.Damage:ShowTooltip(user,k)
 			end
 			GameTooltip:AddLine(DPSMate.L["tttop"]..DPSMateSettings["subviewrows"]..DPSMate.L["ttpet"]..DPSMate.L["ttattacked"])
 			for i=1, DPSMateSettings["subviewrows"] do
-				if not edtaken[i] then break end
+				if not edtakenPet[i] then break end
 				GameTooltip:AddDoubleLine(i..". "..DPSMate:GetUserById(edtakenPet[i][1]), edtakenPet[i][2].." ("..strformat("%.2f", 100*edtakenPet[i][2]/pet).."%)", 1,1,1,1,1,1)
 			end
 		end
