@@ -77,9 +77,9 @@ function DPSMate.Modules.EffectiveHPS:GetSettingValues(arr, cbt, k,ecbt)
 		if varea==0 then break end; if varea<=10000 then p = "" end
 		local str = {[1]="",[2]="",[3]="",[4]=""}
 		local pname = DPSMate:GetUserById(a[cat])
-		if DPSMateSettings["columnsehps"][2] then str[1] = " "..strformat("%.1f", va/cbt)..p; strt[2] = " "..strformat("%.1f", tot/cbt)..p end
+		if DPSMateSettings["columnsehps"][2] then str[1] = " "..strformat("%.1f", va/cbt)..p; strt[2] = " "..strformat("%.1f", (tot/cbt))..pt end
 		if DPSMateSettings["columnsehps"][3] then str[2] = " ("..strformat("%.1f", 100*varea/totr).."%)" end
-		if DPSMateSettings["columnsehps"][1] then str[3] = "("..DPSMate:Commas(va, k)..p..")"; strt[1] = "("..DPSMate:Commas(tot, k)..p..")" end
+		if DPSMateSettings["columnsehps"][1] then str[3] = "("..DPSMate:Commas(va, k)..p..")"; strt[1] = "("..DPSMate:Commas(tot, k)..pt..")" end
 		if DPSMateSettings["columnsehps"][4] then str[4] = " ("..strformat("%.1f", va/(ecbt[pname] or cbt))..p..")" end
 		tinsert(name, pname) 
 		tinsert(value, str[3]..str[1]..str[4]..str[2])

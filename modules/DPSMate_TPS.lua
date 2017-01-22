@@ -96,7 +96,7 @@ function DPSMate.Modules.TPS:GetSettingValues(arr, cbt, k,ecbt)
 		if dmgr==0 then break end; if dmgr<=10000 then p = "" end
 		local str = {[1]="",[2]="",[3]="",[4]=""}
 		if DPSMateSettings["columnstps"][1] then str[1] = "("..strformat("%.2f", dmg)..p..")"; strt[1] = "("..strformat("%.2f", tot)..p..")" end
-		if DPSMateSettings["columnstps"][2] then str[2] = " "..strformat("%.1f", (dmg/cbt))..p; strt[2] = " "..strformat("%.1f", (tot/cbt))..p end
+		if DPSMateSettings["columnstps"][2] then str[2] = " "..strformat("%.1f", (dmg/cbt))..p; strt[2] = " "..strformat("%.1f", (tot/cbt))..pt end
 		if DPSMateSettings["columnstps"][3] then str[3] = " ("..strformat("%.1f", 100*dmgr/totr).."%)" end
 		if DPSMateSettings["columnstps"][4] then str[4] = " ("..strformat("%.1f", dmg/(ecbt[a[cat]] or cbt))..p..")" end
 		tinsert(name, a[cat])
