@@ -96,15 +96,19 @@ function DPSMate.Modules.EffectiveHPS:ShowTooltip(user, k)
 		
 		for cat, val in pairs(db) do
 			if val[DPSMateUser[user][1]] then
-				if val["i"]>0 then
+				p = 0
+				for _, va in pairs(val[DPSMateUser[user][1]]) do
+					p = p + va[1]
+				end
+				if p>0 then
 					i = 1
 					while true do
 						if (not abn[i]) then
-							tinsert(abn, i, {cat, val["i"]})
+							tinsert(abn, i, {cat, p})
 							break
 						else
-							if (abn[i][2] < val["i"]) then
-								tinsert(abn, i, {cat, val["i"]})
+							if (abn[i][2] < p) then
+								tinsert(abn, i, {cat, p})
 								break
 							end
 						end

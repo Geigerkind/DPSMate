@@ -268,11 +268,45 @@ function DPSMate.Modules.HealingAndAbsorbs:GetSettingValues(arr, cbt, k,ecbt)
 end
 
 function DPSMate.Modules.HealingAndAbsorbs:ShowTooltip(user, k)
-	local a,b,c = DPSMate.Modules.HealingAndAbsorbs:EvalTable(DPSMateUser[user], k)
 	if DPSMateSettings["informativetooltips"] then
+		local a,b,c = DPSMate.Modules.HealingAndAbsorbs:EvalTable(DPSMateUser[user], k)
+		local db = DPSMate:GetModeByArr(DPSMateEHealingTaken, k, "EHealingTaken")
+		local abn, p, i = {}, 1, 1
+		
+		for cat, val in pairs(db) do
+			if val[DPSMateUser[user][1]] then
+				p = 0
+				for _, va in pairs(val[DPSMateUser[user][1]]) do
+					p = p + va[1]
+				end
+				if p>0 then
+					i = 1
+					while true do
+						if (not abn[i]) then
+							tinsert(abn, i, {cat, p})
+							break
+						else
+							if (abn[i][2] < p) then
+								tinsert(abn, i, {cat, p})
+								break
+							end
+						end
+						i = i + 1
+					end
+				end
+			end
+		end
+		
+		GameTooltip:AddLine(DPSMate.L["tttop"]..DPSMateSettings["subviewrows"]..DPSMate.L["tthealing"]..DPSMate.L["ttabilities"])
 		for i=1, DPSMateSettings["subviewrows"] do
 			if not a[i] then break end
 			GameTooltip:AddDoubleLine(i..". "..DPSMate:GetAbilityById(a[i]),c[i][1].." ("..strformat("%.2f", 100*c[i][1]/b).."%)",1,1,1,1,1,1)
+		end
+		
+		GameTooltip:AddLine(DPSMate.L["tttop"]..DPSMateSettings["subviewrows"]..DPSMate.L["tthealed"])
+		for i=1, DPSMateSettings["subviewrows"] do
+			if not abn[i] then break end
+			GameTooltip:AddDoubleLine(i..". "..DPSMate:GetUserById(abn[i][1]), abn[i][2].." ("..strformat("%.2f", 100*abn[i][2]/b).."%)", 1,1,1,1,1,1)
 		end
 	end
 end

@@ -112,6 +112,7 @@ function DPSMate.Modules.HealingTaken:ShowTooltip(user, k)
 	if DPSMateSettings["informativetooltips"] then
 		local a,b,c = DPSMate.Modules.HealingTaken:EvalTable(DPSMateUser[user], k)
 		local ab, abn, p, i = {}, {}, 1, 1
+		b = 0
 		
 		while a[i] do
 			p = 1
@@ -140,6 +141,7 @@ function DPSMate.Modules.HealingTaken:ShowTooltip(user, k)
 					end
 					i = i + 1
 				end
+				b = b + val
 			end
 		end
 		ab = nil
