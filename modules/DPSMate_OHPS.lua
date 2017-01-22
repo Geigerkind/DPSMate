@@ -89,11 +89,41 @@ function DPSMate.Modules.OHPS:GetSettingValues(arr, cbt, k,ecbt)
 end
 
 function DPSMate.Modules.OHPS:ShowTooltip(user, k)
-	local a,b,c = DPSMate.Modules.OHPS:EvalTable(DPSMateUser[user], k)
 	if DPSMateSettings["informativetooltips"] then
+		local a,b,c = DPSMate.Modules.OHPS:EvalTable(DPSMateUser[user], k)
+		local db, cbt = DPSMate:GetModeByArr(DPSMateOverhealingTaken, k, "OHealingTaken")
+		local abn, p, i = {}, 1, 1
+		
+		for cat, val in pairs(db) do
+			if val[DPSMateUser[user][1]] then
+				if val["i"]>0 then
+					i = 1
+					while true do
+						if (not abn[i]) then
+							tinsert(abn, i, {cat, val["i"]})
+							break
+						else
+							if (abn[i][2] < val["i"]) then
+								tinsert(abn, i, {cat, val["i"]})
+								break
+							end
+						end
+						i = i + 1
+					end
+				end
+			end
+		end
+		
+		GameTooltip:AddLine(DPSMate.L["tttop"]..DPSMateSettings["subviewrows"]..DPSMate.L["tthealing"]..DPSMate.L["ttabilities"])
 		for i=1, DPSMateSettings["subviewrows"] do
 			if not a[i] then break end
 			GameTooltip:AddDoubleLine(i..". "..DPSMate:GetAbilityById(a[i]),strformat("%.2f", c[i]).." ("..strformat("%.2f", 100*c[i]/b).."%)",1,1,1,1,1,1)
+		end
+		
+		GameTooltip:AddLine(DPSMate.L["tttop"]..DPSMateSettings["subviewrows"]..DPSMate.L["tthealed"])
+		for i=1, DPSMateSettings["subviewrows"] do
+			if not abn[i] then break end
+			GameTooltip:AddDoubleLine(i..". "..DPSMate:GetUserById(abn[i][1]), strformat("%.2f", abn[i][2]/cbt).." ("..strformat("%.2f", 100*(abn[i][2]/cbt)/b).."%)", 1,1,1,1,1,1)
 		end
 	end
 end
