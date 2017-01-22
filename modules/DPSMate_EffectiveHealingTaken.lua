@@ -89,12 +89,13 @@ function DPSMate.Modules.EffectiveHealingTaken:EvalTable(user, k)
 end
 
 function DPSMate.Modules.EffectiveHealingTaken:GetSettingValues(arr, cbt, k,ecbt)
+	local pt = ""
 	local name, value, perc, sortedTable, total, a, p, strt = {}, {}, {}, {}, 0, 0, "", {[1]="",[2]=""}
-	if DPSMateSettings["windows"][k]["numberformat"] == 2 or DPSMateSettings["windows"][k]["numberformat"] == 4 then p = "K" end
+	if DPSMateSettings["windows"][k]["numberformat"] == 2 or DPSMateSettings["windows"][k]["numberformat"] == 4 then p = "K"; pt = "K" end
 	sortedTable, total, a = DPSMate.Modules.EffectiveHealingTaken:GetSortedTable(arr,k)
 	for cat, val in pairs(sortedTable) do
 		local va, tot, sort, varea, totr, sortr = DPSMate:FormatNumbers(val, total, sortedTable[1], k)
-		if varea==0 then break end; if varea<=10000 then p = "" end
+		if varea==0 then break end; if totr <= 10000 then pt = "" end; if varea<=10000 then p = "" end
 		local str = {[1]="",[2]="",[3]="",[4]=""}
 		local pname = DPSMate:GetUserById(a[cat])
 		if DPSMateSettings["columnsehealingtaken"][1] then str[1] = " "..DPSMate:Commas(va, k)..p; strt[2] = DPSMate:Commas(tot, k)..pt end

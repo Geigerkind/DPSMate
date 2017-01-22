@@ -86,12 +86,13 @@ function DPSMate.Modules.DPS:EvalTable(user, k, cbt)
 end
 
 function DPSMate.Modules.DPS:GetSettingValues(arr, cbt, k, ecbt)
+	local pt = ""
 	local name, value, perc, sortedTable, total, a, p, strt = {}, {}, {}, {}, 0, 0, "", {[1]="",[2]=""}
-	if DPSMateSettings["windows"][k]["numberformat"] == 2 or DPSMateSettings["windows"][k]["numberformat"] == 4 then p = "K" end
+	if DPSMateSettings["windows"][k]["numberformat"] == 2 or DPSMateSettings["windows"][k]["numberformat"] == 4 then p = "K"; pt = "K" end
 	sortedTable, total, a = DPSMate.Modules.DPS:GetSortedTable(arr,k)
 	for cat, val in pairs(sortedTable) do
 		local dmg, tot, sort, dmgr, totr, sortr = DPSMate:FormatNumbers(val, total, sortedTable[1], k)
-		if dmgr==0 then break end; if dmgr<=10000 then p = "" end
+		if dmgr==0 then break end; if totr <= 10000 then pt = "" end; if dmgr<=10000 then p = "" end
 		local str = {[1]="",[2]="",[3]="",[4]=""}
 		local pname = a[cat]
 		if DPSMateSettings["columnsdps"][1] then str[1] = "("..DPSMate:Commas(dmg, k)..p..")"; strt[1] = "("..DPSMate:Commas(tot, k)..pt..")" end

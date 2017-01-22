@@ -88,12 +88,13 @@ function DPSMate.Modules.TPS:EvalTable(user, k, cbt)
 end
 
 function DPSMate.Modules.TPS:GetSettingValues(arr, cbt, k,ecbt)
+	local pt = ""
 	local name, value, perc, sortedTable, total, a, p, strt = {}, {}, {}, {}, 0, 0, "", {[1]="",[2]=""}
-	if DPSMateSettings["windows"][k]["numberformat"] == 2 or DPSMateSettings["windows"][k]["numberformat"] == 4 then p = "K" end
+	if DPSMateSettings["windows"][k]["numberformat"] == 2 or DPSMateSettings["windows"][k]["numberformat"] == 4 then p = "K"; pt = "K" end
 	sortedTable, total, a = DPSMate.Modules.TPS:GetSortedTable(arr, k)
 	for cat, val in sortedTable do
 		local dmg, tot, sort, dmgr, totr, sortr = DPSMate:FormatNumbers(val, total, sortedTable[1], k)
-		if dmgr==0 then break end; if dmgr<=10000 then p = "" end
+		if dmgr==0 then break end; if totr <= 10000 then pt = "" end; if dmgr<=10000 then p = "" end
 		local str = {[1]="",[2]="",[3]="",[4]=""}
 		if DPSMateSettings["columnstps"][1] then str[1] = "("..strformat("%.2f", dmg)..p..")"; strt[1] = "("..strformat("%.2f", tot)..p..")" end
 		if DPSMateSettings["columnstps"][2] then str[2] = " "..strformat("%.1f", (dmg/cbt))..p; strt[2] = " "..strformat("%.1f", (tot/cbt))..pt end

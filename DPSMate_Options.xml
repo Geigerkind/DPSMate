@@ -302,11 +302,11 @@
 							DPSMate_ConfigMenu_Tab_Content_BGColor_SwatchBg.r = DPSMateSettings["windows"][this:GetParent().Key]["contentbgcolor"][1]
 							DPSMate_ConfigMenu_Tab_Content_BGColor_SwatchBg.g = DPSMateSettings["windows"][this:GetParent().Key]["contentbgcolor"][2]
 							DPSMate_ConfigMenu_Tab_Content_BGColor_SwatchBg.b = DPSMateSettings["windows"][this:GetParent().Key]["contentbgcolor"][3]
-							UIDropDownMenu_SetSelectedValue(DPSMate_ConfigMenu_Tab_Content_NumberFormat, DPSMateSettings["windows"][this:GetParent().Key]["numberformat"])
 							UIDropDownMenu_SetSelectedValue(DPSMate_ConfigMenu_Tab_Content_BGDropDown, DPSMateSettings["windows"][this:GetParent().Key]["contentbgtexture"])
 							UIDropDownMenu_SetSelectedValue(DPSMate_ConfigMenu_Tab_Content_BorderTexture, DPSMateSettings["windows"][this:GetParent().Key]["bordertexture"] or "UI-Tooltip-Border")
 							DPSMate_ConfigMenu_Tab_Content_BorderTextureText:SetText(DPSMateSettings["windows"][this:GetParent().Key]["bordertexture"] or "UI-Tooltip-Border")
 							UIDropDownMenu_SetSelectedValue(DPSMate_ConfigMenu_Tab_Content_BorderStrata, DPSMateSettings["windows"][this:GetParent().Key]["borderstrata"] or 1)
+							UIDropDownMenu_SetSelectedValue(DPSMate_ConfigMenu_Tab_Content_NumberFormat, DPSMateSettings["windows"][this:GetParent().Key]["numberformat"])
 							DPSMate_ConfigMenu_Tab_Content_BGDropDownText:SetText(DPSMateSettings["windows"][this:GetParent().Key]["contentbgtexture"])
 							DPSMate_ConfigMenu_Tab_Content_BorderColorNormalTexture:SetVertexColor(DPSMateSettings["windows"][this:GetParent().Key]["contentbordercolor"][1], DPSMateSettings["windows"][this:GetParent().Key]["contentbordercolor"][2], DPSMateSettings["windows"][this:GetParent().Key]["contentbordercolor"][3])
 							DPSMate_ConfigMenu_Tab_Content_BorderColor_SwatchBg.r = DPSMateSettings["windows"][this:GetParent().Key]["contentbordercolor"][1]
