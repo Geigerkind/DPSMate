@@ -114,11 +114,67 @@ function DPSMate.Modules.CurePoison:GetSettingValues(arr, cbt, k)
 end
 
 function DPSMate.Modules.CurePoison:ShowTooltip(user,k)
-	local a,b,c = DPSMate.Modules.CurePoison:EvalTable(DPSMateUser[user], k)
 	if DPSMateSettings["informativetooltips"] then
+		local p, sum = 0, 0
+		local a, b, abn, abnt = {}, {}, {}, {}
+		local arr = DPSMate:GetMode(k)
+		if arr[DPSMateUser[user][1]] then 
+			for cat, val in pairs(arr[DPSMateUser[user][1]]) do -- 41 Ability
+				if cat~="i" then
+					for ca, va in pairs(val) do -- Cleansed guy
+						for c, v in pairs(va) do -- Cleansed ability
+							if self:IsValid(DPSMate:GetAbilityById(c), DPSMate:GetAbilityById(cat)) then
+								if b[c] then b[c] = b[c] + v else b[c] = v end
+								if a[ca] then a[ca] = a[ca] + v else a[ca] = v end
+							end
+						end
+					end
+				end
+			end
+		end
+		
+		for cat, val in pairs(a) do
+			i = 1
+			while true do
+				if not abn[i] then
+					tinsert(abn, i, {cat, val})
+					break
+				else
+					if abn[i][2]<val then
+						tinsert(abn, i, {cat, val})
+						break
+					end
+				end
+			end
+		end
+		for cat, val in pairs(b) do
+			i = 1
+			while true do
+				if not abnt[i] then
+					tinsert(abnt, i, {cat, val})
+					break
+				else
+					if abnt[i][2]<val then
+						tinsert(abnt, i, {cat, val})
+						break
+					end
+				end
+			end
+			sum = sum + val
+		end
+		a = nil
+		b = nil
+		
+		GameTooltip:AddLine(DPSMate.L["tttop"]..DPSMateSettings["subviewrows"]..DPSMate.L["ttdispelled"]..DPSMate.L["ttabilities"])
 		for i=1, DPSMateSettings["subviewrows"] do
-			if not a[i] then break end
-			GameTooltip:AddDoubleLine(i..". "..DPSMate:GetAbilityById(a[i]),c[i].." ("..strformat("%.2f", 100*c[i]/b).."%)",1,1,1,1,1,1)
+			if not abnt[i] then break end
+			GameTooltip:AddDoubleLine(i..". "..DPSMate:GetAbilityById(abnt[i][1]),abnt[i][2].." ("..strformat("%.2f", 100*abnt[i][2]/sum).."%)",1,1,1,1,1,1)
+		end
+		
+		GameTooltip:AddLine(DPSMate.L["tttop"]..DPSMateSettings["subviewrows"]..DPSMate.L["ttdispelled"])
+		for i=1, DPSMateSettings["subviewrows"] do
+			if not abn[i] then break end
+			GameTooltip:AddDoubleLine(i..". "..DPSMate:GetUserById(abn[i][1]), abn[i][2].." ("..strformat("%.2f", 100*abn[i][2]/sum).."%)", 1,1,1,1,1,1)
 		end
 	end
 end
