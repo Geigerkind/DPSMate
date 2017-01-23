@@ -1,0 +1,14 @@
+## Interface: 11200
+## Title: DPSMate - Lift magic
+## Notes: Adds the modules for lift magic evaluation.
+## Author: Shino <Synced> - Kronos
+## Dependencies: DPSMate_Core
+
+DPSMate_LiftMagic.lua
+DPSMate_LiftMagicReceieved.lua
+DPSMate_Details_LiftMagic.lua
+DPSMate_Details_LiftMagic.xml
+DPSMate_Details_LiftMagicReceieved.lua
+DPSMate_Details_LiftMagicReceieved.xml
+DPSMate_Details_LiftMagicTotal.lua
+DPSMate_Details_LiftMagicTotal.xml

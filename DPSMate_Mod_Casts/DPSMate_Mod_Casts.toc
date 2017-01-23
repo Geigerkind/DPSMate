@@ -1,0 +1,11 @@
+## Interface: 11200
+## Title: DPSMate - Casts
+## Notes: Adds the casts module.
+## Author: Shino <Synced> - Kronos
+## Dependencies: DPSMate_Core
+
+DPSMate_Casts.lua
+DPSMate_Details_Casts.lua
+DPSMate_Details_Casts.xml
+DPSMate_Details_CastsTotal.lua
+DPSMate_Details_CastsTotal.xml

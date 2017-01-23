@@ -1,0 +1,14 @@
+## Interface: 11200
+## Title: DPSMate - Decurses
+## Notes: Adds the modules for decurse evaluation.
+## Author: Shino <Synced> - Kronos
+## Dependencies: DPSMate_Core
+
+DPSMate_Decurses.lua
+DPSMate_DecursesReceieved.lua
+DPSMate_Details_Decurses.lua
+DPSMate_Details_Decurses.xml
+DPSMate_Details_DecursesReceieved.lua
+DPSMate_Details_DecursesReceieved.xml
+DPSMate_Details_DecursesTotal.lua
+DPSMate_Details_DecursesTotal.xml

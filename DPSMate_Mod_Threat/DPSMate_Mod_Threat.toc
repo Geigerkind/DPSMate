@@ -1,0 +1,12 @@
+## Interface: 11200
+## Title: DPSMate - Threat
+## Notes: Adds the modules for the threat evaluation.
+## Author: Shino <Synced> - Kronos
+## Dependencies: DPSMate_Core, KLHThreatMeter
+
+DPSMate_Threat.lua
+DPSMate_TPS.lua
+DPSMate_Details_Threat.lua
+DPSMate_Details_Threat.xml
+DPSMate_Details_ThreatTotal.lua
+DPSMate_Details_ThreatTotal.xml

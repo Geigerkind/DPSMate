@@ -1,0 +1,11 @@
+## Interface: 11200
+## Title: DPSMate - Procs
+## Notes: Adds the modules for the proc evaluation.
+## Author: Shino <Synced> - Kronos
+## Dependencies: DPSMate_Core
+
+DPSMate_Procs.lua
+DPSMate_Details_Procs.lua
+DPSMate_Details_Procs.xml
+DPSMate_Details_ProcsTotal.lua
+DPSMate_Details_ProcsTotal.xml

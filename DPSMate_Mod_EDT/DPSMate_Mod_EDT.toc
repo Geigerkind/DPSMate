@@ -1,0 +1,11 @@
+## Interface: 11200
+## Title: DPSMate - Enemy Damage Taken
+## Notes: Adds the modules for the edt evaluation.
+## Author: Shino <Synced> - Kronos
+## Dependencies: DPSMate_Core
+
+DPSMate_EDT.lua
+DPSMate_Details_EDT.lua
+DPSMate_Details_EDT.xml
+DPSMate_Details_EDTTotal.lua
+DPSMate_Details_EDTTotal.xml

@@ -1,0 +1,12 @@
+## Interface: 11200
+## Title: DPSMate - Damage taken
+## Notes: Adds the modules for damage taken evaluation.
+## Author: Shino <Synced> - Kronos
+## Dependencies: DPSMate_Core
+
+DPSMate_DamageTaken.lua
+DPSMate_DTPS.lua
+DPSMate_Details_DamageTaken.lua
+DPSMate_Details_DamageTaken.xml
+DPSMate_Details_DamageTakenTotal.lua
+DPSMate_Details_DamageTakenTotal.xml

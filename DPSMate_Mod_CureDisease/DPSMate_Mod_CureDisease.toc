@@ -1,0 +1,14 @@
+## Interface: 11200
+## Title: DPSMate - Cure disease
+## Notes: Adds the modules for cure disease evaluation.
+## Author: Shino <Synced> - Kronos
+## Dependencies: DPSMate_Core
+
+DPSMate_CureDisease.lua
+DPSMate_CureDiseaseReceieved.lua
+DPSMate_Details_CureDisease.lua
+DPSMate_Details_CureDisease.xml
+DPSMate_Details_CureDiseaseReceieved.lua
+DPSMate_Details_CureDiseaseReceieved.xml
+DPSMate_Details_CureDiseaseTotal.lua
+DPSMate_Details_CureDiseaseTotal.xml
