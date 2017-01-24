@@ -108,7 +108,7 @@ local windfuryab = {
 -- Begin Functions
 
 function DPSMate.DB:OnEvent(event)
-	if event == "ADDON_LOADED" and (not self.loaded) then
+	if event == "PLAYER_ENTERING_WORLD" and (not self.loaded) then
 		if DPSMateSettings == nil then
 			DPSMateSettings = {
 				windows = {
@@ -471,49 +471,49 @@ function DPSMate.DB:OnEvent(event)
 		if DPSMatePlayer == nil then DPSMatePlayer = {} end
 		if DPSMateLoot == nil then DPSMateLoot = {} end
 		
-		DPSMate.Modules.DPS.DB = DPSMateDamageDone
-		DPSMate.Modules.Damage.DB = DPSMateDamageDone
-		DPSMate.Modules.DamageTaken.DB = DPSMateDamageTaken
-		DPSMate.Modules.DTPS.DB = DPSMateDamageTaken
-		DPSMate.Modules.EDD.DB = DPSMateEDD
-		DPSMate.Modules.EDT.DB = DPSMateEDT
-		DPSMate.Modules.FriendlyFire.DB = DPSMateEDT
-		DPSMate.Modules.FriendlyFireTaken.DB = DPSMateEDT
-		DPSMate.Modules.Healing.DB = DPSMateTHealing
-		DPSMate.Modules.HPS.DB = DPSMateTHealing
-		DPSMate.Modules.Overhealing.DB = DPSMateOverhealing
-		DPSMate.Modules.EffectiveHealing.DB = DPSMateEHealing
-		DPSMate.Modules.EffectiveHPS.DB = DPSMateEHealing
-		DPSMate.Modules.HealingTaken.DB = DPSMateHealingTaken
-		DPSMate.Modules.EffectiveHealingTaken.DB = DPSMateEHealingTaken
-		DPSMate.Modules.Absorbs.DB = DPSMateAbsorbs
-		DPSMate.Modules.AbsorbsTaken.DB = DPSMateAbsorbs
-		DPSMate.Modules.HealingAndAbsorbs.DB = DPSMateAbsorbs
-		DPSMate.Modules.Deaths.DB = DPSMateDeaths
-		DPSMate.Modules.Dispels.DB = DPSMateDispels
-		DPSMate.Modules.DispelsReceived.DB = DPSMateDispels
-		DPSMate.Modules.Decurses.DB = DPSMateDispels
-		DPSMate.Modules.DecursesReceived.DB = DPSMateDispels
-		DPSMate.Modules.CureDisease.DB = DPSMateDispels
-		DPSMate.Modules.CureDiseaseReceived.DB = DPSMateDispels
-		DPSMate.Modules.CurePoison.DB = DPSMateDispels
-		DPSMate.Modules.CurePoisonReceived.DB = DPSMateDispels
-		DPSMate.Modules.LiftMagic.DB = DPSMateDispels
-		DPSMate.Modules.LiftMagicReceived.DB = DPSMateDispels
-		DPSMate.Modules.Interrupts.DB = DPSMateInterrupts
-		DPSMate.Modules.AurasGained.DB = DPSMateAurasGained
-		DPSMate.Modules.AurasLost.DB = DPSMateAurasGained
-		DPSMate.Modules.AurasLost.DB = DPSMateAurasGained
-		DPSMate.Modules.AurasUptimers.DB = DPSMateAurasGained
-		DPSMate.Modules.Procs.DB = DPSMateAurasGained
-		DPSMate.Modules.Casts.DB = DPSMateEDT
-		DPSMate.Modules.Threat.DB = DPSMateThreat
-		DPSMate.Modules.TPS.DB = DPSMateThreat
-		DPSMate.Modules.Fails.DB = DPSMateFails
-		DPSMate.Modules.CCBreaker.DB = DPSMateCCBreaker
-		DPSMate.Modules.OHPS.DB = DPSMateOverhealing
-		DPSMate.Modules.OHealingTaken.DB = DPSMateOverhealingTaken
-		DPSMate.Modules.Activity.DB = DPSMateCombatTime
+		if DPSMate.Modules.DPS then DPSMate.Modules.DPS.DB = DPSMateDamageDone end
+		if DPSMate.Modules.Damage then DPSMate.Modules.Damage.DB = DPSMateDamageDone end
+		if DPSMate.Modules.DamageTaken then DPSMate.Modules.DamageTaken.DB = DPSMateDamageTaken end
+		if DPSMate.Modules.DTPS then DPSMate.Modules.DTPS.DB = DPSMateDamageTaken end
+		if DPSMate.Modules.EDD then DPSMate.Modules.EDD.DB = DPSMateEDD end
+		if DPSMate.Modules.EDT then DPSMate.Modules.EDT.DB = DPSMateEDT end
+		if DPSMate.Modules.FriendlyFire then DPSMate.Modules.FriendlyFire.DB = DPSMateEDT end
+		if DPSMate.Modules.FriendlyFireTaken then DPSMate.Modules.FriendlyFireTaken.DB = DPSMateEDT end
+		if DPSMate.Modules.Healing then DPSMate.Modules.Healing.DB = DPSMateTHealing end
+		if DPSMate.Modules.HPS then DPSMate.Modules.HPS.DB = DPSMateTHealing end
+		if DPSMate.Modules.Overhealing then DPSMate.Modules.Overhealing.DB = DPSMateOverhealing end
+		if DPSMate.Modules.EffectiveHealing then DPSMate.Modules.EffectiveHealing.DB = DPSMateEHealing end
+		if DPSMate.Modules.EffectiveHPS then DPSMate.Modules.EffectiveHPS.DB = DPSMateEHealing end
+		if DPSMate.Modules.HealingTaken then DPSMate.Modules.HealingTaken.DB = DPSMateHealingTaken end
+		if DPSMate.Modules.EffectiveHealingTaken then DPSMate.Modules.EffectiveHealingTaken.DB = DPSMateEHealingTaken end
+		if DPSMate.Modules.Absorbs then DPSMate.Modules.Absorbs.DB = DPSMateAbsorbs end
+		if DPSMate.Modules.AbsorbsTaken then DPSMate.Modules.AbsorbsTaken.DB = DPSMateAbsorbs end
+		if DPSMate.Modules.HealingAndAbsorbs then DPSMate.Modules.HealingAndAbsorbs.DB = DPSMateAbsorbs end
+		if DPSMate.Modules.Deaths then DPSMate.Modules.Deaths.DB = DPSMateDeaths end
+		if DPSMate.Modules.Dispels then DPSMate.Modules.Dispels.DB = DPSMateDispels end
+		if DPSMate.Modules.DispelsReceived then DPSMate.Modules.DispelsReceived.DB = DPSMateDispels end
+		if DPSMate.Modules.Decurses then DPSMate.Modules.Decurses.DB = DPSMateDispels end
+		if DPSMate.Modules.DecursesReceived then DPSMate.Modules.DecursesReceived.DB = DPSMateDispels end
+		if DPSMate.Modules.CureDisease then DPSMate.Modules.CureDisease.DB = DPSMateDispels end
+		if DPSMate.Modules.CureDiseaseReceived then DPSMate.Modules.CureDiseaseReceived.DB = DPSMateDispels end
+		if DPSMate.Modules.CurePoison then DPSMate.Modules.CurePoison.DB = DPSMateDispels end
+		if DPSMate.Modules.CurePoisonReceived then DPSMate.Modules.CurePoisonReceived.DB = DPSMateDispels end
+		if DPSMate.Modules.LiftMagic then DPSMate.Modules.LiftMagic.DB = DPSMateDispels end
+		if DPSMate.Modules.LiftMagicReceived then DPSMate.Modules.LiftMagicReceived.DB = DPSMateDispels end
+		if DPSMate.Modules.Interrupts then DPSMate.Modules.Interrupts.DB = DPSMateInterrupts end
+		if DPSMate.Modules.AurasGained then DPSMate.Modules.AurasGained.DB = DPSMateAurasGained end
+		if DPSMate.Modules.AurasLost then DPSMate.Modules.AurasLost.DB = DPSMateAurasGained end
+		if DPSMate.Modules.AurasLost then DPSMate.Modules.AurasLost.DB = DPSMateAurasGained end
+		if DPSMate.Modules.AurasUptimers then DPSMate.Modules.AurasUptimers.DB = DPSMateAurasGained end
+		if DPSMate.Modules.Procs then DPSMate.Modules.Procs.DB = DPSMateAurasGained end
+		if DPSMate.Modules.Casts then DPSMate.Modules.Casts.DB = DPSMateEDT end
+		if DPSMate.Modules.Threat then DPSMate.Modules.Threat.DB = DPSMateThreat end
+		if DPSMate.Modules.TPS then DPSMate.Modules.TPS.DB = DPSMateThreat end
+		if DPSMate.Modules.Fails then DPSMate.Modules.Fails.DB = DPSMateFails end
+		if DPSMate.Modules.CCBreaker then DPSMate.Modules.CCBreaker.DB = DPSMateCCBreaker end
+		if DPSMate.Modules.OHPS then DPSMate.Modules.OHPS.DB = DPSMateOverhealing end
+		if DPSMate.Modules.OHealingTaken then DPSMate.Modules.OHealingTaken.DB = DPSMateOverhealingTaken end
+		if DPSMate.Modules.Activity then DPSMate.Modules.Activity.DB = DPSMateCombatTime end
 		
 		if not DPSMateSettings["columnsprocs"] then
 			DPSMateSettings["columnsprocs"] = {

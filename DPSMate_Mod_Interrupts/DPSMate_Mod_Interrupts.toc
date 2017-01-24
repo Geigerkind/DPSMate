@@ -1,8 +1,8 @@
 ## Interface: 11200
-## Title: DPSMate - Interrupts
+## Title: DPSMate +|cFFFFFFFFInterrupts|r
 ## Notes: Adds the modules for the interrupt evaluation.
 ## Author: Shino <Synced> - Kronos
-## Dependencies: DPSMate_Core
+## Dependencies: DPSMate
 
 DPSMate_Interrupts.lua
 DPSMate_Details_Interrupts.lua

@@ -1,8 +1,8 @@
 ## Interface: 11200
-## Title: DPSMate - Healing and Absorbs
+## Title: DPSMate +|cFFFFFFFFHealing and Absorbs|r
 ## Notes: Adds the modules for the healing and absorbs evaluation.
 ## Author: Shino <Synced> - Kronos
-## Dependencies: DPSMate_Core
+## Dependencies: DPSMate
 
 DPSMate_HealingAndAbsorbs.lua
 DPSMate_Details_HealingAndAbsorbs.lua

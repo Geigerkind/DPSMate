@@ -1,8 +1,8 @@
 ## Interface: 11200
-## Title: DPSMate - Raw healing taken
+## Title: DPSMate +|cFFFFFFFFRaw healing taken|r
 ## Notes: Adds the modules for the raw healing taken evaluation.
 ## Author: Shino <Synced> - Kronos
-## Dependencies: DPSMate_Core
+## Dependencies: DPSMate
 
 DPSMate_HealingTaken.lua
 DPSMate_Details_HealingTaken.lua

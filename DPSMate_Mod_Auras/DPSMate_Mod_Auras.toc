@@ -1,12 +1,12 @@
 ## Interface: 11200
-## Title: DPSMate - Auras
+## Title: DPSMate +|cFFFFFFFFAuras|r
 ## Notes: Adds the modules for gained auras, lost auras and aura uptimes.
 ## Author: Shino <Synced> - Kronos
-## Dependencies: DPSMate_Core
+## Dependencies: DPSMate
 
 DPSMate_AurasGained.lua
 DPSMate_AurasLost.lua
-DPSMate_AurasUptimers.lua
+DPSMate_AuraUptimers.lua
 DPSMate_Details_Auras.lua
 DPSMate_Details_Auras.xml
 DPSMate_Details_AurasTotal.lua

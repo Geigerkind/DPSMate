@@ -1,14 +1,14 @@
 ## Interface: 11200
-## Title: DPSMate - Dispels
+## Title: DPSMate +|cFFFFFFFFDispels|r
 ## Notes: Adds the modules for general dispel evaluation.
 ## Author: Shino <Synced> - Kronos
-## Dependencies: DPSMate_Core
+## Dependencies: DPSMate
 
 DPSMate_Dispels.lua
-DPSMate_DispelsReceieved.lua
+DPSMate_DispelsReceived.lua
 DPSMate_Details_Dispels.lua
 DPSMate_Details_Dispels.xml
-DPSMate_Details_DispelsReceieved.lua
-DPSMate_Details_DispelsReceieved.xml
+DPSMate_Details_DispelsReceived.lua
+DPSMate_Details_DispelsReceived.xml
 DPSMate_Details_DispelsTotal.lua
 DPSMate_Details_DispelsTotal.xml

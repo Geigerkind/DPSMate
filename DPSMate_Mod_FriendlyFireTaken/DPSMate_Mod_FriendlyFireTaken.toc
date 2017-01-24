@@ -1,8 +1,8 @@
 ## Interface: 11200
-## Title: DPSMate - Friendly Fire Taken
+## Title: DPSMate +|cFFFFFFFFFriendly Fire Taken|r
 ## Notes: Adds the modules for the friendly fire taken evaluation.
 ## Author: Shino <Synced> - Kronos
-## Dependencies: DPSMate_Core
+## Dependencies: DPSMate
 
 DPSMate_FriendlyFireTaken.lua
 DPSMate_Details_FriendlyFireTaken.lua

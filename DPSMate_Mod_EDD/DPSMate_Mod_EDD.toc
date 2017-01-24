@@ -1,8 +1,8 @@
 ## Interface: 11200
-## Title: DPSMate - Enemy Damage Done
+## Title: DPSMate +|cFFFFFFFFEnemy Damage Done|r
 ## Notes: Adds the modules for the edd evaluation.
 ## Author: Shino <Synced> - Kronos
-## Dependencies: DPSMate_Core
+## Dependencies: DPSMate
 
 DPSMate_EDD.lua
 DPSMate_Details_EDD.lua

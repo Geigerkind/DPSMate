@@ -1,8 +1,8 @@
 ## Interface: 11200
-## Title: DPSMate - Deaths
+## Title: DPSMate +|cFFFFFFFFDeaths|r
 ## Notes: Adds the modules for death evaluation.
 ## Author: Shino <Synced> - Kronos
-## Dependencies: DPSMate_Core
+## Dependencies: DPSMate
 
 DPSMate_Deaths.lua
 DPSMate_Details_Deaths.lua

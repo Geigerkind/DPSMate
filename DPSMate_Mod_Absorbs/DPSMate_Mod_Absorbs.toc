@@ -1,8 +1,8 @@
 ## Interface: 11200
-## Title: DPSMate - Absorbs
+## Title: DPSMate +|cFFFFFFFFAbsorbs|r
 ## Notes: Adds the absorbtion evaluation module.
 ## Author: Shino <Synced> - Kronos
-## Dependencies: DPSMate_Core
+## Dependencies: DPSMate
 
 DPSMate_Absorbs.lua
 DPSMate_Details_Absorbs.lua

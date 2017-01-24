@@ -1,8 +1,8 @@
 ## Interface: 11200
-## Title: DPSMate - Effective healing
+## Title: DPSMate +|cFFFFFFFFEffective healing|r
 ## Notes: Adds the modules for the effective healing evaluation.
 ## Author: Shino <Synced> - Kronos
-## Dependencies: DPSMate_Core
+## Dependencies: DPSMate
 
 DPSMate_EffectiveHealing.lua
 DPSMate_EffectiveHPS.lua

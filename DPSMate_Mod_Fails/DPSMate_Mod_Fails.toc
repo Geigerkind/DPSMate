@@ -1,8 +1,8 @@
 ## Interface: 11200
-## Title: DPSMate - Fails
+## Title: DPSMate +|cFFFFFFFFFails|r
 ## Notes: Adds the modules for the fail evaluation.
 ## Author: Shino <Synced> - Kronos
-## Dependencies: DPSMate_Core
+## Dependencies: DPSMate
 
 DPSMate_Fails.lua
 DPSMate_Details_Fails.lua

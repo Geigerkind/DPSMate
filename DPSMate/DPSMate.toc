@@ -19,8 +19,7 @@ DPSMate.lua
 enUS\enUS.lua
 
 DPSMate_Parser.lua
-DPSMate_ParserENUS.lua
-DPSMate_ParserDEDE.lua
+enUS\DPSMate_ParserENUS.lua
 DPSMate_Options.lua
 DPSMate_Sync.lua
 DPSMate_Realmplayers.lua

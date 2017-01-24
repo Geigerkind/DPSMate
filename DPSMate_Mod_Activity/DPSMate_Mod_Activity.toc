@@ -1,7 +1,7 @@
 ## Interface: 11200
-## Title: DPSMate - Activity
+## Title: DPSMate +|cFFFFFFFFActivity|r
 ## Notes: Adds the activity module.
 ## Author: Shino <Synced> - Kronos
-## Dependencies: DPSMate_Core
+## Dependencies: DPSMate
 
 DPSMate_Activity.lua

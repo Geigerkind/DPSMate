@@ -1,8 +1,8 @@
 ## Interface: 11200
-## Title: DPSMate - Overhealing
+## Title: DPSMate +|cFFFFFFFFOverhealing|r
 ## Notes: Adds the modules for the overhealing evaluation.
 ## Author: Shino <Synced> - Kronos
-## Dependencies: DPSMate_Core
+## Dependencies: DPSMate
 
 DPSMate_Overhealing.lua
 DPSMate_OHPS.lua

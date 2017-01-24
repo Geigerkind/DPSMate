@@ -1,8 +1,8 @@
 ## Interface: 11200
-## Title: DPSMate - Effective healing taken
+## Title: DPSMate +|cFFFFFFFFEffective healing taken|r
 ## Notes: Adds the modules for the effective healing taken evaluation.
 ## Author: Shino <Synced> - Kronos
-## Dependencies: DPSMate_Core
+## Dependencies: DPSMate
 
 DPSMate_EffectiveHealingTaken.lua
 DPSMate_Details_EHealingTaken.lua

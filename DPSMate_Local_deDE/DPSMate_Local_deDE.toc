@@ -1,8 +1,8 @@
 ## Interface: 11200
-## Title: DPSMate Local - deDE
+## Title: DPSMate +|cFFFFFFFFLocal - deDE|r
 ## Notes: Lade dieses Modul, um den deutschen Clienten zu unterstützen.
 ## Author: Shino <Synced> - Kronos
-## Dependencies: DPSMate_Core
+## Dependencies: DPSMate
 
 Babble-Spell-2.3_deDE.lua
 Babble-Boss-2.3_deDE.lua
