@@ -1,0 +1,9 @@
+## Interface: 11200
+## Title: DPSMate +|cFFFFFFFFDispels received|r
+## Notes: Adds the modules for dispels received evaluation.
+## Author: Shino <Synced> - Kronos
+## Dependencies: DPSMate, DPSMate_Dispels
+
+DPSMate_DispelsReceived.lua
+DPSMate_Details_DispelsReceived.lua
+DPSMate_Details_DispelsReceived.xml

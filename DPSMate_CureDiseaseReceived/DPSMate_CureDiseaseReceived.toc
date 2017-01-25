@@ -1,0 +1,9 @@
+## Interface: 11200
+## Title: DPSMate +|cFFFFFFFFCure disease received|r
+## Notes: Adds the modules for cure disease received evaluation.
+## Author: Shino <Synced> - Kronos
+## Dependencies: DPSMate, DPSMate_CureDisease
+
+DPSMate_CureDiseaseReceived.lua
+DPSMate_Details_CureDiseaseReceived.lua
+DPSMate_Details_CureDiseaseReceived.xml

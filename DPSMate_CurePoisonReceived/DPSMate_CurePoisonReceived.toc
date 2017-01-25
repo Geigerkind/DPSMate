@@ -1,0 +1,9 @@
+## Interface: 11200
+## Title: DPSMate +|cFFFFFFFFCure poison received|r
+## Notes: Adds the modules for cure poison received evaluation.
+## Author: Shino <Synced> - Kronos
+## Dependencies: DPSMate, DPSMate_CurePoison
+
+DPSMate_CurePoisonReceived.lua
+DPSMate_Details_CurePoisonReceived.lua
+DPSMate_Details_CurePoisonReceived.xml

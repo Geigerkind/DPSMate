@@ -1,0 +1,9 @@
+## Interface: 11200
+## Title: DPSMate +|cFFFFFFFFLift magic received|r
+## Notes: Adds the modules for lift magic received evaluation.
+## Author: Shino <Synced> - Kronos
+## Dependencies: DPSMate, DPSMate_LiftMagic
+
+DPSMate_LiftMagicReceived.lua
+DPSMate_Details_LiftMagicReceived.lua
+DPSMate_Details_LiftMagicReceived.xml
