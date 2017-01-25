@@ -36,6 +36,8 @@ local bit_band = bit.band
 local bit_bor = bit.bor
 local bit_lshift = bit.lshift
 local bit_rshift = bit.rshift
+local tostring = tostring
+local next = next
 
 --------------------------------------------------------------------------------
 -- Cleanup
@@ -64,13 +66,17 @@ LibCompress.frame = LibCompress.frame or CreateFrame("frame", nil, UIParent) -- 
 LibCompress.frame:SetScript("OnUpdate", onUpdate)
 LibCompress.frame:Hide()
 
-local function setCleanupTables(...)
+local function setCleanupTables(s1, s2)
 	timeout = 15 -- empty tables after 15 seconds
 	if not LibCompress.frame:IsShown() then
 		LibCompress.frame:Show()
 	end
-	for i=1,select("#",...) do
-		tables_to_clean[(select(i, ...))] = true
+	
+	if tables_to_clean[s1] then
+		tables_to_clean[s1] = true
+	end
+	if tables_to_clean[s2] then
+		tables_to_clean[s2] = true
 	end
 end
 
@@ -83,21 +89,21 @@ end
 -- the bytes returned by this do not contain "\000"
 local bytes = {}
 local function encode(x)
-	for k = 1, #bytes do bytes[k] = nil end
+	for k = 1, getn(bytes) do bytes[k] = nil end
 	local xmod
 	x, xmod = math_modf(x/255)
 	xmod = xmod * 255
-	bytes[#bytes + 1] = xmod
+	bytes[getn(bytes) + 1] = xmod
 	while x > 0 do
 		x, xmod = math_modf(x/255)
 		xmod = xmod * 255
-		bytes[#bytes + 1] = xmod
+		bytes[getn(bytes) + 1] = xmod
 	end
-	if #bytes == 1 and bytes[1] > 0 and bytes[1] < 250 then
+	if getn(bytes) == 1 and bytes[1] > 0 and bytes[1] < 250 then
 		return string_char(bytes[1])
 	else
-		for i = 1, #bytes do bytes[i] = bytes[i] + 1 end
-		return string_char(256 - #bytes, unpack(bytes))
+		for i = 1, getn(bytes) do bytes[i] = bytes[i] + 1 end
+		return string_char(256 - getn(bytes), unpack(bytes))
 	end
 end
 
@@ -136,7 +142,7 @@ function LibCompress:CompressLZW(uncompressed)
 		for i = 0, 255 do
 			dict[string_char(i)] = i
 		end
-		for i = 1, #uncompressed do
+		for i = 1, getn(uncompressed) do
 			local c = uncompressed:sub(i,i)
 			local wc = w..c
 			if dict[wc] then
@@ -145,17 +151,17 @@ function LibCompress:CompressLZW(uncompressed)
 				dict[wc] = dict_size
 				dict_size = dict_size +1
 				local r = encode(dict[w])
-				ressize = ressize + #r
-				result[#result + 1] = r
+				ressize = ressize + getn(r)
+				result[getn(result) + 1] = r
 				w = c
 			end
 		end
 		if w then
 			local r = encode(dict[w])
-			ressize = ressize + #r
-			result[#result + 1] = r
+			ressize = ressize + getn(r)
+			result[getn(result) + 1] = r
 		end
-		if (#uncompressed+1) > ressize then
+		if (getn(uncompressed)+1) > ressize then
 			return table_concat(result)
 		else
 			return string_char(1)..uncompressed
@@ -186,14 +192,14 @@ function LibCompress:DecompressLZW(compressed)
 		local delta, k
 		k, delta = decode(compressed,t)
 		t = t + delta
-		result[#result+1] = dict[k]
+		result[getn(result)+1] = dict[k]
 		local w = dict[k]
 		local entry
-		while t <= #compressed do
+		while t <= getn(compressed) do
 			k, delta = decode(compressed,t)
 			t = t + delta
 			entry = dict[k] or (w..w:sub(1,1))
-			result[#result+1] = entry
+			result[getn(result)+1] = entry
 			dict[dict_size] = w..entry:sub(1,1)
 			dict_size = dict_size + 1
 			w = entry
@@ -283,14 +289,14 @@ function LibCompress:CompressHuffman(uncompressed)
 	--Enqueue all leaf nodes into the first queue (by probability in increasing order so that the least likely item is in the head of the queue).
 	sort(leafs, function(a,b) if a.weight<b.weight then return true elseif a.weight>b.weight then return false else return nil end end)
 
-	local nLeafs = #leafs
+	local nLeafs = getn(leafs)
 	
 	-- create tree
 	local huff = {}
 	--While there is more than one node in the queues:
 	local l,h, li, hi, leaf1, leaf2
 	local newNode;
-	while (#leafs+#huff > 1) do
+	while (getn(leafs)+getn(huff) > 1) do
 		-- Dequeue the two nodes with the lowest weight.
 		-- Dequeue first
 		if not next(huff) then
@@ -333,7 +339,7 @@ function LibCompress:CompressHuffman(uncompressed)
 		newNode = { c1 = leaf1, c2 = leaf2, weight = leaf1.weight+leaf2.weight }
 		table_insert(huff,newNode)
 	end
-	if #leafs>0 then
+	if getn(leafs)>0 then
 		li, l = next(leafs)
 		table_insert(huff, l)
 		table_remove(leafs, li)
@@ -420,7 +426,7 @@ function LibCompress:CompressHuffman(uncompressed)
 	local compressed_string = table_concat(large_compressed, "", 1, large_compressed_size)
 	
 	-- is compression worth it? If not, return uncompressed data.
-	if (#uncompressed+1) <= #compressed_string then
+	if (getn(uncompressed)+1) <= getn(compressed_string) then
 		return "\001"..uncompressed
 	end
 	
@@ -490,7 +496,7 @@ function LibCompress:DecompressHuffman(compressed)
 		return nil, "Can only uncompress strings"
 	end
 
-	local compressed_size = #compressed
+	local compressed_size = getn(compressed)
 	--decode header
 	local info_byte = string_byte(compressed)
 	-- is data compressed
@@ -603,7 +609,7 @@ function LibCompress:DecompressHuffman(compressed)
 			else
 				test_code_len = test_code_len + 1
 				if test_code_len>maxCodeLen then
-					return nil, "Decompression error at "..tostring(i).."/"..tostring(#compressed)
+					return nil, "Decompression error at "..tostring(i).."/"..tostring(getn(compressed))
 				end
 			end
 		else
@@ -655,7 +661,7 @@ function LibCompress:Compress(data)
 	method = next(compression_methods, method)
 	while method do
 		n = compression_methods[method](self, data)
-		if #n < #result then
+		if getn(n) < getn(result) then
 			result = n
 		end
 		method = next(compression_methods, method)
