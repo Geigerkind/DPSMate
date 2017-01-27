@@ -7,8 +7,6 @@
 ## SavedVariablesPerCharacter: DPSMateUser, DPSMateAbility, DPSMateDamageDone, DPSMateEDT, DPSMateEDD, DPSMateDamageTaken, DPSMateDispels, DPSMateInterrupts, DPSMateDeaths, DPSMateEHealing, DPSMateTHealing, DPSMateHealingTaken, DPSMateEHealingTaken, DPSMateOverhealing, DPSMateOverhealingTaken, DPSMateAbsorbs, DPSMateThreat, DPSMateAurasGained, DPSMateCombatTime, DPSMateHistory, DPSMateAttempts, DPSMatePlayer, DPSMateLoot, DPSMateFails, DPSMateCCBreaker
 
 libs\AceLibrary\AceLibrary.lua
-libs\LibStub\LibStub.lua
-libs\LibCompress\LibCompress.lua
 libs\Dewdrop-2.0\Dewdrop-2.0.lua
 libs\GraphLib\Graph-1.0\Graph-1.0.lua
 libs\AceLocale\AceLocale-2.2.lua
