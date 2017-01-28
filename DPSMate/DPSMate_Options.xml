@@ -6175,7 +6175,7 @@
 				this:RegisterEvent("PLAYER_AURAS_CHANGED")
 				--this:RegisterEvent("UNIT_AURA")
 				this:RegisterEvent("PLAYER_TARGET_CHANGED")
-				this:RegisterEvent("PLAYER_LOGOUT")
+				--this:RegisterEvent("PLAYER_LOGOUT")
 			</OnLoad>
 			<OnEvent>
 				DPSMate.DB:OnEvent(event)
