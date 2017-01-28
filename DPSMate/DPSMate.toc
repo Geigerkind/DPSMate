@@ -35,3 +35,4 @@ Damage\DPSMate_Details_DamageTotal.xml
 
 DPSMate_Frame.xml
 DPSMate_Options.xml
+Bindings.xml
