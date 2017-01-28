@@ -854,12 +854,7 @@ function DPSMate.DB:Threat(cause, spellname, target, value, amount)
 				[2] = 0, -- Min
 				[3] = 0, -- Max
 				[4] = 0, -- Hits
-				["i"] = {
-					[1] = "",
-					[2] = "",
-					[3] = 0, -- start timestamp
-					[4] = 0, -- app value
-				}
+				["i"] = {}
 			}
 		end
 		local path = DPSMateThreat[cat][DPSMateUser[cause][1]][DPSMateUser[target][1]][DPSMateAbility[spellname][1]]
@@ -871,6 +866,16 @@ function DPSMate.DB:Threat(cause, spellname, target, value, amount)
 		if path[3]<value then
 			path[3] = value
 		end
+		
+		if value>0 then
+			local time = floor(DPSMateCombatTime[val])
+			if path["i"][time] then
+				path["i"][time] = path["i"][time] + value
+			else
+				path["i"][time] = value
+			end
+		end		
+		--[[
 		if path["i"][3]>DPSMateCombatTime[val] then
 			path["i"][4] = path["i"][4] + value
 		else
@@ -881,6 +886,7 @@ function DPSMate.DB:Threat(cause, spellname, target, value, amount)
 			path["i"][3] = DPSMateCombatTime[val]+self.precision
 			path["i"][4] = value
 		end
+		--]]
 	end
 	self.NeedUpdate = true
 end
@@ -998,12 +1004,7 @@ function DPSMate.DB:DamageDone(Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, Ddodge,
 				[20] = 0,
 				[21] = 0,
 				[22] = 0, -- Casts
-				["i"] = {
-					[1] = "",
-					[2] = "",
-					[3] = 0, -- start timestamp
-					[4] = 0, -- app value
-				}
+				["i"] = {}
 			}
 		end
 		local path = DPSMateDamageDone[cat][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]]
@@ -1052,15 +1053,11 @@ function DPSMate.DB:DamageDone(Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, Ddodge,
 		end
 		DPSMateDamageDone[cat][DPSMateUser[Duser][1]]["i"] = DPSMateDamageDone[cat][DPSMateUser[Duser][1]]["i"] + Damount
 		if Damount > 0 then 
-			if path["i"][3]>DPSMateCombatTime[val] then
-				path["i"][4] = path["i"][4] + Damount
+			time = floor(DPSMateCombatTime[val])
+			if path["i"][time] then
+				path["i"][time] = path["i"][time] + Damount
 			else
-				if path["i"][4]>0 then
-					path["i"][1] = path["i"][1]..strformat("%.1f", path["i"][3]-self.precision)..","
-					path["i"][2] = path["i"][2]..path["i"][4]..","
-				end
-				path["i"][3] = DPSMateCombatTime[val]+self.precision
-				path["i"][4] = Damount
+				path["i"][time] = Damount
 			end
 		end
 	end
@@ -1105,12 +1102,7 @@ function DPSMate.DB:DamageTaken(Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, Ddodge
 				[21] = 0,
 				[22] = 0,
 				[23] = 0,
-				["i"] = {
-					[1] = "",
-					[2] = "",
-					[3] = 0, -- start timestamp
-					[4] = 0, -- app value
-				}
+				["i"] = {}
 			}
 		end
 		local path = DPSMateDamageTaken[cat][DPSMateUser[Duser][1]][DPSMateUser[cause][1]][DPSMateAbility[Dname][1]]
@@ -1160,15 +1152,11 @@ function DPSMate.DB:DamageTaken(Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, Ddodge
 		DPSMateDamageTaken[cat][DPSMateUser[Duser][1]]["i"] = DPSMateDamageTaken[cat][DPSMateUser[Duser][1]]["i"] + Damount
 		if Damount > 0 then 
 			path[14] = (path[14] + Damount)/2
-			if path["i"][3]>DPSMateCombatTime[val] then
-				path["i"][4] = path["i"][4] + Damount
+			time = floor(DPSMateCombatTime[val])
+			if path["i"][time] then
+				path["i"][time] = path["i"][time] + Damount
 			else
-				if path["i"][4]>0 then
-					path["i"][1] = path["i"][1]..strformat("%.1f", path["i"][3]-self.precision)..","
-					path["i"][2] = path["i"][2]..path["i"][4]..","
-				end
-				path["i"][3] = DPSMateCombatTime[val]+self.precision
-				path["i"][4] = 0
+				path["i"][time] = Damount
 			end
 		end
 	end
@@ -1228,12 +1216,7 @@ function DPSMate.DB:EnemyDamage(mode, arr, Duser, Dname, Dhit, Dcrit, Dmiss, Dpa
 				[20] = 0,
 				[21] = 0,
 				[22] = 0,
-				["i"] = {
-					[1] = "",
-					[2] = "",
-					[3] = 0, -- start timestamp
-					[4] = 0, -- app value
-				}
+				["i"] = {}
 			}
 		end
 		local path = arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]]
@@ -1282,15 +1265,11 @@ function DPSMate.DB:EnemyDamage(mode, arr, Duser, Dname, Dhit, Dcrit, Dmiss, Dpa
 		end
 		arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser][1]]["i"] = arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser][1]]["i"] + Damount
 		if Damount > 0 then
-			if path["i"][3]>DPSMateCombatTime[val] then
-				path["i"][4] = path["i"][4] + Damount
+			time = floor(DPSMateCombatTime[val])
+			if path["i"][time] then
+				path["i"][time] = path["i"][time] + Damount
 			else
-				if path["i"][4]>0 then
-					path["i"][1] = path["i"][1]..strformat("%.1f", path["i"][3]-self.precision)..","
-					path["i"][2] = path["i"][2]..path["i"][4]..","
-				end
-				path["i"][3] = DPSMateCombatTime[val]+self.precision
-				path["i"][4] = Damount
+				path["i"][time] = Damount
 			end
 		end
 	end
@@ -1318,12 +1297,7 @@ function DPSMate.DB:Healing(mode, arr, Duser, Dname, Dhit, Dcrit, Damount)
 				[7] = 0, -- hitMax
 				[8] = 0, -- critMin
 				[9] = 0, -- critMax
-				["i"] = {
-					[1] = "",
-					[2] = "",
-					[3] = 0, -- start timestamp
-					[4] = 0, -- app value
-				}
+				["i"] = {}
 			}
 		end
 		local path = arr[cat][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]]
@@ -1354,15 +1328,11 @@ function DPSMate.DB:Healing(mode, arr, Duser, Dname, Dhit, Dcrit, Damount)
 			end
 		end
 		if Damount > 0 then 
-			if path["i"][3]>DPSMateCombatTime[val] then
-				path["i"][4] = path["i"][4] + Damount
+			time = floor(DPSMateCombatTime[val])
+			if path["i"][time] then
+				path["i"][time] = path["i"][time] + Damount
 			else
-				if path["i"][4]>0 then
-					path["i"][1] = path["i"][1]..strformat("%.1f", path["i"][3]-self.precision)..","
-					path["i"][2] = path["i"][2]..path["i"][4]..","
-				end
-				path["i"][3] = DPSMateCombatTime[val]+self.precision
-				path["i"][4] = Damount
+				path["i"][time] = Damount
 			end
 		end
 	end
@@ -1397,12 +1367,7 @@ function DPSMate.DB:HealingTaken(arr, Duser, Dname, Dhit, Dcrit, Damount, target
 				[7] = 0, -- hitMax
 				[8] = 0, -- critMin
 				[9] = 0, -- critMax
-				["i"] = {
-					[1] = "",
-					[2] = "",
-					[3] = 0, -- start timestamp
-					[4] = 0, -- app value
-				}
+				["i"] = {}
 			}
 		end
 		local path = arr[cat][DPSMateUser[Duser][1]][DPSMateUser[target][1]][DPSMateAbility[Dname][1]]
@@ -1429,15 +1394,11 @@ function DPSMate.DB:HealingTaken(arr, Duser, Dname, Dhit, Dcrit, Damount, target
 		end
 		arr[cat][DPSMateUser[Duser][1]]["i"] = arr[cat][DPSMateUser[Duser][1]]["i"]+Damount
 		if Damount > 0 then 
-			if path["i"][3]>DPSMateCombatTime[val] then
-				path["i"][4] = path["i"][4] + Damount
+			time = floor(DPSMateCombatTime[val])
+			if path["i"][time] then
+				path["i"][time] = path["i"][time] + Damount
 			else
-				if path["i"][4]>0 then
-					path["i"][1] = path["i"][1]..strformat("%.1f", path["i"][3]-self.precision)..","
-					path["i"][2] = path["i"][2]..path["i"][4]..","
-				end
-				path["i"][3] = DPSMateCombatTime[val]+self.precision
-				path["i"][4] = Damount
+				path["i"][time] = Damount
 			end
 		end
 	end
