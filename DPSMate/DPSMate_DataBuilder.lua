@@ -1328,7 +1328,7 @@ function DPSMate.DB:Healing(mode, arr, Duser, Dname, Dhit, Dcrit, Damount)
 			end
 		end
 		if Damount > 0 then 
-			time = floor(DPSMateCombatTime[val])
+			local time = floor(DPSMateCombatTime[val])
 			if path["i"][time] then
 				path["i"][time] = path["i"][time] + Damount
 			else
@@ -1394,7 +1394,7 @@ function DPSMate.DB:HealingTaken(arr, Duser, Dname, Dhit, Dcrit, Damount, target
 		end
 		arr[cat][DPSMateUser[Duser][1]]["i"] = arr[cat][DPSMateUser[Duser][1]]["i"]+Damount
 		if Damount > 0 then 
-			time = floor(DPSMateCombatTime[val])
+			local time = floor(DPSMateCombatTime[val])
 			if path["i"][time] then
 				path["i"][time] = path["i"][time] + Damount
 			else

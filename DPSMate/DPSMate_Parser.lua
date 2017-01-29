@@ -530,22 +530,20 @@ end
 -- The totem aura just reports a removed event in the chat.
 -- Maybe we can guess here?
 function DPSMate.Parser:UnitAuraDispels(unit)
-	for i=1, 16 do
+	for i=1, 4 do
+		--DPSMate_Tooltip:SetOwner(UIParent, "ANCHOR_NONE")
+		DPSMate_Tooltip:ClearLines()
+		--DPSMate_Tooltip:SetUnitDebuff(unit, i, "HARMFUL")
+		DPSMate_Tooltip:SetPlayerBuff(GetPlayerBuff(i, "HARMFUL"))
+		local aura = DPSMate_TooltipTextLeft1:GetText()
+		--local type = DPSMate_TooltipTextRight1:GetText()
+		DPSMate_Tooltip:Hide()
+		if not aura then break end
 		local _, _, debuffDispelType = UnitDebuff("player", i);
 		if debuffDispelType then
 			DB:BuildAbility(aura, debuffDispelType)
 			DPSMateAbility[aura][2] = debuffDispelType
 		end
-		--[[
-		DPSMate_Tooltip:SetOwner(UIParent, "ANCHOR_NONE")
-		DPSMate_Tooltip:ClearLines()
-		--DPSMate_Tooltip:SetUnitDebuff(unit, i, "HARMFUL")
-		DPSMate_Tooltip:SetPlayerBuff(GetPlayerBuff(i, "HARMFUL"))
-		local aura = DPSMate_TooltipTextLeft1:GetText()
-		local type = DPSMate_TooltipTextRight1:GetText()
-		DPSMate_Tooltip:Hide()
-		if not aura then break end
-		--]]
 	end
 end
 
