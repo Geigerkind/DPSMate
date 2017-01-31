@@ -3323,7 +3323,7 @@ local npcs = {
 	["Unknown"] = true,
 }
 
-DPSMate.NPCDB = {}
-function DPSMate.NPCDB:Contains(name)
+NPCDB = {}
+function NPCDB:Contains(name)
 	return npcs[name]
 end

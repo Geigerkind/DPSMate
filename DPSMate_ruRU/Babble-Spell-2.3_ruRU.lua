@@ -941,7 +941,7 @@ local translation = {
 	["Disease Cloud"] = 'Болезнетворное облако',
 	["Virulent Poison"] = 'Жестокий яд',
 	["Web Spray"] = 'Летящая паутина',
-	["Curse of Tuten'kash"] = 'Проклятие Тутен'каш',
+	["Curse of Tuten'kash"] = 'Проклятие Тутен\'каш',
 	["Breath of Fire"] = 'Дыхание Огня',
 	["Summon Shadowcaster"] = 'Вызов темного чародея',
 	["Acid of Hakkar"] = 'Кислота Хаккара',
@@ -982,8 +982,8 @@ local translation = {
 	["Solid Dynamite"] = 'Твердый динамит',
 	["Summon Skeletal Servant"] = 'Призыв скелета-слуги',
 	["Cold Snap"] = 'Холодная хватка',
-	["Hex of Jammal'an"] = 'Проклятие Джаммал'ана',
-	["Atal'ai Skeleton Totem"] = 'Тотем скелета из племени Атал'ай',
+	["Hex of Jammal'an"] = "Проклятие Джаммал'ана",
+	["Atal'ai Skeleton Totem"] = 'Тотем скелета из племени Атал\'ай',
 	["Chilling Touch"] = 'Леденящее прикосновение',
 	["Frailty"] = 'Немощь',
 	["Clearcasting"] = 'Ясность мысли',
@@ -1047,7 +1047,7 @@ local translation = {
 	["Summon Warhorse"] = 'Вызов боевого коня',
 	["Blade Flurry"] = 'Шквал клинков',
 	["Magma Splash"] = 'Выплеск магмы',
-	["Summon Spawn of Bael'Gar"] = 'Вызов порождения Бал'Гора',
+	["Summon Spawn of Bael'Gar"] = 'Вызов порождения Бал\'Гора',
 	["Fiery Weapon"] = 'Огненное оружие',
 	["Fiery Burst"] = 'Выброс огня',
 	["Fist of Ragnaros"] = 'Кулак Рагнароса',
@@ -1686,13 +1686,13 @@ local translation = {
 	["King of the Gordok"] = 'Король Гордока',
 	["Opening - No Text"] = 'Открытие - без текста',
 	["Fengus' Ferocity"] = 'Свирепость Фенгуса',
-	["Mol'dar's Moxie"] = 'Дерзость Мол'дара',
-	["Slip'kik's Savvy"] = 'Смекалка Слип'кика',
+	["Mol'dar's Moxie"] = 'Дерзость Мол\'дара',
+	["Slip'kik's Savvy"] = 'Смекалка Слип\'кика',
 	["Booze Spit"] = 'Пьяный плевок',
 	["Frenzied Regeneration"] = 'Неистовое восстановление',
 	["Mortal Cleave"] = 'Смертельный раскол',
 	["Rallying Cry of the Dragonslayer"] = 'Ободряющий клич Драконоборца',
-	["Eye of Immol'thar"] = 'Око Бессмер'тера',
+	["Eye of Immol'thar"] = 'Око Бессмер\'тера',
 	["Fire Vulnerability"] = 'Уязвимость к огню',
 	["Plague"] = 'Чума',
 	["Arcane Brilliance"] = 'Чародейская гениальность',
@@ -1779,13 +1779,13 @@ local translation = {
 	["Brain Wash"] = 'Зомбирование',
 	["Mar'li's Brain Boost"] = 'Стимулятор мозга Марли',
 	["Monster Slaying"] = 'Убийство монстров',
-	["Delusions of Jin'do"] = 'Иллюзии Джин'до',
+	["Delusions of Jin'do"] = 'Иллюзии Джин\'до',
 	["Powerful Healing Ward"] = 'Могущественный исцеляющий идол',
 	["Threatening Gaze"] = 'Угрожающий взгляд',
 	["Guillotine"] = 'Гильотина',
 	["Poisonous Blood"] = 'Ядовитая кровь',
 	["Blood Siphon"] = 'Кровавый насос',
-	["Gahz'ranka Slam"] = 'Хлопушка Газ'ранки',
+	["Gahz'ranka Slam"] = 'Хлопушка Газ\'ранки',
 	["Corrupted Blood"] = 'Порченая кровь',
 	["Meteor"] = 'Метеор',
 	["Master Angler"] = 'Лучший рыболов',
@@ -2122,7 +2122,7 @@ local spellIcons = {
 	['Щит лавы'] = "spell_fire_immolation",
 	['Дыхание'] = "spell_fire_fire",
 	['Гильотина'] = "ability_warrior_punishingblow",
-	['Хлопушка Газ'ранки'] = "ability_devour",
+	['Хлопушка Газ\'ранки'] = "ability_devour",
 	['Тысяча Клинков'] = "inv-sword_53",
 	['Широкий взмах'] = "ability_warrior_cleave",
 	['Сотрясение'] = "temp",
@@ -2539,12 +2539,12 @@ local spellIcons = {
 	['Струя пара'] = "ability_hibernation",
 	['Разрыв мышц'] = "ability_gouge",
 	['Призыв слизнюченыша'] = "spell_nature_abolishmagic",
-	['Проклятие Тутен'каш'] = "spell_nature_drowsy",
+	['Проклятие Тутен\'каш'] = "spell_nature_drowsy",
 	['Вызов темного чародея'] = "spell_shadow_raisedead",
 	['Кислота Хаккара'] = "spell_nature_acid_01",
 	['Призыв скелета-слуги'] = "spell_shadow_raisedead",
-	['Проклятие Джаммал'ана'] = "spell_totem_wardofdraining",
-	['Тотем скелета из племени Атал'ай'] = "spell_shadow_raisedead",
+	['Проклятие Джаммал\'ана'] = "spell_totem_wardofdraining",
+	['Тотем скелета из племени Атал\'ай'] = "spell_shadow_raisedead",
 	['Немощь'] = "spell_shadow_animatedead",
 	['Стражи Хукку'] = "spell_shadow_summonvoidwalker",
 	['Взмах крыла'] = "spell_nature_earthbind",
@@ -2554,7 +2554,7 @@ local spellIcons = {
 	['Проклятие Мертвого Леса'] = "spell_shadow_gathershadows",
 	['Аура поспешности'] = "spell_holy_fistofjustice",
 	['Лютый рык'] = "ability_racial_cannibalize",
-	['Вызов порождения Бал'Гора'] = "spell_fire_lavaspawn",
+	['Вызов порождения Бал\'Гора'] = "spell_fire_lavaspawn",
 	['Печать жертвы'] = "spell_holy_sealofsacrifice",
 	['Починка'] = "spell_shadow_lifedrain",
 	['Лоза-кожедер'] = "ability_warrior_cleave",
@@ -2667,7 +2667,7 @@ local spellIcons = {
 	['Каменные доспехи'] = "spell_nature_skinofearth",
 	['Вызов гидралинга'] = "spell_frost_chillingblast",
 	['Пьяный плевок'] = "inv_drink_05",
-	['Око Бессмер'тера'] = "spell_shadow_antimagicshell",
+	['Око Бессмер\'тера'] = "spell_shadow_antimagicshell",
 	['Хваткие лозы'] = "ability_golemthunderclap",
 	['Урон стойкости'] = "spell_holy_harmundeadaura",
 	['Энтропийное жало'] = "spell_nature_callstorm",
@@ -2748,7 +2748,7 @@ local spellIcons = {
 	['Вихрь'] = "spell_nature_cyclone",
 	['Метка Каззака'] = "spell_shadow_antishadow",
 	['Король Гордока'] = "inv_crown_02",
-	['Смекалка Слип'кика'] = "spell_holy_lesserheal02",
+	['Смекалка Слип\'кика'] = "spell_holy_lesserheal02",
 	['Крупный камень здоровья'] = "inv_stone_04",
 	['Интеллект'] = "spell_holy_magicalsentry",
 	['Взмах хвоста'] = "inv_misc_monsterscales_05",
@@ -2784,7 +2784,7 @@ local spellIcons = {
 	['Эликсир мангуста'] = "inv_potion_32",
 	['Большая ловкость'] = "inv_potion_94",
 	['Скорость'] = "ability_kick",
-	['Дерзость Мол'дара'] = "spell_nature_massteleport",
+	['Дерзость Мол\'дара'] = "spell_nature_massteleport",
 	['Эффект замораживающей ловушки'] = "spell_frost_chainsofice",
 	['Свирепость Фенгуса'] = "spell_nature_undyingstrength",
 	['Пламенный кнут'] = "spell_fire_flameblades",
@@ -2998,7 +2998,7 @@ local spellIcons = {
 	['Прижигание пламенем'] = "spell_fire_volcano",
 	['Ядовитая кровь'] = "spell_nature_regenerate",
 	['Отравляющий плевок'] = "spell_nature_corrosivebreath",
-	['Иллюзии Джин'до'] = "spell_shadow_unholyfrenzy",
+	['Иллюзии Джин\'до'] = "spell_shadow_unholyfrenzy",
 	['Устрашающий рев'] = "ability_golemthunderclap",
 	['Сглаз'] = "spell_shaman_hex",
 	['Опутывающие сети'] = "spell_nature_earthbind",
@@ -4091,18 +4091,20 @@ local spellIcons = {
 	['Укус виверны'] = "INV_Spear_02",
 }
 
-DPSMate.BabbleSpell = {}
-function DPSMate.BabbleSpell:GetSpellIcon(spell)
+BabbleSpell = {}
+function BabbleSpell:GetSpellIcon(spell)
 	if spellIcons[spell] then
 		return "Interface\\Icons\\" .. spellIcons[spell]
 	end
 	return nil
 end
-function DPSMate.BabbleSpell:GetTranslation(spell)
+function BabbleSpell:GetTranslation(spell)
 	if translation[spell] then
 		return translation[spell]
 	end
 	return spell
 end
+
+DPSMate.BabbleSpell = BabbleSpell
 
 end

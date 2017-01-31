@@ -76,13 +76,13 @@ DPSMate.Events = {
 DPSMate.Registered = true
 DPSMate.RegistredModules = {}
 DPSMate.ModuleNames = {}
-DPSMate.BabbleSpell = AceLibrary("DPSBabble-Spell-2.3")
-DPSMate.BabbleBoss = AceLibrary("DPSBabble-Boss-2.3")
-DPSMate.NPCDB = AceLibrary("NPCDB-1.0")
 DPSMate.UserId = nil
 DPSMate.AbilityId = nil
 DPSMate.Key = 1
 DPSMate.DelayMsg = {}
+DPSMate.BabbleSpell = BabbleSpell
+DPSMate.NPCDB = NPCDB
+DPSMate.BabbleBoss = BabbleBoss
 
 -- Local Variables
 local _G = getglobal

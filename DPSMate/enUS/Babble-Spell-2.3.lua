@@ -2063,14 +2063,14 @@ local spellIcons = {
 	["Wyvern Sting"] = "INV_Spear_02"
 }
 
-DPSMate.BabbleSpell = {}
-function DPSMate.BabbleSpell:GetSpellIcon(spell)
+BabbleSpell = {}
+function BabbleSpell:GetSpellIcon(spell)
 	if spellIcons[spell] then
 		return "Interface\\Icons\\" .. spellIcons[spell]
 	end
 	return nil
 end
 
-function DPSMate.BabbleSpell:GetTranslation(spell)
+function BabbleSpell:GetTranslation(spell)
 	return spell
 end

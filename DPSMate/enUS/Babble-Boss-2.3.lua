@@ -300,8 +300,8 @@ local bosses = {
 	["Mogor"] = true,
 }
 
-DPSMate.BabbleBoss = {}
-function DPSMate.BabbleBoss:Contains(name)
+BabbleBoss = {}
+function BabbleBoss:Contains(name)
 	return bosses[name]
 end
 
