@@ -4,22 +4,7 @@ Revision: $Rev: 17545 $
 Author(s): Shino (Geigerkind)
 Website: http://legacy-logs/
 Description: A library to provide localizations for relevant npcs.
-Dependencies: AceLibrary, AceLocale-2.3
 ]]
-
-local MAJOR_VERSION = "NPCDB-1.0"
-local MINOR_VERSION = tonumber(string.sub("$Revision: 17545 $", 12, -3))
-
-if not AceLibrary then error(MAJOR_VERSION .. " requires AceLibrary") end
-
-if not AceLibrary:HasInstance("AceLocale-2.3") then error(MAJOR_VERSION .. " requires AceLocale-2.3") end
-
-local _, x = AceLibrary("AceLocale-2.3"):GetLibraryVersion()
-MINOR_VERSION = MINOR_VERSION * 100000 + x
-
-if not AceLibrary:IsNewVersion(MAJOR_VERSION, MINOR_VERSION) then return end
-
-local NPCDB = AceLibrary("AceLocale-2.3"):new(MAJOR_VERSION)
 
 local npcs = {
 	["Waypoint"] = true,
@@ -3338,15 +3323,7 @@ local npcs = {
 	["Unknown"] = true,
 }
 
-NPCDB:Debug()
-NPCDB:SetStrictness(true)
-
-function NPCDB:Contains(name)
-	if npcs[name] or npcs[self:HasReverseTranslation(name) and self:GetReverseTranslation(name) or false] then
-		return true
-	end
-	return false
+DPSMate.NPCDB = {}
+function DPSMate.NPCDB:Contains(name)
+	return npcs[name]
 end
-
-AceLibrary:Register(NPCDB, MAJOR_VERSION, MINOR_VERSION)
-NPCDB = nil

@@ -7,23 +7,9 @@ Documentation: http://wiki.wowace.com/index.php/Babble-Spell-2.2
 SVN: http://svn.wowace.com/root/trunk/Babble-2.2/Babble-Spell-2.2
 Description: A library to provide localizations for spells.
 Dependencies: AceLibrary, AceLocale-2.2
+
+Rewritten a little and added some "bosses" by Shino
 ]]
-
-local MAJOR_VERSION = "DPSBabble-Spell-2.3"
-local MINOR_VERSION = tonumber(string.sub("$Revision: 15059 $", 12, -3))
-
-if not AceLibrary then error(MAJOR_VERSION .. " requires AceLibrary") end
-if not AceLibrary:HasInstance("AceLocale-2.3") then error(MAJOR_VERSION .. " requires AceLocale-2.3") end
-
-local _, x = AceLibrary("AceLocale-2.3"):GetLibraryVersion()
-MINOR_VERSION = MINOR_VERSION * 100000 + x
-
-if not AceLibrary:IsNewVersion(MAJOR_VERSION, MINOR_VERSION) then return end
-
-local BabbleSpell = AceLibrary("AceLocale-2.3"):new(MAJOR_VERSION)
-
--- uncomment below for debug information
--- BabbleSpell:EnableDebugging()
 
 local spellIcons = {
 	-- Adding missing ones
@@ -2077,29 +2063,14 @@ local spellIcons = {
 	["Wyvern Sting"] = "INV_Spear_02"
 }
 
-BabbleSpell:RegisterTranslations("enUS", function() 
-local temp = {}
-for c,_ in pairs(spellIcons) do
-	temp[c] = true
-end
-return temp end)
-
-BabbleSpell:Debug()
-BabbleSpell:SetStrictness(true)
-
-function BabbleSpell:GetSpellIcon(spell)
-	self:argCheck(spell, 2, "string")
-	local icon = spellIcons[spell] or spellIcons[self:HasReverseTranslation(spell) and self:GetReverseTranslation(spell) or false]
-	if not icon then
-		return nil
+DPSMate.BabbleSpell = {}
+function DPSMate.BabbleSpell:GetSpellIcon(spell)
+	if spellIcons[spell] then
+		return "Interface\\Icons\\" .. spellIcons[spell]
 	end
-	return "Interface\\Icons\\" .. icon
+	return nil
 end
 
-function BabbleSpell:GetShortSpellIcon(spell)
-	self:argCheck(spell, 2, "string")
-	return spellIcons[spell] or spellIcons[self:HasReverseTranslation(spell) and self:GetReverseTranslation(spell) or false]
+function DPSMate.BabbleSpell:GetTranslation(spell)
+	return spell
 end
-
-AceLibrary:Register(BabbleSpell, MAJOR_VERSION, MINOR_VERSION)
-BabbleSpell = nil

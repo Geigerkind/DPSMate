@@ -7,24 +7,9 @@ Documentation: http://wiki.wowace.com/index.php/Babble-Boss-2.2
 SVN: http://svn.wowace.com/root/trunk/Babble-2.2/Babble-Boss-2.2
 Description: A library to provide localizations for bosses.
 Dependencies: AceLibrary, AceLocale-2.2
+
+Rewritten a little and added some "bosses" by Shino
 ]]
-
-local MAJOR_VERSION = "DPSBabble-Boss-2.3"
-local MINOR_VERSION = tonumber(string.sub("$Revision: 17545 $", 12, -3))
-
-if not AceLibrary then error(MAJOR_VERSION .. " requires AceLibrary") end
-
-if not AceLibrary:HasInstance("AceLocale-2.3") then error(MAJOR_VERSION .. " requires AceLocale-2.3") end
-
-local _, x = AceLibrary("AceLocale-2.3"):GetLibraryVersion()
-MINOR_VERSION = MINOR_VERSION * 100000 + x
-
-if not AceLibrary:IsNewVersion(MAJOR_VERSION, MINOR_VERSION) then return end
-
-local BabbleBoss = AceLibrary("AceLocale-2.3"):new(MAJOR_VERSION)
-
--- uncomment below for debug information
--- BabbleBoss:EnableDebugging()
 
 local bosses = {
 	-- Costum bosses
@@ -315,15 +300,8 @@ local bosses = {
 	["Mogor"] = true,
 }
 
-BabbleBoss:Debug()
-BabbleBoss:SetStrictness(true)
-
-function BabbleBoss:Contains(name)
-	if bosses[name] or bosses[self:HasReverseTranslation(name) and self:GetReverseTranslation(name) or false] then
-		return true
-	end
-	return false
+DPSMate.BabbleBoss = {}
+function DPSMate.BabbleBoss:Contains(name)
+	return bosses[name]
 end
 
-AceLibrary:Register(BabbleBoss, MAJOR_VERSION, MINOR_VERSION)
-BabbleBoss = nil
