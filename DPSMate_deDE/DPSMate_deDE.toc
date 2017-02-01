@@ -8,3 +8,4 @@ Babble-Spell-2.3_deDE.lua
 Babble-Boss-2.3_deDE.lua
 NPCDB-1.0_deDE.lua
 deDE.lua
+DPSMate_ParserDEDE.lua
