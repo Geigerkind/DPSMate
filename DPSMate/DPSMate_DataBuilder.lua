@@ -5,42 +5,42 @@
 -- Global Variables
 DPSMate.DB.loaded = false
 DPSMate.DB.ShieldFlags = {
-	[DPSMate.BabbleSpell:GetTranslation("Power Word: Shield")] = 0, -- All
-	[DPSMate.BabbleSpell:GetTranslation("Ice Barrier")] = 0, -- All
-	[DPSMate.BabbleSpell:GetTranslation("The Burrower's Shell")] = 0, -- All
-	[DPSMate.BabbleSpell:GetTranslation("Aura of Protection")] = 0, -- All
-	[DPSMate.BabbleSpell:GetTranslation("Damage Absorb")] = 0, -- All
-	[DPSMate.BabbleSpell:GetTranslation("Physical Protection")] = 1, -- Meele
-	[DPSMate.BabbleSpell:GetTranslation("Harm Prevention Belt")] = 0, -- All
-	[DPSMate.BabbleSpell:GetTranslation("Mana Shield")] = 1, -- Meele
-	[DPSMate.BabbleSpell:GetTranslation("Frost Protection")] = 2, -- Frost
-	[DPSMate.BabbleSpell:GetTranslation("Frost Resistance")] = 2, -- Frost
-	[DPSMate.BabbleSpell:GetTranslation("Frost Ward")] = 2, -- Frost
-	[DPSMate.BabbleSpell:GetTranslation("Fire Protection")] = 3, -- Fire
-	[DPSMate.BabbleSpell:GetTranslation("Fire Ward")] = 3, -- Fire
-	[DPSMate.BabbleSpell:GetTranslation("Nature Protection")] = 4, -- Nature
-	[DPSMate.BabbleSpell:GetTranslation("Shadow Protection")] = 5, -- Shadow
-	[DPSMate.BabbleSpell:GetTranslation("Arcane Protection")] = 6, -- Arcane
-	[DPSMate.BabbleSpell:GetTranslation("Holy Protection")] = 7, -- Holy
+	["Power Word: Shield"] = 0, -- All
+	["Ice Barrier"] = 0, -- All
+	["The Burrower's Shell"] = 0, -- All
+	["Aura of Protection"] = 0, -- All
+	["Damage Absorb"] = 0, -- All
+	["Physical Protection"] = 1, -- Meele
+	["Harm Prevention Belt"] = 0, -- All
+	["Mana Shield"] = 1, -- Meele
+	["Frost Protection"] = 2, -- Frost
+	["Frost Resistance"] = 2, -- Frost
+	["Frost Ward"] = 2, -- Frost
+	["Fire Protection"] = 3, -- Fire
+	["Fire Ward"] = 3, -- Fire
+	["Nature Protection"] = 4, -- Nature
+	["Shadow Protection"] = 5, -- Shadow
+	["Arcane Protection"] = 6, -- Arcane
+	["Holy Protection"] = 7, -- Holy
 }
 DPSMate.DB.FixedShieldAmounts = {
-	[DPSMate.BabbleSpell:GetTranslation("Power Word: Shield")] = 1000, -- All
-	[DPSMate.BabbleSpell:GetTranslation("Ice Barrier")] = 818, -- All
-	[DPSMate.BabbleSpell:GetTranslation("The Burrower's Shell")] = 900, -- All
-	[DPSMate.BabbleSpell:GetTranslation("Aura of Protection")] = 1000, -- All
-	[DPSMate.BabbleSpell:GetTranslation("Damage Absorb")] = 550, -- All
-	[DPSMate.BabbleSpell:GetTranslation("Physical Protection")] = 500, -- Meele
-	[DPSMate.BabbleSpell:GetTranslation("Harm Prevention Belt")] = 500, -- All
-	[DPSMate.BabbleSpell:GetTranslation("Mana Shield")] = 570, -- Meele
-	[DPSMate.BabbleSpell:GetTranslation("Frost Protection")] = 2500, -- Frost
-	[DPSMate.BabbleSpell:GetTranslation("Frost Resistance")] = 600, -- Frost
-	[DPSMate.BabbleSpell:GetTranslation("Frost Ward")] = 920, -- Frost
-	[DPSMate.BabbleSpell:GetTranslation("Fire Protection")] = 2500, -- Fire
-	[DPSMate.BabbleSpell:GetTranslation("Fire Ward")] = 920, -- Fire
-	[DPSMate.BabbleSpell:GetTranslation("Nature Protection")] = 2500, -- Nature
-	[DPSMate.BabbleSpell:GetTranslation("Shadow Protection")] = 2500, -- Shadow
-	[DPSMate.BabbleSpell:GetTranslation("Arcane Protection")] = 2500, -- Arcane
-	[DPSMate.BabbleSpell:GetTranslation("Holy Protection")] = 2500, -- Holy
+	["Power Word: Shield"] = 1000, -- All
+	["Ice Barrier"] = 818, -- All
+	["The Burrower's Shell"] = 900, -- All
+	["Aura of Protection"] = 1000, -- All
+	["Damage Absorb"] = 550, -- All
+	["Physical Protection"] = 500, -- Meele
+	["Harm Prevention Belt"] = 500, -- All
+	["Mana Shield"] = 570, -- Meele
+	["Frost Protection"] = 2500, -- Frost
+	["Frost Resistance"] = 600, -- Frost
+	["Frost Ward"] = 920, -- Frost
+	["Fire Protection"] = 2500, -- Fire
+	["Fire Ward"] = 920, -- Fire
+	["Nature Protection"] = 2500, -- Nature
+	["Shadow Protection"] = 2500, -- Shadow
+	["Arcane Protection"] = 2500, -- Arcane
+	["Holy Protection"] = 2500, -- Holy
 }
 local AbilityFlags = {
 	["fire"] = 3,
@@ -102,9 +102,9 @@ local strfind = string.find
 local UL = UnitLevel
 local slower = strlower
 local strformat = string.format
-local windfuryab = {
-	[DPSMate.BabbleSpell:GetTranslation("Windfury Weapon")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Windfury Totem")] = true,
+DPSMate.DB.windfuryab = {
+	["Windfury Weapon"] = true,
+	["Windfury Totem"] = true,
 }
 
 -- Begin Functions
@@ -744,39 +744,39 @@ function DPSMate.DB:BuildAbility(name, kind, school)
 end
 
 -- KTMHOOK
-local specialAbTrans = {
-	["heroicstrike"] = DPSMate.BabbleSpell:GetTranslation("Heroic Strike"),
-	["maul"] = DPSMate.BabbleSpell:GetTranslation("Maul"),	
-	["swipe"] = DPSMate.BabbleSpell:GetTranslation("Swipe"),
-	["shieldslam"] = DPSMate.BabbleSpell:GetTranslation("Shield Slam"),
-	["revenge"] = DPSMate.BabbleSpell:GetTranslation("Revenge"),
-	["shieldbash"] = DPSMate.BabbleSpell:GetTranslation("Shield Bash"),
-	["sunder"] = DPSMate.BabbleSpell:GetTranslation("Sunder Armor"),
-	["cleave"] = DPSMate.BabbleSpell:GetTranslation("Cleave"),
-	--["feint"] = DPSMate.BabbleSpell:GetTranslation("Feint"),
-	--["cower"] = DPSMate.BabbleSpell:GetTranslation("Cower"),
-	["searingpain"] = DPSMate.BabbleSpell:GetTranslation("Searing Pain"),
-	["earthshock"] = DPSMate.BabbleSpell:GetTranslation("Earth Shock"),
-	["mindblast"] = DPSMate.BabbleSpell:GetTranslation("Mind Blast"),
-	["holyshield"] = DPSMate.BabbleSpell:GetTranslation("Holy Shield"),
-	--["distractingshot"] = DPSMate.BabbleSpell:GetTranslation("Distracting Shot"),
-	["heroicstrike"] = DPSMate.BabbleSpell:GetTranslation("Heroic Strike"),
-	["thunderfury"] = DPSMate.BabbleSpell:GetTranslation("Thunderfury"),
-	["graceofearth"] = DPSMate.BabbleSpell:GetTranslation("Grace of Earth"),
-	["blackamnesty"] = DPSMate.BabbleSpell:GetTranslation("Black Amnesty"),
-	["whitedamage"] = DPSMate.BabbleSpell:GetTranslation("AutoAttack"),
+DPSMate.DB.specialAbTrans = {
+	["heroicstrike"] = "Heroic Strike",
+	["maul"] = "Maul",	
+	["swipe"] = "Swipe",
+	["shieldslam"] = "Shield Slam",
+	["revenge"] = "Revenge",
+	["shieldbash"] = "Shield Bash",
+	["sunder"] = "Sunder Armor",
+	["cleave"] = "Cleave",
+	--["feint"] = "Feint",
+	--["cower"] = "Cower",
+	["searingpain"] = "Searing Pain",
+	["earthshock"] = "Earth Shock",
+	["mindblast"] = "Mind Blast",
+	["holyshield"] = "Holy Shield",
+	--["distractingshot"] = "Distracting Shot",
+	["heroicstrike"] = "Heroic Strike",
+	["thunderfury"] = "Thunderfury",
+	["graceofearth"] = "Grace of Earth",
+	["blackamnesty"] = "Black Amnesty",
+	["whitedamage"] = "AutoAttack",
 }
 
 if klhtm then
 	local oldModSpecialAttack = klhtm.combat.specialattack
 	klhtm.combat.specialattack = function(abilityid, target, damage, iscrit, spellschool)
 		oldModSpecialAttack(abilityid, target, damage, iscrit, spellschool)
-		if specialAbTrans[abilityid] then
-			if not DPSMate.DB.KTMHOOK[specialAbTrans[abilityid]] then
-				DPSMate.DB.KTMHOOK[specialAbTrans[abilityid]] = {}
+		if DPSMate.DB.specialAbTrans[abilityid] then
+			if not DPSMate.DB.KTMHOOK[DPSMate.DB.specialAbTrans[abilityid]] then
+				DPSMate.DB.KTMHOOK[DPSMate.DB.specialAbTrans[abilityid]] = {}
 			end
-			tinsert(DPSMate.DB.KTMHOOK[specialAbTrans[abilityid]], {target, klhtm.combat.event.threat})
-			DPSMate.DB:Threat(player, specialAbTrans[abilityid], target, klhtm.combat.event.threat, 1)
+			tinsert(DPSMate.DB.KTMHOOK[DPSMate.DB.specialAbTrans[abilityid]], {target, klhtm.combat.event.threat})
+			DPSMate.DB:Threat(player, DPSMate.DB.specialAbTrans[abilityid], target, klhtm.combat.event.threat, 1)
 		end
 	end
 
@@ -958,7 +958,7 @@ end
 
 -- First crit/hit av value will be half if it is not the first hit actually. Didnt want to add an exception for it though. Maybe later :/
 local CastsBuffer = {[1]={[1]={},[2]={}},[2]={[1]={},[2]={}},[3]={[1]={},[2]={}}}
-local AAttack = DPSMate.BabbleSpell:GetTranslation("AutoAttack")
+DPSMate.DB.AAttack = "AutoAttack"
 local hackOrder, hackOrder2 = {}, {}
 function DPSMate.DB:DamageDone(Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, Ddodge, Dresist, Damount, Dglance, Dblock)
 	if self:BuildUser(Duser, nil) or self:BuildAbility(Dname, nil) then return end -- Attempt to fix this problem?
@@ -970,11 +970,11 @@ function DPSMate.DB:DamageDone(Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, Ddodge,
 	
 	-- Part to take extra swings as abilities into account
 	if self.NextSwing[Duser] then
-		if Dname == AAttack and self.NextSwing[Duser][1]>0 and ((hackOrder[Duser] and windfuryab[self.NextSwing[Duser][2]]) or not windfuryab[self.NextSwing[Duser][2]]) then
+		if Dname == self.AAttack and self.NextSwing[Duser][1]>0 and ((hackOrder[Duser] and self.windfuryab[self.NextSwing[Duser][2]]) or not self.windfuryab[self.NextSwing[Duser][2]]) then
 			Dname = self.NextSwing[Duser][2]
 			self.NextSwing[Duser][1] = self.NextSwing[Duser][1] - 1
 			hackOrder[Duser] = true
-		elseif Dname == AAttack and self.NextSwing[Duser][1]>0 and not hackOrder[Duser] and windfuryab[self.NextSwing[Duser][2]] then
+		elseif Dname == self.AAttack and self.NextSwing[Duser][1]>0 and not hackOrder[Duser] and self.windfuryab[self.NextSwing[Duser][2]] then
 			hackOrder[Duser] = true
 		else
 			hackOrder[Duser] = false
@@ -1179,10 +1179,10 @@ function DPSMate.DB:EnemyDamage(mode, arr, Duser, Dname, Dhit, Dcrit, Dmiss, Dpa
 	if mode then
 		-- Part to take extra swings as abilities into account
 		if self.NextSwingEDD[Duser] then
-			if Dname == AAttack and self.NextSwingEDD[Duser][1]>0 and ((hackOrder2[Duser] and windfuryab[self.NextSwingEDD[Duser][2]]) or not windfuryab[self.NextSwingEDD[Duser][2]]) then
+			if Dname == self.AAttack and self.NextSwingEDD[Duser][1]>0 and ((hackOrder2[Duser] and self.windfuryab[self.NextSwingEDD[Duser][2]]) or not self.windfuryab[self.NextSwingEDD[Duser][2]]) then
 				Dname = self.NextSwingEDD[Duser][2]
 				self.NextSwingEDD[Duser][1] = self.NextSwingEDD[Duser][1] - 1
-			elseif Dname == AAttack and self.NextSwingEDD[Duser][1]>0 and not hackOrder2[Duser] and windfuryab[self.NextSwingEDD[Duser][2]] then
+			elseif Dname == self.AAttack and self.NextSwingEDD[Duser][1]>0 and not hackOrder2[Duser] and self.windfuryab[self.NextSwingEDD[Duser][2]] then
 				hackOrder2[Duser] = true
 			else
 				hackOrder2[Duser] = false
@@ -1423,16 +1423,16 @@ end
 -- Weasel casts Frostbolt. -> Game: Can FPP absorb the FD? Yes -> Go for it. (The Power Word Shield is ignored until FPP fades)
 -- What if a shield is refreshed
 local Await = {}
-local realAbility = {
-	[DPSMate.BabbleSpell:GetTranslation("Greater Fire Protection Potion")] = DPSMate.BabbleSpell:GetTranslation("Fire Protection"),
-	[DPSMate.BabbleSpell:GetTranslation("Greater Frost Protection Potion")] = DPSMate.BabbleSpell:GetTranslation("Frost Protection"),
-	[DPSMate.BabbleSpell:GetTranslation("Greater Nature Protection Potion")] = DPSMate.BabbleSpell:GetTranslation("Nature Protection"),
-	[DPSMate.BabbleSpell:GetTranslation("Greater Holy Protection Potion")] = DPSMate.BabbleSpell:GetTranslation("Holy Protection"),
-	[DPSMate.BabbleSpell:GetTranslation("Greater Shadow Protection Potion")] = DPSMate.BabbleSpell:GetTranslation("Shadow Protection"),
-	[DPSMate.BabbleSpell:GetTranslation("Greater Arcane Protection Potion")] = DPSMate.BabbleSpell:GetTranslation("Arcane Protection"),
+DPSMate.DB.realAbility = {
+	["Greater Fire Protection Potion"] = "Fire Protection",
+	["Greater Frost Protection Potion"] = "Frost Protection",
+	["Greater Nature Protection Potion"] = "Nature Protection",
+	["Greater Holy Protection Potion"] = "Holy Protection",
+	["Greater Shadow Protection Potion"] = "Shadow Protection",
+	["Greater Arcane Protection Potion"] = "Arcane Protection",
 }
 function DPSMate.DB:AwaitingAbsorbConfirmation(owner, ability, abilityTarget, time)
-	tinsert(Await, {owner, realAbility[ability] or ability, abilityTarget, time})
+	tinsert(Await, {owner, self.realAbility[ability] or ability, abilityTarget, time})
 	--DPSMate:SendMessage(time)
 	--DPSMate:SendMessage("Awaiting confirmation!")
 end
@@ -1660,17 +1660,17 @@ end
 -- /script DPSMate.DB:ConfirmDispel("Frostbolt", "Shino", 1.2)
 
 local AwaitHotDispel = {}
-local Restor = DPSMate.BabbleSpell:GetTranslation("Restoration")
-local RPotion = DPSMate.BabbleSpell:GetTranslation("Restorative Potion")
-local PFication = DPSMate.BabbleSpell:GetTranslation("Purification")
-local PPotion = DPSMate.BabbleSpell:GetTranslation("Purification Potion")
+DPSMate.DB.Restor = "Restoration"
+DPSMate.DB.RPotion = "Restorative Potion"
+DPSMate.DB.PFication = "Purification"
+DPSMate.DB.PPotion = "Purification Potion"
 function DPSMate.DB:AwaitHotDispel(ability, target, cause, time)
-	if ability == RPotion then
-		ability = Restor
+	if ability == self.RPotion then
+		ability = self.Restor
 		target = cause
 	end
-	if ability == PPotion then
-		ability = PFication
+	if ability == self.PPotion then
+		ability = self.PFication
 		target = cause
 	end
 	tinsert(AwaitHotDispel, {cause, target, ability, time})

@@ -991,41 +991,41 @@ function DPSMate.Parser:GetTarget()
 end
 
 -- Hooking useaction function in order to get the owner of the spell.
-local OverTimeDispels = {
-	[DPSMate.BabbleSpell:GetTranslation("Abolish Poison")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Abolish Disease")] = true,
+DPSMate.Sync.OverTimeDispels = {
+	["Abolish Poison"] = true,
+	["Abolish Disease"] = true,
 }
-local AbsorbAbilities = {
-	[DPSMate.BabbleSpell:GetTranslation("Greater Fire Protection Potion")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Greater Frost Protection Potion")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Greater Nature Protection Potion")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Greater Holy Protection Potion")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Greater Shadow Protection Potion")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Greater Arcane Protection Potion")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Power Word: Shield")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Ice Barrier")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("The Burrower's Shell")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Aura of Protection")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Damage Absorb")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Physical Protection")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Harm Prevention Belt")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Mana Shield")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Frost Protection")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Frost Resistance")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Frost Ward")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Fire Protection")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Fire Ward")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Nature Protection")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Shadow Protection")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Arcane Protection")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Holy Protection")] = true,
+DPSMate.Sync.AbsorbAbilities = {
+	["Greater Fire Protection Potion"] = true,
+	["Greater Frost Protection Potion"] = true,
+	["Greater Nature Protection Potion"] = true,
+	["Greater Holy Protection Potion"] = true,
+	["Greater Shadow Protection Potion"] = true,
+	["Greater Arcane Protection Potion"] = true,
+	["Power Word: Shield"] = true,
+	["Ice Barrier"] = true,
+	["The Burrower's Shell"] = true,
+	["Aura of Protection"] = true,
+	["Damage Absorb"] = true,
+	["Physical Protection"] = true,
+	["Harm Prevention Belt"] = true,
+	["Mana Shield"] = true,
+	["Frost Protection"] = true,
+	["Frost Resistance"] = true,
+	["Frost Ward"] = true,
+	["Fire Protection"] = true,
+	["Fire Ward"] = true,
+	["Nature Protection"] = true,
+	["Shadow Protection"] = true,
+	["Arcane Protection"] = true,
+	["Holy Protection"] = true,
 }
-local OtherAbilities = {
-	[DPSMate.BabbleSpell:GetTranslation("Banish")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Curse of Recklessness")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Curse of the Elements")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Curse of Tongues")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Curse of Shadow")] = true,
+DPSMate.Sync.OtherAbilities = {
+	["Banish"] = true,
+	["Curse of Recklessness"] = true,
+	["Curse of the Elements"] = true,
+	["Curse of Tongues"] = true,
+	["Curse of Shadow"] = true,
 }
 DPSMate.Parser.SendSpell = {}
 local oldUseAction = UseAction
@@ -1035,7 +1035,7 @@ DPSMate.Parser.UseAction = function(slot, checkCursor, onSelf)
 	DPSMate_Tooltip:SetAction(slot)
 	local aura = DPSMate_TooltipTextLeft1:GetText()
 	local target = DPSMate.Parser:GetTarget()
-	if aura and target and (OverTimeDispels[aura] or AbsorbAbilities[aura] or OtherAbilities[aura]) and not DPSMate.Parser.SendSpell[aura] then
+	if aura and target and (DPSMate.Sync.OverTimeDispels[aura] or DPSMate.Sync.AbsorbAbilities[aura] or DPSMate.Sync.OtherAbilities[aura]) and not DPSMate.Parser.SendSpell[aura] then
 	--if aura and target and not DPSMate.Parser.SendSpell[aura] then
 		--DPSMate:SendMessage("Send:"..aura.." with target: "..target)
 		SDM("DPSMate"..DPSMate.SYNCVERSION, aura..","..target..",", "RAID")
@@ -1056,7 +1056,7 @@ UseAction = DPSMate.Parser.UseAction
 local oldCastSpellByName = CastSpellByName
 DPSMate.Parser.CastSpellByName = function(spellName, onSelf)
 	local target = DPSMate.Parser:GetTarget()
-	if target and (OverTimeDispels[spellName] or AbsorbAbilities[spellName] or OtherAbilities[spellName]) and not DPSMate.Parser.SendSpell[spellName] then 
+	if target and (DPSMate.Sync.OverTimeDispels[spellName] or DPSMate.Sync.AbsorbAbilities[spellName] or DPSMate.Sync.OtherAbilities[spellName]) and not DPSMate.Parser.SendSpell[spellName] then 
 		SDM("DPSMate"..DPSMate.SYNCVERSION, spellName..","..target..",", "RAID")
 		DPSMate.Parser.SendSpell[spellName] = true
 	end
@@ -1074,7 +1074,7 @@ local oldCastSpell = CastSpell
 DPSMate.Parser.CastSpell = function(spellID, spellbookType)
 	local spellName, spellRank = GetSpellName(spellID, spellbookType)
 	local target = DPSMate.Parser:GetTarget()
-	if target and (OverTimeDispels[spellName] or AbsorbAbilities[spellName] or OtherAbilities[spellName]) and not DPSMate.Parser.SendSpell[spellName] then 
+	if target and (DPSMate.Sync.OverTimeDispels[spellName] or DPSMate.Sync.AbsorbAbilities[spellName] or DPSMate.Sync.OtherAbilities[spellName]) and not DPSMate.Parser.SendSpell[spellName] then 
 		SDM("DPSMate"..DPSMate.SYNCVERSION, spellName..","..target..",", "RAID")
 		DPSMate.Parser.SendSpell[spellName] = true
 	end
@@ -1616,7 +1616,6 @@ DPSMate.Sync.Exec = {
 		strgsub(arg2, "(.-),", func) -- name, aura, target, time
 		t[3] = GT()
 	
-		--t[2] = npctra:GetTranslation(t[2]) or t[2]
 		DB:AwaitAfflicted(arg4, t[1], t[2], t[3])
 		if DPSMate.Parser.HotDispels[t[1]] then DB:AwaitHotDispel(t[1], t[2], arg4, t[3]) end
 		DB:AwaitingBuff(arg4, t[1], t[2], t[3])

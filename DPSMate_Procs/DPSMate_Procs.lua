@@ -15,39 +15,39 @@ DPSMate:Register("procs", DPSMate.Modules.Procs, DPSMate.L["procs"])
 
 local tinsert = table.insert
 local strformat = string.format
-local nonProcProcs = {
-	[DPSMate.BabbleSpell:GetTranslation("Holy Strength")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Felstriker")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Sanctuary")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Fury of Forgewright")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Primal Blessing")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Spinal Reaper")] = true, -- To test
-	[DPSMate.BabbleSpell:GetTranslation("Netherwind Focus")] = true, -- To test
-	[DPSMate.BabbleSpell:GetTranslation("Parry")] = true, -- To test
-	[DPSMate.BabbleSpell:GetTranslation("Untamed Fury")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Aura of the Blue Dragon")] = true, -- Mana Darkmoon card
-	[DPSMate.BabbleSpell:GetTranslation("Invigorate")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Head Rush")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Enigma Resist Bonus")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Enigma Blizzard Bonus")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Not There")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Epiphany")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Inspiration")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Blessed Recovery")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Focused Casting")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Clearcasting")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Nature's Grace")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Battlegear of Eternal Justice")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Redoubt")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Vengeance")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Stormcaller's Wrath")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Ancestral Healing")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Vampirism")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Nightfall")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Cheat Death")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Flurry")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Enrage")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Quick Shots")] = true,
+DPSMate.Modules.Procs.nonProcProcs = {
+	["Holy Strength"] = true,
+	["Felstriker"] = true,
+	["Sanctuary"] = true,
+	["Fury of Forgewright"] = true,
+	["Primal Blessing"] = true,
+	["Spinal Reaper"] = true, -- To test
+	["Netherwind Focus"] = true, -- To test
+	["Parry"] = true, -- To test
+	["Untamed Fury"] = true,
+	["Aura of the Blue Dragon"] = true, -- Mana Darkmoon card
+	["Invigorate"] = true,
+	["Head Rush"] = true,
+	["Enigma Resist Bonus"] = true,
+	["Enigma Blizzard Bonus"] = true,
+	["Not There"] = true,
+	["Epiphany"] = true,
+	["Inspiration"] = true,
+	["Blessed Recovery"] = true,
+	["Focused Casting"] = true,
+	["Clearcasting"] = true,
+	["Nature's Grace"] = true,
+	["Battlegear of Eternal Justice"] = true,
+	["Redoubt"] = true,
+	["Vengeance"] = true,
+	["Stormcaller's Wrath"] = true,
+	["Ancestral Healing"] = true,
+	["Vampirism"] = true,
+	["Nightfall"] = true,
+	["Cheat Death"] = true,
+	["Flurry"] = true,
+	["Enrage"] = true,
+	["Quick Shots"] = true,
 }
 
 function DPSMate.Modules.Procs:GetSortedTable(arr,k)
@@ -57,7 +57,7 @@ function DPSMate.Modules.Procs:GetSortedTable(arr,k)
 			local CV = 0
 			for ca, va in pairs(val) do -- 3 ability
 				local name = DPSMate:GetAbilityById(ca)
-				if (DPSMate.Parser.procs[name] and va[4]) or nonProcProcs[name] or DPSMate.Parser.DmgProcs[name] then
+				if (DPSMate.Parser.procs[name] and va[4]) or self.nonProcProcs[name] or DPSMate.Parser.DmgProcs[name] then
 					for c, v in va[1] do -- 1 Ability
 						CV=CV+1
 					end
@@ -89,7 +89,7 @@ function DPSMate.Modules.Procs:EvalTable(user, k)
 	local arr = DPSMate:GetMode(k)
 	for cat, val in pairs(arr[user[1]]) do -- 3 Ability
 		local name = DPSMate:GetAbilityById(cat)
-		if (DPSMate.Parser.procs[name] and val[4]) or nonProcProcs[name] or DPSMate.Parser.DmgProcs[name] then
+		if (DPSMate.Parser.procs[name] and val[4]) or self.nonProcProcs[name] or DPSMate.Parser.DmgProcs[name] then
 			local CV = 0
 			for c, v in val[1] do -- 1 Ability
 				CV=CV+1

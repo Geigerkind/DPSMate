@@ -13,419 +13,419 @@ BINDING_NAME_DPSMATE_RESET = DPSMate.L["resetdpsmate"]
 -- Global Variables
 DPSMate.Parser.procs = {
 	-- General
-	[DPSMate.BabbleSpell:GetTranslation("Earthstrike")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Juju Flurry")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Holy Strength")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Ephemeral Power")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Chromatic Infusion")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Brittle Armor")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Unstable Power")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Zandalarian Hero Medallion")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Ascendance")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Essence of Sapphiron")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Hand of Justice")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Sword Specialization")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Bonereaver's Edge")] = true,
+	["Earthstrike"] = true,
+	["Juju Flurry"] = true,
+	["Holy Strength"] = true,
+	["Ephemeral Power"] = true,
+	["Chromatic Infusion"] = true,
+	["Brittle Armor"] = true,
+	["Unstable Power"] = true,
+	["Zandalarian Hero Medallion"] = true,
+	["Ascendance"] = true,
+	["Essence of Sapphiron"] = true,
+	["Hand of Justice"] = true,
+	["Sword Specialization"] = true,
+	["Bonereaver's Edge"] = true,
 	
 	--New
-	[DPSMate.BabbleSpell:GetTranslation("Felstriker")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Sanctuary")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Fury of Forgewright")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Primal Blessing")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Spinal Reaper")] = true, -- To test
-	[DPSMate.BabbleSpell:GetTranslation("Netherwind Focus")] = true, -- To test
-	[DPSMate.BabbleSpell:GetTranslation("Parry")] = true, -- To test
-	[DPSMate.BabbleSpell:GetTranslation("Untamed Fury")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("The Eye of Diminution")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Kiss of the Spider")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Glyph of Deflection")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("The Eye of the Dead")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Slayer's Crest")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Badge of the Swarmguard")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Arcane Shroud")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Persistent Shield")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Jom Gabbar")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("The Burrower's Shell")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Thrash")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Free Action")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Living Free Action")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Restoration")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Speed")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Invulnerability")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Aura of the Blue Dragon")] = true, -- Mana Darkmoon card
-	[DPSMate.BabbleSpell:GetTranslation("Invulnerability")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Battle Squawk")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Devilsaur Fury")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Furious Howl")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Healing Potion")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Major Rejuvenation Potion")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Mana Potion")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Restore Mana")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Dreamless Sleep")] = true,
+	["Felstriker"] = true,
+	["Sanctuary"] = true,
+	["Fury of Forgewright"] = true,
+	["Primal Blessing"] = true,
+	["Spinal Reaper"] = true, -- To test
+	["Netherwind Focus"] = true, -- To test
+	["Parry"] = true, -- To test
+	["Untamed Fury"] = true,
+	["The Eye of Diminution"] = true,
+	["Kiss of the Spider"] = true,
+	["Glyph of Deflection"] = true,
+	["The Eye of the Dead"] = true,
+	["Slayer's Crest"] = true,
+	["Badge of the Swarmguard"] = true,
+	["Arcane Shroud"] = true,
+	["Persistent Shield"] = true,
+	["Jom Gabbar"] = true,
+	["The Burrower's Shell"] = true,
+	["Thrash"] = true,
+	["Free Action"] = true,
+	["Living Free Action"] = true,
+	["Restoration"] = true,
+	["Speed"] = true,
+	["Invulnerability"] = true,
+	["Aura of the Blue Dragon"] = true, -- Mana Darkmoon card
+	["Invulnerability"] = true,
+	["Battle Squawk"] = true,
+	["Devilsaur Fury"] = true,
+	["Furious Howl"] = true,
+	["Healing Potion"] = true,
+	["Major Rejuvenation Potion"] = true,
+	["Mana Potion"] = true,
+	["Restore Mana"] = true,
+	["Dreamless Sleep"] = true,
 	
 	
 	-- Rogue
-	[DPSMate.BabbleSpell:GetTranslation("Slice and Dice")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Blade Flurry")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Sprint")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Adrenaline Rush")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Vanish")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Relentless Strikes Effect")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Ruthlessness")] = true, -- To Test!!!!
-	[DPSMate.BabbleSpell:GetTranslation("Rogue Armor Energize Effect")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Rogue Armor Energize")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Invigorate")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Head Rush")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Venomous Totem")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Evasion")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Restore Energy")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Remorseless Attacks")] = true,
+	["Slice and Dice"] = true,
+	["Blade Flurry"] = true,
+	["Sprint"] = true,
+	["Adrenaline Rush"] = true,
+	["Vanish"] = true,
+	["Relentless Strikes Effect"] = true,
+	["Ruthlessness"] = true, -- To Test!!!!
+	["Rogue Armor Energize Effect"] = true,
+	["Rogue Armor Energize"] = true,
+	["Invigorate"] = true,
+	["Head Rush"] = true,
+	["Venomous Totem"] = true,
+	["Evasion"] = true,
+	["Restore Energy"] = true,
+	["Remorseless Attacks"] = true,
 	
 	-- Mage
-	[DPSMate.BabbleSpell:GetTranslation("Arcane Power")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Combustion")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Mind Quickening")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Enigma Resist Bonus")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Enigma Blizzard Bonus")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Adaptive Warding")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Not There")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Cold Snap")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Presence of Mind")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Ice Block")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Evocation")] = true,
+	["Arcane Power"] = true,
+	["Combustion"] = true,
+	["Mind Quickening"] = true,
+	["Enigma Resist Bonus"] = true,
+	["Enigma Blizzard Bonus"] = true,
+	["Adaptive Warding"] = true,
+	["Not There"] = true,
+	["Cold Snap"] = true,
+	["Presence of Mind"] = true,
+	["Ice Block"] = true,
+	["Evocation"] = true,
 	
 	-- Priest
-	[DPSMate.BabbleSpell:GetTranslation("Power Infusion")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Oracle Healing Bonus")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Epiphany")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Aegis of Preservation")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Inspiration")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Blessed Recovery")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Focused Casting")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Spirit Tap")] = true,
+	["Power Infusion"] = true,
+	["Oracle Healing Bonus"] = true,
+	["Epiphany"] = true,
+	["Aegis of Preservation"] = true,
+	["Inspiration"] = true,
+	["Blessed Recovery"] = true,
+	["Focused Casting"] = true,
+	["Spirit Tap"] = true,
 	
 	-- Druid
-	[DPSMate.BabbleSpell:GetTranslation("Symbols of Unending Life Finisher Bonus")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Metamorphosis Rune")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Clearcasting")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Nature's Grace")] = true,
+	["Symbols of Unending Life Finisher Bonus"] = true,
+	["Metamorphosis Rune"] = true,
+	["Clearcasting"] = true,
+	["Nature's Grace"] = true,
 	
 	-- Paladin
-	[DPSMate.BabbleSpell:GetTranslation("Battlegear of Eternal Justice")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Blinding Light")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Divine Favor")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Divine Shield")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Redoubt")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Holy Shield")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Vengeance")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Blessing of Freedom")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Blessing of Sacrifice")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Blessing of Protection")] = true,
+	["Battlegear of Eternal Justice"] = true,
+	["Blinding Light"] = true,
+	["Divine Favor"] = true,
+	["Divine Shield"] = true,
+	["Redoubt"] = true,
+	["Holy Shield"] = true,
+	["Vengeance"] = true,
+	["Blessing of Freedom"] = true,
+	["Blessing of Sacrifice"] = true,
+	["Blessing of Protection"] = true,
 	
 	-- Shaman
-	[DPSMate.BabbleSpell:GetTranslation("Stormcaller's Wrath")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Nature Aligned")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Elemental Mastery")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Windfury Weapon")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Windfury Totem")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Nature's Swiftness")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Ancestral Healing")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Reincarnation")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Elemental Mastery")] = true,
+	["Stormcaller's Wrath"] = true,
+	["Nature Aligned"] = true,
+	["Elemental Mastery"] = true,
+	["Windfury Weapon"] = true,
+	["Windfury Totem"] = true,
+	["Nature's Swiftness"] = true,
+	["Ancestral Healing"] = true,
+	["Reincarnation"] = true,
+	["Elemental Mastery"] = true,
 	
 	-- Warlock
-	[DPSMate.BabbleSpell:GetTranslation("Vampirism")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Nightfall")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Soul Link")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Life Tap")] = true,
+	["Vampirism"] = true,
+	["Nightfall"] = true,
+	["Soul Link"] = true,
+	["Life Tap"] = true,
 	
 	-- Warrior
-	[DPSMate.BabbleSpell:GetTranslation("Cheat Death")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Gift of Life")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Bloodrage")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Flurry")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Enrage")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Sweeping Strikes")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Death Wish")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Recklessness")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Mighty Rage")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Great Rage")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Rage")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Berserker Rage")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Shield Wall")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Retaliation")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Diamond Flask")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Shield Block")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Last Stand")] = true,
+	["Cheat Death"] = true,
+	["Gift of Life"] = true,
+	["Bloodrage"] = true,
+	["Flurry"] = true,
+	["Enrage"] = true,
+	["Sweeping Strikes"] = true,
+	["Death Wish"] = true,
+	["Recklessness"] = true,
+	["Mighty Rage"] = true,
+	["Great Rage"] = true,
+	["Rage"] = true,
+	["Berserker Rage"] = true,
+	["Shield Wall"] = true,
+	["Retaliation"] = true,
+	["Diamond Flask"] = true,
+	["Shield Block"] = true,
+	["Last Stand"] = true,
 	
 	-- Hunter
-	[DPSMate.BabbleSpell:GetTranslation("Arcane Infused")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Quick Shots")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Rapid Fire")] = true,
+	["Arcane Infused"] = true,
+	["Quick Shots"] = true,
+	["Rapid Fire"] = true,
 	
 	-- Boss Spells
-	[DPSMate.BabbleSpell:GetTranslation("Lucifron's Curse")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Gehennas' Curse")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Panic")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Living Bomb")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Brood Affliction: Bronze")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Bellowing Roar")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Fear")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Entangle")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Digestive Acid")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Locust Swarm")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Web Wrap")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Mutating Injection")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Terrifying Roar")] = true,
+	["Lucifron's Curse"] = true,
+	["Gehennas' Curse"] = true,
+	["Panic"] = true,
+	["Living Bomb"] = true,
+	["Brood Affliction: Bronze"] = true,
+	["Bellowing Roar"] = true,
+	["Fear"] = true,
+	["Entangle"] = true,
+	["Digestive Acid"] = true,
+	["Locust Swarm"] = true,
+	["Web Wrap"] = true,
+	["Mutating Injection"] = true,
+	["Terrifying Roar"] = true,
 }
 
 DPSMate.Parser.BuffExceptions = {
-	[DPSMate.BabbleSpell:GetTranslation("Fury of Forgewright")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Bloodfang")] = true,
+	["Fury of Forgewright"] = true,
+	["Bloodfang"] = true,
 }
 
 DPSMate.Parser.OtherExceptions = {
-	[DPSMate.BabbleSpell:GetTranslation("Mighty Rage")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Bloodrage")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Holy Strength")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Dreamless Sleep")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Vampirism")] = true,
+	["Mighty Rage"] = true,
+	["Bloodrage"] = true,
+	["Holy Strength"] = true,
+	["Dreamless Sleep"] = true,
+	["Vampirism"] = true,
 }
 DPSMate.Parser.DmgProcs = {
 	-- General
-	[DPSMate.BabbleSpell:GetTranslation("Life Steal")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Thunderfury")] = true,
+	["Life Steal"] = true,
+	["Thunderfury"] = true,
 	-- New
-	[DPSMate.BabbleSpell:GetTranslation("Bloodfang")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Fatal Wound")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Decapitate")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Gutgore Ripper")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Firebolt")] = true,
+	["Bloodfang"] = true,
+	["Fatal Wound"] = true,
+	["Decapitate"] = true,
+	["Gutgore Ripper"] = true,
+	["Firebolt"] = true,
 	-- Can't add Hand of Ragnaros
-	[DPSMate.BabbleSpell:GetTranslation("Expose Weakness")] = true, -- To Test
-	[DPSMate.BabbleSpell:GetTranslation("Silence")] = true, -- To Test
-	[DPSMate.BabbleSpell:GetTranslation("Chilled")] = true, -- To Test
-	[DPSMate.BabbleSpell:GetTranslation("Glimpse of Madness")] = true, -- To Test
-	[DPSMate.BabbleSpell:GetTranslation("Engulfing Shadows")] = true, -- To Test
-	[DPSMate.BabbleSpell:GetTranslation("Elemental Vulnerability")] = true, -- To Test
-	[DPSMate.BabbleSpell:GetTranslation("Holy Power")] = true, -- To Test
-	[DPSMate.BabbleSpell:GetTranslation("Revealed Flaw")] = true, -- To Test
-	[DPSMate.BabbleSpell:GetTranslation("Totemic Power")] = true, -- To Test
-	[DPSMate.BabbleSpell:GetTranslation("Stygian Grasp")] = true, -- To Test
-	[DPSMate.BabbleSpell:GetTranslation("Electric Discharge")] = true, -- To Test
-	[DPSMate.BabbleSpell:GetTranslation("Flame Lash")] = true, -- To Test
-	[DPSMate.BabbleSpell:GetTranslation("Spell Vulnerability")] = true, -- To Test
-	[DPSMate.BabbleSpell:GetTranslation("Lightning Strike")] = true, -- To Test
+	["Expose Weakness"] = true, -- To Test
+	["Silence"] = true, -- To Test
+	["Chilled"] = true, -- To Test
+	["Glimpse of Madness"] = true, -- To Test
+	["Engulfing Shadows"] = true, -- To Test
+	["Elemental Vulnerability"] = true, -- To Test
+	["Holy Power"] = true, -- To Test
+	["Revealed Flaw"] = true, -- To Test
+	["Totemic Power"] = true, -- To Test
+	["Stygian Grasp"] = true, -- To Test
+	["Electric Discharge"] = true, -- To Test
+	["Flame Lash"] = true, -- To Test
+	["Spell Vulnerability"] = true, -- To Test
+	["Lightning Strike"] = true, -- To Test
 	-- Deathbringer Skipped
 }
 DPSMate.Parser.TargetParty = {}
 DPSMate.Parser.RCD = {
-	[DPSMate.BabbleSpell:GetTranslation("Shield Wall")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Recklessness")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Retaliation")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Last Stand")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Innervate")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Divine Shield")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Blessing of Protection")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Gift of Life")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Redemption")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Rebirth")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Resurrection")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Reincarnation")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Ancestral Spirit")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Soulstone Resurrection")] = true,
+	["Shield Wall"] = true,
+	["Recklessness"] = true,
+	["Retaliation"] = true,
+	["Last Stand"] = true,
+	["Innervate"] = true,
+	["Divine Shield"] = true,
+	["Blessing of Protection"] = true,
+	["Gift of Life"] = true,
+	["Redemption"] = true,
+	["Rebirth"] = true,
+	["Resurrection"] = true,
+	["Reincarnation"] = true,
+	["Ancestral Spirit"] = true,
+	["Soulstone Resurrection"] = true,
 }
 DPSMate.Parser.FailDT = {
 	-- Molten Core
-	[DPSMate.BabbleSpell:GetTranslation("Rain of Fire")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Cone of Fire")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Lava Bomb")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Eruption")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Earthquake")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Hand of Ragnaros")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Wrath of Ragnaros")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Conflagration")] = true,
+	["Rain of Fire"] = true,
+	["Cone of Fire"] = true,
+	["Lava Bomb"] = true,
+	["Eruption"] = true,
+	["Earthquake"] = true,
+	["Hand of Ragnaros"] = true,
+	["Wrath of Ragnaros"] = true,
+	["Conflagration"] = true,
 	
 	-- Blackwing Lair
-	[DPSMate.BabbleSpell:GetTranslation("War Stomp")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Incinerate")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Corrosive Acid")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Frost Burn")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Ignite Flesh")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Time Lapse")] = true,
+	["War Stomp"] = true,
+	["Incinerate"] = true,
+	["Corrosive Acid"] = true,
+	["Frost Burn"] = true,
+	["Ignite Flesh"] = true,
+	["Time Lapse"] = true,
 	
 	-- Zul Gurub
-	[DPSMate.BabbleSpell:GetTranslation("Whirlwind")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Charge")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Poison Cloud")] = true,
+	["Whirlwind"] = true,
+	["Charge"] = true,
+	["Poison Cloud"] = true,
 	
 	-- AQ 20
-	[DPSMate.BabbleSpell:GetTranslation("Arcane Eruption")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Harsh Winds")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Sand Trap")] = true,
+	["Arcane Eruption"] = true,
+	["Harsh Winds"] = true,
+	["Sand Trap"] = true,
 	
 	-- AQ 40
-	[DPSMate.BabbleSpell:GetTranslation("Toxin Cloud")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Arcane Burst")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Eye Beam")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Dark Glare")] = true,
+	["Toxin Cloud"] = true,
+	["Arcane Burst"] = true,
+	["Eye Beam"] = true,
+	["Dark Glare"] = true,
 	
 	-- Naxx
-	[DPSMate.BabbleSpell:GetTranslation("Negative Charge")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Positive Charge")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Void Zone")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Plague Cloud")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Blizzard")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Chill")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Frost Breath")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Mana Detonation")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Shadow Fissure")] = true,
+	["Negative Charge"] = true,
+	["Positive Charge"] = true,
+	["Void Zone"] = true,
+	["Plague Cloud"] = true,
+	["Blizzard"] = true,
+	["Chill"] = true,
+	["Frost Breath"] = true,
+	["Mana Detonation"] = true,
+	["Shadow Fissure"] = true,
 	
 }
 DPSMate.Parser.FailDB = {
 	-- Molten Core
 	
 	-- Blackwing Lair
-	[DPSMate.BabbleSpell:GetTranslation("Suppression Aura")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Bellowing Roar")] = true,
+	["Suppression Aura"] = true,
+	["Bellowing Roar"] = true,
 }
 DPSMate.Parser.CC = {
-	[DPSMate.BabbleSpell:GetTranslation("Sap")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Gouge")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Sleep")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Polymorph")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Greater Polymorph")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Polymorph: Chicken")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Polymorph: Cow")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Polymorph: Pig")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Polymorph: Sheep")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Polymorph: Turtle")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Blind")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Freezing Trap Effect")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Intimidating Shout")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Magic Dust")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Scatter Shot")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Wyvern Sting")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Seduction")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Repentance")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Shackle Undead")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Reckless Charge")] = true,
+	["Sap"] = true,
+	["Gouge"] = true,
+	["Sleep"] = true,
+	["Polymorph"] = true,
+	["Greater Polymorph"] = true,
+	["Polymorph: Chicken"] = true,
+	["Polymorph: Cow"] = true,
+	["Polymorph: Pig"] = true,
+	["Polymorph: Sheep"] = true,
+	["Polymorph: Turtle"] = true,
+	["Blind"] = true,
+	["Freezing Trap Effect"] = true,
+	["Intimidating Shout"] = true,
+	["Magic Dust"] = true,
+	["Scatter Shot"] = true,
+	["Wyvern Sting"] = true,
+	["Seduction"] = true,
+	["Repentance"] = true,
+	["Shackle Undead"] = true,
+	["Reckless Charge"] = true,
 }
 
 DPSMate.Parser.Dispels = {
-	[DPSMate.BabbleSpell:GetTranslation("Remove Curse")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Cleanse")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Remove Lesser Curse")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Purify")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Dispel Magic")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Abolish Poison")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Abolish Disease")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Devour Magic")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Cure Disease")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Poison Cleansing Totem")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Cure Poison")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Disease Cleansing Totem")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Purge")] = true,
+	["Remove Curse"] = true,
+	["Cleanse"] = true,
+	["Remove Lesser Curse"] = true,
+	["Purify"] = true,
+	["Dispel Magic"] = true,
+	["Abolish Poison"] = true,
+	["Abolish Disease"] = true,
+	["Devour Magic"] = true,
+	["Cure Disease"] = true,
+	["Poison Cleansing Totem"] = true,
+	["Cure Poison"] = true,
+	["Disease Cleansing Totem"] = true,
+	["Purge"] = true,
 	-- Potion
-	[DPSMate.BabbleSpell:GetTranslation("Powerful Anti-Venom")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Restoration")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Purification")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Purification Potion")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Restorative Potion")] = true,
+	["Powerful Anti-Venom"] = true,
+	["Restoration"] = true,
+	["Purification"] = true,
+	["Purification Potion"] = true,
+	["Restorative Potion"] = true,
 }
 DPSMate.Parser.DeCurse = {
-	[DPSMate.BabbleSpell:GetTranslation("Remove Curse")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Remove Lesser Curse")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Restoration")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Purification")] = true,
+	["Remove Curse"] = true,
+	["Remove Lesser Curse"] = true,
+	["Restoration"] = true,
+	["Purification"] = true,
 }
 DPSMate.Parser.DeMagic = {
-	[DPSMate.BabbleSpell:GetTranslation("Dispel Magic")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Devour Magic")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Purge")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Restoration")] = true,
+	["Dispel Magic"] = true,
+	["Devour Magic"] = true,
+	["Purge"] = true,
+	["Restoration"] = true,
 }
 DPSMate.Parser.DeDisease = {
-	[DPSMate.BabbleSpell:GetTranslation("Purify")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Abolish Disease")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Cure Disease")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Disease Cleansing Totem")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Restoration")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Purification")] = true,
+	["Purify"] = true,
+	["Abolish Disease"] = true,
+	["Cure Disease"] = true,
+	["Disease Cleansing Totem"] = true,
+	["Restoration"] = true,
+	["Purification"] = true,
 }
 DPSMate.Parser.DePoison = {
-	[DPSMate.BabbleSpell:GetTranslation("Abolish Poison")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Purify")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Poison Cleansing Totem")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Cure Poison")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Powerful Anti-Venom")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Restoration")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Purification")] = true,
+	["Abolish Poison"] = true,
+	["Purify"] = true,
+	["Poison Cleansing Totem"] = true,
+	["Cure Poison"] = true,
+	["Powerful Anti-Venom"] = true,
+	["Restoration"] = true,
+	["Purification"] = true,
 }
 DPSMate.Parser.DebuffTypes = {}
 DPSMate.Parser.HotDispels = {
-	[DPSMate.BabbleSpell:GetTranslation("Abolish Poison")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Abolish Disease")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Restoration")] = true,
+	["Abolish Poison"] = true,
+	["Abolish Disease"] = true,
+	["Restoration"] = true,
 }
 
 DPSMate.Parser.Kicks = {
 	-- Interrupts
 	-- Rogue
-	[DPSMate.BabbleSpell:GetTranslation("Kick")] = true,
+	["Kick"] = true,
 	-- Warrior
-	[DPSMate.BabbleSpell:GetTranslation("Pummel")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Shield Bash")] = true,
+	["Pummel"] = true,
+	["Shield Bash"] = true,
 	
 	-- Mage
-	[DPSMate.BabbleSpell:GetTranslation("Counterspell")] = true,
+	["Counterspell"] = true,
 	
 	-- Shaman
-	[DPSMate.BabbleSpell:GetTranslation("Earth Shock")] = true,
+	["Earth Shock"] = true,
 	
 	-- Priest
-	[DPSMate.BabbleSpell:GetTranslation("Silence")] = true,
+	["Silence"] = true,
 	
 	-- Stuns
 	-- Rogue
-	[DPSMate.BabbleSpell:GetTranslation("Gouge")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Kidney Shot")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Cheap Shot")] = true,
+	["Gouge"] = true,
+	["Kidney Shot"] = true,
+	["Cheap Shot"] = true,
 	
 	-- Hunter
-	[DPSMate.BabbleSpell:GetTranslation("Scatter Shot")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Improved Concussive Shot")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Wyvern Sting")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Intimidation")] = true,
+	["Scatter Shot"] = true,
+	["Improved Concussive Shot"] = true,
+	["Wyvern Sting"] = true,
+	["Intimidation"] = true,
 	
 	-- Warrior
-	[DPSMate.BabbleSpell:GetTranslation("Charge Stun")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Intercept Stun")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Concussion Blow")] = true,
+	["Charge Stun"] = true,
+	["Intercept Stun"] = true,
+	["Concussion Blow"] = true,
 	
 	-- Druid
-	[DPSMate.BabbleSpell:GetTranslation("Feral Charge")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Feral Charge Effect")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Bash")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Pounce")] = true,
+	["Feral Charge"] = true,
+	["Feral Charge Effect"] = true,
+	["Bash"] = true,
+	["Pounce"] = true,
 	
 	-- Mage
-	[DPSMate.BabbleSpell:GetTranslation("Impact")] = true,
+	["Impact"] = true,
 	
 	-- Paladin
-	[DPSMate.BabbleSpell:GetTranslation("Repentance")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Hammer of Justice")] = true,
+	["Repentance"] = true,
+	["Hammer of Justice"] = true,
 	
 	-- Warlock
-	[DPSMate.BabbleSpell:GetTranslation("Pyroclasm")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Death Coil")] = true,
+	["Pyroclasm"] = true,
+	["Death Coil"] = true,
 	
 	-- Priest
-	[DPSMate.BabbleSpell:GetTranslation("Blackout")] = true,
+	["Blackout"] = true,
 	
 	-- General
-	[DPSMate.BabbleSpell:GetTranslation("Tidal Charm")] = true,
-	[DPSMate.BabbleSpell:GetTranslation("Reckless Charge")] = true,
+	["Tidal Charm"] = true,
+	["Reckless Charge"] = true,
 }
 DPSMate.Parser.player = UnitName("player")
 DPSMate.Parser.playerclass = nil
@@ -451,36 +451,6 @@ function DPSMate.Parser:OnLoad()
 	-- Prevent this addon from causing issues
 	if SW_FixLogStrings then
 		DPSMate:SendMessage("Please disable SW_StatsFixLogStrings and SW_Stats. Those addons causes issues.")
-	end
-	
-	-- Prevent error messages of NPCDB
-	local oldError = _G.error
-	_G.error = function(message, prio)
-		if string_find(message, "NPCDB") then
-			return
-		end
-		oldError(message, prio)
-	end
-	
-	-- Changing the GetTranslation function
-	local oldGetTranslation = DPSMate.BabbleSpell.GetTranslation
-	DPSMate.BabbleSpell.GetTranslation = function(self, msg)
-		if msg=="" or msg==" " then
-			return msg
-		else
-			if DPSMate.BabbleSpell:HasTranslation(msg) then
-				return oldGetTranslation(self, msg)
-			elseif DPSMate.BabbleSpell:HasReverseTranslation(msg) then
-				local revTra = DPSMate.BabbleSpell:GetReverseTranslation(msg)
-				if DPSMate.BabbleSpell:HasTranslation(revTra) then
-					return oldGetTranslation(self, revTra)
-				else
-					return msg
-				end
-			else
-				return msg
-			end
-		end
 	end
 end
 
