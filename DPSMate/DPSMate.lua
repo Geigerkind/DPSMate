@@ -17,8 +17,8 @@ DPSMate.Events = {
 	"CHAT_MSG_COMBAT_SELF_HITS",
 	"CHAT_MSG_COMBAT_SELF_MISSES",
 	"CHAT_MSG_SPELL_SELF_DAMAGE",
-	"CHAT_MSG_SPELL_PERIODIC_HOSTILEPLAYER_DAMAGE", 
-	"CHAT_MSG_SPELL_HOSTILEPLAYER_DAMAGE", 
+	"CHAT_MSG_SPELL_PERIODIC_HOSTILEPLAYER_DAMAGE",
+	"CHAT_MSG_SPELL_HOSTILEPLAYER_DAMAGE",
 	"CHAT_MSG_SPELL_PERIODIC_CREATURE_DAMAGE",
 	"CHAT_MSG_COMBAT_PARTY_HITS",
 	"CHAT_MSG_SPELL_PARTY_DAMAGE",
@@ -26,22 +26,22 @@ DPSMate.Events = {
 	"CHAT_MSG_COMBAT_FRIENDLYPLAYER_HITS",
 	"CHAT_MSG_COMBAT_FRIENDLYPLAYER_MISSES",
 	"CHAT_MSG_SPELL_FRIENDLYPLAYER_DAMAGE",
-	
+
 	--"COMBAT_TEXT_UPDATE",
-	
+
 	"CHAT_MSG_COMBAT_CREATURE_VS_SELF_HITS",
 	"CHAT_MSG_COMBAT_CREATURE_VS_SELF_MISSES",
 	"CHAT_MSG_SPELL_CREATURE_VS_SELF_DAMAGE",
 	"CHAT_MSG_SPELL_PERIODIC_SELF_DAMAGE",
 	"CHAT_MSG_COMBAT_CREATURE_VS_PARTY_HITS",
 	"CHAT_MSG_COMBAT_CREATURE_VS_PARTY_MISSES",
-	"CHAT_MSG_SPELL_PERIODIC_PARTY_DAMAGE", 
-	"CHAT_MSG_SPELL_CREATURE_VS_PARTY_DAMAGE", 
-	"CHAT_MSG_COMBAT_CREATURE_VS_CREATURE_HITS", 
+	"CHAT_MSG_SPELL_PERIODIC_PARTY_DAMAGE",
+	"CHAT_MSG_SPELL_CREATURE_VS_PARTY_DAMAGE",
+	"CHAT_MSG_COMBAT_CREATURE_VS_CREATURE_HITS",
 	"CHAT_MSG_COMBAT_CREATURE_VS_CREATURE_MISSES",
 	"CHAT_MSG_SPELL_CREATURE_VS_CREATURE_DAMAGE",
-	"CHAT_MSG_SPELL_PERIODIC_FRIENDLYPLAYER_DAMAGE", 
-	
+	"CHAT_MSG_SPELL_PERIODIC_FRIENDLYPLAYER_DAMAGE",
+
 	"CHAT_MSG_SPELL_SELF_BUFF",
 	"CHAT_MSG_SPELL_PERIODIC_SELF_BUFFS",
 	"CHAT_MSG_SPELL_FRIENDLYPLAYER_BUFF",
@@ -50,27 +50,27 @@ DPSMate.Events = {
 	"CHAT_MSG_SPELL_PERIODIC_HOSTILEPLAYER_BUFFS",
 	"CHAT_MSG_SPELL_PARTY_BUFF",
 	"CHAT_MSG_SPELL_PERIODIC_PARTY_BUFFS",
-	
-	"CHAT_MSG_SPELL_DAMAGESHIELDS_ON_SELF", 
-	"CHAT_MSG_SPELL_DAMAGESHIELDS_ON_OTHERS", 
-	"CHAT_MSG_SPELL_BREAK_AURA", 
-	"CHAT_MSG_SPELL_AURA_GONE_SELF", 
-	"CHAT_MSG_SPELL_AURA_GONE_OTHER", 
-	"CHAT_MSG_SPELL_AURA_GONE_PARTY", 
-	
+
+	"CHAT_MSG_SPELL_DAMAGESHIELDS_ON_SELF",
+	"CHAT_MSG_SPELL_DAMAGESHIELDS_ON_OTHERS",
+	"CHAT_MSG_SPELL_BREAK_AURA",
+	"CHAT_MSG_SPELL_AURA_GONE_SELF",
+	"CHAT_MSG_SPELL_AURA_GONE_OTHER",
+	"CHAT_MSG_SPELL_AURA_GONE_PARTY",
+
 	"CHAT_MSG_COMBAT_FRIENDLY_DEATH",
 	"CHAT_MSG_COMBAT_HOSTILE_DEATH",
-	
+
 	"CHAT_MSG_COMBAT_PET_HITS",
 	"CHAT_MSG_COMBAT_PET_MISSES",
 	"CHAT_MSG_SPELL_PET_BUFF",
 	"CHAT_MSG_SPELL_PET_DAMAGE",
-	
+
 	--"SPELLCAST_CHANNEL_START", --
 	--"SPELLCAST_STOP", --
 	--"SPELLCAST_FAILED", --
 	--"SPELLCAST_INTERRUPTED", --
-	
+
 	"PLAYER_AURAS_CHANGED",
 }
 DPSMate.Registered = true
@@ -173,7 +173,7 @@ function DPSMate:InitializeFrames()
 		frame.fborder = _G("DPSMate_"..val["name"].."_Border")
 		DPSMateSettings["windows"][k]["hidden"] = false
 		frame:SetToplevel(true)
-		
+
 		if (val["position"] and val["position"][1]) then
 			frame:ClearAllPoints()
 			frame:SetPoint(val["position"][1], UIParent, val["position"][1], val["position"][2], val["position"][3])
@@ -182,30 +182,30 @@ function DPSMate:InitializeFrames()
 			frame:SetWidth(val["savsize"][1])
 			frame:SetHeight(val["savsize"][2])
 		end
-		
+
 		DPSMate.Options:ToggleDrewDrop(1, DPSMate.DB:GetOptionsTrue(1, k), frame)
 		DPSMate.Options:ToggleDrewDrop(2, DPSMate.DB:GetOptionsTrue(2, k), frame)
-		
+
 		frame.fborder:SetAlpha(val["borderopacity"] or 0)
 		frame.fborder:SetFrameStrata(DPSMate.Options.stratas[val["borderstrata"] or 1])
-		frame.fborder:SetBackdrop({ 
-								  bgFile = "", 
-								  edgeFile = DPSMate.Options.bordertextures[val["bordertexture"] or "UI-Tooltip-Border"], tile = true, tileSize = 12, edgeSize = 10, 
+		frame.fborder:SetBackdrop({
+								  bgFile = "",
+								  edgeFile = DPSMate.Options.bordertextures[val["bordertexture"] or "UI-Tooltip-Border"], tile = true, tileSize = 12, edgeSize = 10,
 								  insets = { left = 5, right = 5, top = 3, bottom = 1 }
 								})
 		frame.fborder:SetBackdropBorderColor(val["contentbordercolor"][1], val["contentbordercolor"][2], val["contentbordercolor"][3])
-		
+
 		local head = _G("DPSMate_"..val["name"].."_Head")
 		head.font = _G("DPSMate_"..val["name"].."_Head_Font")
 		head.bg = _G("DPSMate_"..val["name"].."_Head_Background")
 		head.sync = _G("DPSMate_"..val["name"].."_Head_Sync")
-		
+
 		if DPSMateSettings["sync"] then
 			head.sync:GetNormalTexture():SetVertexColor(0.67,0.83,0.45,1)
 		else
 			head.sync:GetNormalTexture():SetVertexColor(1,0,0,1)
 		end
-		
+
 		if DPSMateSettings["lock"] then
 			_G("DPSMate_"..val["name"].."_Resize"):Hide()
 		end
@@ -224,7 +224,7 @@ function DPSMate:InitializeFrames()
 		_G("DPSMate_"..val["name"].."_ScrollFrame_Background"):SetAlpha(val["bgopacity"] or 1)
 		frame:SetScale(val["scale"])
 		_G("DPSMate_"..val["name"].."_Head_Enable"):SetChecked(DPSMateSettings["enable"])
-		
+
 		-- Styles // Bars
 		local child = _G("DPSMate_"..val["name"].."_ScrollFrame_Child")
 		_G("DPSMate_"..val["name"].."_ScrollFrame_Child_Total"):SetPoint("TOPLEFT", child, "TOPLEFT")
@@ -246,7 +246,7 @@ function DPSMate:InitializeFrames()
 			bar.value = _G("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar"..i.."_Value")
 			bar.icon = _G("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar"..i.."_Icon")
 			bar.bg = _G("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar"..i.."_BG")
-			
+
 			-- Postition
 			bar:SetPoint("TOPLEFT", child, "TOPLEFT")
 			bar:SetPoint("TOPRIGHT", child, "TOPRIGHT")
@@ -267,7 +267,7 @@ function DPSMate:InitializeFrames()
 				bar.icon:SetHeight(val["barheight"])
 				bar.icon:Show()
 			end
-		
+
 			-- Styles
 			bar.name:SetFont(DPSMate.Options.fonts[val["barfont"]], val["barfontsize"], DPSMate.Options.fontflags[val["barfontflag"]])
 			bar.name:SetTextColor(val["barfontcolor"][1],val["barfontcolor"][2],val["barfontcolor"][3])
@@ -289,10 +289,10 @@ function DPSMate:InitializeFrames()
 	if not DPSMateSettings["enable"] then
 		self:Disable()
 	end
-	
+
 	-- Report delay button
 	DPSMate_Report_Delay:SetChecked(DPSMateSettings["reportdelay"])
-	
+
 	DPSMate_MiniMap:SetToplevel(true)
 	DPSMate_PopUp:SetToplevel(true)
 	DPSMate_Vote:SetToplevel(true)
@@ -443,16 +443,16 @@ function DPSMate:SetStatusBarValue()
 				if (not user[i]) then break end -- To prevent visual issues
 				local statusbar, name, value, texture, p = _G("DPSMate_"..c["name"].."_ScrollFrame_Child_StatusBar"..i), _G("DPSMate_"..c["name"].."_ScrollFrame_Child_StatusBar"..i.."_Name"), _G("DPSMate_"..c["name"].."_ScrollFrame_Child_StatusBar"..i.."_Value"), _G("DPSMate_"..c["name"].."_ScrollFrame_Child_StatusBar"..i.."_Icon"), ""
 				_G("DPSMate_"..c["name"].."_ScrollFrame_Child"):SetHeight((i+1)*(c["barheight"]+c["barspacing"]))
-				
+
 				local r,g,b,img = self:GetClassColor(user[i])
 				statusbar:SetStatusBarColor(r,g,b, 1)
-				
+
 				if c["ranks"] then p=i..". " else p="" end
 				name:SetText(p..user[i])
 				value:SetText(val[i])
 				texture:SetTexture("Interface\\AddOns\\DPSMate\\images\\class\\"..img)
 				statusbar:SetValue(perc[i])
-				
+
 				statusbar.user = user[i]
 				statusbar:Show()
 			end
@@ -464,7 +464,7 @@ end
 
 function DPSMate:strrev(str)
 	local res = "";
-	local len = strlen(str) 
+	local len = strlen(str)
 	for i=0, len-1 do
 		res = res..strsub(str, len-i, len-i)
 	end
@@ -472,14 +472,13 @@ function DPSMate:strrev(str)
 end
 
 function DPSMate:Commas(n,k)
-	if DPSMateSettings["windows"][k]["numberformat"] == 3 then 
+	if DPSMateSettings["windows"][k]["numberformat"] == 3 then
 		n = strformat("%.0f", n)
 		for left, num, right in strgfind(n, '([^%d]*%d)(%d+)') do
-			return left and left..self:strrev(strgsub(self:strrev(num), '(%d%d%d)','%1,')) or n
+			return left and left..self:strrev(strgsub(self:strrev(num), '(%d%d%d)','%1,'))
 		end
-	else
-		return n;
 	end
+	return n;
 end
 
 function DPSMate:FormatNumbers(dmg,total,sort,k)
@@ -605,7 +604,7 @@ function DPSMate:GetModeName(k)
 	k = k or 1
 	local result = {total="Total", currentfight="Current fight"}
 	for cat, val in pairs(DPSMateSettings["windows"][k]["options"][2]) do
-		if val then 
+		if val then
 			if strfind(cat, "segment") then
 				local num = tonumber(strsub(cat, 8))
 				return DPSMateHistory["names"][num]
