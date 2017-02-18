@@ -1517,6 +1517,7 @@ end
 ----------------------------------------------------------------------------------
 
 function DPSMate.Sync:ThreatIn(arg2,arg4)
+	if not arg2 then return end
 	for cat, val in loadstring("return {"..arg2.."}")() do
 		for ca, va in val do
 			for c,v in va do
