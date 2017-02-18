@@ -6176,6 +6176,10 @@
 				--this:RegisterEvent("UNIT_AURA")
 				this:RegisterEvent("PLAYER_TARGET_CHANGED")
 				--this:RegisterEvent("PLAYER_LOGOUT")
+				this:RegisterEvent("PET_STABLE_CLOSED")
+				this:RegisterEvent("PET_STABLE_SHOW")
+				this:RegisterEvent("PET_STABLE_UPDATE")
+				this:RegisterEvent("PET_STABLE_UPDATE_PAPERDOLL")
 			</OnLoad>
 			<OnEvent>
 				DPSMate.DB:OnEvent(event)

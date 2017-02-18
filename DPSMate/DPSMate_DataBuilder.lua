@@ -599,7 +599,7 @@ function DPSMate.DB:OnEvent(event)
 		self:hasVanishedFeignDeath()
 	elseif event == "PLAYER_TARGET_CHANGED" then
 		self:PlayerTargetChanged()
-	elseif event == "PLAYER_PET_CHANGED" then
+	elseif event == "PLAYER_PET_CHANGED" or event == "PET_STABLE_CLOSED" or event == "PET_STABLE_SHOW" or event == "PET_STABLE_UPDATE" or event == "PET_STABLE_UPDATE_PAPERDOLL" then
 		DPSMate.DB:OnGroupUpdate()
 	end
 end
@@ -2294,8 +2294,21 @@ function DPSMate.DB:Attempt(mode, check, tar)
 		if not DPSMateAttempts[zone] then DPSMateAttempts[zone] = {} end
 		if mode then
 			if DPSMateAttempts[zone][1] and not DPSMateAttempts[zone][1][4] then
-				local _,_,a = DPSMate.Modules.EDT:GetSortedTable(DPSMateEDT[2])
-				local name = DPSMate:GetUserById(a[1])
+				local max, a = 0, 0
+				-- Get name of this session
+				for c, v in pairs(DPSMateEDT[2]) do
+					local CV = 0
+					for cat, val in pairs(v) do
+						if cat~="i" then
+							CV = CV+val["i"]
+						end
+					end
+					if max<CV then
+						max = CV
+						a = c
+					end
+				end
+				local name = DPSMate:GetUserById(a)
 				if DPSMateAttempts[zone][1][1]=="" or DPSMateAttempts[zone][1][1]==DPSMate.L["unknown"] then
 					if name == "" then
 						DPSMateAttempts[zone][1][1] = DPSMate.L["unknown"]
