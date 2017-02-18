@@ -240,7 +240,7 @@ function DPSMate.Modules.DetailsProcs:GetSpecialSnowFlakeHits(ability, cname)
 				end
 			end
 		end
-	elseif ability == "Vengeance") or ability == "Flurry" then
+	elseif ability == "Vengeance" or ability == "Flurry" then
 		for cat, val in DPSMateDamageDone[1][DPSMateUser[cname or DetailsUser][1]] do
 			if cat~="i" then
 				num = num + val[5]

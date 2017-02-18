@@ -2548,7 +2548,6 @@ DPSMate.Modules.Procs.nonProcProcs = {
 ["Исступление"] = true,
 ["Скорострельность"] = true,
 }
-}
 end
 if DPSMate.Modules.DetailsProcs then
 DPSMate.Modules.DetailsProcs.mab = {
@@ -2693,7 +2692,6 @@ DPSMate.Modules.DetailsProcs.specialSnowflakesHealDone = {
 ["Малая волна исцеления"] = true,
 },
 }
-}
 end
 if DPSMate.Modules.DetailsProcsTotal then
 DPSMate.Modules.DetailsProcsTotal.mab = DPSMate.Modules.DetailsProcs.mab
@@ -2706,7 +2704,8 @@ DPSMate.Modules.DetailsProcsTotal.Ven = "Отмщение"
 DPSMate.Modules.DetailsProcsTotal.Flu = "Шквал"
 DPSMate.Modules.DetailsProcsTotal.Rel = "Эффект неослабевающих ударов"
 end
-if DPSMate.Modules.Auras thenDPSMate.Modules.Auras.Debuffs = {
+if DPSMate.Modules.Auras then
+DPSMate.Modules.Auras.Debuffs = {
 ["Кровопускание"] = true,
 ["Паутина"] = true,
 ["Яд"] = true,

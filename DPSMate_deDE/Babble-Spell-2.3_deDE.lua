@@ -2548,7 +2548,6 @@ DPSMate.Modules.Procs.nonProcProcs = {
 ["Wutanfall"] = true,
 ["Schnelle Schüsse"] = true,
 }
-}
 end
 if DPSMate.Modules.DetailsProcs then
 DPSMate.Modules.DetailsProcs.mab = {
@@ -2693,7 +2692,6 @@ DPSMate.Modules.DetailsProcs.specialSnowflakesHealDone = {
 ["Geringe Welle der Heilung"] = true,
 },
 }
-}
 end
 if DPSMate.Modules.DetailsProcsTotal then
 DPSMate.Modules.DetailsProcsTotal.mab = DPSMate.Modules.DetailsProcs.mab
@@ -2706,7 +2704,8 @@ DPSMate.Modules.DetailsProcsTotal.Ven = "Rache"
 DPSMate.Modules.DetailsProcsTotal.Flu = "Schlaghagel"
 DPSMate.Modules.DetailsProcsTotal.Rel = "Unerbittliche Stöße"
 end
-if DPSMate.Modules.Auras thenDPSMate.Modules.Auras.Debuffs = {
+if DPSMate.Modules.Auras then
+DPSMate.Modules.Auras.Debuffs = {
 ["Verwunden"] = true,
 ["Netz"] = true,
 ["Gift"] = true,
