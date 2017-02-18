@@ -282,7 +282,7 @@ if (GetLocale() == "zhCN") then
 	DPSMate.L["whocreateddpsmate"] = "谁制作了DPSMate?"
 	DPSMate.L["whocreateddpsmateText"] = "DPSMate由Shino (Albea) <Synced>制作, 来自Kronos (Twinstar.cz)服务器，K服论坛昵称Geigerkind."
 	DPSMate.L["thanksto"] = "感谢以下贡献者:"
-	DPSMate.L["thankstoText"] = "Weasel - 参与Beta测试. \nBambustreppe - 德语本地化. \nDarkmiao - 中文本地化."
+	--DPSMate.L["thankstoText"] = "Weasel - 参与Beta测试. \nBambustreppe - 德语本地化. \nDarkmiao - 中文本地化."
 	DPSMate.L["remove"] = "删除"
 	DPSMate.L["removeTooltip"] = "点击来删除选择窗口."
 	DPSMate.L["copy"] = "复制"

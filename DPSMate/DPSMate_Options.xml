@@ -6076,7 +6076,7 @@
 						</Scripts>
 					</Frame>
 					<Frame name="$parent_Thanks" inherits="DPSMate_Template_TextBox">
-						<Size x="280" y="80" />
+						<Size x="280" y="90" />
 						<Anchors>
 							<Anchor point="TOP" relativeTo="$parent_Who" relativePoint="BOTTOM">
 								<Offset x="0" y="-17" />
@@ -6085,6 +6085,9 @@
 						<Scripts>
 							<OnLoad>
 								getglobal(this:GetName().."_Title"):SetText(DPSMate.L["thanksto"])
+								getglobal(this:GetName().."_Text"):SetHeight(90)
+								getglobal(this:GetName().."_Text"):ClearAllPoints()
+								getglobal(this:GetName().."_Text"):SetPoint("TOPLEFT", this, "TOPLEFT", 5, -5)
 								getglobal(this:GetName().."_Text"):SetText(DPSMate.L["thankstoText"])
 							</OnLoad>
 						</Scripts>

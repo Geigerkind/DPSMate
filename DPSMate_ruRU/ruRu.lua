@@ -280,7 +280,7 @@ if (GetLocale() == "koKR") then
 	DPSMate.L["whocreateddpsmate"] = "Who created DPSMate?"
 	DPSMate.L["whocreateddpsmateText"] = "DPSMate was created by Shino (Albea) <Synced> who developed the AddOn on Kronos (Twinstar.cz). He is formally known as Geigerkind in the Twinstar community."
 	DPSMate.L["thanksto"] = "Thanks to following supporters:"
-	DPSMate.L["thankstoText"] = "Weasel - For beta testing the addon and providing feedback. \nBambustreppe - For translating DPSMate to german."
+	--DPSMate.L["thankstoText"] = "Weasel - For beta testing the addon and providing feedback. \nBambustreppe - For translating DPSMate to german."
 	DPSMate.L["remove"] = "Remove"
 	DPSMate.L["removeTooltip"] = "Click here in order to remove the selected window."
 	DPSMate.L["copy"] = "Copy"
