@@ -66,7 +66,7 @@ function DPSMate.Modules.Dispels:EvalTable(user, k)
 						break
 					end
 				end
-				i=i+1
+				i = i + 1
 			end
 		end
 	end
@@ -96,7 +96,7 @@ function DPSMate.Modules.Dispels:ShowTooltip(user,k)
 		local p, sum = 0, 0
 		local a, b, abn, abnt = {}, {}, {}, {}
 		local arr = DPSMate:GetMode(k)
-		if arr[DPSMateUser[user][1]] then 
+		if arr[DPSMateUser[user][1]] then
 			for cat, val in pairs(arr[DPSMateUser[user][1]]) do -- 41 Ability
 				if cat~="i" then
 					for ca, va in pairs(val) do -- Cleansed guy
@@ -110,7 +110,7 @@ function DPSMate.Modules.Dispels:ShowTooltip(user,k)
 				end
 			end
 		end
-		
+
 		for cat, val in pairs(a) do
 			i = 1
 			while true do
@@ -123,6 +123,7 @@ function DPSMate.Modules.Dispels:ShowTooltip(user,k)
 						break
 					end
 				end
+				i = i + 1
 			end
 		end
 		for cat, val in pairs(b) do
@@ -137,18 +138,19 @@ function DPSMate.Modules.Dispels:ShowTooltip(user,k)
 						break
 					end
 				end
+				i = i + 1
 			end
 			sum = sum + val
 		end
 		a = nil
 		b = nil
-		
+
 		GameTooltip:AddLine(DPSMate.L["tttop"]..DPSMateSettings["subviewrows"]..DPSMate.L["ttdispelled"]..DPSMate.L["ttabilities"])
 		for i=1, DPSMateSettings["subviewrows"] do
 			if not abnt[i] then break end
 			GameTooltip:AddDoubleLine(i..". "..DPSMate:GetAbilityById(abnt[i][1]),abnt[i][2].." ("..strformat("%.2f", 100*abnt[i][2]/sum).."%)",1,1,1,1,1,1)
 		end
-		
+
 		GameTooltip:AddLine(DPSMate.L["tttop"]..DPSMateSettings["subviewrows"]..DPSMate.L["ttdispelled"])
 		for i=1, DPSMateSettings["subviewrows"] do
 			if not abn[i] then break end
@@ -168,4 +170,3 @@ end
 function DPSMate.Modules.Dispels:OpenTotalDetails(obj, key)
 	DPSMate.Modules.DetailsDispelsTotal:UpdateDetails(obj, key)
 end
-
