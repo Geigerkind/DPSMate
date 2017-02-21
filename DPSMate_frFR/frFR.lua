@@ -1,8 +1,8 @@
 -- Translated by ITTranslator
 if (GetLocale() == "frFR")  then
 	DPSMate.L["name"] = "DPSMate"
-	DPSMate.L["popup"] = "Voulez-vous reinitialiser DPSMate??"
-	DPSMate.L["memory"] = "DPSMate a recueilli beaucoup de donnees. Cela causera un retard de l'ecran lors de l'enregistrement pendant la deconnexion. Souhaitez-vous reinitialiser DPSMate d'abord ?"
+	DPSMate.L["popup"] = "Voulez-vous reinitialiser DPSMate?"
+	DPSMate.L["memory"] = "DPSMate a recueilli beaucoup de donnees. Cela causera un retard de l'ecran lors de l'enregistrement pendant la deconnexion. Souhaitez-vous reinitialiser DPSMate d'abord?"
 	DPSMate.L["accept"] = "Accepter"
 	DPSMate.L["decline"] = "Refuser"
 	DPSMate.L["total"] = "Total"
