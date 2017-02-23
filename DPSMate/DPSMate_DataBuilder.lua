@@ -630,6 +630,15 @@ function DPSMate.DB:OnGroupUpdate()
 			DPSMateUser[name][5] = pet
 			DPSMateUser[pet][6] = DPSMateUser[name][1]
 		end
+		if DPSMate.Parser.TargetParty[pet] then
+			DPSMateUser[pet][4] = false
+			DPSMateUser[pet][6] = ""
+			DPSMateUser[name][5] = ""
+		end
+		if DPSMateUser[name][4] then
+			DPSMateUser[name][4] = false
+			DPSMateUser[name][5] = ""
+		end
 		if fac == DPSMate.L["alliance"] then
 			DPSMateUser[name][3] = 1
 		elseif fac == DPSMate.L["horde"] then
@@ -675,7 +684,7 @@ end
 function DPSMate.DB:PlayerTargetChanged()
 	if UnitIsPlayer("target") then
 		local name = UnitName("target")
-		local a, class = UnitClass("target")
+		local _, class = UnitClass("target")
 		local fac = UnitFactionGroup("target") or ""
 		local level = UL("target")
 		if DPSMateUser[name] then
@@ -690,6 +699,10 @@ function DPSMate.DB:PlayerTargetChanged()
 		end
 		if level and level>0 then
 			DPSMateUser[name][8] = level
+		end
+		if DPSMateUser[name][4] then
+			DPSMateUser[name][4] = false
+			DPSMateUser[name][5] = ""
 		end
 	end
 end
