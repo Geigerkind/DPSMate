@@ -46,9 +46,9 @@ local Arrays = {
 	[15] = {}, -- O Healing taken
 	[16] = {} -- Threat
 }
-local tra = DPSMate.BabbleSpell
-local npctra = DPSMate.NPCDB
-local UpTime = 0
+--local tra = DPSMate.BabbleSpell
+--local npctra = DPSMate.NPCDB
+--local UpTime = 0
 
 -- Beginn Functions
 
@@ -85,28 +85,15 @@ function DPSMate.Sync:OnLoad()
 end
 
 function DPSMate.Sync:GetMessageState()
-	--if sname ~= "Kronos" and sname ~= "Kronos II" then return true end 
-	if ccount<=550 then
-		return true
-	end
-	return false
+	return (ccount<=550)
 end
 
 local co, cou = 1, 1
 function DPSMate.Sync:SendAddonMessages(elapsed)
-	if DPSMateSettings["sync"] then
-		UpTime = UpTime + elapsed
-		if self:GetMessageState() then
-			if UpTime>1 then
-				for i=1,80 do
-					if not Buffer[co] then break end
-					SendAddonMessage(Buffer[co][1]..DPSMate.SYNCVERSION, Buffer[co][2], "RAID")
-					Buffer[co] = nil
-					co = co + 1
-				end
-				UpTime = 0
-			end
-		end
+	if DPSMateSettings["sync"] and self:GetMessageState() and Buffer[co] then
+		SendAddonMessage(Buffer[co][1]..DPSMate.SYNCVERSION, Buffer[co][2], "RAID")
+		Buffer[co] = nil
+		co = co + 1
 	end
 end
 
