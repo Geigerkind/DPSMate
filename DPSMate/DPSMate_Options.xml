@@ -5917,6 +5917,22 @@
 							</OnClick>
 						</Scripts>
 					</Button>
+					<CheckButton name="$parent_LegacyLogs" inherits="DPSMate_Template_CheckButton">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent_HelloWorld" relativePoint="TOPLEFT">
+								<Offset x="0" y="-20" />
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								this.aide = "Check this to track data for legacy logs!"
+								getglobal(this:GetName().."_Title"):SetText("Legacy Logs")
+							</OnLoad>
+							<OnClick>
+								DPSMateSettings["legacylogs"] = not DPSMateSettings["legacylogs"] 
+							</OnClick>
+						</Scripts>
+					</CheckButton>
 				</Frames>
 			</Frame>
 			

@@ -423,6 +423,7 @@ function DPSMate.DB:OnEvent(event)
 				targetscale=0.58,
 				hideonlogin = false,
 				reportdelay = false,
+				legacylogs = false,
 			}
 		end
 		if DPSMateHistory == nil then 
@@ -580,7 +581,7 @@ function DPSMate.DB:OnEvent(event)
 			end
 		end
 		DPSMate.Options:HideWhenSolo()
-		if (not CombatState and cheatCombat+10<GetTime()) then
+		if (not CombatState and cheatCombat+10<GT()) then
 			DPSMate.Options:NewSegment()
 		end
 		CombatState, CombatTime = true, 0
@@ -976,7 +977,7 @@ local hackOrder, hackOrder2 = {}, {}
 function DPSMate.DB:DamageDone(Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, Ddodge, Dresist, Damount, Dglance, Dblock)
 	if self:BuildUser(Duser, nil) or self:BuildAbility(Dname, nil) then return end -- Attempt to fix this problem?
 	
-	if (not CombatState and cheatCombat+10<GetTime()) then
+	if (not CombatState and cheatCombat+10<GT()) then
 		DPSMate.Options:NewSegment()
 	end
 	CombatState, CombatTime = true, 0
@@ -1452,7 +1453,7 @@ end
 
 function DPSMate.DB:ClearAwaitAbsorb()
 	for cat, val in pairs(Await) do
-		if (GetTime()-val[4])>=10 then
+		if (GT()-val[4])>=10 then
 			tremove(Await, cat)
 			break
 		end
@@ -1719,7 +1720,7 @@ end
 
 function DPSMate.DB:ClearAwaitHotDispel()
 	for cat, val in AwaitHotDispel do
-		if (GetTime()-val[4])>=10 then
+		if (GT()-val[4])>=10 then
 			tremove(AwaitHotDispel, cat)
 		end
 	end
@@ -1739,7 +1740,7 @@ function DPSMate.DB:ApplyRemainingDispels()
 	for cat, val in ConfirmedDispel do
 		for ca, va in val do
 			num = num + 1
-			if (GetTime()-va[2])>10 then
+			if (GT()-va[2])>10 then
 				local type = "party"
 				local num = GetNumPartyMembers()
 				if num <= 0 then
@@ -1806,7 +1807,7 @@ function DPSMate.DB:EvaluateDispel()
 	end
 	for cat, val in AwaitDispel do
 		for ca, va in val do
-			if (GetTime()-(va[3] or 0))<=10 then
+			if (GT()-(va[3] or 0))<=10 then
 				if ConfirmedDispel[cat] then
 					if va[2]~=Restor then
 						if ConfirmedDispel[cat][1] then
@@ -1872,7 +1873,7 @@ function DPSMate.DB:Dispels(cause, Dname, target, ability)
 		end
 		DPSMateDispels[cat][DPSMateUser[cause][1]][DPSMateAbility[Dname][1]][DPSMateUser[target][1]][DPSMateAbility[ability][1]] = DPSMateDispels[cat][DPSMateUser[cause][1]][DPSMateAbility[Dname][1]][DPSMateUser[target][1]][DPSMateAbility[ability][1]]+1
 		DPSMateDispels[cat][DPSMateUser[cause][1]]["i"][1] = DPSMateDispels[cat][DPSMateUser[cause][1]]["i"][1]+1
-		tinsert(DPSMateDispels[cat][DPSMateUser[cause][1]]["i"][2], {DPSMateCombatTime[val], DPSMateAbility[ability][1], DPSMateUser[target][1], GameTime_GetTime()})
+		tinsert(DPSMateDispels[cat][DPSMateUser[cause][1]]["i"][2], {DPSMateCombatTime[val], DPSMateAbility[ability][1], DPSMateUser[target][1], GameTime_GT()})
 	end
 	self.NeedUpdate = true
 end
@@ -1883,7 +1884,7 @@ function DPSMate.DB:UnregisterDeath(target)
 	for cat, val in pairs({[1]="total", [2]="current"}) do 
 		if DPSMateDeaths[cat][DPSMateUser[target][1]] then
 			DPSMateDeaths[cat][DPSMateUser[target][1]][1]["i"][1]=1
-			DPSMateDeaths[cat][DPSMateUser[target][1]][1]["i"][2]=GameTime_GetTime()
+			DPSMateDeaths[cat][DPSMateUser[target][1]][1]["i"][2]=GameTime_GT()
 			if cat==1 and DPSMate.Parser.TargetParty[target] then 
 				local p = DPSMateDeaths[cat][DPSMateUser[target][1]][1][1]
 				DPSMate:Broadcast(4, target, DPSMate:GetUserById(p[1]), DPSMate:GetAbilityById(p[2]), p[3]) 
@@ -1918,7 +1919,7 @@ function DPSMate.DB:DeathHistory(target, cause, ability, amount, hit, crit, type
 			[4] = hitCritCrush,
 			[5] = type,
 			[6] = DPSMateCombatTime[val],
-			[7] = GameTime_GetTime(),
+			[7] = GameTime_GT(),
 		})
 		if DPSMateDeaths[cat][DPSMateUser[target][1]][1][21] then
 			tremove(DPSMateDeaths[cat][DPSMateUser[target][1]][1], 21)
@@ -1981,7 +1982,7 @@ end
 
 function DPSMate.DB:UpdateKicks()
 	for cat, val in AwaitKick do
-		if (GetTime()-val[3])>=2.5 then
+		if (GT()-val[3])>=2.5 then
 			if val[4] then
 				self:Kick(val[4][1], val[1], val[4][2], val[2])
 			end
@@ -2011,7 +2012,7 @@ function DPSMate.DB:Kick(cause, target, causeAbility, targetAbility)
 			DPSMateInterrupts[cat][DPSMateUser[cause][1]][DPSMateAbility[causeAbility][1]][DPSMateUser[target][1]][DPSMateAbility[targetAbility][1]] = 0
 		end
 		DPSMateInterrupts[cat][DPSMateUser[cause][1]]["i"][1] = DPSMateInterrupts[cat][DPSMateUser[cause][1]]["i"][1] + 1
-		tinsert(DPSMateInterrupts[cat][DPSMateUser[cause][1]]["i"][2], {DPSMateCombatTime[val], GameTime_GetTime(), DPSMateAbility[targetAbility][1], DPSMateUser[target][1]})
+		tinsert(DPSMateInterrupts[cat][DPSMateUser[cause][1]]["i"][2], {DPSMateCombatTime[val], GameTime_GT(), DPSMateAbility[targetAbility][1], DPSMateUser[target][1]})
 		DPSMateInterrupts[cat][DPSMateUser[cause][1]][DPSMateAbility[causeAbility][1]][DPSMateUser[target][1]][DPSMateAbility[targetAbility][1]]=DPSMateInterrupts[cat][DPSMateUser[cause][1]][DPSMateAbility[causeAbility][1]][DPSMateUser[target][1]][DPSMateAbility[targetAbility][1]]+1
 	end
 end
@@ -2022,16 +2023,16 @@ function DPSMate.DB:AwaitingBuff(cause, ability, target, time)
 	--DPSMate:SendMessage("Awaiting buff!"..ability)
 end
 
--- deprecated function cause of gettime??
+-- deprecated function cause of GT??
 function DPSMate.DB:ClearAwaitBuffs()
 	for cat, val in AwaitBuff do
-		if (GetTime()-(val[4] or 0))>=5 then
+		if (GT()-(val[4] or 0))>=5 then
 			tremove(AwaitBuff, cat)
 		end
 	end
 end
 
--- deprecated function cause of gettime??
+-- deprecated function cause of GT??
 function DPSMate.DB:ConfirmBuff(target, ability, time)
 	for cat, val in AwaitBuff do
 		if val[4]<=(time or 0) then
@@ -2273,7 +2274,26 @@ function DPSMate.DB:CombatTime()
 	end
 end
 
+local cheatDeathTable = {
+	"Interface\\Icons\\Ability_Vanish" = true,
+	"Interface\\Icons\\Ability_Rogue_Feighdeath" = true,
+	"Interface\\Icons\\ability_vanish" = true,
+	"Interface\\Icons\\Ability_vanish" = true,
+	"Interface\\Icons\\ability_rogue_feighdeath" = true,
+	"Interface\\Icons\\Ability_rogue_feighdeath" = true,
+}
 function DPSMate.DB:hasVanishedFeignDeath()
+	local tex
+	for i=1, 32 do
+		tex = UnitBuff("player", i)
+		if not tex then break end
+		if cheatDeathTable[tex] then
+			cheatCombat = GT()
+			break
+		end
+	end
+
+	--[[
 	for i=0, 31 do
 		DPSMate_Tooltip:SetOwner(UIParent, "ANCHOR_NONE")
 		DPSMate_Tooltip:ClearLines()
@@ -2281,11 +2301,12 @@ function DPSMate.DB:hasVanishedFeignDeath()
 		local buff = DPSMate_TooltipTextLeft1:GetText()
 		if (not buff) then break end
 		if (strfind(buff, DPSMate.L["vanish"]) or strfind(buff, DPSMate.L["feigndeath"])) then
-			cheatCombat = GetTime()
+			cheatCombat = GT()
 			return true
 		end
 		DPSMate_Tooltip:Hide()
 	end
+	--]]
 end
 
 local oldRepopMe = RepopMe
@@ -2341,7 +2362,7 @@ function DPSMate.DB:Attempt(mode, check, tar)
 				tinsert(DPSMateAttempts[zone], 1, {
 					[1] = DPSMate.L["unknown"],
 					[2] = DPSMateCombatTime["total"],
-					[3] = GameTime_GetTime(),
+					[3] = GameTime_GT(),
 					[6] = {}
 				})
 			end
@@ -2383,7 +2404,7 @@ function DPSMate.DB:BuildFail(type, user, cause, ability, amount)
 			[3] = DPSMateAbility[ability][1],
 			[4] = amount,
 			[5] = DPSMateCombatTime[val],
-			[6] = GameTime_GetTime(),
+			[6] = GameTime_GT(),
 		})
 	end
 	DPSMate:Broadcast(3, user, cause, ability, amount, type)
@@ -2432,7 +2453,7 @@ function DPSMate.DB:CCBreaker(target, ability, cause)
 			[1] = DPSMateAbility[ability][1],
 			[2] = DPSMateUser[target][1],
 			[3] = DPSMateCombatTime[val],
-			[4] = GameTime_GetTime()
+			[4] = GameTime_GT()
 		})
 	end
 end
