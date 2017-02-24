@@ -9,6 +9,35 @@ DPSMate.Options.Options[1]["args"]["healingandabsorbs"] = {
 	get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["options"][1]["healingandabsorbs"] end,
 	set = function() DPSMate.Options:ToggleDrewDrop(1, "healingandabsorbs", DPSMate.Options.Dewdrop:GetOpenedParent()) end,
 }
+DPSMate.Modules.HealingAndAbsorbs.Events = {
+	-- Healing/Absorbs/Fail/DeathHistory/Dispels
+	"CHAT_MSG_SPELL_SELF_BUFF",
+	"CHAT_MSG_SPELL_PERIODIC_SELF_BUFFS",
+	"CHAT_MSG_SPELL_FRIENDLYPLAYER_BUFF",
+	"CHAT_MSG_SPELL_PERIODIC_FRIENDLYPLAYER_BUFFS",
+	"CHAT_MSG_SPELL_HOSTILEPLAYER_BUFF",
+	"CHAT_MSG_SPELL_PERIODIC_HOSTILEPLAYER_BUFFS",
+	"CHAT_MSG_SPELL_PARTY_BUFF",
+	"CHAT_MSG_SPELL_PERIODIC_PARTY_BUFFS",
+	
+	-- Healing/Absorbs/Fail/DeathHistory/Dispels
+	"CHAT_MSG_SPELL_SELF_BUFF",
+	"CHAT_MSG_SPELL_PERIODIC_SELF_BUFFS",
+	"CHAT_MSG_SPELL_FRIENDLYPLAYER_BUFF",
+	"CHAT_MSG_SPELL_PERIODIC_FRIENDLYPLAYER_BUFFS",
+	"CHAT_MSG_SPELL_HOSTILEPLAYER_BUFF",
+	"CHAT_MSG_SPELL_PERIODIC_HOSTILEPLAYER_BUFFS",
+	"CHAT_MSG_SPELL_PARTY_BUFF",
+	"CHAT_MSG_SPELL_PERIODIC_PARTY_BUFFS",
+
+	-- Absorbs/Auras
+	"CHAT_MSG_SPELL_DAMAGESHIELDS_ON_SELF",
+	"CHAT_MSG_SPELL_DAMAGESHIELDS_ON_OTHERS",
+	"CHAT_MSG_SPELL_BREAK_AURA",
+	"CHAT_MSG_SPELL_AURA_GONE_SELF",
+	"CHAT_MSG_SPELL_AURA_GONE_OTHER",
+	"CHAT_MSG_SPELL_AURA_GONE_PARTY",
+}
 
 -- Register the moodule
 DPSMate:Register("healingandabsorbs", DPSMate.Modules.HealingAndAbsorbs, DPSMate.L["healingandabsorbs"])

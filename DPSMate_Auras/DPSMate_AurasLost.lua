@@ -9,6 +9,19 @@ DPSMate.Options.Options[1]["args"]["auraslost"] = {
 	get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["options"][1]["auraslost"] end,
 	set = function() DPSMate.Options:ToggleDrewDrop(1, "auraslost", DPSMate.Options.Dewdrop:GetOpenedParent()) end,
 }
+DPSMate.Modules.AurasLost.Events = {
+	"CHAT_MSG_SPELL_SELF_BUFF",
+	"CHAT_MSG_SPELL_PERIODIC_SELF_BUFFS",
+	"CHAT_MSG_SPELL_FRIENDLYPLAYER_BUFF",
+	"CHAT_MSG_SPELL_PERIODIC_FRIENDLYPLAYER_BUFFS",
+	"CHAT_MSG_SPELL_HOSTILEPLAYER_BUFF",
+	"CHAT_MSG_SPELL_PERIODIC_HOSTILEPLAYER_BUFFS",
+	"CHAT_MSG_SPELL_PARTY_BUFF",
+	"CHAT_MSG_SPELL_PERIODIC_PARTY_BUFFS",
+	"CHAT_MSG_SPELL_AURA_GONE_SELF",
+	"CHAT_MSG_SPELL_AURA_GONE_OTHER",
+	"CHAT_MSG_SPELL_AURA_GONE_PARTY",
+}
 
 -- Register the moodule
 DPSMate:Register("auraslost", DPSMate.Modules.AurasLost, DPSMate.L["auraslost"])

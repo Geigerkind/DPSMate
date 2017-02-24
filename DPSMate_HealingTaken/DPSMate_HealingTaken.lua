@@ -9,6 +9,17 @@ DPSMate.Options.Options[1]["args"]["healingtaken"] = {
 	get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["options"][1]["healingtaken"] end,
 	set = function() DPSMate.Options:ToggleDrewDrop(1, "healingtaken", DPSMate.Options.Dewdrop:GetOpenedParent()) end,
 }
+DPSMate.Modules.HealingTaken.Events = {
+	-- Healing/Absorbs/Fail/DeathHistory/Dispels
+	"CHAT_MSG_SPELL_SELF_BUFF",
+	"CHAT_MSG_SPELL_PERIODIC_SELF_BUFFS",
+	"CHAT_MSG_SPELL_FRIENDLYPLAYER_BUFF",
+	"CHAT_MSG_SPELL_PERIODIC_FRIENDLYPLAYER_BUFFS",
+	"CHAT_MSG_SPELL_HOSTILEPLAYER_BUFF",
+	"CHAT_MSG_SPELL_PERIODIC_HOSTILEPLAYER_BUFFS",
+	"CHAT_MSG_SPELL_PARTY_BUFF",
+	"CHAT_MSG_SPELL_PERIODIC_PARTY_BUFFS",
+}
 
 -- Register the moodule
 DPSMate:Register("healingtaken", DPSMate.Modules.HealingTaken, DPSMate.L["healingtaken"])

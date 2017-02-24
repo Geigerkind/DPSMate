@@ -9,6 +9,7 @@ DPSMate.Options.Options[1]["args"]["threat"] = {
 	get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["options"][1]["threat"] end,
 	set = function() DPSMate.Options:ToggleDrewDrop(1, "threat", DPSMate.Options.Dewdrop:GetOpenedParent()) end,
 }
+DPSMate.Modules.Threat.Events = {}
 
 -- Register the moodule
 DPSMate:Register("threat", DPSMate.Modules.Threat, DPSMate.L["threat"])

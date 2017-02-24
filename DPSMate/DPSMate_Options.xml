@@ -5930,6 +5930,9 @@
 							</OnLoad>
 							<OnClick>
 								DPSMateSettings["legacylogs"] = not DPSMateSettings["legacylogs"] 
+								if DPSMateSettings["enable"] then
+									DPSMate:Enable()
+								end
 							</OnClick>
 						</Scripts>
 					</CheckButton>
@@ -6147,8 +6150,6 @@
 				this:RegisterEvent("CHAT_MSG_COMBAT_HOSTILEPLAYER_HITS")
 				this:RegisterEvent("CHAT_MSG_COMBAT_HOSTILEPLAYER_MISSES")
 				
-				--this:RegisterEvent("COMBAT_TEXT_UPDATE")
-				
 				this:RegisterEvent("CHAT_MSG_COMBAT_CREATURE_VS_SELF_HITS")
 				this:RegisterEvent("CHAT_MSG_COMBAT_CREATURE_VS_SELF_MISSES")
 				this:RegisterEvent("CHAT_MSG_SPELL_CREATURE_VS_SELF_DAMAGE")
@@ -6186,15 +6187,8 @@
 				this:RegisterEvent("PLAYER_REGEN_DISABLED")
 				this:RegisterEvent("PLAYER_REGEN_ENABLED")
 				
-				--this:RegisterEvent("SPELLCAST_CHANNEL_START")
-				--this:RegisterEvent("SPELLCAST_STOP")
-				--this:RegisterEvent("SPELLCAST_FAILED")
-				--this:RegisterEvent("SPELLCAST_INTERRUPTED")
-				
 				this:RegisterEvent("PLAYER_AURAS_CHANGED")
-				--this:RegisterEvent("UNIT_AURA")
 				this:RegisterEvent("PLAYER_TARGET_CHANGED")
-				--this:RegisterEvent("PLAYER_LOGOUT")
 				this:RegisterEvent("PET_STABLE_CLOSED")
 				this:RegisterEvent("PET_STABLE_SHOW")
 				this:RegisterEvent("PET_STABLE_UPDATE")

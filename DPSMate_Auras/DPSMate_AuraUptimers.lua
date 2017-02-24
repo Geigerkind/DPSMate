@@ -9,6 +9,19 @@ DPSMate.Options.Options[1]["args"]["aurasuptime"] = {
 	get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["options"][1]["aurasuptime"] end,
 	set = function() DPSMate.Options:ToggleDrewDrop(1, "aurasuptime", DPSMate.Options.Dewdrop:GetOpenedParent()) end,
 }
+DPSMate.Modules.AurasUptimers.Events = {
+	"CHAT_MSG_SPELL_SELF_BUFF",
+	"CHAT_MSG_SPELL_PERIODIC_SELF_BUFFS",
+	"CHAT_MSG_SPELL_FRIENDLYPLAYER_BUFF",
+	"CHAT_MSG_SPELL_PERIODIC_FRIENDLYPLAYER_BUFFS",
+	"CHAT_MSG_SPELL_HOSTILEPLAYER_BUFF",
+	"CHAT_MSG_SPELL_PERIODIC_HOSTILEPLAYER_BUFFS",
+	"CHAT_MSG_SPELL_PARTY_BUFF",
+	"CHAT_MSG_SPELL_PERIODIC_PARTY_BUFFS",
+	"CHAT_MSG_SPELL_AURA_GONE_SELF",
+	"CHAT_MSG_SPELL_AURA_GONE_OTHER",
+	"CHAT_MSG_SPELL_AURA_GONE_PARTY",
+}
 
 -- Register the moodule
 DPSMate:Register("aurasuptime", DPSMate.Modules.AurasUptimers, DPSMate.L["aurauptime"])

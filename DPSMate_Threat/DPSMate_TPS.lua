@@ -9,6 +9,7 @@ DPSMate.Options.Options[1]["args"]["tps"] = {
 	get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["options"][1]["tps"] end,
 	set = function() DPSMate.Options:ToggleDrewDrop(1, "tps", DPSMate.Options.Dewdrop:GetOpenedParent()) end,
 }
+DPSMate.Modules.TPS.Events = {}
 
 -- Register the moodule
 DPSMate:Register("tps", DPSMate.Modules.TPS, DPSMate.L["tps"])

@@ -662,12 +662,12 @@ end
 			if b=="вас" then t[1]=self.player end
 			t[2] = tnbr(c)
 			overheal = self:GetOverhealByName(t[2], t[1] or b)
-			DB:HealingTaken(DPSMateHealingTaken, t[1] or b, a, 0, 1, t[2], self.player)
-			DB:HealingTaken(DPSMateEHealingTaken, t[1] or b, a, 0, 1, t[2]-overheal, self.player)
+			DB:HealingTaken(0, DPSMateHealingTaken, t[1] or b, a, 0, 1, t[2], self.player)
+			DB:HealingTaken(1, DPSMateEHealingTaken, t[1] or b, a, 0, 1, t[2]-overheal, self.player)
 			DB:Healing(0, DPSMateEHealing, self.player, a, 0, 1, t[2]-overheal, t[1] or b)
 			if overheal>0 then 
 				DB:Healing(2, DPSMateOverhealing, self.player, a, 0, 1, overheal, t[1] or b)
-				DB:HealingTaken(DPSMateOverhealingTaken, t[1] or b, a, 0, 1, overheal, self.player)
+				DB:HealingTaken(2, DPSMateOverhealingTaken, t[1] or b, a, 0, 1, overheal, self.player)
 			end
 			DB:Healing(1, DPSMateTHealing, self.player, a, 0, 1, t[2], t[1] or b)
 			DB:DeathHistory(t[1] or b, self.player, a, t[2], 0, 1, 1, 0)
@@ -679,12 +679,12 @@ end
 			if b=="вас" then t[1]=self.player end
 			t[2] = tnbr(c)
 			overheal = self:GetOverhealByName(t[2], t[1] or b)
-			DB:HealingTaken(DPSMateHealingTaken, t[1] or b, a, t[4], t[3], t[2], self.player)
-			DB:HealingTaken(DPSMateEHealingTaken, t[1] or b, a, t[4], t[3], t[2]-overheal, self.player)
+			DB:HealingTaken(0, DPSMateHealingTaken, t[1] or b, a, t[4], t[3], t[2], self.player)
+			DB:HealingTaken(1, DPSMateEHealingTaken, t[1] or b, a, t[4], t[3], t[2]-overheal, self.player)
 			DB:Healing(0, DPSMateEHealing, self.player, a, t[4], t[3], t[2]-overheal, t[1] or b)
 			if overheal>0 then 
 				DB:Healing(2, DPSMateOverhealing, self.player, a, t[4], t[3], overheal, t[1] or b) 
-				DB:HealingTaken(DPSMateOverhealingTaken, t[1] or b, a, t[4], t[3], overheal, self.player)
+				DB:HealingTaken(2, DPSMateOverhealingTaken, t[1] or b, a, t[4], t[3], overheal, self.player)
 			end
 			DB:Healing(1, DPSMateTHealing, self.player, a, t[4], t[3], t[2], t[1] or b)
 			DB:DeathHistory(t[1] or b, self.player, a, t[2], t[4], t[3], 1, 0)
@@ -750,12 +750,12 @@ end
 		for a,c,b in strgfind(msg, "Вы получаете (%d+) ед%. здоровья от заклинания \"(.+)\" (.+)%.") do
 			t[1]=tnbr(a)
 			overheal = self:GetOverhealByName(t[1], self.player)
-			DB:HealingTaken(DPSMateHealingTaken, self.player, c.."(Периодический)", 1, 0, t[1], b)
-			DB:HealingTaken(DPSMateEHealingTaken, self.player, c.."(Периодический)", 1, 0, t[1]-overheal, b)
+			DB:HealingTaken(0, DPSMateHealingTaken, self.player, c.."(Периодический)", 1, 0, t[1], b)
+			DB:HealingTaken(1, DPSMateEHealingTaken, self.player, c.."(Периодический)", 1, 0, t[1]-overheal, b)
 			DB:Healing(0, DPSMateEHealing, b, c.."(Периодический)", 1, 0, t[1]-overheal, self.player)
 			if overheal>0 then 
 				DB:Healing(2, DPSMateOverhealing, b, c.."(Периодический)", 1, 0, overheal, self.player)
-				DB:HealingTaken(DPSMateOverhealingTaken, self.player, c.."(Периодический)", 1, 0, overheal, b)
+				DB:HealingTaken(2, DPSMateOverhealingTaken, self.player, c.."(Периодический)", 1, 0, overheal, b)
 			end
 			DB:Healing(1, DPSMateTHealing, b, c.."(Периодический)", 1, 0, t[1], self.player)
 			DB:DeathHistory(self.player, b, c.."(Периодический)", t[1], 1, 0, 1, 0)
@@ -764,12 +764,12 @@ end
 		for a,b in strgfind(msg, "Вы получаете (%d+) ед%. здоровья от заклинания \"(.+)\"%.") do 
 			t[1] = tnbr(a)
 			overheal = self:GetOverhealByName(t[1], self.player)
-			DB:HealingTaken(DPSMateHealingTaken, self.player, b.."(Периодический)", 1, 0, t[1], self.player)
-			DB:HealingTaken(DPSMateEHealingTaken, self.player, b.."(Периодический)", 1, 0, t[1]-overheal, self.player)
+			DB:HealingTaken(0, DPSMateHealingTaken, self.player, b.."(Периодический)", 1, 0, t[1], self.player)
+			DB:HealingTaken(1, DPSMateEHealingTaken, self.player, b.."(Периодический)", 1, 0, t[1]-overheal, self.player)
 			DB:Healing(0, DPSMateEHealing, self.player, b.."(Периодический)", 1, 0, t[1]-overheal, self.player)
 			if overheal>0 then 
 				DB:Healing(2, DPSMateOverhealing, self.player, b.."(Периодический)", 1, 0, overheal, self.player)
-				DB:HealingTaken(DPSMateOverhealingTaken, self.player, b.."(Периодический)", 1, 0, overheal, self.player)
+				DB:HealingTaken(2, DPSMateOverhealingTaken, self.player, b.."(Периодический)", 1, 0, overheal, self.player)
 			end
 			DB:Healing(1, DPSMateTHealing, self.player, b.."(Периодический)", 1, 0, t[1], self.player)
 			DB:DeathHistory(self.player, self.player, b.."(Периодический)", t[1], 1, 0, 1, 0)
@@ -800,12 +800,12 @@ end
 		for f,a,c,b in strgfind(msg, "(.+) получает (%d+) ед%. здоровья от заклинания \"(.+)\" (.+)%.") do
 			t[1]=tnbr(a)
 			overheal = self:GetOverhealByName(t[1], f)
-			DB:HealingTaken(DPSMateHealingTaken, f, c.."(Периодический)", 1, 0, t[1], b)
-			DB:HealingTaken(DPSMateEHealingTaken, f, c.."(Периодический)", 1, 0, t[1]-overheal, b)
+			DB:HealingTaken(0, DPSMateHealingTaken, f, c.."(Периодический)", 1, 0, t[1], b)
+			DB:HealingTaken(1, DPSMateEHealingTaken, f, c.."(Периодический)", 1, 0, t[1]-overheal, b)
 			DB:Healing(0, DPSMateEHealing, b, c.."(Периодический)", 1, 0, t[1]-overheal, f)
 			if overheal>0 then 
 				DB:Healing(2, DPSMateOverhealing, b, c.."(Периодический)", 1, 0, overheal, f)
-				DB:HealingTaken(DPSMateOverhealingTaken, f, c.."(Периодический)", 1, 0, overheal, b)
+				DB:HealingTaken(2, DPSMateOverhealingTaken, f, c.."(Периодический)", 1, 0, overheal, b)
 			end
 			DB:Healing(1, DPSMateTHealing, b, c.."(Периодический)", 1, 0, t[1], f)
 			DB:DeathHistory(f, b, c.."(Периодический)", t[1], 1, 0, 1, 0)
@@ -814,12 +814,12 @@ end
 		for f,a,b in strgfind(msg, "(.+) получает (%d+) ед%. здоровья от вашего заклинания \"(.+)\".") do 
 			t[1] = tnbr(a)
 			overheal = self:GetOverhealByName(t[1], f)
-			DB:HealingTaken(DPSMateHealingTaken, f, b.."(Периодический)", 1, 0, t[1], self.player)
-			DB:HealingTaken(DPSMateEHealingTaken, f, b.."(Периодический)", 1, 0, t[1]-overheal, self.player)
+			DB:HealingTaken(0, DPSMateHealingTaken, f, b.."(Периодический)", 1, 0, t[1], self.player)
+			DB:HealingTaken(1, DPSMateEHealingTaken, f, b.."(Периодический)", 1, 0, t[1]-overheal, self.player)
 			DB:Healing(0, DPSMateEHealing, self.player, b.."(Периодический)", 1, 0, t[1]-overheal)
 			if overheal>0 then 
 				DB:Healing(2, DPSMateOverhealing, self.player, b.."(Периодический)", 1, 0, overheal)
-				DB:HealingTaken(DPSMateOverhealingTaken, f, b.."(Периодический)", 1, 0, overheal, self.player)
+				DB:HealingTaken(2, DPSMateOverhealingTaken, f, b.."(Периодический)", 1, 0, overheal, self.player)
 			end
 			DB:Healing(1, DPSMateTHealing, self.player, b.."(Периодический)", 1, 0, t[1])
 			DB:DeathHistory(f, self.player, b.."(Периодический)", t[1], 1, 0, 1, 0)
@@ -849,12 +849,12 @@ end
 			t[1] = tnbr(d)
 			if c=="вас" then t[2]=self.player end
 			overheal = self:GetOverhealByName(t[1], t[2] or c)
-			DB:HealingTaken(DPSMateHealingTaken, t[2] or c, b, 0, 1, t[1], a)
-			DB:HealingTaken(DPSMateEHealingTaken, t[2] or c, b, 0, 1, t[1]-overheal, a)
+			DB:HealingTaken(0, DPSMateHealingTaken, t[2] or c, b, 0, 1, t[1], a)
+			DB:HealingTaken(1, DPSMateEHealingTaken, t[2] or c, b, 0, 1, t[1]-overheal, a)
 			DB:Healing(0, DPSMateEHealing, a, b, 0, 1, t[1]-overheal, t[2] or c)
 			if overheal>0 then 
 				DB:Healing(2, DPSMateOverhealing, a, b, 0, 1, overheal, t[2] or c)
-				DB:HealingTaken(DPSMateOverhealingTaken, t[2] or c, b, 0, 1, overheal, a)
+				DB:HealingTaken(2, DPSMateOverhealingTaken, t[2] or c, b, 0, 1, overheal, a)
 			end
 			DB:Healing(1, DPSMateTHealing, a, b, 0, 1, t[1], t[2] or c)
 			DB:DeathHistory(t[2] or c, a, b, t[1], 0, 1, 1, 0)
@@ -866,12 +866,12 @@ end
 			t[3] = 0
 			if c=="вас" then t[2]=self.player end
 			overheal = self:GetOverhealByName(t[1], t[2] or c)
-			DB:HealingTaken(DPSMateHealingTaken, t[2] or c, b, t[4], t[3], t[1], a)
-			DB:HealingTaken(DPSMateEHealingTaken, t[2] or c, b, t[4], t[3], t[1]-overheal, a)
+			DB:HealingTaken(0, DPSMateHealingTaken, t[2] or c, b, t[4], t[3], t[1], a)
+			DB:HealingTaken(1, DPSMateEHealingTaken, t[2] or c, b, t[4], t[3], t[1]-overheal, a)
 			DB:Healing(0, DPSMateEHealing, a, b, t[4], t[3], t[1]-overheal, t[2] or c)
 			if overheal>0 then 
 				DB:Healing(2, DPSMateOverhealing, a, b, t[4], t[3], overheal, t[2] or c)
-				DB:HealingTaken(DPSMateOverhealingTaken, t[2] or c, b, t[4], t[3], overheal, a)
+				DB:HealingTaken(2, DPSMateOverhealingTaken, t[2] or c, b, t[4], t[3], overheal, a)
 			end
 			DB:Healing(1, DPSMateTHealing, a, b, t[4], t[3], t[1], t[2] or c)
 			DB:DeathHistory(t[2] or c, a, b, t[1], t[4], t[3], 1, 0)

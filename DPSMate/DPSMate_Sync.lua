@@ -387,12 +387,16 @@ function DPSMate.Sync:SyncStatus(arg2, arg4)
 	if arg2 == "0" then
 		local usid = DPSMateUser[arg4][1]
 		if Arrays[1][usid] then DPSMateDamageDone[1][usid] = Arrays[1][usid] end
-		if Arrays[2][usid] then DPSMateDamageTaken[1][usid] = Arrays[2][usid] end
-		for cat, val in Arrays[3] do
-			if val[usid] then
-				if not DPSMateEDD[1][cat] then DPSMateEDD[1][cat] = {} end
-				DPSMateEDD[1][cat][usid] = val[usid]
+		if Arrays[2][usid] and (DPSMateSettings["legacylogs"] and (DPSMate.ModuleNames["damagetaken"])) then DPSMateDamageTaken[1][usid] = Arrays[2][usid] else Arrays[2][usid] = nil end
+		if DPSMateSettings["legacylogs"] and DPSMate.ModuleNames["enemydamagedone"] then
+			for cat, val in Arrays[3] do
+				if val[usid] then
+					if not DPSMateEDD[1][cat] then DPSMateEDD[1][cat] = {} end
+					DPSMateEDD[1][cat][usid] = val[usid]
+				end
 			end
+		else
+			Arrays[3][usid] = nil
 		end
 		for cat, val in Arrays[4] do
 			if val[usid] then
@@ -400,18 +404,18 @@ function DPSMate.Sync:SyncStatus(arg2, arg4)
 				DPSMateEDT[1][cat][usid] = val[usid]
 			end
 		end
-		if Arrays[5][usid] then DPSMateTHealing[1][usid] = Arrays[5][usid] end
-		if Arrays[6][usid] then DPSMateEHealing[1][usid] = Arrays[6][usid] end
-		if Arrays[7][usid] then DPSMateHealingTaken[1][usid] = Arrays[7][usid] end
-		if Arrays[8][usid] then DPSMateEHealingTaken[1][usid] = Arrays[8][usid] end
-		if Arrays[9][usid] then DPSMateOverhealing[1][usid] = Arrays[9][usid] end
-		if Arrays[10][usid] then DPSMateAbsorbs[1][usid] = Arrays[10][usid] end
-		if Arrays[11][usid] then DPSMateDeaths[1][usid] = Arrays[11][usid] end
-		if Arrays[12][usid] then DPSMateInterrupts[1][usid] = Arrays[12][usid] end
-		if Arrays[13][usid] then DPSMateDispels[1][usid] = Arrays[13][usid] end
-		if Arrays[14][usid] then DPSMateAurasGained[1][usid] = Arrays[14][usid] end
-		if Arrays[15][usid] then DPSMateOverhealingTaken[1][usid] = Arrays[15][usid] end
-		if Arrays[16][usid] then DPSMateThreat[1][usid] = Arrays[16][usid] end
+		if Arrays[5][usid] and (DPSMateSettings["legacylogs"] and (DPSMate.ModuleNames["healing"])) then DPSMateTHealing[1][usid] = Arrays[5][usid] else Arrays[5][usid] = nil end
+		if Arrays[6][usid] and (DPSMateSettings["legacylogs"] and (DPSMate.ModuleNames["effectivehealing"] or DPSMate.ModuleNames["healingandabsorbs"])) then DPSMateEHealing[1][usid] = Arrays[6][usid] else Arrays[6][usid] = nil end
+		if Arrays[7][usid] and (DPSMateSettings["legacylogs"] and (DPSMate.ModuleNames["healingtaken"] or DPSMate.ModuleNames["healing"])) then DPSMateHealingTaken[1][usid] = Arrays[7][usid] else Arrays[7][usid] = nil end
+		if Arrays[8][usid] and (DPSMateSettings["legacylogs"] and (DPSMate.ModuleNames["effectivehealingtaken"] or DPSMate.ModuleNames["effectivehealing"] or DPSMate.ModuleNames["healingandabsorbs"])) then DPSMateEHealingTaken[1][usid] = Arrays[8][usid] else Arrays[8][usid] = nil end
+		if Arrays[9][usid] and (DPSMateSettings["legacylogs"] and (DPSMate.ModuleNames["overhealing"])) then DPSMateOverhealing[1][usid] = Arrays[9][usid] else Arrays[9][usid] = nil end 
+		if Arrays[10][usid] and (DPSMateSettings["legacylogs"] and (DPSMate.ModuleNames["absorbs"] or DPSMate.ModuleNames["absorbstaken"] or DPSMate.ModuleNames["healingandabsorbs"])) then DPSMateAbsorbs[1][usid] = Arrays[10][usid] else Arrays[10][usid] = nil end
+		if Arrays[11][usid] and (DPSMateSettings["legacylogs"] and (DPSMate.ModuleNames["deaths"])) then DPSMateDeaths[1][usid] = Arrays[11][usid] else Arrays[11][usid] = nil end
+		if Arrays[12][usid] and (DPSMateSettings["legacylogs"] and (DPSMate.ModuleNames["interrupts"])) then DPSMateInterrupts[1][usid] = Arrays[12][usid] else Arrays[12][usid] = nil end
+		if Arrays[13][usid] and (DPSMateSettings["legacylogs"] and (DPSMate.ModuleNames["decurses"] or DPSMate.ModuleNames["curepoison"] or DPSMate.ModuleNames["liftmagic"] or DPSMate.ModuleNames["curedisease"] or DPSMate.ModuleNames["dispels"])) then DPSMateDispels[1][usid] = Arrays[13][usid] else Arrays[13][usid] = nil end
+		if Arrays[14][usid] and (DPSMateSettings["legacylogs"] and (DPSMate.ModuleNames["aurasgained"])) then DPSMateAurasGained[1][usid] = Arrays[14][usid] else Arrays[14][usid] = nil end
+		if Arrays[15][usid] and (DPSMateSettings["legacylogs"] and (DPSMate.ModuleNames["overhealing"] or DPSMate.ModuleNames["OHealingTaken"])) then DPSMateOverhealingTaken[1][usid] = Arrays[15][usid] else Arrays[15][usid] = nil end
+		if Arrays[16][usid] and (DPSMateSettings["legacylogs"] and (DPSMate.ModuleNames["threats"])) then DPSMateThreat[1][usid] = Arrays[16][usid] else Arrays[16][usid] = nil end
 		DB.NeedUpdate = true
 	else
 		DB:BuildUser(arg4, nil)

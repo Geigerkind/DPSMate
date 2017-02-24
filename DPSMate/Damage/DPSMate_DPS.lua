@@ -9,6 +9,22 @@ DPSMate.Options.Options[1]["args"]["dps"] = {
 	get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["options"][1]["dps"] end, -- Addons might conflicting here with dewdrop
 	set = function() DPSMate.Options:ToggleDrewDrop(1, "dps", DPSMate.Options.Dewdrop:GetOpenedParent()) end,
 }
+DPSMate.Modules.DPS.Events = {
+	"CHAT_MSG_COMBAT_SELF_HITS",
+	"CHAT_MSG_COMBAT_SELF_MISSES",
+	"CHAT_MSG_SPELL_SELF_DAMAGE",
+	"CHAT_MSG_COMBAT_PARTY_HITS",
+	"CHAT_MSG_SPELL_PARTY_DAMAGE",
+	"CHAT_MSG_COMBAT_PARTY_MISSES",
+	"CHAT_MSG_COMBAT_FRIENDLYPLAYER_HITS",
+	"CHAT_MSG_COMBAT_FRIENDLYPLAYER_MISSES",
+	"CHAT_MSG_SPELL_FRIENDLYPLAYER_DAMAGE",
+	-- Pet Damage
+	"CHAT_MSG_COMBAT_PET_HITS",
+	"CHAT_MSG_COMBAT_PET_MISSES",
+	--"CHAT_MSG_SPELL_PET_BUFF",
+	"CHAT_MSG_SPELL_PET_DAMAGE",
+}
 
 -- Register the moodule
 DPSMate:Register("dps", DPSMate.Modules.DPS, DPSMate.L["dps"])

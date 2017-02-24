@@ -9,6 +9,17 @@ DPSMate.Options.Options[1]["args"]["effectivehealing"] = {
 	get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["options"][1]["effectivehealing"] end,
 	set = function() DPSMate.Options:ToggleDrewDrop(1, "effectivehealing", DPSMate.Options.Dewdrop:GetOpenedParent()) end,
 }
+DPSMate.Modules.EffectiveHealing.Events = {
+	-- Healing/Absorbs/Fail/DeathHistory/Dispels
+	"CHAT_MSG_SPELL_SELF_BUFF",
+	"CHAT_MSG_SPELL_PERIODIC_SELF_BUFFS",
+	"CHAT_MSG_SPELL_FRIENDLYPLAYER_BUFF",
+	"CHAT_MSG_SPELL_PERIODIC_FRIENDLYPLAYER_BUFFS",
+	"CHAT_MSG_SPELL_HOSTILEPLAYER_BUFF",
+	"CHAT_MSG_SPELL_PERIODIC_HOSTILEPLAYER_BUFFS",
+	"CHAT_MSG_SPELL_PARTY_BUFF",
+	"CHAT_MSG_SPELL_PERIODIC_PARTY_BUFFS",
+}
 
 -- Register the moodule
 DPSMate:Register("effectivehealing", DPSMate.Modules.EffectiveHealing, DPSMate.L["effectivehealing"])

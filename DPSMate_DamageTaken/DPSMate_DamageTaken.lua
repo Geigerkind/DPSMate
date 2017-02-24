@@ -9,6 +9,21 @@ DPSMate.Options.Options[1]["args"]["damagetaken"] = {
 	get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["options"][1]["damagetaken"] end,
 	set = function() DPSMate.Options:ToggleDrewDrop(1, "damagetaken", DPSMate.Options.Dewdrop:GetOpenedParent()) end,
 }
+DPSMate.Modules.DamageTaken.Events = {
+	"CHAT_MSG_COMBAT_CREATURE_VS_SELF_HITS",
+	"CHAT_MSG_COMBAT_CREATURE_VS_SELF_MISSES",
+	"CHAT_MSG_SPELL_CREATURE_VS_SELF_DAMAGE",
+	"CHAT_MSG_COMBAT_CREATURE_VS_PARTY_HITS",
+	"CHAT_MSG_COMBAT_CREATURE_VS_PARTY_MISSES",
+	"CHAT_MSG_SPELL_CREATURE_VS_PARTY_DAMAGE",
+	"CHAT_MSG_COMBAT_CREATURE_VS_CREATURE_HITS",
+	"CHAT_MSG_COMBAT_CREATURE_VS_CREATURE_MISSES",
+	"CHAT_MSG_SPELL_CREATURE_VS_CREATURE_DAMAGE",
+	"CHAT_MSG_SPELL_PERIODIC_PARTY_DAMAGE",
+	"CHAT_MSG_SPELL_PERIODIC_SELF_DAMAGE",
+	"CHAT_MSG_SPELL_PERIODIC_FRIENDLYPLAYER_DAMAGE",
+	"CHAT_MSG_SPELL_PERIODIC_CREATURE_DAMAGE",
+}
 
 -- Register the moodule
 DPSMate:Register("damagetaken", DPSMate.Modules.DamageTaken, DPSMate.L["damagetaken"])
