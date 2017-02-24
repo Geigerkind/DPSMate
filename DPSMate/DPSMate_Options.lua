@@ -541,6 +541,9 @@ function DPSMate.Options:InitializeConfigMenu()
 	DPSMate_ConfigMenu_Tab_Broadcasting_Fails:SetChecked(DPSMateSettings["bcfail"])
 	DPSMate_ConfigMenu_Tab_Broadcasting_RaidWarning:SetChecked(DPSMateSettings["bcrw"])
 	
+	-- Tab Raidleader options
+	DPSMate_ConfigMenu_Tab_RaidLeader_LegacyLogs:SetChecked(DPSMateSettings["legacylogs"])
+	
 	-- Mode menu
 	for cat, _ in DPSMateSettings["hiddenmodes"] do
 		DPSMate.Options.Options[1]["args"][cat] = nil
