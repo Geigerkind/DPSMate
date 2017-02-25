@@ -1,0 +1,11 @@
+## Interface: 11200
+## Title: DPSMate +|cFFFFFFFFLocal - frFR|r
+## Notes: Load this module in order to support the french client.
+## Author: Shino <Synced> - Kronos
+## Dependencies: DPSMate
+
+Babble-Spell-2.3_frFR.lua
+Babble-Boss-2.3_frFR.lua
+NPCDB-1.0_frFR.lua
+frFR.lua
+DPSMate_ParserFRFR.lua
