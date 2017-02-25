@@ -287,6 +287,8 @@ function DPSMate:InitializeFrames()
 	DPSMate.Options:HideWhenSolo()
 	if not DPSMateSettings["enable"] then
 		self:Disable()
+	else
+		self:Enable()
 	end
 
 	-- Report delay button
