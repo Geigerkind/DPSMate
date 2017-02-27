@@ -426,85 +426,37 @@ if (GetLocale() == "frFR") then
 	
 	DPSMate.Parser.SpellDamageShieldsOnSelf = function(self, msg)
 		t = {}
-		for a,b,c in strgfind(msg, "Ihr reflektiert (%d+) (%a-) auf (.+)%.") do 
+		for a,b,c in strgfind(msg, "Vous renvoyez (%d+) points de dégâts (.*) à (.+)%.") do 
 			local am = tnbr(a)
-			if c == "Euch" then c=self.player end
-			DB:EnemyDamage(true, DPSMateEDT, self.player, "Reflektieren", 1, 0, 0, 0, 0, 0, am, c, 0, 0)
-			DB:DamageDone(self.player, "Reflektieren", 1, 0, 0, 0, 0, 0, am, 0, 0)
-		end
-		
-		-- The rebirth support
-		for c in strgfind(msg, "(.+) greift an%. Ihr absorbiert allen Schaden%.") do DB:Absorb(DPSMate.L["AutoAttack"], self.player, c); return end
-		for a,b in strgfind(msg, "(.+) ist (.+) ausgewichen%.") do 
-			DB:EnemyDamage(true, DPSMateEDT, self.player, b, 0, 0, 0, 0, 1, 0, 0, a, 0, 0)
-			DB:DamageDone(self.player, b, 0, 0, 0, 0, 1, 0, 0, 0, 0)
-			return
-		end
-		for a,b in strgfind(msg, "(.+) wurde von (.+) pariert%.") do 
-			DB:EnemyDamage(true, DPSMateEDT, self.player, a, 0, 0, 0, 1, 0, 0, 0, b, 0, 0)
-			DB:DamageDone(self.player, a, 0, 0, 0, 1, 0, 0, 0, 0, 0)
-			return
-		end
-		for a,b in strgfind(msg, "(.+) hat (.+) verfehlt%.") do
-			DB:EnemyDamage(true, DPSMateEDT, self.player, a, 0, 0, 1, 0, 0, 0, 0, b, 0, 0)
-			DB:DamageDone(self.player, a, 0, 0, 1, 0, 0, 0, 0, 0, 0)
-			return
-		end
-		for a,b in strgfind(msg, "Ihr habt es mit (.+) versucht, aber (.+) hat widerstanden%.") do
-			DB:EnemyDamage(true, DPSMateEDT, self.player, a, 0, 0, 0, 0, 0, 1, 0, b, 0, 0)
-			DB:DamageDone(self.player, a, 0, 0, 0, 0, 0, 1, 0, 0, 0)
-			return
-		end
-		for a,b in strgfind(msg, "(.+) wurde von (.+) érafle%.") do 
-			DB:EnemyDamage(true, DPSMateEDT, self.player, a, 0, 0, 0, 0, 0, 0, 0, b, 1, 0)
-			DB:DamageDone(self.player, a, 0, 0, 0, 0, 0, 0, 0, 0, 1)
-			return
+			DB:EnemyDamage(true, DPSMateEDT, self.player, "Renvoyez", 1, 0, 0, 0, 0, 0, am, c, 0, 0)
+			DB:DamageDone(self.player, "Renvoyez", 1, 0, 0, 0, 0, 0, am, 0, 0)
 		end
 	end
 	
 	-- X reflektiert d+ Feuerschaden auf Euch.
 	DPSMate.Parser.SpellDamageShieldsOnOthers = function(self, msg)
 		t = {}
-		for a,b,c,d in strgfind(msg, "(.+) reflektiert (%d+) (%a-) auf (.+)%.") do
+		for a,b,c,d in strgfind(msg, "(.+) renvoie (%d+) points de dégâts (.*) sur (.+)%.") do
 			local am = tnbr(b)
-			if d == "Euch" then d=self.player end
 			if npcdb:Contains(a) or strfind(a, "%s") then
-				DB:EnemyDamage(false, DPSMateEDD, d, "Reflektieren", 1, 0, 0, 0, 0, 0, am, a, 0, 0)
-				DB:DamageTaken(d, "Reflektieren", 1, 0, 0, 0, 0, 0, am, a, 0,0)
-				DB:DeathHistory(d, a, "Reflektieren", am, 1, 0, 0, 0)
+				DB:EnemyDamage(false, DPSMateEDD, d, "Renvoyez", 1, 0, 0, 0, 0, 0, am, a, 0, 0)
+				DB:DamageTaken(d, "Renvoyez", 1, 0, 0, 0, 0, 0, am, a, 0,0)
+				DB:DeathHistory(d, a, "Renvoyez", am, 1, 0, 0, 0)
 			else
-				DB:EnemyDamage(true, DPSMateEDT, a, "Reflektieren", 1, 0, 0, 0, 0, 0, am, d, 0, 0)
-				DB:DamageDone(a, "Reflektieren", 1, 0, 0, 0, 0, 0, am, 0, 0)
+				DB:EnemyDamage(true, DPSMateEDT, a, "Renvoyez", 1, 0, 0, 0, 0, 0, am, d, 0, 0)
+				DB:DamageDone(a, "Renvoyez", 1, 0, 0, 0, 0, 0, am, 0, 0)
 			end
 		end
-		
-		-- The rebirth support
-		for c,b in strgfind(msg, "(.+) greift an%. (.+) absorbiert allen Schaden%.") do DB:Absorb(DPSMate.L["AutoAttack"], b, c); return end
-		for a,b,f in strgfind(msg, "(.+) ist (.+) von (.+) ausgewichen%.") do 
-			DB:EnemyDamage(true, DPSMateEDT, f, b, 0, 0, 0, 0, 1, 0, 0, a, 0, 0)
-			DB:DamageDone(f, b, 0, 0, 0, 0, 1, 0, 0, 0, 0)
-			return
-		end
-		for a,f,b in strgfind(msg, "(.+) von (.+) wurde von (.+) pariert%.") do 
-			DB:EnemyDamage(true, DPSMateEDT, f, a, 0, 0, 0, 1, 0, 0, 0, b, 0, 0)
-			DB:DamageDone(f, a, 0, 0, 0, 1, 0, 0, 0, 0, 0)
-			return
-		end
-		for a,f,b in strgfind(msg, "(.+) von (.+) verfehlt (.+)%.") do
-			DB:EnemyDamage(true, DPSMateEDT, f, a, 0, 0, 1, 0, 0, 0, 0, b, 0, 0)
-			DB:DamageDone(f, a, 0, 0, 1, 0, 0, 0, 0, 0, 0)
-			return
-		end
-		for f,a,b in strgfind(msg, "(.-%s*)'?s (.+) wurde von (.+) widerstanden%.") do
-			f = self:ReplaceSwString(f)
-			DB:EnemyDamage(true, DPSMateEDT, f, a, 0, 0, 0, 0, 0, 1, 0, b, 0, 0)
-			DB:DamageDone(f, a, 0, 0, 0, 0, 0, 1, 0, 0, 0)
-			return
-		end
-		for a,f,b in strgfind(msg, "(.+) von (.+) wurde von (.+) érafle%.") do 
-			DB:EnemyDamage(true, DPSMateEDT, f, a, 0, 0, 0, 0, 0, 0, 0, b, 1, 0)
-			DB:DamageDone(f, a, 0, 0, 0, 0, 0, 0, 0, 0, 1)
-			return
+		for a,b,c in strgfind(msg, "(.+) réfléchit (%d+) (.*) points de dégâts sur vous.") do
+			local am = tnbr(b)
+			if npcdb:Contains(a) or strfind(a, "%s") then
+				DB:EnemyDamage(false, DPSMateEDD, self.player, "Renvoyez", 1, 0, 0, 0, 0, 0, am, a, 0, 0)
+				DB:DamageTaken(self.player, "Renvoyez", 1, 0, 0, 0, 0, 0, am, a, 0,0)
+				DB:DeathHistory(self.player, a, "Renvoyez", am, 1, 0, 0, 0)
+			else
+				DB:EnemyDamage(true, DPSMateEDT, a, "Renvoyez", 1, 0, 0, 0, 0, 0, am, self.player, 0, 0)
+				DB:DamageDone(a, "Renvoyez", 1, 0, 0, 0, 0, 0, am, 0, 0)
+			end
 		end
 	end
 	
