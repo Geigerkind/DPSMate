@@ -247,7 +247,7 @@ if (GetLocale() == "frFR") then
 		end
 
 		-- Normal
-		for f,a,b,c,d,e in strgfind(msg, "(.+) lance (.+) et inflige un coup critique à (.+) %((%d+) points de dégâts%s?(.*)%)%.%s?(.*)   (.-%s*)'?s (.+) trifft (.+) kritisch für (%d+)(.*)\.%s?(.*)") do 
+		for f,a,b,c,d,e in strgfind(msg, "(.+) lance (.+) et inflige un coup critique à (.+) %((%d+) points de dégâts%s?(.*)%)%.%s?(.*)") do 
 			t[1] = tnbr(c)
 			if strfind(e, "érafle") then t[4]=1;t[2]=0;end
 			if DPSMate.Parser.Kicks[a] then DB:AssignPotentialKick(f, a, c, GetTime()) end
@@ -309,53 +309,74 @@ if (GetLocale() == "frFR") then
 	-- X fällt und verliert d+ Gesundheit.
 	DPSMate.Parser.FriendlyPlayerHits = function(self, msg)
 		t = {}
-		for a,b,c,e in strgfind(msg, "(.-) trifft (.+) für (%d+) Schaden%. %((%d+) absorbiert%)") do
+		for a,b,c,e in strgfind(msg, "(.+) touche (.+) et inflige (%d+) points de dégâts%. %((%d+) absorbé%)") do
 			DB:SetUnregisterVariables(tnbr(e), DPSMate.L["AutoAttack"], a)
 		end
-		for a,b,c,d in strgfind(msg, "(.-) trifft (.+) kritisch für (%d+) Schaden\.%s?(.*)") do
-			if d=="(gestreift)" then t[1]=1;t[3]=0 elseif d~="" then t[2]=1;t[3]=0 end
+		for a,b,c,d in strgfind(msg, "(.+) inflige un coup critique à (.+) %((%d+) points de dégâts%)%.%s?(.*)") do
+			if d=="(érafle)" then t[1]=1;t[3]=0 elseif d~="" then t[2]=1;t[3]=0 end
 			t[5] = tnbr(c)
 			DB:EnemyDamage(true, DPSMateEDT, a, DPSMate.L["AutoAttack"], 0, t[3] or 1, 0, 0, 0, 0, t[5], b, t[2] or 0, t[1] or 0)
 			DB:DamageDone(a, DPSMate.L["AutoAttack"], 0, t[3] or 1, 0, 0, 0, 0, t[5], t[1] or 0, t[2] or 0)
 			if self.TargetParty[a] and self.TargetParty[b] then DB:BuildFail(1, b, a, DPSMate.L["AutoAttack"], t[5]);DB:DeathHistory(b, a, DPSMate.L["AutoAttack"], t[5], 0, 1, 0, 0) end
 			return
 		end
-		for a,b,c,d in strgfind(msg, "(.-) trifft (.+) für (%d+) Schaden\.%s?(.*)") do
-			if d=="(gestreift)" then t[1]=1;t[3]=0 elseif d~="" then t[2]=1;t[3]=0 end
-			if b=="Euch" then b=self.player end
+		for a,b,c,d in strgfind(msg, "(.+) touche (.+) et inflige (%d+) points de dégâts%.%s?(.*)") do
+			if d=="(érafle)" then t[1]=1;t[3]=0 elseif d~="" then t[2]=1;t[3]=0 end
 			t[5] = tnbr(c)
 			DB:EnemyDamage(true, DPSMateEDT, a, DPSMate.L["AutoAttack"], t[3] or 1, 0, 0, 0, 0, 0, t[5], b, t[2] or 0, t[1] or 0)
 			DB:DamageDone(a, DPSMate.L["AutoAttack"], t[3] or 1, 0, 0, 0, 0, 0, t[5], t[1] or 0, t[2] or 0)
 			if self.TargetParty[a] and self.TargetParty[b] then DB:BuildFail(1, b, a, DPSMate.L["AutoAttack"], t[5]);DB:DeathHistory(b, a, DPSMate.L["AutoAttack"], t[5], 1, 0, 0, 0) end
 			return
 		end
-		for a,c,d in strgfind(msg, "(.-) trifft Euch kritisch: (%d+) Schaden\.%s?(.*)") do
-			if d=="(gestreift)" then t[1]=1;t[3]=0 elseif d~="" then t[2]=1;t[3]=0 end
+
+		for a,b in strgfind(msg, "(.+) perd (%d+) points de vie en nageant dans la lave%.") do
+			DB:DamageTaken(a, "Lave", 1, 0, 0, 0, 0, 0, tnbr(b), "Environnement", 0, 0)
+			DB:DeathHistory(a, "Environnement", "Lave", tnbr(b), 1, 0, 0, 0)
+			DB:AddSpellSchool("Lave","feu")
+			return
+		end
+		for a,b in strgfind(msg, "(.+) tombe et perd (%d+) PV%.") do
+			DB:DamageTaken(a, "Chute", 1, 0, 0, 0, 0, 0, tnbr(b), "Environnement", 0, 0)
+			DB:DeathHistory(a, "Environnement", "Chute", tnbr(b), 1, 0, 0, 0)
+			return
+		end
+		for a,b in strgfind(msg, "(.+) se noie et perd (%d+) points de vie%.") do
+			DB:DamageTaken(a, "Noyade", 1, 0, 0, 0, 0, 0, tnbr(b), "Environnement", 0, 0)
+			DB:DeathHistory(a, "Environnement", "Noyade", tnbr(b), 1, 0, 0, 0)
+			return
+		end
+		-- New
+		for a,b in strgfind(msg, "(.+) perd (%d+) points de vie à cause du feu%.") do
+			DB:DamageTaken(a, "Feu", 1, 0, 0, 0, 0, 0, tnbr(b), "Environnement", 0, 0)
+			DB:DeathHistory(a, "Environnement", "Feu", tnbr(b), 1, 0, 0, 0)
+			DB:AddSpellSchool("Feu","feu")
+			return
+		end
+		for a,b in strgfind(msg, "(.+) perd (%d+) points de vie en nageant dans la vase%.") do
+			DB:DamageTaken(a, "Slime", 1, 0, 0, 0, 0, 0, tnbr(b), "Environnement", 0, 0)
+			DB:DeathHistory(a, "Environnement", "Slime", tnbr(b), 1, 0, 0, 0)
+			return
+		end
+
+		-- PvP
+		for a,c,d in strgfind(msg, "(.+) vous inflige (%d+) points de dégâts%.%s?(.*)") do
+			if d=="(érafle)" then t[1]=1;t[3]=0 elseif d~="" then t[2]=1;t[3]=0 end
+			t[5] = tnbr(c)
+			DB:EnemyDamage(true, DPSMateEDT, a, DPSMate.L["AutoAttack"], t[3] or 1, 0, 0, 0, 0, 0, t[5], self.player, t[2] or 0, t[1] or 0)
+			DB:DamageDone(a, DPSMate.L["AutoAttack"], t[3] or 1, 0, 0, 0, 0, 0, t[5], t[1] or 0, t[2] or 0)
+			if self.TargetParty[a] and self.TargetParty[self.player] then DB:BuildFail(1, self.player, a, DPSMate.L["AutoAttack"], t[5]);DB:DeathHistory(self.player, a, DPSMate.L["AutoAttack"], t[5], 1, 0, 0, 0) end
+			return
+		end
+		for a,c,d in strgfind(msg, "(.+) vous inflige un coup critique pour (%d+) points de dégâts%.%s?(.*)") do
+			if d=="(érafle)" then t[1]=1;t[3]=0 elseif d~="" then t[2]=1;t[3]=0 end
 			t[5] = tnbr(c)
 			DB:EnemyDamage(true, DPSMateEDT, a, DPSMate.L["AutoAttack"], 0, t[3] or 1, 0, 0, 0, 0, t[5], self.player, t[2] or 0, t[1] or 0)
 			DB:DamageDone(a, DPSMate.L["AutoAttack"], 0, t[3] or 1, 0, 0, 0, 0, t[5], t[1] or 0, t[2] or 0)
-			if self.TargetParty[a] then DB:BuildFail(1, self.player, a, DPSMate.L["AutoAttack"], t[5]);DB:DeathHistory(self.player, a, DPSMate.L["AutoAttack"], t[5], 0, 1, 0, 0) end
-			return
-		end
-		-- (...). (608 absorbed/resisted) -> Therefore here some loss
-		for a,b in strgfind(msg, "(.-) verliert (%d+) Gesundheit durch Berührung mit Lava%.") do
-			DB:DamageTaken(a, "Lava", 1, 0, 0, 0, 0, 0, tnbr(b), "Umgebung", 0, 0)
-			DB:DeathHistory(a, "Umgebung", "Lava", tnbr(b), 1, 0, 0, 0)
-			DB:AddSpellSchool("Lava","feuer")
-			return
-		end
-		for a,b in strgfind(msg, "(.-) fällt und verliert (%d+) Gesundheit%.") do
-			DB:DamageTaken(a, "Fallen", 1, 0, 0, 0, 0, 0, tnbr(b), "Umgebung", 0, 0)
-			DB:DeathHistory(a, "Umgebung", "Fallen", tnbr(b), 1, 0, 0, 0)
-			return
-		end
-		for a,b in strgfind(msg, "(.-) ertrinkt und verliert (%d+) Gesundheit%.") do
-			DB:DamageTaken(a, "Ertrinken", 1, 0, 0, 0, 0, 0, tnbr(b), "Umgebung", 0, 0)
-			DB:DeathHistory(a, "Umgebung", "Ertrinken", tnbr(b), 1, 0, 0, 0)
+			if self.TargetParty[a] and self.TargetParty[self.player] then DB:BuildFail(1, self.player, a, DPSMate.L["AutoAttack"], t[5]);DB:DeathHistory(self.player, a, DPSMate.L["AutoAttack"], t[5], 0, 1, 0, 0) end
 			return
 		end
 	end
-	
+
 	-- X greift an. Y pariert.
 	-- X verfehlt Y.
 	-- X greift an. Y weicht aus.
@@ -865,7 +886,7 @@ if (GetLocale() == "frFR") then
 				--DB:AwaitDispel(a, self.player, "Unknown", GetTime());
 			end
 			if self.RCD[a] then DPSMate:Broadcast(1, self.player, a) end
-			if self.FailDB[a] then DB:BuildFail(3, "Umgebung", self.player, a, 0) end
+			if self.FailDB[a] then DB:BuildFail(3, "Environnement", self.player, a, 0) end
 			return 
 		end
 	end
@@ -911,7 +932,7 @@ if (GetLocale() == "frFR") then
 				--DB:AwaitDispel(a, f, "Unknown", GetTime());
 			end
 			if self.RCD[a] then DPSMate:Broadcast(1, f, a) end
-			if self.FailDB[a] then DB:BuildFail(3, "Umgebung", f, a, 0) end
+			if self.FailDB[a] then DB:BuildFail(3, "Environnement", f, a, 0) end
 			return 
 		end
 	end
