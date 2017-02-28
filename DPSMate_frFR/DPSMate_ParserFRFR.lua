@@ -532,7 +532,7 @@ if (GetLocale() == "frFR") then
 			if self.FailDT[b] then DB:BuildFail(2, a, self.player, c, t[1]) end
 			return
 		end
-		for a,b,c in strgfind(msg, "(.+) lance (.+) et vous inflige un coup critique %((%d+) points de dégâts%)%.") do -- Potential here to track school and resisted damage
+		for a,b,c,d in strgfind(msg, "(.+) lance (.+) et vous inflige un coup critique %((%d+) points de dégâts%)%.(.*)") do -- Potential here to track school and resisted damage
 			t[1] = tnbr(c)
 			DB:UnregisterPotentialKick(self.player, b, GetTime())
 			DB:EnemyDamage(false, DPSMateEDD, self.player, b, 0, 1, 0, 0, 0, 0, t[1], a, 0, 0)
@@ -596,7 +596,7 @@ if (GetLocale() == "frFR") then
 	
 	DPSMate.Parser.PeriodicSelfDamage = function(self, msg)
 		t = {}
-		for a,b,c,d,e in strgfind(msg, "Ihr erleidet (%d+) (%a+) von (.+) %(durch (.+)%)%.(.*)") do -- Potential to track school and resisted damage
+		for d,c,a,b,e in strgfind(msg, "(.+) de (.+) vous inflige (%d+) points de dégâts (.*)%.(.*)") do -- Potential to track school and resisted damage
 			t[1] = tnbr(a)
 			DB:EnemyDamage(false, DPSMateEDD, self.player, d..DPSMate.L["periodic"], 1, 0, 0, 0, 0, 0, t[1], c, 0, 0)
 			DB:DamageTaken(self.player, d..DPSMate.L["periodic"], 1, 0, 0, 0, 0, 0, t[1], c, 0, 0)
@@ -605,13 +605,13 @@ if (GetLocale() == "frFR") then
 			DB:AddSpellSchool(d..DPSMate.L["periodic"],b)
 			return
 		end
-		for a in strgfind(msg, "Ihr seid von (.+) betroffen%.") do
+		for a in strgfind(msg, "Vous subissez les effets de (.+)%.") do
 			if strfind(a, "%(") then a=strsub(a, 1, strfind(a, "%(")-2) end;
 			DB:BuildBuffs(DPSMate.L["unknown"], self.player, a, false)
 			if self.CC[a] then DB:BuildActiveCC(self.player, a) end
 			return
 		end
-		for a,b,d,e in strgfind(msg, "Ihr erleidet (%d+) Punkte (%a+) %(durch (.+)%)%.(.*)") do -- Potential to track school and resisted damage
+		for a,b,d,e in strgfind(msg, "Vous subissez (%d+) (.*) dégâts de votre (.+)%.(.*)") do -- Potential to track school and resisted damage
 			t[1] = tnbr(a)
 			DB:EnemyDamage(false, DPSMateEDD, self.player, d..DPSMate.L["periodic"], 1, 0, 0, 0, 0, 0, t[1], self.player, 0, 0)
 			DB:DamageTaken(self.player, d..DPSMate.L["periodic"], 1, 0, 0, 0, 0, 0, t[1], self.player, 0, 0)
@@ -619,8 +619,7 @@ if (GetLocale() == "frFR") then
 			DB:AddSpellSchool(d..DPSMate.L["periodic"],b)
 			return
 		end
-		for a,b in strgfind(msg, "Ihr absorbiert (.-%s*)'?s (.+)%.") do
-			a = self:ReplaceSwString(a)
+		for a,b in strgfind(msg, "(.+) utilise (.+), mais vous absorbez l'effet%.") do
 			DB:Absorb(b..DPSMate.L["periodic"], self.player, a)
 			return
 		end
