@@ -668,17 +668,26 @@ if (GetLocale() == "frFR") then
 	-- X greift an. Y pariert.
 	DPSMate.Parser.CreatureVsCreatureMisses = function(self, msg)
 		t = {}
-		for c, ta in strgfind(msg, "(.+) greift an%. (.+) absorbiert allen Schaden%.") do DB:Absorb(DPSMate.L["AutoAttack"], ta, c); return end
-		for a,b,c in strgfind(msg, "(.+) greift an%. (.-) (.+)%.") do 
-			if c=="pariert" then t[1]=1 elseif c=="weicht aus" then t[2]=1 else t[3]=1 end 
-			DB:EnemyDamage(false, DPSMateEDD, b, DPSMate.L["AutoAttack"], 0, 0, 0, t[1] or 0, t[2] or 0, 0, 0, a, t[3] or 0, 0)
-			DB:DamageTaken(b, DPSMate.L["AutoAttack"], 0, 0, 0, t[1] or 0, t[2] or 0, 0, 0, a, 0, t[3] or 0)
+		for c, ta in strgfind(msg, "(.+) attaque. (.+) absorbe tous les dégâts%.") do DB:Absorb(DPSMate.L["AutoAttack"], ta, c); return end
+		for a,b,c in strgfind(msg, "(.+) attaque et (.+) pare son attaque%.") do 
+			DB:EnemyDamage(false, DPSMateEDD, b, DPSMate.L["AutoAttack"], 0, 0, 0, 1, 0, 0, 0, a, 0, 0)
+			DB:DamageTaken(b, DPSMate.L["AutoAttack"], 0, 0, 0, 1, 0, 0, 0, a, 0, 0)
 			return
 		end
-		for a,b in strgfind(msg, "(.+) verfehlt (.+)%.") do 
+		for a,b in strgfind(msg, "(.+) attaque et (.+) esquive%.") do 
+			DB:EnemyDamage(false, DPSMateEDD, b, DPSMate.L["AutoAttack"], 0, 0, 0, 0, 1, 0, 0, a, 0, 0)
+			DB:DamageTaken(b, DPSMate.L["AutoAttack"], 0, 0, 0, 0, 1, 0, 0, a, 0, 0)
+			return
+		end
+		for a,b in strgfind(msg, "(.+) manque (.+)%.") do 
 			DB:EnemyDamage(false, DPSMateEDD, b, DPSMate.L["AutoAttack"], 0, 0, 1, 0, 0, 0, 0, a, 0, 0)
 			DB:DamageTaken(b, DPSMate.L["AutoAttack"], 0, 0, 1, 0, 0, 0, 0, a, 0, 0)
 			return 
+		end
+		for a,b in strgfind(msg, "(.+) attaque et (.+) bloque l'attaque%.") do 
+			DB:EnemyDamage(false, DPSMateEDD, b, DPSMate.L["AutoAttack"], 0, 0, 0, 0, 0, 0, 0, a, 1, 0)
+			DB:DamageTaken(b, DPSMate.L["AutoAttack"], 0, 0, 0, 0, 0, 0, 0, a, 0, 1)
+			return
 		end
 	end
 	
