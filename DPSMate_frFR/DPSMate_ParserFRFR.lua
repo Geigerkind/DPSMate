@@ -6,7 +6,7 @@ local strgsub = string.gsub
 local npcdb = DPSMate.NPCDB
 local GetTime = GetTime
 
---schmetternd
+--écrase
 if (GetLocale() == "frFR") then
 	DPSMate.Parser.ReplaceSwString = function(self, str)
 		return str
@@ -468,20 +468,29 @@ if (GetLocale() == "frFR") then
 	-- X trifft Euch kritisch: d+ Schaden.
 	DPSMate.Parser.CreatureVsSelfHits = function(self, msg)
 		t = {}
-		for a,c,d in strgfind(msg, "(.+) trifft Euch für (%d+)(.*)") do
-			if strfind(d, "schmetternd") then t[3]=1;t[1]=0; elseif strfind(d, "érafle") then t[4]=1;t[1]=0; end
+		for a,c,d in strgfind(msg, "(.+) vous inflige (%d+) points de dégâts%.(.*)") do
+			if strfind(d, "écrase") then t[3]=1;t[1]=0; elseif strfind(d, "érafle") then t[4]=1;t[1]=0; end
 			t[5] = tnbr(c)
 			DB:EnemyDamage(false, DPSMateEDD, self.player, DPSMate.L["AutoAttack"], t[1] or 1, 0, 0, 0, 0, 0, t[5], a, t[4] or 0, t[3] or 0)
 			DB:DamageTaken(self.player, DPSMate.L["AutoAttack"], t[1] or 1, 0, 0, 0, 0, 0, t[5], a, t[3] or 0, t[4] or 0)
 			DB:DeathHistory(self.player, a, DPSMate.L["AutoAttack"], t[5], t[1] or 1, 0, 0, t[3] or 0)
 			return
 		end
-		for a,c,d in strgfind(msg, "(.+) trifft Euch kritisch: (%d+)(.*)") do
-			if strfind(d, "schmetternd") then t[3]=1;t[2]=0 elseif strfind(d, "érafle") then t[4]=1;t[2]=0 end
+		for a,c,e,d in strgfind(msg, "(.+) vous inflige un coup critique pour (%d+) points de dégâts(.*)") do
+			if strfind(d, "écrase") then t[3]=1;t[2]=0 elseif strfind(d, "érafle") then t[4]=1;t[2]=0 end
 			t[5] = tnbr(c)
 			DB:EnemyDamage(false, DPSMateEDD, self.player, DPSMate.L["AutoAttack"], 0, t[2] or 1, 0, 0, 0, 0, t[5], a, t[4] or 0, t[3] or 0)
 			DB:DamageTaken(self.player, DPSMate.L["AutoAttack"], 0, t[2] or 1, 0, 0, 0, 0, t[5], a, t[3] or 0, t[4] or 0)
 			DB:DeathHistory(self.player, a, DPSMate.L["AutoAttack"], t[5], 0, t[2] or 1, 0, t[3] or 0)
+			return
+		end
+		-- Hit with school
+		for a,c,e,d in strgfind(msg, "(.+) vous touche et vous inflige (%d+) points de dégâts (.*)%.(.*)") do
+			if strfind(d, "écrase") then t[3]=1;t[1]=0; elseif strfind(d, "érafle") then t[4]=1;t[1]=0; end
+			t[5] = tnbr(c)
+			DB:EnemyDamage(false, DPSMateEDD, self.player, DPSMate.L["AutoAttack"], t[1] or 1, 0, 0, 0, 0, 0, t[5], a, t[4] or 0, t[3] or 0)
+			DB:DamageTaken(self.player, DPSMate.L["AutoAttack"], t[1] or 1, 0, 0, 0, 0, 0, t[5], a, t[3] or 0, t[4] or 0)
+			DB:DeathHistory(self.player, a, DPSMate.L["AutoAttack"], t[5], t[1] or 1, 0, 0, t[3] or 0)
 			return
 		end
 	end
@@ -619,7 +628,7 @@ if (GetLocale() == "frFR") then
 	DPSMate.Parser.CreatureVsCreatureHits = function(self, msg) 
 		t = {}
 		for a,c,d,e in strgfind(msg, "(.+) trifft (.+) kritisch für (%d+)(.*)") do
-			if strfind(e, "schmetternd") then t[3]=1;t[1]=0;t[2]=0 elseif strfind(e, "érafle") then t[4]=1;t[1]=0;t[2]=0 end
+			if strfind(e, "écrase") then t[3]=1;t[1]=0;t[2]=0 elseif strfind(e, "érafle") then t[4]=1;t[1]=0;t[2]=0 end
 			t[5] = tnbr(d)
 			DB:EnemyDamage(false, DPSMateEDD, c, DPSMate.L["AutoAttack"], 0, t[2] or 1, 0, 0, 0, 0, t[5], a, t[4] or 0, t[3] or 0)
 			DB:DamageTaken(c, DPSMate.L["AutoAttack"], 0, t[2] or 1, 0, 0, 0, 0, t[5], a, t[3] or 0, t[4] or 0)
@@ -627,7 +636,7 @@ if (GetLocale() == "frFR") then
 			return
 		end
 		for a,c,d,e in strgfind(msg, "(.+) trifft (.+) für (%d+)(.*)") do
-			if strfind(e, "schmetternd") then t[3]=1;t[1]=0;t[2]=0 elseif strfind(e, "érafle") then t[4]=1;t[1]=0;t[2]=0 end
+			if strfind(e, "écrase") then t[3]=1;t[1]=0;t[2]=0 elseif strfind(e, "érafle") then t[4]=1;t[1]=0;t[2]=0 end
 			t[5] = tnbr(d)
 			DB:EnemyDamage(false, DPSMateEDD, c, DPSMate.L["AutoAttack"], t[1] or 1, 0, 0, 0, 0, 0, t[5], a, t[4] or 0, t[3] or 0)
 			DB:DamageTaken(c, DPSMate.L["AutoAttack"], t[1] or 1, 0, 0, 0, 0, 0, t[5], a, t[3] or 0, t[4] or 0)
