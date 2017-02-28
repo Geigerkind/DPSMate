@@ -693,7 +693,7 @@ if (GetLocale() == "frFR") then
 	
 	DPSMate.Parser.SpellPeriodicDamageTaken = function(self, msg)
 		t = {}
-		for a,b,c,d,e,f in strgfind(msg, "(.+) erleidet (%d+) (%a+) von (.+) %(durch (.+)%)%.(.*)") do -- Potential to track resisted damage and school
+		for e,d,a,b,c,f in strgfind(msg, "(.+) de (.+) inflige à (.+) (%d+) points de dégâts (.*)%.(.*)") do -- Potential to track resisted damage and school
 			t[1] = tnbr(b)
 			DB:EnemyDamage(false, DPSMateEDD, a, e..DPSMate.L["periodic"], 1, 0, 0, 0, 0, 0, t[1], d, 0, 0)
 			DB:DamageTaken(a, e..DPSMate.L["periodic"], 1, 0, 0, 0, 0, 0, t[1], d, 0, 0)
@@ -702,14 +702,13 @@ if (GetLocale() == "frFR") then
 			DB:AddSpellSchool(e..DPSMate.L["periodic"],c)
 			return
 		end
-		for a, b in strgfind(msg, "(.+) ist von (.+) betroffen%.") do
+		for a, b in strgfind(msg, "(.+) subit les effets de (.+)%.") do
 			if strfind(b, "%(") then b=strsub(b, 1, strfind(b, "%(")-2) end;
 			DB:BuildBuffs(DPSMate.L["unknown"], a, b, false)
 			if self.CC[b] then DB:BuildActiveCC(a, b) end
 			return
 		end
-		for f,a,b in strgfind(msg, "(.-%s*)'?s (.+) wurde von (.+) absorbiert%.") do -- To Test
-			f = self:ReplaceSwString(f)
+		for f,a,b in strgfind(msg, "(.+) utilise (.+), mais l'effet est absorbé par (.+)%.") do -- To Test
 			DB:Absorb(a..DPSMate.L["periodic"], f, b)
 			return
 		end
