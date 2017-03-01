@@ -1202,108 +1202,133 @@ if (GetLocale() == "frFR") then
 
 	DPSMate.Parser.PetHits = function(self, msg)
 		t = {}
-		for a,b,c,d in strgfind(msg, "(.-) trifft (.+) kritisch für (%d+) Schaden\.%s?(.*)") do
-			if d=="(gestreift)" then t[1]=1;t[3]=0 elseif d~="" then t[2]=1;t[3]=0 end
+		for a,b,c,d in strgfind(msg, "(.+) inflige un coup critique à (.+) %((%d+) points de dégâts%)%.%s?(.*)") do
+			if d=="(érafle)" then t[1]=1;t[3]=0 elseif d~="" then t[2]=1;t[3]=0 end
 			t[5] = tnbr(c)
 			DB:EnemyDamage(true, DPSMateEDT, a, DPSMate.L["AutoAttack"], 0, t[3] or 1, 0, 0, 0, 0, t[5], b, t[2] or 0, t[1] or 0)
 			DB:DamageDone(a, DPSMate.L["AutoAttack"], 0, t[3] or 1, 0, 0, 0, 0, t[5], t[1] or 0, t[2] or 0)
-			if self.TargetParty[a] and self.TargetParty[b] then DB:BuildFail(1, b, a, DPSMate.L["AutoAttack"], t[5]) end
+			if self.TargetParty[a] and self.TargetParty[b] then DB:BuildFail(1, b, a, DPSMate.L["AutoAttack"], t[5]);DB:DeathHistory(b, a, DPSMate.L["AutoAttack"], t[5], 0, 1, 0, 0) end
 			return
 		end
-		for a,b,c,d in strgfind(msg, "(.-) trifft (.+) für (%d+) Schaden\.%s?(.*)") do
-			if d=="(gestreift)" then t[1]=1;t[3]=0 elseif d~="" then t[2]=1;t[3]=0 end
-			if b=="Euch" then b=self.player end
+		for a,b,c,d in strgfind(msg, "(.+) touche (.+) et inflige (%d+) points de dégâts%.%s?(.*)") do
+			if d=="(érafle)" then t[1]=1;t[3]=0 elseif d~="" then t[2]=1;t[3]=0 end
 			t[5] = tnbr(c)
 			DB:EnemyDamage(true, DPSMateEDT, a, DPSMate.L["AutoAttack"], t[3] or 1, 0, 0, 0, 0, 0, t[5], b, t[2] or 0, t[1] or 0)
 			DB:DamageDone(a, DPSMate.L["AutoAttack"], t[3] or 1, 0, 0, 0, 0, 0, t[5], t[1] or 0, t[2] or 0)
-			if self.TargetParty[a] and self.TargetParty[b] then DB:BuildFail(1, b, a, DPSMate.L["AutoAttack"], t[5]) end
-			return
-		end
-		for a,c,d in strgfind(msg, "(.-) trifft Euch kritisch: (%d+) Schaden\.%s?(.*)") do
-			if d=="(gestreift)" then t[1]=1;t[3]=0 elseif d~="" then t[2]=1;t[3]=0 end
-			t[5] = tnbr(c)
-			DB:EnemyDamage(true, DPSMateEDT, a, DPSMate.L["AutoAttack"], 0, t[3] or 1, 0, 0, 0, 0, t[5], self.player, t[2] or 0, t[1] or 0)
-			DB:DamageDone(a, DPSMate.L["AutoAttack"], 0, t[3] or 1, 0, 0, 0, 0, t[5], t[1] or 0, t[2] or 0)
-			if self.TargetParty[a] then DB:BuildFail(1, self.player, a, DPSMate.L["AutoAttack"], t[5]) end
+			if self.TargetParty[a] and self.TargetParty[b] then DB:BuildFail(1, b, a, DPSMate.L["AutoAttack"], t[5]);DB:DeathHistory(b, a, DPSMate.L["AutoAttack"], t[5], 1, 0, 0, 0) end
 			return
 		end
 	end
 
 	DPSMate.Parser.PetMisses = function(self, msg)
 		t = {}
-		for a,b in strgfind(msg, "(.-) verfehlt (.+)%.") do 
-			if b=="Euch" then b=self.player end
+		for a,b in strgfind(msg, "(.+) manque (.+)%.") do 
 			DB:EnemyDamage(true, DPSMateEDT, a, DPSMate.L["AutoAttack"], 0, 0, 1, 0, 0, 0, 0, b, 0, 0)
 			DB:DamageDone(a, DPSMate.L["AutoAttack"], 0, 0, 1, 0, 0, 0, 0, 0, 0)
 			return
 		end
-		for a,b in strgfind(msg, "(.-) greift an%. (.+) weicht aus%.") do 
-			if b=="Ihr" then b=self.player end
+		for a,b in strgfind(msg, "(.+) attaque et (.+) esquive%.") do 
+			if b=="vous" then b=self.player end
 			DB:EnemyDamage(true, DPSMateEDT, a, DPSMate.L["AutoAttack"], 0, 0, 0, 0, 1, 0, 0, b, 0, 0)
 			DB:DamageDone(a, DPSMate.L["AutoAttack"], 0, 0, 0, 0, 1, 0, 0, 0, 0)
 			return
 		end
-		for a,b in strgfind(msg, "(.-) greift an%. (.+) pariert%.") do 
-			if b=="Ihr" then b=self.player end
+		for a,b in strgfind(msg, "(.+) attaque et (.+) pare son attaque%.") do 
 			DB:EnemyDamage(true, DPSMateEDT, a, DPSMate.L["AutoAttack"], 0, 0, 0, 1, 0, 0, 0, b, 0, 0)
 			DB:DamageDone(a, DPSMate.L["AutoAttack"], 0, 0, 0, 1, 0, 0, 0, 0, 0)
 			return
 		end
-		for a,b in strgfind(msg, "(.-) greift an%. (.+) blockt%.") do 
-			if b=="Ihr" then b=self.player end
+		for a,b in strgfind(msg, "(.+) attaque et (.+) bloque l'attaque%.") do 
 			DB:EnemyDamage(true, DPSMateEDT, a, DPSMate.L["AutoAttack"], 0, 0, 0, 0, 0, 0, 0, b, 1, 0)
 			DB:DamageDone(a, DPSMate.L["AutoAttack"], 0, 0, 0, 0, 0, 0, 0, 0, 1)
 			return
 		end
+		for c,b in strgfind(msg, "(.+) attaque. (.+) absorbe tous les dégâts%.") do DB:Absorb(DPSMate.L["AutoAttack"], b, c); return end
+
+		-- PvP
+		for a in strgfind(msg, "(.+) vous rate%.") do 
+			DB:EnemyDamage(true, DPSMateEDT, a, DPSMate.L["AutoAttack"], 0, 0, 1, 0, 0, 0, 0, self.player, 0, 0)
+			DB:DamageDone(a, DPSMate.L["AutoAttack"], 0, 0, 1, 0, 0, 0, 0, 0, 0)
+			return
+		end
+		for a in strgfind(msg, "(.+) attaque, mais vous parez le coup%.") do 
+			DB:EnemyDamage(true, DPSMateEDT, a, DPSMate.L["AutoAttack"], 0, 0, 0, 1, 0, 0, 0, self.player, 0, 0)
+			DB:DamageDone(a, DPSMate.L["AutoAttack"], 0, 0, 0, 1, 0, 0, 0, 0, 0)
+			return
+		end
+		for a in strgfind(msg, "(.+) attaque, mais vous bloquez le coup%.") do 
+			DB:EnemyDamage(true, DPSMateEDT, a, DPSMate.L["AutoAttack"], 0, 0, 0, 0, 0, 0, 0, self.player, 1, 0)
+			DB:DamageDone(a, DPSMate.L["AutoAttack"], 0, 0, 0, 0, 0, 0, 0, 0, 1)
+			return
+		end
+		for c in strgfind(msg, "(.+) attaque. Vous absorbez tous les dégâts%.") do DB:Absorb(DPSMate.L["AutoAttack"], self.player, c); return end
 	end
 
-	-- Marktast casts bla on bla.
 	DPSMate.Parser.PetSpellDamage = function(self, msg)
 		t = {}
-		for f,a,b,c,d,e in strgfind(msg, "(.-%s*)'?s (.+) trifft (.+) kritisch für (%d+)(.*)\.%s?(.*)") do 
+		for a,b,c,d,f in strgfind(msg, "(.+) de (.+) touche (.+) pour (%d+) points de dégâts%. %((%d+) absorbé%)") do 
+			DB:SetUnregisterVariables(tnbr(f), a, b)
+		end
+		for a,f,b,c,e in strgfind(msg, "(.+) de (.+) touche (.+) pour (%d+) points de dégâts%.%s?(.*)") do 
 			t[1] = tnbr(c)
-			f = self:ReplaceSwString(f)
+			if strfind(e, "érafle") then t[4]=1;t[2]=0;t[3]=0 end
+			if DPSMate.Parser.Kicks[a] then DB:AssignPotentialKick(f, a, b, GetTime()) end
+			if DPSMate.Parser.DmgProcs[a] then DB:BuildBuffs(f, f, a, true) end
+			DB:EnemyDamage(true, DPSMateEDT, f, a,  t[2] or 1, 0, 0, 0, 0, 0, t[1], b, t[4] or 0, 0)
+			DB:DamageDone(f, a, t[2] or 1, 0, 0, 0, 0, 0, t[1], 0, t[4] or 0)
+			if self.TargetParty[b] and self.TargetParty[f] then DB:BuildFail(1, b, f, a, t[1]);DB:DeathHistory(b, f, a, t[1], 1, 0, 0, 0) end
+			return
+		end
+		-- Schools
+		for a,b,c,d,e,f in strgfind(msg, "(.+) lance (.+) sur (.+) et lui inflige (%d+) points de dégâts (.*)%. %((%d+) absorbé%)") do 
+			DB:AddSpellSchool(b,e)
+			DB:SetUnregisterVariables(tnbr(f), b, a)
+		end
+		for f,a,b,c,d,e in strgfind(msg, "(.+) lance (.+) sur (.+) et lui inflige (%d+) points de dégâts (.*)%.%s?(.*)") do 
+			t[1] = tnbr(c)
+			if strfind(e, "érafle") then t[4]=1;t[2]=0;t[3]=0 end
+			if DPSMate.Parser.Kicks[a] then DB:AssignPotentialKick(f, a, b, GetTime()) end
+			if DPSMate.Parser.DmgProcs[a] then DB:BuildBuffs(f, f, a, true) end
+			DB:EnemyDamage(true, DPSMateEDT, f, a,  t[2] or 1, 0, 0, 0, 0, 0, t[1], b, t[4] or 0, 0)
+			DB:DamageDone(f, a, t[2] or 1, 0, 0, 0, 0, 0, t[1], 0, t[4] or 0)
+			if self.TargetParty[b] and self.TargetParty[f] then DB:BuildFail(1, b, f, a, t[1]);DB:DeathHistory(b, f, a, t[1], 1, 0, 0, 0) end
+			DB:AddSpellSchool(a,d)
+			return
+		end
+
+		-- Normal
+		for f,a,b,c,d,e in strgfind(msg, "(.+) lance (.+) et inflige un coup critique à (.+) %((%d+) points de dégâts%s?(.*)%)%.%s?(.*)") do 
+			t[1] = tnbr(c)
 			if strfind(e, "érafle") then t[4]=1;t[2]=0;end
 			if DPSMate.Parser.Kicks[a] then DB:AssignPotentialKick(f, a, c, GetTime()) end
 			if DPSMate.Parser.DmgProcs[a] then DB:BuildBuffs(f, f, a, true) end
 			DB:EnemyDamage(true, DPSMateEDT, f, a,  0, t[2] or 1, 0, 0, 0, 0, t[1], b, t[4] or 0, 0)
 			DB:DamageDone(f, a, 0, t[2] or 1, 0, 0, 0, 0, t[1], 0, t[4] or 0)
-			if self.TargetParty[b] and self.TargetParty[f] then DB:BuildFail(1, b, f, a, t[1]) end
+			if self.TargetParty[b] and self.TargetParty[f] then DB:BuildFail(1, b, f, a, t[1]);DB:DeathHistory(b, f, a, t[1], 0, 1, 0, 0) end
+			DB:AddSpellSchool(a,d)
 			return
 		end
-		for f,a,b,c,d,e in strgfind(msg, "(.-%s*)'?s (.+) trifft (.+) für (%d+)(.*)\.%s?(.*)") do 
-			t[1] = tnbr(c)
-			f = self:ReplaceSwString(f)
-			if strfind(e, "érafle") then t[4]=1;t[2]=0;t[3]=0 end
-			if DPSMate.Parser.Kicks[a] then DB:AssignPotentialKick(f, a, b, GetTime()) end
-			if DPSMate.Parser.DmgProcs[a] then DB:BuildBuffs(f, f, a, true) end
-			DB:EnemyDamage(true, DPSMateEDT, f, a,  1, 0, 0, 0, 0, 0, t[1], b, t[4] or 0, 0)
-			DB:DamageDone(f, a, 1, 0, 0, 0, 0, 0, t[1], 0, t[4] or 0)
-			if self.TargetParty[b] and self.TargetParty[f] then DB:BuildFail(1, b, f, a, t[1]) end
-			return
-		end
-		for a,b,f in strgfind(msg, "(.+) ist (.+) von (.+) ausgewichen%.") do 
+		for a,b,f in strgfind(msg, "(.+) esquive (.+) de (.+)%.") do 
 			DB:EnemyDamage(true, DPSMateEDT, f, b, 0, 0, 0, 0, 1, 0, 0, a, 0, 0)
 			DB:DamageDone(f, b, 0, 0, 0, 0, 1, 0, 0, 0, 0)
 			return
 		end
-		for a,f,b in strgfind(msg, "(.+) von (.+) wurde von (.+) pariert%.") do 
+		for b,a,f in strgfind(msg, "(.+) pare (.+) de (.+)%.") do 
 			DB:EnemyDamage(true, DPSMateEDT, f, a, 0, 0, 0, 1, 0, 0, 0, b, 0, 0)
 			DB:DamageDone(f, a, 0, 0, 0, 1, 0, 0, 0, 0, 0)
 			return
 		end
-		for a,f,b in strgfind(msg, "(.+) von (.+) verfehlt (.+)%.") do
+		for f,a,b in strgfind(msg, "(.+) voit son (.+) manquer (.+)%.") do
 			DB:EnemyDamage(true, DPSMateEDT, f, a, 0, 0, 1, 0, 0, 0, 0, b, 0, 0)
 			DB:DamageDone(f, a, 0, 0, 1, 0, 0, 0, 0, 0, 0)
 			return
 		end
-		for f,a,b in strgfind(msg, "(.-%s*)'?s (.+) wurde von (.+) widerstanden%.") do
-			f = self:ReplaceSwString(f)
+		for f,a,b in strgfind(msg, "(.+) utilise (.+), mais (.+) résiste%.") do
 			DB:EnemyDamage(true, DPSMateEDT, f, a, 0, 0, 0, 0, 0, 1, 0, b, 0, 0)
 			DB:DamageDone(f, a, 0, 0, 0, 0, 0, 1, 0, 0, 0)
 			return
 		end
-		for a,f,b in strgfind(msg, "(.+) von (.+) wurde von (.+) érafle%.") do 
+		for b,a,f in strgfind(msg, "(.+) bloque (.+) de (.+)%.") do 
 			DB:EnemyDamage(true, DPSMateEDT, f, a, 0, 0, 0, 0, 0, 0, 0, b, 1, 0)
 			DB:DamageDone(f, a, 0, 0, 0, 0, 0, 0, 0, 0, 1)
 			return
