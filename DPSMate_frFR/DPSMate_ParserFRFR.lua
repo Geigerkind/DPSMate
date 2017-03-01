@@ -888,7 +888,7 @@ if (GetLocale() == "frFR") then
 	-- Ihr erhaltet d+ Gesundheit durch X.
 	DPSMate.Parser.SpellPeriodicSelfBuff = function(self, msg) -- Maybe some loss here?
 		t = {}
-		for a,b,c in strgfind(msg, "Ihr erhaltet (%d+) Gesundheit von (.+) %(durch (.+)%)%.") do
+		for c,b,a in strgfind(msg, "Le (.+) de (.+) vous fait gagner (%d+) points de vie%.") do
 			t[1]=tnbr(a)
 			overheal = self:GetOverhealByName(t[1], self.player)
 			DB:HealingTaken(0, DPSMateHealingTaken, self.player, c..DPSMate.L["periodic"], 1, 0, t[1], b)
@@ -902,7 +902,7 @@ if (GetLocale() == "frFR") then
 			DB:DeathHistory(self.player, b, c..DPSMate.L["periodic"], t[1], 1, 0, 1, 0)
 			return
 		end
-		for a,b in strgfind(msg, "Ihr erhaltet (%d+) Gesundheit von (.+)%.") do 
+		for b,a in strgfind(msg, "(.+) vous rend (%d+) points de vie%.") do 
 			t[1] = tnbr(a)
 			overheal = self:GetOverhealByName(t[1], self.player)
 			DB:HealingTaken(0, DPSMateHealingTaken, self.player, b..DPSMate.L["periodic"], 1, 0, t[1], self.player)
@@ -916,14 +916,12 @@ if (GetLocale() == "frFR") then
 			DB:DeathHistory(self.player, self.player, b..DPSMate.L["periodic"], t[1], 1, 0, 1, 0)
 			return
 		end
-		for a in strgfind(msg, "Ihr bekommt %'(.+)%'%.") do
-			if strfind(a, "von") then return end
+		for a in strgfind(msg, "Vous gagnez (.+)%.") do
 			if self.BuffExceptions[a] then return end
 			if strfind(a, "%(") then a=strsub(a, 1, strfind(a, "%(")-2) end -- Unstable Power (12)
 			DB:ConfirmBuff(self.player, a, GetTime())
 			if DPSMate.Parser.Dispels[a] then 
 				DB:RegisterHotDispel(self.player, a)
-				--DB:AwaitDispel(a, self.player, "Unknown", GetTime());
 			end
 			if self.RCD[a] then DPSMate:Broadcast(1, self.player, a) end
 			if self.FailDB[a] then DB:BuildFail(3, "Environnement", self.player, a, 0) end
