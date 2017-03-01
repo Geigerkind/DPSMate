@@ -5,6 +5,7 @@ local tnbr = tonumber
 local npcdb = DPSMate.NPCDB
 local GT = GetTime
 local strsub = string.sub
+local GetTime = GetTime
 
 ----------------------------------------------------------------------------------
 --------------                    Damage Done                       --------------                                  
@@ -36,9 +37,20 @@ function DPSMate.Parser:SelfHits(msg)
 		DB:AddSpellSchool("Lava","fire")
 		return
 	end
+	for a in strgfind(msg, "You suffer (%d+) points of fire damage%.") do
+		DB:DamageTaken(self.player, "Fire", 1, 0, 0, 0, 0, 0, tnbr(a), "Environment", 0, 0)
+		DB:DeathHistory(self.player, "Environment", "Fire", tnbr(a), 1, 0, 0, 0)
+		DB:AddSpellSchool("Fire","fire")
+		return
+	end
 	for a in strgfind(msg, "You are drowning and lose (%d+) health%.") do
 		DB:DamageTaken(self.player, "Drowning", 1, 0, 0, 0, 0, 0, tnbr(a), "Environment", 0, 0)
 		DB:DeathHistory(self.player, "Environment", "Drowning", tnbr(a), 1, 0, 0, 0)
+		return
+	end
+	for a in strgfind(msg, "You lose (%d+) health for swimming in slime%.") do
+		DB:DamageTaken(self.player, "Slime", 1, 0, 0, 0, 0, 0, tnbr(a), "Environment", 0, 0)
+		DB:DeathHistory(self.player, "Environment", "Slime", tnbr(a), 1, 0, 0, 0)
 		return
 	end
 end
@@ -223,6 +235,12 @@ function DPSMate.Parser:FriendlyPlayerHits(msg)
 		DB:AddSpellSchool("Lava","fire")
 		return
 	end
+	for a,b in strgfind(msg, "(.+) suffers (%d+) points of fire damage%.") do
+		DB:DamageTaken(a, "Fire", 1, 0, 0, 0, 0, 0, tnbr(b), "Environment", 0, 0)
+		DB:DeathHistory(a, "Environment", "Fire", tnbr(b), 1, 0, 0, 0)
+		DB:AddSpellSchool("Fire","fire")
+		return
+	end
 	for a,b in strgfind(msg, "(.-) falls and loses (%d+) health%.") do
 		DB:DamageTaken(a, "Falling", 1, 0, 0, 0, 0, 0, tnbr(b), "Environment", 0, 0)
 		DB:DeathHistory(a, "Environment", "Falling", tnbr(b), 1, 0, 0, 0)
@@ -231,6 +249,11 @@ function DPSMate.Parser:FriendlyPlayerHits(msg)
 	for a,b in strgfind(msg, "(.-) is drowning and loses (%d+) health%.") do
 		DB:DamageTaken(a, "Drowning", 1, 0, 0, 0, 0, 0, tnbr(b), "Environment", 0, 0)
 		DB:DeathHistory(a, "Environment", "Drowning", tnbr(b), 1, 0, 0, 0)
+		return
+	end
+	for a,b in strgfind(msg, "(.+) loses (%d+) health for swimming in slime%.") do
+		DB:DamageTaken(a, "Slime", 1, 0, 0, 0, 0, 0, tnbr(b), "Environment", 0, 0)
+		DB:DeathHistory(a, "Environment", "Slime", tnbr(b), 1, 0, 0, 0)
 		return
 	end
 end
