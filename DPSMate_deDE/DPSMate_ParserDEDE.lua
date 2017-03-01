@@ -1010,7 +1010,7 @@ if (GetLocale() == "deDE") then
 	end
 	
 	DPSMate.Parser.CreatureVsCreatureSpellDamageAbsorb = function(self, msg)
-		for c, ab, b, a, x, d, absorbed in strgfind(msg, "(.-%s*)'?s (.+) trifft (.+) für (.+)%.(.*)%((%d+) absorbiert%)") do DB:SetUnregisterVariables(tnbr(absorbed), ab, self:ReplaceSwString(c)); return end
+		for c, ab, b, a, d, absorbed in strgfind(msg, "(.-%s*)'?s (.+) trifft (.+) für (.+)%.(.*)%((%d+) absorbiert%)") do DB:SetUnregisterVariables(tnbr(absorbed), ab, self:ReplaceSwString(c)); return end
 	end
 	
 	DPSMate.Parser.SpellPeriodicSelfBuffAbsorb = function(self, msg)
