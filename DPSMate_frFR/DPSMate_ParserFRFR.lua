@@ -978,25 +978,36 @@ if (GetLocale() == "frFR") then
 	-- Kritische Heilung: Xs Y heilt Euch um d+ Punkte.
 	DPSMate.Parser.SpellHostilePlayerBuff = function(self, msg)
 		t = {}
-		for a,b,c,d in strgfind(msg, "Kritische Heilung: (.-%s*)'?s (.+) heilt (.+) um (%d+) Punkte%.") do 
+		for b,a,c,d in strgfind(msg, "Le (.+) de (.+) soigne avec un effet critique (.+), pour (%d+) points de vie%.") do 
 			t[1] = tnbr(d)
-			a = self:ReplaceSwString(a)
-			if c=="Euch" then t[2]=self.player end
-			overheal = self:GetOverhealByName(t[1], t[2] or c)
-			DB:HealingTaken(0, DPSMateHealingTaken, t[2] or c, b, 0, 1, t[1], a)
-			DB:HealingTaken(1, DPSMateEHealingTaken, t[2] or c, b, 0, 1, t[1]-overheal, a)
-			DB:Healing(0, DPSMateEHealing, a, b, 0, 1, t[1]-overheal, t[2] or c)
+			overheal = self:GetOverhealByName(t[1], c)
+			DB:HealingTaken(0, DPSMateHealingTaken, c, b, 0, 1, t[1], a)
+			DB:HealingTaken(1, DPSMateEHealingTaken, c, b, 0, 1, t[1]-overheal, a)
+			DB:Healing(0, DPSMateEHealing, a, b, 0, 1, t[1]-overheal, c)
 			if overheal>0 then 
-				DB:Healing(2, DPSMateOverhealing, a, b, 0, 1, overheal, t[2] or c)
-				DB:HealingTaken(2, DPSMateOverhealingTaken, t[2] or c, b, 0, 1, overheal, a)
+				DB:Healing(2, DPSMateOverhealing, a, b, 0, 1, overheal, c)
+				DB:HealingTaken(2, DPSMateOverhealingTaken, c, b, 0, 1, overheal, a)
 			end
-			DB:Healing(1, DPSMateTHealing, a, b, 0, 1, t[1], t[2] or c)
-			DB:DeathHistory(t[2] or c, a, b, t[1], 0, 1, 1, 0)
+			DB:Healing(1, DPSMateTHealing, a, b, 0, 1, t[1], c)
+			DB:DeathHistory(c, a, b, t[1], 0, 1, 1, 0)
 			return
 		end
-		for a,b,c,d in strgfind(msg, "(.-%s*)'?s (.+) heilt (.+) um (%d+) Punkte%.") do 
+		for a,b,d in strgfind(msg, "(.+) vous soigne avec (.+) et vous rend (%d+) points de vie%.") do 
 			t[1] = tnbr(d)
-			a = self:ReplaceSwString(a)
+			overheal = self:GetOverhealByName(t[1], self.player)
+			DB:HealingTaken(0, DPSMateHealingTaken, self.player, b, 0, 1, t[1], a)
+			DB:HealingTaken(1, DPSMateEHealingTaken, self.player, b, 0, 1, t[1]-overheal, a)
+			DB:Healing(0, DPSMateEHealing, a, b, 0, 1, t[1]-overheal, self.player)
+			if overheal>0 then 
+				DB:Healing(2, DPSMateOverhealing, a, b, 0, 1, overheal, self.player)
+				DB:HealingTaken(2, DPSMateOverhealingTaken, self.player, b, 0, 1, overheal, a)
+			end
+			DB:Healing(1, DPSMateTHealing, a, b, 0, 1, t[1], self.player)
+			DB:DeathHistory(self.player, a, b, t[1], 0, 1, 1, 0)
+			return
+		end
+		for b,a,c,d in strgfind(msg, "(.+) de (.+) guérit (.+) de (%d+) points de vie%.") do 
+			t[1] = tnbr(d)
 			overheal = self:GetOverhealByName(t[1], t[2] or c)
 			DB:HealingTaken(0, DPSMateHealingTaken, t[2] or c, b, 1, 0, t[1], a)
 			DB:HealingTaken(1, DPSMateEHealingTaken, t[2] or c, b, 1, 0, t[1]-overheal, a)
@@ -1012,7 +1023,7 @@ if (GetLocale() == "frFR") then
 			end
 			return
 		end
-		for a,b,d in strgfind(msg, "(.+) benutzt (.+) und heilt Euch um (%d+) Punkte%.") do 
+		for b,a,d in strgfind(msg, "(.+) de (.+) vous soigne pour (%d+) points de vie%.") do 
 			t[1] = tnbr(d)
 			overheal = self:GetOverhealByName(t[1], self.player)
 			DB:HealingTaken(0, DPSMateHealingTaken, self.player, b, 1, 0, t[1], a)
@@ -1026,17 +1037,16 @@ if (GetLocale() == "frFR") then
 			DB:DeathHistory(self.player, a, b, t[1], 1, 0, 1, 0)
 			return
 		end
-		for a,b in strgfind(msg, "(.+) beginnt (.+) zu wirken%.")  do
+		for a,b in strgfind(msg, "(.+) commence à lancer (.+)%.") do
 			DB:RegisterPotentialKick(a, b, GetTime())
 			return
 		end
-		for a,b,c,d in strgfind(msg, "(.+) bekommt (%d+) Energie durch (.-%s*)'?s (.+)%.") do
-			c = self:ReplaceSwString(c)
+		for d,c,b,a in strgfind(msg, "(.+) de (.+) fait gagner (%d+) energie à (.+)%.") do
 			DB:BuildBuffs(c, a, d, true)
 			DB:DestroyBuffs(c, d)
 			return 
 		end
-		for a,c,b in strgfind(msg, "(.+) bekommt durch (.+) (%d+) Extra-Angriff\e?%.") do
+		for c,b,a in strgfind(msg, "(.+) gagne (%d+) attaques supplémentaires grâce à (.+)%.") do
 			DB.NextSwing[a] = {
 				[1] = tnbr(b),
 				[2] = c
@@ -1049,17 +1059,15 @@ if (GetLocale() == "frFR") then
 			DB:DestroyBuffs(a, c)
 			return 
 		end
-		for a,b,c,d in strgfind(msg, "(.+) bekommt (%d+) Wut durch (.-%s*)'?s (.+)%.") do
+		for d,c,b,a in strgfind(msg, "(.+) de (.+) fait gagner (%d+) rage à (.+)%.") do
 			if self.procs[d] and not self.OtherExceptions[d] then
-				c = self:ReplaceSwString(c)
 				DB:BuildBuffs(c, a, d, true)
 				DB:DestroyBuffs(c, d)
 			end
 			return 
 		end
-		for a,b,c,d in strgfind(msg, "(.+) bekommt (%d+) Mana durch (.-%s*)'?s (.+)%.") do
+		for d,c,b,a in strgfind(msg, "(.+) de (.+) fait gagner (%d+) mana à (.+)%.") do
 			if self.procs[d] then
-				c = self:ReplaceSwString(c)
 				DB:BuildBuffs(c, a, d, true)
 				DB:DestroyBuffs(c, d)
 			end
