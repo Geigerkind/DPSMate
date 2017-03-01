@@ -1149,11 +1149,16 @@ if (GetLocale() == "frFR") then
 	----------------------------------------------------------------------------------
 
 	DPSMate.Parser.CombatFriendlyDeath = function(self, msg)
-		for ta,kind in strgfind(msg, "(.-) (.-)%.") do if ta=="Ihr" then DB:UnregisterDeath(self.player) else DB:UnregisterDeath(ta) end end
+		if msg == "Vous êtes mort." or msg == "Vous êtes morte." then
+			DB:UnregisterDeath(self.player)
+		end
+		for ta in strgfind(msg, "(.+) meurt%.") do 
+			DB:UnregisterDeath(ta)
+		end
 	end
 
 	DPSMate.Parser.CombatHostileDeaths = function(self, msg)
-		for ta in strgfind(msg, "(.+) stirbt%.") do 
+		for ta in strgfind(msg, "(.+) meurt%.") do 
 			DB:UnregisterDeath(ta)
 			DB:Attempt(false, true, ta)
 		end
