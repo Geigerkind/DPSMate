@@ -1169,12 +1169,10 @@ if (GetLocale() == "frFR") then
 	----------------------------------------------------------------------------------
 
 	DPSMate.Parser.CreatureVsCreatureSpellDamageInterrupts = function(self, msg)
-		for c, ab in strgfind(msg, "(.+) beginnt (.+) zu wirken%.") do DB:RegisterPotentialKick(c, ab, GetTime()); return end
-		--for c, ab in strgfind(msg, "(.+) begins to perform (.+)%.") do DB:RegisterPotentialKick(c, ab, GetTime()) end -- Nicht genutzt für die deutsche Sprache?
+		for c, ab in strgfind(msg, "(.+) commence à lancer (.+)%.") do DB:RegisterPotentialKick(c, ab, GetTime()); return end
 	end
 	DPSMate.Parser.HostilePlayerSpellDamageInterrupts = function(self, msg)
-		for c, ab in strgfind(msg, "(.-) beginnt (.+) zu wirken%.") do DB:RegisterPotentialKick(c, ab, GetTime()); return end
-		--for c, ab in strgfind(msg, "(.-) begins to perform (.+)%.") do DB:RegisterPotentialKick(c, ab, GetTime()) end
+		for c, ab in strgfind(msg, "(.+) commence à lancer (.+)%.") do DB:RegisterPotentialKick(c, ab, GetTime()); return end
 	end
 	
 	local linkQuality = {
@@ -1186,15 +1184,15 @@ if (GetLocale() == "frFR") then
 		["ff8000"] = 5
 	}
 	DPSMate.Parser.Loot = function(self, msg)
-		for a,b,c,d,e in strgfind(msg, "(.-) bekommt Beute: |cff(.-)|Hitem:(%d+)(.+)%[(.+)%]|h|r") do
+		for a,b,c,d,e in strgfind(msg, "(.+) reçoit le butin : |cff(.-)|Hitem:(%d+)(.+)%[(.+)%]|h|r%.") do
 			DB:Loot(a, linkQuality[b], tnbr(c), e)
 			return
 		end
-		for a,b,c,d,e in strgfind(msg, "(.-) erhält Beute: |cff(.-)|Hitem:(%d+)(.+)%[(.+)%]|h|r") do
+		for a,b,c,d,e in strgfind(msg, "(.+) reçoit le butin : |cff(.-)|Hitem:(%d+)(.+)%[(.+)%]|h|r%.") do
 			DB:Loot(a, linkQuality[b], tnbr(c), e)
 			return
 		end
-		for a,b,c,d in strgfind(msg, "Ihr erhaltet Beute: |cff(.-)|Hitem:(%d+)(.+)%[(.+)%]|h|r") do
+		for a,b,c,d in strgfind(msg, "Vous recevez le butin : |cff(.-)|Hitem:(%d+)(.+)%[(.+)%]|h|r%.") do
 			DB:Loot(self.player, linkQuality[a], tnbr(b), d)
 			return
 		end
