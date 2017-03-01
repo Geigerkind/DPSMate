@@ -789,45 +789,74 @@ if (GetLocale() == "frFR") then
 	-- Energiegeladene Rüstung des Schurken.
 	DPSMate.Parser.SpellSelfBuff = function(self, msg)
 		t = {}
-		for a,b,c in strgfind(msg, "Kritische Heilung: (.+) heilt (.+) um (%d+) Punkte.") do 
-			if b=="Euch" then t[1]=self.player end
-			t[2] = tnbr(c)
-			overheal = self:GetOverhealByName(t[2], t[1] or b)
-			DB:HealingTaken(0, DPSMateHealingTaken, t[1] or b, a, 0, 1, t[2], self.player)
-			DB:HealingTaken(1, DPSMateEHealingTaken, t[1] or b, a, 0, 1, t[2]-overheal, self.player)
-			DB:Healing(0, DPSMateEHealing, self.player, a, 0, 1, t[2]-overheal, t[1] or b)
+		for a,c in strgfind(msg, "Votre (.+) vous soigne pour (%d+) points de vie%.") do 
+			t[1] = tnbr(c)
+			overheal = self:GetOverhealByName(t[1], self.player)
+			DB:HealingTaken(0, DPSMateHealingTaken, self.player, a, 1, 0, t[1], self.player)
+			DB:HealingTaken(1, DPSMateEHealingTaken, self.player, a, 1, 0, t[1]-overheal, self.player)
+			DB:Healing(0, DPSMateEHealing, self.player, a, 1, 0, t[1]-overheal, self.player)
 			if overheal>0 then 
-				DB:Healing(2, DPSMateOverhealing, self.player, a, 0, 1, overheal, t[1] or b)
-				DB:HealingTaken(2, DPSMateOverhealingTaken, t[1] or b, a, 0, 1, overheal, self.player)
+				DB:Healing(2, DPSMateOverhealing, self.player, a, 1, 0, overheal, self.player)
+				DB:HealingTaken(2, DPSMateOverhealingTaken, self.player, a, 1, 0, overheal, self.player)
 			end
-			DB:Healing(1, DPSMateTHealing, self.player, a, 0, 1, t[2], t[1] or b)
-			DB:DeathHistory(t[1] or b, self.player, a, t[2], 0, 1, 1, 0)
-			return
-		end
-		for a,b,c in strgfind(msg, "(.+) heilt (.+) um (%d+) Punkte%.") do 
-			if b=="Euch" then t[1]=self.player end
-			t[2] = tnbr(c)
-			overheal = self:GetOverhealByName(t[2], t[1] or b)
-			DB:HealingTaken(0, DPSMateHealingTaken, t[1] or b, a, 1, 0, t[2], self.player)
-			DB:HealingTaken(1, DPSMateEHealingTaken, t[1] or b, a, 1, 0, t[2]-overheal, self.player)
-			DB:Healing(0, DPSMateEHealing, self.player, a, 1, 0, t[2]-overheal, t[1] or b)
-			if overheal>0 then 
-				DB:Healing(2, DPSMateOverhealing, self.player, a, 1, 0, overheal, t[1] or b)
-				DB:HealingTaken(2, DPSMateOverhealingTaken, t[1] or b, a, 1, 0, overheal, self.player)
-			end
-			DB:Healing(1, DPSMateTHealing, self.player, a, 1, 0, t[2], t[1] or b)
-			DB:DeathHistory(t[1] or b, self.player, a, t[2], 1, 0, 1, 0)
+			DB:Healing(1, DPSMateTHealing, self.player, a, 1, 0, t[1], self.player)
+			DB:DeathHistory(self.player, self.player, a, t[1], 1, 0, 1, 0)
 			if self.procs[a] and not self.OtherExceptions[a] then
 				DB:BuildBuffs(self.player, self.player, a, true)
 			end
 			return
 		end
-		for a,b in strgfind(msg, "Ihr bekommt (%d+) Energie durch (.+)%.") do -- Potential to gain energy values for class evaluation
+		for a,b,c in strgfind(msg, "Votre (.+) soigne (.+) pour (%d+) points de vie%.") do 
+			t[1] = tnbr(c)
+			overheal = self:GetOverhealByName(t[1], b)
+			DB:HealingTaken(0, DPSMateHealingTaken, b, a, 1, 0, t[1], self.player)
+			DB:HealingTaken(1, DPSMateEHealingTaken, b, a, 1, 0, t[1]-overheal, self.player)
+			DB:Healing(0, DPSMateEHealing, self.player, a, 1, 0, t[1]-overheal, b)
+			if overheal>0 then 
+				DB:Healing(2, DPSMateOverhealing, self.player, a, 1, 0, overheal, b)
+				DB:HealingTaken(2, DPSMateOverhealingTaken, b, a, 1, 0, overheal, self.player)
+			end
+			DB:Healing(1, DPSMateTHealing, self.player, a, 1, 0, t[1], b)
+			DB:DeathHistory(b, self.player, a, t[1], 1, 0, 1, 0)
+			if self.procs[a] and not self.OtherExceptions[a] then
+				DB:BuildBuffs(self.player, self.player, a, true)
+			end
+			return
+		end
+		for a,c in strgfind(msg, "Votre (.+) a un effet critique et vous rend (%d+) points de vie%.") do 
+			t[1] = tnbr(c)
+			overheal = self:GetOverhealByName(t[1], self.player)
+			DB:HealingTaken(0, DPSMateHealingTaken, self.player, a, 0, 1, t[1], self.player)
+			DB:HealingTaken(1, DPSMateEHealingTaken, self.player, a, 0, 1, t[1]-overheal, self.player)
+			DB:Healing(0, DPSMateEHealing, self.player, a, 0, 1, t[1]-overheal, self.player)
+			if overheal>0 then 
+				DB:Healing(2, DPSMateOverhealing, self.player, a, 0, 1, overheal, self.player)
+				DB:HealingTaken(2, DPSMateOverhealingTaken, self.player, a, 0, 1, overheal, self.player)
+			end
+			DB:Healing(1, DPSMateTHealing, self.player, a, 0, 1, t[1], self.player)
+			DB:DeathHistory(self.player, self.player, a, t[1], 0, 1, 1, 0)
+			return
+		end
+		for a,b,c in strgfind(msg, "Votre (.+) soigne (.+) avec un effet critique et lui rend (%d+) points de vie%.") do 
+			t[1] = tnbr(c)
+			overheal = self:GetOverhealByName(t[1], b)
+			DB:HealingTaken(0, DPSMateHealingTaken, b, a, 0, 1, t[1], self.player)
+			DB:HealingTaken(1, DPSMateEHealingTaken, b, a, 0, 1, t[1]-overheal, self.player)
+			DB:Healing(0, DPSMateEHealing, self.player, a, 0, 1, t[1]-overheal, b)
+			if overheal>0 then 
+				DB:Healing(2, DPSMateOverhealing, self.player, a, 0, 1, overheal, b)
+				DB:HealingTaken(2, DPSMateOverhealingTaken, b, a, 0, 1, overheal, self.player)
+			end
+			DB:Healing(1, DPSMateTHealing, self.player, a, 0, 1, t[1], b)
+			DB:DeathHistory(b, self.player, a, t[1], 0, 1, 1, 0)
+			return
+		end
+		for b,a in strgfind(msg, "(.+) vous fait gagner (%d+) energie%.") do -- Potential to gain energy values for class evaluation
 			DB:BuildBuffs(self.player, self.player, b, true)
 			DB:DestroyBuffs(self.player, b)
 			return
 		end
-		for b,a in strgfind(msg, "Ihr bekommt durch (.+) (%d) Extra-Angriff\e?%.") do -- Potential for more evaluation
+		for a,b in strgfind(msg, "Vous gagnez (%d+) attaques supplémentaires grâce à (.+)%.") do -- Potential for more evaluation
 			DB.NextSwing[self.player] = {
 				[1] = tnbr(a),
 				[2] = b
@@ -840,14 +869,14 @@ if (GetLocale() == "frFR") then
 			DB:DestroyBuffs(self.player, b)
 			return
 		end	
-		for a,b in strgfind(msg, "Ihr bekommt (%d+) Wut durch (.+)%.") do -- Potential to gain energy values for class evaluation
+		for b,a in strgfind(msg, "(.+) vous fait gagner (%d+) rage%.") do -- Potential to gain energy values for class evaluation
 			if self.procs[b] and not self.OtherExceptions[b] then
 				DB:BuildBuffs(self.player, self.player, b, true)
 				DB:DestroyBuffs(self.player, b)
 			end
 			return
 		end
-		for a,b in strgfind(msg, "Ihr bekommt (%d+) Mana durch (.+)%.") do -- Potential to gain energy values for class evaluation
+		for b,a in strgfind(msg, "(.+) vous fait gagner (%d+) mana%.") do -- Potential to gain energy values for class evaluation
 			if self.procs[b] then
 				DB:BuildBuffs(self.player, self.player, b, true)
 				DB:DestroyBuffs(self.player, b)
