@@ -8,9 +8,6 @@ local GetTime = GetTime
 
 --écrase
 if (GetLocale() == "frFR") then
-	DPSMate.Parser.ReplaceSwString = function(self, str)
-		return str
-	end
 	DPSMate.Parser.SelfHits = function(self, msg)
 		t = {}
 		for a,b,c,d in strgfind(msg, "Vous touchez (.+) et infligez (%d+) points de dégâts(.*)%. %((%d+) absorbé%)") do
