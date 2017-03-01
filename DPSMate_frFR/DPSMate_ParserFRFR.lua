@@ -931,9 +931,8 @@ if (GetLocale() == "frFR") then
 	
 	DPSMate.Parser.SpellPeriodicFriendlyPlayerBuffs = function(self, msg)
 		t = {}
-		for f,a,b,c in strgfind(msg, "(.+) erhält (%d+) Gesundheit von (.-%s*)'?s (.+)%.") do
+		for c,b,a,f in strgfind(msg, "(.+) de (.+) rend (%d+) points de vie à (.+)%.") do
 			t[1]=tnbr(a)
-			b = self:ReplaceSwString(b)
 			overheal = self:GetOverhealByName(t[1], f)
 			DB:HealingTaken(0, DPSMateHealingTaken, f, c..DPSMate.L["periodic"], 1, 0, t[1], b)
 			DB:HealingTaken(1, DPSMateEHealingTaken, f, c..DPSMate.L["periodic"], 1, 0, t[1]-overheal, b)
@@ -946,7 +945,7 @@ if (GetLocale() == "frFR") then
 			DB:DeathHistory(f, b, c..DPSMate.L["periodic"], t[1], 1, 0, 1, 0)
 			return
 		end
-		for f,a,b in strgfind(msg, "(.+) erhält (%d+) Gesundheit durch (.+)%.") do 
+		for b,a,f in strgfind(msg, "Votre (.+) rend (%d+) points de vie à (.+)%.") do 
 			t[1] = tnbr(a)
 			overheal = self:GetOverhealByName(t[1], f)
 			DB:HealingTaken(0, DPSMateHealingTaken, f, b..DPSMate.L["periodic"], 1, 0, t[1], self.player)
@@ -960,14 +959,12 @@ if (GetLocale() == "frFR") then
 			DB:DeathHistory(f, self.player, b..DPSMate.L["periodic"], t[1], 1, 0, 1, 0)
 			return
 		end
-		for f,a in strgfind(msg, "(.-) bekommt %'(.+)%'%.") do
-			if strfind(a, "von") then return end
+		for f,a in strgfind(msg, "(.+) gagne (.+)%.") do
 			if self.BuffExceptions[a] then return end
 			if strfind(a, "%(") then a=strsub(a, 1, strfind(a, "%(")-2) end -- Unstable Power (12)
 			DB:ConfirmBuff(f, a, GetTime())
 			if DPSMate.Parser.Dispels[a] then
 				DB:RegisterHotDispel(f, a)
-				--DB:AwaitDispel(a, f, "Unknown", GetTime());
 			end
 			if self.RCD[a] then DPSMate:Broadcast(1, f, a) end
 			if self.FailDB[a] then DB:BuildFail(3, "Environnement", f, a, 0) end
