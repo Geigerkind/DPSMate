@@ -48,9 +48,20 @@ if (GetLocale() == "deDE") then
 			DB:AddSpellSchool("Lava","feuer")
 			return
 		end
+		for a in strgfind(msg, "Ihr verliert (%d+) Gesundheit aufgrund von Feuerschaden%.") do
+			DB:DamageTaken(self.player, "Feuer", 1, 0, 0, 0, 0, 0, tnbr(a), "Umgebung", 0, 0)
+			DB:DeathHistory(self.player, "Umgebung", "Feuer", tnbr(a), 1, 0, 0, 0)
+			DB:AddSpellSchool("Feuer","feuer")
+			return
+		end
 		for a in strgfind(msg, "Ihr ertrinkt und verliert (%d+) Gesundheit%.") do
 			DB:DamageTaken(self.player, "Ertrinken", 1, 0, 0, 0, 0, 0, tnbr(a), "Umgebung", 0, 0)
 			DB:DeathHistory(self.player, "Umgebung", "Ertrinken", tnbr(a), 1, 0, 0, 0)
+			return
+		end
+		for a in strgfind(msg, "Ihr verliert (%d+) Gesundheit wegen Schwimmens in Schleim%.") do
+			DB:DamageTaken(self.player, "Schleim", 1, 0, 0, 0, 0, 0, tnbr(a), "Umgebung", 0, 0)
+			DB:DeathHistory(self.player, "Umgebung", "Schleim", tnbr(a), 1, 0, 0, 0)
 			return
 		end
 	end
@@ -325,6 +336,12 @@ if (GetLocale() == "deDE") then
 			DB:AddSpellSchool("Lava","feuer")
 			return
 		end
+		for a,b in strgfind(msg, "(.+) verliert (%d+) Punkte aufgrund von Feuerschaden%.") do
+			DB:DamageTaken(a, "Feuer", 1, 0, 0, 0, 0, 0, tnbr(b), "Umgebung", 0, 0)
+			DB:DeathHistory(a, "Umgebung", "Feuer", tnbr(b), 1, 0, 0, 0)
+			DB:AddSpellSchool("Feuer","feuer")
+			return
+		end
 		for a,b in strgfind(msg, "(.-) fällt und verliert (%d+) Gesundheit%.") do
 			DB:DamageTaken(a, "Fallen", 1, 0, 0, 0, 0, 0, tnbr(b), "Umgebung", 0, 0)
 			DB:DeathHistory(a, "Umgebung", "Fallen", tnbr(b), 1, 0, 0, 0)
@@ -333,6 +350,11 @@ if (GetLocale() == "deDE") then
 		for a,b in strgfind(msg, "(.-) ertrinkt und verliert (%d+) Gesundheit%.") do
 			DB:DamageTaken(a, "Ertrinken", 1, 0, 0, 0, 0, 0, tnbr(b), "Umgebung", 0, 0)
 			DB:DeathHistory(a, "Umgebung", "Ertrinken", tnbr(b), 1, 0, 0, 0)
+			return
+		end
+		for a,b in strgfind(msg, "(.+) verliert (%d+) Gesundheit wegen Schwimmens in Schleim%.") do
+			DB:DamageTaken(a, "Schleim", 1, 0, 0, 0, 0, 0, tnbr(b), "Umgebung", 0, 0)
+			DB:DeathHistory(a, "Umgebung", "Schleim", tnbr(b), 1, 0, 0, 0)
 			return
 		end
 	end
