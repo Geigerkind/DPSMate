@@ -66,6 +66,36 @@ local AbilityFlags = {
 	["自然"] = 4,
 	["冰霜"] = 2,
 	["物理"] = 1,
+
+	["ombre"] = 5,
+	["feu"] = 3,
+	["nature"] = 4,
+	["givre"] = 2,
+	["arcane"] = 6,
+	["sacré"] = 7,
+	["d'ombre"] = 5,
+	["d'feu"] = 3,
+	["d'nature"] = 4,
+	["d'givre"] = 2,
+	["d'arcane"] = 6,
+	["d'sacré"] = 7,
+	["de ombre"] = 5,
+	["de feu"] = 3,
+	["de givre"] = 2,
+	["de nature"] = 4,
+	["de arcane"] = 6,
+	["de sacré"] = 7,
+	["physique"] = 1,
+	["d'physique"] = 1,
+	["de physique"] = 1,
+
+	["огонь"] = 3,
+	["обычный"] = 7,
+	["тайная магия"] = 6,
+	["тьма"] = 5,
+	["природа"] = 4,
+	["лед"] = 2,
+	["физический урон"] = 1,
 }
 DPSMate.DB.NeedUpdate = false
 DPSMate.DB.UserData = {}
@@ -943,6 +973,7 @@ function DPSMate.DB:WeightedAverage(a, b, c, d)
 end
 
 local spellSchoolNames = {
+	-- enUS
 	["fire"] = true,
 	["nature"] = true,
 	["shadow"] = true,
@@ -950,6 +981,7 @@ local spellSchoolNames = {
 	["frost"] = true,
 	["arcane"] = true,
 	
+	-- deDE
 	["feuer"] = true,
 	["natur"] = true,
 	["schatten"] = true,
@@ -957,6 +989,39 @@ local spellSchoolNames = {
 	["frost"] = true,
 	["heilig"] = true,
 	
+	--frFR
+	["ombre"] = true,
+	["feu"] = true,
+	["nature"] = true,
+	["givre"] = true,
+	["arcane"] = true,
+	["sacré"] = true,
+	["d'ombre"] = true,
+	["d'feu"] = true,
+	["d'nature"] = true,
+	["d'givre"] = true,
+	["d'arcane"] = true,
+	["d'sacré"] = true,
+	["de ombre"] = true,
+	["de feu"] = true,
+	["de givre"] = true,
+	["de nature"] = true,
+	["de arcane"] = true,
+	["de sacré"] = true,
+	["physique"] = true,
+	["d'physique"] = true,
+	["de physique"] = true,
+
+	-- ruRU
+	["огонь"] = true,
+	["обычный"] = true,
+	["тайная магия"] = true,
+	["тьма"] = true,
+	["природа"] = true,
+	["лед"] = true,
+	["физический урон"] = true,
+
+	-- zhCN
 	["火焰"] = true,
 	["神圣"] = true,
 	["奥术"] = true,
@@ -965,8 +1030,35 @@ local spellSchoolNames = {
 	["冰霜"] = true,
 	["物理"] = true,
 }
+
+local frenchConv = {
+	["ombre"] = "ombre",
+	["feu"] = "feu",
+	["nature"] = "nature",
+	["givre"] = "givre",
+	["arcane"] = "aracane",
+	["sacré"] = "sacré",
+	["d'ombre"] = "ombre",
+	["d'feu"] = "feu",
+	["d'nature"] = "nature",
+	["d'givre"] = "givre",
+	["d'arcane"] = "aracane",
+	["d'sacré"] = "sacré",
+	["de ombre"] = "ombre",
+	["de feu"] = "feu",
+	["de givre"] = "givre",
+	["de nature"] = "nature",
+	["de arcane"] = "aracane",
+	["de sacré"] = "sacré",
+	["physique"] = "physique",
+	["d'physique"] = "physique",
+	["de physique"] = "physique",
+}
 function DPSMate.DB:AddSpellSchool(ab, school)
 	school = slower(school)
+	if frenchConv[school] then
+		school = frenchConv[school]
+	end
 	local sc
 	if spellSchoolNames[school] then
 		sc = school

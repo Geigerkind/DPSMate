@@ -9,7 +9,7 @@ if (GetLocale() == "frFR")  then
 	DPSMate.L["current"] = "Actuel"
 	DPSMate.L["cancel"] = "Annuler"
 	DPSMate.L["report"] = "Rapport"
-	DPSMate.L["reportfor"] = "Rapport pour"
+	DPSMate.L["reportfor"] = "Rapport pour "
 	
 	-- Abilities	
 	DPSMate.L["vanish"] = "Disparition"
