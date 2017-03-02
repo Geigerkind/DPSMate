@@ -1,0 +1,11 @@
+## Interface: 11200
+## Title: DPSMate +|cFFFFFFFFLocal - zhCN|r
+## Notes: Load this module in order to support the mandarin client.
+## Author: Shino <Synced> - Kronos
+## Dependencies: DPSMate
+
+Babble-Spell-2.3_zhCN.lua
+Babble-Boss-2.3_zhCN.lua
+NPCDB-1.0_zhCN.lua
+zhCN.lua
+DPSMate_ParserZHCN.lua
