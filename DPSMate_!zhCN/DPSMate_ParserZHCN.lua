@@ -58,28 +58,27 @@ if (GetLocale() == "zhCN") then
 		end
 	end
 	
-	-- Ihr verfehlt X.
-	-- Ihr greift an. X weicht aus.
 	DPSMate.Parser.SelfMisses = function(self, msg)
-		-- Filter out immune message --> using them?
 		t = {}
-		for a in strgfind(msg, "Ihr verfehlt (.+)%.") do 
+		for a in strgfind(msg, "你没有击中(.+)。") do 
 			DB:EnemyDamage(true, DPSMateEDT, self.player, DPSMate.L["AutoAttack"], 0, 0, 1, 0, 0, 0, 0, a, 0, 0)
 			DB:DamageDone(self.player, DPSMate.L["AutoAttack"], 0, 0, 1, 0, 0, 0, 0, 0, 0)
 			return
 		end
-		for a,b in strgfind(msg, "Ihr greift an%. (.+) weicht aus%.") do 
+		for a,b in strgfind(msg, "你发起了攻击。(.+)闪开了。") do 
 			DB:EnemyDamage(true, DPSMateEDT, self.player, DPSMate.L["AutoAttack"], 0, 0, 0, 0, 1, 0, 0, a, 0, 0)
 			DB:DamageDone(self.player, DPSMate.L["AutoAttack"], 0, 0, 0, 0, 1, 0, 0, 0, 0)
 			return
 		end
-		-- Not tested
-		for ta in strgfind(msg, "Ihr greift an%. (.+) absorbiert allen Schaden%.") do DB:Absorb("AutoAttack", ta, self.player); return end
-		for a,b in strgfind(msg, "Ihr greift an%. (.+) (%a-)%.") do 
-			if b=="pariert" then t[1]=1 else t[3]=1 end
-			DB:EnemyDamage(true, DPSMateEDT, self.player, DPSMate.L["AutoAttack"], 0, 0, 0, t[1] or 0, 0, 0, 0, a, t[3] or 0, 0)
-			DB:DamageDone(self.player, DPSMate.L["AutoAttack"], 0, 0, 0, t[1] or 0, 0, 0, 0, 0, t[3] or 0)
+		for a in strgfind(msg, "你发起了攻击。(.+)招架住了。") do 
+			DB:EnemyDamage(true, DPSMateEDT, self.player, DPSMate.L["AutoAttack"], 0, 0, 0, 1, 0, 0, 0, a, 0, 0)
+			DB:DamageDone(self.player, DPSMate.L["AutoAttack"], 0, 0, 0, 1, 0, 0, 0, 0, 0)
 		end
+		for a in strgfind(msg, "你发起了攻击。(.+)格挡住了。") do 
+			DB:EnemyDamage(true, DPSMateEDT, self.player, DPSMate.L["AutoAttack"], 0, 0, 0, 0, 0, 0, 0, a, 1, 0)
+			DB:DamageDone(self.player, DPSMate.L["AutoAttack"], 0, 0, 0, 0, 0, 0, 0, 0, 1)
+		end
+		for ta in strgfind(msg, "你发动攻击，(.+)吸收了所有伤害。") do DB:Absorb("AutoAttack", ta, self.player); return end
 	end
 	
 	-- X trifft Y kritisch: 455 Schaden.
