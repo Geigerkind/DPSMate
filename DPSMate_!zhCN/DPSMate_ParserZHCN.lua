@@ -143,36 +143,36 @@ if (GetLocale() == "zhCN") then
 	
 	DPSMate.Parser.PeriodicDamage = function(self, msg)
 		t = {}
-		for a,b in strgfind(msg, "(.+) ist von (.+) betroffen%.") do if strfind(b, "%(") then b=strsub(b, 1, strfind(b, "%(")-2) end; DB:ConfirmAfflicted(a, b, GetTime()); if self.CC[b] then  DB:BuildActiveCC(a, b) end; return end
-		for a,b,c,d,e,f in strgfind(msg, "(.+) erleidet (%d+) (.-) von (.+) %(durch (.+)%)%.(.*)") do
+		-- ??
+		for a,b,f in strgfind(msg, "(.+)受到(.+)的伤害(.*)   (.+) ist von (.+) betroffen%.") do if strfind(b, "%(") then b=strsub(b, 1, strfind(b, "%(")-2) end; DB:ConfirmAfflicted(a, b, GetTime()); if self.CC[b] then  DB:BuildActiveCC(a, b) end; return end
+		for d,e,a,b,c,f in strgfind(msg, "(.+)的(.+)使(.+)受到了(%d+)点(.+)伤害(.*)。") do
 			t[1] = tnbr(b)
 			if f~="" then
-				DB:SetUnregisterVariables(tnbr(strsub(f, strfind(f, "%d+"))), e.."(Periodisch)", d)
+				DB:SetUnregisterVariables(tnbr(strsub(f, strfind(f, "%d+"))), e..DPSMate.L["periodic"], d)
 			end
-			DB:EnemyDamage(true, DPSMateEDT, d, e.."(Periodisch)", 1, 0, 0, 0, 0, 0, t[1], a, 0, 0)
-			DB:DamageDone(d, e.."(Periodisch)", 1, 0, 0, 0, 0, 0, t[1], 0, 0)
-			if self.TargetParty[a] and self.TargetParty[d] then DB:BuildFail(1, a, d, e.."(Periodisch)", t[1]);DB:DeathHistory(a, d, e.."(Periodisch)", t[1], 1, 0, 0, 0) end
-			DB:AddSpellSchool(e.."(Periodisch)",c)
+			DB:EnemyDamage(true, DPSMateEDT, d, e..DPSMate.L["periodic"], 1, 0, 0, 0, 0, 0, t[1], a, 0, 0)
+			DB:DamageDone(d, e..DPSMate.L["periodic"], 1, 0, 0, 0, 0, 0, t[1], 0, 0)
+			if self.TargetParty[a] and self.TargetParty[d] then DB:BuildFail(1, a, d, e..DPSMate.L["periodic"], t[1]);DB:DeathHistory(a, d, e..DPSMate.L["periodic"], t[1], 1, 0, 0, 0) end
+			DB:AddSpellSchool(e..DPSMate.L["periodic"],c)
 			return
 		end
-		for a,b,c,d,f in strgfind(msg, "(.+) erleidet (%d+) (.-) %(durch (.+)%)%.(.*)") do
+		for d,a,b,c,f in strgfind(msg, "你的(.+)使(.+)受到了(%d+)点(.+)伤害(.*)。") do
 			t[1] = tnbr(b)
 			if f~="" then
-				DB:SetUnregisterVariables(tnbr(strsub(f, strfind(f, "%d+"))), d.."(Periodisch)", self.player)
+				DB:SetUnregisterVariables(tnbr(strsub(f, strfind(f, "%d+"))), d..DPSMate.L["periodic"], self.player)
 			end
-			DB:EnemyDamage(true, DPSMateEDT, self.player, d.."(Periodisch)", 1, 0, 0, 0, 0, 0, t[1], a, 0, 0)
-			DB:DamageDone(self.player, d.."(Periodisch)", 1, 0, 0, 0, 0, 0, t[1], 0, 0)
-			if self.TargetParty[a] then DB:BuildFail(1, a, self.player, d.."(Periodisch)", t[1]);DB:DeathHistory(a, self.player, d.."(Periodisch)", t[1], 1, 0, 0, 0) end
-			DB:AddSpellSchool(d.."(Periodisch)",c)
+			DB:EnemyDamage(true, DPSMateEDT, self.player, d..DPSMate.L["periodic"], 1, 0, 0, 0, 0, 0, t[1], a, 0, 0)
+			DB:DamageDone(self.player, d..DPSMate.L["periodic"], 1, 0, 0, 0, 0, 0, t[1], 0, 0)
+			if self.TargetParty[a] then DB:BuildFail(1, a, self.player, d..DPSMate.L["periodic"], t[1]);DB:DeathHistory(a, self.player, d..DPSMate.L["periodic"], t[1], 1, 0, 0, 0) end
+			DB:AddSpellSchool(d..DPSMate.L["periodic"],c)
 			return
 		end
-		for f,a,b in strgfind(msg, "(.-%s*)'?s (.+) wurde von (.+) absorbiert%.") do -- To Test
-			f = self:ReplaceSwString(f)
-			DB:Absorb(a.."(Periodisch)", b, f)
+		for f,a,b in strgfind(msg, "(.+)的(.+)被(.+)吸收了。") do
+			DB:Absorb(a..DPSMate.L["periodic"], b, f)
 			return
 		end
-		for a,b in strgfind(msg, "Euer (.+) wurde von (.+) absorbiert%.") do -- To Test
-			DB:Absorb(a.."(Periodisch)", b, self.player)
+		for a,b in strgfind(msg, "你的(.+)被(.+)吸收了。") do
+			DB:Absorb(a..DPSMate.L["periodic"], b, self.player)
 			return
 		end
 	end
@@ -566,11 +566,11 @@ if (GetLocale() == "zhCN") then
 		t = {}
 		for a,b,c,d,e in strgfind(msg, "Ihr erleidet (%d+) (%a+) von (.+) %(durch (.+)%)%.(.*)") do -- Potential to track school and resisted damage
 			t[1] = tnbr(a)
-			DB:EnemyDamage(false, DPSMateEDD, self.player, d.."(Periodisch)", 1, 0, 0, 0, 0, 0, t[1], c, 0, 0)
-			DB:DamageTaken(self.player, d.."(Periodisch)", 1, 0, 0, 0, 0, 0, t[1], c, 0, 0)
-			DB:DeathHistory(self.player, c, d.."(Periodisch)", t[1], 1, 0, 0, 0)
+			DB:EnemyDamage(false, DPSMateEDD, self.player, d..DPSMate.L["periodic"], 1, 0, 0, 0, 0, 0, t[1], c, 0, 0)
+			DB:DamageTaken(self.player, d..DPSMate.L["periodic"], 1, 0, 0, 0, 0, 0, t[1], c, 0, 0)
+			DB:DeathHistory(self.player, c, d..DPSMate.L["periodic"], t[1], 1, 0, 0, 0)
 			if self.FailDT[d] then DB:BuildFail(2, c, self.player, d, t[1]) end
-			DB:AddSpellSchool(d.."(Periodisch)",b)
+			DB:AddSpellSchool(d..DPSMate.L["periodic"],b)
 			return
 		end
 		for a in strgfind(msg, "Ihr seid von (.+) betroffen%.") do
@@ -581,15 +581,15 @@ if (GetLocale() == "zhCN") then
 		end
 		for a,b,d,e in strgfind(msg, "Ihr erleidet (%d+) Punkte (%a+) %(durch (.+)%)%.(.*)") do -- Potential to track school and resisted damage
 			t[1] = tnbr(a)
-			DB:EnemyDamage(false, DPSMateEDD, self.player, d.."(Periodisch)", 1, 0, 0, 0, 0, 0, t[1], self.player, 0, 0)
-			DB:DamageTaken(self.player, d.."(Periodisch)", 1, 0, 0, 0, 0, 0, t[1], self.player, 0, 0)
-			DB:DeathHistory(self.player, self.player, d.."(Periodisch)", t[1], 1, 0, 0, 0)
-			DB:AddSpellSchool(d.."(Periodisch)",b)
+			DB:EnemyDamage(false, DPSMateEDD, self.player, d..DPSMate.L["periodic"], 1, 0, 0, 0, 0, 0, t[1], self.player, 0, 0)
+			DB:DamageTaken(self.player, d..DPSMate.L["periodic"], 1, 0, 0, 0, 0, 0, t[1], self.player, 0, 0)
+			DB:DeathHistory(self.player, self.player, d..DPSMate.L["periodic"], t[1], 1, 0, 0, 0)
+			DB:AddSpellSchool(d..DPSMate.L["periodic"],b)
 			return
 		end
 		for a,b in strgfind(msg, "Ihr absorbiert (.-%s*)'?s (.+)%.") do
 			a = self:ReplaceSwString(a)
-			DB:Absorb(b.."(Periodisch)", self.player, a)
+			DB:Absorb(b..DPSMate.L["periodic"], self.player, a)
 			return
 		end
 	end
@@ -637,11 +637,11 @@ if (GetLocale() == "zhCN") then
 		t = {}
 		for a,b,c,d,e,f in strgfind(msg, "(.+) erleidet (%d+) (%a+) von (.+) %(durch (.+)%)%.(.*)") do -- Potential to track resisted damage and school
 			t[1] = tnbr(b)
-			DB:EnemyDamage(false, DPSMateEDD, a, e.."(Periodisch)", 1, 0, 0, 0, 0, 0, t[1], d, 0, 0)
-			DB:DamageTaken(a, e.."(Periodisch)", 1, 0, 0, 0, 0, 0, t[1], d, 0, 0)
-			DB:DeathHistory(a, d, e.."(Periodisch)", t[1], 1, 0, 0, 0)
+			DB:EnemyDamage(false, DPSMateEDD, a, e..DPSMate.L["periodic"], 1, 0, 0, 0, 0, 0, t[1], d, 0, 0)
+			DB:DamageTaken(a, e..DPSMate.L["periodic"], 1, 0, 0, 0, 0, 0, t[1], d, 0, 0)
+			DB:DeathHistory(a, d, e..DPSMate.L["periodic"], t[1], 1, 0, 0, 0)
 			if self.FailDT[e] then DB:BuildFail(2, d, a, e, t[1]) end
-			DB:AddSpellSchool(e.."(Periodisch)",c)
+			DB:AddSpellSchool(e..DPSMate.L["periodic"],c)
 			return
 		end
 		for a, b in strgfind(msg, "(.+) ist von (.+) betroffen%.") do
@@ -652,7 +652,7 @@ if (GetLocale() == "zhCN") then
 		end
 		for f,a,b in strgfind(msg, "(.-%s*)'?s (.+) wurde von (.+) absorbiert%.") do -- To Test
 			f = self:ReplaceSwString(f)
-			DB:Absorb(a.."(Periodisch)", f, b)
+			DB:Absorb(a..DPSMate.L["periodic"], f, b)
 			return
 		end
 	end
@@ -796,29 +796,29 @@ if (GetLocale() == "zhCN") then
 		for a,b,c in strgfind(msg, "Ihr erhaltet (%d+) Gesundheit von (.+) %(durch (.+)%)%.") do
 			t[1]=tnbr(a)
 			overheal = self:GetOverhealByName(t[1], self.player)
-			DB:HealingTaken(0, DPSMateHealingTaken, self.player, c.."(Periodisch)", 1, 0, t[1], b)
-			DB:HealingTaken(1, DPSMateEHealingTaken, self.player, c.."(Periodisch)", 1, 0, t[1]-overheal, b)
-			DB:Healing(0, DPSMateEHealing, b, c.."(Periodisch)", 1, 0, t[1]-overheal, self.player)
+			DB:HealingTaken(0, DPSMateHealingTaken, self.player, c..DPSMate.L["periodic"], 1, 0, t[1], b)
+			DB:HealingTaken(1, DPSMateEHealingTaken, self.player, c..DPSMate.L["periodic"], 1, 0, t[1]-overheal, b)
+			DB:Healing(0, DPSMateEHealing, b, c..DPSMate.L["periodic"], 1, 0, t[1]-overheal, self.player)
 			if overheal>0 then 
-				DB:Healing(2, DPSMateOverhealing, b, c.."(Periodisch)", 1, 0, overheal, self.player)
-				DB:HealingTaken(2, DPSMateOverhealingTaken, self.player, c.."(Periodisch)", 1, 0, overheal, b)
+				DB:Healing(2, DPSMateOverhealing, b, c..DPSMate.L["periodic"], 1, 0, overheal, self.player)
+				DB:HealingTaken(2, DPSMateOverhealingTaken, self.player, c..DPSMate.L["periodic"], 1, 0, overheal, b)
 			end
-			DB:Healing(1, DPSMateTHealing, b, c.."(Periodisch)", 1, 0, t[1], self.player)
-			DB:DeathHistory(self.player, b, c.."(Periodisch)", t[1], 1, 0, 1, 0)
+			DB:Healing(1, DPSMateTHealing, b, c..DPSMate.L["periodic"], 1, 0, t[1], self.player)
+			DB:DeathHistory(self.player, b, c..DPSMate.L["periodic"], t[1], 1, 0, 1, 0)
 			return
 		end
 		for a,b in strgfind(msg, "Ihr erhaltet (%d+) Gesundheit von (.+)%.") do 
 			t[1] = tnbr(a)
 			overheal = self:GetOverhealByName(t[1], self.player)
-			DB:HealingTaken(0, DPSMateHealingTaken, self.player, b.."(Periodisch)", 1, 0, t[1], self.player)
-			DB:HealingTaken(1, DPSMateEHealingTaken, self.player, b.."(Periodisch)", 1, 0, t[1]-overheal, self.player)
-			DB:Healing(0, DPSMateEHealing, self.player, b.."(Periodisch)", 1, 0, t[1]-overheal, self.player)
+			DB:HealingTaken(0, DPSMateHealingTaken, self.player, b..DPSMate.L["periodic"], 1, 0, t[1], self.player)
+			DB:HealingTaken(1, DPSMateEHealingTaken, self.player, b..DPSMate.L["periodic"], 1, 0, t[1]-overheal, self.player)
+			DB:Healing(0, DPSMateEHealing, self.player, b..DPSMate.L["periodic"], 1, 0, t[1]-overheal, self.player)
 			if overheal>0 then 
-				DB:Healing(2, DPSMateOverhealing, self.player, b.."(Periodisch)", 1, 0, overheal, self.player)
-				DB:HealingTaken(2, DPSMateOverhealingTaken, self.player, b.."(Periodisch)", 1, 0, overheal, self.player)
+				DB:Healing(2, DPSMateOverhealing, self.player, b..DPSMate.L["periodic"], 1, 0, overheal, self.player)
+				DB:HealingTaken(2, DPSMateOverhealingTaken, self.player, b..DPSMate.L["periodic"], 1, 0, overheal, self.player)
 			end
-			DB:Healing(1, DPSMateTHealing, self.player, b.."(Periodisch)", 1, 0, t[1], self.player)
-			DB:DeathHistory(self.player, self.player, b.."(Periodisch)", t[1], 1, 0, 1, 0)
+			DB:Healing(1, DPSMateTHealing, self.player, b..DPSMate.L["periodic"], 1, 0, t[1], self.player)
+			DB:DeathHistory(self.player, self.player, b..DPSMate.L["periodic"], t[1], 1, 0, 1, 0)
 			return
 		end
 		for a in strgfind(msg, "Ihr bekommt %'(.+)%'%.") do
@@ -842,29 +842,29 @@ if (GetLocale() == "zhCN") then
 			t[1]=tnbr(a)
 			b = self:ReplaceSwString(b)
 			overheal = self:GetOverhealByName(t[1], f)
-			DB:HealingTaken(0, DPSMateHealingTaken, f, c.."(Periodisch)", 1, 0, t[1], b)
-			DB:HealingTaken(1, DPSMateEHealingTaken, f, c.."(Periodisch)", 1, 0, t[1]-overheal, b)
-			DB:Healing(0, DPSMateEHealing, b, c.."(Periodisch)", 1, 0, t[1]-overheal, f)
+			DB:HealingTaken(0, DPSMateHealingTaken, f, c..DPSMate.L["periodic"], 1, 0, t[1], b)
+			DB:HealingTaken(1, DPSMateEHealingTaken, f, c..DPSMate.L["periodic"], 1, 0, t[1]-overheal, b)
+			DB:Healing(0, DPSMateEHealing, b, c..DPSMate.L["periodic"], 1, 0, t[1]-overheal, f)
 			if overheal>0 then 
-				DB:Healing(2, DPSMateOverhealing, b, c.."(Periodisch)", 1, 0, overheal, f)
-				DB:HealingTaken(2, DPSMateOverhealingTaken, f, c.."(Periodisch)", 1, 0, overheal, b)
+				DB:Healing(2, DPSMateOverhealing, b, c..DPSMate.L["periodic"], 1, 0, overheal, f)
+				DB:HealingTaken(2, DPSMateOverhealingTaken, f, c..DPSMate.L["periodic"], 1, 0, overheal, b)
 			end
-			DB:Healing(1, DPSMateTHealing, b, c.."(Periodisch)", 1, 0, t[1], f)
-			DB:DeathHistory(f, b, c.."(Periodisch)", t[1], 1, 0, 1, 0)
+			DB:Healing(1, DPSMateTHealing, b, c..DPSMate.L["periodic"], 1, 0, t[1], f)
+			DB:DeathHistory(f, b, c..DPSMate.L["periodic"], t[1], 1, 0, 1, 0)
 			return
 		end
 		for f,a,b in strgfind(msg, "(.+) erhält (%d+) Gesundheit durch (.+)%.") do 
 			t[1] = tnbr(a)
 			overheal = self:GetOverhealByName(t[1], f)
-			DB:HealingTaken(0, DPSMateHealingTaken, f, b.."(Periodisch)", 1, 0, t[1], self.player)
-			DB:HealingTaken(1, DPSMateEHealingTaken, f, b.."(Periodisch)", 1, 0, t[1]-overheal, self.player)
-			DB:Healing(0, DPSMateEHealing, self.player, b.."(Periodisch)", 1, 0, t[1]-overheal)
+			DB:HealingTaken(0, DPSMateHealingTaken, f, b..DPSMate.L["periodic"], 1, 0, t[1], self.player)
+			DB:HealingTaken(1, DPSMateEHealingTaken, f, b..DPSMate.L["periodic"], 1, 0, t[1]-overheal, self.player)
+			DB:Healing(0, DPSMateEHealing, self.player, b..DPSMate.L["periodic"], 1, 0, t[1]-overheal)
 			if overheal>0 then 
-				DB:Healing(2, DPSMateOverhealing, self.player, b.."(Periodisch)", 1, 0, overheal)
-				DB:HealingTaken(2, DPSMateOverhealingTaken, f, b.."(Periodisch)", 1, 0, overheal, self.player)
+				DB:Healing(2, DPSMateOverhealing, self.player, b..DPSMate.L["periodic"], 1, 0, overheal)
+				DB:HealingTaken(2, DPSMateOverhealingTaken, f, b..DPSMate.L["periodic"], 1, 0, overheal, self.player)
 			end
-			DB:Healing(1, DPSMateTHealing, self.player, b.."(Periodisch)", 1, 0, t[1])
-			DB:DeathHistory(f, self.player, b.."(Periodisch)", t[1], 1, 0, 1, 0)
+			DB:Healing(1, DPSMateTHealing, self.player, b..DPSMate.L["periodic"], 1, 0, t[1])
+			DB:DeathHistory(f, self.player, b..DPSMate.L["periodic"], t[1], 1, 0, 1, 0)
 			return
 		end
 		for f,a in strgfind(msg, "(.-) bekommt %'(.+)%'%.") do
