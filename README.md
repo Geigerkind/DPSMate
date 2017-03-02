@@ -39,7 +39,6 @@ Misc:
 ![img](http://i.imgur.com/Uezcowg.png)  
 ![img](http://i.imgur.com/Ine09Kp.png)  
 ![img](http://i.imgur.com/eEIL8i5.png)  
-![img](https://gyazo.com/a045046b53246a133461939067a0dbc6.png)  
 
 #**Download and install:** 
 1. Download the addon folder here.
