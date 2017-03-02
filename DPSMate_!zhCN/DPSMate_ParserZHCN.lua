@@ -177,20 +177,14 @@ if (GetLocale() == "zhCN") then
 		end
 	end
 	
-	-- Xs Y trifft Z für d+ 火焰schaden.
-	-- X ist Y von Z ausgewichen.
-	-- X von Z verfehlt Y.
-	-- X von Z wurde von Y pariert.
 	DPSMate.Parser.FriendlyPlayerDamage = function(self, msg)
 		t = {}
-		for k,a,b,c,d,f in strgfind(msg, "(.-%s*)'?s (.+) trifft (.+) für (%d+)(.*)%. %((%d+) absorbiert%)") do 
-			k = self:ReplaceSwString(k)
+		for k,a,b,c,d,f in strgfind(msg, "(.+)的(.+)击中(.+)造成(%d+)点伤害%（(%d+)点被吸收%）。   (.-%s*)'?s (.+) trifft (.+) für (%d+)(.*)%. %((%d+) absorbiert%)") do 
 			DB:AddSpellSchool(a,d)
 			DB:SetUnregisterVariables(tnbr(f), b, k)
 		end
 		for f,a,b,c,d,e in strgfind(msg, "(.-%s*)'?s (.+) trifft (.+) kritisch für (%d+)(.*)\.%s?(.*)") do 
 			t[1] = tnbr(c)
-			f = self:ReplaceSwString(f)
 			if strfind(e, "点被格挡") then t[4]=1;t[2]=0;end
 			if DPSMate.Parser.Kicks[a] then DB:AssignPotentialKick(f, a, c, GetTime()) end
 			if DPSMate.Parser.DmgProcs[a] then DB:BuildBuffs(f, f, a, true) end
@@ -202,7 +196,6 @@ if (GetLocale() == "zhCN") then
 		end
 		for f,a,b,c,d,e in strgfind(msg, "(.-%s*)'?s (.+) trifft (.+) für (%d+)(.*)\.%s?(.*)") do 
 			t[1] = tnbr(c)
-			f = self:ReplaceSwString(f)
 			if strfind(e, "点被格挡") then t[4]=1;t[2]=0;t[3]=0 end
 			if DPSMate.Parser.Kicks[a] then DB:AssignPotentialKick(f, a, b, GetTime()) end
 			if DPSMate.Parser.DmgProcs[a] then DB:BuildBuffs(f, f, a, true) end

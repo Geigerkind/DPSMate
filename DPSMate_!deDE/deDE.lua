@@ -799,4 +799,39 @@ if (GetLocale() == "deDE") then
 	DPSMate_Details_CompareDamage_LogDetails_Parry:SetText(DPSMate.L["parry"])
 	DPSMate_Details_CompareDamage_LogDetails_Dodge:SetText(DPSMate.L["dodge"])
 	DPSMate_Details_CompareDamage_LogDetails_Resist:SetText(DPSMate.L["resist"])
+	
+	DPSMate.Options.Options[1]["args"]["damage"] = {
+		order = 20,
+		type = 'toggle',
+		name = DPSMate.L["damage"],
+		desc = DPSMate.L["show"].." "..DPSMate.L["damage"]..".",
+		get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["options"][1]["damage"] end,
+		set = function() DPSMate.Options:ToggleDrewDrop(1, "damage", DPSMate.Options.Dewdrop:GetOpenedParent()) end,
+	}
+	DPSMate.Options.Options[1]["args"]["dps"] = {
+		order = 10,
+		type = 'toggle',
+		name = DPSMate.L["dps"],
+		desc = DPSMate.L["show"].." "..DPSMate.L["dps"]..".",
+		get = function() return DPSMateSettings["windows"][DPSMate.Options.Dewdrop:GetOpenedParent().Key]["options"][1]["dps"] end, -- Addons might conflicting here with dewdrop
+		set = function() DPSMate.Options:ToggleDrewDrop(1, "dps", DPSMate.Options.Dewdrop:GetOpenedParent()) end,
+	}
+	
+	-- Popups
+	DPSMate_PopUp_Text:SetText(DPSMate.L["popup"])
+	DPSMate_PopUp_TotalText:SetText(DPSMate.L["total"])
+	DPSMate_PopUp_CurrentText:SetText(DPSMate.L["current"])
+	DPSMate_PopUp_CancelText:SetText(DPSMate.L["cancel"])
+	DPSMate_Vote_Text:SetText(DPSMate.L["popup"])
+	DPSMate_Vote_AcceptText:SetText(DPSMate.L["vreset"])
+	DPSMate_Vote_CancelText:SetText(DPSMate.L["vdreset"])
+	DPSMate_Logout_Text:SetText(DPSMate.L["memory"])
+	DPSMate_Logout_AcceptText:SetText(DPSMate.L["accept"])
+	DPSMate_Logout_CancelText:SetText(DPSMate.L["decline"])
+	DPSMate_Report_Text:SetText(DPSMate.L["report"].." - "..DPSMate.L["name"])
+	DPSMate_Report_Channel_Text:SetText(DPSMate.L["channel"])
+	DPSMate_Report_Delay.aide = DPSMate.L["reportdelaytooltip"]
+	DPSMate_Report_Delay_Title:SetText(DPSMate.L["delay"])
+	DPSMate_Report_Editbox_Text:SetText(DPSMate.L["editboxtitle"])
+	DPSMate_Report_ReportButton:SetText(DPSMate.L["report"])
 end
