@@ -26,8 +26,7 @@ Some of them are:
 Misc:   
 - Several Segments (Total, Current, and previous fights)   
 - Synchronizing, to guarantee accurate data   
-- Report function for every mode and everys player data   
-- An own evaluation site to compare to revamp the raid and compare to other guilds: [Legacy Logs](http://legacy-logs.com/#)  
+- Report function for every mode and everys player data    
 - And many more...   
 
 #But pictures tell more than words:   
@@ -62,7 +61,7 @@ It looks like this: [(Link)](http://legacy-logs.com/#)
 
 #**Support me!**   
 1. [Report bugs](https://github.com/Geigerkind/DPSMate/issues) that you found.
-2. Suggest improvements in this thread. 
+2. Suggest improvements. 
 3. You can also [donate](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=57SWBZ3B7RTTQ) for my projects if you like.
 
 cheers!  
