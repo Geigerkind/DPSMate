@@ -130,7 +130,7 @@ if (GetLocale() == "zhCN") then
 			DB:DamageDone(self.player, a, 0, 0, 0, 0, 0, 0, 0, 0, 1)
 			return
 		end
-		for what, whom in strgfind(msg, "你打断了(.+)的(.+)。  Ihr unterbrecht (.+) von (.+)%.") do -- ????
+		for whom, what in strgfind(msg, "你打断了(.+)的(.+)。") do
 			local causeAbility = "法术反制"
 			if DPSMateUser[self.player] then
 				if DPSMateUser[self.player][2] == "priest" then
@@ -226,7 +226,7 @@ if (GetLocale() == "zhCN") then
 			DB:DamageDone(f, a, 0, 0, 0, 0, 0, 0, 0, 0, 1)
 			return
 		end
-		for who, what, whom in strgfind(msg, "(.+)打断了(.+)的(.+)。   (.-) unterbricht (.+) von (.+)%.") do -- ?
+		for who, whom, what in strgfind(msg, "(.+)打断了(.+)的(.+)。") do
 			local causeAbility = "法术反制"
 			if DPSMateUser[who] then
 				if DPSMateUser[who][2] == "priest" then
