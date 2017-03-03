@@ -856,18 +856,18 @@ if (GetLocale() == "zhCN") then
 	----------------------------------------------------------------------------------
 	
 	DPSMate.Parser.SpellSelfBuffDispels = function(self, msg)
-		for ab, tar in strgfind(msg, "Ihr wirkt (.+) auf (.-)%.") do if DPSMate.Parser.Dispels[ab] then DB:AwaitDispel(ab, tar, self.player, GetTime()) end; if self.RCD[ab] then DPSMate:Broadcast(2, self.player, tar, ab) end; return end
-		for ab in strgfind(msg, "Ihr wirkt (.+)%.") do if DPSMate.Parser.Dispels[ab] then DB:AwaitDispel(ab, self.player, self.player, GetTime()) end; return end
+		for tar, ab in strgfind(msg, "你对(.+)施放了(.+)。") do if DPSMate.Parser.Dispels[ab] then DB:AwaitDispel(ab, tar, self.player, GetTime()) end; if self.RCD[ab] then DPSMate:Broadcast(2, self.player, tar, ab) end; return end
+		for ab in strgfind(msg, "你施放了(.+)。") do if DPSMate.Parser.Dispels[ab] then DB:AwaitDispel(ab, self.player, self.player, GetTime()) end; return end
 	end
 	
 	DPSMate.Parser.SpellHostilePlayerBuffDispels = function(self, msg)
-		for c, ab, ta in strgfind(msg, "(.+) wirkt (.+) auf (.-)%.") do if ta=="Euch" then ta = self.player end; if DPSMate.Parser.Dispels[ab] then DB:AwaitDispel(ab, ta, c, GetTime()) end; if self.RCD[ab] then DPSMate:Broadcast(2, c, ta, ab) end; return end
-		for c, ab in strgfind(msg, "(.+) wirkt (.+)%.") do if DPSMate.Parser.Dispels[ab] then DB:AwaitDispel(ab, DPSMate.L["unknown"], c, GetTime()) end; return end
+		for c, ta, ab in strgfind(msg, "(.+)对(.+)施放了(.+)。   (.+) wirkt (.+) auf (.-)%.") do if ta=="你" then ta = self.player end; if DPSMate.Parser.Dispels[ab] then DB:AwaitDispel(ab, ta, c, GetTime()) end; if self.RCD[ab] then DPSMate:Broadcast(2, c, ta, ab) end; return end
+		for c, ab in strgfind(msg, "(.+)施放了(.+)。") do if DPSMate.Parser.Dispels[ab] then DB:AwaitDispel(ab, DPSMate.L["unknown"], c, GetTime()) end; return end
 	end
 	
 	DPSMate.Parser.SpellBreakAura = function(self, msg) 
-		for ab, ta in strgfind(msg, "%'(.+)%' von (.+) wurde entfernt%.") do DB:ConfirmRealDispel(ab, ta, GetTime()); return end
-		for ab in strgfind(msg, "(.+) wurde entfernt%.") do DB:ConfirmRealDispel(ab, self.player, GetTime()); return end
+		for ab in strgfind(msg, "你的(.+)被移除了。") do DB:ConfirmRealDispel(ab, self.player, GetTime()); return end
+		for ta, ab in strgfind(msg, "(.+)的(.+)被移除了。") do DB:ConfirmRealDispel(ab, ta, GetTime()); return end
 	end
 	
 	----------------------------------------------------------------------------------
