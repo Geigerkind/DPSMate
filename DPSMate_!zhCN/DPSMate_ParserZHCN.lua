@@ -9,10 +9,10 @@ local GetTime = GetTime
 if (GetLocale() == "zhCN") then
 	DPSMate.Parser.SelfHits = function(self, msg)
 		t = {}
-		for a,b,c,d in strgfind(msg, "你击中(.+)造成(%d+)伤害%（(%d+)被吸收%）。") do 
+		for a,b,c,f,d in strgfind(msg, "你击中(.+)造成(%d+)伤(.*)害%（(%d+)被吸收%）。") do 
 			DB:SetUnregisterVariables(tnbr(d), DPSMate.L["AutoAttack"], self.player)
 		end
-		for a,b,c in strgfind(msg, "你击中(.+)造成(%d+)点伤害。%s?(.*)") do
+		for a,b,f,c in strgfind(msg, "你击中(.+)造成(%d+)点(.*)伤害。%s?(.*)") do
 			if c == "(偏斜)" then t[3]=1;t[1]=0 elseif c ~= "" then t[4]=1;t[1]=0; end
 			DB:EnemyDamage(true, DPSMateEDT, self.player, DPSMate.L["AutoAttack"], t[1] or 1, 0, 0, 0, 0, 0, tnbr(b), a, t[4] or 0, t[3] or 0)
 			DB:DamageDone(self.player, DPSMate.L["AutoAttack"], t[1] or 1, 0, 0, 0, 0, 0, tnbr(b), t[3] or 0, t[4] or 0)
@@ -20,6 +20,12 @@ if (GetLocale() == "zhCN") then
 			return
 		end
 		for a,b,c in strgfind(msg, "(.+)对你造成(%d+)的致命一击伤害。%s?(.*)") do
+			DB:EnemyDamage(true, DPSMateEDT, self.player, DPSMate.L["AutoAttack"], 0, 1, 0, 0, 0, 0, tnbr(b), a, t[4] or 0, t[3] or 0)
+			DB:DamageDone(self.player, DPSMate.L["AutoAttack"], 0, 1, 0, 0, 0, 0, tnbr(b), t[3] or 0, t[4] or 0)
+			if self.TargetParty[a] then DB:BuildFail(1, a, self.player, DPSMate.L["AutoAttack"], tnbr(b));DB:DeathHistory(a, self.player, DPSMate.L["AutoAttack"], tnbr(b), 0, 1, 0, 0) end
+			return
+		end
+		for a,b,f,c in strgfind(msg, "你的致命一击中(.+)造成(%d+)点(.*)伤害。%s?(.*)") do
 			DB:EnemyDamage(true, DPSMateEDT, self.player, DPSMate.L["AutoAttack"], 0, 1, 0, 0, 0, 0, tnbr(b), a, t[4] or 0, t[3] or 0)
 			DB:DamageDone(self.player, DPSMate.L["AutoAttack"], 0, 1, 0, 0, 0, 0, tnbr(b), t[3] or 0, t[4] or 0)
 			if self.TargetParty[a] then DB:BuildFail(1, a, self.player, DPSMate.L["AutoAttack"], tnbr(b));DB:DeathHistory(a, self.player, DPSMate.L["AutoAttack"], tnbr(b), 0, 1, 0, 0) end
@@ -176,7 +182,7 @@ if (GetLocale() == "zhCN") then
 	
 	DPSMate.Parser.FriendlyPlayerDamage = function(self, msg)
 		t = {}
-		for k,a,b,c,f in strgfind(msg, "(.+)的(.+)击中(.+)造成(%d+)点伤害%（(%d+)点被吸收%）。") do 
+		for k,a,b,c,g,f in strgfind(msg, "(.+)的(.+)击中(.+)造成(%d+)点(.*)伤害%（(%d+)点被吸收%）。") do 
 			DB:SetUnregisterVariables(tnbr(f), b, k)
 		end
 		for f,a,b,c,e in strgfind(msg, "(.+)的(.+)对(.+)造成(%d+)点致命一击伤害。%s?(.*)") do 
@@ -189,7 +195,18 @@ if (GetLocale() == "zhCN") then
 			if self.TargetParty[b] and self.TargetParty[f] then DB:BuildFail(1, b, f, a, t[1]);DB:DeathHistory(b, f, a, t[1], 0, 1, 0, 0) end
 			return
 		end
-		for f,a,b,c,e in strgfind(msg, "(.+)的(.+)击中(.+)造成(%d+)点伤害。%s?(.*)") do 
+		for f,a,b,c,g,e in strgfind(msg, "(.+)的(.+)致命一击对(.+)造成(%d+)点(.*)伤害。%s?(.*)") do 
+			t[1] = tnbr(c)
+			if strfind(e, "点被格挡") then t[4]=1;t[2]=0;end
+			if DPSMate.Parser.Kicks[a] then DB:AssignPotentialKick(f, a, c, GetTime()) end
+			if DPSMate.Parser.DmgProcs[a] then DB:BuildBuffs(f, f, a, true) end
+			DB:EnemyDamage(true, DPSMateEDT, f, a,  0, t[2] or 1, 0, 0, 0, 0, t[1], b, t[4] or 0, 0)
+			DB:DamageDone(f, a, 0, t[2] or 1, 0, 0, 0, 0, t[1], 0, t[4] or 0)
+			if self.TargetParty[b] and self.TargetParty[f] then DB:BuildFail(1, b, f, a, t[1]);DB:DeathHistory(b, f, a, t[1], 0, 1, 0, 0) end
+			DB:AddSpellSchool(a,g)
+			return
+		end
+		for f,a,b,c,g,e in strgfind(msg, "(.+)的(.+)击中(.+)造成(%d+)点(.*)伤害。%s?(.*)") do 
 			t[1] = tnbr(c)
 			if strfind(e, "点被格挡") then t[4]=1;t[2]=0;t[3]=0 end
 			if DPSMate.Parser.Kicks[a] then DB:AssignPotentialKick(f, a, b, GetTime()) end
@@ -245,7 +262,7 @@ if (GetLocale() == "zhCN") then
 	
 	DPSMate.Parser.FriendlyPlayerHits = function(self, msg)
 		t = {}
-		for a,b,c,e in strgfind(msg, "(.+)击中(.+)造成(%d+)点伤害%（(%d+)点被吸收%）。") do
+		for a,b,c,f,e in strgfind(msg, "(.+)击中(.+)造成(%d+)点(.*)伤害%（(%d+)点被吸收%）。") do
 			DB:SetUnregisterVariables(tnbr(e), DPSMate.L["AutoAttack"], a)
 		end
 		for a,b,c,d in strgfind(msg, "(.+)对(.+)造成(%d+)的致命一击伤害。%s?(.*)") do
@@ -257,7 +274,16 @@ if (GetLocale() == "zhCN") then
 			if self.TargetParty[a] and self.TargetParty[b] then DB:BuildFail(1, b, a, DPSMate.L["AutoAttack"], t[5]);DB:DeathHistory(b, a, DPSMate.L["AutoAttack"], t[5], 0, 1, 0, 0) end
 			return
 		end
-		for a,b,c,d in strgfind(msg, "(.+)击中(.+)造成(%d+)点伤害。") do
+		for a,b,c,f,d in strgfind(msg, "(.+)的致命一击中(.+)造成(%d+)点(.*)伤害。%s?(.*)") do
+			if d=="(偏斜)" then t[1]=1;t[3]=0 elseif d~="" then t[2]=1;t[3]=0 end
+			if b == "你" then b=self.player end
+			t[5] = tnbr(c)
+			DB:EnemyDamage(true, DPSMateEDT, a, DPSMate.L["AutoAttack"], 0, t[3] or 1, 0, 0, 0, 0, t[5], b, t[2] or 0, t[1] or 0)
+			DB:DamageDone(a, DPSMate.L["AutoAttack"], 0, t[3] or 1, 0, 0, 0, 0, t[5], t[1] or 0, t[2] or 0)
+			if self.TargetParty[a] and self.TargetParty[b] then DB:BuildFail(1, b, a, DPSMate.L["AutoAttack"], t[5]);DB:DeathHistory(b, a, DPSMate.L["AutoAttack"], t[5], 0, 1, 0, 0) end
+			return
+		end
+		for a,b,c,f,d in strgfind(msg, "(.+)击中(.+)造成(%d+)点(.*)伤害。") do
 			if d=="(偏斜)" then t[1]=1;t[3]=0 elseif d~="" then t[2]=1;t[3]=0 end
 			if b=="你" then b=self.player end
 			t[5] = tnbr(c)
@@ -355,7 +381,7 @@ if (GetLocale() == "zhCN") then
 
 	DPSMate.Parser.CreatureVsSelfHits = function(self, msg)
 		t = {}
-		for a,c,d in strgfind(msg, "(.+)击中你造成(%d+)点伤害。(.*)") do
+		for a,c,f,d in strgfind(msg, "(.+)击中你造成(%d+)点(.*)伤害。(.*)") do
 			if strfind(d, "碾压") then t[3]=1;t[1]=0; elseif strfind(d, "点被格挡") then t[4]=1;t[1]=0; end
 			t[5] = tnbr(c)
 			DB:EnemyDamage(false, DPSMateEDD, self.player, DPSMate.L["AutoAttack"], t[1] or 1, 0, 0, 0, 0, 0, t[5], a, t[4] or 0, t[3] or 0)
@@ -364,6 +390,14 @@ if (GetLocale() == "zhCN") then
 			return
 		end
 		for a,c,d in strgfind(msg, "(.+)对你造成(%d+)的致命一击伤害。(.*)") do
+			if strfind(d, "碾压") then t[3]=1;t[2]=0 elseif strfind(d, "点被格挡") then t[4]=1;t[2]=0 end
+			t[5] = tnbr(c)
+			DB:EnemyDamage(false, DPSMateEDD, self.player, DPSMate.L["AutoAttack"], 0, t[2] or 1, 0, 0, 0, 0, t[5], a, t[4] or 0, t[3] or 0)
+			DB:DamageTaken(self.player, DPSMate.L["AutoAttack"], 0, t[2] or 1, 0, 0, 0, 0, t[5], a, t[3] or 0, t[4] or 0)
+			DB:DeathHistory(self.player, a, DPSMate.L["AutoAttack"], t[5], 0, t[2] or 1, 0, t[3] or 0)
+			return
+		end
+		for a,c,f,d in strgfind(msg, "(.+)的致命一击对你造成(%d+)点(.*)伤害。%s?(.*)") do
 			if strfind(d, "碾压") then t[3]=1;t[2]=0 elseif strfind(d, "点被格挡") then t[4]=1;t[2]=0 end
 			t[5] = tnbr(c)
 			DB:EnemyDamage(false, DPSMateEDD, self.player, DPSMate.L["AutoAttack"], 0, t[2] or 1, 0, 0, 0, 0, t[5], a, t[4] or 0, t[3] or 0)
@@ -391,22 +425,33 @@ if (GetLocale() == "zhCN") then
 	
 	DPSMate.Parser.CreatureVsSelfSpellDamage = function(self, msg)
 		t = {}
-		for a,b,c,d in strgfind(msg, "(.+)的(.+)击中你造成(%d+)点伤害。(.*)") do
+		for a,b,c,f,d in strgfind(msg, "(.+)的(.+)击中你造成(%d+)点(.*)伤害。(.*)") do
 			t[3] = tnbr(c)
 			DB:UnregisterPotentialKick(self.player, b, GetTime())
 			DB:EnemyDamage(false, DPSMateEDD, self.player, b, t[1] or 1, 0, 0, 0, 0, 0, t[3], a, t[4] or 0, 0)
 			DB:DamageTaken(self.player, b, t[1] or 1, 0, 0, 0, 0, 0, t[3], a, 0, t[4] or 0)
 			DB:DeathHistory(self.player, a, b, t[3], t[1] or 1, 0, 0, 0)
 			if self.FailDT[b] then DB:BuildFail(2, a, self.player, b, t[3]) end
+			DB:AddSpellSchool(b,f)
 			return
 		end
-		for a,b,c in strgfind(msg, "(.+)的(.+)对你造成(%d+)点致命一击伤害。(.*)") do
+		for a,b,c,d in strgfind(msg, "(.+)的(.+)对你造成(%d+)点致命一击伤害。(.*)") do
 			t[3] = tnbr(c)
 			DB:UnregisterPotentialKick(self.player, b, GetTime())
 			DB:EnemyDamage(false, DPSMateEDD, self.player, b, 0, 1, 0, 0, 0, 0, t[3], a, t[4] or 0, 0)
 			DB:DamageTaken(self.player, b, 0, 1, 0, 0, 0, 0, t[3], a, 0, t[4] or 0)
 			DB:DeathHistory(self.player, a, b, t[3], 0, 1, 0, 0)
 			if self.FailDT[b] then DB:BuildFail(2, a, self.player, b, t[3]) end
+			return
+		end
+		for a,b,c,f,g in strgfind(msg, "(.+)的(.+)致命一击对你造成(%d+)点(.*)伤害。(.*)") do
+			t[3] = tnbr(c)
+			DB:UnregisterPotentialKick(self.player, b, GetTime())
+			DB:EnemyDamage(false, DPSMateEDD, self.player, b, 0, 1, 0, 0, 0, 0, t[3], a, t[4] or 0, 0)
+			DB:DamageTaken(self.player, b, 0, 1, 0, 0, 0, 0, t[3], a, 0, t[4] or 0)
+			DB:DeathHistory(self.player, a, b, t[3], 0, 1, 0, 0)
+			if self.FailDT[b] then DB:BuildFail(2, a, self.player, b, t[3]) end
+			DB:AddSpellSchool(b,f)
 			return
 		end
 		for a,b in strgfind(msg, "(.+)的(.+)没有击中你。") do
@@ -477,7 +522,15 @@ if (GetLocale() == "zhCN") then
 			DB:DeathHistory(c, a, DPSMate.L["AutoAttack"], t[5], 0, t[2] or 1, 0, t[3] or 0)
 			return
 		end
-		for a,c,d,f,e in strgfind(msg, "(.+)击中(.+)造成(%d+)点伤害(.*)。(.*)") do
+		for a,c,d,f,e in strgfind(msg, "(.+)的致命一击中(.+)造成(%d+)点(.*)伤害。%s?(.*)") do
+			if strfind(e, "碾压") then t[3]=1;t[1]=0;t[2]=0 elseif strfind(e, "点被格挡") then t[4]=1;t[1]=0;t[2]=0 end
+			t[5] = tnbr(d)
+			DB:EnemyDamage(false, DPSMateEDD, c, DPSMate.L["AutoAttack"], 0, t[2] or 1, 0, 0, 0, 0, t[5], a, t[4] or 0, t[3] or 0)
+			DB:DamageTaken(c, DPSMate.L["AutoAttack"], 0, t[2] or 1, 0, 0, 0, 0, t[5], a, t[3] or 0, t[4] or 0)
+			DB:DeathHistory(c, a, DPSMate.L["AutoAttack"], t[5], 0, t[2] or 1, 0, t[3] or 0)
+			return
+		end
+		for a,c,d,g,f,e in strgfind(msg, "(.+)击中(.+)造成(%d+)点(.*)伤害(.*)。(.*)") do
 			if strfind(e, "碾压") then t[3]=1;t[1]=0;t[2]=0 elseif strfind(e, "点被格挡") then t[4]=1;t[1]=0;t[2]=0 end
 			t[5] = tnbr(d)
 			if f~="" then
@@ -553,7 +606,18 @@ if (GetLocale() == "zhCN") then
 			if self.FailDT[b] then DB:BuildFail(2, a, d, b, t[3]) end
 			return
 		end
-		for a,b,d,e,g,f in strgfind(msg, "(.+)的(.+)击中(.+)造成(%d+)点伤害(.*)。(.*)") do
+		for a,b,d,e,f,g in strgfind(msg, "(.+)的(.+)致命一击对(.+)造成(%d+)点(.*)伤害。%s?(.*)") do
+			if strfind(f, "点被格挡") then t[4]=1;t[2]=0 end
+			t[3] = tnbr(e)
+			DB:UnregisterPotentialKick(d, b, GetTime())
+			DB:EnemyDamage(false, DPSMateEDD, d, b, 0, t[2] or 1, 0, 0, 0, 0, t[3], a, t[4] or 0, 0)
+			DB:DamageTaken(d, b, 0, t[2] or 1, 0, 0, 0, 0, t[3], a, 0, t[4] or 0)
+			DB:DeathHistory(d, a, b, t[3], 0, t[2] or 1, 0, 0)
+			if self.FailDT[b] then DB:BuildFail(2, a, d, b, t[3]) end
+			DB:AddSpellSchool(b,f)
+			return
+		end
+		for a,b,d,e,h,g,f in strgfind(msg, "(.+)的(.+)击中(.+)造成(%d+)点(.*)伤害(.*)。(.*)") do
 			if strfind(f, "点被格挡") then t[4]=1;t[1]=0 end
 			t[3] = tnbr(e)
 			if g~="" then
@@ -564,6 +628,7 @@ if (GetLocale() == "zhCN") then
 			DB:DamageTaken(d, b, t[1] or 1, 0, 0, 0, 0, 0, t[3], a, 0, t[4] or 0)
 			DB:DeathHistory(d, a, b, t[3], t[1] or 1, 0, 0, 0)
 			if self.FailDT[b] then DB:BuildFail(2, a, d, b, t[3]) end
+			DB:AddSpellSchool(a,h)
 			return
 		end
 		for a,b,c in strgfind(msg, "(.+)的(.+)被(.+)闪躲过去。") do
