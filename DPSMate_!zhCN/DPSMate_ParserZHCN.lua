@@ -861,7 +861,7 @@ if (GetLocale() == "zhCN") then
 	end
 	
 	DPSMate.Parser.SpellHostilePlayerBuffDispels = function(self, msg)
-		for c, ta, ab in strgfind(msg, "(.+)对(.+)施放了(.+)。   (.+) wirkt (.+) auf (.-)%.") do if ta=="你" then ta = self.player end; if DPSMate.Parser.Dispels[ab] then DB:AwaitDispel(ab, ta, c, GetTime()) end; if self.RCD[ab] then DPSMate:Broadcast(2, c, ta, ab) end; return end
+		for c, ta, ab in strgfind(msg, "(.+)对(.+)施放了(.+)。") do if ta=="你" then ta = self.player end; if DPSMate.Parser.Dispels[ab] then DB:AwaitDispel(ab, ta, c, GetTime()) end; if self.RCD[ab] then DPSMate:Broadcast(2, c, ta, ab) end; return end
 		for c, ab in strgfind(msg, "(.+)施放了(.+)。") do if DPSMate.Parser.Dispels[ab] then DB:AwaitDispel(ab, DPSMate.L["unknown"], c, GetTime()) end; return end
 	end
 	
@@ -896,12 +896,10 @@ if (GetLocale() == "zhCN") then
 	----------------------------------------------------------------------------------
 
 	DPSMate.Parser.CreatureVsCreatureSpellDamageInterrupts = function(self, msg)
-		for c, ab in strgfind(msg, "(.+) beginnt (.+) zu wirken%.") do DB:RegisterPotentialKick(c, ab, GetTime()); return end
-		--for c, ab in strgfind(msg, "(.+) begins to perform (.+)%.") do DB:RegisterPotentialKick(c, ab, GetTime()) end -- Nicht genutzt für die deutsche Sprache?
+		for c, ab in strgfind(msg, "(.+)开始施放(.+)。") do DB:RegisterPotentialKick(c, ab, GetTime()); return end
 	end
 	DPSMate.Parser.HostilePlayerSpellDamageInterrupts = function(self, msg)
-		for c, ab in strgfind(msg, "(.-) beginnt (.+) zu wirken%.") do DB:RegisterPotentialKick(c, ab, GetTime()); return end
-		--for c, ab in strgfind(msg, "(.-) begins to perform (.+)%.") do DB:RegisterPotentialKick(c, ab, GetTime()) end
+		for c, ab in strgfind(msg, "(.+)开始施放(.+)。") do DB:RegisterPotentialKick(c, ab, GetTime()); return end
 	end
 	
 	local linkQuality = {
