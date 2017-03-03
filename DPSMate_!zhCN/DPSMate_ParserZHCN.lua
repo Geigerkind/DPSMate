@@ -6,7 +6,7 @@ local strgsub = string.gsub
 local npcdb = DPSMate.NPCDB
 local GetTime = GetTime
 
---schmetternd
+--碾压
 if (GetLocale() == "zhCN") then
 	DPSMate.Parser.ReplaceSwString = function(self, str)
 		return strgsub(str, "'", "")
@@ -358,7 +358,7 @@ if (GetLocale() == "zhCN") then
 	DPSMate.Parser.CreatureVsSelfHits = function(self, msg)
 		t = {}
 		for a,c,d in strgfind(msg, "(.+)击中你造成(%d+)点伤害。(.*)") do
-			if strfind(d, "schmetternd") then t[3]=1;t[1]=0; elseif strfind(d, "点被格挡") then t[4]=1;t[1]=0; end
+			if strfind(d, "碾压") then t[3]=1;t[1]=0; elseif strfind(d, "点被格挡") then t[4]=1;t[1]=0; end
 			t[5] = tnbr(c)
 			DB:EnemyDamage(false, DPSMateEDD, self.player, DPSMate.L["AutoAttack"], t[1] or 1, 0, 0, 0, 0, 0, t[5], a, t[4] or 0, t[3] or 0)
 			DB:DamageTaken(self.player, DPSMate.L["AutoAttack"], t[1] or 1, 0, 0, 0, 0, 0, t[5], a, t[3] or 0, t[4] or 0)
@@ -366,7 +366,7 @@ if (GetLocale() == "zhCN") then
 			return
 		end
 		for a,c,d in strgfind(msg, "(.+)对你造成(%d+)的致命一击伤害。(.*)") do
-			if strfind(d, "schmetternd") then t[3]=1;t[2]=0 elseif strfind(d, "点被格挡") then t[4]=1;t[2]=0 end
+			if strfind(d, "碾压") then t[3]=1;t[2]=0 elseif strfind(d, "点被格挡") then t[4]=1;t[2]=0 end
 			t[5] = tnbr(c)
 			DB:EnemyDamage(false, DPSMateEDD, self.player, DPSMate.L["AutoAttack"], 0, t[2] or 1, 0, 0, 0, 0, t[5], a, t[4] or 0, t[3] or 0)
 			DB:DamageTaken(self.player, DPSMate.L["AutoAttack"], 0, t[2] or 1, 0, 0, 0, 0, t[5], a, t[3] or 0, t[4] or 0)
@@ -472,7 +472,7 @@ if (GetLocale() == "zhCN") then
 	DPSMate.Parser.CreatureVsCreatureHits = function(self, msg) 
 		t = {}
 		for a,c,d,e in strgfind(msg, "(.+)对(.+)造成(%d+)的致命一击伤害。(.*)") do
-			if strfind(e, "schmetternd") then t[3]=1;t[1]=0;t[2]=0 elseif strfind(e, "点被格挡") then t[4]=1;t[1]=0;t[2]=0 end
+			if strfind(e, "碾压") then t[3]=1;t[1]=0;t[2]=0 elseif strfind(e, "点被格挡") then t[4]=1;t[1]=0;t[2]=0 end
 			t[5] = tnbr(d)
 			DB:EnemyDamage(false, DPSMateEDD, c, DPSMate.L["AutoAttack"], 0, t[2] or 1, 0, 0, 0, 0, t[5], a, t[4] or 0, t[3] or 0)
 			DB:DamageTaken(c, DPSMate.L["AutoAttack"], 0, t[2] or 1, 0, 0, 0, 0, t[5], a, t[3] or 0, t[4] or 0)
@@ -480,7 +480,7 @@ if (GetLocale() == "zhCN") then
 			return
 		end
 		for a,c,d,f,e in strgfind(msg, "(.+)击中(.+)造成(%d+)点伤害(.*)。(.*)") do
-			if strfind(e, "schmetternd") then t[3]=1;t[1]=0;t[2]=0 elseif strfind(e, "点被格挡") then t[4]=1;t[1]=0;t[2]=0 end
+			if strfind(e, "碾压") then t[3]=1;t[1]=0;t[2]=0 elseif strfind(e, "点被格挡") then t[4]=1;t[1]=0;t[2]=0 end
 			t[5] = tnbr(d)
 			if f~="" then
 				DB:SetUnregisterVariables(tnbr(strsub(f, strfind(f, "%d+"))), DPSMate.L["AutoAttack"], c)
@@ -598,9 +598,6 @@ if (GetLocale() == "zhCN") then
 	--------------                       Healing                        --------------                                  
 	----------------------------------------------------------------------------------
 	
-	-- Kritische Heilung: X heilt Y um d+ Punkte.
-	-- X heilt Y um d+ Punkte.
-	-- Energiegeladene Rüstung des Schurken.
 	DPSMate.Parser.SpellSelfBuff = function(self, msg)
 		t = {}
 		for a,b,c in strgfind(msg, "你的(.+)对(.+)产生极效治疗效果，恢复了(%d+)点生命值。") do 
@@ -671,10 +668,9 @@ if (GetLocale() == "zhCN") then
 		end	
 	end
 	
-	-- Ihr erhaltet d+ Gesundheit durch X.
-	DPSMate.Parser.SpellPeriodicSelfBuff = function(self, msg) -- Maybe some loss here?
+	DPSMate.Parser.SpellPeriodicSelfBuff = function(self, msg)
 		t = {}
-		for a,b,c in strgfind(msg, "Ihr erhaltet (%d+) Gesundheit von (.+) %(durch (.+)%)%.") do
+		for b,c,a in strgfind(msg, "你因(.+)的(.+)而获得了($d+)点生命值。") do
 			t[1]=tnbr(a)
 			overheal = self:GetOverhealByName(t[1], self.player)
 			DB:HealingTaken(0, DPSMateHealingTaken, self.player, c..DPSMate.L["periodic"], 1, 0, t[1], b)
@@ -688,7 +684,7 @@ if (GetLocale() == "zhCN") then
 			DB:DeathHistory(self.player, b, c..DPSMate.L["periodic"], t[1], 1, 0, 1, 0)
 			return
 		end
-		for a,b in strgfind(msg, "Ihr erhaltet (%d+) Gesundheit von (.+)%.") do 
+		for b,a in strgfind(msg, "你因(.+)而获得了(%d+)点生命值。") do 
 			t[1] = tnbr(a)
 			overheal = self:GetOverhealByName(t[1], self.player)
 			DB:HealingTaken(0, DPSMateHealingTaken, self.player, b..DPSMate.L["periodic"], 1, 0, t[1], self.player)
@@ -702,14 +698,12 @@ if (GetLocale() == "zhCN") then
 			DB:DeathHistory(self.player, self.player, b..DPSMate.L["periodic"], t[1], 1, 0, 1, 0)
 			return
 		end
-		for a in strgfind(msg, "Ihr bekommt %'(.+)%'%.") do
-			if strfind(a, "von") then return end
+		for a in strgfind(msg, "你获得了(.+)的效果。") do
 			if self.BuffExceptions[a] then return end
-			if strfind(a, "%(") then a=strsub(a, 1, strfind(a, "%(")-2) end -- Unstable Power (12)
+			if strfind(a, "%(") then a=strsub(a, 1, strfind(a, "%(")-2) end
 			DB:ConfirmBuff(self.player, a, GetTime())
 			if DPSMate.Parser.Dispels[a] then 
 				DB:RegisterHotDispel(self.player, a)
-				--DB:AwaitDispel(a, self.player, "Unknown", GetTime());
 			end
 			if self.RCD[a] then DPSMate:Broadcast(1, self.player, a) end
 			if self.FailDB[a] then DB:BuildFail(3, "染病蛾", self.player, a, 0) end
@@ -719,9 +713,8 @@ if (GetLocale() == "zhCN") then
 	
 	DPSMate.Parser.SpellPeriodicFriendlyPlayerBuffs = function(self, msg)
 		t = {}
-		for f,a,b,c in strgfind(msg, "(.+) erhält (%d+) Gesundheit von (.-%s*)'?s (.+)%.") do
+		for f,a,b,c in strgfind(msg, "(.+)获得(%d+)点生命值%（(.+)的(.+)%）。") do
 			t[1]=tnbr(a)
-			b = self:ReplaceSwString(b)
 			overheal = self:GetOverhealByName(t[1], f)
 			DB:HealingTaken(0, DPSMateHealingTaken, f, c..DPSMate.L["periodic"], 1, 0, t[1], b)
 			DB:HealingTaken(1, DPSMateEHealingTaken, f, c..DPSMate.L["periodic"], 1, 0, t[1]-overheal, b)
@@ -734,7 +727,7 @@ if (GetLocale() == "zhCN") then
 			DB:DeathHistory(f, b, c..DPSMate.L["periodic"], t[1], 1, 0, 1, 0)
 			return
 		end
-		for f,a,b in strgfind(msg, "(.+) erhält (%d+) Gesundheit durch (.+)%.") do 
+		for f,a,b in strgfind(msg, "(.+)获得(%d+)点生命值%（你的(.+)%）。") do
 			t[1] = tnbr(a)
 			overheal = self:GetOverhealByName(t[1], f)
 			DB:HealingTaken(0, DPSMateHealingTaken, f, b..DPSMate.L["periodic"], 1, 0, t[1], self.player)
@@ -748,14 +741,12 @@ if (GetLocale() == "zhCN") then
 			DB:DeathHistory(f, self.player, b..DPSMate.L["periodic"], t[1], 1, 0, 1, 0)
 			return
 		end
-		for f,a in strgfind(msg, "(.-) bekommt %'(.+)%'%.") do
-			if strfind(a, "von") then return end
+		for f,a in strgfind(msg, "(.+)获得了(.+)。") do
 			if self.BuffExceptions[a] then return end
-			if strfind(a, "%(") then a=strsub(a, 1, strfind(a, "%(")-2) end -- Unstable Power (12)
+			if strfind(a, "%(") then a=strsub(a, 1, strfind(a, "%(")-2) end
 			DB:ConfirmBuff(f, a, GetTime())
 			if DPSMate.Parser.Dispels[a] then
 				DB:RegisterHotDispel(f, a)
-				--DB:AwaitDispel(a, f, "Unknown", GetTime());
 			end
 			if self.RCD[a] then DPSMate:Broadcast(1, f, a) end
 			if self.FailDB[a] then DB:BuildFail(3, "染病蛾", f, a, 0) end
@@ -763,16 +754,11 @@ if (GetLocale() == "zhCN") then
 		end
 	end
 	
-	-- Xs Y heilt Z um d+ Punkte.
-	-- X benutzt Y und heilt Euch um 867 Punkte.
-	-- Kritische Heilung: Xs Y heilt Z um d+ Punkte.
-	-- Kritische Heilung: Xs Y heilt Euch um d+ Punkte.
 	DPSMate.Parser.SpellHostilePlayerBuff = function(self, msg)
 		t = {}
-		for a,b,c,d in strgfind(msg, "Kritische Heilung: (.-%s*)'?s (.+) heilt (.+) um (%d+) Punkte%.") do 
+		for a,b,c,d in strgfind(msg, "(.+)的(.+)发挥极效，为(.+)恢复了(%d+)点生命值。") do 
 			t[1] = tnbr(d)
-			a = self:ReplaceSwString(a)
-			if c=="Euch" then t[2]=self.player end
+			if c=="你" then t[2]=self.player end
 			overheal = self:GetOverhealByName(t[1], t[2] or c)
 			DB:HealingTaken(0, DPSMateHealingTaken, t[2] or c, b, 0, 1, t[1], a)
 			DB:HealingTaken(1, DPSMateEHealingTaken, t[2] or c, b, 0, 1, t[1]-overheal, a)
@@ -785,9 +771,9 @@ if (GetLocale() == "zhCN") then
 			DB:DeathHistory(t[2] or c, a, b, t[1], 0, 1, 1, 0)
 			return
 		end
-		for a,b,c,d in strgfind(msg, "(.-%s*)'?s (.+) heilt (.+) um (%d+) Punkte%.") do 
+		for a,b,c,d in strgfind(msg, "(.+)的(.+)为(.+)恢复了(%d+)点生命值。") do 
 			t[1] = tnbr(d)
-			a = self:ReplaceSwString(a)
+			if c=="你" then t[2] = self.player end
 			overheal = self:GetOverhealByName(t[1], t[2] or c)
 			DB:HealingTaken(0, DPSMateHealingTaken, t[2] or c, b, 1, 0, t[1], a)
 			DB:HealingTaken(1, DPSMateEHealingTaken, t[2] or c, b, 1, 0, t[1]-overheal, a)
@@ -803,32 +789,19 @@ if (GetLocale() == "zhCN") then
 			end
 			return
 		end
-		for a,b,d in strgfind(msg, "(.+) benutzt (.+) und heilt Euch um (%d+) Punkte%.") do 
-			t[1] = tnbr(d)
-			overheal = self:GetOverhealByName(t[1], self.player)
-			DB:HealingTaken(0, DPSMateHealingTaken, self.player, b, 1, 0, t[1], a)
-			DB:HealingTaken(1, DPSMateEHealingTaken, self.player, b, 1, 0, t[1]-overheal, a)
-			DB:Healing(0, DPSMateEHealing, a, b, 1, 0, t[1]-overheal, self.player)
-			if overheal>0 then 
-				DB:Healing(2, DPSMateOverhealing, a, b, 1, 0, overheal, self.player)
-				DB:HealingTaken(2, DPSMateOverhealingTaken, self.player, b, 1, 0, overheal, a)
-			end
-			DB:Healing(1, DPSMateTHealing, a, b, 1, 0, t[1], self.player)
-			DB:DeathHistory(self.player, a, b, t[1], 1, 0, 1, 0)
-			return
-		end
-		for a,b in strgfind(msg, "(.+) beginnt (.+) zu wirken%.")  do
+		for a,b in strgfind(msg, "(.+)开始施放(.+)。")  do
 			DB:RegisterPotentialKick(a, b, GetTime())
 			return
 		end
-		for a,b,c,d in strgfind(msg, "(.+) bekommt (%d+) Energie durch (.-%s*)'?s (.+)%.") do
-			c = self:ReplaceSwString(c)
-			DB:BuildBuffs(c, a, d, true)
-			DB:DestroyBuffs(c, d)
+		for a,b,d in strgfind(msg, "(.+)获得(%d+)点(.+)。") do
+			if self.procs[d] and not self.OtherExceptions[d] then
+				DB:BuildBuffs(a, a, d, true)
+				DB:DestroyBuffs(a, d)
+			end
 			return 
 		end
-		for a,c,b in strgfind(msg, "(.+) bekommt durch (.+) (%d+) Extra-Angriff\e?%.") do
-			DB.NextSwing[a] = {
+		for a,c,b in strgfind(msg, "(.+)通过(.+)获得了(%d+)次额外攻击。") do
+			DB.NextSwing[a] = { 
 				[1] = tnbr(b),
 				[2] = c
 			}
@@ -838,22 +811,6 @@ if (GetLocale() == "zhCN") then
 			}
 			DB:BuildBuffs(a, a, c, true)
 			DB:DestroyBuffs(a, c)
-			return 
-		end
-		for a,b,c,d in strgfind(msg, "(.+) bekommt (%d+) Wut durch (.-%s*)'?s (.+)%.") do
-			if self.procs[d] and not self.OtherExceptions[d] then
-				c = self:ReplaceSwString(c)
-				DB:BuildBuffs(c, a, d, true)
-				DB:DestroyBuffs(c, d)
-			end
-			return 
-		end
-		for a,b,c,d in strgfind(msg, "(.+) bekommt (%d+) Mana durch (.-%s*)'?s (.+)%.") do
-			if self.procs[d] then
-				c = self:ReplaceSwString(c)
-				DB:BuildBuffs(c, a, d, true)
-				DB:DestroyBuffs(c, d)
-			end
 			return 
 		end
 	end
