@@ -145,6 +145,27 @@ DPSMate.DB.windfuryab = {
 	["Windfury Totem"] = true,
 }
 
+if not GameTime_GT then
+	GameTime_GT = function()
+		local hour, minutes = GetGameTime()
+		if hour>12 then
+			hour = mod(hour, 12)
+			if minutes<10 then
+				return hour..":0"..minutes.." PM"
+			else
+				return hour..":"..minutes.." PM"
+			end
+		else
+			hour = mod(hour, 12)
+			if minutes<10 then
+				return hour..":0"..minutes.." AM"
+			else
+				return hour..":"..minutes.." AM"
+			end
+		end
+	end
+end
+
 -- Begin Functions
 
 function DPSMate.DB:OnEvent(event)
