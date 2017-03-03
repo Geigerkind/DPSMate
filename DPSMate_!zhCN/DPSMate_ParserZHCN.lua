@@ -82,7 +82,7 @@ if (GetLocale() == "zhCN") then
 		for a,b,c,f in strgfind(msg, "你的(.+)击中(.+)造成(%d+)伤害%（(%d+)被吸收%）。") do
 			DB:SetUnregisterVariables(tnbr(f), a, self.player)
 		end
-		for a,b,c,e in strgfind(msg, "你的(.+)击中(.+)造成(%d+)点伤害。%s?(.*)") do 
+		for a,b,c,d,e in strgfind(msg, "你的(.+)击中(.+)造成(%d+)点(.*)伤害。%s?(.*)") do 
 			t[1] = tnbr(c)
 			if strfind(e, "点被格挡") then t[4]=1;t[2]=0;t[3]=0 end
 			if DPSMate.Parser.Kicks[a] then DB:AssignPotentialKick(self.player, a, b, GetTime()) end
@@ -90,6 +90,7 @@ if (GetLocale() == "zhCN") then
 			DB:EnemyDamage(true, DPSMateEDT, self.player, a,  t[2] or 1, 0, 0, 0, 0, 0, t[1], b, t[4] or 0, 0)
 			DB:DamageDone(self.player, a, t[2] or 1, 0, 0, 0, 0, 0, t[1], 0, t[4] or 0)
 			if self.TargetParty[c] then DB:BuildFail(1, c, self.player, a, t[1]);DB:DeathHistory(c, self.player, a, t[1], 1, 0, 0, 0) end
+			DB:AddSpellSchool(a,d)
 			return
 		end
 		for a,b,d,e in strgfind(msg, "你的(.+)对(.+)造成(%d+)的致命一击伤害。%s?(.*)") do 
@@ -99,6 +100,17 @@ if (GetLocale() == "zhCN") then
 			DB:EnemyDamage(true, DPSMateEDT, self.player, a,  0, 1, 0, 0, 0, 0, t[1], b, 0, 0)
 			DB:DamageDone(self.player, a, 0, 1, 0, 0, 0, 0, t[1], 0, 0)
 			if self.TargetParty[b] then DB:BuildFail(1, b, self.player, a, t[1]);DB:DeathHistory(b, self.player, a, t[1], 1, 0, 0, 0) end
+			return
+		end
+		for a,b,c,d,e in strgfind(msg, "你的(.+)致命一击对(.+)造成(%d+)点(.+)伤害。%s?(.*)") do 
+			t[1] = tnbr(c)
+			if strfind(e, "点被格挡") then t[4]=1;t[2]=0;t[3]=0 end
+			if DPSMate.Parser.Kicks[a] then DB:AssignPotentialKick(self.player, a, b, GetTime()) end
+			if DPSMate.Parser.DmgProcs[a] then DB:BuildBuffs(self.player, self.player, a, true) end
+			DB:EnemyDamage(true, DPSMateEDT, self.player, a,  0, t[2] or 1, 0, 0, 0, 0, t[1], b, t[4] or 0, 0)
+			DB:DamageDone(self.player, a, 0, t[2] or 1, 0, 0, 0, 0, t[1], 0, t[4] or 0)
+			if self.TargetParty[c] then DB:BuildFail(1, c, self.player, a, t[1]);DB:DeathHistory(c, self.player, a, t[1], 1, 0, 0, 0) end
+			DB:AddSpellSchool(a,d)
 			return
 		end
 		for b,a in strgfind(msg, "你的(.+)被(.+)躲闪过去了。") do 
