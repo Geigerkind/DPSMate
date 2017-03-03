@@ -875,11 +875,17 @@ if (GetLocale() == "zhCN") then
 	----------------------------------------------------------------------------------
 
 	DPSMate.Parser.CombatFriendlyDeath = function(self, msg)
-		for ta,kind in strgfind(msg, "(.-) (.-)%.") do if ta=="Ihr" then DB:UnregisterDeath(self.player) else DB:UnregisterDeath(ta) end end
+		for ta in strgfind(msg, "(.+)被摧毁了。") do DB:UnregisterDeath(ta) end
+		for ta in strgfind(msg, "(.+)死亡了。") do DB:UnregisterDeath(ta) end
+		if msg == "你死了。" then DB:UnregisterDeath(self.player) end
 	end
 
 	DPSMate.Parser.CombatHostileDeaths = function(self, msg)
-		for ta in strgfind(msg, "(.+) stirbt%.") do 
+		for ta in strgfind(msg, "(.+)死亡了。") do 
+			DB:UnregisterDeath(ta)
+			DB:Attempt(false, true, ta)
+		end
+		for ta in strgfind(msg, "(.+)被摧毁了。") do 
 			DB:UnregisterDeath(ta)
 			DB:Attempt(false, true, ta)
 		end
