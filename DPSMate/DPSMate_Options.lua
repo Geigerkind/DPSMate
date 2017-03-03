@@ -1,6 +1,6 @@
 -- Global Variables
 DPSMate.Options.fonts = {
-	["FRIZQT"] = "Fonts\\FRIZQT__.TTF",
+	["FRIZQT"] = UNIT_NAME_FONT,
 	["ARIALN"] = "Fonts\\ARIALN.TTF",
 	["MORPHEUS"] = "Fonts\\MORPHEUS.TTF",
 	["ABF"] = "Interface\\AddOns\\DPSMate\\fonts\\ABF.TTF",

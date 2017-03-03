@@ -2291,7 +2291,7 @@ function Dewdrop:AddLine(k1, v1, k2, v2, k3, v3, k4, v4, k5, v5, k6, v6, k7, v7,
 	button.closeWhenClicked = info.closeWhenClicked
 	button.textHeight = info.textHeight or UIDROPDOWNMENU_DEFAULT_TEXT_HEIGHT or 10
 	local font,_ = button.text:GetFont()
-	button.text:SetFont(STANDARD_TEXT_FONT or "Fonts\\FRIZQT__.TTF", button.textHeight)
+	button.text:SetFont(STANDARD_TEXT_FONT or UNIT_NAME_FONT, button.textHeight)
 	button:SetHeight(button.textHeight + 6)
 	button.text:SetPoint("RIGHT", button.arrow, (button.hasColorSwatch or button.hasArrow) and "LEFT" or "RIGHT")
 	button.text:SetJustifyH(info.justifyH or "LEFT")
