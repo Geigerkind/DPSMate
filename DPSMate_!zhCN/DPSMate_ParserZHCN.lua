@@ -142,6 +142,7 @@ if (GetLocale() == "zhCN") then
 		for a,b,f in strgfind(msg, "(.+)受到(.+)的伤害(.*)") do if strfind(b, "%(") then b=strsub(b, 1, strfind(b, "%(")-2) end; DB:ConfirmAfflicted(a, b, GetTime()); if self.CC[b] then  DB:BuildActiveCC(a, b) end; return end
 		for d,e,a,b,c,f in strgfind(msg, "(.+)的(.+)使(.+)受到了(%d+)点(.+)伤害(.*)。") do
 			t[1] = tnbr(b)
+			if d=="你" then d=self.player end
 			if f~="" then
 				DB:SetUnregisterVariables(tnbr(strsub(f, strfind(f, "%d+"))), e..DPSMate.L["periodic"], d)
 			end
@@ -149,17 +150,6 @@ if (GetLocale() == "zhCN") then
 			DB:DamageDone(d, e..DPSMate.L["periodic"], 1, 0, 0, 0, 0, 0, t[1], 0, 0)
 			if self.TargetParty[a] and self.TargetParty[d] then DB:BuildFail(1, a, d, e..DPSMate.L["periodic"], t[1]);DB:DeathHistory(a, d, e..DPSMate.L["periodic"], t[1], 1, 0, 0, 0) end
 			DB:AddSpellSchool(e..DPSMate.L["periodic"],c)
-			return
-		end
-		for d,a,b,c,f in strgfind(msg, "你的(.+)使(.+)受到了(%d+)点(.+)伤害(.*)。") do
-			t[1] = tnbr(b)
-			if f~="" then
-				DB:SetUnregisterVariables(tnbr(strsub(f, strfind(f, "%d+"))), d..DPSMate.L["periodic"], self.player)
-			end
-			DB:EnemyDamage(true, DPSMateEDT, self.player, d..DPSMate.L["periodic"], 1, 0, 0, 0, 0, 0, t[1], a, 0, 0)
-			DB:DamageDone(self.player, d..DPSMate.L["periodic"], 1, 0, 0, 0, 0, 0, t[1], 0, 0)
-			if self.TargetParty[a] then DB:BuildFail(1, a, self.player, d..DPSMate.L["periodic"], t[1]);DB:DeathHistory(a, self.player, d..DPSMate.L["periodic"], t[1], 1, 0, 0, 0) end
-			DB:AddSpellSchool(d..DPSMate.L["periodic"],c)
 			return
 		end
 		for f,a,b in strgfind(msg, "(.+)的(.+)被(.+)吸收了。") do
