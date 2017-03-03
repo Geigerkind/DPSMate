@@ -355,11 +355,9 @@ if (GetLocale() == "zhCN") then
 	--------------                    Damage taken                      --------------                                  
 	----------------------------------------------------------------------------------
 
-	-- X trifft Euch für d+ Schaden.
-	-- X trifft Euch kritisch: d+ Schaden.
 	DPSMate.Parser.CreatureVsSelfHits = function(self, msg)
 		t = {}
-		for a,c,d in strgfind(msg, "(.+) trifft Euch für (%d+)(.*)") do
+		for a,c,d in strgfind(msg, "(.+)击中你造成(%d+)点伤害。(.*)") do
 			if strfind(d, "schmetternd") then t[3]=1;t[1]=0; elseif strfind(d, "点被格挡") then t[4]=1;t[1]=0; end
 			t[5] = tnbr(c)
 			DB:EnemyDamage(false, DPSMateEDD, self.player, DPSMate.L["AutoAttack"], t[1] or 1, 0, 0, 0, 0, 0, t[5], a, t[4] or 0, t[3] or 0)
@@ -367,7 +365,7 @@ if (GetLocale() == "zhCN") then
 			DB:DeathHistory(self.player, a, DPSMate.L["AutoAttack"], t[5], t[1] or 1, 0, 0, t[3] or 0)
 			return
 		end
-		for a,c,d in strgfind(msg, "(.+) trifft Euch kritisch: (%d+)(.*)") do
+		for a,c,d in strgfind(msg, "(.+)对你造成(%d+)的致命一击伤害。(.*)") do
 			if strfind(d, "schmetternd") then t[3]=1;t[2]=0 elseif strfind(d, "点被格挡") then t[4]=1;t[2]=0 end
 			t[5] = tnbr(c)
 			DB:EnemyDamage(false, DPSMateEDD, self.player, DPSMate.L["AutoAttack"], 0, t[2] or 1, 0, 0, 0, 0, t[5], a, t[4] or 0, t[3] or 0)
@@ -377,99 +375,68 @@ if (GetLocale() == "zhCN") then
 		end
 	end
 	
-	-- X verfehlt Euch.
-	-- X greift an. Ihr pariert.
-	-- X greift an. Ihr weicht aus.
 	DPSMate.Parser.CreatureVsSelfMisses = function(self, msg)
 		t = {}
-		for c in strgfind(msg, "(.+) greift an%. Ihr absorbiert allen Schaden%.") do DB:Absorb(DPSMate.L["AutoAttack"], self.player, c); return end
-		for a in strgfind(msg, "(.+) verfehlt Euch%.") do 
+		for c in strgfind(msg, "(.+)发起攻击，你吸收了所有伤害。") do DB:Absorb(DPSMate.L["AutoAttack"], self.player, c); return end
+		for a in strgfind(msg, "(.+)没有击中你。") do 
 			DB:EnemyDamage(false, DPSMateEDD, self.player, DPSMate.L["AutoAttack"], 0, 0, 1, 0, 0, 0, 0, a, 0, 0)
 			DB:DamageTaken(self.player, DPSMate.L["AutoAttack"], 0, 0, 1, 0, 0, 0, 0, a, 0, 0)
 			return
 		end
-		for a,b in strgfind(msg, "(.+) greift an. Ihr (.+)%.") do 
-			if b=="pariert" then t[1]=1 elseif b=="weicht aus" then t[2]=1 else t[3]=1 end 
+		for a,b in strgfind(msg, "(.+)发起了攻击。(.+)。") do 
+			if b=="你招架住了" then t[1]=1 elseif b=="你闪躲开了" then t[2]=1 else t[3]=1 end 
 			DB:EnemyDamage(false, DPSMateEDD, self.player, DPSMate.L["AutoAttack"], 0, 0, 0, t[1] or 0, t[2] or 0, 0, 0, a, t[3] or 0, 0)
 			DB:DamageTaken(self.player, DPSMate.L["AutoAttack"], 0, 0, 0, t[1] or 0, t[2] or 0, 0, 0, a, 0, t[3] or 0)
 			return
 		end
 	end 
 	
-	-- X trifft Euch (mit Y). Schaden: d+.
-	-- X trifft Euch kritisch (mit Y). Schaden: d+.
-	-- X trifft Euch mit 'Y' für d+ Frostschaden.
-	-- X trifft Euch (mit Y) und verfehlt Euch.
-	-- Xs Y wurde ausgewichen.
 	DPSMate.Parser.CreatureVsSelfSpellDamage = function(self, msg)
 		t = {}
-		for a,b,c,d,e in strgfind(msg, "(.+) trifft Euch(.*) %(mit (.+)%)%. Schaden: (%d+)(.*)") do -- Potential here to track school and resisted damage
-			if b=="" then t[1]=1;t[2]=0 end
-			if strfind(e, "点被格挡") then t[4]=1;t[1]=0;t[2]=0 end
-			t[3] = tnbr(d)
-			DB:UnregisterPotentialKick(self.player, b, GetTime())
-			DB:EnemyDamage(false, DPSMateEDD, self.player, c, t[1] or 0, t[2] or 1, 0, 0, 0, 0, t[3], a, t[4] or 0, 0)
-			DB:DamageTaken(self.player, c, t[1] or 0, t[2] or 1, 0, 0, 0, 0, t[3], a, 0, t[4] or 0)
-			DB:DeathHistory(self.player, a, c, t[3], t[1] or 0, t[2] or 1, 0, 0)
-			if self.FailDT[b] then DB:BuildFail(2, a, self.player, c, t[3]) end
-			DB:AddSpellSchool(c,e)
-			return
-		end
-		for a,b,c,d in strgfind(msg, "(.+) trifft Euch mit %'(.+)%' für (%d+)(.*)") do -- Potential here to track school and resisted damage
-			--if c=="kritisch" then t[1]=1;t[2]=0 end
-			--if strfind(e, "点被格挡") then t[4]=1 end
+		for a,b,c,d in strgfind(msg, "(.+)的(.+)击中你造成(%d+)点伤害。(.*)") do
 			t[3] = tnbr(c)
 			DB:UnregisterPotentialKick(self.player, b, GetTime())
 			DB:EnemyDamage(false, DPSMateEDD, self.player, b, t[1] or 1, 0, 0, 0, 0, 0, t[3], a, t[4] or 0, 0)
 			DB:DamageTaken(self.player, b, t[1] or 1, 0, 0, 0, 0, 0, t[3], a, 0, t[4] or 0)
 			DB:DeathHistory(self.player, a, b, t[3], t[1] or 1, 0, 0, 0)
 			if self.FailDT[b] then DB:BuildFail(2, a, self.player, b, t[3]) end
-			DB:AddSpellSchool(b,d)
 			return
 		end
-		for a,b,c,d in strgfind(msg, "(.-%s*)'?s (.+) trifft Euch kritisch für (%d+)(.*)") do -- Potential here to track school and resisted damage
-			--if c=="kritisch" then t[1]=1;t[2]=0 end
-			--if strfind(e, "点被格挡") then t[4]=1 end
+		for a,b,c in strgfind(msg, "(.+)的(.+)对你造成(%d+)点致命一击伤害。(.*)") do
 			t[3] = tnbr(c)
-			a = self:ReplaceSwString(a)
 			DB:UnregisterPotentialKick(self.player, b, GetTime())
 			DB:EnemyDamage(false, DPSMateEDD, self.player, b, 0, 1, 0, 0, 0, 0, t[3], a, t[4] or 0, 0)
 			DB:DamageTaken(self.player, b, 0, 1, 0, 0, 0, 0, t[3], a, 0, t[4] or 0)
 			DB:DeathHistory(self.player, a, b, t[3], 0, 1, 0, 0)
 			if self.FailDT[b] then DB:BuildFail(2, a, self.player, b, t[3]) end
-			DB:AddSpellSchool(b,d)
 			return
 		end
-		for a,b in strgfind(msg, "(.+) greift an %(mit (.+)%) und verfehlt Euch%.") do
+		for a,b in strgfind(msg, "(.+)的(.+)没有击中你。") do
 			DB:EnemyDamage(false, DPSMateEDD, self.player, b, 0, 0, 1, 0, 0, 0, 0, a, 0, 0)
 			DB:DamageTaken(self.player, b, 0, 0, 1, 0, 0, 0, 0, a, 0, 0)
 			return
 		end
-		for a,b in strgfind(msg, "(.-%s*)'?s (.+) wurde pariert%.") do
-			a = self:ReplaceSwString(a)
+		for a,b in strgfind(msg, "(.+)的(.+)被招架了。") do
 			DB:EnemyDamage(false, DPSMateEDD, self.player, b, 0, 0, 0, 1, 0, 0, 0, a, 0, 0)
 			DB:DamageTaken(self.player, b, 0, 0, 0, 1, 0, 0, 0, a, 0, 0)
 			return
 		end
-		for a,b in strgfind(msg, "(.-%s*)'?s (.+) wurde ausgewichen%.") do
-			a = self:ReplaceSwString(a)
+		for a,b in strgfind(msg, "(.+)的(.+)被闪躲过去。") do
 			DB:EnemyDamage(false, DPSMateEDD, self.player, b, 0, 0, 0, 0, 1, 0, 0, a, 0, 0)
 			DB:DamageTaken(self.player, b, 0, 0, 0, 0, 1, 0, 0, a, 0, 0)
 			return
 		end
-		for a,b in strgfind(msg, "(.+) versucht es mit (.+)%.%.%. widerstanden%.") do
+		for a,b in strgfind(msg, "(.+)的(.+)被抵抗了。") do
 			DB:EnemyDamage(false, DPSMateEDD, self.player, b, 0, 0, 0, 0, 0, 1, 0, a, 0, 0)
 			DB:DamageTaken(self.player, b, 0, 0, 0, 0, 0, 1, 0, a, 0, 0)
 			return
 		end
-		for a,b in strgfind(msg, "(.-%s*)'?s (.+) wurde 点被格挡%.") do
-			a = self:ReplaceSwString(a)
+		for a,b in strgfind(msg, "(.+)的(.+)被格挡过去。") do
 			DB:EnemyDamage(false, DPSMateEDD, self.player, b, 0, 0, 0, 0, 0, 0, 0, a, 1, 0)
 			DB:DamageTaken(self.player, b, 0, 0, 0, 0, 0, 0, 0, a, 0, 1)
 			return
 		end
-		for a,b in strgfind(msg, "Ihr absorbiert (.-%s*)'?s (.+)%.") do
-			a = self:ReplaceSwString(a)
+		for a,b in strgfind(msg, "你吸收了(.+)的(.+)。") do
 			DB:Absorb(b, self.player, a)
 			return
 		end
@@ -477,8 +444,12 @@ if (GetLocale() == "zhCN") then
 	
 	DPSMate.Parser.PeriodicSelfDamage = function(self, msg)
 		t = {}
-		for a,b,c,d,e in strgfind(msg, "Ihr erleidet (%d+) (%a+) von (.+) %(durch (.+)%)%.(.*)") do -- Potential to track school and resisted damage
+		for a,b,c,d,f,e in strgfind(msg, "你受到(%d+)点(.+)伤害%（(.+)的(.+)%）(.*)。(.*)") do
 			t[1] = tnbr(a)
+			if c=="你" then c=self.player end
+			if strfind(f, "点被吸收") then
+				DB:SetUnregisterVariables(tnbr(strsub(f, strfind(f, "%d+"))), d..DPSMate.L["periodic"], c)
+			end
 			DB:EnemyDamage(false, DPSMateEDD, self.player, d..DPSMate.L["periodic"], 1, 0, 0, 0, 0, 0, t[1], c, 0, 0)
 			DB:DamageTaken(self.player, d..DPSMate.L["periodic"], 1, 0, 0, 0, 0, 0, t[1], c, 0, 0)
 			DB:DeathHistory(self.player, c, d..DPSMate.L["periodic"], t[1], 1, 0, 0, 0)
@@ -486,22 +457,13 @@ if (GetLocale() == "zhCN") then
 			DB:AddSpellSchool(d..DPSMate.L["periodic"],b)
 			return
 		end
-		for a in strgfind(msg, "Ihr seid von (.+) betroffen%.") do
+		for a in strgfind(msg, "你受到了(.+)效果的影响。") do
 			if strfind(a, "%(") then a=strsub(a, 1, strfind(a, "%(")-2) end;
-			DB:BuildBuffs("Unbekannt", self.player, a, false)
+			DB:BuildBuffs(DPSMate.L["unknown"], self.player, a, false)
 			if self.CC[a] then DB:BuildActiveCC(self.player, a) end
 			return
 		end
-		for a,b,d,e in strgfind(msg, "Ihr erleidet (%d+) Punkte (%a+) %(durch (.+)%)%.(.*)") do -- Potential to track school and resisted damage
-			t[1] = tnbr(a)
-			DB:EnemyDamage(false, DPSMateEDD, self.player, d..DPSMate.L["periodic"], 1, 0, 0, 0, 0, 0, t[1], self.player, 0, 0)
-			DB:DamageTaken(self.player, d..DPSMate.L["periodic"], 1, 0, 0, 0, 0, 0, t[1], self.player, 0, 0)
-			DB:DeathHistory(self.player, self.player, d..DPSMate.L["periodic"], t[1], 1, 0, 0, 0)
-			DB:AddSpellSchool(d..DPSMate.L["periodic"],b)
-			return
-		end
-		for a,b in strgfind(msg, "Ihr absorbiert (.-%s*)'?s (.+)%.") do
-			a = self:ReplaceSwString(a)
+		for a,b in strgfind(msg, "你吸收了(.+)的(.+)。") do
 			DB:Absorb(b..DPSMate.L["periodic"], self.player, a)
 			return
 		end
@@ -509,7 +471,7 @@ if (GetLocale() == "zhCN") then
 	
 	DPSMate.Parser.CreatureVsCreatureHits = function(self, msg) 
 		t = {}
-		for a,c,d,e in strgfind(msg, "(.+) trifft (.+) kritisch für (%d+)(.*)") do
+		for a,c,d,e in strgfind(msg, "(.+)对(.+)造成(%d+)的致命一击伤害。(.*)") do
 			if strfind(e, "schmetternd") then t[3]=1;t[1]=0;t[2]=0 elseif strfind(e, "点被格挡") then t[4]=1;t[1]=0;t[2]=0 end
 			t[5] = tnbr(d)
 			DB:EnemyDamage(false, DPSMateEDD, c, DPSMate.L["AutoAttack"], 0, t[2] or 1, 0, 0, 0, 0, t[5], a, t[4] or 0, t[3] or 0)
@@ -517,9 +479,12 @@ if (GetLocale() == "zhCN") then
 			DB:DeathHistory(c, a, DPSMate.L["AutoAttack"], t[5], 0, t[2] or 1, 0, t[3] or 0)
 			return
 		end
-		for a,c,d,e in strgfind(msg, "(.+) trifft (.+) für (%d+)(.*)") do
+		for a,c,d,f,e in strgfind(msg, "(.+)击中(.+)造成(%d+)点伤害(.*)。(.*)") do
 			if strfind(e, "schmetternd") then t[3]=1;t[1]=0;t[2]=0 elseif strfind(e, "点被格挡") then t[4]=1;t[1]=0;t[2]=0 end
 			t[5] = tnbr(d)
+			if f~="" then
+				DB:SetUnregisterVariables(tnbr(strsub(f, strfind(f, "%d+"))), DPSMate.L["AutoAttack"], c)
+			end
 			DB:EnemyDamage(false, DPSMateEDD, c, DPSMate.L["AutoAttack"], t[1] or 1, 0, 0, 0, 0, 0, t[5], a, t[4] or 0, t[3] or 0)
 			DB:DamageTaken(c, DPSMate.L["AutoAttack"], t[1] or 1, 0, 0, 0, 0, 0, t[5], a, t[3] or 0, t[4] or 0)
 			DB:DeathHistory(c, a, DPSMate.L["AutoAttack"], t[5], t[1] or 1, 0, 0, t[3] or 0)
@@ -527,19 +492,25 @@ if (GetLocale() == "zhCN") then
 		end
 	end
 	
-	-- X verfehlt Y.
-	-- X greift an. Y weicht aus.
-	-- X greift an. Y pariert.
 	DPSMate.Parser.CreatureVsCreatureMisses = function(self, msg)
 		t = {}
-		for c, ta in strgfind(msg, "(.+) greift an%. (.+) absorbiert allen Schaden%.") do DB:Absorb(DPSMate.L["AutoAttack"], ta, c); return end
-		for a,b,c in strgfind(msg, "(.+) greift an%. (.-) (.+)%.") do 
-			if c=="pariert" then t[1]=1 elseif c=="weicht aus" then t[2]=1 else t[3]=1 end 
-			DB:EnemyDamage(false, DPSMateEDD, b, DPSMate.L["AutoAttack"], 0, 0, 0, t[1] or 0, t[2] or 0, 0, 0, a, t[3] or 0, 0)
-			DB:DamageTaken(b, DPSMate.L["AutoAttack"], 0, 0, 0, t[1] or 0, t[2] or 0, 0, 0, a, 0, t[3] or 0)
+		for c, ta in strgfind(msg, "(.+)发起攻击，(.+)吸收了所有伤害。") do DB:Absorb(DPSMate.L["AutoAttack"], ta, c); return end
+		for a,b in strgfind(msg, "(.+)发起了攻击。(.+)格挡住了。") do 
+			DB:EnemyDamage(false, DPSMateEDD, b, DPSMate.L["AutoAttack"], 0, 0, 0, 0, 0, 0, 0, a, 1, 0)
+			DB:DamageTaken(b, DPSMate.L["AutoAttack"], 0, 0, 0, 0, 0, 0, 0, a, 0, 1)
 			return
 		end
-		for a,b in strgfind(msg, "(.+) verfehlt (.+)%.") do 
+		for a,b in strgfind(msg, "(.+)发起了攻击。(.+)闪躲开了。") do 
+			DB:EnemyDamage(false, DPSMateEDD, b, DPSMate.L["AutoAttack"], 0, 0, 0, 0, 1, 0, 0, a, 0, 0)
+			DB:DamageTaken(b, DPSMate.L["AutoAttack"], 0, 0, 0, 0, 1, 0, 0, a, 0, 0)
+			return
+		end
+		for a,b in strgfind(msg, "(.+)发起了攻击。(.+)招架住了。") do 
+			DB:EnemyDamage(false, DPSMateEDD, b, DPSMate.L["AutoAttack"], 0, 0, 0, 1, 0, 0, 0, a, 0, 0)
+			DB:DamageTaken(b, DPSMate.L["AutoAttack"], 0, 0, 0, 1, 0, 0, 0, a, 0, 0)
+			return
+		end
+		for a,b in strgfind(msg, "(.+)没有击中(.+)。") do 
 			DB:EnemyDamage(false, DPSMateEDD, b, DPSMate.L["AutoAttack"], 0, 0, 1, 0, 0, 0, 0, a, 0, 0)
 			DB:DamageTaken(b, DPSMate.L["AutoAttack"], 0, 0, 1, 0, 0, 0, 0, a, 0, 0)
 			return 
@@ -548,8 +519,11 @@ if (GetLocale() == "zhCN") then
 	
 	DPSMate.Parser.SpellPeriodicDamageTaken = function(self, msg)
 		t = {}
-		for a,b,c,d,e,f in strgfind(msg, "(.+) erleidet (%d+) (%a+) von (.+) %(durch (.+)%)%.(.*)") do -- Potential to track resisted damage and school
+		for d,e,a,b,c,f,g in strgfind(msg, "(.+)的(.+)使(.+)受到了(%d+)点(.+)伤害(.*)。(.*)") do
 			t[1] = tnbr(b)
+			if f~="" then
+				DB:SetUnregisterVariables(tnbr(strsub(f, strfind(f, "%d+"))), e..DPSMate.L["periodic"], d)
+			end
 			DB:EnemyDamage(false, DPSMateEDD, a, e..DPSMate.L["periodic"], 1, 0, 0, 0, 0, 0, t[1], d, 0, 0)
 			DB:DamageTaken(a, e..DPSMate.L["periodic"], 1, 0, 0, 0, 0, 0, t[1], d, 0, 0)
 			DB:DeathHistory(a, d, e..DPSMate.L["periodic"], t[1], 1, 0, 0, 0)
@@ -557,71 +531,64 @@ if (GetLocale() == "zhCN") then
 			DB:AddSpellSchool(e..DPSMate.L["periodic"],c)
 			return
 		end
-		for a, b in strgfind(msg, "(.+) ist von (.+) betroffen%.") do
+		for a, b in strgfind(msg, "(.+)受到(.+)的伤害") do
 			if strfind(b, "%(") then b=strsub(b, 1, strfind(b, "%(")-2) end;
-			DB:BuildBuffs("Unbekannt", a, b, false)
+			DB:BuildBuffs(DPSMate.L["unknown"], a, b, false)
 			if self.CC[b] then DB:BuildActiveCC(a, b) end
 			return
 		end
-		for f,a,b in strgfind(msg, "(.-%s*)'?s (.+) wurde von (.+) absorbiert%.") do -- To Test
-			f = self:ReplaceSwString(f)
+		for f,a,b in strgfind(msg, "(.+)的(.+)被(.+)吸收了。") do
 			DB:Absorb(a..DPSMate.L["periodic"], f, b)
 			return
 		end
 	end
 	
-	-- Xs Y trifft Z für d+ Heiligschaden.
-	-- Xs Y trifft Z kritisch für d+ Heiligschaden.
 	DPSMate.Parser.CreatureVsCreatureSpellDamage = function(self, msg)
 		t = {}
-		for a,b,d,e,f in strgfind(msg, "(.-%s*)'?s (.+) trifft (.+) kritisch für (%d+)(.*)") do
+		for a,b,d,e,f in strgfind(msg, "(.+)的(.+)对(.+)造成(%d+)点致命一击伤害。(.*)") do
 			if strfind(f, "点被格挡") then t[4]=1;t[2]=0 end
 			t[3] = tnbr(e)
-			a = self:ReplaceSwString(a)
 			DB:UnregisterPotentialKick(d, b, GetTime())
 			DB:EnemyDamage(false, DPSMateEDD, d, b, 0, t[2] or 1, 0, 0, 0, 0, t[3], a, t[4] or 0, 0)
 			DB:DamageTaken(d, b, 0, t[2] or 1, 0, 0, 0, 0, t[3], a, 0, t[4] or 0)
 			DB:DeathHistory(d, a, b, t[3], 0, t[2] or 1, 0, 0)
 			if self.FailDT[b] then DB:BuildFail(2, a, d, b, t[3]) end
-			DB:AddSpellSchool(b,f)
 			return
 		end
-		-- Ragnaross Zorn des
-		for a,b,d,e,f in strgfind(msg, "(.-%s*)'?s (.+) trifft (.+) für (%d+)(.*)") do
+		for a,b,d,e,g,f in strgfind(msg, "(.+)的(.+)击中(.+)造成(%d+)点伤害(.*)。(.*)") do
 			if strfind(f, "点被格挡") then t[4]=1;t[1]=0 end
 			t[3] = tnbr(e)
-			a = self:ReplaceSwString(a)
+			if g~="" then
+				DB:SetUnregisterVariables(tnbr(strsub(g, strfind(g, "%d+"))), b, a)
+			end
 			DB:UnregisterPotentialKick(d, b, GetTime())
 			DB:EnemyDamage(false, DPSMateEDD, d, b, t[1] or 1, 0, 0, 0, 0, 0, t[3], a, t[4] or 0, 0)
 			DB:DamageTaken(d, b, t[1] or 1, 0, 0, 0, 0, 0, t[3], a, 0, t[4] or 0)
 			DB:DeathHistory(d, a, b, t[3], t[1] or 1, 0, 0, 0)
 			if self.FailDT[b] then DB:BuildFail(2, a, d, b, t[3]) end
-			DB:AddSpellSchool(b,f)
 			return
 		end
-		for c,b,a in strgfind(msg, "(.+) ist (.+) von (.+) ausgewichen%.") do
+		for a,b,c in strgfind(msg, "(.+)的(.+)被(.+)闪躲过去。") do
 			DB:EnemyDamage(false, DPSMateEDD, c, b, 0, 0, 0, 0, 1, 0, 0, a, 0, 0)
 			DB:DamageTaken(c, b, 0, 0, 0, 0, 1, 0, 0, a, 0, 0)
 			return
 		end
-		for b,a,c in strgfind(msg, "(.+) von (.+) wurde von (.+) pariert%.") do
+		for a,b,c in strgfind(msg, "(.+)的(.+)被(.+)招架了。") do
 			DB:EnemyDamage(false, DPSMateEDD, c, b, 0, 0, 0, 1, 0, 0, 0, a, 0, 0)
 			DB:DamageTaken(c, b, 0, 0, 0, 1, 0, 0, 0, a, 0, 0)
 			return
 		end
-		for b,a,c in strgfind(msg, "(.+) von (.+) verfehlt (.+)%.") do
+		for a,b,c in strgfind(msg, "(.+)的(.+)没有击中(.+)。") do
 			DB:EnemyDamage(false, DPSMateEDD, c, b, 0, 0, 1, 0, 0, 0, 0, a, 0, 0)
 			DB:DamageTaken(c, b, 0, 0, 1, 0, 0, 0, 0, a, 0, 0)
 			return
 		end
-		for a,b,c in strgfind(msg, "(.-%s*)'?s (.+) wurde von (.+) widerstanden%.") do
-			a = self:ReplaceSwString(a)
+		for a,b,c in strgfind(msg, "(.+)的(.+)被(.+)抵抗了。") do
 			DB:EnemyDamage(false, DPSMateEDD, c, b, 0, 0, 0, 0, 0, 1, 0, a, 0, 0)
 			DB:DamageTaken(c, b, 0, 0, 0, 0, 0, 1, 0, a, 0, 0)
 			return
 		end
-		for f,a,b in strgfind(msg, "(.-%s*)'?s (.+) wurde von (.+) absorbiert%.") do -- To Test
-			f = self:ReplaceSwString(f)
+		for f,a,b in strgfind(msg, "(.+)的(.+)被(.+)吸收了。") do
 			DB:Absorb(a, f, b)
 			return
 		end
@@ -947,7 +914,7 @@ if (GetLocale() == "zhCN") then
 	
 	DPSMate.Parser.SpellHostilePlayerBuffDispels = function(self, msg)
 		for c, ab, ta in strgfind(msg, "(.+) wirkt (.+) auf (.-)%.") do if ta=="Euch" then ta = self.player end; if DPSMate.Parser.Dispels[ab] then DB:AwaitDispel(ab, ta, c, GetTime()) end; if self.RCD[ab] then DPSMate:Broadcast(2, c, ta, ab) end; return end
-		for c, ab in strgfind(msg, "(.+) wirkt (.+)%.") do if DPSMate.Parser.Dispels[ab] then DB:AwaitDispel(ab, "Unbekannt", c, GetTime()) end; return end
+		for c, ab in strgfind(msg, "(.+) wirkt (.+)%.") do if DPSMate.Parser.Dispels[ab] then DB:AwaitDispel(ab, DPSMate.L["unknown"], c, GetTime()) end; return end
 	end
 	
 	DPSMate.Parser.SpellBreakAura = function(self, msg) 
