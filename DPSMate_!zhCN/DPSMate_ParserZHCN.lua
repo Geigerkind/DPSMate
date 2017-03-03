@@ -603,23 +603,36 @@ if (GetLocale() == "zhCN") then
 	-- Energiegeladene Rüstung des Schurken.
 	DPSMate.Parser.SpellSelfBuff = function(self, msg)
 		t = {}
-		for a,b,c in strgfind(msg, "Kritische Heilung: (.+) heilt (.+) um (%d+) Punkte.") do 
-			if b=="Euch" then t[1]=self.player end
-			t[2] = tnbr(c)
-			overheal = self:GetOverhealByName(t[2], t[1] or b)
-			DB:HealingTaken(0, DPSMateHealingTaken, t[1] or b, a, 0, 1, t[2], self.player)
-			DB:HealingTaken(1, DPSMateEHealingTaken, t[1] or b, a, 0, 1, t[2]-overheal, self.player)
-			DB:Healing(0, DPSMateEHealing, self.player, a, 0, 1, t[2]-overheal, t[1] or b)
+		for a,b,c in strgfind(msg, "你的(.+)对(.+)产生极效治疗效果，恢复了(%d+)点生命值。") do 
+			t[1] = tnbr(c)
+			overheal = self:GetOverhealByName(t[1], b)
+			DB:HealingTaken(0, DPSMateHealingTaken, b, a, 0, 1, t[1], self.player)
+			DB:HealingTaken(1, DPSMateEHealingTaken, b, a, 0, 1, t[1]-overheal, self.player)
+			DB:Healing(0, DPSMateEHealing, self.player, a, 0, 1, t[1]-overheal, b)
 			if overheal>0 then 
-				DB:Healing(2, DPSMateOverhealing, self.player, a, 0, 1, overheal, t[1] or b)
-				DB:HealingTaken(2, DPSMateOverhealingTaken, t[1] or b, a, 0, 1, overheal, self.player)
+				DB:Healing(2, DPSMateOverhealing, self.player, a, 0, 1, overheal, b)
+				DB:HealingTaken(2, DPSMateOverhealingTaken, b, a, 0, 1, overheal, self.player)
 			end
-			DB:Healing(1, DPSMateTHealing, self.player, a, 0, 1, t[2], t[1] or b)
-			DB:DeathHistory(t[1] or b, self.player, a, t[2], 0, 1, 1, 0)
+			DB:Healing(1, DPSMateTHealing, self.player, a, 0, 1, t[1], b)
+			DB:DeathHistory(b, self.player, a, t[1], 0, 1, 1, 0)
 			return
 		end
-		for a,b,c in strgfind(msg, "(.+) heilt (.+) um (%d+) Punkte%.") do 
-			if b=="Euch" then t[1]=self.player end
+		for a,c in strgfind(msg, "你的(.+)对你造成极效治疗，恢复了(%d+)点生命值。") do 
+			t[1] = tnbr(c)
+			overheal = self:GetOverhealByName(t[1], self.player)
+			DB:HealingTaken(0, DPSMateHealingTaken, self.player, a, 0, 1, t[1], self.player)
+			DB:HealingTaken(1, DPSMateEHealingTaken, self.player, a, 0, 1, t[1]-overheal, self.player)
+			DB:Healing(0, DPSMateEHealing, self.player, a, 0, 1, t[1]-overheal, self.player)
+			if overheal>0 then 
+				DB:Healing(2, DPSMateOverhealing, self.player, a, 0, 1, overheal, self.player)
+				DB:HealingTaken(2, DPSMateOverhealingTaken, self.player, a, 0, 1, overheal, self.player)
+			end
+			DB:Healing(1, DPSMateTHealing, self.player, a, 0, 1, t[1], self.player)
+			DB:DeathHistory(self.player, self.player, a, t[1], 0, 1, 1, 0)
+			return
+		end
+		for a,b,c in strgfind(msg, "你的(.+)治疗了(.+)(%d+)点生命值。") do 
+			if b=="你" then t[1]=self.player end
 			t[2] = tnbr(c)
 			overheal = self:GetOverhealByName(t[2], t[1] or b)
 			DB:HealingTaken(0, DPSMateHealingTaken, t[1] or b, a, 1, 0, t[2], self.player)
@@ -636,12 +649,14 @@ if (GetLocale() == "zhCN") then
 			end
 			return
 		end
-		for a,b in strgfind(msg, "Ihr bekommt (%d+) Energie durch (.+)%.") do -- Potential to gain energy values for class evaluation
-			DB:BuildBuffs(self.player, self.player, b, true)
-			DB:DestroyBuffs(self.player, b)
+		for a,b in strgfind(msg, "你获得了(%d+)点(.+)。") do
+			if self.procs[b] and not self.OtherExceptions[b] then
+				DB:BuildBuffs(self.player, self.player, b, true)
+				DB:DestroyBuffs(self.player, b)
+			end
 			return
 		end
-		for b,a in strgfind(msg, "Ihr bekommt durch (.+) (%d) Extra-Angriff\e?%.") do -- Potential for more evaluation
+		for b,f,a in strgfind(msg, "你通过(.+)获(.*)(%d+)次额外攻击。") do
 			DB.NextSwing[self.player] = {
 				[1] = tnbr(a),
 				[2] = b
@@ -654,20 +669,6 @@ if (GetLocale() == "zhCN") then
 			DB:DestroyBuffs(self.player, b)
 			return
 		end	
-		for a,b in strgfind(msg, "Ihr bekommt (%d+) Wut durch (.+)%.") do -- Potential to gain energy values for class evaluation
-			if self.procs[b] and not self.OtherExceptions[b] then
-				DB:BuildBuffs(self.player, self.player, b, true)
-				DB:DestroyBuffs(self.player, b)
-			end
-			return
-		end
-		for a,b in strgfind(msg, "Ihr bekommt (%d+) Mana durch (.+)%.") do -- Potential to gain energy values for class evaluation
-			if self.procs[b] then
-				DB:BuildBuffs(self.player, self.player, b, true)
-				DB:DestroyBuffs(self.player, b)
-			end
-			return
-		end
 	end
 	
 	-- Ihr erhaltet d+ Gesundheit durch X.
