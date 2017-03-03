@@ -819,46 +819,36 @@ if (GetLocale() == "zhCN") then
 	--------------                       Absorbs                        --------------                                  
 	----------------------------------------------------------------------------------
 	
-	-- X trifft Y für d+ Schaden. (d+ absorbiert)
 	DPSMate.Parser.CreatureVsSelfHitsAbsorb = function(self, msg)
-		for c, b, d, absorbed in strgfind(msg, "(.+) trifft Euch für (%d+) Schaden%.(.*)%((%d+) absorbiert%)") do DB:SetUnregisterVariables(tnbr(absorbed), DPSMate.L["AutoAttack"], c); return end
-		for c, b, d, absorbed in strgfind(msg, "(.+) trifft Euch kritisch für (%d+) Schaden%.(.*)%((%d+) absorbiert%)") do DB:SetUnregisterVariables(tnbr(absorbed), DPSMate.L["AutoAttack"], c); return end
+		for c, b, absorbed in strgfind(msg, "(.+)击中你造成(%d+)点伤害%（(%d+)点被吸收%）。") do DB:SetUnregisterVariables(tnbr(absorbed), DPSMate.L["AutoAttack"], c); return end
 	end
 	
-	DPSMate.Parser.CreatureVsCreatureHitsAbsorb = function(self, msg)
-		for c, b, a, d, absorbed in strgfind(msg, "(.+) trifft (.+) kritisch für (%d+) Schaden%.(.*)%((%d+) absorbiert%)") do DB:SetUnregisterVariables(tnbr(absorbed), DPSMate.L["AutoAttack"], c); return end
-		for c, b, a, d, absorbed in strgfind(msg, "(.+) trifft (.+) für (%d+) Schaden%.(.*)%((%d+) absorbiert%)") do DB:SetUnregisterVariables(tnbr(absorbed), DPSMate.L["AutoAttack"], c); return end
-	end
+	DPSMate.Parser.CreatureVsCreatureHitsAbsorb = function(self, msg) end
 	
 	DPSMate.Parser.CreatureVsSelfSpellDamageAbsorb = function(self, msg)
-		for c, q, ab, b, a, d, absorbed in strgfind(msg, "(.+) trifft Euch(.*) mit %'(.+)%' für (.+)%.(.*)%((%d+) absorbiert%)") do DB:SetUnregisterVariables(tnbr(absorbed), ab, c); return end
-		for c, q, ab, b, a, d, absorbed in strgfind(msg, "(.+) trifft Euch(.*) %(mit (.+)%)%. Schaden: (%d+)(.*)%((%d+) absorbiert%)") do DB:SetUnregisterVariables(tnbr(absorbed), ab, c); return end
-		for c, ab, b, a, d, absorbed in strgfind(msg, "(.-%s*)'?s (.+) trifft Euch kritisch für (%d+)(.*)%((%d+) absorbiert%)") do DB:SetUnregisterVariables(tnbr(absorbed), ab, c); return end
+		for c, ab, b, absorbed in strgfind(msg, "(.+)的(.+)击中你造成(%d+)点伤害%（(%d+)点被吸收%）。") do DB:SetUnregisterVariables(tnbr(absorbed), ab, c); return end
 	end
 	
-	DPSMate.Parser.CreatureVsCreatureSpellDamageAbsorb = function(self, msg)
-		for c, ab, b, a, d, absorbed in strgfind(msg, "(.-%s*)'?s (.+) trifft (.+) kritisch für (.*)%((%d+) absorbiert%)") do DB:SetUnregisterVariables(tnbr(absorbed), ab, self:ReplaceSwString(c)); return end
-		for c, ab, b, a, d, absorbed in strgfind(msg, "(.-%s*)'?s (.+) trifft (.+) für (.+)%.(.*)%((%d+) absorbiert%)") do DB:SetUnregisterVariables(tnbr(absorbed), ab, self:ReplaceSwString(c)); return end
-	end
+	DPSMate.Parser.CreatureVsCreatureSpellDamageAbsorb = function(self, msg) end
 	
 	DPSMate.Parser.SpellPeriodicSelfBuffAbsorb = function(self, msg)
-		for ab in strgfind(msg, "Ihr bekommt %'(.+)%'%.") do if DB.ShieldFlags[ab] then DB:ConfirmAbsorbApplication(ab, self.player, GetTime()) end end
+		for ab in strgfind(msg, "你获得了(.+)的效果。") do if DB.ShieldFlags[ab] then DB:ConfirmAbsorbApplication(ab, self.player, GetTime()) end end
 	end
 
 	DPSMate.Parser.SpellPeriodicFriendlyPlayerBuffsAbsorb = function(self, msg)
-		for ta, ab in strgfind(msg, "(.-) bekommt %'(.+)%'%.") do if DB.ShieldFlags[ab] then DB:ConfirmAbsorbApplication(ab, ta, GetTime()) end end
+		for ta, ab in strgfind(msg, "(.+)获得了(.+)。") do if DB.ShieldFlags[ab] then DB:ConfirmAbsorbApplication(ab, ta, GetTime()) end end
 	end
 	
 	DPSMate.Parser.SpellAuraGoneSelf = function(self, msg)
-		for ab in strgfind(msg, "%'(.+)%' schwindet von Euch%.") do if self.BuffExceptions[ab] then return end; if strfind(ab, "%(") then ab=strsub(ab, 1, strfind(ab, "%(")-2) end;if DB.ShieldFlags[ab] then DB:UnregisterAbsorb(ab, self.player) end; if self.RCD[ab] then DPSMate:Broadcast(6, self.player, ab) end; DB:DestroyBuffs(self.player, ab); DB:UnregisterHotDispel(self.player, ab); DB:RemoveActiveCC(self.player, ab) end
+		for ab in strgfind(msg, "(.+)效果从你身上消失了。") do if self.BuffExceptions[ab] then return end; if strfind(ab, "%(") then ab=strsub(ab, 1, strfind(ab, "%(")-2) end;if DB.ShieldFlags[ab] then DB:UnregisterAbsorb(ab, self.player) end; if self.RCD[ab] then DPSMate:Broadcast(6, self.player, ab) end; DB:DestroyBuffs(self.player, ab); DB:UnregisterHotDispel(self.player, ab); DB:RemoveActiveCC(self.player, ab) end
 	end
 	
 	DPSMate.Parser.SpellAuraGoneParty = function(self, msg)
-		for ab, ta in strgfind(msg, "%'(.+)%' schwindet von (.-)%.") do if self.BuffExceptions[ab] then return end; if strfind(ab, "%(") then ab=strsub(ab, 1, strfind(ab, "%(")-2) end;if DB.ShieldFlags[ab] then DB:UnregisterAbsorb(ab, ta) end; if self.RCD[ab] then DPSMate:Broadcast(6, ta, ab) end; DB:DestroyBuffs(ta, ab); DB:UnregisterHotDispel(ta, ab); DB:RemoveActiveCC(ta, ab) end
+		for ab, ta in strgfind(msg, "(.+)效果从(.+)身上消失。") do if self.BuffExceptions[ab] then return end; if strfind(ab, "%(") then ab=strsub(ab, 1, strfind(ab, "%(")-2) end;if DB.ShieldFlags[ab] then DB:UnregisterAbsorb(ab, ta) end; if self.RCD[ab] then DPSMate:Broadcast(6, ta, ab) end; DB:DestroyBuffs(ta, ab); DB:UnregisterHotDispel(ta, ab); DB:RemoveActiveCC(ta, ab) end
 	end
 	
 	DPSMate.Parser.SpellAuraGoneOther = function(self, msg)
-		for ab, ta in strgfind(msg, "%'(.+)%' schwindet von (.-)%.") do if self.BuffExceptions[ab] then return end; if strfind(ab, "%(") then ab=strsub(ab, 1, strfind(ab, "%(")-2) end;if DB.ShieldFlags[ab] then DB:UnregisterAbsorb(ab, ta) end; if self.RCD[ab] then DPSMate:Broadcast(6, ta, ab) end; DB:DestroyBuffs(ta, ab); DB:UnregisterHotDispel(ta, ab); DB:RemoveActiveCC(ta, ab) end
+		for ab, ta in strgfind(msg, "(.+)效果从(.+)身上消失。") do if self.BuffExceptions[ab] then return end; if strfind(ab, "%(") then ab=strsub(ab, 1, strfind(ab, "%(")-2) end;if DB.ShieldFlags[ab] then DB:UnregisterAbsorb(ab, ta) end; if self.RCD[ab] then DPSMate:Broadcast(6, ta, ab) end; DB:DestroyBuffs(ta, ab); DB:UnregisterHotDispel(ta, ab); DB:RemoveActiveCC(ta, ab) end
 	end
 	
 	----------------------------------------------------------------------------------
