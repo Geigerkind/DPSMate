@@ -144,7 +144,7 @@ DPSMate.DB.windfuryab = {
 	["Windfury Weapon"] = true,
 	["Windfury Totem"] = true,
 }
-local playerfaction = string.lower(UnitFactionGroup("player"))
+local playerfaction = UnitFactionGroup("player")
 
 if not GameTime_GT then
 	GameTime_GT = function()
@@ -1881,7 +1881,7 @@ end
 
 function DPSMate.DB:ApplyRemainingDispels()
 	if not DPSMateSettings["legacylogs"] and not DPSMate.RegistredModules["decurses"] and not DPSMate.RegistredModules["curepoison"] and not DPSMate.RegistredModules["liftmagic"] and not DPSMate.RegistredModules["curedisease"] and not DPSMate.RegistredModules["dispels"] then return end
-	if playerfaction~="horde" then NextTotemDispel = false; return end
+	if playerfaction~="Horde" then NextTotemDispel = false; return end
 	local num = 0
 	for cat, val in ConfirmedDispel do
 		for ca, va in val do
