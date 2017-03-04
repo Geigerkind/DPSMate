@@ -144,6 +144,7 @@ DPSMate.DB.windfuryab = {
 	["Windfury Weapon"] = true,
 	["Windfury Totem"] = true,
 }
+local playerfaction = string.lower(UnitFactionGroup("player"))
 
 if not GameTime_GT then
 	GameTime_GT = function()
@@ -1807,7 +1808,7 @@ local NextTotemDispel = false
 local TotemDispelTimer = 0
 function DPSMate.DB:AwaitDispel(ability, target, cause, time)
 	if not AwaitDispel[target] then AwaitDispel[target] = {} end
-	tinsert(AwaitDispel[target], {cause, ability, time})
+	tinsert(AwaitDispel[target], {cause, ability, time, 2})
 	--DPSMate:SendMessage("Awaiting Dispel! - "..cause.." - "..target.." - "..ability.." - "..time)
 	self:EvaluateDispel()
 end
@@ -1880,11 +1881,12 @@ end
 
 function DPSMate.DB:ApplyRemainingDispels()
 	if not DPSMateSettings["legacylogs"] and not DPSMate.RegistredModules["decurses"] and not DPSMate.RegistredModules["curepoison"] and not DPSMate.RegistredModules["liftmagic"] and not DPSMate.RegistredModules["curedisease"] and not DPSMate.RegistredModules["dispels"] then return end
+	if playerfaction~="horde" then NextTotemDispel = false; return end
 	local num = 0
 	for cat, val in ConfirmedDispel do
 		for ca, va in val do
 			num = num + 1
-			if (GT()-va[2])>10 then
+			if (GT()-va[2])>10 and (GT()-va[2])<40 then
 				local type = "party"
 				local num = GetNumPartyMembers()
 				if num <= 0 then
@@ -1958,26 +1960,28 @@ function DPSMate.DB:EvaluateDispel()
 						if ConfirmedDispel[cat][1] then
 							self:Dispels(va[1], va[2], cat, ConfirmedDispel[cat][1][1])
 							tremove(ConfirmedDispel[cat], 1)
+							AwaitDispel[cat][4] = AwaitDispel[cat][4] - 1
+							if AwaitDispel[cat][4]<=0 then
+								tremove(AwaitDispel[cat], ca)
+							end
 							self:EvaluateDispel()
-							--tremove(AwaitDispel[cat], ca)
-							--lastDispel = nil;
 							return
 						end
 					end
 				end
-				--DPSMate:SendMessage("Test 1")
 				if cat == DPSMate.L["unknown"] and lastDispel then
-					--DPSMate:SendMessage("Test 2")
+					-- Commented out for now, because of too much uncertainity
+					--[[
 					if ConfirmedDispel[lastDispel] then
 						if ConfirmedDispel[lastDispel][1] then
 							self:Dispels(va[1], va[2], lastDispel, ConfirmedDispel[lastDispel][1][1])
 							tremove(ConfirmedDispel[lastDispel], 1)
 							self:EvaluateDispel()
 							--tremove(AwaitDispel[cat], ca)
-							--lastDispel = nil;
 							return
 						end
 					end
+					--]]
 				end
 			end
 		end
