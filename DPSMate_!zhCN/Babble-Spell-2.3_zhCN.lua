@@ -1893,6 +1893,7 @@ local spellIcons = {
 ["烈焰打击"] = "spell_fire_fireball",
 ["变形术"] = "spell_nature_polymorph",
 ["凋零缠绕"] = "spell_shadow_deathcoil",
+["死亡缠绕"] = "spell_shadow_deathcoil",
 ["腐蚀毒药"] = "spell_nature_corrosivebreath",
 ["妖术"] = "spell_nature_polymorph",
 ["缩小"] = "spell_shadow_antishadow",
