@@ -2122,7 +2122,7 @@ function DPSMate.Options:ShowTooltip()
 			GameTooltip:SetOwner(this:GetParent():GetParent():GetParent(), "TOPRIGHT")
 		end
 		local _, cbt = DPSMate:GetMode(DPSMate_Details.PaKey)
-		GameTooltip:AddLine(this.user.." ["..strformat("%0.1f", cbt).."s]", 1,0.82,0,1)
+		GameTooltip:AddLine(this.user.." ["..self:FormatTime(cbt).."]", 1,0.82,0,1)
 		DPSMate.RegistredModules[DPSMateSettings["windows"][DPSMate_Details.PaKey]["CurMode"]]:ShowTooltip(this.user, DPSMate_Details.PaKey)
 		GameTooltip:AddLine(" ")
 		GameTooltip:AddLine(DPSMate.L["leftclickopend"], 0,1,0,1)

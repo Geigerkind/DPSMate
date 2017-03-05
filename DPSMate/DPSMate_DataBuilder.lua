@@ -1960,8 +1960,8 @@ function DPSMate.DB:EvaluateDispel()
 						if ConfirmedDispel[cat][1] then
 							self:Dispels(va[1], va[2], cat, ConfirmedDispel[cat][1][1])
 							tremove(ConfirmedDispel[cat], 1)
-							AwaitDispel[cat][4] = AwaitDispel[cat][4] - 1
-							if AwaitDispel[cat][4]<=0 then
+							AwaitDispel[cat][ca][4] = AwaitDispel[cat][ca][4] - 1
+							if AwaitDispel[cat][ca][4]<=0 then
 								tremove(AwaitDispel[cat], ca)
 							end
 							self:EvaluateDispel()
