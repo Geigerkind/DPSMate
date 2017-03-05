@@ -205,18 +205,20 @@ function DPSMate.Sync:Vote()
 	SDM("DPSMate_Vote", nil, "RAID")
 end
 
+local voteCount = 1
+local participants = 1
+local abort = 0
 function DPSMate.Sync:StartVote()
 	if not voteStarter then
 		self.synckey = player..(random(1,1000))
 		SDM("DPSMate_StartVote", nil, "RAID")
 		voteStarter = true
+		participants = 1
 	else
 		DPSMate:SendMessage(DPSMate.L["votestartederror"])
 	end
 end
 
-local voteCount = 1
-local participants = 1
 function DPSMate.Sync:CountVote()
 	if voteStarter then
 		voteCount=voteCount+1
