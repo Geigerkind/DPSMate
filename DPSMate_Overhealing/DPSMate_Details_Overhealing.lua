@@ -71,7 +71,7 @@ function DPSMate.Modules.DetailsOverhealing:UpdateCompare(obj, key, comp)
 	UIDropDownMenu_SetSelectedValue(DPSMate_Details_CompareOverhealing_DiagramLegend_Procs, "None")
 	DetailsUserComp = comp
 	DPSMate_Details_CompareOverhealing_Title:SetText(DPSMate.L["overhealby"]..comp)
-	DPSMate_Details_CompareOverhealing_SubTitle:SetText(DPSMate.L["activity"]..strformat("%.2f", DPSMateCombatTime["effective"][key][comp] or 0).."s "..DPSMate.L["of"].." "..strformat("%.2f", DPSMateCombatTime[mode[key]]).."s ("..strformat("%.2f", 100*(DPSMateCombatTime["effective"][key][comp] or 0)/DPSMateCombatTime[mode[key]]).."%)")
+	DPSMate_Details_CompareOverhealing_SubTitle:SetText(DPSMate.L["activity"]..strformat("%.2f", DPSMateCombatTime["effective"][key][comp] or 0).."s "..DPSMate.L["of"].." "..strformat("%.2f", cbt).."s ("..strformat("%.2f", 100*(DPSMateCombatTime["effective"][key][comp] or 0)/cbt).."%)")
 	UIDropDownMenu_Initialize(DPSMate_Details_CompareOverhealing_DiagramLegend_Procs, DPSMate.Modules.DetailsOverhealing.ProcsDropDown_CompareOverhealing)
 	DetailsArrComp, DetailsTotalComp, DmgArrComp = DPSMate.RegistredModules[DPSMateSettings["windows"][curKey]["CurMode"]]:EvalTable(DPSMateUser[comp], curKey)
 	t1Comp, t2Comp, TTotalComp = self:EvalToggleTable(comp)

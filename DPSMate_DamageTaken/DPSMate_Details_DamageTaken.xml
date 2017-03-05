@@ -1339,6 +1339,13 @@
 							</Anchors>
 							<Color r="1" g="1" b="1" />
 						</FontString>
+						<FontString name="$parent_Average8" inherits="GameFontNormalSmall" text="10000">
+							<Size x="60" y="30" />
+							<Anchors>
+								<Anchor point="TOP" relativeTo="$parent_Average7" relativePoint="BOTTOM" />
+							</Anchors>
+							<Color r="1" g="1" b="1" />
+						</FontString>
 						<FontString name="$parent_Min1" inherits="GameFontNormalSmall" text="10000">
 							<Size x="60" y="30" />
 							<Anchors>
@@ -1387,6 +1394,13 @@
 							<Size x="60" y="30" />
 							<Anchors>
 								<Anchor point="TOP" relativeTo="$parent_Min6" relativePoint="BOTTOM" />
+							</Anchors>
+							<Color r="1" g="1" b="1" />
+						</FontString>
+						<FontString name="$parent_Min8" inherits="GameFontNormalSmall" text="10000">
+							<Size x="60" y="30" />
+							<Anchors>
+								<Anchor point="TOP" relativeTo="$parent_Min7" relativePoint="BOTTOM" />
 							</Anchors>
 							<Color r="1" g="1" b="1" />
 						</FontString>
@@ -1441,6 +1455,13 @@
 							</Anchors>
 							<Color r="1" g="1" b="1" />
 						</FontString>
+						<FontString name="$parent_Max8" inherits="GameFontNormalSmall" text="10000">
+							<Size x="60" y="30" />
+							<Anchors>
+								<Anchor point="TOP" relativeTo="$parent_Max7" relativePoint="BOTTOM" />
+							</Anchors>
+							<Color r="1" g="1" b="1" />
+						</FontString>
 					</Layer>
 				</Layers>
 				<Scripts>
@@ -1492,6 +1513,11 @@
 					<Frame name="$parent_Amount7" inherits="DPSMateTableAmountTemplate">
 						<Anchors>
 							<Anchor point="TOP" relativeTo="$parent_Amount6" relativePoint="BOTTOM" />
+						</Anchors>
+					</Frame>
+					<Frame name="$parent_Amount8" inherits="DPSMateTableAmountTemplate">
+						<Anchors>
+							<Anchor point="TOP" relativeTo="$parent_Amount7" relativePoint="BOTTOM" />
 						</Anchors>
 					</Frame>
 				</Frames>

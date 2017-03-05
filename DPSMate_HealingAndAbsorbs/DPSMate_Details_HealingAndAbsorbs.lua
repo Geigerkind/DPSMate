@@ -71,7 +71,7 @@ function DPSMate.Modules.DetailsHealingAndAbsorbs:UpdateCompare(obj, key, comp)
 	UIDropDownMenu_SetSelectedValue(DPSMate_Details_CompareHealingAndAbsorbs_DiagramLegend_Procs, "None")
 	DetailsUserComp = comp
 	DPSMate_Details_CompareHealingAndAbsorbs_Title:SetText(DPSMate.L["habby"]..comp)
-	DPSMate_Details_CompareHealingAndAbsorbs_SubTitle:SetText(DPSMate.L["activity"]..strformat("%.2f", DPSMateCombatTime["effective"][key][comp] or 0).."s "..DPSMate.L["of"].." "..strformat("%.2f", DPSMateCombatTime[mode[key]]).."s ("..strformat("%.2f", 100*(DPSMateCombatTime["effective"][key][comp] or 0)/DPSMateCombatTime[mode[key]]).."%)")
+	DPSMate_Details_CompareHealingAndAbsorbs_SubTitle:SetText(DPSMate.L["activity"]..strformat("%.2f", DPSMateCombatTime["effective"][key][comp] or 0).."s "..DPSMate.L["of"].." "..strformat("%.2f", cbt).."s ("..strformat("%.2f", 100*(DPSMateCombatTime["effective"][key][comp] or 0)/cbt).."%)")
 	UIDropDownMenu_Initialize(DPSMate_Details_CompareHealingAndAbsorbs_DiagramLegend_Procs, DPSMate.Modules.DetailsHealingAndAbsorbs.ProcsDropDown_CompareHealingAndAbsorbs)
 	DetailsArrComp, DetailsTotalComp, DmgArrComp = DPSMate.RegistredModules[DPSMateSettings["windows"][curKey]["CurMode"]]:EvalTable(DPSMateUser[comp], curKey)
 	t1Comp, t2Comp, TTotalComp = self:EvalToggleTable(comp)

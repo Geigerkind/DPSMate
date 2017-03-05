@@ -4,7 +4,7 @@
 #What is DPSMate?#
 DPSMate is not only a meter which shows numbers of the raid, such as damage done, damage taken, dispells etc., it is moreover an analyzing tool to review the raid or the previous fight as accurately as possible. This data can help to improve the gameplay or to judge better over someones performance.
 
-![img](http://i.imgur.com/UWEgLn9.png)
+![img](http://i.imgur.com/I7vgsIj.png)  
 
 #Mentionable features of DPSMate#
 Frame:   
@@ -30,14 +30,15 @@ Misc:
 - And many more...   
 
 #But pictures tell more than words:   
-![img](http://i.imgur.com/gG3fHSR.png)  
-![img](https://gyazo.com/df71a4bb0cdf5cb51cd51d96296177a6.png)  
-![img](http://i.imgur.com/acsgyPb.gif)  
-![img](http://i.imgur.com/R8yxnZX.png)  
-![img](http://i.imgur.com/wWZHbeu.png)  
-![img](http://i.imgur.com/Uezcowg.png)  
-![img](http://i.imgur.com/Ine09Kp.png)  
-![img](http://i.imgur.com/eEIL8i5.png)  
+![img](http://i.imgur.com/tjjeryJ.png)  
+![img](http://i.imgur.com/MwPGjKk.png)  
+![img](http://i.imgur.com/psYZ7ND.png)  
+![img](http://i.imgur.com/3YaqUz0.png)  
+![img](http://i.imgur.com/3YuNJaV.png)  
+![img](http://i.imgur.com/79iyOov.png)  
+![img](http://i.imgur.com/pnIia7A.png)  
+![img](http://i.imgur.com/AObESgI.jpg)  
+![img](http://i.imgur.com/jOTG3ip.png)  
 
 #**Download and install:** 
 1. Download the addon folder here.
