@@ -43,8 +43,16 @@ function DPSMate.Modules.DetailsCurePoisonTotal:UpdateRow(row, a, b, c, d, e)
 	else
 		_G("DPSMate_Details_CurePoison_Total_LogDetails_Row"..row.."_CombatTime"):SetText("")
 	end
-	_G("DPSMate_Details_CurePoison_Total_LogDetails_Row"..row.."_Cause"):SetText("|cFF"..hexClassColor[DPSMateUser[c][2] or "warrior"]..c.."|r")
-	_G("DPSMate_Details_CurePoison_Total_LogDetails_Row"..row.."_Target"):SetText("|cFF"..hexClassColor[DPSMateUser[d][2] or "warrior"]..d.."|r")
+	if c == "" then
+		_G("DPSMate_Details_CurePoison_Total_LogDetails_Row"..row.."_Cause"):SetText("")
+	else
+		_G("DPSMate_Details_CurePoison_Total_LogDetails_Row"..row.."_Cause"):SetText("|cFF"..hexClassColor[DPSMateUser[c][2] or "warrior"]..c.."|r")
+	end
+	if d == "" then
+		_G("DPSMate_Details_CurePoison_Total_LogDetails_Row"..row.."_Target"):SetText("")
+	else
+		_G("DPSMate_Details_CurePoison_Total_LogDetails_Row"..row.."_Target"):SetText("|cFF"..hexClassColor[DPSMateUser[d][2] or "warrior"]..d.."|r")
+	end
 	_G("DPSMate_Details_CurePoison_Total_LogDetails_Row"..row.."_Ability"):SetText(e)
 end
 
