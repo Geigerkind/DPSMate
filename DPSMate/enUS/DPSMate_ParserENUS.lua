@@ -18,7 +18,7 @@ function DPSMate.Parser:SelfHits(msg)
 	for a,b,c,d in strgfind(msg, "You (%a%a?)\it (.+) for (%d+)%. %((%d+) absorbed%)") do
 		DB:SetUnregisterVariables(tnbr(d), "AutoAttack", self.player)
 	end
-	for a,b,c,d in strgfind(msg, "You (%a%a?)\it (.+) for (%d+)\.%s?(.*)") do
+	for a,b,c,g,d in strgfind(msg, "You (%a%a?)\it (.+) for (%d+)(.*)\.%s?(.*)") do
 		if a == "h" then t[1]=1;t[2]=0 end
 		if d == "(glancing)" then t[3]=1;t[1]=0;t[2]=0 elseif d ~= "" then t[4]=1;t[1]=0;t[2]=0 end
 		DB:EnemyDamage(true, DPSMateEDT, self.player, "AutoAttack", t[1] or 0, t[2] or 1, 0, 0, 0, 0, tnbr(c), b, t[4] or 0, t[3] or 0)
@@ -218,7 +218,7 @@ function DPSMate.Parser:FriendlyPlayerHits(msg)
 	for a,b,c,d,e in strgfind(msg, "(.-) (%a%a?)\its (.+) for (%d+)%. %((%d+) absorbed%)") do
 		DB:SetUnregisterVariables(tnbr(e), "AutoAttack", a)
 	end
-	for a,b,c,d,e in strgfind(msg, "(.-) (%a%a?)\its (.+) for (%d+)\.%s?(.*)") do
+	for a,b,c,d,g,e in strgfind(msg, "(.-) (%a%a?)\its (.+) for (%d+)(.*)\.%s?(.*)") do
 		if b=="h" then t[3]=1;t[4]=0 end
 		if e=="(glancing)" then t[1]=1;t[3]=0;t[4]=0 elseif e~="" then t[2]=1;t[3]=0;t[4]=0 end
 		if c=="you" then c=self.player end
@@ -286,25 +286,6 @@ function DPSMate.Parser:SpellDamageShieldsOnSelf(msg)
 		DB:EnemyDamage(true, DPSMateEDT, self.player, "Reflection", 1, 0, 0, 0, 0, 0, am, c, 0, 0)
 		DB:DamageDone(self.player, "Reflection", 1, 0, 0, 0, 0, 0, am, 0, 0)
 	end
-	
-	-- The rebirth support
-	for ta in strgfind(msg, "You attack%. (.+) absorbs all the damage%.") do DB:Absorb("AutoAttack", ta, self.player); return end
-	for a,b,c in strgfind(msg, "Your (.+) was (.-) by (.+)%.") do 
-		if b=="dodged" then t[1]=1 elseif b=="blocked" then t[2]=1 else t[3]=1 end
-		DB:EnemyDamage(true, DPSMateEDT, self.player, a, 0, 0, 0, 0, t[1] or 0, t[3] or 0, 0, c, t[2] or 0, 0)
-		DB:DamageDone(self.player, a, 0, 0, 0, 0, t[1] or 0, t[3] or 0, 0, 0, t[2] or 0)
-		return
-	end
-	for a,b in strgfind(msg, "Your (.+) is parried by (.+)%.") do 
-		DB:EnemyDamage(true, DPSMateEDT, self.player, a, 0, 0, 0, 1, 0, 0, 0, b, 0, 0)
-		DB:DamageDone(self.player, a, 0, 0, 0, 1, 0, 0, 0, 0, 0)
-		return
-	end
-	for a,b in strgfind(msg, "Your (.+) missed (.+)%.") do 
-		DB:EnemyDamage(true, DPSMateEDT, self.player, a, 0, 0, 1, 0, 0, 0, 0, b, 0, 0)
-		DB:DamageDone(self.player, a, 0, 0, 1, 0, 0, 0, 0, 0, 0)
-		return
-	end
 end
 
 -- Helboar reflects 4 Fire damage to you.
@@ -321,25 +302,6 @@ function DPSMate.Parser:SpellDamageShieldsOnOthers(msg)
 			DB:EnemyDamage(true, DPSMateEDT, a, "Reflection", 1, 0, 0, 0, 0, 0, am, d, 0, 0)
 			DB:DamageDone(a, "Reflection", 1, 0, 0, 0, 0, 0, am, 0, 0)
 		end
-	end
-	
-	-- The rebirth support
-	for c,ta in strgfind(msg, "(.+) attack\s?%. (.+) absorb\s? all the damage%.") do if ta=="You" then ta=self.player end; DB:Absorb("AutoAttack", ta, c); return end
-	for f,a,b,c in strgfind(msg, "(.-)'s (.+) was (.-) by (.+)%.") do 
-		if b=="dodged" then t[1]=1 elseif b=="blocked" then t[2]=1 else t[3]=1 end
-		DB:EnemyDamage(true, DPSMateEDT, f, a, 0, 0, 0, 0, t[1] or 0, t[3] or 0, 0, c, t[2] or 0, 0)
-		DB:DamageDone(f, a, 0, 0, 0, 0, t[1] or 0, t[3] or 0, 0, 0, t[2] or 0)
-		return
-	end
-	for f,a,b in strgfind(msg, "(.-)'s (.+) is parried by (.+)%.") do
-		DB:EnemyDamage(true, DPSMateEDT, f, a, 0, 0, 0, 1, 0, 0, 0, b, 0, 0)
-		DB:DamageDone(f, a, 0, 0, 0, 1, 0, 0, 0, 0, 0)
-		return
-	end
-	for f,a,b in strgfind(msg, "(.-)'s (.+) missed (.+)%.") do 
-		DB:EnemyDamage(true, DPSMateEDT, f, a, 0, 0, 1, 0, 0, 0, 0, b, 0, 0)
-		DB:DamageDone(f, a, 0, 0, 1, 0, 0, 0, 0, 0, 0)
-		return
 	end
 end
 
@@ -972,7 +934,7 @@ end
 
 function DPSMate.Parser:PetHits(msg)
 	t = {}
-	for a,b,c,d,e in strgfind(msg, "(.-) (%a%a?)\its (.+) for (%d+)\.%s?(.*)") do
+	for a,b,c,d,g,e in strgfind(msg, "(.-) (%a%a?)\its (.+) for (%d+)(.*)\.%s?(.*)") do
 		if b=="h" then t[3]=1;t[4]=0 end
 		if e=="(glancing)" then t[1]=1;t[3]=0;t[4]=0 elseif e~="" then t[2]=1;t[3]=0;t[4]=0 end
 		if c=="you" then c=self.player end
