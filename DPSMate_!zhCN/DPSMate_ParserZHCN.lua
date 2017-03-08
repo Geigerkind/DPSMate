@@ -694,7 +694,8 @@ if (GetLocale() == "zhCN") then
 			DB:DeathHistory(self.player, self.player, a, t[1], 0, 1, 1, 0)
 			return
 		end
-		for a,b,c in strgfind(msg, "你的(.+)治疗了(.+)(%d+)点生命值。") do 
+		-- Thanks to korolevlong
+		for a,b,c in strgfind(msg, "你的(.+)治疗了(.+[^0-9])(%d+)点生命值。") do 
 			if b=="你" then t[1]=self.player end
 			t[2] = tnbr(c)
 			overheal = self:GetOverhealByName(t[2], t[1] or b)

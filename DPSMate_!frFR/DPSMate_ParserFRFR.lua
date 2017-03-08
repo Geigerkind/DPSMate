@@ -473,7 +473,7 @@ if (GetLocale() == "frFR") then
 			DB:DeathHistory(self.player, a, DPSMate.L["AutoAttack"], t[5], t[1] or 1, 0, 0, t[3] or 0)
 			return
 		end
-		for a,c,e,d in strgfind(msg, "(.+) vous inflige un coup critique pour (%d+) points de dégâts(.*)") do
+		for a,c,d in strgfind(msg, "(.+) vous inflige un coup critique pour (%d+) points de dégâts(.*)") do
 			if strfind(d, "écrase") then t[3]=1;t[2]=0 elseif strfind(d, "érafle") then t[4]=1;t[2]=0 end
 			t[5] = tnbr(c)
 			DB:EnemyDamage(false, DPSMateEDD, self.player, DPSMate.L["AutoAttack"], 0, t[2] or 1, 0, 0, 0, 0, t[5], a, t[4] or 0, t[3] or 0)
@@ -742,7 +742,6 @@ if (GetLocale() == "frFR") then
 		for a,b,d,e,g,f in strgfind(msg, "(.+) lance (.+) et inflige un coup critique à (.+) %((%d+) points de dégâts%s?(.*)%)%.(.*)") do
 			if strfind(f, "érafle") then t[4]=1;t[2]=0 end
 			t[3] = tnbr(e)
-			a = self:ReplaceSwString(a)
 			DB:UnregisterPotentialKick(d, b, GetTime())
 			DB:EnemyDamage(false, DPSMateEDD, d, b, 0, t[2] or 1, 0, 0, 0, 0, t[3], a, t[4] or 0, 0)
 			DB:DamageTaken(d, b, 0, t[2] or 1, 0, 0, 0, 0, t[3], a, 0, t[4] or 0)

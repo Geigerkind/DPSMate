@@ -1,6 +1,6 @@
 -- Global Variables
 DPSMate = {}
-DPSMate.VERSION = 95
+DPSMate.VERSION = 96
 DPSMate.LOCALE = GetLocale()
 DPSMate.SYNCVERSION = DPSMate.VERSION..DPSMate.LOCALE
 DPSMate.Parser = {}
@@ -102,7 +102,11 @@ local strgsub = string.gsub
 local func = function(c) tinsert(t, c) end
 local strformat = string.format
 local strgfind = string.gfind
-local strgsub = string.gsub
+local pairs = pairs
+local strlen = strlen
+local strsub = strsub
+local tonumber = tonumber
+
 
 -- Begin functions
 
@@ -303,10 +307,7 @@ function DPSMate:InitializeFrames()
 end
 
 function DPSMate:WindowsExist()
-	if (DPSMate:TableLength(DPSMateSettings.windows)==0) then
-		return false
-	end
-	return true
+	return (DPSMate:TableLength(DPSMateSettings.windows)==0)
 end
 
 function DPSMate:TMax(t)

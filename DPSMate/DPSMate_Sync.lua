@@ -202,7 +202,7 @@ end
 
 function DPSMate.Sync:Vote()
 	DPSMate_Vote:Hide()
-	SDM("DPSMate_Vote", nil, "RAID")
+	SDM("DPSMate_Vote"..DPSMate.SYNCVERSION, nil, "RAID")
 end
 
 local voteCount = 1
@@ -211,7 +211,7 @@ local abort = 0
 function DPSMate.Sync:StartVote()
 	if not voteStarter then
 		self.synckey = player..(random(1,1000))
-		SDM("DPSMate_StartVote", nil, "RAID")
+		SDM("DPSMate_StartVote"..DPSMate.SYNCVERSION, nil, "RAID")
 		voteStarter = true
 		participants = 1
 	else
@@ -223,14 +223,14 @@ function DPSMate.Sync:CountVote()
 	if voteStarter then
 		voteCount=voteCount+1
 		if voteCount >= (participants/2) then
-			SDM("DPSMate_VoteSuccess", self.synckey, "RAID")
+			SDM("DPSMate_VoteSuccess"..DPSMate.SYNCVERSION, self.synckey, "RAID")
 			voteStarter = false
 			voteCount = 1
 			participants = 1
 			local num = GetNumRaidMembers()
 			if num > 0 then
 				for i=1, num-1 do
-					SDM("DPSMate_SyncTimer", UnitName("raid"..i)..","..(ceil(i/8)*30 - 30)..",", "RAID")
+					SDM("DPSMate_SyncTimer"..DPSMate.SYNCVERSION, UnitName("raid"..i)..","..(ceil(i/8)*30 - 30)..",", "RAID")
 				end
 			end
 			DB.MainUpdate = ceil(num/8)*30 - 30
@@ -244,7 +244,7 @@ function DPSMate.Sync:DismissVote(elapsed)
 	if voteStarter then
 		voteTime=voteTime+elapsed
 		if voteTime>=30 then
-			SDM("DPSMate_VoteFail", nil, "RAID")
+			SDM("DPSMate_VoteFail"..DPSMate.SYNCVERSION, nil, "RAID")
 			voteStarter = false
 			voteCount = 1
 			voteTime = 0
@@ -304,7 +304,7 @@ function DPSMate.Sync:CountParticipants()
 end
 
 function DPSMate.Sync:Participate()
-	SDM("DPSMate_Participate", nil, "RAID")
+	SDM("DPSMate_Participate"..DPSMate.SYNCVERSION, nil, "RAID")
 end
 
 function DPSMate.Sync:ReceiveStartVote() 
@@ -318,7 +318,7 @@ end
 
 function DPSMate.Sync:AbortVote()
 	if IsPartyLeader() or IsRaidOfficer() or IsRaidLeader() then
-		SDM("DPSMate_AbortVote", "NaN", "RAID")
+		SDM("DPSMate_AbortVote"..DPSMate.SYNCVERSION, "NaN", "RAID")
 		DPSMate:SendMessage(DPSMate.L["resetaborted"])
 	end
 end
@@ -1664,13 +1664,13 @@ DPSMate.Sync.Exec = {
 	["DPSMate_AurasStart"..DPSMate.SYNCVERSION..DPSMate.Sync.synckey] = function(arg2,arg4) DPSMate.Sync:AurasStartEndIn(arg2, arg4, 1) end,
 	["DPSMate_AurasEnd"..DPSMate.SYNCVERSION..DPSMate.Sync.synckey] = function(arg2,arg4) DPSMate.Sync:AurasStartEndIn(arg2, arg4, 2) end,
 	["DPSMate_AurasCause"..DPSMate.SYNCVERSION..DPSMate.Sync.synckey] = function(arg2,arg4) DPSMate.Sync:AurasCauseIn(arg2, arg4) end,
-	["DPSMate_AbortVote"] = function() DPSMate.Sync:ReceiveAbort() end,
-	["DPSMate_Vote"] = function() DPSMate.Sync:CountVote() end,
-	["DPSMate_StartVote"] = function() DPSMate.Sync:ReceiveStartVote() end,
-	["DPSMate_VoteSuccess"] = function(arg2) DPSMate.Sync:VoteSuccess(arg2) end,
-	["DPSMate_VoteFail"] = function() DPSMate:SendMessage(DPSMate.L["votefailederror"]) end,
-	["DPSMate_Participate"] = function() DPSMate.Sync:CountParticipants() end,
-	["DPSMate_SyncTimer"] = function(arg2) DPSMate.Sync:SetTimer(arg2) end,
+	["DPSMate_AbortVote"..DPSMate.SYNCVERSION] = function() DPSMate.Sync:ReceiveAbort() end,
+	["DPSMate_Vote"..DPSMate.SYNCVERSION] = function() DPSMate.Sync:CountVote() end,
+	["DPSMate_StartVote"..DPSMate.SYNCVERSION] = function() DPSMate.Sync:ReceiveStartVote() end,
+	["DPSMate_VoteSuccess"..DPSMate.SYNCVERSION] = function(arg2) DPSMate.Sync:VoteSuccess(arg2) end,
+	["DPSMate_VoteFail"..DPSMate.SYNCVERSION] = function() DPSMate:SendMessage(DPSMate.L["votefailederror"]) end,
+	["DPSMate_Participate"..DPSMate.SYNCVERSION] = function() DPSMate.Sync:CountParticipants() end,
+	["DPSMate_SyncTimer"..DPSMate.SYNCVERSION] = function(arg2) DPSMate.Sync:SetTimer(arg2) end,
 	["DPSMate_SyncStatus"..DPSMate.SYNCVERSION..DPSMate.Sync.synckey] = function(arg2,arg4) DPSMate.Sync:SyncStatus(arg2, arg4) end,
 	["DPSMate_Threat"..DPSMate.SYNCVERSION..DPSMate.Sync.synckey] = function(arg2,arg4) DPSMate.Sync:ThreatAllIn(arg2, arg4) end,
 	["DPSMate_ThreatStats"..DPSMate.SYNCVERSION..DPSMate.Sync.synckey] = function(arg2,arg4) DPSMate.Sync:ThreatStatsIn(arg2, arg4) end,

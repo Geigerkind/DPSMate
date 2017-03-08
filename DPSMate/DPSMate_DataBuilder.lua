@@ -138,8 +138,25 @@ local player = ""
 local GT = GetTime
 local strfind = string.find
 local UL = UnitLevel
-local slower = strlower
+local strlower = strlower
 local strformat = string.format
+local UnitClass = UnitClass
+local GetGuildInfo = GetGuildInfo
+local GetRaidRosterInfo = GetRaidRosterInfo
+local GetRealZoneText = GetRealZoneText
+local GetNumPartyMembers = GetNumPartyMembers
+local GetNumRaidMembers = GetNumRaidMembers
+local GetGameTime = GetGameTime
+local UnitName = UnitName
+local UnitFactionGroup = UnitFactionGroup
+local UnitAffectingCombat = UnitAffectingCombat
+local UnitIsPlayer = UnitIsPlayer
+local UnitIsDead = UnitIsDead
+local UnitBuff = UnitBuff
+local UnitInRaid = UnitInRaid
+local pairs = pairs
+local floor = floor
+
 DPSMate.DB.windfuryab = {
 	["Windfury Weapon"] = true,
 	["Windfury Totem"] = true,
@@ -776,10 +793,7 @@ function DPSMate.DB:PlayerInParty()
 end
 
 function DPSMate.DB:InPartyOrRaid()
-	if self:PlayerInParty() or UnitInRaid("player") then
-		return true
-	end
-	return false
+	return self:PlayerInParty() or UnitInRaid("player")
 end
 
 function DPSMate.DB:GetNumPartyMembers()
@@ -1077,7 +1091,7 @@ local frenchConv = {
 	["de physique"] = "physique",
 }
 function DPSMate.DB:AddSpellSchool(ab, school)
-	school = slower(school)
+	school = strlower(school)
 	if frenchConv[school] then
 		school = frenchConv[school]
 	end
@@ -1108,7 +1122,8 @@ local hackOrder, hackOrder2 = {}, {}
 function DPSMate.DB:DamageDone(Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, Ddodge, Dresist, Damount, Dglance, Dblock)
 	if self:BuildUser(Duser, nil) or self:BuildAbility(Dname, nil) then return end -- Attempt to fix this problem?
 	
-	if (not CombatState and cheatCombat+10<GT()) then
+	local time = GT()
+	if (not CombatState and cheatCombat+10<time) then
 		DPSMate.Options:NewSegment()
 	end
 	CombatState, CombatTime = true, 0
@@ -1161,7 +1176,6 @@ function DPSMate.DB:DamageDone(Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, Ddodge,
 		end
 		local path = DPSMateDamageDone[cat][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]]
 		-- Casts evaluation
-		local time = GT()
 		if CastsBuffer[1][cat][Duser] then
 			if CastsBuffer[1][cat][Duser][Dname] then
 				if time>=(CastsBuffer[1][cat][Duser][Dname]+0.1) then
@@ -1221,6 +1235,7 @@ end
 function DPSMate.DB:DamageTaken(Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, Ddodge, Dresist, Damount, cause, Dcrush, Dblock)
 	if self:BuildUser(Duser, nil) or self:BuildUser(cause, nil) or self:BuildAbility(Dname, nil) then return end
 	if not DPSMateSettings["legacylogs"] and not DPSMate.RegistredModules["damagetaken"] then return end
+	local time = GT()
 	for cat, val in pairs({[1]="total", [2]="current"}) do 
 		if not DPSMateDamageTaken[cat][DPSMateUser[Duser][1]] then
 			DPSMateDamageTaken[cat][DPSMateUser[Duser][1]] = {
@@ -1260,7 +1275,6 @@ function DPSMate.DB:DamageTaken(Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, Ddodge
 		end
 		local path = DPSMateDamageTaken[cat][DPSMateUser[Duser][1]][DPSMateUser[cause][1]][DPSMateAbility[Dname][1]]
 		-- Casts evaluation
-		local time = GT()
 		if CastsBuffer[2][cat][Duser] then
 			if CastsBuffer[2][cat][Duser][Dname] then
 				if time>=(CastsBuffer[2][cat][Duser][Dname]+0.1) then
@@ -1322,6 +1336,7 @@ function DPSMate.DB:EnemyDamage(mode, arr, Duser, Dname, Dhit, Dcrit, Dmiss, Dpa
 	if self:BuildUser(Duser, nil) or self:BuildUser(cause, nil) or self:BuildAbility(Dname, nil) then return end
 	ActiveMob[cause] = true
 	
+	local time = GT()
 	if mode then -- EDD
 		if not DPSMateSettings["legacylogs"] and not DPSMate.RegistredModules["enemydamagedone"] then
 			return
@@ -1381,7 +1396,6 @@ function DPSMate.DB:EnemyDamage(mode, arr, Duser, Dname, Dhit, Dcrit, Dmiss, Dpa
 		end
 		local path = arr[cat][DPSMateUser[cause][1]][DPSMateUser[Duser][1]][DPSMateAbility[Dname][1]]
 		-- Casts evaluation
-		local time = GT()
 		if CastsBuffer[3][cat][Duser] then
 			if CastsBuffer[3][cat][Duser][Dname] then
 				if time>=(CastsBuffer[3][cat][Duser][Dname]+0.1) then
@@ -1593,8 +1607,9 @@ function DPSMate.DB:AwaitingAbsorbConfirmation(owner, ability, abilityTarget, ti
 end
 
 function DPSMate.DB:ClearAwaitAbsorb()
+	local time = GT()
 	for cat, val in pairs(Await) do
-		if (GT()-val[4])>=10 then
+		if (time-val[4])>=10 then
 			tremove(Await, cat)
 			break
 		end
@@ -1742,12 +1757,13 @@ function DPSMate.DB:GetAbsorbingShield(ability, abilityTarget, cate)
 		if AAS~={} or ASS~={} then
 			local unit = DPSMate.Parser:GetUnitByName(abilityTarget)
 			if unit then
+				-- Maybe some performance improvement here by UnitBuff
 				for i=1, 32 do
-					DPSMate_Tooltip:SetOwner(UIParent, "ANCHOR_NONE")
+					--DPSMate_Tooltip:SetOwner(UIParent, "ANCHOR_NONE")
 					DPSMate_Tooltip:ClearLines()
 					DPSMate_Tooltip:SetUnitBuff(unit, i, "HELPFUL")
 					local buff = DPSMate_TooltipTextLeft1:GetText()
-					DPSMate_Tooltip:Hide()
+					--DPSMate_Tooltip:Hide()
 					if (not buff) then break end
 					self:BuildAbility(buff, nil)
 					buff = DPSMateAbility[buff][1]
@@ -1863,8 +1879,9 @@ function DPSMate.DB:RegisterHotDispel(target, ability)
 end
 
 function DPSMate.DB:ClearAwaitHotDispel()
+	local time = GT()
 	for cat, val in AwaitHotDispel do
-		if (GT()-val[4])>=10 then
+		if (time-val[4])>=10 then
 			tremove(AwaitHotDispel, cat)
 		end
 	end
@@ -1883,18 +1900,19 @@ function DPSMate.DB:ApplyRemainingDispels()
 	if not DPSMateSettings["legacylogs"] and not DPSMate.RegistredModules["decurses"] and not DPSMate.RegistredModules["curepoison"] and not DPSMate.RegistredModules["liftmagic"] and not DPSMate.RegistredModules["curedisease"] and not DPSMate.RegistredModules["dispels"] then return end
 	if playerfaction~="Horde" then NextTotemDispel = false; return end
 	local num = 0
+	local time = GT()
+	local type = "party"
+	local tnum = GetNumPartyMembers()
+	if tnum <= 0 then
+		type="raid"
+		tnum=GetNumRaidMembers()
+	end
 	for cat, val in ConfirmedDispel do
 		for ca, va in val do
 			num = num + 1
-			if (GT()-va[2])>10 and (GT()-va[2])<40 then
-				local type = "party"
-				local num = GetNumPartyMembers()
-				if num <= 0 then
-					type="raid"
-					num=GetNumRaidMembers()
-				end
+			if (time-va[2])>10 and (time-va[2])<40 then
 				if type=="party" then
-					for i=1, num do
+					for i=1, tnum do
 						if UnitClass(type..i)==DPSMate.L["shaman"] then
 							self:Dispels(UnitName(type..i), DPSMate.L["poisoncleansingtotem"], cat, va[1])
 							tremove(ConfirmedDispel[cat], ca)
@@ -1904,7 +1922,7 @@ function DPSMate.DB:ApplyRemainingDispels()
 				else
 					local subGRP = {}
 					local PSGRP = nil
-					for i=1, num do
+					for i=1, tnum do
 						local a,b,c = GetRaidRosterInfo(i)
 						if UnitClass(type..i)==DPSMate.L["shaman"] then
 							subGRP[c] = UnitName(type..i)
@@ -1933,7 +1951,7 @@ function DPSMate.DB:EvaluateDispel()
 	for cat, val in ActiveHotDispel do
 		for ca, va in val do
 			if ConfirmedDispel[cat] then
-				if va[2]~=Restor or (va[2]==Restor and va[1]==cat) then
+				if va[2]~=self.Restor or (va[2]==self.Restor and va[1]==cat) then
 					local check = nil
 					for q, t in ConfirmedDispel[cat] do
 						if DPSMate.Parser.HotDispels[va[2]] then
@@ -1956,7 +1974,7 @@ function DPSMate.DB:EvaluateDispel()
 		for ca, va in val do
 			if (GT()-(va[3] or 0))<=10 then
 				if ConfirmedDispel[cat] then
-					if va[2]~=Restor then
+					if va[2]~=self.Restor then
 						if ConfirmedDispel[cat][1] then
 							self:Dispels(va[1], va[2], cat, ConfirmedDispel[cat][1][1])
 							tremove(ConfirmedDispel[cat], 1)
@@ -1969,7 +1987,7 @@ function DPSMate.DB:EvaluateDispel()
 						end
 					end
 				end
-				if cat == DPSMate.L["unknown"] and lastDispel then
+				--if cat == DPSMate.L["unknown"] and lastDispel then
 					-- Commented out for now, because of too much uncertainity
 					--[[
 					if ConfirmedDispel[lastDispel] then
@@ -1982,7 +2000,7 @@ function DPSMate.DB:EvaluateDispel()
 						end
 					end
 					--]]
-				end
+				--end
 			end
 		end
 	end
@@ -2133,8 +2151,9 @@ function DPSMate.DB:AssignPotentialKick(cause, ability, target, time)
 end
 
 function DPSMate.DB:UpdateKicks()
+	local time = GT()
 	for cat, val in AwaitKick do
-		if (GT()-val[3])>=2.5 then
+		if (time-val[3])>=2.5 then
 			if val[4] then
 				self:Kick(val[4][1], val[1], val[4][2], val[2])
 			end
@@ -2178,8 +2197,9 @@ end
 
 -- deprecated function cause of GT??
 function DPSMate.DB:ClearAwaitBuffs()
+	local time = GT()
 	for cat, val in AwaitBuff do
-		if (GT()-(val[4] or 0))>=5 then
+		if (time-(val[4] or 0))>=5 then
 			tremove(AwaitBuff, cat)
 		end
 	end
@@ -2307,14 +2327,9 @@ function DPSMate.DB:IsWipe()
 			end
 		end
 	end
-	if am > 3 then
-		return false
-	else
-		return true
-	end
+	return (am > 3)
 end
-local UAC = UnitAffectingCombat
-local UN = UnitName
+
 function DPSMate.DB:UpdatePlayerCBT(cbt)
 	local notInCombat = true
 	local type = "raid"
@@ -2322,15 +2337,15 @@ function DPSMate.DB:UpdatePlayerCBT(cbt)
 	if num<=0 then
 		type = "party"
 		num = GetNumPartyMembers()
-		if UAC("player") then
+		if UnitAffectingCombat("player") then
 			DPSMateCombatTime["effective"][1][player] = (DPSMateCombatTime["effective"][1][player] or 0) + cbt
 			DPSMateCombatTime["effective"][2][player] = (DPSMateCombatTime["effective"][2][player] or 0) + cbt
 			notInCombat = false
 		end
 	end
 	for i=1, num do
-		if UAC(type..i) then
-			local name = UN(type..i)
+		if UnitAffectingCombat(type..i) then
+			local name = UnitName(type..i)
 			DPSMateCombatTime["effective"][1][name] = (DPSMateCombatTime["effective"][1][name] or 0) + cbt
 			DPSMateCombatTime["effective"][2][name] = (DPSMateCombatTime["effective"][2][name] or 0) + cbt
 			notInCombat = false
@@ -2550,6 +2565,7 @@ function DPSMate.DB:BuildFail(type, user, cause, ability, amount)
 	self:BuildUser(cause)
 	self:BuildAbility(ability)
 	if not DPSMateSettings["legacylogs"] and not DPSMate.RegistredModules["fails"] then return end
+	local time = GameTime_GT()
 	for cat, val in {[1] = "total", [2] = "current"} do
 		if not DPSMateFails[cat][DPSMateUser[cause][1]] then
 			DPSMateFails[cat][DPSMateUser[cause][1]] = {}
@@ -2560,7 +2576,7 @@ function DPSMate.DB:BuildFail(type, user, cause, ability, amount)
 			[3] = DPSMateAbility[ability][1],
 			[4] = amount,
 			[5] = DPSMateCombatTime[val],
-			[6] = GameTime_GT(),
+			[6] = time,
 		})
 	end
 	DPSMate:Broadcast(3, user, cause, ability, amount, type)
@@ -2602,6 +2618,7 @@ end
 function DPSMate.DB:CCBreaker(target, ability, cause)
 	self:BuildAbility(ability)
 	if not DPSMateSettings["legacylogs"] and not DPSMate.RegistredModules["ccbreaker"] then return end
+	local time = GameTime_GT()
 	for cat, val in {[1]="total",[2]="current"} do
 		if not DPSMateCCBreaker[cat][DPSMateUser[cause][1]] then
 			DPSMateCCBreaker[cat][DPSMateUser[cause][1]] = {}
@@ -2610,7 +2627,7 @@ function DPSMate.DB:CCBreaker(target, ability, cause)
 			[1] = DPSMateAbility[ability][1],
 			[2] = DPSMateUser[target][1],
 			[3] = DPSMateCombatTime[val],
-			[4] = GameTime_GT()
+			[4] = time
 		})
 	end
 end
