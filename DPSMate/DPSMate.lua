@@ -1,6 +1,6 @@
 -- Global Variables
 DPSMate = {}
-DPSMate.VERSION = 96
+DPSMate.VERSION = 97
 DPSMate.LOCALE = GetLocale()
 DPSMate.SYNCVERSION = DPSMate.VERSION..DPSMate.LOCALE
 DPSMate.Parser = {}
@@ -307,7 +307,7 @@ function DPSMate:InitializeFrames()
 end
 
 function DPSMate:WindowsExist()
-	return (DPSMate:TableLength(DPSMateSettings.windows)==0)
+	return (DPSMateSettings["windows"][1]~=nil)
 end
 
 function DPSMate:TMax(t)
