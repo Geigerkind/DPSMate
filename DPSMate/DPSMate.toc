@@ -9,7 +9,6 @@
 libs\AceLibrary\AceLibrary.lua
 libs\Dewdrop-2.0\Dewdrop-2.0.lua
 libs\GraphLib\Graph-1.0\Graph-1.0.lua
-libs\AceLocale\AceLocale-2.2.lua
 enUS\Babble-Spell-2.3.lua
 enUS\Babble-Boss-2.3.lua
 enUS\NPCDB-1.0.lua
