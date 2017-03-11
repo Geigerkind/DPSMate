@@ -106,6 +106,7 @@ local pairs = pairs
 local strlen = strlen
 local strsub = strsub
 local tonumber = tonumber
+local getn = getn
 
 
 -- Begin functions

@@ -116,10 +116,11 @@ DPSMate.DB.Zones = {
 	[DPSMate.L["ash"]] = true,
 	[DPSMate.L["fe"]] = true
 }
-DPSMate.DB.KTMHOOK = {}
 DPSMate.DB.NextSwing = {}
 DPSMate.DB.NextSwingEDD = {}
 DPSMate.DB.precision = 1.0
+DPSMate.DB.userlen = 0
+DPSMate.DB.abilitylen = 0
 
 -- Local Variables
 local CombatState = false
@@ -162,6 +163,7 @@ DPSMate.DB.windfuryab = {
 	["Windfury Totem"] = true,
 }
 local playerfaction = UnitFactionGroup("player")
+local tablemodes = {"total","current"}
 
 if not GameTime_GT then
 	GameTime_GT = function()
@@ -607,6 +609,9 @@ function DPSMate.DB:OnEvent(event)
 			}
 		end
 		
+		self.abilitylen = DPSMate:TableLength(DPSMateAbility)
+		self.userlen = DPSMate:TableLength(DPSMateUser)
+
 		DPSMate:OnLoad()
 		DPSMate.Sync:OnLoad()
 		DPSMate.Options:InitializeSegments()
@@ -616,7 +621,6 @@ function DPSMate.DB:OnEvent(event)
 		
 		player = UnitName("player")
 		
-		-- Fixing an Log Bug
 		if not DPSMateUser["LASTRESETDPSMATE"] or DPSMateUser["LASTRESETDPSMATE"][2]<DPSMate.VERSION then
 			DPSMateUser = {}
 			DPSMateAbility = {}
@@ -633,16 +637,6 @@ function DPSMate.DB:OnEvent(event)
 				_G("DPSMate_Details"..val):SetToplevel(true)
 			end
 		end
-		
-		-- Look it up at NEC
-		--SetCVar("CombatLogRangeParty", 150);
-		--SetCVar("CombatLogRangePartyPet", 150);
-		--SetCVar("CombatLogRangeFriendlyPlayers", 150);
-		--SetCVar("CombatLogRangeFriendlyPlayersPets", 150);
-		--SetCVar("CombatLogRangeHostilePlayers", 150);
-		--SetCVar("CombatLogRangeHostilePlayersPets", 150);
-		--SetCVar("CombatLogRangeCreature", 150);
-		--SetCVar("CombatDeathLogRange", 150);
 		
 		DPSMate:SendMessage("DPSMate build "..DPSMate.VERSION.." has been loaded!")
 		self.loaded = true
@@ -678,7 +672,7 @@ function DPSMate.DB:OnEvent(event)
 	elseif event == "PLAYER_TARGET_CHANGED" then
 		self:PlayerTargetChanged()
 	elseif event == "PLAYER_PET_CHANGED" or event == "PET_STABLE_CLOSED" or event == "PET_STABLE_SHOW" or event == "PET_STABLE_UPDATE" or event == "PET_STABLE_UPDATE_PAPERDOLL" then
-		DPSMate.DB:OnGroupUpdate()
+		self:OnGroupUpdate()
 	end
 end
 
@@ -742,23 +736,6 @@ function DPSMate.DB:OnGroupUpdate()
 	DPSMate.Parser.TargetParty[name] = "player"
 end
 
--- Deprecated
-function DPSMate.DB:AffectingCombat()
-	if UnitAffectingCombat("player") then return true end
-	local type = "raid"
-	local num = GetNumRaidMembers()
-	if num<=0 then
-		type = "party"
-		num = GetNumPartyMembers()
-	end
-	for i=1, num do
-		if UnitAffectingCombat(type..i) then
-			return true
-		end
-	end
-	return false
-end
-
 function DPSMate.DB:PlayerTargetChanged()
 	if UnitIsPlayer("target") then
 		local name = UnitName("target")
@@ -785,77 +762,54 @@ function DPSMate.DB:PlayerTargetChanged()
 	end
 end
 
-function DPSMate.DB:PlayerInParty()
-	if GetNumPartyMembers() > 0 and (not UnitInRaid("player")) then
-		return true
-	end
-	return false
-end
-
-function DPSMate.DB:InPartyOrRaid()
-	return self:PlayerInParty() or UnitInRaid("player")
-end
-
-function DPSMate.DB:GetNumPartyMembers()
-	if self:PlayerInParty() then
-		return GetNumPartyMembers()
-	elseif UnitInRaid("player") then
-		return GetNumRaidMembers()
-	end
-end
-
--- Performance
 function DPSMate.DB:BuildUser(Dname, Dclass)
 	if not Dname then return true end
 	if (not DPSMateUser[Dname] and Dname) then
+		self.userlen = self.userlen + 1
 		DPSMateUser[Dname] = {
-			[1] = DPSMate:TableLength(DPSMateUser)+1,
+			[1] = self.userlen,
 			[2] = Dclass,
 		}
 		DPSMate.UserId = nil
 	end
-	return false
 end
 
--- Performance
 function DPSMate.DB:BuildAbility(name, kind, school)
 	if not name then return true end
 	if not DPSMateAbility[name] then
+		self.abilitylen = self.abilitylen + 1
 		DPSMateAbility[name] = {
-			[1] = DPSMate:TableLength(DPSMateAbility)+1,
+			[1] = self.abilitylen,
 			[2] = kind,
 			[3] = school,
 		}
 		DPSMate.AbilityId = nil
 	end
-	return false
 end
 
--- KTMHOOK
-DPSMate.DB.specialAbTrans = {
-	["heroicstrike"] = "Heroic Strike",
-	["maul"] = "Maul",	
-	["swipe"] = "Swipe",
-	["shieldslam"] = "Shield Slam",
-	["revenge"] = "Revenge",
-	["shieldbash"] = "Shield Bash",
-	["sunder"] = "Sunder Armor",
-	["cleave"] = "Cleave",
-	--["feint"] = "Feint",
-	--["cower"] = "Cower",
-	["searingpain"] = "Searing Pain",
-	["earthshock"] = "Earth Shock",
-	["mindblast"] = "Mind Blast",
-	["holyshield"] = "Holy Shield",
-	--["distractingshot"] = "Distracting Shot",
-	["heroicstrike"] = "Heroic Strike",
-	["thunderfury"] = "Thunderfury",
-	["graceofearth"] = "Grace of Earth",
-	["blackamnesty"] = "Black Amnesty",
-	["whitedamage"] = "AutoAttack",
-}
-
 if klhtm then
+	-- KTMHOOK
+	DPSMate.DB.specialAbTrans = {
+		["heroicstrike"] = "Heroic Strike",
+		["maul"] = "Maul",	
+		["swipe"] = "Swipe",
+		["shieldslam"] = "Shield Slam",
+		["revenge"] = "Revenge",
+		["shieldbash"] = "Shield Bash",
+		["sunder"] = "Sunder Armor",
+		["cleave"] = "Cleave",
+		["searingpain"] = "Searing Pain",
+		["earthshock"] = "Earth Shock",
+		["mindblast"] = "Mind Blast",
+		["holyshield"] = "Holy Shield",
+		["heroicstrike"] = "Heroic Strike",
+		["thunderfury"] = "Thunderfury",
+		["graceofearth"] = "Grace of Earth",
+		["blackamnesty"] = "Black Amnesty",
+		["whitedamage"] = "AutoAttack",
+	}
+	DPSMate.DB.KTMHOOK = {}
+	DPSMate.DB.ktmavail = true
 	local oldModSpecialAttack = klhtm.combat.specialattack
 	klhtm.combat.specialattack = function(abilityid, target, damage, iscrit, spellschool)
 		oldModSpecialAttack(abilityid, target, damage, iscrit, spellschool)
@@ -900,44 +854,47 @@ if klhtm then
 		tinsert(DPSMate.DB.KTMHOOK[powertype], {target, klhtm.combat.event.threat})
 		DPSMate.DB:Threat(player, powertype, target, klhtm.combat.event.threat, 1)
 	end
-end
 
-function DPSMate.DB:UpdateThreat()
-	if self.KTMHOOK ~= {} then
-		local str
-		for cat, val in self.KTMHOOK do
-			local curNpc, curNpcNum = {}, 0
-			if str then
-				str = str..',["'..cat..'"]={'
-			else
-				str = '["'..cat..'"]={'
-			end
-			for ca, va in val do
-				if curNpc[va[1]] then
-					str = str..','..va[2]
+	function DPSMate.DB:UpdateThreat()
+		if self.KTMHOOK ~= {} then
+			local str
+			for cat, val in self.KTMHOOK do
+				local curNpc, curNpcNum = {}, 0
+				if str then
+					str = str..',["'..cat..'"]={'
 				else
-					if curNpcNum==0 then
-						str = str..'["'..va[1]..'"]={'..va[2]
-					else
-						str = str..'},["'..va[1]..'"]={'..va[2]
-					end
-					curNpc[va[1]] = true
-					curNpcNum = curNpcNum + 1
+					str = '["'..cat..'"]={'
 				end
+				for ca, va in val do
+					if curNpc[va[1]] then
+						str = str..','..va[2]
+					else
+						if curNpcNum==0 then
+							str = str..'["'..va[1]..'"]={'..va[2]
+						else
+							str = str..'},["'..va[1]..'"]={'..va[2]
+						end
+						curNpc[va[1]] = true
+						curNpcNum = curNpcNum + 1
+					end
+				end
+				str = str..'}}'
 			end
-			str = str..'}}'
-		end
-		if str then
-			self.KTMHOOK = {}
-			SendAddonMessage("KLHTMHOOK", str, "RAID")
+			if str then
+				self.KTMHOOK = {}
+				SendAddonMessage("KLHTMHOOK", str, "RAID")
+			end
 		end
 	end
 end
 
 function DPSMate.DB:Threat(cause, spellname, target, value, amount)
-	if self:BuildUser(target, nil) or self:BuildUser(cause, nil) or self:BuildAbility(spellname, nil) or value==0 or cause=="" or spellname=="" or target=="" then return end
+	if value==0 then return end
 	if not DPSMateSettings["legacylogs"] and not DPSMate.RegistredModules["threat"] then return end
-	for cat, val in pairs({[1]="total", [2]="current"}) do
+	self:BuildUser(target)
+	self:BuildUser(cause)
+	self:BuildAbility(spellname)
+	for cat, val in pairs(tablemodes) do
 		if not DPSMateThreat[cat][DPSMateUser[cause][1]] then
 			DPSMateThreat[cat][DPSMateUser[cause][1]] = {}
 		end
@@ -970,19 +927,7 @@ function DPSMate.DB:Threat(cause, spellname, target, value, amount)
 			else
 				path["i"][time] = value
 			end
-		end		
-		--[[
-		if path["i"][3]>DPSMateCombatTime[val] then
-			path["i"][4] = path["i"][4] + value
-		else
-			if path["i"][4]>0 then
-				path["i"][1] = path["i"][1]..strformat("%.1f", path["i"][3]-self.precision)..","
-				path["i"][2] = path["i"][2]..path["i"][4]..","
-			end
-			path["i"][3] = DPSMateCombatTime[val]+self.precision
-			path["i"][4] = value
 		end
-		--]]
 	end
 	self.NeedUpdate = true
 end
@@ -1032,21 +977,7 @@ local spellSchoolNames = {
 	["givre"] = true,
 	["arcane"] = true,
 	["sacré"] = true,
-	["d'ombre"] = true,
-	["d'feu"] = true,
-	["d'nature"] = true,
-	["d'givre"] = true,
-	["d'arcane"] = true,
-	["d'sacré"] = true,
-	["de ombre"] = true,
-	["de feu"] = true,
-	["de givre"] = true,
-	["de nature"] = true,
-	["de arcane"] = true,
-	["de sacré"] = true,
 	["physique"] = true,
-	["d'physique"] = true,
-	["de physique"] = true,
 
 	-- ruRU
 	["огонь"] = true,
@@ -1066,69 +997,43 @@ local spellSchoolNames = {
 	["冰霜"] = true,
 	["物理"] = true,
 }
-
-local frenchConv = {
-	["ombre"] = "ombre",
-	["feu"] = "feu",
-	["nature"] = "nature",
-	["givre"] = "givre",
-	["arcane"] = "aracane",
-	["sacré"] = "sacré",
-	["d'ombre"] = "ombre",
-	["d'feu"] = "feu",
-	["d'nature"] = "nature",
-	["d'givre"] = "givre",
-	["d'arcane"] = "aracane",
-	["d'sacré"] = "sacré",
-	["de ombre"] = "ombre",
-	["de feu"] = "feu",
-	["de givre"] = "givre",
-	["de nature"] = "nature",
-	["de arcane"] = "aracane",
-	["de sacré"] = "sacré",
-	["physique"] = "physique",
-	["d'physique"] = "physique",
-	["de physique"] = "physique",
-}
 function DPSMate.DB:AddSpellSchool(ab, school)
-	school = strlower(school)
-	if frenchConv[school] then
-		school = frenchConv[school]
-	end
-	local sc
-	if spellSchoolNames[school] then
-		sc = school
-	else
-		for c, _ in spellSchoolNames do
-			if strfind(school, c) then
-				sc = c
-				break
+	if not DPSMateAbility[ab][3] then
+		school = strlower(school)
+		local sc
+		if spellSchoolNames[school] then
+			sc = school
+		else
+			for c, _ in spellSchoolNames do
+				if strfind(school, c) then
+					sc = c
+					break
+				end
 			end
 		end
-	end
-	if sc then
-		if DPSMateAbility[ab] then
-			DPSMateAbility[ab][3] = sc
-		else
-			self:BuildAbility(ab,nil,sc)
+		if sc then
+			if DPSMateAbility[ab] then
+				DPSMateAbility[ab][3] = sc
+			else
+				self:BuildAbility(ab,nil,sc)
+			end
 		end
 	end
 end
 
--- First crit/hit av value will be half if it is not the first hit actually. Didnt want to add an exception for it though. Maybe later :/
 local CastsBuffer = {[1]={[1]={},[2]={}},[2]={[1]={},[2]={}},[3]={[1]={},[2]={}}}
 DPSMate.DB.AAttack = "AutoAttack"
 local hackOrder, hackOrder2 = {}, {}
 function DPSMate.DB:DamageDone(Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, Ddodge, Dresist, Damount, Dglance, Dblock)
-	if self:BuildUser(Duser, nil) or self:BuildAbility(Dname, nil) then return end -- Attempt to fix this problem?
-	
+	self:BuildUser(Duser)
+	self:BuildAbility(Dname)
+
 	local time = GT()
 	if (not CombatState and cheatCombat+10<time) then
 		DPSMate.Options:NewSegment()
 	end
 	CombatState, CombatTime = true, 0
 	
-	-- Part to take extra swings as abilities into account
 	if self.NextSwing[Duser] then
 		if Dname == self.AAttack and self.NextSwing[Duser][1]>0 and ((hackOrder[Duser] and self.windfuryab[self.NextSwing[Duser][2]]) or not self.windfuryab[self.NextSwing[Duser][2]]) then
 			Dname = self.NextSwing[Duser][2]
@@ -1141,7 +1046,7 @@ function DPSMate.DB:DamageDone(Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, Ddodge,
 		end
 	end
 	
-	for cat, val in pairs({[1]="total", [2]="current"}) do 
+	for cat, val in pairs(tablemodes) do 
 		if (not DPSMateDamageDone[cat][DPSMateUser[Duser][1]]) then
 			DPSMateDamageDone[cat][DPSMateUser[Duser][1]] = {
 				i = 0,
@@ -2413,7 +2318,9 @@ function DPSMate.DB:CombatTime()
 				MainLastUpdate = MainLastUpdate + arg1
 				if MainLastUpdate>=MainUpdateTime then
 					DPSMate.DB:UpdateKicks()
-					DPSMate.DB:UpdateThreat()
+					if DPSMate.DB.ktmavail then
+						DPSMate.DB:UpdateThreat()
+					end
 					DPSMate:SetStatusBarValue()
 					DPSMate.DB.NeedUpdate = false
 					MainLastUpdate = 0
