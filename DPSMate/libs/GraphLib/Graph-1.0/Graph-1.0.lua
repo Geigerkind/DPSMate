@@ -50,10 +50,6 @@ local GetTime = GetTime
 local MouseIsOver = MouseIsOver
 local UnitHealth = UnitHealth
 
-local UIParent = UIParent
-
-local DEFAULT_CHAT_FRAME = DEFAULT_CHAT_FRAME
-
 --Search for just Addon\\ at the front since the interface part often gets trimmed
 local TextureDirectory="Interface\\AddOns\\DPSMate\\libs\\GraphLib\\GraphTextures\\"
 

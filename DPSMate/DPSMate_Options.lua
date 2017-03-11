@@ -995,7 +995,7 @@ function DPSMate.Options:OpenMenu(b, obj)
 end
 
 function DPSMate.Options:ToggleDrewDrop(i, obj, pa)
-	if not DPSMate:WindowsExist() then return end
+	if not DPSMateSettings["windows"][1] then return end
 	for cat, _ in pairs(DPSMateSettings["windows"][pa.Key]["options"][i]) do
 		DPSMateSettings["windows"][pa.Key]["options"][i][cat] = false
 	end
