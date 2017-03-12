@@ -1131,7 +1131,7 @@ function DPSMate.Sync:EDStatOut(arr, prefix)
 								tinsert(a, i, {c,v})
 								break
 							else
-								if ca<=a[i][1] then
+								if c<=a[i][1] then
 									tinsert(a, i, {c,v})
 									break
 								end
@@ -1188,7 +1188,7 @@ function DPSMate.Sync:HealingStatOut(arr, prefix)
 						tinsert(a, i, {c,v})
 						break
 					else
-						if ca<=a[i][1] then
+						if c<=a[i][1] then
 							tinsert(a, i, {c,v})
 							break
 						end
@@ -1234,7 +1234,7 @@ function DPSMate.Sync:HealingTakenStatOut(arr, prefix)
 								tinsert(a, i, {c,v})
 								break
 							else
-								if ca<=a[i][1] then
+								if c<=a[i][1] then
 									tinsert(a, i, {c,v})
 									break
 								end
@@ -1453,7 +1453,7 @@ function DPSMate.Sync:ThreatStatsOut()
 						tinsert(a, i, {c,v})
 						break
 					else
-						if ca<=a[i][1] then
+						if c<=a[i][1] then
 							tinsert(a, i, {c,v})
 							break
 						end
