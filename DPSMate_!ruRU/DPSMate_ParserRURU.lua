@@ -4,9 +4,10 @@ local t = {}
 local strgfind = string.gfind
 local DB = DPSMate.DB
 local tnbr = tonumber
-local npcdb = DPSMate.NPCDB
+local npcdb = NPCDB
 local GT = GetTime
 local strsub = string.sub
+local strfind = string.find
 	
 ----------------------------------------------------------------------------------
 --------------                    Нанесенный урон                   --------------                                  
@@ -699,27 +700,13 @@ end
 			return
 		end
 		for b,a in strgfind(msg, "\"(.+)\" дает вам (%d) дополнительную атаку%.") do -- Potential for more evaluation
-			DB.NextSwing[self.player] = {
-				[1] = tnbr(a),
-				[2] = b
-			}
-			DB.NextSwingEDD[self.player] = {
-				[1] = tnbr(a),
-				[2] = b
-			}
+			DB:RegisterNextSwing(self.player, tnbr(a), b)
 			DB:BuildBuffs(self.player, self.player, b, true)
 			DB:DestroyBuffs(self.player, b)
 			return
 		end
 		for b,a in strgfind(msg, "\"(.+)\" дает вам (%d) дополнительных атаки%.") do -- Potential for more evaluation
-			DB.NextSwing[self.player] = {
-				[1] = tnbr(a),
-				[2] = b
-			}
-			DB.NextSwingEDD[self.player] = {
-				[1] = tnbr(a),
-				[2] = b
-			}
+			DB:RegisterNextSwing(a, tnbr(b), c)
 			DB:BuildBuffs(self.player, self.player, b, true)
 			DB:DestroyBuffs(self.player, b)
 			return

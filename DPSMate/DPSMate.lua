@@ -1,16 +1,16 @@
 -- Global Variables
 DPSMate = {}
-DPSMate.VERSION = 97
+DPSMate.VERSION = 98
 DPSMate.LOCALE = GetLocale()
 DPSMate.SYNCVERSION = DPSMate.VERSION..DPSMate.LOCALE
-DPSMate.Parser = {}
+DPSMate.Parser = CreateFrame("Frame", nil, UIParent)
 DPSMate.L = {}
-DPSMate.DB = {}
-DPSMate.Options = {}
-DPSMate.Sync = {}
+DPSMate.DB = CreateFrame("Frame", nil, UIParent)
+DPSMate.Options = CreateFrame("Frame", nil, UIParent)
+DPSMate.Sync = CreateFrame("Frame", nil, UIParent)
 DPSMate.Modules = {}
 DPSMate.Events = {
-	"CHAT_MSG_ADDON",
+	--"CHAT_MSG_ADDON",
 	"PLAYER_AURAS_CHANGED",
 	
 	-- Damage
@@ -80,7 +80,6 @@ DPSMate.AbilityId = nil
 DPSMate.Key = 1
 DPSMate.DelayMsg = {}
 DPSMate.BabbleSpell = BabbleSpell
-DPSMate.NPCDB = NPCDB
 DPSMate.BabbleBoss = BabbleBoss
 
 -- Local Variables
@@ -107,6 +106,7 @@ local strlen = strlen
 local strsub = strsub
 local tonumber = tonumber
 local getn = getn
+local tconcat = table.concat
 
 
 -- Begin functions
@@ -427,55 +427,53 @@ end
 
 function DPSMate:SetStatusBarValue()
 	if not DPSMateSettings["windows"][1] or self.Options.TestMode then return end
+	local arr, cbt, ecbt, user, val, perc, strt, statusbar, r, g, b, img, len
 	for k,c in DPSMateSettings.windows do
-		local arr, cbt, ecbt = self:GetMode(k)
-		local user, val, perc, strt = self:GetSettingValues(arr,cbt,k,ecbt)
+		arr, cbt, ecbt = self:GetMode(k)
+		user, val, perc, strt = self:GetSettingValues(arr,cbt,k,ecbt)
 		if DPSMateSettings["showtotals"] then
 			_G("DPSMate_"..c["name"].."_ScrollFrame_Child_Total_Value"):SetText(strt[1]..strt[2])
 		end
 		if not c["cbtdisplay"] then
 			_G("DPSMate_"..c["name"].."_Head_Font"):SetText(self.Options.Options[1]["args"][c["CurMode"]].name.." ["..self.Options:FormatTime(cbt).."]")
 		end
-		if (user[1]) then
-			local statusbar, r, g, b, img
-			local len = 0
-			for i=1, 40 do
-				statusbar = _G("DPSMate_"..c["name"].."_ScrollFrame_Child_StatusBar"..i)
-				if user[i] then
-					r,g,b,img = self:GetClassColor(user[i])
-					statusbar:SetStatusBarColor(r,g,b, 1)
+		len = 0
+		for i=1, 40 do
+			statusbar = _G("DPSMate_"..c["name"].."_ScrollFrame_Child_StatusBar"..i)
+			if user[i] then
+				r,g,b,img = self:GetClassColor(user[i])
+				statusbar:SetStatusBarColor(r,g,b, 1)
 
-					if c["ranks"] then 
-						_G("DPSMate_"..c["name"].."_ScrollFrame_Child_StatusBar"..i.."_Name"):SetText(i..". "..user[i])
-					else
-						_G("DPSMate_"..c["name"].."_ScrollFrame_Child_StatusBar"..i.."_Name"):SetText(user[i])
-					end
-					_G("DPSMate_"..c["name"].."_ScrollFrame_Child_StatusBar"..i.."_Value"):SetText(val[i])
-					_G("DPSMate_"..c["name"].."_ScrollFrame_Child_StatusBar"..i.."_Icon"):SetTexture("Interface\\AddOns\\DPSMate\\images\\class\\"..img)
-					statusbar:SetValue(perc[i])
-
-					statusbar.user = user[i]
-					statusbar:Show()
-					len = len + 1
+				if c["ranks"] then 
+					_G("DPSMate_"..c["name"].."_ScrollFrame_Child_StatusBar"..i.."_Name"):SetText(i..". "..user[i])
 				else
-					statusbar:Hide()
+					_G("DPSMate_"..c["name"].."_ScrollFrame_Child_StatusBar"..i.."_Name"):SetText(user[i])
 				end
+				_G("DPSMate_"..c["name"].."_ScrollFrame_Child_StatusBar"..i.."_Value"):SetText(val[i])
+				_G("DPSMate_"..c["name"].."_ScrollFrame_Child_StatusBar"..i.."_Icon"):SetTexture("Interface\\AddOns\\DPSMate\\images\\class\\"..img)
+				statusbar:SetValue(perc[i])
+
+				statusbar.user = user[i]
+				statusbar:Show()
+				len = len + 1
+			else
+				statusbar:Hide()
 			end
+		end
 			_G("DPSMate_"..c["name"].."_ScrollFrame_Child"):SetHeight((len+1)*(c["barheight"]+c["barspacing"]))
 			_G("DPSMate_"..c["name"].."_ScrollFrame_Child_Total"):Show()
-		else
+		if len == 0 then
 			_G("DPSMate_"..c["name"].."_ScrollFrame_Child_Total"):Hide()
 		end
 	end
 end
 
 function DPSMate:strrev(str)
-	local res = "";
-	local len = strlen(str)
+	local res, len = {}, strlen(str)
 	for i=0, len-1 do
-		res = res..strsub(str, len-i, len-i)
+		res[i] = strsub(str, len-i, len-i)
 	end
-	return res;
+	return tconcat(res);
 end
 
 function DPSMate:Commas(n,k)
@@ -555,7 +553,11 @@ function DPSMate:EvalTable(k)
 end
 
 function DPSMate:GetClassColor(class)
-	class = DPSMateUser[class][2] or "warrior"
+	if class then
+		class = DPSMateUser[class][2] or "warrior"
+	else
+		class = "warrior"
+	end
 	return classcolor[class].r, classcolor[class].g, classcolor[class].b, class
 end
 
@@ -563,10 +565,11 @@ function DPSMate:GetMode(k)
 	k = k or 1
 	local Handler = DPSMate.RegistredModules[DPSMateSettings["windows"][k]["CurMode"]]
 	local result = {total={Handler.DB[1], DPSMateCombatTime["total"], DPSMateCombatTime["effective"][1]}, currentfight={Handler.DB[2], DPSMateCombatTime["current"], DPSMateCombatTime["effective"][2]}}
+	local num
 	for cat, val in pairs(DPSMateSettings["windows"][k]["options"][2]) do
 		if val then
 			if strfind(cat, "segment") then
-				local num = tonumber(strsub(cat, 8))
+				num = tonumber(strsub(cat, 8))
 				if DPSMateHistory[Handler.Hist][num] then
 					return DPSMateHistory[Handler.Hist][num], DPSMateCombatTime["segments"][num][1], DPSMateCombatTime["segments"][num][2]
 				else
@@ -581,10 +584,11 @@ end
 
 function DPSMate:GetModeByArr(arr, k, Hist)
 	local result = {total={arr[1], DPSMateCombatTime["total"], DPSMateCombatTime["effective"][1]}, currentfight={arr[2], DPSMateCombatTime["current"], DPSMateCombatTime["effective"][2]}}
+	local num
 	for cat, val in pairs(DPSMateSettings["windows"][k]["options"][2]) do
 		if val then
 			if strfind(cat, "segment") then
-				local num = tonumber(strsub(cat, 8))
+				num = tonumber(strsub(cat, 8))
 				if DPSMateHistory[Hist or arr.Hist][num] then
 					return DPSMateHistory[Hist or arr.Hist][num], DPSMateCombatTime["segments"][num][1], DPSMateCombatTime["segments"][num][2]
 				else
@@ -600,10 +604,11 @@ end
 function DPSMate:GetModeName(k)
 	k = k or 1
 	local result = {total="Total", currentfight="Current fight"}
+	local num
 	for cat, val in pairs(DPSMateSettings["windows"][k]["options"][2]) do
 		if val then
 			if strfind(cat, "segment") then
-				local num = tonumber(strsub(cat, 8))
+				num = tonumber(strsub(cat, 8))
 				return DPSMateHistory["names"][num]
 			else
 				return result[cat]
@@ -614,8 +619,9 @@ end
 
 function DPSMate:Disable()
 	if self.Registered then
+		self.Sync:UnregisterEvent("CHAT_MSG_ADDON")
 		for _, event in pairs(self.Events) do
-			DPSMate_Options:UnregisterEvent(event)
+			self.Parser:UnregisterEvent(event)
 		end
 		self.Registered = false
 	end
@@ -624,18 +630,18 @@ end
 function DPSMate:Enable()
 	if not self.Registered then
 		if DPSMateSettings["legacylogs"] then
-			DPSMate_Options:RegisterEvent("ZONE_CHANGED_NEW_AREA")
-			DPSMate_Options:RegisterEvent("CHAT_MSG_LOOT")
+			self.Parser:RegisterEvent("CHAT_MSG_LOOT")
+			self.Sync:RegisterEvent("CHAT_MSG_ADDON")
 			for _, event in pairs(self.Events) do
-				DPSMate_Options:RegisterEvent(event)
+				self.Parser:RegisterEvent(event)
 			end
 		else
-			DPSMate_Options:UnregisterEvent("ZONE_CHANGED_NEW_AREA")
-			DPSMate_Options:UnregisterEvent("CHAT_MSG_LOOT")
+			self.Parser:UnregisterEvent("CHAT_MSG_LOOT")
+			self.Sync:RegisterEvent("CHAT_MSG_ADDON")
 			for _, val in pairs(self.RegistredModules) do
 				if val.Events then
 					for _, event in pairs(val.Events) do
-						DPSMate_Options:RegisterEvent(event)
+						self.Parser:RegisterEvent(event)
 					end
 				end
 			end

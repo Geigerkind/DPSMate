@@ -31,18 +31,19 @@ DPSMate:Register("damage", DPSMate.Modules.Damage, DPSMate.L["damage"])
 
 local tinsert = table.insert
 local strformat = string.format
+local pairs = pairs
 
 function DPSMate.Modules.Damage:GetSortedTable(arr, k)
-	local b, a, total = {}, {}, 0
+	local b, a, total, CV, i = {}, {}, 0
 	for cat, val in pairs(arr) do
 		local name = DPSMate:GetUserById(cat)
 		if (not DPSMateUser[name][4] or (DPSMateUser[name][4] and not DPSMateSettings["mergepets"])) then
 			if DPSMate:ApplyFilter(k, name) then
-				local CV = val["i"]
+				CV = val["i"]
 				if DPSMateSettings["mergepets"] and DPSMateUser[DPSMateUser[name][5]] and arr[DPSMateUser[DPSMateUser[name][5]][1]] and name~=DPSMateUser[name][5] then
 					CV=CV+arr[DPSMateUser[DPSMateUser[name][5]][1]]["i"]
 				end
-				local i = 1
+				i = 1
 				while true do
 					if (not b[i]) then
 						tinsert(b, i, CV)

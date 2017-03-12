@@ -1,3 +1,8 @@
+-- Events
+DPSMate.Options:RegisterEvent("PARTY_MEMBERS_CHANGED")
+DPSMate.Options:RegisterEvent("RAID_ROSTER_UPDATE")
+DPSMate.Options:RegisterEvent("PLAYER_ENTERING_WORLD")
+
 -- Global Variables
 DPSMate.Options.fonts = {
 	["FRIZQT"] = UNIT_NAME_FONT,
@@ -684,61 +689,67 @@ function DPSMate.Options:SimpleToggle(key, opt)
 	DPSMate:SetStatusBarValue()
 end
 
-function DPSMate.Options:OnEvent(event)
-	if event == "PARTY_MEMBERS_CHANGED" or event == "RAID_ROSTER_UPDATE" then
-		DPSMate.Options:HideWhenSolo()
-		if DPSMate.Options:IsInParty() then
-			if LastPartyNum == 0 then
-				if DPSMateSettings["dataresetsjoinparty"] == 3 then
-					if (GetTime()-LastPopUp) > TimeToNextPopUp and (DPSMate:TableLength(DPSMateUser) ~= 0 or DPSMate:TableLength(DPSMateUserCurrent) ~= 0) then
-						DPSMate.Options:ShowResetPopUp()
-						LastPopUp = GetTime()
-					end
-				elseif DPSMateSettings["dataresetsjoinparty"] == 1 then
-					DPSMate.Options:PopUpAccept(true, true)
+function DPSMate.Options:RosterUpdate()
+	this:HideWhenSolo()
+	if this:IsInParty() then
+		if LastPartyNum == 0 then
+			if DPSMateSettings["dataresetsjoinparty"] == 3 then
+				if (GetTime()-LastPopUp) > TimeToNextPopUp then
+					this:ShowResetPopUp()
+					LastPopUp = GetTime()
 				end
-				DPSMate.DB:OnGroupUpdate()
-			elseif LastPartyNum ~= PartyNum	then
-				if DPSMateSettings["dataresetspartyamount"] == 3 then
-					if (GetTime()-LastPopUp) > TimeToNextPopUp and (DPSMate:TableLength(DPSMateUser) ~= 0 or DPSMate:TableLength(DPSMateUserCurrent) ~= 0) then
-						DPSMate.Options:ShowResetPopUp()
-						LastPopUp = GetTime()
-					end
-				elseif DPSMateSettings["dataresetspartyamount"] == 1 then
-					DPSMate.Options:PopUpAccept(true)
+			elseif DPSMateSettings["dataresetsjoinparty"] == 1 then
+				this:PopUpAccept(true, true)
+			end
+			DPSMate.DB:OnGroupUpdate()
+		elseif LastPartyNum ~= PartyNum	then
+			if DPSMateSettings["dataresetspartyamount"] == 3 then
+				if (GetTime()-LastPopUp) > TimeToNextPopUp then
+					this:ShowResetPopUp()
+					LastPopUp = GetTime()
 				end
-				DPSMate.DB:OnGroupUpdate()
+			elseif DPSMateSettings["dataresetspartyamount"] == 1 then
+				this:PopUpAccept(true)
 			end
-		else
-			if LastPartyNum > PartyNum then
-				if DPSMateSettings["dataresetsleaveparty"] == 3 then
-					if (GetTime()-LastPopUp) > TimeToNextPopUp and (DPSMate:TableLength(DPSMateUser) ~= 0 or DPSMate:TableLength(DPSMateUserCurrent) ~= 0) then
-						DPSMate.Options:ShowResetPopUp()
-						LastPopUp = GetTime()
-					end
-				elseif DPSMateSettings["dataresetsleaveparty"] == 1 then
-					DPSMate.Options:PopUpAccept(true)
+			DPSMate.DB:OnGroupUpdate()
+		end
+	else
+		if LastPartyNum > PartyNum then
+			if DPSMateSettings["dataresetsleaveparty"] == 3 then
+				if (GetTime()-LastPopUp) > TimeToNextPopUp then
+					this:ShowResetPopUp()
+					LastPopUp = GetTime()
 				end
-				DPSMate.DB:OnGroupUpdate()
+			elseif DPSMateSettings["dataresetsleaveparty"] == 1 then
+				this:PopUpAccept(true)
 			end
+			DPSMate.DB:OnGroupUpdate()
 		end
-	elseif event == "PLAYER_ENTERING_WORLD" then
-		if DPSMateSettings["dataresetsworld"] == 3 then
-			if (GetTime()-LastPopUp) > TimeToNextPopUp and (DPSMate:TableLength(DPSMateUser) ~= 0 or DPSMate:TableLength(DPSMateUserCurrent) ~= 0) then
-				self:ShowResetPopUp()
-				LastPopUp = GetTime()
-			end
-		elseif DPSMateSettings["dataresetsworld"] == 1 and not self:IsInParty() then
-			self:PopUpAccept(true)
+	end
+end
+
+DPSMate.Options.PARTY_MEMBERS_CHANGED = function()
+	this:RosterUpdate()
+end
+
+DPSMate.Options.RAID_ROSTER_UPDATE = function()
+	this:RosterUpdate()
+end
+
+DPSMate.Options.PLAYER_ENTERING_WORLD = function()
+	if DPSMateSettings["dataresetsworld"] == 3 then
+		if (GetTime()-LastPopUp) > TimeToNextPopUp and (DPSMate:TableLength(DPSMateUser) ~= 0 or DPSMate:TableLength(DPSMateUserCurrent) ~= 0) then
+			this:ShowResetPopUp()
+			LastPopUp = GetTime()
 		end
-		self:HideInPvP()
-		if DPSMateSettings["hideonlogin"] then
-			for _, val in pairs(DPSMateSettings["windows"]) do
-				DPSMate.Options:Hide(_G("DPSMate_"..val["name"]))
-			end
+	elseif DPSMateSettings["dataresetsworld"] == 1 and not this:IsInParty() then
+		this:PopUpAccept(true)
+	end
+	this:HideInPvP()
+	if DPSMateSettings["hideonlogin"] then
+		for _, val in pairs(DPSMateSettings["windows"]) do
+			this:Hide(_G("DPSMate_"..val["name"]))
 		end
-	elseif event == "ZONE_CHANGED_NEW_AREA" then
-		DPSMate.DB:OnGroupUpdate()
 	end
 end
 
@@ -810,7 +821,7 @@ end
 
 function DPSMate.Options:PopUpAccept(bool, bypass)
 	DPSMate_PopUp:Hide()
-	if (UnitInParty("player") or UnitInRaid("player")) and not bypass and DPSMateSettings["sync"] and bool then
+	if (GetNumPartyMembers()>0 or UnitInRaid("player")) and not bypass and DPSMateSettings["sync"] and bool then
 		if IsPartyLeader() or IsRaidOfficer() or IsRaidLeader() then
 			DPSMate.Sync:StartVote()
 		else
@@ -2174,4 +2185,18 @@ function DPSMate.Options:ToggleSync()
 	DPSMate.Sync.synckey = ""
 end
 
+local reportdelay = 0.5
+local reportuptime = 0
+function DPSMate.Options:ReportDelay()
+	if DPSMateSettings["reportdelay"] and DPSMate.DelayMsg[1] then
+		reportuptime = reportuptime + arg1
+		if reportuptime>reportdelay then
+			SendChatMessage(DPSMate.DelayMsg[1][1], DPSMate.DelayMsg[1][2], nil, DPSMate.DelayMsg[1][3])
+			tremove(DPSMate.DelayMsg, 1)
+			reportuptime = 0
+		end
+	end
+end
 
+DPSMate.Options:SetScript("OnEvent", function() this[event]() end)
+DPSMate.Options:SetScript("OnUpdate", function() this:ReportDelay() end)

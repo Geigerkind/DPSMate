@@ -3,8 +3,9 @@ local strgfind = string.gfind
 local DB = DPSMate.DB
 local tnbr = tonumber
 local strgsub = string.gsub
-local npcdb = DPSMate.NPCDB
+local npcdb = NPCDB
 local GetTime = GetTime
+local strfind = string.find
 
 --écrase
 if (GetLocale() == "frFR") then
@@ -853,14 +854,7 @@ if (GetLocale() == "frFR") then
 			return
 		end
 		for a,b in strgfind(msg, "Vous gagnez (%d+) attaques supplémentaires grâce à (.+)%.") do -- Potential for more evaluation
-			DB.NextSwing[self.player] = {
-				[1] = tnbr(a),
-				[2] = b
-			}
-			DB.NextSwingEDD[self.player] = {
-				[1] = tnbr(a),
-				[2] = b
-			}
+			DB:RegisterNextSwing(self.player, tnbr(a), b)
 			DB:BuildBuffs(self.player, self.player, b, true)
 			DB:DestroyBuffs(self.player, b)
 			return
@@ -1043,14 +1037,7 @@ if (GetLocale() == "frFR") then
 			return 
 		end
 		for c,b,a in strgfind(msg, "(.+) gagne (%d+) attaques supplémentaires grâce à (.+)%.") do
-			DB.NextSwing[a] = {
-				[1] = tnbr(b),
-				[2] = c
-			}
-			DB.NextSwingEDD[a] = {
-				[1] = tnbr(b),
-				[2] = c
-			}
+			DB:RegisterNextSwing(a, tnbr(b), c)
 			DB:BuildBuffs(a, a, c, true)
 			DB:DestroyBuffs(a, c)
 			return 

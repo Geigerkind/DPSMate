@@ -3,8 +3,9 @@ local strgfind = string.gfind
 local DB = DPSMate.DB
 local tnbr = tonumber
 local strgsub = string.gsub
-local npcdb = DPSMate.NPCDB
+local npcdb = NPCDB
 local GetTime = GetTime
+local strfind = string.find
 
 if (GetLocale() == "zhCN") then
 	DPSMate.Parser.SelfHits = function(self, msg)
@@ -721,14 +722,7 @@ if (GetLocale() == "zhCN") then
 			return
 		end
 		for b,f,a in strgfind(msg, "你通过(.+)获(.*)(%d+)次额外攻击。") do
-			DB.NextSwing[self.player] = {
-				[1] = tnbr(a),
-				[2] = b
-			}
-			DB.NextSwingEDD[self.player] = {
-				[1] = tnbr(a),
-				[2] = b
-			}
+			DB:RegisterNextSwing(self.player, tnbr(a), b)
 			DB:BuildBuffs(self.player, self.player, b, true)
 			DB:DestroyBuffs(self.player, b)
 			return
@@ -868,14 +862,7 @@ if (GetLocale() == "zhCN") then
 			return 
 		end
 		for a,c,b in strgfind(msg, "(.+)通过(.+)获得了(%d+)次额外攻击。") do
-			DB.NextSwing[a] = { 
-				[1] = tnbr(b),
-				[2] = c
-			}
-			DB.NextSwingEDD[a] = {
-				[1] = tnbr(b),
-				[2] = c
-			}
+			DB:RegisterNextSwing(a, tnbr(b), c)
 			DB:BuildBuffs(a, a, c, true)
 			DB:DestroyBuffs(a, c)
 			return 

@@ -6643,6 +6643,4 @@ NPCDB = {}
 function NPCDB:Contains(name)
 	return npcs[name]
 end
-
-DPSMate.NPCDB = NPCDB
 end

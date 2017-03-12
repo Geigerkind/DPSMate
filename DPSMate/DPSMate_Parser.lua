@@ -1,9 +1,57 @@
--- Notes
--- "Smbd reflects..." (Thorns etc.)
--- (%s%(%a-%))
--- /script local t = {}; for a,b,c,d in string.gfind("You hit Peter Hallow for 184.", "You (%a%a?)\it (.+) for (%d+)%.%s?(.*)") do t[1]=a;t[2]=b;t[3]=c;t[4]=d end; DPSMate:SendMessage(t[3]); DPSMate:SendMessage(t[4])
--- CHAT_MSG_SPELL_FAILED_LOCALPLAYER -> Examples: You fail to cast Heal: Interrupted. You fail to perform Bear Form: Not enough mana
--- SPELLCAST_INTERRUPTED
+-- Events
+DPSMate.Parser:RegisterEvent("CHAT_MSG_COMBAT_PET_HITS")
+DPSMate.Parser:RegisterEvent("CHAT_MSG_COMBAT_PET_MISSES")
+DPSMate.Parser:RegisterEvent("CHAT_MSG_SPELL_PET_BUFF")
+DPSMate.Parser:RegisterEvent("CHAT_MSG_SPELL_PET_DAMAGE")
+
+DPSMate.Parser:RegisterEvent("CHAT_MSG_COMBAT_SELF_HITS")
+DPSMate.Parser:RegisterEvent("CHAT_MSG_COMBAT_SELF_MISSES")
+DPSMate.Parser:RegisterEvent("CHAT_MSG_SPELL_SELF_DAMAGE")
+DPSMate.Parser:RegisterEvent("CHAT_MSG_SPELL_PERIODIC_HOSTILEPLAYER_DAMAGE") --
+DPSMate.Parser:RegisterEvent("CHAT_MSG_SPELL_HOSTILEPLAYER_DAMAGE") --
+DPSMate.Parser:RegisterEvent("CHAT_MSG_SPELL_PERIODIC_CREATURE_DAMAGE")
+DPSMate.Parser:RegisterEvent("CHAT_MSG_COMBAT_PARTY_HITS")
+DPSMate.Parser:RegisterEvent("CHAT_MSG_SPELL_PARTY_DAMAGE")
+DPSMate.Parser:RegisterEvent("CHAT_MSG_COMBAT_PARTY_MISSES")
+DPSMate.Parser:RegisterEvent("CHAT_MSG_SPELL_FRIENDLYPLAYER_DAMAGE")
+DPSMate.Parser:RegisterEvent("CHAT_MSG_COMBAT_FRIENDLYPLAYER_HITS")
+DPSMate.Parser:RegisterEvent("CHAT_MSG_COMBAT_FRIENDLYPLAYER_MISSES")
+
+DPSMate.Parser:RegisterEvent("CHAT_MSG_COMBAT_HOSTILEPLAYER_HITS")
+DPSMate.Parser:RegisterEvent("CHAT_MSG_COMBAT_HOSTILEPLAYER_MISSES")
+
+DPSMate.Parser:RegisterEvent("CHAT_MSG_COMBAT_CREATURE_VS_SELF_HITS")
+DPSMate.Parser:RegisterEvent("CHAT_MSG_COMBAT_CREATURE_VS_SELF_MISSES")
+DPSMate.Parser:RegisterEvent("CHAT_MSG_SPELL_CREATURE_VS_SELF_DAMAGE")
+DPSMate.Parser:RegisterEvent("CHAT_MSG_SPELL_PERIODIC_SELF_DAMAGE")
+DPSMate.Parser:RegisterEvent("CHAT_MSG_COMBAT_CREATURE_VS_PARTY_HITS")
+DPSMate.Parser:RegisterEvent("CHAT_MSG_COMBAT_CREATURE_VS_PARTY_MISSES")
+DPSMate.Parser:RegisterEvent("CHAT_MSG_SPELL_PERIODIC_PARTY_DAMAGE")
+DPSMate.Parser:RegisterEvent("CHAT_MSG_SPELL_CREATURE_VS_PARTY_DAMAGE")
+DPSMate.Parser:RegisterEvent("CHAT_MSG_COMBAT_CREATURE_VS_CREATURE_HITS")
+DPSMate.Parser:RegisterEvent("CHAT_MSG_COMBAT_CREATURE_VS_CREATURE_MISSES")
+DPSMate.Parser:RegisterEvent("CHAT_MSG_SPELL_CREATURE_VS_CREATURE_DAMAGE")
+DPSMate.Parser:RegisterEvent("CHAT_MSG_SPELL_PERIODIC_FRIENDLYPLAYER_DAMAGE") 
+
+DPSMate.Parser:RegisterEvent("CHAT_MSG_SPELL_SELF_BUFF")
+DPSMate.Parser:RegisterEvent("CHAT_MSG_SPELL_PERIODIC_SELF_BUFFS")
+DPSMate.Parser:RegisterEvent("CHAT_MSG_SPELL_FRIENDLYPLAYER_BUFF")
+DPSMate.Parser:RegisterEvent("CHAT_MSG_SPELL_PERIODIC_FRIENDLYPLAYER_BUFFS")
+DPSMate.Parser:RegisterEvent("CHAT_MSG_SPELL_HOSTILEPLAYER_BUFF")
+DPSMate.Parser:RegisterEvent("CHAT_MSG_SPELL_PERIODIC_HOSTILEPLAYER_BUFFS")
+DPSMate.Parser:RegisterEvent("CHAT_MSG_SPELL_PARTY_BUFF")
+DPSMate.Parser:RegisterEvent("CHAT_MSG_SPELL_PERIODIC_PARTY_BUFFS")
+
+DPSMate.Parser:RegisterEvent("CHAT_MSG_SPELL_DAMAGESHIELDS_ON_SELF")
+DPSMate.Parser:RegisterEvent("CHAT_MSG_SPELL_DAMAGESHIELDS_ON_OTHERS")
+DPSMate.Parser:RegisterEvent("CHAT_MSG_SPELL_BREAK_AURA")
+DPSMate.Parser:RegisterEvent("CHAT_MSG_SPELL_AURA_GONE_SELF")
+DPSMate.Parser:RegisterEvent("CHAT_MSG_SPELL_AURA_GONE_OTHER")
+DPSMate.Parser:RegisterEvent("CHAT_MSG_SPELL_AURA_GONE_PARTY")
+
+DPSMate.Parser:RegisterEvent("CHAT_MSG_COMBAT_FRIENDLY_DEATH")
+DPSMate.Parser:RegisterEvent("CHAT_MSG_COMBAT_HOSTILE_DEATH")
+DPSMate.Parser:RegisterEvent("PLAYER_AURAS_CHANGED")
 
 BINDING_HEADER_DPSMATE = "DPSMate"
 BINDING_NAME_DPSMATE_REPORT = DPSMate.L["togglereportframe"]
@@ -431,11 +479,7 @@ DPSMate.Parser.player = UnitName("player")
 DPSMate.Parser.playerclass = nil
 
 -- Local Variables
-local Execute = {}
 local _,playerclass = UnitClass("player")
-local DB = DPSMate.DB
-local _G = getfenv(0)
-local string_find = string.find
 local UL = UnitLevel
 
 -- Begin Functions
@@ -472,13 +516,6 @@ function DPSMate.Parser:GetPlayerValues()
 	self:OnLoad()
 end
 
-function DPSMate.Parser:OnEvent(event)
-	if Execute[event] then
-		--DPSMate:SendMessage(event..": "..arg1)
-		Execute[event](arg1)
-	end
-end
-
 function DPSMate.Parser:GetUnitByName(target)
 	local unit = self.TargetParty[target]
 	if not unit then
@@ -499,71 +536,220 @@ end
 
 -- The totem aura just reports a removed event in the chat.
 -- Maybe we can guess here?
-function DPSMate.Parser:UnitAuraDispels(unit)
+DPSMate.Parser.PLAYER_AURAS_CHANGED = function(unit)
+	local aura, debuffDispelType
 	for i=1, 4 do
-		--DPSMate_Tooltip:SetOwner(UIParent, "ANCHOR_NONE")
-		DPSMate_Tooltip:ClearLines()
-		--DPSMate_Tooltip:SetUnitDebuff(unit, i, "HARMFUL")
 		DPSMate_Tooltip:SetPlayerBuff(GetPlayerBuff(i, "HARMFUL"))
-		local aura = DPSMate_TooltipTextLeft1:GetText()
-		--local type = DPSMate_TooltipTextRight1:GetText()
+		aura = DPSMate_TooltipTextLeft1:GetText()
 		DPSMate_Tooltip:Hide()
 		if not aura then break end
-		local _, _, debuffDispelType = UnitDebuff("player", i);
-		if debuffDispelType then
-			DB:BuildAbility(aura, debuffDispelType)
+		_, _, debuffDispelType = UnitDebuff("player", i);
+		if debuffDispelType and DPSMateAbility[aura] then
 			DPSMateAbility[aura][2] = debuffDispelType
 		end
 	end
 end
 
-Execute = {
-	["CHAT_MSG_COMBAT_HOSTILE_DEATH"] = function(arg1) DPSMate.Parser:CombatHostileDeaths(arg1) end,
-	["CHAT_MSG_COMBAT_FRIENDLY_DEATH"] = function(arg1) DPSMate.Parser:CombatFriendlyDeath(arg1) end,
-	["PLAYER_AURAS_CHANGED"] = function(arg1) DPSMate.Parser:UnitAuraDispels(arg1) end, -- !
-	["CHAT_MSG_SPELL_BREAK_AURA"] = function(arg1) DPSMate.Parser:SpellBreakAura(arg1) end,
-	["CHAT_MSG_SPELL_AURA_GONE_PARTY"] = function(arg1) DPSMate.Parser:SpellAuraGoneParty(arg1) end,
-	["CHAT_MSG_SPELL_AURA_GONE_OTHER"] = function(arg1) DPSMate.Parser:SpellAuraGoneOther(arg1) end,
-	["CHAT_MSG_SPELL_AURA_GONE_SELF"] = function(arg1) DPSMate.Parser:SpellAuraGoneSelf(arg1) end,
-	["CHAT_MSG_SPELL_PERIODIC_PARTY_BUFFS"] = function(arg1) DPSMate.Parser:SpellPeriodicFriendlyPlayerBuffs(arg1);DPSMate.Parser:SpellPeriodicFriendlyPlayerBuffsAbsorb(arg1) end,
-	["CHAT_MSG_SPELL_PARTY_BUFF"] = function(arg1) DPSMate.Parser:SpellHostilePlayerBuff(arg1);DPSMate.Parser:SpellHostilePlayerBuffDispels(arg1) end,
-	["CHAT_MSG_SPELL_PERIODIC_HOSTILEPLAYER_BUFFS"] = function(arg1) DPSMate.Parser:SpellPeriodicFriendlyPlayerBuffs(arg1);DPSMate.Parser:SpellPeriodicFriendlyPlayerBuffsAbsorb(arg1) end,
-	["CHAT_MSG_SPELL_HOSTILEPLAYER_BUFF"] = function(arg1) DPSMate.Parser:SpellHostilePlayerBuff(arg1);DPSMate.Parser:SpellHostilePlayerBuffDispels(arg1);DPSMate.Parser:HostilePlayerSpellDamageInterrupts(arg1);DPSMate.Parser:SpellPeriodicFriendlyPlayerBuffsAbsorb(arg1) end,
-	["CHAT_MSG_SPELL_PERIODIC_FRIENDLYPLAYER_BUFFS"] = function(arg1) DPSMate.Parser:SpellPeriodicFriendlyPlayerBuffs(arg1);DPSMate.Parser:SpellPeriodicFriendlyPlayerBuffsAbsorb(arg1) end,
-	["CHAT_MSG_SPELL_FRIENDLYPLAYER_BUFF"] = function(arg1) DPSMate.Parser:SpellHostilePlayerBuff(arg1);DPSMate.Parser:SpellHostilePlayerBuffDispels(arg1) end,
-	["CHAT_MSG_SPELL_PERIODIC_SELF_BUFFS"] = function(arg1) DPSMate.Parser:SpellPeriodicSelfBuff(arg1);DPSMate.Parser:SpellPeriodicSelfBuffAbsorb(arg1) end,
-	["CHAT_MSG_SPELL_SELF_BUFF"] = function(arg1) DPSMate.Parser:SpellSelfBuff(arg1);DPSMate.Parser:SpellSelfBuffDispels(arg1) end,
-	["CHAT_MSG_SPELL_PERIODIC_FRIENDLYPLAYER_DAMAGE"] = function(arg1) DPSMate.Parser:SpellPeriodicDamageTaken(arg1) end,
-	["CHAT_MSG_SPELL_CREATURE_VS_CREATURE_DAMAGE"] = function(arg1) DPSMate.Parser:CreatureVsCreatureSpellDamage(arg1);DPSMate.Parser:CreatureVsCreatureSpellDamageAbsorb(arg1);DPSMate.Parser:CreatureVsCreatureSpellDamageInterrupts(arg1) end,
-	["CHAT_MSG_COMBAT_CREATURE_VS_CREATURE_MISSES"] = function(arg1) DPSMate.Parser:CreatureVsCreatureMisses(arg1) end,
-	["CHAT_MSG_COMBAT_CREATURE_VS_CREATURE_HITS"] = function(arg1) DPSMate.Parser:CreatureVsCreatureHits(arg1);DPSMate.Parser:CreatureVsCreatureHitsAbsorb(arg1) end,
-	["CHAT_MSG_SPELL_CREATURE_VS_PARTY_DAMAGE"] = function(arg1) DPSMate.Parser:CreatureVsCreatureSpellDamage(arg1);DPSMate.Parser:CreatureVsCreatureSpellDamageAbsorb(arg1) end,
-	["CHAT_MSG_SPELL_PERIODIC_PARTY_DAMAGE"] = function(arg1) DPSMate.Parser:SpellPeriodicDamageTaken(arg1) end,
-	["CHAT_MSG_COMBAT_CREATURE_VS_PARTY_MISSES"] = function(arg1) DPSMate.Parser:CreatureVsCreatureMisses(arg1) end,
-	["CHAT_MSG_COMBAT_CREATURE_VS_PARTY_HITS"] = function(arg1) DPSMate.Parser:CreatureVsCreatureHits(arg1);DPSMate.Parser:CreatureVsCreatureHitsAbsorb(arg1) end,
-	["CHAT_MSG_SPELL_PERIODIC_SELF_DAMAGE"] = function(arg1) DPSMate.Parser:PeriodicSelfDamage(arg1) end,
-	["CHAT_MSG_SPELL_CREATURE_VS_SELF_DAMAGE"] = function(arg1) DPSMate.Parser:CreatureVsSelfSpellDamage(arg1);DPSMate.Parser:CreatureVsSelfSpellDamageAbsorb(arg1) end,
-	["CHAT_MSG_COMBAT_CREATURE_VS_SELF_MISSES"] = function(arg1) DPSMate.Parser:CreatureVsSelfMisses(arg1) end,
-	["CHAT_MSG_COMBAT_CREATURE_VS_SELF_HITS"] = function(arg1) DPSMate.Parser:CreatureVsSelfHits(arg1);DPSMate.Parser:CreatureVsSelfHitsAbsorb(arg1) end,
-	["CHAT_MSG_SPELL_DAMAGESHIELDS_ON_OTHERS"] = function(arg1) DPSMate.Parser:SpellDamageShieldsOnOthers(arg1) end,
-	["CHAT_MSG_SPELL_DAMAGESHIELDS_ON_SELF"] = function(arg1) DPSMate.Parser:SpellDamageShieldsOnSelf(arg1) end,
-	["CHAT_MSG_COMBAT_HOSTILEPLAYER_MISSES"] = function(arg1) DPSMate.Parser:FriendlyPlayerMisses(arg1) end,
-	["CHAT_MSG_COMBAT_FRIENDLYPLAYER_MISSES"] = function(arg1) DPSMate.Parser:FriendlyPlayerMisses(arg1) end,
-	["CHAT_MSG_COMBAT_HOSTILEPLAYER_HITS"] = function(arg1) DPSMate.Parser:FriendlyPlayerHits(arg1) end,
-	["CHAT_MSG_COMBAT_FRIENDLYPLAYER_HITS"] = function(arg1) DPSMate.Parser:FriendlyPlayerHits(arg1) end,
-	["CHAT_MSG_SPELL_FRIENDLYPLAYER_DAMAGE"] = function(arg1) DPSMate.Parser:FriendlyPlayerDamage(arg1) end,
-	["CHAT_MSG_SPELL_PARTY_DAMAGE"] = function(arg1) DPSMate.Parser:FriendlyPlayerDamage(arg1) end,
-	["CHAT_MSG_COMBAT_PARTY_MISSES"] = function(arg1) DPSMate.Parser:FriendlyPlayerMisses(arg1) end,
-	["CHAT_MSG_COMBAT_PARTY_HITS"] = function(arg1) DPSMate.Parser:FriendlyPlayerHits(arg1) end,
-	["CHAT_MSG_SPELL_PERIODIC_CREATURE_DAMAGE"] = function(arg1) DPSMate.Parser:PeriodicDamage(arg1) end,
-	["CHAT_MSG_SPELL_HOSTILEPLAYER_DAMAGE"] = function(arg1) DPSMate.Parser:FriendlyPlayerDamage(arg1) end,
-	["CHAT_MSG_SPELL_PERIODIC_HOSTILEPLAYER_DAMAGE"] = function(arg1) DPSMate.Parser:PeriodicDamage(arg1) end, -- To be tested
-	["CHAT_MSG_SPELL_SELF_DAMAGE"] = function(arg1) DPSMate.Parser:SelfSpellDMG(arg1) end,
-	["CHAT_MSG_COMBAT_SELF_MISSES"] = function(arg1) DPSMate.Parser:SelfMisses(arg1) end,
-	["CHAT_MSG_COMBAT_SELF_HITS"] = function(arg1) DPSMate.Parser:SelfHits(arg1) end,
-	["CHAT_MSG_LOOT"] = function(arg1) DPSMate.Parser:Loot(arg1) end,
-	["CHAT_MSG_COMBAT_PET_HITS"] = function(arg1) DPSMate.Parser:PetHits(arg1) end,
-	["CHAT_MSG_COMBAT_PET_MISSES"] = function(arg1) DPSMate.Parser:PetMisses(arg1) end,
-	--["CHAT_MSG_SPELL_PET_BUFF"] = function(arg1) DPSMate:SendMessage(arg1.."Test 3"); end,
-	["CHAT_MSG_SPELL_PET_DAMAGE"] = function(arg1) DPSMate.Parser:PetSpellDamage(arg1) end
-}
+
+DPSMate.Parser.CHAT_MSG_COMBAT_HOSTILE_DEATH = function(arg1)
+	this:CombatHostileDeaths(arg1)
+end
+
+DPSMate.Parser.CHAT_MSG_COMBAT_FRIENDLY_DEATH = function(arg1)
+	this:CombatFriendlyDeath(arg1)
+end
+
+DPSMate.Parser.CHAT_MSG_SPELL_BREAK_AURA = function(arg1)
+	this:SpellBreakAura(arg1)
+end
+
+DPSMate.Parser.CHAT_MSG_SPELL_AURA_GONE_PARTY = function(arg1)
+	this:SpellAuraGoneParty(arg1)
+end
+
+DPSMate.Parser.CHAT_MSG_SPELL_AURA_GONE_OTHER = function(arg1)
+	this:SpellAuraGoneOther(arg1)
+end
+
+DPSMate.Parser.CHAT_MSG_SPELL_AURA_GONE_SELF = function(arg1)
+	this:SpellAuraGoneSelf(arg1)
+end
+
+DPSMate.Parser.CHAT_MSG_SPELL_PERIODIC_PARTY_BUFFS = function(arg1)
+	this:SpellPeriodicFriendlyPlayerBuffs(arg1)
+	this:SpellPeriodicFriendlyPlayerBuffsAbsorb(arg1)
+end
+
+DPSMate.Parser.CHAT_MSG_SPELL_PARTY_BUFF = function(arg1)
+	this:SpellHostilePlayerBuff(arg1)
+	this:SpellHostilePlayerBuffDispels(arg1)
+end
+
+DPSMate.Parser.CHAT_MSG_SPELL_PERIODIC_HOSTILEPLAYER_BUFFS = function(arg1)
+	this:SpellPeriodicFriendlyPlayerBuffs(arg1)
+	this:SpellPeriodicFriendlyPlayerBuffsAbsorb(arg1)
+end
+
+DPSMate.Parser.CHAT_MSG_SPELL_HOSTILEPLAYER_BUFF = function(arg1)
+	this:SpellHostilePlayerBuff(arg1)
+	this:SpellHostilePlayerBuffDispels(arg1)
+	this:HostilePlayerSpellDamageInterrupts(arg1)
+	this:SpellPeriodicFriendlyPlayerBuffsAbsorb(arg1)
+end
+
+DPSMate.Parser.CHAT_MSG_SPELL_PERIODIC_FRIENDLYPLAYER_BUFFS = function(arg1)
+	this:SpellPeriodicFriendlyPlayerBuffs(arg1)
+	this:SpellPeriodicFriendlyPlayerBuffsAbsorb(arg1)
+end
+
+DPSMate.Parser.CHAT_MSG_SPELL_FRIENDLYPLAYER_BUFF = function(arg1)
+	this:SpellHostilePlayerBuff(arg1)
+	this:SpellHostilePlayerBuffDispels(arg1)
+end
+
+DPSMate.Parser.CHAT_MSG_SPELL_PERIODIC_SELF_BUFFS = function(arg1)
+	this:SpellPeriodicSelfBuff(arg1)
+	this:SpellPeriodicSelfBuffAbsorb(arg1)
+end
+
+DPSMate.Parser.CHAT_MSG_SPELL_SELF_BUFF = function(arg1)
+	this:SpellSelfBuff(arg1)
+	this:SpellSelfBuffDispels(arg1)
+end
+
+DPSMate.Parser.CHAT_MSG_SPELL_PERIODIC_FRIENDLYPLAYER_DAMAGE = function(arg1)
+	this:SpellPeriodicDamageTaken(arg1)
+end
+
+DPSMate.Parser.CHAT_MSG_SPELL_CREATURE_VS_CREATURE_DAMAGE = function(arg1)
+	this:CreatureVsCreatureSpellDamage(arg1)
+	this:CreatureVsCreatureSpellDamageAbsorb(arg1)
+	this:CreatureVsCreatureSpellDamageInterrupts(arg1)
+end
+
+DPSMate.Parser.CHAT_MSG_COMBAT_CREATURE_VS_CREATURE_MISSES = function(arg1)
+	this:CreatureVsCreatureMisses(arg1)
+end
+
+DPSMate.Parser.CHAT_MSG_COMBAT_CREATURE_VS_CREATURE_HITS = function(arg1)
+	this:CreatureVsCreatureHits(arg1)
+	this:CreatureVsCreatureHitsAbsorb(arg1)
+end
+
+DPSMate.Parser.CHAT_MSG_SPELL_CREATURE_VS_PARTY_DAMAGE = function(arg1)
+	this:CreatureVsCreatureSpellDamage(arg1)
+	this:CreatureVsCreatureSpellDamageAbsorb(arg1)
+end
+
+DPSMate.Parser.CHAT_MSG_SPELL_PERIODIC_PARTY_DAMAGE = function(arg1)
+	this:SpellPeriodicDamageTaken(arg1)
+end
+
+DPSMate.Parser.CHAT_MSG_COMBAT_CREATURE_VS_PARTY_MISSES = function(arg1)
+	this:CreatureVsCreatureMisses(arg1)
+end
+
+DPSMate.Parser.CHAT_MSG_COMBAT_CREATURE_VS_PARTY_HITS = function(arg1)
+	this:CreatureVsCreatureHits(arg1)
+	this:CreatureVsCreatureHitsAbsorb(arg1)
+end
+
+DPSMate.Parser.CHAT_MSG_SPELL_PERIODIC_SELF_DAMAGE = function(arg1)
+	this:PeriodicSelfDamage(arg1)
+end
+
+DPSMate.Parser.CHAT_MSG_SPELL_CREATURE_VS_SELF_DAMAGE = function(arg1)
+	this:CreatureVsSelfSpellDamage(arg1)
+	this:CreatureVsSelfSpellDamageAbsorb(arg1)
+end
+
+DPSMate.Parser.CHAT_MSG_COMBAT_CREATURE_VS_SELF_MISSES = function(arg1)
+	this:CreatureVsSelfMisses(arg1)
+end
+
+DPSMate.Parser.CHAT_MSG_COMBAT_CREATURE_VS_SELF_HITS = function(arg1)
+	this:CreatureVsSelfHits(arg1)
+	this:CreatureVsSelfHitsAbsorb(arg1)
+end
+
+DPSMate.Parser.CHAT_MSG_SPELL_DAMAGESHIELDS_ON_OTHERS = function(arg1)
+	this:SpellDamageShieldsOnOthers(arg1)
+end
+
+DPSMate.Parser.CHAT_MSG_SPELL_DAMAGESHIELDS_ON_SELF = function(arg1)
+	this:SpellDamageShieldsOnSelf(arg1)
+end
+
+DPSMate.Parser.CHAT_MSG_COMBAT_HOSTILEPLAYER_MISSES = function(arg1)
+	this:FriendlyPlayerMisses(arg1)
+end
+
+DPSMate.Parser.CHAT_MSG_COMBAT_FRIENDLYPLAYER_MISSES = function(arg1)
+	this:FriendlyPlayerMisses(arg1)
+end
+
+DPSMate.Parser.CHAT_MSG_COMBAT_HOSTILEPLAYER_HITS = function(arg1)
+	this:FriendlyPlayerHits(arg1)
+end
+
+DPSMate.Parser.CHAT_MSG_COMBAT_FRIENDLYPLAYER_HITS = function(arg1)
+	this:FriendlyPlayerHits(arg1)
+end
+
+DPSMate.Parser.CHAT_MSG_SPELL_FRIENDLYPLAYER_DAMAGE = function(arg1)
+	this:FriendlyPlayerDamage(arg1)
+end
+
+DPSMate.Parser.CHAT_MSG_SPELL_PARTY_DAMAGE = function(arg1)
+	this:FriendlyPlayerDamage(arg1)
+end
+
+DPSMate.Parser.CHAT_MSG_COMBAT_PARTY_MISSES = function(arg1)
+	this:FriendlyPlayerMisses(arg1)
+end
+
+DPSMate.Parser.CHAT_MSG_COMBAT_PARTY_HITS = function(arg1)
+	this:FriendlyPlayerHits(arg1)
+end
+
+DPSMate.Parser.CHAT_MSG_SPELL_PERIODIC_CREATURE_DAMAGE = function(arg1)
+	this:PeriodicDamage(arg1)
+end
+
+DPSMate.Parser.CHAT_MSG_SPELL_HOSTILEPLAYER_DAMAGE = function(arg1)
+	this:FriendlyPlayerDamage(arg1)
+end
+
+DPSMate.Parser.CHAT_MSG_SPELL_PERIODIC_HOSTILEPLAYER_DAMAGE = function(arg1)
+	this:PeriodicDamage(arg1)
+end
+
+DPSMate.Parser.CHAT_MSG_SPELL_SELF_DAMAGE = function(arg1)
+	this:SelfSpellDMG(arg1)
+end
+
+DPSMate.Parser.CHAT_MSG_COMBAT_SELF_MISSES = function(arg1)
+	this:SelfMisses(arg1)
+end
+
+DPSMate.Parser.CHAT_MSG_COMBAT_SELF_HITS = function(arg1)
+	this:SelfHits(arg1)
+end
+
+DPSMate.Parser.CHAT_MSG_LOOT = function(arg1)
+	this:Loot(arg1)
+end
+
+DPSMate.Parser.CHAT_MSG_COMBAT_PET_HITS = function(arg1)
+	this:PetHits(arg1)
+end
+
+DPSMate.Parser.CHAT_MSG_COMBAT_PET_MISSES = function(arg1)
+	this:PetMisses(arg1)
+end
+
+DPSMate.Parser.CHAT_MSG_SPELL_PET_DAMAGE = function(arg1)
+	this:PetSpellDamage(arg1)
+end
+
+DPSMate.Parser:SetScript("OnEvent", function() this[event](arg1) end)
