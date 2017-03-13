@@ -504,14 +504,6 @@
 								</Anchor>
 							</Anchors>
 						</FontString>
-						<FontString name="$parent_Casts" inherits="GameFontNormal" text="C: ">
-							<Size x="60" y="24" />
-							<Anchors>
-								<Anchor point="BOTTOM" relativeTo="$parent_Block" relativePoint="TOP">
-									<Offset x="0" y="6" />
-								</Anchor>
-							</Anchors>
-						</FontString>
 						<FontString name="$parent_Crush" inherits="GameFontNormal" text="Crush" justifyH="LEFT">
 							<Size x="50" y="24" />
 							<Anchors>
@@ -1203,14 +1195,6 @@
 							<Anchors>
 								<Anchor point="TOPLEFT">
 									<Offset x="10" y="-38" />
-								</Anchor>
-							</Anchors>
-						</FontString>
-						<FontString name="$parent_Casts" inherits="GameFontNormal" text="C: ">
-							<Size x="60" y="24" />
-							<Anchors>
-								<Anchor point="BOTTOM" relativeTo="$parent_Crush" relativePoint="TOP">
-									<Offset x="0" y="6" />
 								</Anchor>
 							</Anchors>
 						</FontString>

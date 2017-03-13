@@ -693,12 +693,12 @@ local cheatDeathTable = {
 	["Interface\\Icons\\Ability_rogue_feighdeath"] = true,
 }
 DPSMate.DB.PLAYER_AURAS_CHANGED = function()
-	local tex, time
+	local tex
+	time = GT()
 	for i=1, 32 do
 		tex = UnitBuff("player", i)
 		if not tex then break end
 		if cheatDeathTable[tex] then
-			time = GT()
 			if cheatCombat<time then
 				cheatCombat = time + 10
 			end
