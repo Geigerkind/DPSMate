@@ -411,6 +411,7 @@ function DPSMate.Options:SelectRealtime(obj, kind)
 			end)
 			f:Show()
 			g:Show()
+			DPSMate.DB:HookGraphEvents()
 		else
 			 _G(obj:GetName().."_RealTime"):Show()
 		end

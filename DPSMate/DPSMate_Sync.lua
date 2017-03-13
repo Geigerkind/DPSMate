@@ -63,83 +63,89 @@ function DPSMate.Sync:OnLoad()
 end
 
 local co, cou = 1, 1
+local updater = 0
 function DPSMate.Sync:OnUpdate()
 	if DPSMateSettings["sync"] then
 		time=time+arg1
-		if iterator==1 then
-			Buffer[cou] = {"DPSMate_SyncStatus", "1"}
-			cou = cou + 1
-			self:DMGDoneAllOut()
-			self:DMGDoneAbilityOut()
-			self:DMGDoneStatOut()
-			iterator = 2
-		elseif time>=3 and iterator==2 then
-			self:HealingAllOut(DPSMateEHealing, "E")
-			self:HealingAbilityOut(DPSMateEHealing, "E")
-			self:HealingStatOut(DPSMateEHealing, "E")
-			self:AbsorbsOut() 
-			self:AbsorbsStatOut()
-			iterator = 3
-		elseif time>=6 and iterator==3 then
-			self:AurasOut()
-			self:DeathsAllOut()
-			self:DeathsOut()
-			self:DispelsOut()
-			iterator = 4
-		elseif time>=9 and iterator==4 then
-			self:EDAllOut(DPSMateEDD, "D")
-			self:EDAbilityOut(DPSMateEDD, "D")
-			self:EDStatOut(DPSMateEDD, "D")
-			iterator = 5
-		elseif time>=12 and iterator==5 then
-			self:HealingAllOut(DPSMateTHealing, "T")
-			self:HealingAbilityOut(DPSMateTHealing, "T")
-			self:HealingStatOut(DPSMateTHealing, "T")
-			self:InterruptsAllOut()
-			self:InterruptsAbilityOut()
-			iterator = 6
-		elseif time>=15 and iterator==6 then
-			self:DMGTakenAllOut()
-			self:DMGTakenAbilityOut()
-			self:DMGTakenStatOut()
-			iterator = 7
-		elseif time>=18 and iterator==7 then
-			self:HealingAllOut(DPSMateEHealingTaken, "ETaken")
-			self:HealingTakenAbilityOut(DPSMateEHealingTaken, "E")
-			self:HealingTakenStatOut(DPSMateEHealingTaken, "ETaken")
-			self:HealingAllOut(DPSMateOverhealingTaken, "OTaken")
-			self:HealingTakenAbilityOut(DPSMateOverhealingTaken, "O")
-			self:HealingTakenStatOut(DPSMateOverhealingTaken, "OTaken")
-			iterator = 8
-		elseif time>=21 and iterator==8 then
-			self:HealingAllOut(DPSMateOverhealing, "O")
-			self:HealingAbilityOut(DPSMateOverhealing, "O")
-			self:HealingStatOut(DPSMateOverhealing, "O")
-			iterator = 9
-		elseif time>=24 and iterator==9 then
-			self:HealingAllOut(DPSMateHealingTaken, "TTaken")
-			self:HealingTakenAbilityOut(DPSMateHealingTaken, "T")
-			self:HealingTakenStatOut(DPSMateHealingTaken, "TTaken")
-			iterator = 10
-		elseif time>=27 and iterator==10 then
-			self:EDAllOut(DPSMateEDT, "T")
-			self:EDAbilityOut(DPSMateEDT, "T")
-			self:EDStatOut(DPSMateEDT, "T")
-			iterator = 11
-		elseif time>=30 and iterator==11 then
-			self:ThreatOut()
-			self:ThreatStatsOut()
-			Buffer[cou] = {"DPSMate_SyncStatus", "0"}
-			cou = cou + 1
-			self.Async, iterator, time = false, 1, 0
+		if time<30 then
+			if iterator==1 then
+				Buffer[cou] = {"DPSMate_SyncStatus", "1"}
+				cou = cou + 1
+				self:DMGDoneAllOut()
+				self:DMGDoneAbilityOut()
+				self:DMGDoneStatOut()
+				iterator = 2
+			elseif time>=3 and iterator==2 then
+				self:HealingAllOut(DPSMateEHealing, "E")
+				self:HealingAbilityOut(DPSMateEHealing, "E")
+				self:HealingStatOut(DPSMateEHealing, "E")
+				self:AbsorbsOut() 
+				self:AbsorbsStatOut()
+				iterator = 3
+			elseif time>=6 and iterator==3 then
+				self:AurasOut()
+				self:DeathsAllOut()
+				self:DeathsOut()
+				self:DispelsOut()
+				iterator = 4
+			elseif time>=9 and iterator==4 then
+				self:EDAllOut(DPSMateEDD, "D")
+				self:EDAbilityOut(DPSMateEDD, "D")
+				self:EDStatOut(DPSMateEDD, "D")
+				iterator = 5
+			elseif time>=12 and iterator==5 then
+				self:HealingAllOut(DPSMateTHealing, "T")
+				self:HealingAbilityOut(DPSMateTHealing, "T")
+				self:HealingStatOut(DPSMateTHealing, "T")
+				self:InterruptsAllOut()
+				self:InterruptsAbilityOut()
+				iterator = 6
+			elseif time>=15 and iterator==6 then
+				self:DMGTakenAllOut()
+				self:DMGTakenAbilityOut()
+				self:DMGTakenStatOut()
+				iterator = 7
+			elseif time>=18 and iterator==7 then
+				self:HealingAllOut(DPSMateEHealingTaken, "ETaken")
+				self:HealingTakenAbilityOut(DPSMateEHealingTaken, "E")
+				self:HealingTakenStatOut(DPSMateEHealingTaken, "ETaken")
+				self:HealingAllOut(DPSMateOverhealingTaken, "OTaken")
+				self:HealingTakenAbilityOut(DPSMateOverhealingTaken, "O")
+				self:HealingTakenStatOut(DPSMateOverhealingTaken, "OTaken")
+				iterator = 8
+			elseif time>=21 and iterator==8 then
+				self:HealingAllOut(DPSMateOverhealing, "O")
+				self:HealingAbilityOut(DPSMateOverhealing, "O")
+				self:HealingStatOut(DPSMateOverhealing, "O")
+				iterator = 9
+			elseif time>=24 and iterator==9 then
+				self:HealingAllOut(DPSMateHealingTaken, "TTaken")
+				self:HealingTakenAbilityOut(DPSMateHealingTaken, "T")
+				self:HealingTakenStatOut(DPSMateHealingTaken, "TTaken")
+				iterator = 10
+			elseif time>=27 and iterator==10 then
+				self:EDAllOut(DPSMateEDT, "T")
+				self:EDAbilityOut(DPSMateEDT, "T")
+				self:EDStatOut(DPSMateEDT, "T")
+				iterator = 11
+			elseif time>=30 and iterator==11 then
+				self:ThreatOut()
+				self:ThreatStatsOut()
+				Buffer[cou] = {"DPSMate_SyncStatus", "0"}
+				cou = cou + 1
+			end
+		elseif time>180 then
+			iterator, time = 1, 0
 		end
-		if Buffer[co] then
+		if Buffer[co] and updater>0.1 then
 			SDM(Buffer[co][1]..sKey, Buffer[co][2], "RAID")
 			Buffer[co] = nil
 			co = co + 1
+			updater = 0
 		end
+		updater = updater + arg1
 	else
-		self.Async, iterator, time = false, 1, 0
+		iterator, time = 1, 0
 	end
 	self:DismissVote(arg1)
 end
@@ -349,20 +355,20 @@ DPSMate.Sync.CHAT_MSG_ADDON = function(arg1,arg2,arg3,arg4) -- DB.loaded part? A
 	if DPSMateSettings["sync"] then
 		if arg4 == player then return end 
 		if Execute[arg1] then
-			Execute[arg1](arg2,arg4)
+			Execute[arg1](this, arg2,arg4)
 			return
 		end
 		if lesstrivial[arg1] then
-			lesstrivial[arg1](arg2,arg4)
+			lesstrivial[arg1](this, arg2,arg4)
 			return
 		end
 		if trivial[arg1] then
-			trivial[arg1](arg2,arg4)
+			trivial[arg1](this, arg2,arg4)
 			return
 		end
 	else
 		if arg1=="DPSMate"..sKey then
-			Ececute[arg1](arg2, arg4)
+			Ececute[arg1](this, arg2, arg4)
 		end
 	end
 end
@@ -1506,23 +1512,23 @@ function DPSMate.Sync:ThreatStatsIn(arg2,arg4)
 end
 
 trivial = {
-	["DPSMate_HelloWorld"] = function() DPSMate.Sync:GreetBack() end,
-	["DPSMate_Greet"] = function(arg2,arg4) DPSMate.Sync:ReceiveGreet(arg2, arg4) end,
-	["KLHTMHOOK"] = function(arg2,arg4) DPSMate.Sync:ThreatIn(arg2,arg4) end
+	["DPSMate_HelloWorld"] = function(this) this:GreetBack() end,
+	["DPSMate_Greet"] = function(this, arg2,arg4) this:ReceiveGreet(arg2, arg4) end,
+	["KLHTMHOOK"] = function(this, arg2,arg4) this:ThreatIn(arg2,arg4) end
 }
 
 lesstrivial = {
-	["DPSMate_AbortVote"..DPSMate.SYNCVERSION] = function() DPSMate.Sync:ReceiveAbort() end,
-	["DPSMate_Vote"..DPSMate.SYNCVERSION] = function() DPSMate.Sync:CountVote() end,
-	["DPSMate_StartVote"..DPSMate.SYNCVERSION] = function() DPSMate.Sync:ReceiveStartVote() end,
-	["DPSMate_VoteSuccess"..DPSMate.SYNCVERSION] = function(arg2) DPSMate.Sync:VoteSuccess(arg2) end,
-	["DPSMate_VoteFail"..DPSMate.SYNCVERSION] = function() DPSMate:SendMessage(DPSMate.L["votefailederror"]) end,
-	["DPSMate_Participate"..DPSMate.SYNCVERSION] = function() DPSMate.Sync:CountParticipants() end,
-	["DPSMate_SyncTimer"..DPSMate.SYNCVERSION] = function(arg2) DPSMate.Sync:SetTimer(arg2) end,
+	["DPSMate_AbortVote"..DPSMate.SYNCVERSION] = function(this) this:ReceiveAbort() end,
+	["DPSMate_Vote"..DPSMate.SYNCVERSION] = function(this) this:CountVote() end,
+	["DPSMate_StartVote"..DPSMate.SYNCVERSION] = function(this) this:ReceiveStartVote() end,
+	["DPSMate_VoteSuccess"..DPSMate.SYNCVERSION] = function(this, arg2) this:VoteSuccess(arg2) end,
+	["DPSMate_VoteFail"..DPSMate.SYNCVERSION] = function(this) DPSMate:SendMessage(DPSMate.L["votefailederror"]) end,
+	["DPSMate_Participate"..DPSMate.SYNCVERSION] = function(this) this:CountParticipants() end,
+	["DPSMate_SyncTimer"..DPSMate.SYNCVERSION] = function(this, arg2) this:SetTimer(arg2) end,
 }
 
 important = {
-	["DPSMate"] = function(arg2,arg4) 
+	["DPSMate"] = function(this, arg2,arg4) 
 		t = {}
 		strgsub(arg2, "(.-),", func) -- name, aura, target, time
 		t[3] = GT()
@@ -1531,49 +1537,49 @@ important = {
 		DB:AwaitingBuff(arg4, t[1], t[2], t[3])
 		DB:AwaitingAbsorbConfirmation(arg4, t[1], t[2], t[3])
 	end,
-	["DPSMate_DMGDoneAll"] = function(arg2,arg4) DPSMate.Sync:DMGDoneAllIn(arg2, arg4) end,
-	["DPSMate_DMGDoneStat"] = function(arg2,arg4) DPSMate.Sync:DMGDoneStatIn(arg2, arg4) end,
-	["DPSMate_DMGDoneAbility"] = function(arg2,arg4) DPSMate.Sync:DMGDoneAbilityIn(arg2, arg4) end,
-	["DPSMate_EHealingAll"] = function(arg2,arg4) DPSMate.Sync:HealingAllIn(arg2, arg4, 6) end,
-	["DPSMate_EHealingStat"] = function(arg2,arg4) DPSMate.Sync:HealingStatIn(arg2, arg4, 6) end,
-	["DPSMate_EHealingAbility"] = function(arg2,arg4) DPSMate.Sync:HealingAbilityIn(arg2, arg4, 6) end,
-	["DPSMate_THealingAll"] = function(arg2,arg4) DPSMate.Sync:HealingAllIn(arg2, arg4, 5) end,
-	["DPSMate_THealingStat"] = function(arg2,arg4) DPSMate.Sync:HealingStatIn(arg2, arg4, 5) end,
-	["DPSMate_THealingAbility"] = function(arg2,arg4) DPSMate.Sync:HealingAbilityIn(arg2, arg4, 5) end,
-	["DPSMate_OHealingAll"] = function(arg2,arg4) DPSMate.Sync:HealingAllIn(arg2, arg4, 9) end,
-	["DPSMate_OHealingStat"] = function(arg2,arg4) DPSMate.Sync:HealingStatIn(arg2, arg4, 9) end,
-	["DPSMate_OHealingAbility"] = function(arg2,arg4) DPSMate.Sync:HealingAbilityIn(arg2, arg4, 9) end,
-	["DPSMate_TTakenHealingAll"] = function(arg2,arg4) DPSMate.Sync:HealingAllIn(arg2, arg4, 7) end,
-	["DPSMate_TTakenHealingStat"] = function(arg2,arg4) DPSMate.Sync:HealingTakenStatIn(arg2, arg4, 7) end,
-	["DPSMate_THealingTakenAbility"] = function(arg2,arg4) DPSMate.Sync:HealingTakenAbilityIn(arg2, arg4, 7) end,
-	["DPSMate_ETakenHealingAll"] = function(arg2,arg4) DPSMate.Sync:HealingAllIn(arg2, arg4, 8) end,
-	["DPSMate_ETakenHealingStat"] = function(arg2,arg4) DPSMate.Sync:HealingTakenStatIn(arg2, arg4, 8) end,
-	["DPSMate_EHealingTakenAbility"] = function(arg2,arg4) DPSMate.Sync:HealingTakenAbilityIn(arg2, arg4, 8) end,
-	["DPSMate_OTakenHealingAll"] = function(arg2,arg4) DPSMate.Sync:HealingAllIn(arg2, arg4, 15) end,
-	["DPSMate_OTakenHealingStat"] = function(arg2,arg4) DPSMate.Sync:HealingTakenStatIn(arg2, arg4, 15) end,
-	["DPSMate_OHealingTakenAbility"] = function(arg2,arg4) DPSMate.Sync:HealingTakenAbilityIn(arg2, arg4, 15) end,
-	["DPSMate_Absorbs"] = function(arg2,arg4) DPSMate.Sync:AbsorbsIn(arg2, arg4) end,
-	["DPSMate_iAbsorbs"] = function(arg2,arg4) DPSMate.Sync:iAbsorbsIn(arg2, arg4) end,
-	["DPSMate_Dispels"] = function(arg2,arg4) DPSMate.Sync:DispelsIn(arg2, arg4) end,
-	["DPSMate_iDispels"] = function(arg2,arg4) DPSMate.Sync:iDispelsIn(arg2, arg4) end,
-	["DPSMate_DMGTakenAll"] = function(arg2,arg4) DPSMate.Sync:DMGTakenAllIn(arg2, arg4) end,
-	["DPSMate_DMGTakenStat"] = function(arg2,arg4) DPSMate.Sync:DMGTakenStatIn(arg2, arg4) end,
-	["DPSMate_DMGTakenAbility"] = function(arg2,arg4) DPSMate.Sync:DMGTakenAbilityIn(arg2, arg4) end,
-	["DPSMate_EDTAll"] = function(arg2,arg4) DPSMate.Sync:EDAllIn(4, arg2, arg4) end,
-	["DPSMate_EDTAbility"] = function(arg2,arg4) DPSMate.Sync:EDAbilityIn(4, arg2, arg4) end,
-	["DPSMate_EDTStat"] = function(arg2,arg4) DPSMate.Sync:EDStatIn(4, arg2, arg4) end,
-	["DPSMate_EDDAll"] = function(arg2,arg4) DPSMate.Sync:EDAllIn(3, arg2, arg4) end,
-	["DPSMate_EDDAbility"] = function(arg2,arg4) DPSMate.Sync:EDAbilityIn(3, arg2, arg4) end,
-	["DPSMate_EDDStat"] = function(arg2,arg4) DPSMate.Sync:EDStatIn(3, arg2, arg4) end,
-	["DPSMate_DeathsAll"] = function(arg2,arg4) DPSMate.Sync:DeathsAllIn(arg2, arg4) end,
-	["DPSMate_Deaths"] = function(arg2,arg4) DPSMate.Sync:DeathsIn(arg2, arg4) end,
-	["DPSMate_InterruptsAll"] = function(arg2,arg4) DPSMate.Sync:InterruptsAllIn(arg2, arg4) end,
-	["DPSMate_InterruptsAbility"] = function(arg2,arg4) DPSMate.Sync:InterruptsAbilityIn(arg2, arg4) end,
-	["DPSMate_AurasAll"] = function(arg2,arg4) DPSMate.Sync:AurasAllIn(arg2, arg4) end,
-	["DPSMate_AurasStart"] = function(arg2,arg4) DPSMate.Sync:AurasStartEndIn(arg2, arg4, 1) end,
-	["DPSMate_AurasEnd"] = function(arg2,arg4) DPSMate.Sync:AurasStartEndIn(arg2, arg4, 2) end,
-	["DPSMate_AurasCause"] = function(arg2,arg4) DPSMate.Sync:AurasCauseIn(arg2, arg4) end,
-	["DPSMate_SyncStatus"] = function(arg2,arg4) DPSMate.Sync:SyncStatus(arg2, arg4) end,
-	["DPSMate_Threat"] = function(arg2,arg4) DPSMate.Sync:ThreatAllIn(arg2, arg4) end,
-	["DPSMate_ThreatStats"] = function(arg2,arg4) DPSMate.Sync:ThreatStatsIn(arg2, arg4) end,
+	["DPSMate_DMGDoneAll"] = function(this, arg2,arg4) this:DMGDoneAllIn(arg2, arg4) end,
+	["DPSMate_DMGDoneStat"] = function(this, arg2,arg4) this:DMGDoneStatIn(arg2, arg4) end,
+	["DPSMate_DMGDoneAbility"] = function(this, arg2,arg4) this:DMGDoneAbilityIn(arg2, arg4) end,
+	["DPSMate_EHealingAll"] = function(this, arg2,arg4) this:HealingAllIn(arg2, arg4, 6) end,
+	["DPSMate_EHealingStat"] = function(this, arg2,arg4) this:HealingStatIn(arg2, arg4, 6) end,
+	["DPSMate_EHealingAbility"] = function(this, arg2,arg4) this:HealingAbilityIn(arg2, arg4, 6) end,
+	["DPSMate_THealingAll"] = function(this, arg2,arg4) this:HealingAllIn(arg2, arg4, 5) end,
+	["DPSMate_THealingStat"] = function(this, arg2,arg4) this:HealingStatIn(arg2, arg4, 5) end,
+	["DPSMate_THealingAbility"] = function(this, arg2,arg4) this:HealingAbilityIn(arg2, arg4, 5) end,
+	["DPSMate_OHealingAll"] = function(this, arg2,arg4) this:HealingAllIn(arg2, arg4, 9) end,
+	["DPSMate_OHealingStat"] = function(this, arg2,arg4) this:HealingStatIn(arg2, arg4, 9) end,
+	["DPSMate_OHealingAbility"] = function(this, arg2,arg4) this:HealingAbilityIn(arg2, arg4, 9) end,
+	["DPSMate_TTakenHealingAll"] = function(this, arg2,arg4) this:HealingAllIn(arg2, arg4, 7) end,
+	["DPSMate_TTakenHealingStat"] = function(this, arg2,arg4) this:HealingTakenStatIn(arg2, arg4, 7) end,
+	["DPSMate_THealingTakenAbility"] = function(this, arg2,arg4) this:HealingTakenAbilityIn(arg2, arg4, 7) end,
+	["DPSMate_ETakenHealingAll"] = function(this, arg2,arg4) this:HealingAllIn(arg2, arg4, 8) end,
+	["DPSMate_ETakenHealingStat"] = function(this, arg2,arg4) this:HealingTakenStatIn(arg2, arg4, 8) end,
+	["DPSMate_EHealingTakenAbility"] = function(this, arg2,arg4) this:HealingTakenAbilityIn(arg2, arg4, 8) end,
+	["DPSMate_OTakenHealingAll"] = function(this, arg2,arg4) this:HealingAllIn(arg2, arg4, 15) end,
+	["DPSMate_OTakenHealingStat"] = function(this, arg2,arg4) this:HealingTakenStatIn(arg2, arg4, 15) end,
+	["DPSMate_OHealingTakenAbility"] = function(this, arg2,arg4) this:HealingTakenAbilityIn(arg2, arg4, 15) end,
+	["DPSMate_Absorbs"] = function(this, arg2,arg4) this:AbsorbsIn(arg2, arg4) end,
+	["DPSMate_iAbsorbs"] = function(this, arg2,arg4) this:iAbsorbsIn(arg2, arg4) end,
+	["DPSMate_Dispels"] = function(this, arg2,arg4) this:DispelsIn(arg2, arg4) end,
+	["DPSMate_iDispels"] = function(this, arg2,arg4) this:iDispelsIn(arg2, arg4) end,
+	["DPSMate_DMGTakenAll"] = function(this, arg2,arg4) this:DMGTakenAllIn(arg2, arg4) end,
+	["DPSMate_DMGTakenStat"] = function(this, arg2,arg4) this:DMGTakenStatIn(arg2, arg4) end,
+	["DPSMate_DMGTakenAbility"] = function(this, arg2,arg4) this:DMGTakenAbilityIn(arg2, arg4) end,
+	["DPSMate_EDTAll"] = function(this, arg2,arg4) this:EDAllIn(4, arg2, arg4) end,
+	["DPSMate_EDTAbility"] = function(this, arg2,arg4) this:EDAbilityIn(4, arg2, arg4) end,
+	["DPSMate_EDTStat"] = function(this, arg2,arg4) this:EDStatIn(4, arg2, arg4) end,
+	["DPSMate_EDDAll"] = function(this, arg2,arg4) this:EDAllIn(3, arg2, arg4) end,
+	["DPSMate_EDDAbility"] = function(this, arg2,arg4) this:EDAbilityIn(3, arg2, arg4) end,
+	["DPSMate_EDDStat"] = function(this, arg2,arg4) this:EDStatIn(3, arg2, arg4) end,
+	["DPSMate_DeathsAll"] = function(this, arg2,arg4) this:DeathsAllIn(arg2, arg4) end,
+	["DPSMate_Deaths"] = function(this, arg2,arg4) this:DeathsIn(arg2, arg4) end,
+	["DPSMate_InterruptsAll"] = function(this, arg2,arg4) this:InterruptsAllIn(arg2, arg4) end,
+	["DPSMate_InterruptsAbility"] = function(this, arg2,arg4) this:InterruptsAbilityIn(arg2, arg4) end,
+	["DPSMate_AurasAll"] = function(this, arg2,arg4) this:AurasAllIn(arg2, arg4) end,
+	["DPSMate_AurasStart"] = function(this, arg2,arg4) this:AurasStartEndIn(arg2, arg4, 1) end,
+	["DPSMate_AurasEnd"] = function(this, arg2,arg4) this:AurasStartEndIn(arg2, arg4, 2) end,
+	["DPSMate_AurasCause"] = function(this, arg2,arg4) this:AurasCauseIn(arg2, arg4) end,
+	["DPSMate_SyncStatus"] = function(this, arg2,arg4) this:SyncStatus(arg2, arg4) end,
+	["DPSMate_Threat"] = function(this, arg2,arg4) this:ThreatAllIn(arg2, arg4) end,
+	["DPSMate_ThreatStats"] = function(this, arg2,arg4) this:ThreatStatsIn(arg2, arg4) end,
 }
