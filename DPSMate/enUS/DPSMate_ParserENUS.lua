@@ -321,7 +321,7 @@ function DPSMate.Parser:CreatureVsSelfMisses(msg)
 		return
 	end
 	for a,b in strgfind(msg, "(.+) attacks. You (.+)%.") do 
-		t = {true, true, true}
+		t = {false, false, false}
 		if b=="parry" then t[1]=1 elseif b=="dodge" then t[2]=1 else t[3]=1 end 
 		DB:EnemyDamage(false, DPSMateEDD, self.player, "AutoAttack", 0, 0, 0, t[1] or 0, t[2] or 0, 0, 0, a, t[3] or 0, 0)
 		DB:DamageTaken(self.player, "AutoAttack", 0, 0, 0, t[1] or 0, t[2] or 0, 0, 0, a, 0, t[3] or 0)

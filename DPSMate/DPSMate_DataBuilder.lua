@@ -194,464 +194,466 @@ end
 -- Begin Functions
 
 DPSMate.DB.PLAYER_ENTERING_WORLD = function()
-	if DPSMateSettings == nil then
-		DPSMateSettings = {
-			windows = {
-				[1] = {
-					name = "DPSMate",
-					options = {
-						[1] = {
-							damage = true
+	if not this.loaded then
+		if DPSMateSettings == nil then
+			DPSMateSettings = {
+				windows = {
+					[1] = {
+						name = "DPSMate",
+						options = {
+							[1] = {
+								damage = true
+							},
+							[2] = {
+								total = true
+							}
 						},
-						[2] = {
-							total = true
-						}
-					},
-					CurMode = "damage",
-					hidden = false,
-					scale = 1,
-					barfont = "FRIZQT",
-					barfontsize = 13,
-					barfontflag = "Outline",
-					bartexture = "Minimalist",
-					barspacing = 1,
-					barheight = 17,
-					classicons = true,
-					ranks = true,
-					titlebar = true,
-					titlebarfont = "FRIZQT",
-					titlebarfontflag = "None",
-					titlebarfontsize = 12,
-					titlebarheight = 17,
-					titlebarreport = true,
-					titlebarreset = true,
-					titlebarsegments = true,
-					titlebarconfig = true,
-					titlebarsync = true,
-					titlebarenable = true,
-					titlebarfilter = true,
-					titlebartexture = "Minimalist",
-					titlebarbgcolor = {0.1568627450980392,0.1725490196078431,0.1647058823529412},
-					titlebarfontcolor = {1.0,0.82,0.0},
-					barfontcolor = {1.0,1.0,1.0},
-					contentbgtexture = "UI-Tooltip-Background",
-					contentbgcolor = {0.01568627450980392,0,1},
-					bgbarcolor = {1,1,1},
-					numberformat = 1,
-					opacity = 1,
-					bgopacity = 0,
-					titlebaropacity = 1,
-					filterclasses = {
-						warrior = true,
-						rogue = true,
-						priest = true,
-						hunter = true,
-						mage = true,
-						warlock = true,
-						paladin = true,
-						shaman = true,
-						druid = true,
-					},
-					filterpeople = "",
-					grouponly = true,
-					realtime = false,
-					cbtdisplay = false,
-					barbg = false,
-					totopacity = 1.0,
-					borderopacity = 1.0,
-					contentbordercolor = {0,0,0},
-					borderstrata = 1,
-					bordertexture = "UI-Tooltip-Border",
-					position = {"CENTER",0,0},
-					savsize = {150,100},
-				}
-			},
-			lock = false,
-			sync = true,
-			enable = true,
-			dataresetsworld = 2,
-			dataresetsjoinparty = 2,
-			dataresetsleaveparty = 2,
-			dataresetspartyamount = 2,
-			dataresetssync = 3,
-			dataresetslogout = 2,
-			showminimapbutton = true,
-			showtotals = true,
-			hidewhensolo = false,
-			hideincombat = false,
-			hideinpvp = false,
-			disablewhilehidden = false,
-			datasegments = 8,
-			mergepets = true,
-			columnsdps = {
-				[1] = false,
-				[2] = true,
-				[3] = true,
-				[4] = false
-			},
-			columnsdmg = {
-				[1] = true,
-				[2] = false,
-				[3] = true,
-				[4] = false
-			},
-			columnsdmgtaken = {
-				[1] = true,
-				[2] = false,
-				[3] = true,
-				[4] = false
-			},
-			columnsdtps = {
-				[1] = false,
-				[2] = true,
-				[3] = true,
-				[4] = false
-			},
-			columnsedd = {
-				[1] = true,
-				[2] = false,
-				[3] = true,
-				[4] = false
-			},
-			columnsedt = {
-				[1] = true,
-				[2] = false,
-				[3] = true,
-				[4] = false
-			},
-			columnshealing = {
-				[1] = true,
-				[2] = false,
-				[3] = true,
-				[4] = false
-			},
-			columnshealingtaken = {
-				[1] = true,
-				[2] = false,
-				[3] = true,
-				[4] = false
-			},
-			columnshps = {
-				[1] = false,
-				[2] = true,
-				[3] = true,
-				[4] = false
-			},
-			columnsohps = {
-				[1] = false,
-				[2] = true,
-				[3] = true,
-				[4] = false
-			},
-			columnsoverhealing = {
-				[1] = true,
-				[2] = false,
-				[3] = true,
-				[4] = false
-			},
-			columnsohealingtaken = {
-				[1] = true,
-				[2] = false,
-				[3] = true,
-				[4] = false
-			},
-			columnsehealing = {
-				[1] = true,
-				[2] = false,
-				[3] = true,
-				[4] = false
-			},
-			columnsehealingtaken = {
-				[1] = true,
-				[2] = false,
-				[3] = true,
-				[4] = false
-			},
-			columnsehps = {
-				[1] = false,
-				[2] = true,
-				[3] = true,
-				[4] = false
-			},
-			columnsabsorbs = {
-				[1] = true,
-				[2] = true,
-				[3] = false,
-				[4] = false
-			},
-			columnsabsorbstaken = {
-				[1] = true,
-				[2] = true,
-				[3] = false,
-				[4] = false
-			},
-			columnshab = {
-				[1] = true,
-				[2] = false,
-				[3] = true,
-				[4] = false
-			},
-			columnsdeaths = {
-				[1] = true,
-				[2] = true,
-			},
-			columnsinterrupts = {
-				[1] = true,
-				[2] = true,
-			},
-			columnsdispels = {
-				[1] = true,
-				[2] = true,
-			},
-			columnsdispelsreceived = {
-				[1] = true,
-				[2] = true,
-			},
-			columnsdecurses = {
-				[1] = true,
-				[2] = true,
-			},
-			columnsdecursesreceived = {
-				[1] = true,
-				[2] = true,
-			},
-			columnsdisease = {
-				[1] = true,
-				[2] = true,
-			},
-			columnsdiseasereceived = {
-				[1] = true,
-				[2] = true,
-			},
-			columnspoison = {
-				[1] = true,
-				[2] = true,
-			},
-			columnspoisonreceived = {
-				[1] = true,
-				[2] = true,
-			},
-			columnsmagic = {
-				[1] = true,
-				[2] = true,
-			},
-			columnsmagicreceived = {
-				[1] = true,
-				[2] = true,
-			},
-			columnsaurasgained = {
-				[1] = true,
-				[2] = true,
-			},
-			columnsauraslost = {
-				[1] = true,
-				[2] = true,
-			},
-			columnsaurauptime = {
-				[1] = true,
-				[2] = true,
-			},
-			columnsprocs = {
-				[1] = true,
-				[2] = true,
-			},
-			columnscasts = {
-				[1] = true,
-				[2] = true,
-			},
-			columnsthreat = {
-				[1] = true,
-				[2] = false,
-				[3] = true,
-				[4] = false
-			},
-			columnstps = {
-				[1] = false,
-				[2] = true,
-				[3] = true,
-				[4] = false
-			},
-			columnsfails = {
-				[1] = true,
-				[2] = true,
-			},
-			columnsccbreaker = {
-				[1] = true,
-				[2] = true,
-			},
-			columnsfriendlyfire = {
-				[1] = true,
-				[2] = false,
-				[3] = true,
-				[4] = false
-			},
-			columnsfriendlyfiretaken = {
-				[1] = true,
-				[2] = false,
-				[3] = true,
-				[4] = false
-			},
-			showtooltips = true,
-			informativetooltips = true,
-			subviewrows = 4,
-			tooltipanchor = 5,
-			onlybossfights = true,
-			hiddenmodes = {},
-			broadcasting = false,
-			bccd = false,
-			bcress = false,
-			bckb = false,
-			bcfail = false,
-			bcrw = false,
-			targetscale=0.58,
-			hideonlogin = false,
-			reportdelay = false,
-			legacylogs = false,
-		}
-	end
-	if DPSMateHistory == nil then 
-		DPSMateHistory = {
-			names = {},
-			DMGDone = {},
-			DMGTaken = {},
-			EDDone = {},
-			EDTaken = {},
-			THealing = {},
-			EHealing = {},
-			OHealing = {},
-			EHealingTaken = {},
-			THealingTaken = {},
-			OHealingTaken = {},
-			Absorbs = {},
-			Deaths = {},
-			Interrupts = {},
-			Dispels = {},
-			Auras = {},
-			Threat = {},
-			Fail = {},
-			CCBreaker = {}
-		}
-	end
-	if DPSMateUser == nil then DPSMateUser = {} end
-	if DPSMateAbility == nil then DPSMateAbility = {} end
-	if DPSMateDamageDone == nil then DPSMateDamageDone = {[1]={},[2]={}} end
-	if DPSMateDamageTaken == nil then DPSMateDamageTaken = {[1]={},[2]={}} end
-	if DPSMateEDD == nil then DPSMateEDD = {[1]={},[2]={}} end
-	if DPSMateEDT == nil then DPSMateEDT = {[1]={},[2]={}} end
-	if DPSMateTHealing == nil then DPSMateTHealing = {[1]={},[2]={}} end
-	if DPSMateEHealing == nil then DPSMateEHealing = {[1]={},[2]={}} end
-	if DPSMateOverhealing == nil then DPSMateOverhealing = {[1]={},[2]={}} end
-	if DPSMateHealingTaken == nil then DPSMateHealingTaken = {[1]={},[2]={}} end
-	if DPSMateEHealingTaken == nil then DPSMateEHealingTaken = {[1]={},[2]={}} end
-	if DPSMateOverhealingTaken == nil then DPSMateOverhealingTaken = {[1]={},[2]={}} end
-	if DPSMateAbsorbs == nil then DPSMateAbsorbs = {[1]={},[2]={}} end
-	if DPSMateDispels == nil then DPSMateDispels = {[1]={},[2]={}} end
-	if DPSMateDeaths == nil then DPSMateDeaths = {[1]={},[2]={}} end
-	if DPSMateInterrupts == nil then DPSMateInterrupts = {[1]={},[2]={}} end
-	if DPSMateAurasGained == nil then DPSMateAurasGained = {[1]={},[2]={}} end
-	if DPSMateThreat == nil then DPSMateThreat = {[1]={},[2]={}} end
-	if DPSMateFails == nil then DPSMateFails = {[1]={},[2]={}} end
-	if DPSMateCCBreaker == nil then DPSMateCCBreaker = {[1]={},[2]={}} end
-	-- Legacy Logs support
-	if DPSMateAttempts == nil then DPSMateAttempts = {} end
-	if DPSMatePlayer == nil then DPSMatePlayer = {} end
-	if DPSMateLoot == nil then DPSMateLoot = {} end
-	
-	if DPSMate.Modules.DPS then DPSMate.Modules.DPS.DB = DPSMateDamageDone end
-	if DPSMate.Modules.Damage then DPSMate.Modules.Damage.DB = DPSMateDamageDone end
-	if DPSMate.Modules.DamageTaken then DPSMate.Modules.DamageTaken.DB = DPSMateDamageTaken end
-	if DPSMate.Modules.DTPS then DPSMate.Modules.DTPS.DB = DPSMateDamageTaken end
-	if DPSMate.Modules.EDD then DPSMate.Modules.EDD.DB = DPSMateEDD end
-	if DPSMate.Modules.EDT then DPSMate.Modules.EDT.DB = DPSMateEDT end
-	if DPSMate.Modules.FriendlyFire then DPSMate.Modules.FriendlyFire.DB = DPSMateEDT end
-	if DPSMate.Modules.FriendlyFireTaken then DPSMate.Modules.FriendlyFireTaken.DB = DPSMateEDT end
-	if DPSMate.Modules.Healing then DPSMate.Modules.Healing.DB = DPSMateTHealing end
-	if DPSMate.Modules.HPS then DPSMate.Modules.HPS.DB = DPSMateTHealing end
-	if DPSMate.Modules.Overhealing then DPSMate.Modules.Overhealing.DB = DPSMateOverhealing end
-	if DPSMate.Modules.EffectiveHealing then DPSMate.Modules.EffectiveHealing.DB = DPSMateEHealing end
-	if DPSMate.Modules.EffectiveHPS then DPSMate.Modules.EffectiveHPS.DB = DPSMateEHealing end
-	if DPSMate.Modules.HealingTaken then DPSMate.Modules.HealingTaken.DB = DPSMateHealingTaken end
-	if DPSMate.Modules.EffectiveHealingTaken then DPSMate.Modules.EffectiveHealingTaken.DB = DPSMateEHealingTaken end
-	if DPSMate.Modules.Absorbs then DPSMate.Modules.Absorbs.DB = DPSMateAbsorbs end
-	if DPSMate.Modules.AbsorbsTaken then DPSMate.Modules.AbsorbsTaken.DB = DPSMateAbsorbs end
-	if DPSMate.Modules.HealingAndAbsorbs then DPSMate.Modules.HealingAndAbsorbs.DB = DPSMateAbsorbs end
-	if DPSMate.Modules.Deaths then DPSMate.Modules.Deaths.DB = DPSMateDeaths end
-	if DPSMate.Modules.Dispels then DPSMate.Modules.Dispels.DB = DPSMateDispels end
-	if DPSMate.Modules.DispelsReceived then DPSMate.Modules.DispelsReceived.DB = DPSMateDispels end
-	if DPSMate.Modules.Decurses then DPSMate.Modules.Decurses.DB = DPSMateDispels end
-	if DPSMate.Modules.DecursesReceived then DPSMate.Modules.DecursesReceived.DB = DPSMateDispels end
-	if DPSMate.Modules.CureDisease then DPSMate.Modules.CureDisease.DB = DPSMateDispels end
-	if DPSMate.Modules.CureDiseaseReceived then DPSMate.Modules.CureDiseaseReceived.DB = DPSMateDispels end
-	if DPSMate.Modules.CurePoison then DPSMate.Modules.CurePoison.DB = DPSMateDispels end
-	if DPSMate.Modules.CurePoisonReceived then DPSMate.Modules.CurePoisonReceived.DB = DPSMateDispels end
-	if DPSMate.Modules.LiftMagic then DPSMate.Modules.LiftMagic.DB = DPSMateDispels end
-	if DPSMate.Modules.LiftMagicReceived then DPSMate.Modules.LiftMagicReceived.DB = DPSMateDispels end
-	if DPSMate.Modules.Interrupts then DPSMate.Modules.Interrupts.DB = DPSMateInterrupts end
-	if DPSMate.Modules.AurasGained then DPSMate.Modules.AurasGained.DB = DPSMateAurasGained end
-	if DPSMate.Modules.AurasLost then DPSMate.Modules.AurasLost.DB = DPSMateAurasGained end
-	if DPSMate.Modules.AurasLost then DPSMate.Modules.AurasLost.DB = DPSMateAurasGained end
-	if DPSMate.Modules.AurasUptimers then DPSMate.Modules.AurasUptimers.DB = DPSMateAurasGained end
-	if DPSMate.Modules.Procs then DPSMate.Modules.Procs.DB = DPSMateAurasGained end
-	if DPSMate.Modules.Casts then DPSMate.Modules.Casts.DB = DPSMateEDT end
-	if DPSMate.Modules.Threat then DPSMate.Modules.Threat.DB = DPSMateThreat end
-	if DPSMate.Modules.TPS then DPSMate.Modules.TPS.DB = DPSMateThreat end
-	if DPSMate.Modules.Fails then DPSMate.Modules.Fails.DB = DPSMateFails end
-	if DPSMate.Modules.CCBreaker then DPSMate.Modules.CCBreaker.DB = DPSMateCCBreaker end
-	if DPSMate.Modules.OHPS then DPSMate.Modules.OHPS.DB = DPSMateOverhealing end
-	if DPSMate.Modules.OHealingTaken then DPSMate.Modules.OHealingTaken.DB = DPSMateOverhealingTaken end
-	if DPSMate.Modules.Activity then DPSMate.Modules.Activity.DB = DPSMateCombatTime end
-	
-	if DPSMateCombatTime == nil then
-		DPSMateCombatTime = {
-			total = 0.0001,
-			current = 0.0001,
-			segments = {},
-			effective = {
-				[1] = {},
-				[2] = {}
-			},
-		}
-	end
-	
-	this.abilitylen = DPSMate:TableLength(DPSMateAbility)
-	this.userlen = DPSMate:TableLength(DPSMateUser)
-
-
-	DPSMate:OnLoad()
-	DPSMate.Sync:OnLoad()
-	DPSMate.Options:InitializeSegments()
-	DPSMate.Options:InitializeHideShowWindow()
-	
-	player = UnitName("player")
-	
-	if not DPSMateUser["LASTRESETDPSMATE"] or DPSMateUser["LASTRESETDPSMATE"][2]<DPSMate.VERSION then
-		DPSMateUser = {}
-		DPSMateAbility = {}
-		DPSMateUser["LASTRESETDPSMATE"] = {
-			[1] = 1,
-			[2] = DPSMate.VERSION
-		}
-		DPSMate.Options:PopUpAccept(true, true)
-	end
-	
-	local frames = {"", "_Absorbs", "_AbsorbsTaken", "_Auras", "_Casts", "_CCBreaker", "_CureDisease", "_CureDiseaseReceived", "_CurePoison", "_CurePoisonReceived", "_DamageTaken", "_DamageTakenTotal", "_DamageTotal", "_Deaths", "_Decurses", "_DecursesReceived", "_Dispels", "_DispelsReceived", "_EDD", "_EDT", "_EHealing", "_EHealingTaken", "_Fails", "_FF", "_FFT", "_Healing", "_HealingTaken", "_Interrupts", "_LiftMagic", "_LiftMagicReceived", "_OHealingTaken", "_Overhealing", "_Procs", "_AbsorbsTakenTotal", "_AbsorbsTotal", "_AurasTotal", "_CastsTotal", "_CCBreakerTotal", "_CureDisease_Total", "_CurePoison_Total", "_Deaths_Total", "_Decurses_Total", "_Dispels_Total", "_EDDTotal", "_EDTTotal", "_EHealingTakenTotal", "_EHealingTotal", "_FailsTotal", "_FFTotal", "_FFTTotal", "_HABTotal", "_HealingTakenTotal", "_HealingTotal", "_Interrupts_Total", "_LiftMagic_Total", "_OverhealingTakenTotal", "_OverhealingTotal", "_ProcsTotal"}
-	for cat, val in pairs(frames) do
-		if _G("DPSMate_Details"..val) then
-			_G("DPSMate_Details"..val):SetToplevel(true)
+						CurMode = "damage",
+						hidden = false,
+						scale = 1,
+						barfont = "FRIZQT",
+						barfontsize = 13,
+						barfontflag = "Outline",
+						bartexture = "Minimalist",
+						barspacing = 1,
+						barheight = 17,
+						classicons = true,
+						ranks = true,
+						titlebar = true,
+						titlebarfont = "FRIZQT",
+						titlebarfontflag = "None",
+						titlebarfontsize = 12,
+						titlebarheight = 17,
+						titlebarreport = true,
+						titlebarreset = true,
+						titlebarsegments = true,
+						titlebarconfig = true,
+						titlebarsync = true,
+						titlebarenable = true,
+						titlebarfilter = true,
+						titlebartexture = "Minimalist",
+						titlebarbgcolor = {0.1568627450980392,0.1725490196078431,0.1647058823529412},
+						titlebarfontcolor = {1.0,0.82,0.0},
+						barfontcolor = {1.0,1.0,1.0},
+						contentbgtexture = "UI-Tooltip-Background",
+						contentbgcolor = {0.01568627450980392,0,1},
+						bgbarcolor = {1,1,1},
+						numberformat = 1,
+						opacity = 1,
+						bgopacity = 0,
+						titlebaropacity = 1,
+						filterclasses = {
+							warrior = true,
+							rogue = true,
+							priest = true,
+							hunter = true,
+							mage = true,
+							warlock = true,
+							paladin = true,
+							shaman = true,
+							druid = true,
+						},
+						filterpeople = "",
+						grouponly = true,
+						realtime = false,
+						cbtdisplay = false,
+						barbg = false,
+						totopacity = 1.0,
+						borderopacity = 1.0,
+						contentbordercolor = {0,0,0},
+						borderstrata = 1,
+						bordertexture = "UI-Tooltip-Border",
+						position = {"CENTER",0,0},
+						savsize = {150,100},
+					}
+				},
+				lock = false,
+				sync = true,
+				enable = true,
+				dataresetsworld = 2,
+				dataresetsjoinparty = 2,
+				dataresetsleaveparty = 2,
+				dataresetspartyamount = 2,
+				dataresetssync = 3,
+				dataresetslogout = 2,
+				showminimapbutton = true,
+				showtotals = true,
+				hidewhensolo = false,
+				hideincombat = false,
+				hideinpvp = false,
+				disablewhilehidden = false,
+				datasegments = 8,
+				mergepets = true,
+				columnsdps = {
+					[1] = false,
+					[2] = true,
+					[3] = true,
+					[4] = false
+				},
+				columnsdmg = {
+					[1] = true,
+					[2] = false,
+					[3] = true,
+					[4] = false
+				},
+				columnsdmgtaken = {
+					[1] = true,
+					[2] = false,
+					[3] = true,
+					[4] = false
+				},
+				columnsdtps = {
+					[1] = false,
+					[2] = true,
+					[3] = true,
+					[4] = false
+				},
+				columnsedd = {
+					[1] = true,
+					[2] = false,
+					[3] = true,
+					[4] = false
+				},
+				columnsedt = {
+					[1] = true,
+					[2] = false,
+					[3] = true,
+					[4] = false
+				},
+				columnshealing = {
+					[1] = true,
+					[2] = false,
+					[3] = true,
+					[4] = false
+				},
+				columnshealingtaken = {
+					[1] = true,
+					[2] = false,
+					[3] = true,
+					[4] = false
+				},
+				columnshps = {
+					[1] = false,
+					[2] = true,
+					[3] = true,
+					[4] = false
+				},
+				columnsohps = {
+					[1] = false,
+					[2] = true,
+					[3] = true,
+					[4] = false
+				},
+				columnsoverhealing = {
+					[1] = true,
+					[2] = false,
+					[3] = true,
+					[4] = false
+				},
+				columnsohealingtaken = {
+					[1] = true,
+					[2] = false,
+					[3] = true,
+					[4] = false
+				},
+				columnsehealing = {
+					[1] = true,
+					[2] = false,
+					[3] = true,
+					[4] = false
+				},
+				columnsehealingtaken = {
+					[1] = true,
+					[2] = false,
+					[3] = true,
+					[4] = false
+				},
+				columnsehps = {
+					[1] = false,
+					[2] = true,
+					[3] = true,
+					[4] = false
+				},
+				columnsabsorbs = {
+					[1] = true,
+					[2] = true,
+					[3] = false,
+					[4] = false
+				},
+				columnsabsorbstaken = {
+					[1] = true,
+					[2] = true,
+					[3] = false,
+					[4] = false
+				},
+				columnshab = {
+					[1] = true,
+					[2] = false,
+					[3] = true,
+					[4] = false
+				},
+				columnsdeaths = {
+					[1] = true,
+					[2] = true,
+				},
+				columnsinterrupts = {
+					[1] = true,
+					[2] = true,
+				},
+				columnsdispels = {
+					[1] = true,
+					[2] = true,
+				},
+				columnsdispelsreceived = {
+					[1] = true,
+					[2] = true,
+				},
+				columnsdecurses = {
+					[1] = true,
+					[2] = true,
+				},
+				columnsdecursesreceived = {
+					[1] = true,
+					[2] = true,
+				},
+				columnsdisease = {
+					[1] = true,
+					[2] = true,
+				},
+				columnsdiseasereceived = {
+					[1] = true,
+					[2] = true,
+				},
+				columnspoison = {
+					[1] = true,
+					[2] = true,
+				},
+				columnspoisonreceived = {
+					[1] = true,
+					[2] = true,
+				},
+				columnsmagic = {
+					[1] = true,
+					[2] = true,
+				},
+				columnsmagicreceived = {
+					[1] = true,
+					[2] = true,
+				},
+				columnsaurasgained = {
+					[1] = true,
+					[2] = true,
+				},
+				columnsauraslost = {
+					[1] = true,
+					[2] = true,
+				},
+				columnsaurauptime = {
+					[1] = true,
+					[2] = true,
+				},
+				columnsprocs = {
+					[1] = true,
+					[2] = true,
+				},
+				columnscasts = {
+					[1] = true,
+					[2] = true,
+				},
+				columnsthreat = {
+					[1] = true,
+					[2] = false,
+					[3] = true,
+					[4] = false
+				},
+				columnstps = {
+					[1] = false,
+					[2] = true,
+					[3] = true,
+					[4] = false
+				},
+				columnsfails = {
+					[1] = true,
+					[2] = true,
+				},
+				columnsccbreaker = {
+					[1] = true,
+					[2] = true,
+				},
+				columnsfriendlyfire = {
+					[1] = true,
+					[2] = false,
+					[3] = true,
+					[4] = false
+				},
+				columnsfriendlyfiretaken = {
+					[1] = true,
+					[2] = false,
+					[3] = true,
+					[4] = false
+				},
+				showtooltips = true,
+				informativetooltips = true,
+				subviewrows = 4,
+				tooltipanchor = 5,
+				onlybossfights = true,
+				hiddenmodes = {},
+				broadcasting = false,
+				bccd = false,
+				bcress = false,
+				bckb = false,
+				bcfail = false,
+				bcrw = false,
+				targetscale=0.58,
+				hideonlogin = false,
+				reportdelay = false,
+				legacylogs = false,
+			}
 		end
-	end
-	
-	DPSMate.Parser:GetPlayerValues()
-	this:OnGroupUpdate()
-	DPSMate:SetStatusBarValue()
-	this:UnregisterEvent("PLAYER_ENTERING_WORLD")
-	DPSMate.Sync:RegisterEvent("CHAT_MSG_ADDON")
-	DPSMate.Sync:RegisterEvent("UPDATE_MOUSEOVER_UNIT")
-	DPSMate.Sync:SetScript("OnEvent", function() this[event](arg1,arg2,arg3,arg4) end)
-	DPSMate.Sync:SetScript("OnUpdate", function() this:OnUpdate() end)
+		if DPSMateHistory == nil then 
+			DPSMateHistory = {
+				names = {},
+				DMGDone = {},
+				DMGTaken = {},
+				EDDone = {},
+				EDTaken = {},
+				THealing = {},
+				EHealing = {},
+				OHealing = {},
+				EHealingTaken = {},
+				THealingTaken = {},
+				OHealingTaken = {},
+				Absorbs = {},
+				Deaths = {},
+				Interrupts = {},
+				Dispels = {},
+				Auras = {},
+				Threat = {},
+				Fail = {},
+				CCBreaker = {}
+			}
+		end
+		if DPSMateUser == nil then DPSMateUser = {} end
+		if DPSMateAbility == nil then DPSMateAbility = {} end
+		if DPSMateDamageDone == nil then DPSMateDamageDone = {[1]={},[2]={}} end
+		if DPSMateDamageTaken == nil then DPSMateDamageTaken = {[1]={},[2]={}} end
+		if DPSMateEDD == nil then DPSMateEDD = {[1]={},[2]={}} end
+		if DPSMateEDT == nil then DPSMateEDT = {[1]={},[2]={}} end
+		if DPSMateTHealing == nil then DPSMateTHealing = {[1]={},[2]={}} end
+		if DPSMateEHealing == nil then DPSMateEHealing = {[1]={},[2]={}} end
+		if DPSMateOverhealing == nil then DPSMateOverhealing = {[1]={},[2]={}} end
+		if DPSMateHealingTaken == nil then DPSMateHealingTaken = {[1]={},[2]={}} end
+		if DPSMateEHealingTaken == nil then DPSMateEHealingTaken = {[1]={},[2]={}} end
+		if DPSMateOverhealingTaken == nil then DPSMateOverhealingTaken = {[1]={},[2]={}} end
+		if DPSMateAbsorbs == nil then DPSMateAbsorbs = {[1]={},[2]={}} end
+		if DPSMateDispels == nil then DPSMateDispels = {[1]={},[2]={}} end
+		if DPSMateDeaths == nil then DPSMateDeaths = {[1]={},[2]={}} end
+		if DPSMateInterrupts == nil then DPSMateInterrupts = {[1]={},[2]={}} end
+		if DPSMateAurasGained == nil then DPSMateAurasGained = {[1]={},[2]={}} end
+		if DPSMateThreat == nil then DPSMateThreat = {[1]={},[2]={}} end
+		if DPSMateFails == nil then DPSMateFails = {[1]={},[2]={}} end
+		if DPSMateCCBreaker == nil then DPSMateCCBreaker = {[1]={},[2]={}} end
+		-- Legacy Logs support
+		if DPSMateAttempts == nil then DPSMateAttempts = {} end
+		if DPSMatePlayer == nil then DPSMatePlayer = {} end
+		if DPSMateLoot == nil then DPSMateLoot = {} end
+		
+		if DPSMate.Modules.DPS then DPSMate.Modules.DPS.DB = DPSMateDamageDone end
+		if DPSMate.Modules.Damage then DPSMate.Modules.Damage.DB = DPSMateDamageDone end
+		if DPSMate.Modules.DamageTaken then DPSMate.Modules.DamageTaken.DB = DPSMateDamageTaken end
+		if DPSMate.Modules.DTPS then DPSMate.Modules.DTPS.DB = DPSMateDamageTaken end
+		if DPSMate.Modules.EDD then DPSMate.Modules.EDD.DB = DPSMateEDD end
+		if DPSMate.Modules.EDT then DPSMate.Modules.EDT.DB = DPSMateEDT end
+		if DPSMate.Modules.FriendlyFire then DPSMate.Modules.FriendlyFire.DB = DPSMateEDT end
+		if DPSMate.Modules.FriendlyFireTaken then DPSMate.Modules.FriendlyFireTaken.DB = DPSMateEDT end
+		if DPSMate.Modules.Healing then DPSMate.Modules.Healing.DB = DPSMateTHealing end
+		if DPSMate.Modules.HPS then DPSMate.Modules.HPS.DB = DPSMateTHealing end
+		if DPSMate.Modules.Overhealing then DPSMate.Modules.Overhealing.DB = DPSMateOverhealing end
+		if DPSMate.Modules.EffectiveHealing then DPSMate.Modules.EffectiveHealing.DB = DPSMateEHealing end
+		if DPSMate.Modules.EffectiveHPS then DPSMate.Modules.EffectiveHPS.DB = DPSMateEHealing end
+		if DPSMate.Modules.HealingTaken then DPSMate.Modules.HealingTaken.DB = DPSMateHealingTaken end
+		if DPSMate.Modules.EffectiveHealingTaken then DPSMate.Modules.EffectiveHealingTaken.DB = DPSMateEHealingTaken end
+		if DPSMate.Modules.Absorbs then DPSMate.Modules.Absorbs.DB = DPSMateAbsorbs end
+		if DPSMate.Modules.AbsorbsTaken then DPSMate.Modules.AbsorbsTaken.DB = DPSMateAbsorbs end
+		if DPSMate.Modules.HealingAndAbsorbs then DPSMate.Modules.HealingAndAbsorbs.DB = DPSMateAbsorbs end
+		if DPSMate.Modules.Deaths then DPSMate.Modules.Deaths.DB = DPSMateDeaths end
+		if DPSMate.Modules.Dispels then DPSMate.Modules.Dispels.DB = DPSMateDispels end
+		if DPSMate.Modules.DispelsReceived then DPSMate.Modules.DispelsReceived.DB = DPSMateDispels end
+		if DPSMate.Modules.Decurses then DPSMate.Modules.Decurses.DB = DPSMateDispels end
+		if DPSMate.Modules.DecursesReceived then DPSMate.Modules.DecursesReceived.DB = DPSMateDispels end
+		if DPSMate.Modules.CureDisease then DPSMate.Modules.CureDisease.DB = DPSMateDispels end
+		if DPSMate.Modules.CureDiseaseReceived then DPSMate.Modules.CureDiseaseReceived.DB = DPSMateDispels end
+		if DPSMate.Modules.CurePoison then DPSMate.Modules.CurePoison.DB = DPSMateDispels end
+		if DPSMate.Modules.CurePoisonReceived then DPSMate.Modules.CurePoisonReceived.DB = DPSMateDispels end
+		if DPSMate.Modules.LiftMagic then DPSMate.Modules.LiftMagic.DB = DPSMateDispels end
+		if DPSMate.Modules.LiftMagicReceived then DPSMate.Modules.LiftMagicReceived.DB = DPSMateDispels end
+		if DPSMate.Modules.Interrupts then DPSMate.Modules.Interrupts.DB = DPSMateInterrupts end
+		if DPSMate.Modules.AurasGained then DPSMate.Modules.AurasGained.DB = DPSMateAurasGained end
+		if DPSMate.Modules.AurasLost then DPSMate.Modules.AurasLost.DB = DPSMateAurasGained end
+		if DPSMate.Modules.AurasLost then DPSMate.Modules.AurasLost.DB = DPSMateAurasGained end
+		if DPSMate.Modules.AurasUptimers then DPSMate.Modules.AurasUptimers.DB = DPSMateAurasGained end
+		if DPSMate.Modules.Procs then DPSMate.Modules.Procs.DB = DPSMateAurasGained end
+		if DPSMate.Modules.Casts then DPSMate.Modules.Casts.DB = DPSMateEDT end
+		if DPSMate.Modules.Threat then DPSMate.Modules.Threat.DB = DPSMateThreat end
+		if DPSMate.Modules.TPS then DPSMate.Modules.TPS.DB = DPSMateThreat end
+		if DPSMate.Modules.Fails then DPSMate.Modules.Fails.DB = DPSMateFails end
+		if DPSMate.Modules.CCBreaker then DPSMate.Modules.CCBreaker.DB = DPSMateCCBreaker end
+		if DPSMate.Modules.OHPS then DPSMate.Modules.OHPS.DB = DPSMateOverhealing end
+		if DPSMate.Modules.OHealingTaken then DPSMate.Modules.OHealingTaken.DB = DPSMateOverhealingTaken end
+		if DPSMate.Modules.Activity then DPSMate.Modules.Activity.DB = DPSMateCombatTime end
+		
+		if DPSMateCombatTime == nil then
+			DPSMateCombatTime = {
+				total = 0.0001,
+				current = 0.0001,
+				segments = {},
+				effective = {
+					[1] = {},
+					[2] = {}
+				},
+			}
+		end
+		
+		this.abilitylen = DPSMate:TableLength(DPSMateAbility)
+		this.userlen = DPSMate:TableLength(DPSMateUser)
 
-	DPSMate:SendMessage("DPSMate build "..DPSMate.VERSION.." has been loaded!")
-	this.loaded = true
+
+		DPSMate:OnLoad()
+		DPSMate.Sync:OnLoad()
+		DPSMate.Options:InitializeSegments()
+		DPSMate.Options:InitializeHideShowWindow()
+		
+		player = UnitName("player")
+		
+		if not DPSMateUser["LASTRESETDPSMATE"] or DPSMateUser["LASTRESETDPSMATE"][2]<DPSMate.VERSION then
+			DPSMateUser = {}
+			DPSMateAbility = {}
+			DPSMateUser["LASTRESETDPSMATE"] = {
+				[1] = 1,
+				[2] = DPSMate.VERSION
+			}
+			DPSMate.Options:PopUpAccept(true, true)
+		end
+		
+		local frames = {"", "_Absorbs", "_AbsorbsTaken", "_Auras", "_Casts", "_CCBreaker", "_CureDisease", "_CureDiseaseReceived", "_CurePoison", "_CurePoisonReceived", "_DamageTaken", "_DamageTakenTotal", "_DamageTotal", "_Deaths", "_Decurses", "_DecursesReceived", "_Dispels", "_DispelsReceived", "_EDD", "_EDT", "_EHealing", "_EHealingTaken", "_Fails", "_FF", "_FFT", "_Healing", "_HealingTaken", "_Interrupts", "_LiftMagic", "_LiftMagicReceived", "_OHealingTaken", "_Overhealing", "_Procs", "_AbsorbsTakenTotal", "_AbsorbsTotal", "_AurasTotal", "_CastsTotal", "_CCBreakerTotal", "_CureDisease_Total", "_CurePoison_Total", "_Deaths_Total", "_Decurses_Total", "_Dispels_Total", "_EDDTotal", "_EDTTotal", "_EHealingTakenTotal", "_EHealingTotal", "_FailsTotal", "_FFTotal", "_FFTTotal", "_HABTotal", "_HealingTakenTotal", "_HealingTotal", "_Interrupts_Total", "_LiftMagic_Total", "_OverhealingTakenTotal", "_OverhealingTotal", "_ProcsTotal"}
+		for cat, val in pairs(frames) do
+			if _G("DPSMate_Details"..val) then
+				_G("DPSMate_Details"..val):SetToplevel(true)
+			end
+		end
+		
+		DPSMate.Parser:GetPlayerValues()
+		this:OnGroupUpdate()
+		DPSMate:SetStatusBarValue()
+		this:UnregisterEvent("PLAYER_ENTERING_WORLD")
+		DPSMate.Sync:RegisterEvent("CHAT_MSG_ADDON")
+		DPSMate.Sync:RegisterEvent("UPDATE_MOUSEOVER_UNIT")
+		DPSMate.Sync:SetScript("OnEvent", function() this[event](arg1,arg2,arg3,arg4) end)
+		DPSMate.Sync:SetScript("OnUpdate", function() this:OnUpdate() end)
+
+		DPSMate:SendMessage("DPSMate build "..DPSMate.VERSION.." has been loaded!")
+		this.loaded = true
+	end
 end
 
 DPSMate.DB.PLAYER_REGEN_DISABLED = function()

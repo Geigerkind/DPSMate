@@ -737,18 +737,20 @@ DPSMate.Options.RAID_ROSTER_UPDATE = function()
 end
 
 DPSMate.Options.PLAYER_ENTERING_WORLD = function()
-	if DPSMateSettings["dataresetsworld"] == 3 then
-		if (GetTime()-LastPopUp) > TimeToNextPopUp and (DPSMate:TableLength(DPSMateUser) ~= 0 or DPSMate:TableLength(DPSMateUserCurrent) ~= 0) then
-			this:ShowResetPopUp()
-			LastPopUp = GetTime()
+	if DPSMate.DB.loaded then
+		if DPSMateSettings["dataresetsworld"] == 3 then
+			if (GetTime()-LastPopUp) > TimeToNextPopUp and (DPSMate:TableLength(DPSMateUser) ~= 0 or DPSMate:TableLength(DPSMateUserCurrent) ~= 0) then
+				this:ShowResetPopUp()
+				LastPopUp = GetTime()
+			end
+		elseif DPSMateSettings["dataresetsworld"] == 1 and not this:IsInParty() then
+			this:PopUpAccept(true)
 		end
-	elseif DPSMateSettings["dataresetsworld"] == 1 and not this:IsInParty() then
-		this:PopUpAccept(true)
-	end
-	this:HideInPvP()
-	if DPSMateSettings["hideonlogin"] then
-		for _, val in pairs(DPSMateSettings["windows"]) do
-			this:Hide(_G("DPSMate_"..val["name"]))
+		this:HideInPvP()
+		if DPSMateSettings["hideonlogin"] then
+			for _, val in pairs(DPSMateSettings["windows"]) do
+				this:Hide(_G("DPSMate_"..val["name"]))
+			end
 		end
 	end
 end
