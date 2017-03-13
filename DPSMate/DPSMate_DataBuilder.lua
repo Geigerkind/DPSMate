@@ -1090,6 +1090,7 @@ local hackOrder, hackOrder2 = {}, {}
 local time, path, gen
 function DPSMate.DB:DamageDone(Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, Ddodge, Dresist, Damount, Dglance, Dblock)
 	Duser = self:BuildUser(Duser)
+	time = GT()
 	if (not CombatState and cheatCombat<time) then
 		DPSMate.Options:NewSegment()
 		CombatState = true
