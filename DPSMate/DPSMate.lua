@@ -428,7 +428,7 @@ end
 function DPSMate:SetStatusBarValue()
 	if not DPSMateSettings["windows"][1] or self.Options.TestMode then return end
 	local arr, cbt, ecbt, user, val, perc, strt, statusbar, r, g, b, img, len
-	for k,c in DPSMateSettings.windows do
+	for k,c in pairs(DPSMateSettings.windows) do
 		arr, cbt, ecbt = self:GetMode(k)
 		user, val, perc, strt = self:GetSettingValues(arr,cbt,k,ecbt)
 		if DPSMateSettings["showtotals"] then

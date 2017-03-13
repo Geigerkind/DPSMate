@@ -1134,7 +1134,7 @@ function DPSMate.DB:DamageDone(Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, Ddodge,
 				[19] = 0,
 				[20] = 0,
 				[21] = 0,
-				[22] = 0, -- Casts
+				[22] = 0, -- Casts -- Deprecated
 				["i"] = {}
 			}
 		end
@@ -1163,7 +1163,7 @@ function DPSMate.DB:DamageDone(Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, Ddodge,
 				path[18] = path[18] + 1
 			end
 			gen["i"] = gen["i"] + Damount
-			time = floor(DPSMateCombatTime[val])
+			time = floor(DPSMateCombatTime[val]) -- Maybe put this into the onupdate in order to save time performance?
 			path["i"][time] = (path["i"][time] or 0) + Damount
 		else
 			path[9] = path[9] + Dmiss
@@ -1176,7 +1176,6 @@ function DPSMate.DB:DamageDone(Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, Ddodge,
 	self.NeedUpdate = true
 end
 
--- Fall damage
 function DPSMate.DB:DamageTaken(Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, Ddodge, Dresist, Damount, cause, Dcrush, Dblock)
 	if not DPSMateSettings["legacylogs"] and not DPSMate.RegistredModules["damagetaken"] then return end
 	Duser = self:BuildUser(Duser)
@@ -1270,7 +1269,7 @@ function DPSMate.DB:EnemyDamage(mode, arr, Duser, Dname, Dhit, Dcrit, Dmiss, Dpa
 	cause = self:BuildUser(cause)
 	
 	local time, path = GT()
-	if mode then -- EDD
+	if not mode then -- EDD
 		if not DPSMateSettings["legacylogs"] and not DPSMate.RegistredModules["enemydamagedone"] then
 			return
 		end
@@ -2192,12 +2191,13 @@ function DPSMate.DB:UpdatePlayerCBT(cbt)
 	local notInCombat = true
 	local type = "raid"
 	local num = GetNumRaidMembers()
+	local cbt1, cbt2 = DPSMateCombatTime["effective"][1], DPSMateCombatTime["effective"][2]
 	if num<=0 then
 		type = "party"
 		num = GetNumPartyMembers()
 		if UnitAffectingCombat("player") then
-			DPSMateCombatTime["effective"][1][player] = (DPSMateCombatTime["effective"][1][player] or 0) + cbt
-			DPSMateCombatTime["effective"][2][player] = (DPSMateCombatTime["effective"][2][player] or 0) + cbt
+			cbt1[player] = (cbt1[player] or 0) + cbt
+			cbt2[player] = (cbt2[player] or 0) + cbt
 			notInCombat = false
 		end
 	end
@@ -2205,28 +2205,29 @@ function DPSMate.DB:UpdatePlayerCBT(cbt)
 	for i=1, num do
 		if UnitAffectingCombat(type..i) then
 			name = UnitName(type..i)
-			DPSMateCombatTime["effective"][1][name] = (DPSMateCombatTime["effective"][1][name] or 0) + cbt
-			DPSMateCombatTime["effective"][2][name] = (DPSMateCombatTime["effective"][2][name] or 0) + cbt
+			cbt1[name] = (cbt1[name] or 0) + cbt
+			cbt2[name] = (cbt2[name] or 0) + cbt
 			notInCombat = false
 		end
 	end
 	return notInCombat
 end
 
-local notInCombat
+local notInCombat, cbtpt
 function DPSMate.DB:OnUpdate()
 	if (CombatState) then
 		notInCombat = false
 		LastUpdate = LastUpdate + arg1
 		if LastUpdate>=UpdateTime then
+			cbtpt = DPSMateCombatTime["effective"]
 			DPSMateCombatTime["total"] = DPSMateCombatTime["total"] + LastUpdate
 			DPSMateCombatTime["current"] = DPSMateCombatTime["current"] + LastUpdate
 			notInCombat = self:UpdatePlayerCBT(LastUpdate) -- Slowing it down
 			
 			-- Check NPC E CBT Time (May be inaccurate) -> Can be used as active time later
 			for cat, _ in pairs(ActiveMob) do
-				DPSMateCombatTime["effective"][1][cat] = (DPSMateCombatTime["effective"][1][cat] or 0) + LastUpdate
-				DPSMateCombatTime["effective"][2][cat] = (DPSMateCombatTime["effective"][2][cat] or 0) + LastUpdate
+				cbtpt[1][cat] = (cbtpt[1][cat] or 0) + LastUpdate
+				cbtpt[2][cat] = (cbtpt[2][cat] or 0) + LastUpdate
 			end
 			ActiveMob = {}
 			
