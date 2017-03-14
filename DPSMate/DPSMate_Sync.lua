@@ -949,7 +949,7 @@ DPSMate.Sync.OtherAbilities = {
 DPSMate.Parser.SendSpell = {}
 local oldUseAction = UseAction
 DPSMate.Parser.UseAction = function(slot, checkCursor, onSelf)
-	DPSMate_Tooltip:ClearAllLines()
+	DPSMate_Tooltip:ClearLines()
 	DPSMate_Tooltip:SetAction(slot)
 	local aura = DPSMate_TooltipTextLeft1:GetText()
 	local target = GetTargetP()

@@ -1629,7 +1629,7 @@ function DPSMate.DB:GetAbsorbingShield(ability, abilityTarget, cate)
 			local unit, buff = DPSMate.Parser:GetUnitByName(abilityTarget)
 			if unit then
 				for i=1, 32 do
-					DPSMate_Tooltip:ClearAllLines()
+					DPSMate_Tooltip:ClearLines()
 					DPSMate_Tooltip:SetUnitBuff(unit, i, "HELPFUL")
 					buff = DPSMate_TooltipTextLeft1:GetText()
 					if (not buff) then break end
@@ -2141,7 +2141,7 @@ end
 function DPSMate.DB:UnitIsSaved(unit)
 	local buff
 	for i=1, 32 do
-		DPSMate_Tooltip:ClearAllLines()
+		DPSMate_Tooltip:ClearLines()
 		DPSMate_Tooltip:SetUnitBuff(unit, i)
 		buff = DPSMate_TooltipTextLeft1:GetText()
 		if (not buff) then break end
