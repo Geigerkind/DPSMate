@@ -1,8 +1,8 @@
--- Translated by Chargemiao from Covenant
+-- Translated by Chargemiao & Timolol from Covenant
 
 if (GetLocale() == "zhCN") then
 	DPSMate.L["name"] = "DPSMate输出助手"
-	DPSMate.L["popup"] = "请问您需要重置DPSMate么?"
+	DPSMate.L["popup"] = "你需要重置DPSMate数据吗?"
 	DPSMate.L["memory"] = "DPSMate收集了大量数据，储存数据的过程可能会让您屏幕卡帧。请问您是否需要重置DPSMate?"
 	DPSMate.L["accept"] = "接受"
 	DPSMate.L["decline"] = "拒绝"
@@ -20,7 +20,7 @@ if (GetLocale() == "zhCN") then
 	 
 	-- Evaluation frame
 	DPSMate.L["procs"] = "触发"
-	DPSMate.L["procstooltip"] = "在LineGraph中选择需要显示的触发效果."
+	DPSMate.L["procstooltip"] = "选择需要在线形图中显示的触发效果."
 	DPSMate.L["absorbsby"] = "吸收--"
 	DPSMate.L["absorbstakenby"] = "被吸收--"
 	DPSMate.L["aurasof"] = "光环-"
@@ -159,12 +159,12 @@ if (GetLocale() == "zhCN") then
 	DPSMate.L["channeltooltip"] = "选择你需要报告的频道."
 	DPSMate.L["close"] = "关闭"
 	DPSMate.L["minimapleft"] = "左键拖动来移动图标."
-	DPSMate.L["minimapright"] = "邮件打开菜单."
+	DPSMate.L["minimapright"] = "右键打开菜单."
 	DPSMate.L["window"] = "窗口"
 	DPSMate.L["bars"] = "数据条"
 	DPSMate.L["titlebar"] = "数据条题目"
 	DPSMate.L["content"] = "内容"
-	DPSMate.L["modeswitching"] = "正在转换模式"
+	DPSMate.L["modeswitching"] = "正在切换模式"
 	DPSMate.L["dataresets"] = "数据重置"
 	DPSMate.L["generaloptions"] = "通用选项"
 	DPSMate.L["columns"] = "列"
@@ -382,7 +382,7 @@ if (GetLocale() == "zhCN") then
 	DPSMate.L["rightclickopenm"] = "右键点击来打开菜单."
 	DPSMate.L["hide"] = "隐藏"
 	DPSMate.L["show"] = "显示"
-	DPSMate.L["rcchangemode"] = "右键点击来转换模式."
+	DPSMate.L["rcchangemode"] = "右键点击来切换统计模式."
 	DPSMate.L["segment"] = "数据段"
 	DPSMate.L["sync"] = "同步"
 	DPSMate.L["alliance"] = "联盟"
@@ -402,7 +402,7 @@ if (GetLocale() == "zhCN") then
 	 
 	DPSMate.L["mc"] = "熔火之心"
 	DPSMate.L["bwl"] = "黑翼之巢"
-	DPSMate.L["ony"] = "奥克尼西亚"
+	DPSMate.L["ony"] = "奥妮克希亚的巢穴"
 	DPSMate.L["zg"] = "祖尔格拉布"
 	DPSMate.L["aq401"] = "安其拉废墟"
 	DPSMate.L["aq20"] = "安其拉神庙"
@@ -415,7 +415,7 @@ if (GetLocale() == "zhCN") then
 	DPSMate.L["ash"] = "灰谷"
 	DPSMate.L["fe"] = "菲拉斯"
 	
-	DPSMate.L["switchgraphsdesc"] = "转换图像"
+	DPSMate.L["switchgraphsdesc"] = "切换图像"
 	DPSMate.L["switchindividualsdesc"] = "个人/总计"
 	DPSMate.L["OHPS"] = "OHPS每秒过量治疗"
 	DPSMate.L["OHealingTaken"] = "受到过量治疗"
