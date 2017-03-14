@@ -487,12 +487,7 @@ local UL = UnitLevel
 function DPSMate.Parser:OnLoad()
 	self.player = UnitName("player")
 	_,playerclass = UnitClass("player")
-	if (not DPSMateUser[self.player]) then
-		DPSMateUser[self.player] = {
-			[1] = DPSMate:TableLength(DPSMateUser)+1,
-			[2] = strlower(playerclass),
-		}
-	end
+	DPSMate.DB:BuildUser(self.player, strlower(playerclass))
 	DPSMateUser[self.player][8] = UL("player")
 	-- Prevent this addon from causing issues
 	if SW_FixLogStrings then
