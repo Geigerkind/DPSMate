@@ -485,6 +485,8 @@ local UL = UnitLevel
 -- Begin Functions
 
 function DPSMate.Parser:OnLoad()
+	self.player = UnitName("player")
+	_,playerclass = UnitClass("player")
 	if (not DPSMateUser[self.player]) then
 		DPSMateUser[self.player] = {
 			[1] = DPSMate:TableLength(DPSMateUser)+1,

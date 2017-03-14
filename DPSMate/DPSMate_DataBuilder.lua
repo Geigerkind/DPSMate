@@ -160,6 +160,7 @@ local UnitBuff = UnitBuff
 local UnitInRaid = UnitInRaid
 local pairs = pairs
 local floor = floor
+local UnitIsConnected = UnitIsConnected
 
 DPSMate.DB.windfuryab = {
 	["Windfury Weapon"] = true,
@@ -611,10 +612,6 @@ DPSMate.DB.PLAYER_ENTERING_WORLD = function()
 				},
 			}
 		end
-		
-		this.abilitylen = DPSMate:TableLength(DPSMateAbility)
-		this.userlen = DPSMate:TableLength(DPSMateUser)
-
 
 		DPSMate:OnLoad()
 		DPSMate.Sync:OnLoad()
@@ -622,6 +619,13 @@ DPSMate.DB.PLAYER_ENTERING_WORLD = function()
 		DPSMate.Options:InitializeHideShowWindow()
 		
 		player = UnitName("player")
+		
+		local frames = {"", "_Absorbs", "_AbsorbsTaken", "_Auras", "_Casts", "_CCBreaker", "_CureDisease", "_CureDiseaseReceived", "_CurePoison", "_CurePoisonReceived", "_DamageTaken", "_DamageTakenTotal", "_DamageTotal", "_Deaths", "_Decurses", "_DecursesReceived", "_Dispels", "_DispelsReceived", "_EDD", "_EDT", "_EHealing", "_EHealingTaken", "_Fails", "_FF", "_FFT", "_Healing", "_HealingTaken", "_Interrupts", "_LiftMagic", "_LiftMagicReceived", "_OHealingTaken", "_Overhealing", "_Procs", "_AbsorbsTakenTotal", "_AbsorbsTotal", "_AurasTotal", "_CastsTotal", "_CCBreakerTotal", "_CureDisease_Total", "_CurePoison_Total", "_Deaths_Total", "_Decurses_Total", "_Dispels_Total", "_EDDTotal", "_EDTTotal", "_EHealingTakenTotal", "_EHealingTotal", "_FailsTotal", "_FFTotal", "_FFTTotal", "_HABTotal", "_HealingTakenTotal", "_HealingTotal", "_Interrupts_Total", "_LiftMagic_Total", "_OverhealingTakenTotal", "_OverhealingTotal", "_ProcsTotal"}
+		for cat, val in pairs(frames) do
+			if _G("DPSMate_Details"..val) then
+				_G("DPSMate_Details"..val):SetToplevel(true)
+			end
+		end
 		
 		if not DPSMateUser["LASTRESETDPSMATE"] or DPSMateUser["LASTRESETDPSMATE"][2]<DPSMate.VERSION then
 			DPSMateUser = {}
@@ -633,12 +637,8 @@ DPSMate.DB.PLAYER_ENTERING_WORLD = function()
 			DPSMate.Options:PopUpAccept(true, true)
 		end
 		
-		local frames = {"", "_Absorbs", "_AbsorbsTaken", "_Auras", "_Casts", "_CCBreaker", "_CureDisease", "_CureDiseaseReceived", "_CurePoison", "_CurePoisonReceived", "_DamageTaken", "_DamageTakenTotal", "_DamageTotal", "_Deaths", "_Decurses", "_DecursesReceived", "_Dispels", "_DispelsReceived", "_EDD", "_EDT", "_EHealing", "_EHealingTaken", "_Fails", "_FF", "_FFT", "_Healing", "_HealingTaken", "_Interrupts", "_LiftMagic", "_LiftMagicReceived", "_OHealingTaken", "_Overhealing", "_Procs", "_AbsorbsTakenTotal", "_AbsorbsTotal", "_AurasTotal", "_CastsTotal", "_CCBreakerTotal", "_CureDisease_Total", "_CurePoison_Total", "_Deaths_Total", "_Decurses_Total", "_Dispels_Total", "_EDDTotal", "_EDTTotal", "_EHealingTakenTotal", "_EHealingTotal", "_FailsTotal", "_FFTotal", "_FFTTotal", "_HABTotal", "_HealingTakenTotal", "_HealingTotal", "_Interrupts_Total", "_LiftMagic_Total", "_OverhealingTakenTotal", "_OverhealingTotal", "_ProcsTotal"}
-		for cat, val in pairs(frames) do
-			if _G("DPSMate_Details"..val) then
-				_G("DPSMate_Details"..val):SetToplevel(true)
-			end
-		end
+		this.abilitylen = DPSMate:TableLength(DPSMateAbility)
+		this.userlen = DPSMate:TableLength(DPSMateUser)
 		
 		DPSMate.Parser:GetPlayerValues()
 		this:OnGroupUpdate()
@@ -754,43 +754,45 @@ function DPSMate.DB:OnGroupUpdate()
 		num = GetNumPartyMembers()
 	end
 	for i=1, num do
-		local name = UnitName(type..i)
-		local pet = UnitName(type.."pet"..i)
-		local _,classEng = UnitClass(type..i)
-		local fac = UnitFactionGroup(type..i)
-		local gname, _, _ = GetGuildInfo(type..i)
-		local level = UL(type..i)
-		self:BuildUser(name, strlower(classEng or ""))
-		self:BuildUser(pet)
-		if classEng then
-			DPSMateUser[name][2] = strlower(classEng)
-		end
-		DPSMateUser[name][4] = false
-		if pet and pet ~= DPSMate.L["unknown"] then
-			DPSMateUser[pet][4] = true
-			DPSMateUser[name][5] = pet
-			DPSMateUser[pet][6] = DPSMateUser[name][1]
-		end
-		if DPSMate.Parser.TargetParty[pet] then
-			DPSMateUser[pet][4] = false
-			DPSMateUser[pet][6] = ""
-			DPSMateUser[name][5] = ""
-		end
-		if DPSMateUser[name][4] then
+		if UnitIsConnected(type..i) then
+			local name = UnitName(type..i)
+			local pet = UnitName(type.."pet"..i)
+			local _,classEng = UnitClass(type..i)
+			local fac = UnitFactionGroup(type..i)
+			local gname, _, _ = GetGuildInfo(type..i)
+			local level = UL(type..i)
+			self:BuildUser(name, strlower(classEng or ""))
+			self:BuildUser(pet)
+			if classEng then
+				DPSMateUser[name][2] = strlower(classEng)
+			end
 			DPSMateUser[name][4] = false
-			DPSMateUser[name][5] = ""
-		end
-		if fac == DPSMate.L["alliance"] then
-			DPSMateUser[name][3] = 1
-		elseif fac == DPSMate.L["horde"] then
-			DPSMateUser[name][3] = -1
-		end
-		DPSMate.Parser.TargetParty[name] = type..i
-		if (gname and gname ~= "") then
-			DPSMateUser[name][7] = gname
-		end
-		if level and level>0 then
-			DPSMateUser[name][8] = level
+			if pet and pet ~= DPSMate.L["unknown"] then
+				DPSMateUser[pet][4] = true
+				DPSMateUser[name][5] = pet
+				DPSMateUser[pet][6] = DPSMateUser[name][1]
+			end
+			if DPSMate.Parser.TargetParty[pet] then
+				DPSMateUser[pet][4] = false
+				DPSMateUser[pet][6] = ""
+				DPSMateUser[name][5] = ""
+			end
+			if DPSMateUser[name][4] then
+				DPSMateUser[name][4] = false
+				DPSMateUser[name][5] = ""
+			end
+			if fac == DPSMate.L["alliance"] then
+				DPSMateUser[name][3] = 1
+			elseif fac == DPSMate.L["horde"] then
+				DPSMateUser[name][3] = -1
+			end
+			DPSMate.Parser.TargetParty[name] = type..i
+			if (gname and gname ~= "") then
+				DPSMateUser[name][7] = gname
+			end
+			if level and level>0 then
+				DPSMateUser[name][8] = level
+			end
 		end
 	end
 	local pet = UnitName("pet")
