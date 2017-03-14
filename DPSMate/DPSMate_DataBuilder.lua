@@ -161,6 +161,7 @@ local UnitInRaid = UnitInRaid
 local pairs = pairs
 local floor = floor
 local UnitIsConnected = UnitIsConnected
+local time, path, gen
 
 DPSMate.DB.windfuryab = {
 	["Windfury Weapon"] = true,
@@ -1102,7 +1103,6 @@ end
 
 DPSMate.DB.AAttack = "AutoAttack"
 local hackOrder, hackOrder2 = {}, {}
-local time, path, gen
 function DPSMate.DB:DamageDone(Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, Ddodge, Dresist, Damount, Dglance, Dblock)
 	Duser = self:BuildUser(Duser)
 	time = GT()
