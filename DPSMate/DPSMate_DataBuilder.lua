@@ -1069,26 +1069,25 @@ local spellSchoolNames = {
 	["冰霜"] = true,
 	["物理"] = true,
 }
+local sc
 function DPSMate.DB:AddSpellSchool(ab, school)
-	if not DPSMateAbility[ab][3] then
-		school = strlower(school)
-		local sc
-		if spellSchoolNames[school] then
-			sc = school
-		else
-			for c, _ in pairs(spellSchoolNames) do
-				if strfind(school, c) then
-					sc = c
-					break
-				end
+	school = strlower(school)
+	sc = nil
+	if spellSchoolNames[school] then
+		sc = school
+	else
+		for c, _ in pairs(spellSchoolNames) do
+			if strfind(school, c) then
+				sc = c
+				break
 			end
 		end
-		if sc then
-			if DPSMateAbility[ab] then
-				DPSMateAbility[ab][3] = sc
-			else
-				self:BuildAbility(ab,nil,sc)
-			end
+	end
+	if sc then
+		if DPSMateAbility[ab] then
+			DPSMateAbility[ab][3] = sc
+		else
+			self:BuildAbility(ab,nil,sc)
 		end
 	end
 end
@@ -1295,8 +1294,8 @@ function DPSMate.DB:EnemyDamage(mode, arr, Duser, Dname, Dhit, Dcrit, Dmiss, Dpa
 	for cat, val in pairs(tablemodes) do 
 		if not arr[cat][cause] then arr[cat][cause] = {} end
 		gen = arr[cat][cause]
-		if not gen[Duser] then
-			gen[Duser] = {
+		if not arr[cat][cause][Duser] then
+			arr[cat][cause][Duser] = {
 				i = 0,
 			}
 		end
@@ -1354,13 +1353,13 @@ function DPSMate.DB:EnemyDamage(mode, arr, Duser, Dname, Dhit, Dcrit, Dmiss, Dpa
 			gen[Duser]["i"] = gen[Duser]["i"] + Damount
 			time = floor(DPSMateCombatTime[val])
 			path["i"][time] = (path["i"][time] or 0) + Damount
+		else
+			path[9] = path[9] + Dmiss
+			path[10] = path[10] + Dparry
+			path[11] = path[11] + Ddodge
+			path[12] = path[12] + Dresist
+			path[18] = path[18] + Dblock
 		end
-	else
-		path[9] = path[9] + Dmiss
-		path[10] = path[10] + Dparry
-		path[11] = path[11] + Ddodge
-		path[12] = path[12] + Dresist
-		path[18] = path[18] + Dblock
 	end
 	if Damount>0 then self:CheckActiveCC(Duser, cause) end
 	self.NeedUpdate = true
