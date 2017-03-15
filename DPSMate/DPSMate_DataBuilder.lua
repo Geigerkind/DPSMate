@@ -1,5 +1,5 @@
 -- Events
-DPSMate.DB:RegisterEvent("PLAYER_ENTERING_WORLD")
+DPSMate.DB:RegisterEvent("VARIABLES_LOADED")
 DPSMate.DB:RegisterEvent("PLAYER_REGEN_DISABLED")
 DPSMate.DB:RegisterEvent("PLAYER_REGEN_ENABLED")
 DPSMate.DB:RegisterEvent("PLAYER_AURAS_CHANGED")
@@ -193,7 +193,7 @@ end
 
 -- Begin Functions
 
-DPSMate.DB.PLAYER_ENTERING_WORLD = function()
+DPSMate.DB.VARIABLES_LOADED = function()
 	if not this.loaded then
 		if DPSMateSettings == nil then
 			DPSMateSettings = {
@@ -644,7 +644,7 @@ DPSMate.DB.PLAYER_ENTERING_WORLD = function()
 		DPSMate.Parser:GetPlayerValues()
 		this:OnGroupUpdate()
 		DPSMate:SetStatusBarValue()
-		this:UnregisterEvent("PLAYER_ENTERING_WORLD")
+		this.NeedUpdate = true
 		DPSMate.Sync:RegisterEvent("CHAT_MSG_ADDON")
 		DPSMate.Sync:RegisterEvent("UPDATE_MOUSEOVER_UNIT")
 		DPSMate.Sync:SetScript("OnEvent", function() this[event](arg1,arg2,arg3,arg4) end)
@@ -652,6 +652,7 @@ DPSMate.DB.PLAYER_ENTERING_WORLD = function()
 
 		DPSMate:SendMessage("DPSMate build "..DPSMate.VERSION.." has been loaded!")
 		this.loaded = true
+		DPSMate.Options.PLAYER_ENTERING_WORLD()
 	end
 end
 
@@ -666,10 +667,10 @@ DPSMate.DB.PLAYER_REGEN_DISABLED = function()
 		end
 	end
 	DPSMate.Options:HideWhenSolo()
-	if (not CombatState and cheatCombat+10<GT()) then
+	if (not CombatState and cheatCombat<GT()) then
 		DPSMate.Options:NewSegment()
 	end
-	CombatState, CombatTime = true, 0
+	CombatState = true
 end
 
 DPSMate.DB.PLAYER_REGEN_ENABLED = function()
@@ -817,6 +818,7 @@ function DPSMate.DB:BuildUser(Dname, Dclass)
 				[2] = Dclass,
 			}
 			DPSMate.UserId = nil
+			return self.userlen
 		end
 		return DPSMateUser[Dname][1]
 	end
@@ -832,6 +834,7 @@ function DPSMate.DB:BuildAbility(name, kind, school)
 				[3] = school,
 			}
 			DPSMate.AbilityId = nil
+			return self.abilitylen
 		end
 		return DPSMateAbility[name][1]
 	end
@@ -1105,8 +1108,7 @@ DPSMate.DB.AAttack = "AutoAttack"
 local hackOrder, hackOrder2 = {}, {}
 function DPSMate.DB:DamageDone(Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, Ddodge, Dresist, Damount, Dglance, Dblock)
 	Duser = self:BuildUser(Duser)
-	time = GT()
-	if (not CombatState and cheatCombat<time) then
+	if (not CombatState and cheatCombat<GT()) then
 		DPSMate.Options:NewSegment()
 		CombatState = true
 	end
@@ -1341,16 +1343,16 @@ function DPSMate.DB:EnemyDamage(mode, arr, Duser, Dname, Dhit, Dcrit, Dmiss, Dpa
 				if Damount > path[7] then path[7] = Damount end
 				path[8] = (path[8]*path[5]+Damount)/(path[5]+1)
 				path[5] = path[5] + 1
-			elseif Dblock == 1 then
-				if (Damount < path[15] or path[15] == 0) then path[15] = Damount end
-				if Damount > path[16] then path[16] = Damount end
-				path[17] = (path[17]*path[14]+Damount)/(path[14]+1)
-				path[14] = path[14] + 1
-			else
+			elseif Dcrush == 1 then
 				if (Damount < path[19] or path[19] == 0) then path[19] = Damount end
 				if Damount > path[20] then path[20] = Damount end
 				path[21] = (path[21]*path[18]+Damount)/(path[18]+1)
 				path[18] = path[18] + 1
+			else
+				if (Damount < path[15] or path[15] == 0) then path[15] = Damount end
+				if Damount > path[16] then path[16] = Damount end
+				path[17] = (path[17]*path[14]+Damount)/(path[14]+1)
+				path[14] = path[14] + 1
 			end
 			gen[Duser]["i"] = gen[Duser]["i"] + Damount
 			time = floor(DPSMateCombatTime[val])
@@ -1360,7 +1362,7 @@ function DPSMate.DB:EnemyDamage(mode, arr, Duser, Dname, Dhit, Dcrit, Dmiss, Dpa
 			path[10] = path[10] + Dparry
 			path[11] = path[11] + Ddodge
 			path[12] = path[12] + Dresist
-			path[18] = path[18] + Dblock
+			path[14] = path[14] + Dblock
 		end
 	end
 	if Damount>0 then self:CheckActiveCC(Duser, cause) end
@@ -1904,7 +1906,7 @@ function DPSMate.DB:UnregisterDeath(target)
 		if DPSMateDeaths[cat][target] then
 			DPSMateDeaths[cat][target][1]["i"][1]=1
 			DPSMateDeaths[cat][target][1]["i"][2]=GameTime_GT()
-			if cat==1 and DPSMate.Parser.TargetParty[target] then 
+			if cat==1 and DPSMate.Parser.TargetParty[DPSMate:GetUserById(target)] then 
 				p = DPSMateDeaths[cat][target][1][1]
 				DPSMate:Broadcast(4, target, DPSMate:GetUserById(p[1]), DPSMate:GetAbilityById(p[2]), p[3]) 
 			end
@@ -2023,18 +2025,20 @@ function DPSMate.DB:Kick(cause, target, causeAbility, targetAbility)
 				},
 			}
 		end
-		if not DPSMateInterrupts[cat][cause][causeAbility] then
-			DPSMateInterrupts[cat][cause][causeAbility] = {}
+		gen = DPSMateInterrupts[cat][cause]
+		if not gen[causeAbility] then
+			gen[causeAbility] = {}
 		end
-		if not DPSMateInterrupts[cat][cause][causeAbility][target] then
-			DPSMateInterrupts[cat][cause][causeAbility][target] = {}
+		if not gen[causeAbility][target] then
+			gen[causeAbility][target] = {}
 		end
-		if not DPSMateInterrupts[cat][cause][causeAbility][target][targetAbility] then
-			DPSMateInterrupts[cat][cause][causeAbility][target][targetAbility] = 0
+		path = gen[causeAbility][target]
+		if not path[targetAbility] then
+			path[targetAbility] = 0
 		end
-		DPSMateInterrupts[cat][cause]["i"][1] = DPSMateInterrupts[cat][cause]["i"][1] + 1
-		tinsert(DPSMateInterrupts[cat][cause]["i"][2], {DPSMateCombatTime[val], GameTime_GT(), targetAbility, target})
-		DPSMateInterrupts[cat][cause][causeAbility][target][targetAbility]=DPSMateInterrupts[cat][cause][causeAbility][target][targetAbility]+1
+		gen["i"][1] = gen["i"][1] + 1
+		tinsert(gen["i"][2], {DPSMateCombatTime[val], GameTime_GT(), targetAbility, target})
+		path[targetAbility]=path[targetAbility]+1
 	end
 end
 

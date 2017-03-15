@@ -2190,7 +2190,7 @@ end
 
 local reportdelay = 0.5
 local reportuptime = 0
-function DPSMate.Options:ReportDelay()
+function DPSMate.Options:OnUpdate()
 	if DPSMateSettings["reportdelay"] and DPSMate.DelayMsg[1] then
 		reportuptime = reportuptime + arg1
 		if reportuptime>reportdelay then
@@ -2202,4 +2202,4 @@ function DPSMate.Options:ReportDelay()
 end
 
 DPSMate.Options:SetScript("OnEvent", function() this[event]() end)
-DPSMate.Options:SetScript("OnUpdate", function() this:ReportDelay() end)
+DPSMate.Options:SetScript("OnUpdate", this.OnUpdate)

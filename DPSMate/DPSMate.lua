@@ -1,6 +1,6 @@
 -- Global Variables
 DPSMate = {}
-DPSMate.VERSION = 101
+DPSMate.VERSION = 102
 DPSMate.LOCALE = GetLocale()
 DPSMate.SYNCVERSION = DPSMate.VERSION..DPSMate.LOCALE
 DPSMate.Parser = CreateFrame("Frame", nil, UIParent)
@@ -460,8 +460,8 @@ function DPSMate:SetStatusBarValue()
 				statusbar:Hide()
 			end
 		end
-			_G("DPSMate_"..c["name"].."_ScrollFrame_Child"):SetHeight((len+1)*(c["barheight"]+c["barspacing"]))
-			_G("DPSMate_"..c["name"].."_ScrollFrame_Child_Total"):Show()
+		_G("DPSMate_"..c["name"].."_ScrollFrame_Child"):SetHeight((len+1)*(c["barheight"]+c["barspacing"]))
+		_G("DPSMate_"..c["name"].."_ScrollFrame_Child_Total"):Show()
 		if len == 0 then
 			_G("DPSMate_"..c["name"].."_ScrollFrame_Child_Total"):Hide()
 		end
@@ -545,11 +545,13 @@ function DPSMate:ApplyFilter(key, name)
 end
 
 function DPSMate:GetSettingValues(arr, cbt, k, ecbt)
-	return self.RegistredModules[DPSMateSettings["windows"][k]["CurMode"]]:GetSettingValues(arr, cbt, k or 1, ecbt)
+	k = k or 1
+	return self.RegistredModules[DPSMateSettings["windows"][k]["CurMode"]]:GetSettingValues(arr, cbt, k, ecbt)
 end
 
 function DPSMate:EvalTable(k)
-	return self.RegistredModules[DPSMateSettings["windows"][k]["CurMode"]]:EvalTable(DPSMateUser[UnitName("player")], k or 1)
+	k = k or 1
+	return self.RegistredModules[DPSMateSettings["windows"][k]["CurMode"]]:EvalTable(DPSMateUser[UnitName("player")], k)
 end
 
 function DPSMate:GetClassColor(class)

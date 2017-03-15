@@ -1,7 +1,7 @@
 -- Events
 DPSMate.Parser:RegisterEvent("CHAT_MSG_COMBAT_PET_HITS")
 DPSMate.Parser:RegisterEvent("CHAT_MSG_COMBAT_PET_MISSES")
-DPSMate.Parser:RegisterEvent("CHAT_MSG_SPELL_PET_BUFF")
+--DPSMate.Parser:RegisterEvent("CHAT_MSG_SPELL_PET_BUFF")
 DPSMate.Parser:RegisterEvent("CHAT_MSG_SPELL_PET_DAMAGE")
 
 DPSMate.Parser:RegisterEvent("CHAT_MSG_COMBAT_SELF_HITS")
