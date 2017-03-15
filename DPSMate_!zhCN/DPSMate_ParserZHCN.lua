@@ -20,7 +20,7 @@ if (GetLocale() == "zhCN") then
 			if self.TargetParty[a] then DB:BuildFail(1, a, self.player, DPSMate.L["AutoAttack"], t[5]);DB:DeathHistory(a, self.player, DPSMate.L["AutoAttack"], t[5], 1, 0, 0, 0) end
 			return
 		end
-		for a,b,c in strgfind(msg, "(.+)对你造成(%d+)的致命一击伤害。%s?(.*)") do
+		for a,b,c in strgfind(msg, "你对(.+)造成(%d+)的致命一击伤害。%s?(.*)") do
 			t = {tnbr(b)}
 			DB:EnemyDamage(true, DPSMateEDT, self.player, DPSMate.L["AutoAttack"], 0, 1, 0, 0, 0, 0, t[1], a, 0, 0)
 			DB:DamageDone(self.player, DPSMate.L["AutoAttack"], 0, 1, 0, 0, 0, 0, t[1], 0, 0)

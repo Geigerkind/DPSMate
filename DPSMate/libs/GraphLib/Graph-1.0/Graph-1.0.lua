@@ -1884,11 +1884,9 @@ function lib:DrawLine(C, sx, sy, ex, ey, w, color, layer, point, label, const)
 
 	-- Set texture coordinates and anchors
 	T:ClearAllPoints();
-	if TLx and TLy and BLx and BLy and TLx<=1 and TLy<=1 and BLx<=1 and BLy<=1 and TLy>=0 and TLy>=0 and BLx>=0 and BLy>=0 then
-		T:SetTexCoord(TLx, TLy, BLx, BLy, TRx, TRy, BRx, BRy);
-		T:SetPoint("BOTTOMLEFT", C, relPoint, cx - Bwid, cy - Bhgt + const);
-		T:SetPoint("TOPRIGHT",	C, relPoint, cx + Bwid, cy + Bhgt + const);
-	end
+	T:SetTexCoord(TLx, TLy, BLx, BLy, TRx, TRy, BRx, BRy);
+	T:SetPoint("BOTTOMLEFT", C, relPoint, cx - Bwid, cy - Bhgt + const);
+	T:SetPoint("TOPRIGHT",	C, relPoint, cx + Bwid, cy + Bhgt + const);
 	P:ClearAllPoints();
 	P:SetParent(C);
 	--P:SetPoint("BOTTOMLEFT", C, relPoint, cx - Bwid, cy - Bhgt);
