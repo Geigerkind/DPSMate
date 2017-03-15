@@ -649,6 +649,8 @@ DPSMate.DB.VARIABLES_LOADED = function()
 		DPSMate.Sync:RegisterEvent("UPDATE_MOUSEOVER_UNIT")
 		DPSMate.Sync:SetScript("OnEvent", function() this[event](arg1,arg2,arg3,arg4) end)
 		DPSMate.Sync:SetScript("OnUpdate", function() this:OnUpdate() end)
+		DPSMate.Options:SetScript("OnEvent", function() this[event]() end)
+		DPSMate.Options:SetScript("OnUpdate", function() this:OnUpdate() end)
 
 		DPSMate:SendMessage("DPSMate build "..DPSMate.VERSION.." has been loaded!")
 		this.loaded = true
