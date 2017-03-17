@@ -502,9 +502,9 @@ function DPSMate.Parser:GetPlayerValues()
 	DPSMatePlayer[1] = self.player
 	DPSMatePlayer[2] = playerclass
 	local _, fac = UnitFactionGroup("player")
-	if fac == "Alliance" then
+	if string.find(fac, "lliance") then
 		DPSMatePlayer[3] = 1
-	elseif fac == "Horde" then
+	elseif string.find(fac, "orde") then
 		DPSMatePlayer[3] = -1
 	end
 	DPSMatePlayer[4] = GetRealmName()
