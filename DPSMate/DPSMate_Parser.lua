@@ -53,6 +53,9 @@ DPSMate.Parser:RegisterEvent("CHAT_MSG_COMBAT_FRIENDLY_DEATH")
 DPSMate.Parser:RegisterEvent("CHAT_MSG_COMBAT_HOSTILE_DEATH")
 DPSMate.Parser:RegisterEvent("PLAYER_AURAS_CHANGED")
 
+DPSMate.Parser:RegisterEvent("PLAYER_LOGOUT")
+DPSMate.Parser:RegisterEvent("PLAYER_ENTERING_WORLD")
+
 BINDING_HEADER_DPSMATE = "DPSMate"
 BINDING_NAME_DPSMATE_REPORT = DPSMate.L["togglereportframe"]
 BINDING_NAME_DPSMATE_TOGGLE = DPSMate.L["toggleframes"]
@@ -480,6 +483,7 @@ DPSMate.Parser.playerclass = nil
 
 -- Local Variables
 local _,playerclass = UnitClass("player")
+local fac = UnitFactionGroup("player")
 local UL = UnitLevel
 
 -- Begin Functions
@@ -498,19 +502,29 @@ end
 function DPSMate.Parser:GetPlayerValues()
 	self.player = UnitName("player")
 	_,playerclass = UnitClass("player")
-	self.playerclass = playerclass
+	self.playerclass = strlower(playerclass)
 	DPSMatePlayer[1] = self.player
-	DPSMatePlayer[2] = playerclass
-	local _, fac = UnitFactionGroup("player")
-	if string.find(fac, "lliance") then
-		DPSMatePlayer[3] = 1
-	elseif string.find(fac, "orde") then
-		DPSMatePlayer[3] = -1
+	DPSMatePlayer[2] = strlower(playerclass)
+	fac = UnitFactionGroup("player")
+	if fac then
+		if strfind(fac, "lliance") then
+			DPSMatePlayer[3] = 1
+		elseif strfind(fac, "orde") then
+			DPSMatePlayer[3] = -1
+		end
 	end
 	DPSMatePlayer[4] = GetRealmName()
 	DPSMatePlayer[5] = GetGuildInfo("player")
 	DPSMatePlayer[6] = GetLocale()
 	self:OnLoad()
+end
+
+DPSMate.Parser.PLAYER_LOGOUT = function()
+	this:GetPlayerValues()
+end
+
+DPSMate.Parser.PLAYER_ENTERING_WORLD = function()
+	this:GetPlayerValues()
 end
 
 function DPSMate.Parser:GetUnitByName(target)
