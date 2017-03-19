@@ -1246,4 +1246,6 @@ if (GetLocale() == "frFR") then
 			return
 		end
 	end
+	local gsub = string.gsub
+	DPSMate.Parser:SetScript("OnEvent", function() this[event](gsub(arg1, "DE", "de")) end)
 end
