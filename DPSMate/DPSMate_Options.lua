@@ -932,7 +932,7 @@ function DPSMate.Options:PopUpAccept(bool, bypass)
 			DPSMateThreat[2] = {}
 			DPSMateFails[2] = {}
 			DPSMateCCBreaker[2] = {}
-			DPSMateCombatTime["current"] = 1
+			DPSMateCombatTime["current"] = 10.0001
 		end
 		
 		if DPSMate.Modules.DPS then DPSMate.Modules.DPS.DB = DPSMateDamageDone end
