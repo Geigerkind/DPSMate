@@ -726,6 +726,7 @@ if (GetLocale() == "frFR") then
 	--------------                       Healing                        --------------                                  
 	----------------------------------------------------------------------------------
 	
+	local HealingStream = "Guérisseur"
 	DPSMate.Parser.SpellSelfBuff = function(self, msg)
 		for a,c in strgfind(msg, "Votre (.+) vous soigne pour (%d+) points de vie%.") do 
 			t = {tnbr(c)}
@@ -819,6 +820,9 @@ if (GetLocale() == "frFR") then
 	DPSMate.Parser.SpellPeriodicSelfBuff = function(self, msg)
 		for c,b,a in strgfind(msg, "Le (.+) de (.+) vous fait gagner (%d+) points de vie%.") do
 			t = {tnbr(a)}
+			if c==HealingStream then
+				b = self:AssociateShaman(self.player, b, false)
+			end
 			overheal = self:GetOverhealByName(t[1], self.player)
 			DB:HealingTaken(0, DPSMateHealingTaken, self.player, c..DPSMate.L["periodic"], 1, 0, t[1], b)
 			DB:HealingTaken(1, DPSMateEHealingTaken, self.player, c..DPSMate.L["periodic"], 1, 0, t[1]-overheal, b)
@@ -861,6 +865,9 @@ if (GetLocale() == "frFR") then
 	DPSMate.Parser.SpellPeriodicFriendlyPlayerBuffs = function(self, msg)
 		for c,b,a,f in strgfind(msg, "(.+) de (.+) rend (%d+) points de vie à (.+)%.") do
 			t = {tnbr(a)}
+			if c==HealingStream then
+				b = self:AssociateShaman(a, b, false)
+			end
 			overheal = self:GetOverhealByName(t[1], f)
 			DB:HealingTaken(0, DPSMateHealingTaken, f, c..DPSMate.L["periodic"], 1, 0, t[1], b)
 			DB:HealingTaken(1, DPSMateEHealingTaken, f, c..DPSMate.L["periodic"], 1, 0, t[1]-overheal, b)
@@ -1247,5 +1254,5 @@ if (GetLocale() == "frFR") then
 		end
 	end
 	local gsub = string.gsub
-	DPSMate.Parser:SetScript("OnEvent", function() this[event](gsub(arg1, "DE", "de")) end)
+	DPSMate.Parser:SetScript("OnEvent", function() this[event](gsub(arg1 or "", "DE", "de")) end)
 end

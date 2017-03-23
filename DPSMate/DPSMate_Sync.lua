@@ -51,6 +51,9 @@ local ceil = ceil
 local user, userid, userid2, userid3, userid4, ab, abid, usid
 local trivial, lesstrivial, important, Execute = nil, nil, nil, {}
 
+local strsub = string.sub
+local strfind = string.find
+
 -- Beginn Functions
 
 function DPSMate.Sync:OnLoad()
@@ -338,7 +341,7 @@ function DPSMate.Sync:ReceiveGreet(arg2, arg4)
 		am = am + 1
 	else
 		if (GetTime()-old)>=3 then
-			local ver = tnbr(arg2:match("%d+") or 0)
+			local ver = tnbr(strsub(arg2, strfind(arg2, "%d+")) or 0)
 			if ver>DPSMate.VERSION then
 				DPSMate:SendMessage(DPSMate.L["versionisold"])
 				old = GetTime()

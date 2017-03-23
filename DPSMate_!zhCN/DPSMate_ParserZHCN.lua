@@ -657,6 +657,7 @@ if (GetLocale() == "zhCN") then
 	--------------                       Healing                        --------------                                  
 	----------------------------------------------------------------------------------
 	
+	local HealingStream = "治疗之泉"
 	DPSMate.Parser.SpellSelfBuff = function(self, msg)
 		for a,b,c in strgfind(msg, "你的(.+)对(.+)产生极效治疗效果，恢复了(%d+)点生命值。") do 
 			t = {tnbr(c)}
@@ -723,6 +724,9 @@ if (GetLocale() == "zhCN") then
 	DPSMate.Parser.SpellPeriodicSelfBuff = function(self, msg)
 		for b,c,a in strgfind(msg, "你因(.+)的(.+)而获得了($d+)点生命值。") do
 			t = {tnbr(a)}
+			if c==HealingStream then
+				b = self:AssociateShaman(self.player, b, false)
+			end
 			overheal = self:GetOverhealByName(t[1], self.player)
 			DB:HealingTaken(0, DPSMateHealingTaken, self.player, c..DPSMate.L["periodic"], 1, 0, t[1], b)
 			DB:HealingTaken(1, DPSMateEHealingTaken, self.player, c..DPSMate.L["periodic"], 1, 0, t[1]-overheal, b)
@@ -765,6 +769,9 @@ if (GetLocale() == "zhCN") then
 	DPSMate.Parser.SpellPeriodicFriendlyPlayerBuffs = function(self, msg)
 		for f,a,b,c in strgfind(msg, "(.+)获得(%d+)点生命值%（(.+)的(.+)%）。") do
 			t = {tnbr(a)}
+			if c==HealingStream then
+				b = self:AssociateShaman(a, b, false)
+			end
 			overheal = self:GetOverhealByName(t[1], f)
 			DB:HealingTaken(0, DPSMateHealingTaken, f, c..DPSMate.L["periodic"], 1, 0, t[1], b)
 			DB:HealingTaken(1, DPSMateEHealingTaken, f, c..DPSMate.L["periodic"], 1, 0, t[1]-overheal, b)

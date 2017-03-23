@@ -545,6 +545,40 @@ function DPSMate.Parser:GetOverhealByName(amount, target)
 	if result<0 then return 0 else return result end 
 end
 
+local UnitClass = UnitClass
+local UnitName = UnitName
+local GetNumPartyMembers = GetNumPartyMembers
+local GetNumRaidMembers = GetNumRaidMembers
+local GetRaidRosterInfo = GetRaidRosterInfo
+local subGRP, PSGRP, c
+function DPSMate.Parser:AssociateShaman(name, old, update)
+	if not subGRP or not PSGRP[name] or update then
+		local tnum = GetNumPartyMembers()
+		subGRP, PSGRP = {}, {}
+		if tnum <= 0 then
+			tnum=GetNumRaidMembers()
+			for i=1, tnum do
+				_, _, c = GetRaidRosterInfo(i)
+				if UnitClass("raid"..i)==DPSMate.L["shaman"] then
+					subGRP[c] = UnitName(type..i)
+				end
+				PSGRP[UnitName("raid"..i)] = c
+			end
+		else
+			for i=1, tnum do
+				if UnitClass("party"..i)==DPSMate.L["shaman"] then
+					subGRP[1] = UnitName("party"..i)
+				end
+				PSGRP[UnitName("party"..i)] = 1
+			end
+			PSGRP[name] = 1
+		end
+	end
+	if PSGRP[name] and subGRP[PSGRP[name]] then
+		return subGRP[PSGRP[name]]
+	end
+	return old
+end
 -- The totem aura just reports a removed event in the chat.
 -- Maybe we can guess here?
 DPSMate.Parser.PLAYER_AURAS_CHANGED = function(unit)
