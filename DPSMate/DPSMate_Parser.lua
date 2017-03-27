@@ -560,7 +560,7 @@ function DPSMate.Parser:AssociateShaman(name, old, update)
 			for i=1, tnum do
 				_, _, c = GetRaidRosterInfo(i)
 				if UnitClass("raid"..i)==DPSMate.L["shaman"] then
-					subGRP[c] = UnitName(type..i)
+					subGRP[c] = UnitName("raid"..i)
 				end
 				PSGRP[UnitName("raid"..i)] = c
 			end
