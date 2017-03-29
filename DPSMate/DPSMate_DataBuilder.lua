@@ -1302,8 +1302,8 @@ function DPSMate.DB:EnemyDamage(mode, arr, Duser, Dname, Dhit, Dcrit, Dmiss, Dpa
 	for cat, val in pairs(tablemodes) do 
 		if not arr[cat][cause] then arr[cat][cause] = {} end
 		gen = arr[cat][cause]
-		if not arr[cat][cause][Duser] then
-			arr[cat][cause][Duser] = {
+		if not gen[Duser] then
+			gen[Duser] = {
 				i = 0,
 			}
 		end

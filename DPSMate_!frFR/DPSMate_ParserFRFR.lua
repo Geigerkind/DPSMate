@@ -483,13 +483,13 @@ if (GetLocale() == "frFR") then
 	end 
 
 	DPSMate.Parser.CreatureVsSelfSpellDamage = function(self, msg)
-		for a,b,d,e in strgfind(msg, "(.+) de (.+) vous inflige (%d+) points de dégâts%.(.*)") do -- Potential here to track school and resisted damage
+		for c,a,d,e in strgfind(msg, "(.+) de (.+) vous inflige (%d+) points de dégâts%.(.*)") do -- Potential here to track school and resisted damage
 			t = {tnbr(d)}
-			DB:UnregisterPotentialKick(self.player, b, GetTime())
+			DB:UnregisterPotentialKick(self.player, c, GetTime())
 			DB:EnemyDamage(false, DPSMateEDD, self.player, c, 1, 0, 0, 0, 0, 0, t[1], a, 0, 0)
 			DB:DamageTaken(self.player, c, 1, 0, 0, 0, 0, 0, t[1], a, 0, 0)
 			DB:DeathHistory(self.player, a, c, t[1], 1, 0, 0, 0)
-			if self.FailDT[b] then DB:BuildFail(2, a, self.player, c, t[1]) end
+			if self.FailDT[c] then DB:BuildFail(2, a, self.player, c, t[1]) end
 			return
 		end
 		for a,b,c,d in strgfind(msg, "(.+) lance (.+) et vous inflige un coup critique %((%d+) points de dégâts%)%.(.*)") do -- Potential here to track school and resisted damage
@@ -607,7 +607,7 @@ if (GetLocale() == "frFR") then
 			DB:DeathHistory(c, a, DPSMate.L["AutoAttack"], t[5], t[1] or 1, 0, 0, t[3] or 0)
 			return
 		end
-		for a,c,d,f,e in strgfind(msg, "(.+) inflige un coup critique à (.+) %((%d+) points de dégâts (.*))%.(.*)") do
+		for a,c,d,f,e in strgfind(msg, "(.+) inflige un coup critique à (.+) %((%d+) points de dégâts (.*)%)%.(.*)") do
 			t = {false, false, false, false, tnbr(d)}
 			if strfind(e, "écrase") then t[3]=1;t[1]=0;t[2]=0 elseif strfind(e, "érafle") then t[4]=1;t[1]=0;t[2]=0 end
 			DB:EnemyDamage(false, DPSMateEDD, c, DPSMate.L["AutoAttack"], 0, t[2] or 1, 0, 0, 0, 0, t[5], a, t[4] or 0, t[3] or 0)
