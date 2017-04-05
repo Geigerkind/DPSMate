@@ -809,6 +809,7 @@ function DPSMate.DB:OnGroupUpdate()
 		DPSMateUser[pet][6] = DPSMateUser[name][1]
 	end
 	DPSMate.Parser.TargetParty[name] = "player"
+	DPSMate.Parser:AssociateShaman("None", "None", true)
 end
 
 function DPSMate.DB:BuildUser(Dname, Dclass)
@@ -1197,6 +1198,7 @@ end
 
 function DPSMate.DB:DamageTaken(Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, Ddodge, Dresist, Damount, cause, Dcrush, Dblock)
 	if not DPSMateSettings["legacylogs"] and not DPSMate.RegistredModules["damagetaken"] then return end
+
 	Duser = self:BuildUser(Duser)
 	cause = self:BuildUser(cause)
 	Dname = self:BuildAbility(Dname)
@@ -1300,8 +1302,8 @@ function DPSMate.DB:EnemyDamage(mode, arr, Duser, Dname, Dhit, Dcrit, Dmiss, Dpa
 	for cat, val in pairs(tablemodes) do 
 		if not arr[cat][cause] then arr[cat][cause] = {} end
 		gen = arr[cat][cause]
-		if not arr[cat][cause][Duser] then
-			arr[cat][cause][Duser] = {
+		if not gen[Duser] then
+			gen[Duser] = {
 				i = 0,
 			}
 		end
@@ -1784,7 +1786,7 @@ function DPSMate.DB:ApplyRemainingDispels()
 						end
 					end
 				else
-					subGRP = {}, nil
+					subGRP, PSGRP = {}, nil
 					for i=1, tnum do
 						_, _, c = GetRaidRosterInfo(i)
 						if UnitClass(type..i)==DPSMate.L["shaman"] then

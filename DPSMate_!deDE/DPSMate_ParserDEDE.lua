@@ -447,7 +447,7 @@ if (GetLocale() == "deDE") then
 			return
 		end
 		for a,b,c,d in strgfind(msg, "(.+) trifft Euch mit %'(.+)%' für (%d+)(.*)") do
-			t = {tnbr(d)}
+			t = {tnbr(c)}
 			DB:UnregisterPotentialKick(self.player, b, GetTime())
 			DB:EnemyDamage(false, DPSMateEDD, self.player, b, 1, 0, 0, 0, 0, 0, t[1], a, 0, 0)
 			DB:DamageTaken(self.player, b, 1, 0, 0, 0, 0, 0, t[1], a, 0, 0)
@@ -648,6 +648,7 @@ if (GetLocale() == "deDE") then
 	--------------                       Healing                        --------------                                  
 	----------------------------------------------------------------------------------
 	
+	local HealingStream = "Heilender Fluss"
 	DPSMate.Parser.SpellSelfBuff = function(self, msg)
 		for a,b,c in strgfind(msg, "Kritische Heilung: (.+) heilt (.+) um (%d+) Punkte.") do 
 			t = {false, tnbr(c)}
@@ -712,6 +713,9 @@ if (GetLocale() == "deDE") then
 	DPSMate.Parser.SpellPeriodicSelfBuff = function(self, msg)
 		for a,b,c in strgfind(msg, "Ihr erhaltet (%d+) Gesundheit von (.+) %(durch (.+)%)%.") do
 			t = {tnbr(a)}
+			if c==HealingStream then
+				b = self:AssociateShaman(self.player, b, false)
+			end
 			overheal = self:GetOverhealByName(t[1], self.player)
 			DB:HealingTaken(0, DPSMateHealingTaken, self.player, c.."(Periodisch)", 1, 0, t[1], b)
 			DB:HealingTaken(1, DPSMateEHealingTaken, self.player, c.."(Periodisch)", 1, 0, t[1]-overheal, b)
@@ -756,6 +760,9 @@ if (GetLocale() == "deDE") then
 		for f,a,b,c in strgfind(msg, "(.+) erhält (%d+) Gesundheit von (.-%s*)'?s (.+)%.") do
 			t = {tnbr(a)}
 			b = self:ReplaceSwString(b)
+			if c==HealingStream then
+				b = self:AssociateShaman(a, b, false)
+			end
 			overheal = self:GetOverhealByName(t[1], f)
 			DB:HealingTaken(0, DPSMateHealingTaken, f, c.."(Periodisch)", 1, 0, t[1], b)
 			DB:HealingTaken(1, DPSMateEHealingTaken, f, c.."(Periodisch)", 1, 0, t[1]-overheal, b)

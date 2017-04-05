@@ -44,8 +44,16 @@ function DPSMate.Modules.DetailsDeathsTotal:UpdateRow(row, a, b, c, d, e, f, g, 
 	else
 		_G("DPSMate_Details_Deaths_Total_LogDetails_Row"..row.."_CombatTime"):SetText("")
 	end
-	_G("DPSMate_Details_Deaths_Total_LogDetails_Row"..row.."_Victim"):SetText("|cFF"..hexClassColor[DPSMateUser[c][2] or "warrior"]..c.."|r")
-	_G("DPSMate_Details_Deaths_Total_LogDetails_Row"..row.."_Cause"):SetText("|cFF"..hexClassColor[DPSMateUser[h][2] or "warrior"]..h.."|r")
+	if c=="" then
+		_G("DPSMate_Details_Deaths_Total_LogDetails_Row"..row.."_Victim"):SetText("|cFF"..hexClassColor["warrior"]..c.."|r")
+	else
+		_G("DPSMate_Details_Deaths_Total_LogDetails_Row"..row.."_Victim"):SetText("|cFF"..hexClassColor[DPSMateUser[c][2] or "warrior"]..c.."|r")
+	end
+	if h=="" then
+		_G("DPSMate_Details_Deaths_Total_LogDetails_Row"..row.."_Cause"):SetText("|cFF"..hexClassColor["warrior"]..h.."|r")
+	else
+		_G("DPSMate_Details_Deaths_Total_LogDetails_Row"..row.."_Cause"):SetText("|cFF"..hexClassColor[DPSMateUser[h][2] or "warrior"]..h.."|r")
+	end
 	_G("DPSMate_Details_Deaths_Total_LogDetails_Row"..row.."_Over"):SetText(strformat("%.2f", d).."s")
 	_G("DPSMate_Details_Deaths_Total_LogDetails_Row"..row.."_Ability"):SetText(e)
 	_G("DPSMate_Details_Deaths_Total_LogDetails_Row"..row.."_HealIn"):SetText("+"..f)

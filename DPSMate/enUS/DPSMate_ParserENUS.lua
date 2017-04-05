@@ -561,9 +561,13 @@ function DPSMate.Parser:SpellSelfBuff(msg)
 	end	
 end
 
+local HealingStream = "Healing Stream"
 function DPSMate.Parser:SpellPeriodicSelfBuff(msg)
 	for a,b,c in strgfind(msg, "You gain (%d+) health from (.+)'s (.+)%.") do
 		t = {tnbr(a)}
+		if c==HealingStream then
+			b = self:AssociateShaman(self.player, b, false)
+		end
 		overheal = self:GetOverhealByName(t[1], self.player)
 		DB:HealingTaken(0, DPSMateHealingTaken, self.player, c.."(Periodic)", 1, 0, t[1], b)
 		DB:HealingTaken(1, DPSMateEHealingTaken, self.player, c.."(Periodic)", 1, 0, t[1]-overheal, b)
@@ -607,6 +611,9 @@ end
 function DPSMate.Parser:SpellPeriodicFriendlyPlayerBuffs(msg)
 	for f,a,b,c in strgfind(msg, "(.+) gains (%d+) health from (.+)'s (.+)%.") do
 		t = {tnbr(a)}
+		if c==HealingStream then
+			b = self:AssociateShaman(a, b, false)
+		end
 		overheal = self:GetOverhealByName(t[1], f)
 		DB:HealingTaken(0, DPSMateHealingTaken, f, c.."(Periodic)", 1, 0, t[1], b)
 		DB:HealingTaken(1, DPSMateEHealingTaken, f, c.."(Periodic)", 1, 0, t[1]-overheal, b)

@@ -72,7 +72,7 @@ function DPSMate.Modules.DPS:EvalTable(user, k, cbt)
 	local arr, cbet = DPSMate:GetMode(k)
 	cbt = cbt or cbet
 	if not arr[user[1]] then return end
-	if (user[5] and user[5] ~= DPSMate.L["unknown"] and arr[DPSMateUser[user[5]][1]]) and DPSMateSettings["mergepets"] and DPSMateUser[user[5]][1]~=user[1] then u={user[1],DPSMateUser[user[5]][1]} else u={user[1]} end
+	if (user and user[5] and user[5] ~= DPSMate.L["unknown"] and DPSMateUser[user[5]] and arr[DPSMateUser[user[5]][1]]) and DPSMateSettings["mergepets"] and DPSMateUser[user[5]][1]~=user[1] then u={user[1],DPSMateUser[user[5]][1]} else u={user[1]} end
 	for _, v in pairs(u) do
 		for cat, val in pairs(arr[v]) do
 			if (type(val) == "table" and cat~="i") then

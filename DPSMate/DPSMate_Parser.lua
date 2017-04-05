@@ -53,6 +53,9 @@ DPSMate.Parser:RegisterEvent("CHAT_MSG_COMBAT_FRIENDLY_DEATH")
 DPSMate.Parser:RegisterEvent("CHAT_MSG_COMBAT_HOSTILE_DEATH")
 DPSMate.Parser:RegisterEvent("PLAYER_AURAS_CHANGED")
 
+DPSMate.Parser:RegisterEvent("PLAYER_LOGOUT")
+DPSMate.Parser:RegisterEvent("PLAYER_ENTERING_WORLD")
+
 BINDING_HEADER_DPSMATE = "DPSMate"
 BINDING_NAME_DPSMATE_REPORT = DPSMate.L["togglereportframe"]
 BINDING_NAME_DPSMATE_TOGGLE = DPSMate.L["toggleframes"]
@@ -480,6 +483,7 @@ DPSMate.Parser.playerclass = nil
 
 -- Local Variables
 local _,playerclass = UnitClass("player")
+local fac = UnitFactionGroup("player")
 local UL = UnitLevel
 
 -- Begin Functions
@@ -498,19 +502,29 @@ end
 function DPSMate.Parser:GetPlayerValues()
 	self.player = UnitName("player")
 	_,playerclass = UnitClass("player")
-	self.playerclass = playerclass
+	self.playerclass = strlower(playerclass)
 	DPSMatePlayer[1] = self.player
-	DPSMatePlayer[2] = playerclass
-	local _, fac = UnitFactionGroup("player")
-	if fac == "Alliance" then
-		DPSMatePlayer[3] = 1
-	elseif fac == "Horde" then
-		DPSMatePlayer[3] = -1
+	DPSMatePlayer[2] = strlower(playerclass)
+	fac = UnitFactionGroup("player")
+	if fac then
+		if strfind(fac, "lliance") then
+			DPSMatePlayer[3] = 1
+		elseif strfind(fac, "orde") then
+			DPSMatePlayer[3] = -1
+		end
 	end
 	DPSMatePlayer[4] = GetRealmName()
 	DPSMatePlayer[5] = GetGuildInfo("player")
 	DPSMatePlayer[6] = GetLocale()
 	self:OnLoad()
+end
+
+DPSMate.Parser.PLAYER_LOGOUT = function()
+	this:GetPlayerValues()
+end
+
+DPSMate.Parser.PLAYER_ENTERING_WORLD = function()
+	this:GetPlayerValues()
 end
 
 function DPSMate.Parser:GetUnitByName(target)
@@ -531,6 +545,40 @@ function DPSMate.Parser:GetOverhealByName(amount, target)
 	if result<0 then return 0 else return result end 
 end
 
+local UnitClass = UnitClass
+local UnitName = UnitName
+local GetNumPartyMembers = GetNumPartyMembers
+local GetNumRaidMembers = GetNumRaidMembers
+local GetRaidRosterInfo = GetRaidRosterInfo
+local subGRP, PSGRP, c
+function DPSMate.Parser:AssociateShaman(name, old, update)
+	if not subGRP or not PSGRP[name] or update then
+		local tnum = GetNumPartyMembers()
+		subGRP, PSGRP = {}, {}
+		if tnum <= 0 then
+			tnum=GetNumRaidMembers()
+			for i=1, tnum do
+				_, _, c = GetRaidRosterInfo(i)
+				if UnitClass("raid"..i)==DPSMate.L["shaman"] then
+					subGRP[c] = UnitName("raid"..i)
+				end
+				PSGRP[UnitName("raid"..i)] = c
+			end
+		else
+			for i=1, tnum do
+				if UnitClass("party"..i)==DPSMate.L["shaman"] then
+					subGRP[1] = UnitName("party"..i)
+				end
+				PSGRP[UnitName("party"..i)] = 1
+			end
+			PSGRP[name] = 1
+		end
+	end
+	if PSGRP[name] and subGRP[PSGRP[name]] then
+		return subGRP[PSGRP[name]]
+	end
+	return old
+end
 -- The totem aura just reports a removed event in the chat.
 -- Maybe we can guess here?
 DPSMate.Parser.PLAYER_AURAS_CHANGED = function(unit)

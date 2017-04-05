@@ -538,6 +538,7 @@ if (GetLocale() == "ruRU") then
 	--------------                       Исцеление                      --------------                                  
 	----------------------------------------------------------------------------------
 	
+	local HealingStream = "Исцеляющий поток"
 	function DPSMate.Parser:SpellSelfBuff(msg)
 		for a,b,c in strgfind(msg, "Ваше заклинание \"(.+)\" исцеляет (.+) на (%d+) ед%. здоровья: критический эффект%.") do 
 			t = {false, tnbr(c)}
@@ -609,6 +610,9 @@ if (GetLocale() == "ruRU") then
 	function DPSMate.Parser:SpellPeriodicSelfBuff(msg)
 		for a,c,b in strgfind(msg, "Вы получаете (%d+) ед%. здоровья от заклинания \"(.+)\" (.+)%.") do
 			t = {tnbr(a)}
+			if c==HealingStream then
+				b = self:AssociateShaman(self.player, b, false)
+			end
 			overheal = self:GetOverhealByName(t[1], self.player)
 			DB:HealingTaken(0, DPSMateHealingTaken, self.player, c.."(Периодический)", 1, 0, t[1], b)
 			DB:HealingTaken(1, DPSMateEHealingTaken, self.player, c.."(Периодический)", 1, 0, t[1]-overheal, b)
@@ -652,6 +656,9 @@ if (GetLocale() == "ruRU") then
 	function DPSMate.Parser:SpellPeriodicFriendlyPlayerBuffs(msg)
 		for f,a,c,b in strgfind(msg, "(.+) получает (%d+) ед%. здоровья от заклинания \"(.+)\" (.+)%.") do
 			t = {tnbr(a)}
+			if c==HealingStream then
+				b = self:AssociateShaman(a, b, false)
+			end
 			overheal = self:GetOverhealByName(t[1], f)
 			DB:HealingTaken(0, DPSMateHealingTaken, f, c.."(Периодический)", 1, 0, t[1], b)
 			DB:HealingTaken(1, DPSMateEHealingTaken, f, c.."(Периодический)", 1, 0, t[1]-overheal, b)
