@@ -772,7 +772,7 @@ if (GetLocale() == "zhCN") then
 	end
 	
 	DPSMate.Parser.SpellPeriodicSelfBuff = function(self, msg)
-		for b,c,a in strgfind(msg, "你因(.+)的(.+)而获得了($d+)点生命值。") do
+		for b,c,a in strgfind(msg, "你因(.+)的(.+)而获得了(%d+)点生命值。") do
 			t = {tnbr(a)}
 			if c==HealingStream then
 				b = self:AssociateShaman(self.player, b, false)
@@ -817,6 +817,20 @@ if (GetLocale() == "zhCN") then
 	end
 	
 	DPSMate.Parser.SpellPeriodicFriendlyPlayerBuffs = function(self, msg)
+		for f,a,b in strgfind(msg, "(.+)获得(%d+)点生命值（你的(.+)）。") do
+			t = {tnbr(a)}
+			overheal = self:GetOverhealByName(t[1], f)
+			DB:HealingTaken(0, DPSMateHealingTaken, f, b..DPSMate.L["periodic"], 1, 0, t[1], self.player)
+			DB:HealingTaken(1, DPSMateEHealingTaken, f, b..DPSMate.L["periodic"], 1, 0, t[1]-overheal, self.player)
+			DB:Healing(0, DPSMateEHealing, self.player, b..DPSMate.L["periodic"], 1, 0, t[1]-overheal)
+			if overheal>0 then
+				DB:Healing(2, DPSMateOverhealing, self.player, b..DPSMate.L["periodic"], 1, 0, overheal)
+				DB:HealingTaken(2, DPSMateOverhealingTaken, f, b..DPSMate.L["periodic"], 1, 0, overheal, self.player)
+			end
+			DB:Healing(1, DPSMateTHealing, self.player, b..DPSMate.L["periodic"], 1, 0, t[1])
+			DB:DeathHistory(f, self.player, b..DPSMate.L["periodic"], t[1], 1, 0, 1, 0)
+			return
+		end
 		for f,a,b,c in strgfind(msg, "(.+)获得(%d+)点生命值（(.+)的(.+)）。") do
 			t = {tnbr(a)}
 			if c==HealingStream then
@@ -832,20 +846,6 @@ if (GetLocale() == "zhCN") then
 			end
 			DB:Healing(1, DPSMateTHealing, b, c..DPSMate.L["periodic"], 1, 0, t[1], f)
 			DB:DeathHistory(f, b, c..DPSMate.L["periodic"], t[1], 1, 0, 1, 0)
-			return
-		end
-		for f,a,b in strgfind(msg, "(.+)获得(%d+)点生命值（你的(.+)）。") do
-			t = {tnbr(a)}
-			overheal = self:GetOverhealByName(t[1], f)
-			DB:HealingTaken(0, DPSMateHealingTaken, f, b..DPSMate.L["periodic"], 1, 0, t[1], self.player)
-			DB:HealingTaken(1, DPSMateEHealingTaken, f, b..DPSMate.L["periodic"], 1, 0, t[1]-overheal, self.player)
-			DB:Healing(0, DPSMateEHealing, self.player, b..DPSMate.L["periodic"], 1, 0, t[1]-overheal)
-			if overheal>0 then 
-				DB:Healing(2, DPSMateOverhealing, self.player, b..DPSMate.L["periodic"], 1, 0, overheal)
-				DB:HealingTaken(2, DPSMateOverhealingTaken, f, b..DPSMate.L["periodic"], 1, 0, overheal, self.player)
-			end
-			DB:Healing(1, DPSMateTHealing, self.player, b..DPSMate.L["periodic"], 1, 0, t[1])
-			DB:DeathHistory(f, self.player, b..DPSMate.L["periodic"], t[1], 1, 0, 1, 0)
 			return
 		end
 		for f,a in strgfind(msg, "(.+)获得了(.+)。") do
