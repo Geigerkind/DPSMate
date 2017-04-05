@@ -9,7 +9,7 @@ local strfind = string.find
 
 if (GetLocale() == "zhCN") then
 	DPSMate.Parser.SelfHits = function(self, msg)
-		for a,b,c,d in strgfind(msg, "你击中(.+)造成(%d+)点(.*)伤害%（(%d+)被吸收%）。") do 
+		for a,b,c,d in strgfind(msg, "你击中(.+)造成(%d+)点(.*)伤害(%d+)被吸收）。") do
 			DB:SetUnregisterVariables(tnbr(d), DPSMate.L["AutoAttack"], self.player)
 		end
 		for a,b,f,c in strgfind(msg, "你击中(.+)造成(%d+)点(.*)伤害。%s?(.*)") do
@@ -91,7 +91,7 @@ if (GetLocale() == "zhCN") then
 	end
 	
 	DPSMate.Parser.SelfSpellDMG = function(self, msg)
-		for a,b,c,f in strgfind(msg, "你的(.+)击中(.+)造成(%d+)伤害%（(%d+)被吸收%）。") do
+		for a,b,c,f in strgfind(msg, "你的(.+)击中(.+)造成(%d+)伤害（(%d+)被吸收）。") do
 			DB:SetUnregisterVariables(tnbr(f), a, self.player)
 		end
 		for a,b,c,d,e in strgfind(msg, "你的(.+)击中(.+)造成(%d+)点(.*)伤害。%s?(.*)") do 
@@ -186,7 +186,7 @@ if (GetLocale() == "zhCN") then
 	end
 	
 	DPSMate.Parser.FriendlyPlayerDamage = function(self, msg)
-		for k,a,b,c,g,f in strgfind(msg, "(.+)的(.+)击中(.+)造成(%d+)点(.*)伤害%（(%d+)点被吸收%）。") do 
+		for k,a,b,c,g,f in strgfind(msg, "(.+)的(.+)击中(.+)造成(%d+)点(.*)伤害（(%d+)点被吸收）。") do
 			DB:SetUnregisterVariables(tnbr(f), b, k)
 		end
 		for f,a,b,c,e in strgfind(msg, "(.+)的(.+)对(.+)造成(%d+)点致命一击伤害。%s?(.*)") do 
@@ -268,7 +268,7 @@ if (GetLocale() == "zhCN") then
 	end
 	
 	DPSMate.Parser.FriendlyPlayerHits = function(self, msg)
-		for a,b,c,f,e in strgfind(msg, "(.+)击中(.+)造成(%d+)点(.*)伤害%（(%d+)点被吸收%）。") do
+		for a,b,c,f,e in strgfind(msg, "(.+)击中(.+)造成(%d+)点(.*)伤害（(%d+)点被吸收）。") do
 			DB:SetUnregisterVariables(tnbr(e), DPSMate.L["AutoAttack"], a)
 		end
 		for a,b,c,d in strgfind(msg, "(.+)对(.+)造成(%d+)的致命一击伤害。%s?(.*)") do
@@ -361,6 +361,31 @@ if (GetLocale() == "zhCN") then
 			DB:EnemyDamage(true, DPSMateEDT, self.player, "棱光反射", 1, 0, 0, 0, 0, 0, t[1], c, 0, 0)
 			DB:DamageDone(self.player, "棱光反射", 1, 0, 0, 0, 0, 0, t[1], 0, 0)
 		end
+		for b,a in strgfind(msg, "你的(.+)被(.+)躲闪过去了。") do
+			DB:EnemyDamage(true, DPSMateEDT, self.player, b, 0, 0, 0, 0, 1, 0, 0, a, 0, 0)
+			DB:DamageDone(self.player, b, 0, 0, 0, 0, 1, 0, 0, 0, 0)
+			return
+		end
+		for a,b in strgfind(msg, "你的(.+)被(.+)招架了。") do
+			DB:EnemyDamage(true, DPSMateEDT, self.player, a, 0, 0, 0, 1, 0, 0, 0, b, 0, 0)
+			DB:DamageDone(self.player, a, 0, 0, 0, 1, 0, 0, 0, 0, 0)
+			return
+		end
+		for a,b in strgfind(msg, "你的(.+)没有击中(.+)。") do
+			DB:EnemyDamage(true, DPSMateEDT, self.player, a, 0, 0, 1, 0, 0, 0, 0, b, 0, 0)
+			DB:DamageDone(self.player, a, 0, 0, 1, 0, 0, 0, 0, 0, 0)
+			return
+		end
+		for a,b in strgfind(msg, "你的(.+)被(.+)抵抗了。") do
+			DB:EnemyDamage(true, DPSMateEDT, self.player, a, 0, 0, 0, 0, 0, 1, 0, b, 0, 0)
+			DB:DamageDone(self.player, a, 0, 0, 0, 0, 0, 1, 0, 0, 0)
+			return
+		end
+		for a,b in strgfind(msg, "你的(.+)被(.+)格挡了。") do
+			DB:EnemyDamage(true, DPSMateEDT, self.player, a, 0, 0, 0, 0, 0, 0, 0, b, 1, 0)
+			DB:DamageDone(self.player, a, 0, 0, 0, 0, 0, 0, 0, 0, 1)
+			return
+		end
 	end
 	
 	DPSMate.Parser.SpellDamageShieldsOnOthers = function(self, msg)
@@ -375,6 +400,31 @@ if (GetLocale() == "zhCN") then
 				DB:EnemyDamage(true, DPSMateEDT, a, "棱光反射", 1, 0, 0, 0, 0, 0, t[1], d, 0, 0)
 				DB:DamageDone(a, "棱光反射", 1, 0, 0, 0, 0, 0, t[1], 0, 0)
 			end
+		end
+		for f,b,a in strgfind(msg, "(.+)的(.+)被(.+)闪躲过去。") do
+			DB:EnemyDamage(true, DPSMateEDT, f, b, 0, 0, 0, 0, 1, 0, 0, a, 0, 0)
+			DB:DamageDone(f, b, 0, 0, 0, 0, 1, 0, 0, 0, 0)
+			return
+		end
+		for f,a,b in strgfind(msg, "(.+)的(.+)被(.+)招架了。") do
+			DB:EnemyDamage(true, DPSMateEDT, f, a, 0, 0, 0, 1, 0, 0, 0, b, 0, 0)
+			DB:DamageDone(f, a, 0, 0, 0, 1, 0, 0, 0, 0, 0)
+			return
+		end
+		for f,a,b in strgfind(msg, "(.+)的(.+)没有击中(.+)。") do
+			DB:EnemyDamage(true, DPSMateEDT, f, a, 0, 0, 1, 0, 0, 0, 0, b, 0, 0)
+			DB:DamageDone(f, a, 0, 0, 1, 0, 0, 0, 0, 0, 0)
+			return
+		end
+		for f,a,b in strgfind(msg, "(.+)的(.+)被(.+)抵抗了。") do
+			DB:EnemyDamage(true, DPSMateEDT, f, a, 0, 0, 0, 0, 0, 1, 0, b, 0, 0)
+			DB:DamageDone(f, a, 0, 0, 0, 0, 0, 1, 0, 0, 0)
+			return
+		end
+		for f,a,b in strgfind(msg, "(.+)的(.+)被(.+)格挡过去。") do
+			DB:EnemyDamage(true, DPSMateEDT, f, a, 0, 0, 0, 0, 0, 0, 0, b, 1, 0)
+			DB:DamageDone(f, a, 0, 0, 0, 0, 0, 0, 0, 0, 1)
+			return
 		end
 	end
 	
@@ -487,7 +537,7 @@ if (GetLocale() == "zhCN") then
 	end
 	
 	DPSMate.Parser.PeriodicSelfDamage = function(self, msg)
-		for a,b,c,d,f,e in strgfind(msg, "你受到(%d+)点(.+)伤害%（(.+)的(.+)%）(.*)。(.*)") do
+		for a,b,c,d,f,e in strgfind(msg, "你受到(%d+)点(.+)伤害（(.+)的(.+)）(.*)。(.*)") do
 			t = {tnbr(a)}
 			if c=="你" then c=self.player end
 			if strfind(f, "点被吸收") then
@@ -767,7 +817,7 @@ if (GetLocale() == "zhCN") then
 	end
 	
 	DPSMate.Parser.SpellPeriodicFriendlyPlayerBuffs = function(self, msg)
-		for f,a,b,c in strgfind(msg, "(.+)获得(%d+)点生命值%（(.+)的(.+)%）。") do
+		for f,a,b,c in strgfind(msg, "(.+)获得(%d+)点生命值（(.+)的(.+)）。") do
 			t = {tnbr(a)}
 			if c==HealingStream then
 				b = self:AssociateShaman(a, b, false)
@@ -784,7 +834,7 @@ if (GetLocale() == "zhCN") then
 			DB:DeathHistory(f, b, c..DPSMate.L["periodic"], t[1], 1, 0, 1, 0)
 			return
 		end
-		for f,a,b in strgfind(msg, "(.+)获得(%d+)点生命值%（你的(.+)%）。") do
+		for f,a,b in strgfind(msg, "(.+)获得(%d+)点生命值（你的(.+)）。") do
 			t = {tnbr(a)}
 			overheal = self:GetOverhealByName(t[1], f)
 			DB:HealingTaken(0, DPSMateHealingTaken, f, b..DPSMate.L["periodic"], 1, 0, t[1], self.player)
@@ -869,13 +919,13 @@ if (GetLocale() == "zhCN") then
 	----------------------------------------------------------------------------------
 	
 	DPSMate.Parser.CreatureVsSelfHitsAbsorb = function(self, msg)
-		for c, b, absorbed in strgfind(msg, "(.+)击中你造成(%d+)点伤害%（(%d+)点被吸收%）。") do DB:SetUnregisterVariables(tnbr(absorbed), DPSMate.L["AutoAttack"], c); return end
+		for c, b, absorbed in strgfind(msg, "(.+)击中你造成(%d+)点伤害（(%d+)点被吸收）。") do DB:SetUnregisterVariables(tnbr(absorbed), DPSMate.L["AutoAttack"], c); return end
 	end
 	
 	DPSMate.Parser.CreatureVsCreatureHitsAbsorb = function(self, msg) end
 	
 	DPSMate.Parser.CreatureVsSelfSpellDamageAbsorb = function(self, msg)
-		for c, ab, b, absorbed in strgfind(msg, "(.+)的(.+)击中你造成(%d+)点伤害%（(%d+)点被吸收%）。") do DB:SetUnregisterVariables(tnbr(absorbed), ab, c); return end
+		for c, ab, b, absorbed in strgfind(msg, "(.+)的(.+)击中你造成(%d+)点伤害（(%d+)点被吸收）。") do DB:SetUnregisterVariables(tnbr(absorbed), ab, c); return end
 	end
 	
 	DPSMate.Parser.CreatureVsCreatureSpellDamageAbsorb = function(self, msg) end
@@ -973,7 +1023,7 @@ if (GetLocale() == "zhCN") then
 	-- Pet section
 
 	DPSMate.Parser.PetHits = function(self, msg)
-		for a,b,c,f,e in strgfind(msg, "(.+)击中(.+)造成(%d+)点(.*)伤害%（(%d+)点被吸收%）。") do
+		for a,b,c,f,e in strgfind(msg, "(.+)击中(.+)造成(%d+)点(.*)伤害（(%d+)点被吸收）。") do
 			DB:SetUnregisterVariables(tnbr(e), DPSMate.L["AutoAttack"], a)
 		end
 		for a,b,c,d in strgfind(msg, "(.+)对(.+)造成(%d+)的致命一击伤害。%s?(.*)") do
@@ -1034,7 +1084,7 @@ if (GetLocale() == "zhCN") then
 	end
 
 	DPSMate.Parser.PetSpellDamage = function(self, msg)
-		for k,a,b,c,g,f in strgfind(msg, "(.+)的(.+)击中(.+)造成(%d+)点(.*)伤害%（(%d+)点被吸收%）。") do 
+		for k,a,b,c,g,f in strgfind(msg, "(.+)的(.+)击中(.+)造成(%d+)点(.*)伤害（(%d+)点被吸收）。") do
 			DB:SetUnregisterVariables(tnbr(f), b, k)
 		end
 		for f,a,b,c,e in strgfind(msg, "(.+)的(.+)对(.+)造成(%d+)点致命一击伤害。%s?(.*)") do 
