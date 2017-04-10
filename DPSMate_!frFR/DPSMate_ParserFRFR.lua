@@ -504,7 +504,7 @@ if (GetLocale() == "frFR") then
 		for a,b,c,d,e in strgfind(msg, "(.+) lance (.+) et vous inflige (%d+) points de dégâts (.*)%.(.*)") do -- Potential here to track school and resisted damage
 			t = {tnbr(c)}
 			DB:UnregisterPotentialKick(self.player, b, GetTime())
-			DB:EnemyDamage(false, DPSMateEDD, self.player, b, 1, 0, 0, 0, 0, 0, t[3], a, 0, 0)
+			DB:EnemyDamage(false, DPSMateEDD, self.player, b, 1, 0, 0, 0, 0, 0, t[1], a, 0, 0)
 			DB:DamageTaken(self.player, b, 1, 0, 0, 0, 0, 0, t[1], a, 0, 0)
 			DB:DeathHistory(self.player, a, b, t[1], 1, 0, 0, 0)
 			if self.FailDT[b] then DB:BuildFail(2, a, self.player, b, t[1]) end

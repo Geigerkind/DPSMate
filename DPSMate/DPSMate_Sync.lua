@@ -53,6 +53,7 @@ local trivial, lesstrivial, important, Execute = nil, nil, nil, {}
 
 local strsub = string.sub
 local strfind = string.find
+local UnitAffectingCombat = UnitAffectingCombat
 
 -- Beginn Functions
 
@@ -72,8 +73,9 @@ function DPSMate.Sync:OnUpdate()
 		time=time+arg1
 		if time<30 then
 			if iterator==1 then
-				Buffer[cou] = {"DPSMate_SyncStatus", "1"}
-				cou = cou + 1
+				Buffer = {"DPSMate_SyncStatus", "1"}
+				cou = 1
+				co = 1
 				self:DMGDoneAllOut()
 				self:DMGDoneAbilityOut()
 				self:DMGDoneStatOut()
@@ -140,7 +142,7 @@ function DPSMate.Sync:OnUpdate()
 		elseif time>180 then
 			iterator, time = 1, 0
 		end
-		if Buffer[co] and updater>0.1 then
+		if Buffer[co] and updater>0.1 and not UnitAffectingCombat("player") then
 			SDM(Buffer[co][1]..sKey, Buffer[co][2], "RAID")
 			Buffer[co] = nil
 			co = co + 1
