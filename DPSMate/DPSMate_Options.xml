@@ -3037,7 +3037,9 @@
 								this.func = function() 
 									DPSMateSettings["targetscale"] = this:GetValue()
 									for _, name in frames do
-										getglobal("DPSMate_Details"..name):SetScale(DPSMateSettings["targetscale"]/UIParent:GetScale())
+										if getglobal("DPSMate_Details"..name) then
+											getglobal("DPSMate_Details"..name):SetScale(DPSMateSettings["targetscale"]/UIParent:GetScale())
+										end
 									end
 								end
 								this:SetMinMaxValues(0.3,2.0)
