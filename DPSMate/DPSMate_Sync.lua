@@ -73,7 +73,8 @@ function DPSMate.Sync:OnUpdate()
 		time=time+arg1
 		if time<30 then
 			if iterator==1 then
-				Buffer = {"DPSMate_SyncStatus", "1"}
+				Buffer = {}
+				Buffer[1] = {"DPSMate_SyncStatus", "1"}
 				cou = 1
 				co = 1
 				self:DMGDoneAllOut()
