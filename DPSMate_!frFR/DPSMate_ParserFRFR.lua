@@ -162,7 +162,7 @@ if (GetLocale() == "frFR") then
 	
 	DPSMate.Parser.PeriodicDamage = function(self, msg)
 		for a,b in strgfind(msg, "(.+) subit les effets de (.+)%.") do if strfind(b, "%(") then b=strsub(b, 1, strfind(b, "%(")-2) end; DB:ConfirmAfflicted(a, b, GetTime()); if self.CC[b] then  DB:BuildActiveCC(a, b) end; return end
-		for e,d,a,b,c,f in strgfind(msg, "(.+) de (.+) inflige à (.+) (%d+) points de dégâts%s?(.*)%.(.*)  (.+) erleidet (%d+) (.-) von (.+) %(durch (.+)%)%.(.*)") do
+		for e,d,a,b,c,f in strgfind(msg, "(.+) de (.+) inflige à (.+) (%d+) points de dégâts%s?(.*)%.(.*)") do
 			t = {tnbr(b)}
 			if f~="" then
 				DB:SetUnregisterVariables(tnbr(strsub(f, strfind(f, "%d+"))), e..DPSMate.L["periodic"], d)
@@ -460,7 +460,7 @@ if (GetLocale() == "frFR") then
 	
 	DPSMate.Parser.CreatureVsSelfMisses = function(self, msg)
 		for c in strgfind(msg, "(.+) attaque%. Vous absorbez tous les dégâts%.") do DB:Absorb(DPSMate.L["AutoAttack"], self.player, c); return end
-		for a in strgfind(msg, "(.+) verfehlt Euch%.") do 
+		for a in strgfind(msg, "(.+) vous rate%.") do 
 			DB:EnemyDamage(false, DPSMateEDD, self.player, DPSMate.L["AutoAttack"], 0, 0, 1, 0, 0, 0, 0, a, 0, 0)
 			DB:DamageTaken(self.player, DPSMate.L["AutoAttack"], 0, 0, 1, 0, 0, 0, 0, a, 0, 0)
 			return
