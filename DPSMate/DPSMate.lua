@@ -1,6 +1,6 @@
 -- Global Variables
 DPSMate = {}
-DPSMate.VERSION = 113
+DPSMate.VERSION = 114
 DPSMate.LOCALE = GetLocale()
 DPSMate.SYNCVERSION = DPSMate.VERSION..DPSMate.LOCALE
 DPSMate.Parser = CreateFrame("Frame", nil, UIParent)
@@ -555,12 +555,10 @@ function DPSMate:EvalTable(k)
 end
 
 function DPSMate:GetClassColor(class)
-	if not classcolor[class] then
-		if class then
-			class = DPSMateUser[class][2] or "warrior"
-		else
-			class = "warrior"
-		end
+	if class and not classcolor[class] then
+		class = DPSMateUser[class][2] or "warrior"
+	else
+		class = "warrior"
 	end
 	return classcolor[class].r, classcolor[class].g, classcolor[class].b, class
 end

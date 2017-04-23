@@ -436,7 +436,7 @@ end
 ----------------------------------------------------------------------------------
 
 function DPSMate.Sync:DMGDoneAllIn(arg2, arg4)
-	userid = DPSMateUser[arg4][1]
+	userid = DB:BuildUser(arg4)
 	t = {}
 	strgsub(arg2, "(.-),", func)
 	Arrays[1][userid] = {
@@ -445,7 +445,7 @@ function DPSMate.Sync:DMGDoneAllIn(arg2, arg4)
 end
 
 function DPSMate.Sync:DMGDoneStatIn(arg2, arg4)
-	userid = DPSMateUser[arg4][1]
+	userid = DB:BuildUser(arg4)
 	t = {}
 	strgsub(arg2, "(.-),", func)
 	abid = DB:BuildAbility(t[3])
@@ -457,7 +457,7 @@ function DPSMate.Sync:DMGDoneStatIn(arg2, arg4)
 end
 
 function DPSMate.Sync:DMGDoneAbilityIn(arg2, arg4)
-	userid = DPSMateUser[arg4][1]
+	userid = DB:BuildUser(arg4)
 	t = {}
 	strgsub(arg2, "(.-),", func)
 

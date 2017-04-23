@@ -745,7 +745,7 @@ DPSMate.Options.PLAYER_ENTERING_WORLD = function()
 				LastPopUp = GetTime()
 			end
 		elseif DPSMateSettings["dataresetsworld"] == 1 and not DPSMate.Options:IsInParty() then
-			this:PopUpAccept(true)
+			DPSMate.Options:PopUpAccept(true)
 		end
 		DPSMate.Options:HideInPvP()
 		if DPSMateSettings["hideonlogin"] then
