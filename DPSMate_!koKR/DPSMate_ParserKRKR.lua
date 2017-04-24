@@ -6,37 +6,30 @@ local strgsub = string.gsub
 local npcdb = NPCDB
 local GetTime = GetTime
 local strfind = string.find
+local strsub = strsub
 
---schmetternd
-if (GetLocale() == "deDE") then
-	DPSMate.Parser.ReplaceSwString = function(self, str)
-		return strgsub(str, "'", "")
-	end
-	-- Ihr trefft X. Schaden: d+. (gestreift/geblockt)
-	-- Ihr trefft X kritisch für d+ Schaden.
-	-- Ihr fallt und verliert d+ Gesundheit.
-	-- Ihr ertrinkt und verliert d+ Gesundheit.
-	-- Ihr verliert d+ Gesundheit durch Berührung mit Lava.
+
+
+if (GetLocale() == "koKR") then
 	DPSMate.Parser.SelfHits = function(self, msg)
-		for a,b,c,d in strgfind(msg, "Ihr trefft (.+)%. Schaden: (%d+)\.%s?(.*)%. %((%d+) absorbed%)") do -- To Test
-			DB:SetUnregisterVariables(tnbr(d), "Angreifen", self.player)
+		for b,a,c,d in strgfind(msg, "(.+) 공격하여 (%d+)의 피해를 입혔습니다 %((%d+) 흡수됨%).") do
+			DB:SetUnregisterVariables(tnbr(d), DPSMate.L["AutoAttack"], self.player)
 		end
-		for a,b,d in strgfind(msg, "Ihr trefft (.+) kritisch für (%d+) Schaden%. %((%d+) absorbed%)") do -- To Test
-			DB:SetUnregisterVariables(tnbr(d), "Angreifen", self.player)
-		end
-		for a,b,c in strgfind(msg, "Ihr trefft (.+)%. Schaden: (%d+)\.%s?(.*)") do
+		for a,b,c in strgfind(msg, "(.+) 공격하여 (%d+)의 피해를 입혔습니다%.%s?(.*)") do
 			t = {false, false, false, false, tnbr(b)}
+			a = strsub(a, 1, strfind(a, "[를을]")-1)
 			if c == "(gestreift)" then t[3]=1;t[1]=0 elseif c ~= "" then t[4]=1;t[1]=0; end
-			DB:EnemyDamage(true, DPSMateEDT, self.player, "Angreifen", t[1] or 1, 0, 0, 0, 0, 0, t[5], a, t[4] or 0, t[3] or 0)
-			DB:DamageDone(self.player, "Angreifen", t[1] or 1, 0, 0, 0, 0, 0, t[5], t[3] or 0, t[4] or 0)
-			if self.TargetParty[a] then DB:BuildFail(1, a, self.player, "Angreifen", t[5]);DB:DeathHistory(a, self.player, "Angreifen", t[5], 1, 0, 0, 0) end
+			DB:EnemyDamage(true, DPSMateEDT, self.player, DPSMate.L["AutoAttack"], t[1] or 1, 0, 0, 0, 0, 0, t[5], a, t[4] or 0, t[3] or 0)
+			DB:DamageDone(self.player, DPSMate.L["AutoAttack"], t[1] or 1, 0, 0, 0, 0, 0, t[5], t[3] or 0, t[4] or 0)
+			if self.TargetParty[a] then DB:BuildFail(1, a, self.player, DPSMate.L["AutoAttack"], t[5]);DB:DeathHistory(a, self.player, DPSMate.L["AutoAttack"], t[5], 1, 0, 0, 0) end
 			return
 		end
-		for a,b in strgfind(msg, "Ihr trefft (.+) kritisch für (%d+) Schaden%.") do
+		for a,b,c in strgfind(msg, "(.+) 공격하여 (%d+)의 치명상을 입혔습니다%.%s?(.*)") do
 			t = {false, false, false, false, tnbr(b)}
-			DB:EnemyDamage(true, DPSMateEDT, self.player, "Angreifen", 0, 1, 0, 0, 0, 0, t[5], a, t[4] or 0, t[3] or 0)
-			DB:DamageDone(self.player, "Angreifen", 0, 1, 0, 0, 0, 0, t[5], t[3] or 0, t[4] or 0)
-			if self.TargetParty[a] then DB:BuildFail(1, a, self.player, "Angreifen", t[5]);DB:DeathHistory(a, self.player, "Angreifen", t[5], 0, 1, 0, 0) end
+			a = strsub(a, 1, strfind(a, "[를을]")-1)
+			DB:EnemyDamage(true, DPSMateEDT, self.player, DPSMate.L["AutoAttack"], 0, 1, 0, 0, 0, 0, t[5], a, t[4] or 0, t[3] or 0)
+			DB:DamageDone(self.player, DPSMate.L["AutoAttack"], 0, 1, 0, 0, 0, 0, t[5], t[3] or 0, t[4] or 0)
+			if self.TargetParty[a] then DB:BuildFail(1, a, self.player, DPSMate.L["AutoAttack"], t[5]);DB:DeathHistory(a, self.player, DPSMate.L["AutoAttack"], t[5], 0, 1, 0, 0) end
 			return
 		end
 		for a in strgfind(msg, "Ihr fallt und verliert (%d+) Gesundheit%.") do
@@ -75,21 +68,21 @@ if (GetLocale() == "deDE") then
 	
 	DPSMate.Parser.SelfMisses = function(self, msg)
 		for a in strgfind(msg, "Ihr verfehlt (.+)%.") do 
-			DB:EnemyDamage(true, DPSMateEDT, self.player, "Angreifen", 0, 0, 1, 0, 0, 0, 0, a, 0, 0)
-			DB:DamageDone(self.player, "Angreifen", 0, 0, 1, 0, 0, 0, 0, 0, 0)
+			DB:EnemyDamage(true, DPSMateEDT, self.player, DPSMate.L["AutoAttack"], 0, 0, 1, 0, 0, 0, 0, a, 0, 0)
+			DB:DamageDone(self.player, DPSMate.L["AutoAttack"], 0, 0, 1, 0, 0, 0, 0, 0, 0)
 			return
 		end
 		for a,b in strgfind(msg, "Ihr greift an%. (.+) weicht aus%.") do 
-			DB:EnemyDamage(true, DPSMateEDT, self.player, "Angreifen", 0, 0, 0, 0, 1, 0, 0, a, 0, 0)
-			DB:DamageDone(self.player, "Angreifen", 0, 0, 0, 0, 1, 0, 0, 0, 0)
+			DB:EnemyDamage(true, DPSMateEDT, self.player, DPSMate.L["AutoAttack"], 0, 0, 0, 0, 1, 0, 0, a, 0, 0)
+			DB:DamageDone(self.player, DPSMate.L["AutoAttack"], 0, 0, 0, 0, 1, 0, 0, 0, 0)
 			return
 		end
 		for ta in strgfind(msg, "Ihr greift an%. (.+) absorbiert allen Schaden%.") do DB:Absorb("AutoAttack", ta, self.player); return end
 		for a,b in strgfind(msg, "Ihr greift an%. (.+) (%a-)%.") do 
 			t = {false, false}
 			if b=="pariert" then t[1]=1 else t[2]=1 end
-			DB:EnemyDamage(true, DPSMateEDT, self.player, "Angreifen", 0, 0, 0, t[1] or 0, 0, 0, 0, a, t[2] or 0, 0)
-			DB:DamageDone(self.player, "Angreifen", 0, 0, 0, t[1] or 0, 0, 0, 0, 0, t[2] or 0)
+			DB:EnemyDamage(true, DPSMateEDT, self.player, DPSMate.L["AutoAttack"], 0, 0, 0, t[1] or 0, 0, 0, 0, a, t[2] or 0, 0)
+			DB:DamageDone(self.player, DPSMate.L["AutoAttack"], 0, 0, 0, t[1] or 0, 0, 0, 0, 0, t[2] or 0)
 		end
 	end
 	
@@ -281,31 +274,31 @@ if (GetLocale() == "deDE") then
 	
 	DPSMate.Parser.FriendlyPlayerHits = function(self, msg)
 		for a,b,c,e in strgfind(msg, "(.-) trifft (.+) für (%d+) Schaden%. %((%d+) absorbiert%)") do
-			DB:SetUnregisterVariables(tnbr(e), "Angreifen", a)
+			DB:SetUnregisterVariables(tnbr(e), DPSMate.L["AutoAttack"], a)
 		end
 		for a,b,c,d in strgfind(msg, "(.-) trifft (.+) kritisch für (%d+) Schaden\.%s?(.*)") do
 			t = {false, false, false, false, tnbr(c)}
 			if d=="(gestreift)" then t[1]=1;t[3]=0 elseif d~="" then t[2]=1;t[3]=0 end
-			DB:EnemyDamage(true, DPSMateEDT, a, "Angreifen", 0, t[3] or 1, 0, 0, 0, 0, t[5], b, t[2] or 0, t[1] or 0)
-			DB:DamageDone(a, "Angreifen", 0, t[3] or 1, 0, 0, 0, 0, t[5], t[1] or 0, t[2] or 0)
-			if self.TargetParty[a] and self.TargetParty[b] then DB:BuildFail(1, b, a, "Angreifen", t[5]);DB:DeathHistory(b, a, "Angreifen", t[5], 0, 1, 0, 0) end
+			DB:EnemyDamage(true, DPSMateEDT, a, DPSMate.L["AutoAttack"], 0, t[3] or 1, 0, 0, 0, 0, t[5], b, t[2] or 0, t[1] or 0)
+			DB:DamageDone(a, DPSMate.L["AutoAttack"], 0, t[3] or 1, 0, 0, 0, 0, t[5], t[1] or 0, t[2] or 0)
+			if self.TargetParty[a] and self.TargetParty[b] then DB:BuildFail(1, b, a, DPSMate.L["AutoAttack"], t[5]);DB:DeathHistory(b, a, DPSMate.L["AutoAttack"], t[5], 0, 1, 0, 0) end
 			return
 		end
 		for a,b,c,d in strgfind(msg, "(.-) trifft (.+) für (%d+) Schaden\.%s?(.*)") do
 			t = {false, false, false, false, tnbr(c)}
 			if d=="(gestreift)" then t[1]=1;t[3]=0 elseif d~="" then t[2]=1;t[3]=0 end
 			if b=="Euch" then b=self.player end
-			DB:EnemyDamage(true, DPSMateEDT, a, "Angreifen", t[3] or 1, 0, 0, 0, 0, 0, t[5], b, t[2] or 0, t[1] or 0)
-			DB:DamageDone(a, "Angreifen", t[3] or 1, 0, 0, 0, 0, 0, t[5], t[1] or 0, t[2] or 0)
-			if self.TargetParty[a] and self.TargetParty[b] then DB:BuildFail(1, b, a, "Angreifen", t[5]);DB:DeathHistory(b, a, "Angreifen", t[5], 1, 0, 0, 0) end
+			DB:EnemyDamage(true, DPSMateEDT, a, DPSMate.L["AutoAttack"], t[3] or 1, 0, 0, 0, 0, 0, t[5], b, t[2] or 0, t[1] or 0)
+			DB:DamageDone(a, DPSMate.L["AutoAttack"], t[3] or 1, 0, 0, 0, 0, 0, t[5], t[1] or 0, t[2] or 0)
+			if self.TargetParty[a] and self.TargetParty[b] then DB:BuildFail(1, b, a, DPSMate.L["AutoAttack"], t[5]);DB:DeathHistory(b, a, DPSMate.L["AutoAttack"], t[5], 1, 0, 0, 0) end
 			return
 		end
 		for a,c,d in strgfind(msg, "(.-) trifft Euch kritisch: (%d+) Schaden\.%s?(.*)") do
 			t = {false, false, false, false, tnbr(c)}
 			if d=="(gestreift)" then t[1]=1;t[3]=0 elseif d~="" then t[2]=1;t[3]=0 end
-			DB:EnemyDamage(true, DPSMateEDT, a, "Angreifen", 0, t[3] or 1, 0, 0, 0, 0, t[5], self.player, t[2] or 0, t[1] or 0)
-			DB:DamageDone(a, "Angreifen", 0, t[3] or 1, 0, 0, 0, 0, t[5], t[1] or 0, t[2] or 0)
-			if self.TargetParty[a] then DB:BuildFail(1, self.player, a, "Angreifen", t[5]);DB:DeathHistory(self.player, a, "Angreifen", t[5], 0, 1, 0, 0) end
+			DB:EnemyDamage(true, DPSMateEDT, a, DPSMate.L["AutoAttack"], 0, t[3] or 1, 0, 0, 0, 0, t[5], self.player, t[2] or 0, t[1] or 0)
+			DB:DamageDone(a, DPSMate.L["AutoAttack"], 0, t[3] or 1, 0, 0, 0, 0, t[5], t[1] or 0, t[2] or 0)
+			if self.TargetParty[a] then DB:BuildFail(1, self.player, a, DPSMate.L["AutoAttack"], t[5]);DB:DeathHistory(self.player, a, DPSMate.L["AutoAttack"], t[5], 0, 1, 0, 0) end
 			return
 		end
 		for a,b in strgfind(msg, "(.-) verliert (%d+) Gesundheit durch Berührung mit Lava%.") do
@@ -345,29 +338,29 @@ if (GetLocale() == "deDE") then
 	DPSMate.Parser.FriendlyPlayerMisses = function(self, msg)
 		for a,b in strgfind(msg, "(.-) verfehlt (.+)%.") do 
 			if b=="Euch" then b=self.player end
-			DB:EnemyDamage(true, DPSMateEDT, a, "Angreifen", 0, 0, 1, 0, 0, 0, 0, b, 0, 0)
-			DB:DamageDone(a, "Angreifen", 0, 0, 1, 0, 0, 0, 0, 0, 0)
+			DB:EnemyDamage(true, DPSMateEDT, a, DPSMate.L["AutoAttack"], 0, 0, 1, 0, 0, 0, 0, b, 0, 0)
+			DB:DamageDone(a, DPSMate.L["AutoAttack"], 0, 0, 1, 0, 0, 0, 0, 0, 0)
 			return
 		end
 		for a,b in strgfind(msg, "(.-) greift an%. (.+) weicht aus%.") do 
 			if b=="Ihr" then b=self.player end
-			DB:EnemyDamage(true, DPSMateEDT, a, "Angreifen", 0, 0, 0, 0, 1, 0, 0, b, 0, 0)
-			DB:DamageDone(a, "Angreifen", 0, 0, 0, 0, 1, 0, 0, 0, 0)
+			DB:EnemyDamage(true, DPSMateEDT, a, DPSMate.L["AutoAttack"], 0, 0, 0, 0, 1, 0, 0, b, 0, 0)
+			DB:DamageDone(a, DPSMate.L["AutoAttack"], 0, 0, 0, 0, 1, 0, 0, 0, 0)
 			return
 		end
 		for a,b in strgfind(msg, "(.-) greift an%. (.+) pariert%.") do 
 			if b=="Ihr" then b=self.player end
-			DB:EnemyDamage(true, DPSMateEDT, a, "Angreifen", 0, 0, 0, 1, 0, 0, 0, b, 0, 0)
-			DB:DamageDone(a, "Angreifen", 0, 0, 0, 1, 0, 0, 0, 0, 0)
+			DB:EnemyDamage(true, DPSMateEDT, a, DPSMate.L["AutoAttack"], 0, 0, 0, 1, 0, 0, 0, b, 0, 0)
+			DB:DamageDone(a, DPSMate.L["AutoAttack"], 0, 0, 0, 1, 0, 0, 0, 0, 0)
 			return
 		end
 		for a,b in strgfind(msg, "(.-) greift an%. (.+) blockt%.") do 
 			if b=="Ihr" then b=self.player end
-			DB:EnemyDamage(true, DPSMateEDT, a, "Angreifen", 0, 0, 0, 0, 0, 0, 0, b, 1, 0)
-			DB:DamageDone(a, "Angreifen", 0, 0, 0, 0, 0, 0, 0, 0, 1)
+			DB:EnemyDamage(true, DPSMateEDT, a, DPSMate.L["AutoAttack"], 0, 0, 0, 0, 0, 0, 0, b, 1, 0)
+			DB:DamageDone(a, DPSMate.L["AutoAttack"], 0, 0, 0, 0, 0, 0, 0, 0, 1)
 			return
 		end
-		for c,b in strgfind(msg, "(.+) greift an%. (.+) absorbiert allen Schaden%.") do DB:Absorb("Angreifen", b, c); return end
+		for c,b in strgfind(msg, "(.+) greift an%. (.+) absorbiert allen Schaden%.") do DB:Absorb(DPSMate.L["AutoAttack"], b, c); return end
 	end
 	
 	DPSMate.Parser.SpellDamageShieldsOnSelf = function(self, msg)
@@ -402,33 +395,33 @@ if (GetLocale() == "deDE") then
 		for a,c,d in strgfind(msg, "(.+) trifft Euch für (%d+)(.*)") do
 			t = {false, false, false, false, tnbr(c)}
 			if strfind(d, "schmetternd") then t[3]=1;t[1]=0; elseif strfind(d, "geblockt") then t[4]=1;t[1]=0; end
-			DB:EnemyDamage(false, DPSMateEDD, self.player, "Angreifen", t[1] or 1, 0, 0, 0, 0, 0, t[5], a, t[4] or 0, t[3] or 0)
-			DB:DamageTaken(self.player, "Angreifen", t[1] or 1, 0, 0, 0, 0, 0, t[5], a, t[3] or 0, t[4] or 0)
-			DB:DeathHistory(self.player, a, "Angreifen", t[5], t[1] or 1, 0, 0, t[3] or 0)
+			DB:EnemyDamage(false, DPSMateEDD, self.player, DPSMate.L["AutoAttack"], t[1] or 1, 0, 0, 0, 0, 0, t[5], a, t[4] or 0, t[3] or 0)
+			DB:DamageTaken(self.player, DPSMate.L["AutoAttack"], t[1] or 1, 0, 0, 0, 0, 0, t[5], a, t[3] or 0, t[4] or 0)
+			DB:DeathHistory(self.player, a, DPSMate.L["AutoAttack"], t[5], t[1] or 1, 0, 0, t[3] or 0)
 			return
 		end
 		for a,c,d in strgfind(msg, "(.+) trifft Euch kritisch: (%d+)(.*)") do
 			t = {false, false, false, false, tnbr(c)}
 			if strfind(d, "schmetternd") then t[3]=1;t[2]=0 elseif strfind(d, "geblockt") then t[4]=1;t[2]=0 end
-			DB:EnemyDamage(false, DPSMateEDD, self.player, "Angreifen", 0, t[2] or 1, 0, 0, 0, 0, t[5], a, t[4] or 0, t[3] or 0)
-			DB:DamageTaken(self.player, "Angreifen", 0, t[2] or 1, 0, 0, 0, 0, t[5], a, t[3] or 0, t[4] or 0)
-			DB:DeathHistory(self.player, a, "Angreifen", t[5], 0, t[2] or 1, 0, t[3] or 0)
+			DB:EnemyDamage(false, DPSMateEDD, self.player, DPSMate.L["AutoAttack"], 0, t[2] or 1, 0, 0, 0, 0, t[5], a, t[4] or 0, t[3] or 0)
+			DB:DamageTaken(self.player, DPSMate.L["AutoAttack"], 0, t[2] or 1, 0, 0, 0, 0, t[5], a, t[3] or 0, t[4] or 0)
+			DB:DeathHistory(self.player, a, DPSMate.L["AutoAttack"], t[5], 0, t[2] or 1, 0, t[3] or 0)
 			return
 		end
 	end
 	
 	DPSMate.Parser.CreatureVsSelfMisses = function(self, msg)
-		for c in strgfind(msg, "(.+) greift an%. Ihr absorbiert allen Schaden%.") do DB:Absorb("Angreifen", self.player, c); return end
+		for c in strgfind(msg, "(.+) greift an%. Ihr absorbiert allen Schaden%.") do DB:Absorb(DPSMate.L["AutoAttack"], self.player, c); return end
 		for a in strgfind(msg, "(.+) verfehlt Euch%.") do 
-			DB:EnemyDamage(false, DPSMateEDD, self.player, "Angreifen", 0, 0, 1, 0, 0, 0, 0, a, 0, 0)
-			DB:DamageTaken(self.player, "Angreifen", 0, 0, 1, 0, 0, 0, 0, a, 0, 0)
+			DB:EnemyDamage(false, DPSMateEDD, self.player, DPSMate.L["AutoAttack"], 0, 0, 1, 0, 0, 0, 0, a, 0, 0)
+			DB:DamageTaken(self.player, DPSMate.L["AutoAttack"], 0, 0, 1, 0, 0, 0, 0, a, 0, 0)
 			return
 		end
 		for a,b in strgfind(msg, "(.+) greift an. Ihr (.+)%.") do 
 			t = {false, false, false}
 			if b=="pariert" then t[1]=1 elseif b=="weicht aus" then t[2]=1 else t[3]=1 end 
-			DB:EnemyDamage(false, DPSMateEDD, self.player, "Angreifen", 0, 0, 0, t[1] or 0, t[2] or 0, 0, 0, a, t[3] or 0, 0)
-			DB:DamageTaken(self.player, "Angreifen", 0, 0, 0, t[1] or 0, t[2] or 0, 0, 0, a, 0, t[3] or 0)
+			DB:EnemyDamage(false, DPSMateEDD, self.player, DPSMate.L["AutoAttack"], 0, 0, 0, t[1] or 0, t[2] or 0, 0, 0, a, t[3] or 0, 0)
+			DB:DamageTaken(self.player, DPSMate.L["AutoAttack"], 0, 0, 0, t[1] or 0, t[2] or 0, 0, 0, a, 0, t[3] or 0)
 			return
 		end
 	end 
@@ -537,33 +530,33 @@ if (GetLocale() == "deDE") then
 		for a,c,d,e in strgfind(msg, "(.+) trifft (.+) kritisch für (%d+)(.*)") do
 			t = {false, false, false, false, tnbr(d)}
 			if strfind(e, "schmetternd") then t[3]=1;t[1]=0;t[2]=0 elseif strfind(e, "geblockt") then t[4]=1;t[1]=0;t[2]=0 end
-			DB:EnemyDamage(false, DPSMateEDD, c, "Angreifen", 0, t[2] or 1, 0, 0, 0, 0, t[5], a, t[4] or 0, t[3] or 0)
-			DB:DamageTaken(c, "Angreifen", 0, t[2] or 1, 0, 0, 0, 0, t[5], a, t[3] or 0, t[4] or 0)
-			DB:DeathHistory(c, a, "Angreifen", t[5], 0, t[2] or 1, 0, t[3] or 0)
+			DB:EnemyDamage(false, DPSMateEDD, c, DPSMate.L["AutoAttack"], 0, t[2] or 1, 0, 0, 0, 0, t[5], a, t[4] or 0, t[3] or 0)
+			DB:DamageTaken(c, DPSMate.L["AutoAttack"], 0, t[2] or 1, 0, 0, 0, 0, t[5], a, t[3] or 0, t[4] or 0)
+			DB:DeathHistory(c, a, DPSMate.L["AutoAttack"], t[5], 0, t[2] or 1, 0, t[3] or 0)
 			return
 		end
 		for a,c,d,e in strgfind(msg, "(.+) trifft (.+) für (%d+)(.*)") do
 			t = {false, false, false, false, tnbr(d)}
 			if strfind(e, "schmetternd") then t[3]=1;t[1]=0;t[2]=0 elseif strfind(e, "geblockt") then t[4]=1;t[1]=0;t[2]=0 end
-			DB:EnemyDamage(false, DPSMateEDD, c, "Angreifen", t[1] or 1, 0, 0, 0, 0, 0, t[5], a, t[4] or 0, t[3] or 0)
-			DB:DamageTaken(c, "Angreifen", t[1] or 1, 0, 0, 0, 0, 0, t[5], a, t[3] or 0, t[4] or 0)
-			DB:DeathHistory(c, a, "Angreifen", t[5], t[1] or 1, 0, 0, t[3] or 0)
+			DB:EnemyDamage(false, DPSMateEDD, c, DPSMate.L["AutoAttack"], t[1] or 1, 0, 0, 0, 0, 0, t[5], a, t[4] or 0, t[3] or 0)
+			DB:DamageTaken(c, DPSMate.L["AutoAttack"], t[1] or 1, 0, 0, 0, 0, 0, t[5], a, t[3] or 0, t[4] or 0)
+			DB:DeathHistory(c, a, DPSMate.L["AutoAttack"], t[5], t[1] or 1, 0, 0, t[3] or 0)
 			return
 		end
 	end
 	
 	DPSMate.Parser.CreatureVsCreatureMisses = function(self, msg)
-		for c, ta in strgfind(msg, "(.+) greift an%. (.+) absorbiert allen Schaden%.") do DB:Absorb("Angreifen", ta, c); return end
+		for c, ta in strgfind(msg, "(.+) greift an%. (.+) absorbiert allen Schaden%.") do DB:Absorb(DPSMate.L["AutoAttack"], ta, c); return end
 		for a,b,c in strgfind(msg, "(.+) greift an%. (.-) (.+)%.") do 
 			t = {false, false, false}
 			if c=="pariert" then t[1]=1 elseif c=="weicht aus" then t[2]=1 else t[3]=1 end 
-			DB:EnemyDamage(false, DPSMateEDD, b, "Angreifen", 0, 0, 0, t[1] or 0, t[2] or 0, 0, 0, a, t[3] or 0, 0)
-			DB:DamageTaken(b, "Angreifen", 0, 0, 0, t[1] or 0, t[2] or 0, 0, 0, a, 0, t[3] or 0)
+			DB:EnemyDamage(false, DPSMateEDD, b, DPSMate.L["AutoAttack"], 0, 0, 0, t[1] or 0, t[2] or 0, 0, 0, a, t[3] or 0, 0)
+			DB:DamageTaken(b, DPSMate.L["AutoAttack"], 0, 0, 0, t[1] or 0, t[2] or 0, 0, 0, a, 0, t[3] or 0)
 			return
 		end
 		for a,b in strgfind(msg, "(.+) verfehlt (.+)%.") do 
-			DB:EnemyDamage(false, DPSMateEDD, b, "Angreifen", 0, 0, 1, 0, 0, 0, 0, a, 0, 0)
-			DB:DamageTaken(b, "Angreifen", 0, 0, 1, 0, 0, 0, 0, a, 0, 0)
+			DB:EnemyDamage(false, DPSMateEDD, b, DPSMate.L["AutoAttack"], 0, 0, 1, 0, 0, 0, 0, a, 0, 0)
+			DB:DamageTaken(b, DPSMate.L["AutoAttack"], 0, 0, 1, 0, 0, 0, 0, a, 0, 0)
 			return 
 		end
 	end
@@ -891,13 +884,13 @@ if (GetLocale() == "deDE") then
 	----------------------------------------------------------------------------------
 	
 	DPSMate.Parser.CreatureVsSelfHitsAbsorb = function(self, msg)
-		for c, b, d, absorbed in strgfind(msg, "(.+) trifft Euch für (%d+) Schaden%.(.*)%((%d+) absorbiert%)") do DB:SetUnregisterVariables(tnbr(absorbed), "Angreifen", c); return end
-		for c, b, d, absorbed in strgfind(msg, "(.+) trifft Euch kritisch für (%d+) Schaden%.(.*)%((%d+) absorbiert%)") do DB:SetUnregisterVariables(tnbr(absorbed), "Angreifen", c); return end
+		for c, b, d, absorbed in strgfind(msg, "(.+) trifft Euch für (%d+) Schaden%.(.*)%((%d+) absorbiert%)") do DB:SetUnregisterVariables(tnbr(absorbed), DPSMate.L["AutoAttack"], c); return end
+		for c, b, d, absorbed in strgfind(msg, "(.+) trifft Euch kritisch für (%d+) Schaden%.(.*)%((%d+) absorbiert%)") do DB:SetUnregisterVariables(tnbr(absorbed), DPSMate.L["AutoAttack"], c); return end
 	end
 	
 	DPSMate.Parser.CreatureVsCreatureHitsAbsorb = function(self, msg)
-		for c, b, a, d, absorbed in strgfind(msg, "(.+) trifft (.+) kritisch für (%d+) Schaden%.(.*)%((%d+) absorbiert%)") do DB:SetUnregisterVariables(tnbr(absorbed), "Angreifen", c); return end
-		for c, b, a, d, absorbed in strgfind(msg, "(.+) trifft (.+) für (%d+) Schaden%.(.*)%((%d+) absorbiert%)") do DB:SetUnregisterVariables(tnbr(absorbed), "Angreifen", c); return end
+		for c, b, a, d, absorbed in strgfind(msg, "(.+) trifft (.+) kritisch für (%d+) Schaden%.(.*)%((%d+) absorbiert%)") do DB:SetUnregisterVariables(tnbr(absorbed), DPSMate.L["AutoAttack"], c); return end
+		for c, b, a, d, absorbed in strgfind(msg, "(.+) trifft (.+) für (%d+) Schaden%.(.*)%((%d+) absorbiert%)") do DB:SetUnregisterVariables(tnbr(absorbed), DPSMate.L["AutoAttack"], c); return end
 	end
 	
 	DPSMate.Parser.CreatureVsSelfSpellDamageAbsorb = function(self, msg)
@@ -1005,26 +998,26 @@ if (GetLocale() == "deDE") then
 		for a,b,c,d in strgfind(msg, "(.-) trifft (.+) kritisch für (%d+) Schaden\.%s?(.*)") do
 			t = {false, false, false, false, tnbr(c)}
 			if d=="(gestreift)" then t[1]=1;t[3]=0 elseif d~="" then t[2]=1;t[3]=0 end
-			DB:EnemyDamage(true, DPSMateEDT, a, "Angreifen", 0, t[3] or 1, 0, 0, 0, 0, t[5], b, t[2] or 0, t[1] or 0)
-			DB:DamageDone(a, "Angreifen", 0, t[3] or 1, 0, 0, 0, 0, t[5], t[1] or 0, t[2] or 0)
-			if self.TargetParty[a] and self.TargetParty[b] then DB:BuildFail(1, b, a, "Angreifen", t[5]) end
+			DB:EnemyDamage(true, DPSMateEDT, a, DPSMate.L["AutoAttack"], 0, t[3] or 1, 0, 0, 0, 0, t[5], b, t[2] or 0, t[1] or 0)
+			DB:DamageDone(a, DPSMate.L["AutoAttack"], 0, t[3] or 1, 0, 0, 0, 0, t[5], t[1] or 0, t[2] or 0)
+			if self.TargetParty[a] and self.TargetParty[b] then DB:BuildFail(1, b, a, DPSMate.L["AutoAttack"], t[5]) end
 			return
 		end
 		for a,b,c,d in strgfind(msg, "(.-) trifft (.+) für (%d+) Schaden\.%s?(.*)") do
 			t = {false, false, false, false, tnbr(c)}
 			if d=="(gestreift)" then t[1]=1;t[3]=0 elseif d~="" then t[2]=1;t[3]=0 end
 			if b=="Euch" then b=self.player end
-			DB:EnemyDamage(true, DPSMateEDT, a, "Angreifen", t[3] or 1, 0, 0, 0, 0, 0, t[5], b, t[2] or 0, t[1] or 0)
-			DB:DamageDone(a, "Angreifen", t[3] or 1, 0, 0, 0, 0, 0, t[5], t[1] or 0, t[2] or 0)
-			if self.TargetParty[a] and self.TargetParty[b] then DB:BuildFail(1, b, a, "Angreifen", t[5]) end
+			DB:EnemyDamage(true, DPSMateEDT, a, DPSMate.L["AutoAttack"], t[3] or 1, 0, 0, 0, 0, 0, t[5], b, t[2] or 0, t[1] or 0)
+			DB:DamageDone(a, DPSMate.L["AutoAttack"], t[3] or 1, 0, 0, 0, 0, 0, t[5], t[1] or 0, t[2] or 0)
+			if self.TargetParty[a] and self.TargetParty[b] then DB:BuildFail(1, b, a, DPSMate.L["AutoAttack"], t[5]) end
 			return
 		end
 		for a,c,d in strgfind(msg, "(.-) trifft Euch kritisch: (%d+) Schaden\.%s?(.*)") do
 			t = {false, false, false, false, tnbr(c)}
 			if d=="(gestreift)" then t[1]=1;t[3]=0 elseif d~="" then t[2]=1;t[3]=0 end
-			DB:EnemyDamage(true, DPSMateEDT, a, "Angreifen", 0, t[3] or 1, 0, 0, 0, 0, t[5], self.player, t[2] or 0, t[1] or 0)
-			DB:DamageDone(a, "Angreifen", 0, t[3] or 1, 0, 0, 0, 0, t[5], t[1] or 0, t[2] or 0)
-			if self.TargetParty[a] then DB:BuildFail(1, self.player, a, "Angreifen", t[5]) end
+			DB:EnemyDamage(true, DPSMateEDT, a, DPSMate.L["AutoAttack"], 0, t[3] or 1, 0, 0, 0, 0, t[5], self.player, t[2] or 0, t[1] or 0)
+			DB:DamageDone(a, DPSMate.L["AutoAttack"], 0, t[3] or 1, 0, 0, 0, 0, t[5], t[1] or 0, t[2] or 0)
+			if self.TargetParty[a] then DB:BuildFail(1, self.player, a, DPSMate.L["AutoAttack"], t[5]) end
 			return
 		end
 	end
@@ -1032,26 +1025,26 @@ if (GetLocale() == "deDE") then
 	DPSMate.Parser.PetMisses = function(self, msg)
 		for a,b in strgfind(msg, "(.-) verfehlt (.+)%.") do 
 			if b=="Euch" then b=self.player end
-			DB:EnemyDamage(true, DPSMateEDT, a, "Angreifen", 0, 0, 1, 0, 0, 0, 0, b, 0, 0)
-			DB:DamageDone(a, "Angreifen", 0, 0, 1, 0, 0, 0, 0, 0, 0)
+			DB:EnemyDamage(true, DPSMateEDT, a, DPSMate.L["AutoAttack"], 0, 0, 1, 0, 0, 0, 0, b, 0, 0)
+			DB:DamageDone(a, DPSMate.L["AutoAttack"], 0, 0, 1, 0, 0, 0, 0, 0, 0)
 			return
 		end
 		for a,b in strgfind(msg, "(.-) greift an%. (.+) weicht aus%.") do 
 			if b=="Ihr" then b=self.player end
-			DB:EnemyDamage(true, DPSMateEDT, a, "Angreifen", 0, 0, 0, 0, 1, 0, 0, b, 0, 0)
-			DB:DamageDone(a, "Angreifen", 0, 0, 0, 0, 1, 0, 0, 0, 0)
+			DB:EnemyDamage(true, DPSMateEDT, a, DPSMate.L["AutoAttack"], 0, 0, 0, 0, 1, 0, 0, b, 0, 0)
+			DB:DamageDone(a, DPSMate.L["AutoAttack"], 0, 0, 0, 0, 1, 0, 0, 0, 0)
 			return
 		end
 		for a,b in strgfind(msg, "(.-) greift an%. (.+) pariert%.") do 
 			if b=="Ihr" then b=self.player end
-			DB:EnemyDamage(true, DPSMateEDT, a, "Angreifen", 0, 0, 0, 1, 0, 0, 0, b, 0, 0)
-			DB:DamageDone(a, "Angreifen", 0, 0, 0, 1, 0, 0, 0, 0, 0)
+			DB:EnemyDamage(true, DPSMateEDT, a, DPSMate.L["AutoAttack"], 0, 0, 0, 1, 0, 0, 0, b, 0, 0)
+			DB:DamageDone(a, DPSMate.L["AutoAttack"], 0, 0, 0, 1, 0, 0, 0, 0, 0)
 			return
 		end
 		for a,b in strgfind(msg, "(.-) greift an%. (.+) blockt%.") do 
 			if b=="Ihr" then b=self.player end
-			DB:EnemyDamage(true, DPSMateEDT, a, "Angreifen", 0, 0, 0, 0, 0, 0, 0, b, 1, 0)
-			DB:DamageDone(a, "Angreifen", 0, 0, 0, 0, 0, 0, 0, 0, 1)
+			DB:EnemyDamage(true, DPSMateEDT, a, DPSMate.L["AutoAttack"], 0, 0, 0, 0, 0, 0, 0, b, 1, 0)
+			DB:DamageDone(a, DPSMate.L["AutoAttack"], 0, 0, 0, 0, 0, 0, 0, 0, 1)
 			return
 		end
 	end
