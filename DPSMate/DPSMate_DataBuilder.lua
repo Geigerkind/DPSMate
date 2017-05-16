@@ -1926,7 +1926,7 @@ function DPSMate.DB:UnregisterDeath(target)
 			DPSMateDeaths[cat][target][1]["i"][2]=GameTime_GT()
 			if cat==1 and DPSMate.Parser.TargetParty[DPSMate:GetUserById(target)] then 
 				p = DPSMateDeaths[cat][target][1][1]
-				DPSMate:Broadcast(4, target, DPSMate:GetUserById(p[1]), DPSMate:GetAbilityById(p[2]), p[3]) 
+				DPSMate:Broadcast(4, DPSMate:GetUserById(target), DPSMate:GetUserById(p[1]), DPSMate:GetAbilityById(p[2]), p[3]) 
 			end
 		end
 	end
