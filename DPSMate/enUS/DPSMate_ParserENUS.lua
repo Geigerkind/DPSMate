@@ -163,7 +163,12 @@ function DPSMate.Parser:FriendlyPlayerDamage(msg)
 		if self.DmgProcs[a] then DB:BuildBuffs(f, f, a, true) end
 		DB:EnemyDamage(true, DPSMateEDT, f, a,  t[2] or 0, t[3] or 1, 0, 0, 0, 0, t[1], c, t[4] or 0, 0)
 		DB:DamageDone(f, a, t[2] or 0, t[3] or 1, 0, 0, 0, 0, t[1], 0, t[4] or 0)
-		if self.TargetParty[f] and self.TargetParty[c] then DB:BuildFail(1, c, f, a, t[1]);DB:DeathHistory(c, f, a, t[1], t[2] or 0, t[3] or 1, 0, 0) end
+		if self.TargetParty[c] then -- Fixes the issue for pvp death logging
+			if self.TargetParty[f] then
+				DB:BuildFail(1, c, f, a, t[1]);
+			end
+			DB:DeathHistory(c, f, a, t[1], t[2] or 0, t[3] or 1, 0, 0) 
+		end
 		DB:AddSpellSchool(a,e)
 		return
 	end
@@ -217,7 +222,11 @@ function DPSMate.Parser:FriendlyPlayerHits(msg)
 		if c=="you" then c=self.player end
 		DB:EnemyDamage(true, DPSMateEDT, a, "AutoAttack", t[3] or 0, t[4] or 1, 0, 0, 0, 0, t[5], c, t[2] or 0, t[1] or 0)
 		DB:DamageDone(a, "AutoAttack", t[3] or 0, t[4] or 1, 0, 0, 0, 0, t[5], t[1] or 0, t[2] or 0)
-		if self.TargetParty[a] and self.TargetParty[c] then DB:BuildFail(1, c, a, "AutoAttack", t[5]);DB:DeathHistory(c, a, "AutoAttack", t[5], t[3] or 0, t[4] or 1, 0, 0) end
+		if self.TargetParty[c] then 
+			if self.TargetParty[a] then
+				DB:BuildFail(1, c, a, "AutoAttack", t[5]);
+			end
+			DB:DeathHistory(c, a, "AutoAttack", t[5], t[3] or 0, t[4] or 1, 0, 0) end
 		return
 	end
 	for a,b in strgfind(msg, "(.-) loses (%d+) health for swimming in lava%.") do

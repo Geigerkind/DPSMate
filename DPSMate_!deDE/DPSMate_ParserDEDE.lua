@@ -217,7 +217,12 @@ if (GetLocale() == "deDE") then
 			if DPSMate.Parser.DmgProcs[a] then DB:BuildBuffs(f, f, a, true) end
 			DB:EnemyDamage(true, DPSMateEDT, f, a,  0, t[2] or 1, 0, 0, 0, 0, t[1], b, t[4] or 0, 0)
 			DB:DamageDone(f, a, 0, t[2] or 1, 0, 0, 0, 0, t[1], 0, t[4] or 0)
-			if self.TargetParty[b] and self.TargetParty[f] then DB:BuildFail(1, b, f, a, t[1]);DB:DeathHistory(b, f, a, t[1], 0, 1, 0, 0) end
+			if self.TargetParty[b] then 
+				if self.TargetParty[f] then
+					DB:BuildFail(1, b, f, a, t[1]);
+				end
+				DB:DeathHistory(b, f, a, t[1], 0, 1, 0, 0) 
+			end
 			DB:AddSpellSchool(a,d)
 			return
 		end
@@ -230,7 +235,12 @@ if (GetLocale() == "deDE") then
 			if DPSMate.Parser.DmgProcs[a] then DB:BuildBuffs(f, f, a, true) end
 			DB:EnemyDamage(true, DPSMateEDT, f, a,  t[2] or 1, 0, 0, 0, 0, 0, t[1], b, t[4] or 0, 0)
 			DB:DamageDone(f, a, t[2] or 1, 0, 0, 0, 0, 0, t[1], 0, t[4] or 0)
-			if self.TargetParty[b] and self.TargetParty[f] then DB:BuildFail(1, b, f, a, t[1]);DB:DeathHistory(b, f, a, t[1], 1, 0, 0, 0) end
+			if self.TargetParty[b] then
+				if self.TargetParty[f] then 
+					DB:BuildFail(1, b, f, a, t[1]);
+				end
+				DB:DeathHistory(b, f, a, t[1], 1, 0, 0, 0)
+			end
 			DB:AddSpellSchool(a,d)
 			return
 		end
@@ -297,7 +307,12 @@ if (GetLocale() == "deDE") then
 			if b=="Euch" then b=self.player end
 			DB:EnemyDamage(true, DPSMateEDT, a, "Angreifen", t[3] or 1, 0, 0, 0, 0, 0, t[5], b, t[2] or 0, t[1] or 0)
 			DB:DamageDone(a, "Angreifen", t[3] or 1, 0, 0, 0, 0, 0, t[5], t[1] or 0, t[2] or 0)
-			if self.TargetParty[a] and self.TargetParty[b] then DB:BuildFail(1, b, a, "Angreifen", t[5]);DB:DeathHistory(b, a, "Angreifen", t[5], 1, 0, 0, 0) end
+			if self.TargetParty[b] then 
+				if self.TargetParty[a] then
+					DB:BuildFail(1, b, a, "Angreifen", t[5]);
+				end
+				DB:DeathHistory(b, a, "Angreifen", t[5], 1, 0, 0, 0)
+			end
 			return
 		end
 		for a,c,d in strgfind(msg, "(.-) trifft Euch kritisch: (%d+) Schaden\.%s?(.*)") do
@@ -305,7 +320,8 @@ if (GetLocale() == "deDE") then
 			if d=="(gestreift)" then t[1]=1;t[3]=0 elseif d~="" then t[2]=1;t[3]=0 end
 			DB:EnemyDamage(true, DPSMateEDT, a, "Angreifen", 0, t[3] or 1, 0, 0, 0, 0, t[5], self.player, t[2] or 0, t[1] or 0)
 			DB:DamageDone(a, "Angreifen", 0, t[3] or 1, 0, 0, 0, 0, t[5], t[1] or 0, t[2] or 0)
-			if self.TargetParty[a] then DB:BuildFail(1, self.player, a, "Angreifen", t[5]);DB:DeathHistory(self.player, a, "Angreifen", t[5], 0, 1, 0, 0) end
+			if self.TargetParty[a] then DB:BuildFail(1, self.player, a, "Angreifen", t[5]); end
+			DB:DeathHistory(self.player, a, "Angreifen", t[5], 0, 1, 0, 0)
 			return
 		end
 		for a,b in strgfind(msg, "(.-) verliert (%d+) Gesundheit durch Berührung mit Lava%.") do

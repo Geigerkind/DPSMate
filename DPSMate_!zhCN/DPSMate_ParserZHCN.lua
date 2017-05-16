@@ -197,7 +197,11 @@ if (GetLocale() == "zhCN") then
 			if DPSMate.Parser.DmgProcs[a] then DB:BuildBuffs(f, f, a, true) end
 			DB:EnemyDamage(true, DPSMateEDT, f, a,  0, t[2] or 1, 0, 0, 0, 0, t[1], b, t[4] or 0, 0)
 			DB:DamageDone(f, a, 0, t[2] or 1, 0, 0, 0, 0, t[1], 0, t[4] or 0)
-			if self.TargetParty[b] and self.TargetParty[f] then DB:BuildFail(1, b, f, a, t[1]);DB:DeathHistory(b, f, a, t[1], 0, 1, 0, 0) end
+			if self.TargetParty[b] then 
+				if self.TargetParty[f] then
+					DB:BuildFail(1, b, f, a, t[1]);
+				end
+				DB:DeathHistory(b, f, a, t[1], 0, 1, 0, 0) end
 			return
 		end
 		for f,a,b,c,g,e in strgfind(msg, "(.+)的(.+)致命一击对(.+)造成(%d+)点(.*)伤害。%s?(.*)") do 
@@ -208,7 +212,11 @@ if (GetLocale() == "zhCN") then
 			if DPSMate.Parser.DmgProcs[a] then DB:BuildBuffs(f, f, a, true) end
 			DB:EnemyDamage(true, DPSMateEDT, f, a,  0, t[2] or 1, 0, 0, 0, 0, t[1], b, t[4] or 0, 0)
 			DB:DamageDone(f, a, 0, t[2] or 1, 0, 0, 0, 0, t[1], 0, t[4] or 0)
-			if self.TargetParty[b] and self.TargetParty[f] then DB:BuildFail(1, b, f, a, t[1]);DB:DeathHistory(b, f, a, t[1], 0, 1, 0, 0) end
+			if self.TargetParty[b] then
+				if self.TargetParty[f] then
+					DB:BuildFail(1, b, f, a, t[1]);
+				end
+				DB:DeathHistory(b, f, a, t[1], 0, 1, 0, 0) end
 			DB:AddSpellSchool(a,g)
 			return
 		end
@@ -220,7 +228,11 @@ if (GetLocale() == "zhCN") then
 			if DPSMate.Parser.DmgProcs[a] then DB:BuildBuffs(f, f, a, true) end
 			DB:EnemyDamage(true, DPSMateEDT, f, a,  t[2] or 1, 0, 0, 0, 0, 0, t[1], b, t[4] or 0, 0)
 			DB:DamageDone(f, a, t[2] or 1, 0, 0, 0, 0, 0, t[1], 0, t[4] or 0)
-			if self.TargetParty[b] and self.TargetParty[f] then DB:BuildFail(1, b, f, a, t[1]);DB:DeathHistory(b, f, a, t[1], 1, 0, 0, 0) end
+			if self.TargetParty[b] then 
+				if self.TargetParty[f] then 
+					DB:BuildFail(1, b, f, a, t[1]);
+				end
+				DB:DeathHistory(b, f, a, t[1], 1, 0, 0, 0) end
 			return
 		end
 		for f,b,a in strgfind(msg, "(.+)的(.+)被(.+)闪躲过去。") do 
@@ -277,7 +289,11 @@ if (GetLocale() == "zhCN") then
 			if b == "你" then b=self.player end
 			DB:EnemyDamage(true, DPSMateEDT, a, DPSMate.L["AutoAttack"], 0, t[3] or 1, 0, 0, 0, 0, t[5], b, t[2] or 0, t[1] or 0)
 			DB:DamageDone(a, DPSMate.L["AutoAttack"], 0, t[3] or 1, 0, 0, 0, 0, t[5], t[1] or 0, t[2] or 0)
-			if self.TargetParty[a] and self.TargetParty[b] then DB:BuildFail(1, b, a, DPSMate.L["AutoAttack"], t[5]);DB:DeathHistory(b, a, DPSMate.L["AutoAttack"], t[5], 0, 1, 0, 0) end
+			if self.TargetParty[b] then 
+				if self.TargetParty[a] then
+					DB:BuildFail(1, b, a, DPSMate.L["AutoAttack"], t[5]);
+				end
+				DB:DeathHistory(b, a, DPSMate.L["AutoAttack"], t[5], 0, 1, 0, 0) end
 			return
 		end
 		for a,b,c,f,d in strgfind(msg, "(.+)的致命一击中(.+)造成(%d+)点(.*)伤害。%s?(.*)") do
@@ -286,7 +302,11 @@ if (GetLocale() == "zhCN") then
 			if b == "你" then b=self.player end
 			DB:EnemyDamage(true, DPSMateEDT, a, DPSMate.L["AutoAttack"], 0, t[3] or 1, 0, 0, 0, 0, t[5], b, t[2] or 0, t[1] or 0)
 			DB:DamageDone(a, DPSMate.L["AutoAttack"], 0, t[3] or 1, 0, 0, 0, 0, t[5], t[1] or 0, t[2] or 0)
-			if self.TargetParty[a] and self.TargetParty[b] then DB:BuildFail(1, b, a, DPSMate.L["AutoAttack"], t[5]);DB:DeathHistory(b, a, DPSMate.L["AutoAttack"], t[5], 0, 1, 0, 0) end
+			if self.TargetParty[b] then 
+				if self.TargetParty[a] then
+					DB:BuildFail(1, b, a, DPSMate.L["AutoAttack"], t[5]);
+				end
+				DB:DeathHistory(b, a, DPSMate.L["AutoAttack"], t[5], 0, 1, 0, 0) end
 			return
 		end
 		for a,b,c,f,d in strgfind(msg, "(.+)击中(.+)造成(%d+)点(.*)伤害。%s?(.*)") do
@@ -295,7 +315,11 @@ if (GetLocale() == "zhCN") then
 			if b=="你" then b=self.player end
 			DB:EnemyDamage(true, DPSMateEDT, a, DPSMate.L["AutoAttack"], t[3] or 1, 0, 0, 0, 0, 0, t[5], b, t[2] or 0, t[1] or 0)
 			DB:DamageDone(a, DPSMate.L["AutoAttack"], t[3] or 1, 0, 0, 0, 0, 0, t[5], t[1] or 0, t[2] or 0)
-			if self.TargetParty[a] and self.TargetParty[b] then DB:BuildFail(1, b, a, DPSMate.L["AutoAttack"], t[5]);DB:DeathHistory(b, a, DPSMate.L["AutoAttack"], t[5], 1, 0, 0, 0) end
+			if self.TargetParty[b] then 
+				if self.TargetParty[a] then
+					DB:BuildFail(1, b, a, DPSMate.L["AutoAttack"], t[5]);
+				end
+				DB:DeathHistory(b, a, DPSMate.L["AutoAttack"], t[5], 1, 0, 0, 0) end
 			return
 		end
 		for a,b in strgfind(msg, "在岩浆中，(.+)损失了(%d+)生命值。") do
@@ -982,7 +1006,11 @@ if (GetLocale() == "zhCN") then
 			if b == "你" then b=self.player end
 			DB:EnemyDamage(true, DPSMateEDT, a, DPSMate.L["AutoAttack"], 0, t[3] or 1, 0, 0, 0, 0, t[5], b, t[2] or 0, t[1] or 0)
 			DB:DamageDone(a, DPSMate.L["AutoAttack"], 0, t[3] or 1, 0, 0, 0, 0, t[5], t[1] or 0, t[2] or 0)
-			if self.TargetParty[a] and self.TargetParty[b] then DB:BuildFail(1, b, a, DPSMate.L["AutoAttack"], t[5]);DB:DeathHistory(b, a, DPSMate.L["AutoAttack"], t[5], 0, 1, 0, 0) end
+			if self.TargetParty[b] then 
+				if self.TargetParty[a] then
+					DB:BuildFail(1, b, a, DPSMate.L["AutoAttack"], t[5]);
+				end
+				DB:DeathHistory(b, a, DPSMate.L["AutoAttack"], t[5], 0, 1, 0, 0) end
 			return
 		end
 		for a,b,c,f,d in strgfind(msg, "(.+)的致命一击中(.+)造成(%d+)点(.*)伤害。%s?(.*)") do
@@ -991,7 +1019,11 @@ if (GetLocale() == "zhCN") then
 			if b == "你" then b=self.player end
 			DB:EnemyDamage(true, DPSMateEDT, a, DPSMate.L["AutoAttack"], 0, t[3] or 1, 0, 0, 0, 0, t[5], b, t[2] or 0, t[1] or 0)
 			DB:DamageDone(a, DPSMate.L["AutoAttack"], 0, t[3] or 1, 0, 0, 0, 0, t[5], t[1] or 0, t[2] or 0)
-			if self.TargetParty[a] and self.TargetParty[b] then DB:BuildFail(1, b, a, DPSMate.L["AutoAttack"], t[5]);DB:DeathHistory(b, a, DPSMate.L["AutoAttack"], t[5], 0, 1, 0, 0) end
+			if self.TargetParty[b] then 
+				if self.TargetParty[a] then 
+					DB:BuildFail(1, b, a, DPSMate.L["AutoAttack"], t[5]);
+				end
+				DB:DeathHistory(b, a, DPSMate.L["AutoAttack"], t[5], 0, 1, 0, 0) end
 			return
 		end
 		for a,b,c,f,d in strgfind(msg, "(.+)击中(.+)造成(%d+)点(.*)伤害。%s?(.*)") do
@@ -1000,7 +1032,11 @@ if (GetLocale() == "zhCN") then
 			if b=="你" then b=self.player end
 			DB:EnemyDamage(true, DPSMateEDT, a, DPSMate.L["AutoAttack"], t[3] or 1, 0, 0, 0, 0, 0, t[5], b, t[2] or 0, t[1] or 0)
 			DB:DamageDone(a, DPSMate.L["AutoAttack"], t[3] or 1, 0, 0, 0, 0, 0, t[5], t[1] or 0, t[2] or 0)
-			if self.TargetParty[a] and self.TargetParty[b] then DB:BuildFail(1, b, a, DPSMate.L["AutoAttack"], t[5]);DB:DeathHistory(b, a, DPSMate.L["AutoAttack"], t[5], 1, 0, 0, 0) end
+			if self.TargetParty[b] then 
+				if self.TargetParty[a] then
+					DB:BuildFail(1, b, a, DPSMate.L["AutoAttack"], t[5]);
+				end
+				DB:DeathHistory(b, a, DPSMate.L["AutoAttack"], t[5], 1, 0, 0, 0) end
 			return
 		end
 	end
@@ -1045,7 +1081,11 @@ if (GetLocale() == "zhCN") then
 			if DPSMate.Parser.DmgProcs[a] then DB:BuildBuffs(f, f, a, true) end
 			DB:EnemyDamage(true, DPSMateEDT, f, a,  0, t[2] or 1, 0, 0, 0, 0, t[1], b, t[4] or 0, 0)
 			DB:DamageDone(f, a, 0, t[2] or 1, 0, 0, 0, 0, t[1], 0, t[4] or 0)
-			if self.TargetParty[b] and self.TargetParty[f] then DB:BuildFail(1, b, f, a, t[1]);DB:DeathHistory(b, f, a, t[1], 0, 1, 0, 0) end
+			if self.TargetParty[b] then 
+				if self.TargetParty[f] then
+					DB:BuildFail(1, b, f, a, t[1]);
+				end
+				DB:DeathHistory(b, f, a, t[1], 0, 1, 0, 0) end
 			return
 		end
 		for f,a,b,c,g,e in strgfind(msg, "(.+)的(.+)致命一击对(.+)造成(%d+)点(.*)伤害。%s?(.*)") do 
@@ -1056,7 +1096,11 @@ if (GetLocale() == "zhCN") then
 			if DPSMate.Parser.DmgProcs[a] then DB:BuildBuffs(f, f, a, true) end
 			DB:EnemyDamage(true, DPSMateEDT, f, a,  0, t[2] or 1, 0, 0, 0, 0, t[1], b, t[4] or 0, 0)
 			DB:DamageDone(f, a, 0, t[2] or 1, 0, 0, 0, 0, t[1], 0, t[4] or 0)
-			if self.TargetParty[b] and self.TargetParty[f] then DB:BuildFail(1, b, f, a, t[1]);DB:DeathHistory(b, f, a, t[1], 0, 1, 0, 0) end
+			if self.TargetParty[b] then 
+				if self.TargetParty[f] then
+					DB:BuildFail(1, b, f, a, t[1]);
+				end
+				DB:DeathHistory(b, f, a, t[1], 0, 1, 0, 0) end
 			DB:AddSpellSchool(a,g)
 			return
 		end
@@ -1068,7 +1112,11 @@ if (GetLocale() == "zhCN") then
 			if DPSMate.Parser.DmgProcs[a] then DB:BuildBuffs(f, f, a, true) end
 			DB:EnemyDamage(true, DPSMateEDT, f, a,  t[2] or 1, 0, 0, 0, 0, 0, t[1], b, t[4] or 0, 0)
 			DB:DamageDone(f, a, t[2] or 1, 0, 0, 0, 0, 0, t[1], 0, t[4] or 0)
-			if self.TargetParty[b] and self.TargetParty[f] then DB:BuildFail(1, b, f, a, t[1]);DB:DeathHistory(b, f, a, t[1], 1, 0, 0, 0) end
+			if self.TargetParty[b] then 
+				if self.TargetParty[f] then
+					DB:BuildFail(1, b, f, a, t[1]);
+				end
+				DB:DeathHistory(b, f, a, t[1], 1, 0, 0, 0) end
 			return
 		end
 		for f,b,a in strgfind(msg, "(.+)的(.+)被(.+)闪躲过去。") do 
