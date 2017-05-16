@@ -34,9 +34,9 @@ local strformat = string.format
 local pairs = pairs
 
 function DPSMate.Modules.Damage:GetSortedTable(arr, k)
-	local b, a, total, CV, i = {}, {}, 0
+	local b, a, total, CV, i, name = {}, {}, 0
 	for cat, val in pairs(arr) do
-		local name = DPSMate:GetUserById(cat)
+		name = DPSMate:GetUserById(cat)
 		if (not DPSMateUser[name][4] or (DPSMateUser[name][4] and not DPSMateSettings["mergepets"])) then
 			if DPSMate:ApplyFilter(k, name) then
 				CV = val["i"]
