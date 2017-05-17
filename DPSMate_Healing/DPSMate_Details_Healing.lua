@@ -310,7 +310,7 @@ function DPSMate.Modules.DetailsHealing:SelectDetails_HealingButton(i, comp, cna
 	_G("DPSMate_Details_"..comp.."Healing_LogDetails_Healing_Amount0_Percent"):SetText(strformat("%.1f", 100*hit/total).."%")
 	_G("DPSMate_Details_"..comp.."Healing_LogDetails_Healing_Amount0_StatusBar"):SetValue(ceil(100*hit/max))
 	_G("DPSMate_Details_"..comp.."Healing_LogDetails_Healing_Amount0_StatusBar"):SetStatusBarColor(0.3,0.7,1.0,1)
-	_G("DPSMate_Details_"..comp.."Healing_LogDetails_Healing_Average0"):SetText(ceil(hitav))
+	_G("DPSMate_Details_"..comp.."Healing_LogDetails_Healing_Average0"):SetText(ceil(hitav/DPSMate:ProbZero(hit)))
 	_G("DPSMate_Details_"..comp.."Healing_LogDetails_Healing_Min0"):SetText(hitMin)
 	_G("DPSMate_Details_"..comp.."Healing_LogDetails_Healing_Max0"):SetText(hitMax)
 	
@@ -319,7 +319,7 @@ function DPSMate.Modules.DetailsHealing:SelectDetails_HealingButton(i, comp, cna
 	_G("DPSMate_Details_"..comp.."Healing_LogDetails_Healing_Amount1_Percent"):SetText(strformat("%.1f", 100*crit/total).."%")
 	_G("DPSMate_Details_"..comp.."Healing_LogDetails_Healing_Amount1_StatusBar"):SetValue(ceil(100*crit/max))
 	_G("DPSMate_Details_"..comp.."Healing_LogDetails_Healing_Amount1_StatusBar"):SetStatusBarColor(1.0,0.7,0.3,1)
-	_G("DPSMate_Details_"..comp.."Healing_LogDetails_Healing_Average1"):SetText(ceil(critav))
+	_G("DPSMate_Details_"..comp.."Healing_LogDetails_Healing_Average1"):SetText(ceil(critav/DPSMate:ProbZero(crit)))
 	_G("DPSMate_Details_"..comp.."Healing_LogDetails_Healing_Min1"):SetText(critMin)
 	_G("DPSMate_Details_"..comp.."Healing_LogDetails_Healing_Max1"):SetText(critMax)
 end

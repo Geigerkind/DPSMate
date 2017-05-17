@@ -300,7 +300,7 @@ function DPSMate.Modules.DetailsEHealingTaken:SelectDetailsButton(p,i, comp, cna
 	_G("DPSMate_Details_"..comp.."EHealingTaken_LogDetails_Amount1_Percent"):SetText(strformat("%.1f", 100*hit/total).."%")
 	_G("DPSMate_Details_"..comp.."EHealingTaken_LogDetails_Amount1_StatusBar"):SetValue(ceil(100*hit/max))
 	_G("DPSMate_Details_"..comp.."EHealingTaken_LogDetails_Amount1_StatusBar"):SetStatusBarColor(1.0,0.7,0.3,1)
-	_G("DPSMate_Details_"..comp.."EHealingTaken_LogDetails_Average1"):SetText(ceil(hitav))
+	_G("DPSMate_Details_"..comp.."EHealingTaken_LogDetails_Average1"):SetText(ceil(hitav/DPSMate:ProbZero(hit)))
 	_G("DPSMate_Details_"..comp.."EHealingTaken_LogDetails_Min1"):SetText(hitMin)
 	_G("DPSMate_Details_"..comp.."EHealingTaken_LogDetails_Max1"):SetText(hitMax)
 	
@@ -309,7 +309,7 @@ function DPSMate.Modules.DetailsEHealingTaken:SelectDetailsButton(p,i, comp, cna
 	_G("DPSMate_Details_"..comp.."EHealingTaken_LogDetails_Amount2_Percent"):SetText(strformat("%.1f", 100*crit/total).."%")
 	_G("DPSMate_Details_"..comp.."EHealingTaken_LogDetails_Amount2_StatusBar"):SetValue(ceil(100*crit/max))
 	_G("DPSMate_Details_"..comp.."EHealingTaken_LogDetails_Amount2_StatusBar"):SetStatusBarColor(0.9,0.0,0.0,1)
-	_G("DPSMate_Details_"..comp.."EHealingTaken_LogDetails_Average2"):SetText(ceil(critav))
+	_G("DPSMate_Details_"..comp.."EHealingTaken_LogDetails_Average2"):SetText(ceil(critav/DPSMate:ProbZero(crit)))
 	_G("DPSMate_Details_"..comp.."EHealingTaken_LogDetails_Min2"):SetText(critMin)
 	_G("DPSMate_Details_"..comp.."EHealingTaken_LogDetails_Max2"):SetText(critMax)
 end
