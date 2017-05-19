@@ -754,6 +754,20 @@ DPSMate.Options.PLAYER_ENTERING_WORLD = function()
 			end
 		end
 	end
+
+	SetCVar("CombatLogPeriodicSpells", 1);
+		
+	
+	SetCVar("CombatLogRangeParty", 200);
+	SetCVar("CombatLogRangePartyPet", 200);
+	SetCVar("CombatLogRangeFriendlyPlayers", 200);
+	SetCVar("CombatLogRangeFriendlyPlayersPets", 200);
+	SetCVar("CombatLogRangeHostilePlayers", 200);
+	SetCVar("CombatLogRangeHostilePlayersPets", 200);
+	
+
+	SetCVar("CombatLogRangeCreature", 200);
+	SetCVar("CombatDeathLogRange", 200);
 end
 
 function DPSMate.Options:ShowResetPopUp()

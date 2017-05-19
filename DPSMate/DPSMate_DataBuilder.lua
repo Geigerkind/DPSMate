@@ -652,20 +652,6 @@ DPSMate.DB.VARIABLES_LOADED = function()
 		DPSMate.Options:SetScript("OnEvent", function() this[event]() end)
 		DPSMate.Options:SetScript("OnUpdate", function() this:OnUpdate() end)
 
-		SetCVar("CombatLogPeriodicSpells", 1);
-		
-		--[[
-		SetCVar("CombatLogRangeParty", 150);
-		SetCVar("CombatLogRangePartyPet", 150);
-		SetCVar("CombatLogRangeFriendlyPlayers", 150);
-		SetCVar("CombatLogRangeFriendlyPlayersPets", 150);
-		SetCVar("CombatLogRangeHostilePlayers", 150);
-		SetCVar("CombatLogRangeHostilePlayersPets", 150);
-		]]--
-
-		--SetCVar("CombatLogRangeCreature", 200);
-		SetCVar("CombatDeathLogRange", 200);
-
 		DPSMate:SendMessage("DPSMate build "..DPSMate.VERSION.." has been loaded!")
 		this.loaded = true
 		DPSMate.Options.PLAYER_ENTERING_WORLD()
