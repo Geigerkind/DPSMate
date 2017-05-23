@@ -628,13 +628,10 @@ DPSMate.DB.VARIABLES_LOADED = function()
 			end
 		end
 		
-		if not DPSMateUser["LASTRESETDPSMATE"] or DPSMateUser["LASTRESETDPSMATE"][2]<DPSMate.VERSION then
+		if not DPSMATERESET or DPSMATERESET<DPSMate.VERSION then
 			DPSMateUser = {}
 			DPSMateAbility = {}
-			DPSMateUser["LASTRESETDPSMATE"] = {
-				[1] = 1,
-				[2] = DPSMate.VERSION
-			}
+			DPSMATERESET = DPSMate.VERSION
 			DPSMate.Options:PopUpAccept(true, true)
 		end
 		
@@ -651,6 +648,20 @@ DPSMate.DB.VARIABLES_LOADED = function()
 		DPSMate.Sync:SetScript("OnUpdate", function() this:OnUpdate() end)
 		DPSMate.Options:SetScript("OnEvent", function() this[event]() end)
 		DPSMate.Options:SetScript("OnUpdate", function() this:OnUpdate() end)
+
+		SetCVar("CombatLogPeriodicSpells", 1);
+			
+		
+		RegisterCVar("CombatLogRangeParty", 200);
+		RegisterCVar("CombatLogRangePartyPet", 200);
+		RegisterCVar("CombatLogRangeFriendlyPlayers", 200);
+		RegisterCVar("CombatLogRangeFriendlyPlayersPets", 200);
+		RegisterCVar("CombatLogRangeHostilePlayers", 200);
+		RegisterCVar("CombatLogRangeHostilePlayersPets", 200);
+		
+
+		RegisterCVar("CombatLogRangeCreature", 200);
+		RegisterCVar("CombatDeathLogRange", 200);
 
 		DPSMate:SendMessage("DPSMate build "..DPSMate.VERSION.." has been loaded!")
 		this.loaded = true
