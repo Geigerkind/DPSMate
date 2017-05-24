@@ -562,7 +562,7 @@ function DPSMate:EvalTable(k)
 end
 
 function DPSMate:GetClassColor(class)
-	if class and not classcolor[class] then
+	if class and not classcolor[class] and DPSMateUser[class] then
 		class = DPSMateUser[class][2] or "warrior"
 	else
 		class = "warrior"
