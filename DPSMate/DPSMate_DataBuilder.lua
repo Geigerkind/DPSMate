@@ -637,6 +637,12 @@ DPSMate.DB.VARIABLES_LOADED = function()
 		
 		this.abilitylen = DPSMate:TableLength(DPSMateAbility)
 		this.userlen = DPSMate:TableLength(DPSMateUser)
+		if this.userlen==0 then
+			this.userlen = 1
+		end
+		if this.abilitylen then
+			this.abilitylen = 1
+		end
 		
 		DPSMate.Parser:GetPlayerValues()
 		this:OnGroupUpdate()

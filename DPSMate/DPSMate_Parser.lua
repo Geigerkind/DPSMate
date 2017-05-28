@@ -495,7 +495,7 @@ function DPSMate.Parser:OnLoad()
 	DPSMateUser[self.player][8] = UL("player")
 	-- Prevent this addon from causing issues
 	if SW_FixLogStrings then
-		DPSMate:SendMessage("Please disable SW_StatsFixLogStrings and SW_Stats. Those addons causes issues.")
+		DPSMate:SendMessage("Please disable SW_StatsFixLogStrings and SW_Stats. Those addons cause issues.")
 	end
 end
 
