@@ -614,6 +614,18 @@ DPSMate.DB.VARIABLES_LOADED = function()
 			}
 		end
 
+		if not DPSMATERESET or DPSMATERESET<DPSMate.VERSION then
+			DPSMateUser = {}
+			DPSMateAbility = {}
+			DPSMATERESET = DPSMate.VERSION
+			DPSMate.Options:PopUpAccept(true, true)
+		end
+		
+		this.abilitylen = DPSMate:TableLength(DPSMateAbility)
+		this.userlen = DPSMate:TableLength(DPSMateUser)
+		--local _,playerclass = UnitClass("player")
+		--this:BuildUser(player, strlower(playerclass))
+
 		DPSMate:OnLoad()
 		DPSMate.Sync:OnLoad()
 		DPSMate.Options:InitializeSegments()
@@ -628,22 +640,6 @@ DPSMate.DB.VARIABLES_LOADED = function()
 			end
 		end
 		
-		if not DPSMATERESET or DPSMATERESET<DPSMate.VERSION then
-			DPSMateUser = {}
-			DPSMateAbility = {}
-			DPSMATERESET = DPSMate.VERSION
-			DPSMate.Options:PopUpAccept(true, true)
-		end
-		
-		this.abilitylen = DPSMate:TableLength(DPSMateAbility)
-		this.userlen = DPSMate:TableLength(DPSMateUser)
-		if this.userlen==0 then
-			this.userlen = 1
-		end
-		if this.abilitylen then
-			this.abilitylen = 1
-		end
-		
 		DPSMate.Parser:GetPlayerValues()
 		this:OnGroupUpdate()
 		DPSMate:SetStatusBarValue()
@@ -656,7 +652,6 @@ DPSMate.DB.VARIABLES_LOADED = function()
 		DPSMate.Options:SetScript("OnUpdate", function() this:OnUpdate() end)
 
 		SetCVar("CombatLogPeriodicSpells", 1);
-			
 		
 		RegisterCVar("CombatLogRangeParty", 200);
 		RegisterCVar("CombatLogRangePartyPet", 200);
@@ -783,17 +778,17 @@ function DPSMate.DB:OnGroupUpdate()
 			local gname, _, _ = GetGuildInfo(type..i)
 			local level = UL(type..i)
 			self:BuildUser(name, strlower(classEng or ""))
-			self:BuildUser(pet)
 			if classEng then
 				DPSMateUser[name][2] = strlower(classEng)
 			end
 			DPSMateUser[name][4] = false
-			if pet and pet ~= DPSMate.L["unknown"] then
+			if pet and pet ~= DPSMate.L["unknown"] and pet ~= "" then
+				self:BuildUser(pet)
 				DPSMateUser[pet][4] = true
 				DPSMateUser[name][5] = pet
 				DPSMateUser[pet][6] = DPSMateUser[name][1]
 			end
-			if DPSMate.Parser.TargetParty[pet] then
+			if pet and DPSMate.Parser.TargetParty[pet] then
 				DPSMateUser[pet][4] = false
 				DPSMateUser[pet][6] = ""
 				DPSMateUser[name][5] = ""
@@ -818,8 +813,8 @@ function DPSMate.DB:OnGroupUpdate()
 	end
 	local pet = UnitName("pet")
 	local name = UnitName("player")
-	if pet and pet ~= DPSMate.L["unknown"] then
-		self:BuildUser(name, nil)
+	self:BuildUser(name, nil)
+	if pet and pet ~= DPSMate.L["unknown"] and pet ~= "" then
 		self:BuildUser(pet, nil)
 		DPSMateUser[pet][4] = true
 		DPSMateUser[name][5] = pet
