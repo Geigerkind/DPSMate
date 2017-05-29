@@ -614,6 +614,10 @@ DPSMate.DB.VARIABLES_LOADED = function()
 			}
 		end
 
+		DPSMate:OnLoad()
+		DPSMate.Options:InitializeSegments()
+		DPSMate.Options:InitializeHideShowWindow()
+
 		if not DPSMATERESET or DPSMATERESET<DPSMate.VERSION then
 			DPSMateUser = {}
 			DPSMateAbility = {}
@@ -626,10 +630,7 @@ DPSMate.DB.VARIABLES_LOADED = function()
 		--local _,playerclass = UnitClass("player")
 		--this:BuildUser(player, strlower(playerclass))
 
-		DPSMate:OnLoad()
 		DPSMate.Sync:OnLoad()
-		DPSMate.Options:InitializeSegments()
-		DPSMate.Options:InitializeHideShowWindow()
 		
 		player = UnitName("player")
 		
@@ -1386,7 +1387,10 @@ function DPSMate.DB:EnemyDamage(mode, arr, Duser, Dname, Dhit, Dcrit, Dmiss, Dpa
 end
 
 function DPSMate.DB:Healing(mode, arr, Duser, Dname, Dhit, Dcrit, Damount)
-	if not DPSMateSettings["legacylogs"] and ((mode==0 and not DPSMate.RegistredModules["effectivehealing"] and not DPSMate.RegistredModules["healingandabsorbs"]) or (mode==1 and not DPSMate.RegistredModules["healing"]) or (mode==2 and not DPSMate.RegistredModules["overhealing"])) then return end
+	if not DPSMateSettings["legacylogs"] and (
+		(mode==0 and not DPSMate.RegistredModules["effectivehealing"] and not DPSMate.RegistredModules["healingandabsorbs"]) or 
+		(mode==1 and not DPSMate.RegistredModules["healing"]) or 
+		(mode==2 and not DPSMate.RegistredModules["overhealing"])) then return end
 	if not CombatState then return end
 	Duser = self:BuildUser(Duser)
 	Dname = self:BuildAbility(Dname)
