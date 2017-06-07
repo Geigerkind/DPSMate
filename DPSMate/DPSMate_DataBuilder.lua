@@ -615,19 +615,9 @@ DPSMate.DB.VARIABLES_LOADED = function()
 		end
 
 		DPSMate:OnLoad()
-		DPSMate.Sync:OnLoad()
 		DPSMate.Options:InitializeSegments()
 		DPSMate.Options:InitializeHideShowWindow()
-		
-		player = UnitName("player")
-		
-		local frames = {"", "_Absorbs", "_AbsorbsTaken", "_Auras", "_Casts", "_CCBreaker", "_CureDisease", "_CureDiseaseReceived", "_CurePoison", "_CurePoisonReceived", "_DamageTaken", "_DamageTakenTotal", "_DamageTotal", "_Deaths", "_Decurses", "_DecursesReceived", "_Dispels", "_DispelsReceived", "_EDD", "_EDT", "_EHealing", "_EHealingTaken", "_Fails", "_FF", "_FFT", "_Healing", "_HealingTaken", "_Interrupts", "_LiftMagic", "_LiftMagicReceived", "_OHealingTaken", "_Overhealing", "_Procs", "_AbsorbsTakenTotal", "_AbsorbsTotal", "_AurasTotal", "_CastsTotal", "_CCBreakerTotal", "_CureDisease_Total", "_CurePoison_Total", "_Deaths_Total", "_Decurses_Total", "_Dispels_Total", "_EDDTotal", "_EDTTotal", "_EHealingTakenTotal", "_EHealingTotal", "_FailsTotal", "_FFTotal", "_FFTTotal", "_HABTotal", "_HealingTakenTotal", "_HealingTotal", "_Interrupts_Total", "_LiftMagic_Total", "_OverhealingTakenTotal", "_OverhealingTotal", "_ProcsTotal"}
-		for cat, val in pairs(frames) do
-			if _G("DPSMate_Details"..val) then
-				_G("DPSMate_Details"..val):SetToplevel(true)
-			end
-		end
-		
+
 		if not DPSMATERESET or DPSMATERESET<DPSMate.VERSION then
 			DPSMateUser = {}
 			DPSMateAbility = {}
@@ -643,6 +633,17 @@ DPSMate.DB.VARIABLES_LOADED = function()
 		if this.abilitylen == 0 then
 			this.abilitylen = 1
 		end
+
+		DPSMate.Sync:OnLoad()
+		
+		player = UnitName("player")
+		
+		local frames = {"", "_Absorbs", "_AbsorbsTaken", "_Auras", "_Casts", "_CCBreaker", "_CureDisease", "_CureDiseaseReceived", "_CurePoison", "_CurePoisonReceived", "_DamageTaken", "_DamageTakenTotal", "_DamageTotal", "_Deaths", "_Decurses", "_DecursesReceived", "_Dispels", "_DispelsReceived", "_EDD", "_EDT", "_EHealing", "_EHealingTaken", "_Fails", "_FF", "_FFT", "_Healing", "_HealingTaken", "_Interrupts", "_LiftMagic", "_LiftMagicReceived", "_OHealingTaken", "_Overhealing", "_Procs", "_AbsorbsTakenTotal", "_AbsorbsTotal", "_AurasTotal", "_CastsTotal", "_CCBreakerTotal", "_CureDisease_Total", "_CurePoison_Total", "_Deaths_Total", "_Decurses_Total", "_Dispels_Total", "_EDDTotal", "_EDTTotal", "_EHealingTakenTotal", "_EHealingTotal", "_FailsTotal", "_FFTotal", "_FFTTotal", "_HABTotal", "_HealingTakenTotal", "_HealingTotal", "_Interrupts_Total", "_LiftMagic_Total", "_OverhealingTakenTotal", "_OverhealingTotal", "_ProcsTotal"}
+		for cat, val in pairs(frames) do
+			if _G("DPSMate_Details"..val) then
+				_G("DPSMate_Details"..val):SetToplevel(true)
+			end
+		end
 		
 		DPSMate.Parser:GetPlayerValues()
 		this:OnGroupUpdate()
@@ -656,7 +657,6 @@ DPSMate.DB.VARIABLES_LOADED = function()
 		DPSMate.Options:SetScript("OnUpdate", function() this:OnUpdate() end)
 
 		SetCVar("CombatLogPeriodicSpells", 1);
-			
 		
 		RegisterCVar("CombatLogRangeParty", 200);
 		RegisterCVar("CombatLogRangePartyPet", 200);
@@ -783,17 +783,17 @@ function DPSMate.DB:OnGroupUpdate()
 			local gname, _, _ = GetGuildInfo(type..i)
 			local level = UL(type..i)
 			self:BuildUser(name, strlower(classEng or ""))
-			self:BuildUser(pet)
 			if classEng then
 				DPSMateUser[name][2] = strlower(classEng)
 			end
 			DPSMateUser[name][4] = false
-			if pet and pet ~= DPSMate.L["unknown"] then
+			if pet and pet ~= DPSMate.L["unknown"] and pet ~= "" then
+				self:BuildUser(pet)
 				DPSMateUser[pet][4] = true
 				DPSMateUser[name][5] = pet
 				DPSMateUser[pet][6] = DPSMateUser[name][1]
 			end
-			if DPSMate.Parser.TargetParty[pet] then
+			if pet and DPSMate.Parser.TargetParty[pet] then
 				DPSMateUser[pet][4] = false
 				DPSMateUser[pet][6] = ""
 				DPSMateUser[name][5] = ""
@@ -818,8 +818,8 @@ function DPSMate.DB:OnGroupUpdate()
 	end
 	local pet = UnitName("pet")
 	local name = UnitName("player")
-	if pet and pet ~= DPSMate.L["unknown"] then
-		self:BuildUser(name, nil)
+	self:BuildUser(name, nil)
+	if pet and pet ~= DPSMate.L["unknown"] and pet ~= "" then
 		self:BuildUser(pet, nil)
 		DPSMateUser[pet][4] = true
 		DPSMateUser[name][5] = pet
@@ -1391,7 +1391,10 @@ function DPSMate.DB:EnemyDamage(mode, arr, Duser, Dname, Dhit, Dcrit, Dmiss, Dpa
 end
 
 function DPSMate.DB:Healing(mode, arr, Duser, Dname, Dhit, Dcrit, Damount)
-	if not DPSMateSettings["legacylogs"] and ((mode==0 and not DPSMate.RegistredModules["effectivehealing"] and not DPSMate.RegistredModules["healingandabsorbs"]) or (mode==1 and not DPSMate.RegistredModules["healing"]) or (mode==2 and not DPSMate.RegistredModules["overhealing"])) then return end
+	if not DPSMateSettings["legacylogs"] and (
+		(mode==0 and not DPSMate.RegistredModules["effectivehealing"] and not DPSMate.RegistredModules["healingandabsorbs"]) or 
+		(mode==1 and not DPSMate.RegistredModules["healing"]) or 
+		(mode==2 and not DPSMate.RegistredModules["overhealing"])) then return end
 	if not CombatState then return end
 	Duser = self:BuildUser(Duser)
 	Dname = self:BuildAbility(Dname)
