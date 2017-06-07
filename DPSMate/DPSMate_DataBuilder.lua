@@ -640,7 +640,7 @@ DPSMate.DB.VARIABLES_LOADED = function()
 		if this.userlen==0 then
 			this.userlen = 1
 		end
-		if this.abilitylen then
+		if this.abilitylen == 0 then
 			this.abilitylen = 1
 		end
 		
