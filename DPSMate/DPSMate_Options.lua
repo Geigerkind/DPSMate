@@ -702,7 +702,6 @@ function DPSMate.Options:RosterUpdate()
 			elseif DPSMateSettings["dataresetsjoinparty"] == 1 then
 				this:PopUpAccept(true, true)
 			end
-			DPSMate.DB:OnGroupUpdate()
 		elseif LastPartyNum ~= PartyNum	then
 			if DPSMateSettings["dataresetspartyamount"] == 3 then
 				if (GetTime()-LastPopUp) > TimeToNextPopUp then
@@ -712,7 +711,6 @@ function DPSMate.Options:RosterUpdate()
 			elseif DPSMateSettings["dataresetspartyamount"] == 1 then
 				this:PopUpAccept(true)
 			end
-			DPSMate.DB:OnGroupUpdate()
 		end
 	else
 		if LastPartyNum > PartyNum then
@@ -724,9 +722,9 @@ function DPSMate.Options:RosterUpdate()
 			elseif DPSMateSettings["dataresetsleaveparty"] == 1 then
 				this:PopUpAccept(true)
 			end
-			DPSMate.DB:OnGroupUpdate()
 		end
 	end
+	DPSMate.DB:OnGroupUpdate()
 end
 
 DPSMate.Options.PARTY_MEMBERS_CHANGED = function()
@@ -753,6 +751,7 @@ DPSMate.Options.PLAYER_ENTERING_WORLD = function()
 				DPSMate.Options:Hide(_G("DPSMate_"..val["name"]))
 			end
 		end
+		DPSMate.DB:OnGroupUpdate()
 	end
 end
 
