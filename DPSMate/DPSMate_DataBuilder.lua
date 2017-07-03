@@ -731,6 +731,7 @@ end
 DPSMate.DB.PLAYER_TARGET_CHANGED = function()
 	if UnitIsPlayer("target") then
 		local name = UnitName("target")
+		local pet = UnitName("targetpet")
 		local _, class = UnitClass("target")
 		local fac = UnitFactionGroup("target") or ""
 		local level = UL("target")
@@ -749,6 +750,17 @@ DPSMate.DB.PLAYER_TARGET_CHANGED = function()
 		end
 		if DPSMateUser[name][4] then
 			DPSMateUser[name][4] = false
+			DPSMateUser[name][5] = ""
+		end
+		if pet and pet ~= DPSMate.L["unknown"] and pet ~= "" then
+			this:BuildUser(pet, nil)
+			DPSMateUser[pet][4] = true
+			DPSMateUser[name][5] = pet
+			DPSMateUser[pet][6] = DPSMateUser[name][1]
+		end
+		if DPSMate.Parser.TargetParty[pet] then
+			DPSMateUser[pet][4] = false
+			DPSMateUser[pet][6] = ""
 			DPSMateUser[name][5] = ""
 		end
 	end
