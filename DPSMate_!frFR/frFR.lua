@@ -399,7 +399,7 @@ if (GetLocale() == "frFR")  then
 	DPSMate.L["buffs"] = "Buffs"
 	DPSMate.L["debuffs"] = "Debuffs"
 	
-	DPSMate.L["mc"] = "Cœur du Magma"
+	DPSMate.L["mc"] = "C\197\147ur du Magma"
 	DPSMate.L["bwl"] = "Repaire de l'Aile noire"
 	DPSMate.L["ony"] = "Repaire d'Onyxia"
 	DPSMate.L["zg"] = "Zul'Gurub"
