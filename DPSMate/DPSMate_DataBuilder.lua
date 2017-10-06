@@ -506,8 +506,7 @@ DPSMate.DB.VARIABLES_LOADED = function()
 				bcrw = false,
 				targetscale=0.58,
 				hideonlogin = false,
-				reportdelay = false,
-				legacylogs = false,
+				reportdelay = false
 			}
 		end
 		if DPSMateHistory == nil then 
@@ -553,10 +552,6 @@ DPSMate.DB.VARIABLES_LOADED = function()
 		if DPSMateThreat == nil then DPSMateThreat = {[1]={},[2]={}} end
 		if DPSMateFails == nil then DPSMateFails = {[1]={},[2]={}} end
 		if DPSMateCCBreaker == nil then DPSMateCCBreaker = {[1]={},[2]={}} end
-		-- Legacy Logs support
-		if DPSMateAttempts == nil then DPSMateAttempts = {} end
-		if DPSMatePlayer == nil then DPSMatePlayer = {} end
-		if DPSMateLoot == nil then DPSMateLoot = {} end
 		
 		if DPSMate.Modules.DPS then DPSMate.Modules.DPS.DB = DPSMateDamageDone end
 		if DPSMate.Modules.Damage then DPSMate.Modules.Damage.DB = DPSMateDamageDone end
@@ -645,7 +640,7 @@ DPSMate.DB.VARIABLES_LOADED = function()
 			end
 		end
 		
-		DPSMate.Parser:GetPlayerValues()
+		DPSMate.Parser:OnLoad()
 		this:OnGroupUpdate()
 		DPSMate:SetStatusBarValue()
 		this.NeedUpdate = true
@@ -975,7 +970,7 @@ end
 
 function DPSMate.DB:Threat(cause, spellname, target, value, amount)
 	if value==0 then return end
-	if not DPSMateSettings["legacylogs"] and not DPSMate.RegistredModules["threat"] then return end
+	if not DPSMate.RegistredModules["threat"] then return end
 	target = self:BuildUser(target)
 	cause = self:BuildUser(cause)
 	spellname = self:BuildAbility(spellname)
@@ -1226,7 +1221,7 @@ function DPSMate.DB:DamageDone(Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, Ddodge,
 end
 
 function DPSMate.DB:DamageTaken(Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, Ddodge, Dresist, Damount, cause, Dcrush, Dblock)
-	if not DPSMateSettings["legacylogs"] and not DPSMate.RegistredModules["damagetaken"] then return end
+	if not DPSMate.RegistredModules["damagetaken"] then return end
 
 	Duser = self:BuildUser(Duser)
 	cause = self:BuildUser(cause)
@@ -1311,7 +1306,7 @@ function DPSMate.DB:EnemyDamage(mode, arr, Duser, Dname, Dhit, Dcrit, Dmiss, Dpa
 	cause = self:BuildUser(cause)
 	
 	if not mode then -- EDD
-		if not DPSMateSettings["legacylogs"] and not DPSMate.RegistredModules["enemydamagedone"] then
+		if not DPSMate.RegistredModules["enemydamagedone"] then
 			return
 		end
 	else
@@ -1403,7 +1398,7 @@ function DPSMate.DB:EnemyDamage(mode, arr, Duser, Dname, Dhit, Dcrit, Dmiss, Dpa
 end
 
 function DPSMate.DB:Healing(mode, arr, Duser, Dname, Dhit, Dcrit, Damount)
-	if not DPSMateSettings["legacylogs"] and (
+	if (
 		(mode==0 and not DPSMate.RegistredModules["effectivehealing"] and not DPSMate.RegistredModules["healingandabsorbs"]) or 
 		(mode==1 and not DPSMate.RegistredModules["healing"]) or 
 		(mode==2 and not DPSMate.RegistredModules["overhealing"])) then return end
@@ -1458,7 +1453,7 @@ function DPSMate.DB:Healing(mode, arr, Duser, Dname, Dhit, Dcrit, Damount)
 end
 
 function DPSMate.DB:HealingTaken(mode, arr, Duser, Dname, Dhit, Dcrit, Damount, target)
-	if not DPSMateSettings["legacylogs"] and ((mode==0 and not DPSMate.RegistredModules["healingtaken"] and not DPSMate.RegistredModules["healing"]) or (mode==1 and not DPSMate.RegistredModules["effectivehealingtaken"] and not DPSMate.RegistredModules["effectivehealing"] and not DPSMate.RegistredModules["healingandabsorbs"]) or (mode==2 and not DPSMate.RegistredModules["OHealingTaken"] and not DPSMate.RegistredModules["overhealing"])) then return end
+	if ((mode==0 and not DPSMate.RegistredModules["healingtaken"] and not DPSMate.RegistredModules["healing"]) or (mode==1 and not DPSMate.RegistredModules["effectivehealingtaken"] and not DPSMate.RegistredModules["effectivehealing"] and not DPSMate.RegistredModules["healingandabsorbs"]) or (mode==2 and not DPSMate.RegistredModules["OHealingTaken"] and not DPSMate.RegistredModules["overhealing"])) then return end
 	if not CombatState then return end
 	Duser = self:BuildUser(Duser)
 	Dname = self:BuildAbility(Dname)
@@ -1560,7 +1555,7 @@ function DPSMate.DB:ConfirmAbsorbApplication(ability, abilityTarget, time)
 end
 
 function DPSMate.DB:RegisterAbsorb(owner, ability, abilityTarget)
-	if not DPSMateSettings["legacylogs"] and not DPSMate.RegistredModules["absorbs"] and not DPSMate.RegistredModules["absorbstaken"] and not DPSMate.RegistredModules["healingandabsorbs"] then return end
+	if not DPSMate.RegistredModules["absorbs"] and not DPSMate.RegistredModules["absorbstaken"] and not DPSMate.RegistredModules["healingandabsorbs"] then return end
 	owner = self:BuildUser(owner)
 	abilityTarget = self:BuildUser(abilityTarget)
 	ability = self:BuildAbility(ability)
@@ -1593,7 +1588,7 @@ function DPSMate.DB:SetUnregisterVariables(broAbsorb, ab, c)
 end
 
 function DPSMate.DB:UnregisterAbsorb(ability, abilityTarget)
-	if not DPSMateSettings["legacylogs"] and not DPSMate.RegistredModules["absorbs"] and not DPSMate.RegistredModules["absorbstaken"] and not DPSMate.RegistredModules["healingandabsorbs"] then return end
+	if not DPSMate.RegistredModules["absorbs"] and not DPSMate.RegistredModules["absorbstaken"] and not DPSMate.RegistredModules["healingandabsorbs"] then return end
 	ability = self:BuildAbility(ability)
 	abilityTarget = self:BuildUser(abilityTarget)
 	local AbsorbingAbility
@@ -1704,7 +1699,7 @@ function DPSMate.DB:GetAbsorbingShield(ability, abilityTarget, cate)
 end
 
 function DPSMate.DB:Absorb(ability, abilityTarget, incTarget)
-	if not DPSMateSettings["legacylogs"] and not DPSMate.RegistredModules["absorbs"] and not DPSMate.RegistredModules["absorbstaken"] and not DPSMate.RegistredModules["healingandabsorbs"] then return end
+	if not DPSMate.RegistredModules["absorbs"] and not DPSMate.RegistredModules["absorbstaken"] and not DPSMate.RegistredModules["healingandabsorbs"] then return end
 	incTarget = self:BuildUser(incTarget)
 	abilityTarget = self:BuildUser(abilityTarget)
 	ability = self:BuildAbility(ability)
@@ -1794,7 +1789,7 @@ function DPSMate.DB:ConfirmRealDispel(ability, target, time)
 end
 
 function DPSMate.DB:ApplyRemainingDispels()
-	if not DPSMateSettings["legacylogs"] and not DPSMate.RegistredModules["decurses"] and not DPSMate.RegistredModules["curepoison"] and not DPSMate.RegistredModules["liftmagic"] and not DPSMate.RegistredModules["curedisease"] and not DPSMate.RegistredModules["dispels"] then return end
+	if not DPSMate.RegistredModules["decurses"] and not DPSMate.RegistredModules["curepoison"] and not DPSMate.RegistredModules["liftmagic"] and not DPSMate.RegistredModules["curedisease"] and not DPSMate.RegistredModules["dispels"] then return end
 	if playerfaction~="Horde" then NextTotemDispel = false; return end
 	local num = 0
 	local time = GT()
@@ -1843,7 +1838,7 @@ function DPSMate.DB:ApplyRemainingDispels()
 end
 
 function DPSMate.DB:EvaluateDispel()
-	if not DPSMateSettings["legacylogs"] and not DPSMate.RegistredModules["decurses"] and not DPSMate.RegistredModules["curepoison"] and not DPSMate.RegistredModules["liftmagic"] and not DPSMate.RegistredModules["curedisease"] and not DPSMate.RegistredModules["dispels"] then return end
+	if not DPSMate.RegistredModules["decurses"] and not DPSMate.RegistredModules["curepoison"] and not DPSMate.RegistredModules["liftmagic"] and not DPSMate.RegistredModules["curedisease"] and not DPSMate.RegistredModules["dispels"] then return end
 	local check
 	for cat, val in pairs(ActiveHotDispel) do
 		for ca, va in pairs(val) do
@@ -1901,7 +1896,7 @@ function DPSMate.DB:UnregisterHotDispel(target, ability)
 end
 
 function DPSMate.DB:Dispels(cause, Dname, target, ability)
-	if not DPSMateSettings["legacylogs"] and not DPSMate.RegistredModules["decurses"] and not DPSMate.RegistredModules["curepoison"] and not DPSMate.RegistredModules["liftmagic"] and not DPSMate.RegistredModules["curedisease"] and not DPSMate.RegistredModules["dispels"] then return end
+	if not DPSMate.RegistredModules["decurses"] and not DPSMate.RegistredModules["curepoison"] and not DPSMate.RegistredModules["liftmagic"] and not DPSMate.RegistredModules["curedisease"] and not DPSMate.RegistredModules["dispels"] then return end
 	cause = self:BuildUser(cause)
 	target = self:BuildUser(target)
 	Dname = self:BuildAbility(Dname)
@@ -1934,7 +1929,7 @@ function DPSMate.DB:Dispels(cause, Dname, target, ability)
 end
 
 function DPSMate.DB:UnregisterDeath(target)
-	if not DPSMateSettings["legacylogs"] and not DPSMate.RegistredModules["deaths"] then return end
+	if not DPSMate.RegistredModules["deaths"] then return end
 	if strfind(target, "%s") then return end
 	target = self:BuildUser(target)
 	local p
@@ -1951,7 +1946,7 @@ function DPSMate.DB:UnregisterDeath(target)
 end
 
 function DPSMate.DB:DeathHistory(target, cause, ability, amount, hit, crit, type, crush)
-	if not DPSMateSettings["legacylogs"] and not DPSMate.RegistredModules["deaths"] then return end
+	if not DPSMate.RegistredModules["deaths"] then return end
 	target = self:BuildUser(target)
 	cause = self:BuildUser(cause)
 	ability = self:BuildAbility(ability)
@@ -2047,7 +2042,7 @@ function DPSMate.DB:UpdateKicks()
 end
 
 function DPSMate.DB:Kick(cause, target, causeAbility, targetAbility)
-	if not DPSMateSettings["legacylogs"] and not DPSMate.RegistredModules["interrupts"] then return end
+	if not DPSMate.RegistredModules["interrupts"] then return end
 	target = self:BuildUser(target)
 	cause = self:BuildUser(cause)
 	causeAbility = self:BuildAbility(causeAbility)
@@ -2105,7 +2100,7 @@ function DPSMate.DB:ConfirmBuff(target, ability, time)
 end
 
 function DPSMate.DB:BuildBuffs(cause, target, ability, bool)
-	if not DPSMateSettings["legacylogs"] and not DPSMate.RegistredModules["aurasgained"] then return end
+	if not DPSMate.RegistredModules["aurasgained"] then return end
 	target = self:BuildUser(target)
 	cause = self:BuildUser(cause)
 	ability = self:BuildAbility(ability)
@@ -2140,7 +2135,7 @@ function DPSMate.DB:BuildBuffs(cause, target, ability, bool)
 end
 
 function DPSMate.DB:DestroyBuffs(target, ability)
-	if not DPSMateSettings["legacylogs"] and not DPSMate.RegistredModules["aurasgained"] then return end
+	if not DPSMate.RegistredModules["aurasgained"] then return end
 	target = self:BuildUser(target)
 	ability = self:BuildAbility(ability)
 	local TL
@@ -2177,33 +2172,6 @@ function DPSMate.DB:GetOptionsTrue(i,k)
 			return cat
 		end
 	end
-end
-
--- Will be removed anyway
-function DPSMate.DB:UnitIsSaved(unit)
-	local buff
-	for i=1, 32 do
-		DPSMate_Tooltip:ClearLines()
-		DPSMate_Tooltip:SetUnitBuff(unit, i)
-		buff = DPSMate_TooltipTextLeft1:GetText()
-		if (not buff) then break end
-		if (strfind(buff, DPSMate.L["vanish"]) or strfind(buff, DPSMate.L["feigndeath"])) or strfind(buff, DPSMate.L["divineintervention"]) or strfind(buff, DPSMate.L["stealth"]) then
-			return true
-		end
-	end
-	return false
-end
-
-function DPSMate.DB:IsWipe()
-	local am = 0
-	for i=1, GetNumRaidMembers() do
-		if not UnitIsDead("raid"..i) then
-			if not DPSMate.DB:UnitIsSaved("raid"..i) then
-				am = am + 1
-			end
-		end
-	end
-	return (am > 3)
 end
 
 function DPSMate.DB:UpdatePlayerCBT(cbt)
@@ -2254,11 +2222,6 @@ function DPSMate.DB:OnUpdate()
 			LastUpdate = 0
 		end
 		
-		if notInCombat then 
-			CombatState = false
-			self:Attempt(true, self:IsWipe(), nil)
-		end
-		
 		if NextTotemDispel then
 			TotemDispelTimer = TotemDispelTimer + arg1
 			if TotemDispelTimer>2 then
@@ -2289,86 +2252,9 @@ function DPSMate.DB:OnUpdate()
 	end
 end
 
-local oldRepopMe = RepopMe
-function NewRepopMe()
-	if CombatState then
-		DPSMate.DB:Attempt(true, true, nil)
-	else
-		DPSMate.DB:Attempt(true, DPSMate.DB:IsWipe(), nil)
-	end
-	oldRepopMe()
-end
-RepopMe = NewRepopMe
-
-function DPSMate.DB:Attempt(mode, check, tar)
-	local zone = GetRealZoneText()
-	if self.Zones[zone] and DPSMateSettings["legacylogs"] then
-		if not DPSMateAttempts[zone] then DPSMateAttempts[zone] = {} end
-		if mode then
-			if DPSMateAttempts[zone][1] and not DPSMateAttempts[zone][1][4] then
-				local max, a, CV = 0, 0
-				for c, v in pairs(DPSMateEDT[2]) do
-					CV = 0
-					for cat, val in pairs(v) do
-						if cat~="i" then
-							CV = CV+val["i"]
-						end
-					end
-					if max<CV then
-						max = CV
-						a = c
-					end
-				end
-				local name = DPSMate:GetUserById(a)
-				if DPSMateAttempts[zone][1][1]=="" or DPSMateAttempts[zone][1][1]==DPSMate.L["unknown"] then
-					if name == "" then
-						DPSMateAttempts[zone][1][1] = DPSMate.L["unknown"]
-					else
-						DPSMateAttempts[zone][1][1] = name or DPSMate.L["unknown"]
-					end
-				end
-				DPSMateAttempts[zone][1][4] = DPSMateCombatTime["total"]
-				DPSMateAttempts[zone][1][5] = check
-			end
-		else
-			if check then
-				if DPSMateAttempts[zone] and DPSMateAttempts[zone][1] then
-					tinsert(DPSMateAttempts[zone][1][6], {DPSMateCombatTime["total"], tar or DPSMate.L["unknown"]})
-				end
-			else
-				tinsert(DPSMateAttempts[zone], 1, {
-					[1] = DPSMate.L["unknown"],
-					[2] = DPSMateCombatTime["total"],
-					[3] = GameTime_GT(),
-					[6] = {}
-				})
-			end
-		end
-	end
-end
-
-local bannedItems = {
-	[20725] = true,
-	[18562] = true
-}
-function DPSMate.DB:Loot(user, quality, itemid)
-	if DPSMateSettings["legacylogs"] and quality>3 and not bannedItems[itemid] then
-		local zone = GetRealZoneText()
-		if not DPSMateLoot[zone] then DPSMateLoot[zone] = {} end
-		if self.Zones[zone] then -- Need to find a solution for world bosses.
-			tinsert(DPSMateLoot[zone], {
-				[1] = DPSMateCombatTime["total"],
-				[2] = itemid,
-				[3] = quality,
-				[4] = user
-			})
-		end
-	end
-end
-
 -- Type: 1 => FriendlyFire, 2 => Damage taken, 3 => Debuff taken
 function DPSMate.DB:BuildFail(type, user, cause, ability, amount)
-	if not DPSMateSettings["legacylogs"] and not DPSMate.RegistredModules["fails"] then return end
+	if not DPSMate.RegistredModules["fails"] then return end
 	user = self:BuildUser(user)
 	cause = self:BuildUser(cause)
 	ability = self:BuildAbility(ability)
@@ -2423,7 +2309,7 @@ function DPSMate.DB:CheckActiveCC(cause, target)
 end
 
 function DPSMate.DB:CCBreaker(target, ability, cause)
-	if not DPSMateSettings["legacylogs"] and not DPSMate.RegistredModules["ccbreaker"] then return end
+	if not DPSMate.RegistredModules["ccbreaker"] then return end
 	local time = GameTime_GT()
 	ability = self:BuildAbility(ability)
 	cause = self:BuildUser(cause)

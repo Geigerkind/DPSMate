@@ -541,9 +541,6 @@ function DPSMate.Options:InitializeConfigMenu()
 	DPSMate_ConfigMenu_Tab_Broadcasting_Fails:SetChecked(DPSMateSettings["bcfail"])
 	DPSMate_ConfigMenu_Tab_Broadcasting_RaidWarning:SetChecked(DPSMateSettings["bcrw"])
 	
-	-- Tab Raidleader options
-	DPSMate_ConfigMenu_Tab_RaidLeader_LegacyLogs:SetChecked(DPSMateSettings["legacylogs"])
-	
 	-- Mode menu
 	for cat, _ in DPSMateSettings["hiddenmodes"] do
 		DPSMate.Options.Options[1]["args"][cat] = nil
@@ -826,8 +823,6 @@ function DPSMate.Options:PopUpAccept(bool, bypass)
 					[2] = {}
 				},
 			}
-			DPSMateAttempts = {}
-			DPSMateLoot = {}
 			
 			-- Get buffs of people after reset
 			local type = "party"
@@ -1698,7 +1693,6 @@ function DPSMate.Options:NewSegment(segname)
 		DPSMateCombatTime["effective"][2] = {}
 		DPSMate:SetStatusBarValue()
 	end
-	DPSMate.DB:Attempt(false)
 end
 
 function DPSMate.Options:CreateSegment(name)

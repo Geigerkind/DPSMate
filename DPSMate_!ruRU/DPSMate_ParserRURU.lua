@@ -851,7 +851,6 @@ if (GetLocale() == "ruRU") then
 	function DPSMate.Parser:CombatHostileDeaths(msg)
 		for ta in strgfind(msg, "(.+) погибает%.") do 
 			DB:UnregisterDeath(ta)
-			DB:Attempt(false, true, ta)
 		end
 	end
 	
@@ -866,25 +865,6 @@ if (GetLocale() == "ruRU") then
 	function DPSMate.Parser:HostilePlayerSpellDamageInterrupts(msg)
 		for c, ab in strgfind(msg, "(.-) начинает использовать \"(.+)\"%.") do DB:RegisterPotentialKick(c, ab, GetTime()); return end
 		for c, ab in strgfind(msg, "(.-) начинает выполнять действие \"(.+)\"%.") do DB:RegisterPotentialKick(c, ab, GetTime()) end
-	end
-	
-	local linkQuality = {
-		["9d9d9d"] = 0,
-		["ffffff"] = 1,
-		["1eff00"] = 2,
-		["0070dd"] = 3,
-		["a335ee"] = 4,
-		["ff8000"] = 5
-	}
-	function DPSMate.Parser:Loot(msg)
-		for a,b,c,d,e in strgfind(msg, "(.-) получает добычу: |cff(.-)|Hitem:(%d+)(.+)%[(.+)%]|h|r") do
-			DB:Loot(a, linkQuality[b], tnbr(c), e)
-			return
-		end
-		for a,b,c,d in strgfind(msg, "Ваша добыча: |cff(.-)|Hitem:(%d+)(.+)%[(.+)%]|h|r") do
-			DB:Loot(self.player, linkQuality[a], tnbr(b), d)
-			return
-		end
 	end
 	
 	----------------------------------------------------------------------------------

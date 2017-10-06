@@ -1,6 +1,6 @@
 -- Global Variables
 DPSMate = {}
-DPSMate.VERSION = 125
+DPSMate.VERSION = 126
 DPSMate.LOCALE = GetLocale()
 DPSMate.SYNCVERSION = DPSMate.VERSION..DPSMate.LOCALE
 DPSMate.Parser = CreateFrame("Frame", nil, UIParent)
@@ -640,20 +640,11 @@ end
 
 function DPSMate:Enable()
 	if not self.Registered then
-		if DPSMateSettings["legacylogs"] then
-			self.Parser:RegisterEvent("CHAT_MSG_LOOT")
-			self.Sync:RegisterEvent("CHAT_MSG_ADDON")
-			for _, event in pairs(self.Events) do
-				self.Parser:RegisterEvent(event)
-			end
-		else
-			self.Parser:UnregisterEvent("CHAT_MSG_LOOT")
-			self.Sync:RegisterEvent("CHAT_MSG_ADDON")
-			for _, val in pairs(self.RegistredModules) do
-				if val.Events then
-					for _, event in pairs(val.Events) do
-						self.Parser:RegisterEvent(event)
-					end
+		self.Sync:RegisterEvent("CHAT_MSG_ADDON")
+		for _, val in pairs(self.RegistredModules) do
+			if val.Events then
+				for _, event in pairs(val.Events) do
+					self.Parser:RegisterEvent(event)
 				end
 			end
 		end

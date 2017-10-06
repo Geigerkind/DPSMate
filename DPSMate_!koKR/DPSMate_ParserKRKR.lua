@@ -967,7 +967,6 @@ if (GetLocale() == "koKR") then
 	DPSMate.Parser.CombatHostileDeaths = function(self, msg)
 		for ta in strgfind(msg, "(.+) stirbt%.") do 
 			DB:UnregisterDeath(ta)
-			DB:Attempt(false, true, ta)
 		end
 	end
 	
@@ -980,29 +979,6 @@ if (GetLocale() == "koKR") then
 	end
 	DPSMate.Parser.HostilePlayerSpellDamageInterrupts = function(self, msg)
 		for c, ab in strgfind(msg, "(.-) beginnt (.+) zu wirken%.") do DB:RegisterPotentialKick(c, ab, GetTime()); return end
-	end
-	
-	local linkQuality = {
-		["9d9d9d"] = 0,
-		["ffffff"] = 1,
-		["1eff00"] = 2,
-		["0070dd"] = 3,
-		["a335ee"] = 4,
-		["ff8000"] = 5
-	}
-	DPSMate.Parser.Loot = function(self, msg)
-		for a,b,c,d,e in strgfind(msg, "(.-) bekommt Beute: |cff(.-)|Hitem:(%d+)(.+)%[(.+)%]|h|r") do
-			DB:Loot(a, linkQuality[b], tnbr(c), e)
-			return
-		end
-		for a,b,c,d,e in strgfind(msg, "(.-) erhält Beute: |cff(.-)|Hitem:(%d+)(.+)%[(.+)%]|h|r") do
-			DB:Loot(a, linkQuality[b], tnbr(c), e)
-			return
-		end
-		for a,b,c,d in strgfind(msg, "Ihr erhaltet Beute: |cff(.-)|Hitem:(%d+)(.+)%[(.+)%]|h|r") do
-			DB:Loot(self.player, linkQuality[a], tnbr(b), d)
-			return
-		end
 	end
 	
 	-- Pet section

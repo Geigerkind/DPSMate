@@ -499,34 +499,6 @@ function DPSMate.Parser:OnLoad()
 	end
 end
 
-function DPSMate.Parser:GetPlayerValues()
-	self.player = UnitName("player")
-	_,playerclass = UnitClass("player")
-	self.playerclass = strlower(playerclass)
-	DPSMatePlayer[1] = self.player
-	DPSMatePlayer[2] = strlower(playerclass)
-	fac = UnitFactionGroup("player")
-	if fac then
-		if strfind(fac, "lliance") then
-			DPSMatePlayer[3] = 1
-		elseif strfind(fac, "orde") then
-			DPSMatePlayer[3] = -1
-		end
-	end
-	DPSMatePlayer[4] = GetRealmName()
-	DPSMatePlayer[5] = GetGuildInfo("player")
-	DPSMatePlayer[6] = GetLocale()
-	self:OnLoad()
-end
-
-DPSMate.Parser.PLAYER_LOGOUT = function()
-	this:GetPlayerValues()
-end
-
-DPSMate.Parser.PLAYER_ENTERING_WORLD = function()
-	this:GetPlayerValues()
-end
-
 function DPSMate.Parser:GetUnitByName(target)
 	local unit = self.TargetParty[target]
 	if not unit then
@@ -781,10 +753,6 @@ DPSMate.Parser.CHAT_MSG_COMBAT_SELF_HITS = function(arg1)
 	this:SelfHits(arg1)
 end
 
-DPSMate.Parser.CHAT_MSG_LOOT = function(arg1)
-	this:Loot(arg1)
-end
-
 DPSMate.Parser.CHAT_MSG_COMBAT_PET_HITS = function(arg1)
 	this:PetHits(arg1)
 end
@@ -797,4 +765,4 @@ DPSMate.Parser.CHAT_MSG_SPELL_PET_DAMAGE = function(arg1)
 	this:PetSpellDamage(arg1)
 end
 
-DPSMate.Parser:SetScript("OnEvent", function() this[event](arg1) end)
+DPSMate.Parser:SetScript("OnEvent", function() if this[event] then this[event](arg1) end end)
