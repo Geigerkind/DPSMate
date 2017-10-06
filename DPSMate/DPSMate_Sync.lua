@@ -450,6 +450,7 @@ function DPSMate.Sync:DMGDoneStatIn(arg2, arg4)
 	strgsub(arg2, "(.-),", func)
 	abid = DB:BuildAbility(t[3])
 	t[1] = tnbr(t[1])
+	if t[1]>DPSMateCombatTime["total"] and (t[1]>5*DPSMateCombatTime["total"] or t[1]>20000) then return end
 	if not Arrays[1][userid] then return end
 	if not Arrays[1][userid][abid] then return end
 	Arrays[1][userid][abid]["i"][t[1]]=tnbr(t[2])
@@ -512,6 +513,7 @@ function DPSMate.Sync:DMGTakenStatIn(arg2, arg4)
 	if not Arrays[2][userid][userid2][abid] then return end
 	if not Arrays[2][userid][userid2][abid] then return end
 	t[1] = tnbr(t[1])
+	if t[1]>DPSMateCombatTime["total"] and (t[1]>5*DPSMateCombatTime["total"] or t[1]>20000) then return end
 	Arrays[2][userid][userid2][abid]["i"][t[1]]=tnbr(t[2])
 	if t[1]>DPSMateCombatTime["total"] then DPSMateCombatTime["total"]=t[1] end
 end
@@ -576,6 +578,7 @@ function DPSMate.Sync:EDStatIn(arr, arg2, arg4)
 	if not Arrays[arr][userid][userid2] then return end
 	if not Arrays[arr][userid][userid2][abid] then return end
 	t[2] = tnbr(t[2])
+	if t[2]>DPSMateCombatTime["total"] and (t[2]>5*DPSMateCombatTime["total"] or t[2]>20000) then return end
 	Arrays[arr][userid][userid2][abid]["i"][t[2]] = tnbr(t[3])
 	if t[2]>DPSMateCombatTime["total"] then DPSMateCombatTime["total"]=t[2] end
 end
@@ -633,6 +636,7 @@ function DPSMate.Sync:HealingStatIn(arg2, arg4, arr)
 	t[1] = tnbr(t[1])
 	if not Arrays[arr][userid] then return end
 	if not Arrays[arr][userid][abid] then return end
+	if t[1]>DPSMateCombatTime["total"] and (t[1]>5*DPSMateCombatTime["total"] or t[1]>20000) then return end
 	Arrays[arr][userid][abid]["i"][t[1]]=tnbr(t[2])
 	if t[1]>DPSMateCombatTime["total"] then DPSMateCombatTime["total"]=t[1] end
 end
@@ -670,6 +674,7 @@ function DPSMate.Sync:HealingTakenStatIn(arg2, arg4, arr)
 	if not Arrays[arr][userid] then return end
 	if not Arrays[arr][userid][userid2] then return end
 	if not Arrays[arr][userid][userid2][abid] then return end
+	if t[1]>DPSMateCombatTime["total"] and (t[1]>5*DPSMateCombatTime["total"] or t[1]>20000) then return end
 	Arrays[arr][userid][userid2][abid]["i"][t[1]]=tnbr(t[2])
 	if t[1]>DPSMateCombatTime["total"] then DPSMateCombatTime["total"]=t[1] end
 end
@@ -732,6 +737,7 @@ function DPSMate.Sync:AbsorbsStatIn(arg2, arg4)
 	if not DPSMateAbsorbs[1][userid] then return end
 	if not DPSMateAbsorbs[1][userid][userid2] then return end
 	t[2] = tnbr(t[2])
+	if t[2]>DPSMateCombatTime["total"] and (t[2]>5*DPSMateCombatTime["total"] or t[2]>20000) then return end
 	if t[4] then
 		tinsert(Arrays[10][userid][userid2]["i"], {t[2], tnbr(t[3]), tnbr(t[4]), tnbr(t[5])})
 	else

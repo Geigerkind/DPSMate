@@ -477,6 +477,7 @@ function DPSMate.Modules.DetailsDamageTotal:ShowTooltip(user, obj)
 	local pet = ""
 	GameTooltip:SetOwner(obj, "TOPLEFT")
 	GameTooltip:AddLine(name.."'s "..strlower(DPSMate.L["damagedone"]), 1,1,1)
+	if not a or not b or not c then return end
 	for i=1, DPSMateSettings["subviewrows"] do
 		if not a[i] then break end
 		if c[i][2] then pet="(Pet)" else pet="" end

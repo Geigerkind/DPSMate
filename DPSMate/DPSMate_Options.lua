@@ -576,60 +576,6 @@ Logout = function()
 	end
 end
 
--- Deprecated
-function DPSMate.Options:SumGraphData()
-	for i=1,2 do
-		-- Damage done
-		for k,v in DPSMateDamageDone[i] do
-			DPSMateDamageDone[i][k]["i"][1] = DPSMate.Sync:GetSummarizedTable(v["i"][1])
-		end
-		
-		-- EDT
-		for k,v in DPSMateEDT[i] do
-			for key, var in v do 
-				DPSMateEDT[i][k][key]["i"][1] = DPSMate.Sync:GetSummarizedTable(var["i"][1])
-			end
-		end
-		
-		-- EDD
-		for k,v in DPSMateEDD[i] do
-			for key, var in v do 
-				DPSMateEDD[i][k][key]["i"][1] = DPSMate.Sync:GetSummarizedTable(var["i"][1])
-			end
-		end
-		
-		-- Damage taken
-		for k,v in DPSMateDamageTaken[i] do
-			DPSMateDamageTaken[i][k]["i"][1] = DPSMate.Sync:GetSummarizedTable(v["i"][1])
-		end
-		
-		-- Ehealing
-		for k,v in DPSMateEHealing[i] do
-			DPSMateEHealing[i][k]["i"][2] = DPSMate.Sync:GetSummarizedTable(v["i"][2])
-		end
-		
-		-- Thealing
-		for k,v in DPSMateTHealing[i] do
-			DPSMateTHealing[i][k]["i"][2] = DPSMate.Sync:GetSummarizedTable(v["i"][2])
-		end
-		
-		-- Overhealing
-		for k,v in DPSMateOverhealing[i] do
-			DPSMateOverhealing[i][k]["i"][2] = DPSMate.Sync:GetSummarizedTable(v["i"][2])
-		end
-		
-		-- Ehealing taken
-		for k,v in DPSMateEHealingTaken[i] do
-			DPSMateEHealingTaken[i][k]["i"][2] = DPSMate.Sync:GetSummarizedTable(v["i"][2])
-		end
-		
-		-- Thealing taken
-		for k,v in DPSMateHealingTaken[i] do
-			DPSMateHealingTaken[i][k]["i"][2] = DPSMate.Sync:GetSummarizedTable(v["i"][2])
-		end
-	end
-end
-
 function DPSMate.Options:ToggleVisibility()
 	for _, val in DPSMateSettings["windows"] do
 		if val["hidden"] then

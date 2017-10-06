@@ -656,18 +656,18 @@ DPSMate.DB.VARIABLES_LOADED = function()
 		DPSMate.Options:SetScript("OnEvent", function() this[event]() end)
 		DPSMate.Options:SetScript("OnUpdate", function() this:OnUpdate() end)
 
-		SetCVar("CombatLogPeriodicSpells", 1);
+		if GetCVar("CombatLogPeriodicSpells") then SetCVar("CombatLogPeriodicSpells", 1) else RegisterCVar("CombatLogPeriodicSpells", 1) end
 		
-		RegisterCVar("CombatLogRangeParty", 200);
-		RegisterCVar("CombatLogRangePartyPet", 200);
-		RegisterCVar("CombatLogRangeFriendlyPlayers", 200);
-		RegisterCVar("CombatLogRangeFriendlyPlayersPets", 200);
-		RegisterCVar("CombatLogRangeHostilePlayers", 200);
-		RegisterCVar("CombatLogRangeHostilePlayersPets", 200);
+		if GetCVar("CombatLogRangeParty") then SetCVar("CombatLogRangeParty", 200) else RegisterCVar("CombatLogRangeParty", 200) end
+		if GetCVar("CombatLogRangePartyPet") then SetCVar("CombatLogRangePartyPet", 200) else RegisterCVar("CombatLogRangePartyPet", 200) end
+		if GetCVar("CombatLogRangeFriendlyPlayers") then SetCVar("CombatLogRangeFriendlyPlayers", 200) else RegisterCVar("CombatLogRangeFriendlyPlayers", 200) end
+		if GetCVar("CombatLogRangeFriendlyPlayersPets") then SetCVar("CombatLogRangeFriendlyPlayersPets", 200) else RegisterCVar("CombatLogRangeFriendlyPlayersPets", 200) end
+		if GetCVar("CombatLogRangeHostilePlayers") then SetCVar("CombatLogRangeHostilePlayers", 200) else RegisterCVar("CombatLogRangeHostilePlayers", 200) end
+		if GetCVar("CombatLogRangeHostilePlayersPets") then SetCVar("CombatLogRangeHostilePlayersPets", 200) else RegisterCVar("CombatLogRangeHostilePlayersPets", 200) end
 		
 
-		RegisterCVar("CombatLogRangeCreature", 200);
-		RegisterCVar("CombatDeathLogRange", 200);
+		if GetCVar("CombatLogRangeCreature") then SetCVar("CombatLogRangeCreature", 200) else RegisterCVar("CombatLogRangeCreature", 200) end
+		if GetCVar("CombatDeathLogRange") then SetCVar("CombatDeathLogRange", 200) else RegisterCVar("CombatDeathLogRange", 200) end
 
 		DPSMate:SendMessage("DPSMate build "..DPSMate.VERSION.." has been loaded!")
 		this.loaded = true
