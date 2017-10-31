@@ -1,6 +1,6 @@
 -- Global Variables
 DPSMate = {}
-DPSMate.VERSION = 126
+DPSMate.VERSION = 127
 DPSMate.LOCALE = GetLocale()
 DPSMate.SYNCVERSION = DPSMate.VERSION..DPSMate.LOCALE
 DPSMate.Parser = CreateFrame("Frame", nil, UIParent)
@@ -569,6 +569,7 @@ function DPSMate:GetClassColor(class)
 			class = "warrior"
 		end
 	end
+	if classcolor[class]==nil then class="warrior" end
 	return classcolor[class].r, classcolor[class].g, classcolor[class].b, class
 end
 
