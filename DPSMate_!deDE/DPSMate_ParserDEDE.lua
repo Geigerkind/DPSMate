@@ -704,7 +704,7 @@ if (GetLocale() == "deDE") then
 			DB:DestroyBuffs(self.player, b)
 			return
 		end
-		for b,a in strgfind(msg, "Ihr bekommt durch (.+) (%d) Extra-Angriff\e?%.") do
+		for b,a in strgfind(msg, "Ihr bekommt durch (.+) (%d) Extra%-Angriff\e?%.") do
 			DB:RegisterNextSwing(self.player, tnbr(a), b)
 			DB:BuildBuffs(self.player, self.player, b, true)
 			DB:DestroyBuffs(self.player, b)
@@ -878,7 +878,7 @@ if (GetLocale() == "deDE") then
 			DB:DestroyBuffs(c, d)
 			return 
 		end
-		for a,c,b in strgfind(msg, "(.+) bekommt durch (.+) (%d+) Extra-Angriff\e?%.") do
+		for a,c,b in strgfind(msg, "(.+) bekommt durch (.+) (%d+) Extra%-Angriff\e?%.") do
 			DB:RegisterNextSwing(a, tnbr(b), c)
 			DB:BuildBuffs(a, a, c, true)
 			DB:DestroyBuffs(a, c)
