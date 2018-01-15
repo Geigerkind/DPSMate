@@ -107,7 +107,9 @@ local strsub = strsub
 local tonumber = tonumber
 local getn = getn
 local tconcat = table.concat
-local SendChatMessage = ChatThrottleLib.SendChatMessage
+local SendChatMessage = function(prio, prefix, text, chattype, language, destination) 
+	ChatThrottleLib:SendChatMessage(prio, prefix, text, chattype, language, destination) 
+end
 
 
 -- Begin functions

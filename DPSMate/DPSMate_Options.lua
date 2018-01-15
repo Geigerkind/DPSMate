@@ -387,7 +387,9 @@ local tinsert = table.insert
 local tremove = tremove
 local strformat = string.format
 local strgfind = string.gfind
-local SendChatMessage = ChatThrottleLib.SendChatMessage
+local SendChatMessage = function(prio, prefix, text, chattype, language, destination) 
+	ChatThrottleLib:SendChatMessage(prio, prefix, text, chattype, language, destination) 
+end
 
 -- Begin Functions
 

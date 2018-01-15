@@ -14,7 +14,6 @@ local strgfind = string.gfind
 local tinsert = table.insert
 local tremove = table.remove
 local tnbr = tonumber
-local SDM = ChatThrottleLib.SendAddonMessage
 local func = function(c) tinsert(t,c) end
 local LastMouseover = nil
 local DB = DPSMate.DB
@@ -51,6 +50,9 @@ local trivial, lesstrivial, important, Execute = nil, nil, nil, {}
 local strsub = string.sub
 local strfind = string.find
 local UnitAffectingCombat = UnitAffectingCombat
+local SDM = function(prio, prefix, text, chattype)
+	ChatThrottleLib:SendAddonMessage(prio, prefix, text, chattype)
+end
 
 -- Beginn Functions
 

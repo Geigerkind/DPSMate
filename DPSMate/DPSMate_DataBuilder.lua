@@ -159,11 +159,13 @@ local UnitIsPlayer = UnitIsPlayer
 local UnitIsDead = UnitIsDead
 local UnitBuff = UnitBuff
 local UnitInRaid = UnitInRaid
-local SendAddonMessage = ChatThrottleLib.SendAddonMessage
 local pairs = pairs
 local floor = floor
 local UnitIsConnected = UnitIsConnected
 local time, path, gen
+local SendAddonMessage = function(prio, prefix, text, chattype)
+	ChatThrottleLib:SendAddonMessage(prio, prefix, text, chattype)
+end
 
 DPSMate.DB.windfuryab = {
 	["Windfury Weapon"] = true,
