@@ -387,6 +387,7 @@ local tinsert = table.insert
 local tremove = tremove
 local strformat = string.format
 local strgfind = string.gfind
+local SendChatMessage = ChatThrottleLib.SendChatMessage
 
 -- Begin Functions
 
@@ -1439,13 +1440,13 @@ function DPSMate.Options:Report()
 	else
 		chn = "CHANNEL"; index = GetChannelName(channel)
 	end
-	SendChatMessage(DPSMate.L["name"].." - "..DPSMate.L["reportfor"]..DPSMate:GetModeName(DPSMate_Report.PaKey or 1).." - ".._G("DPSMate_"..DPSMateSettings["windows"][DPSMate_Report.PaKey or 1]["name"].."_Head_Font"):GetText().." - "..b[1]..b[2], chn, nil, index)
+	SendChatMessage("BULK", "DPSMateChat", DPSMate.L["name"].." - "..DPSMate.L["reportfor"]..DPSMate:GetModeName(DPSMate_Report.PaKey or 1).." - ".._G("DPSMate_"..DPSMateSettings["windows"][DPSMate_Report.PaKey or 1]["name"].."_Head_Font"):GetText().." - "..b[1]..b[2], chn, nil, index)
 	for i=1, DPSMate_Report_Lines:GetValue() do
 		if (not value[i] or value[i] == 0) then break end
 		if DPSMateSettings["reportdelay"] then
 			tinsert(DPSMate.DelayMsg, {i..". "..name[i].." -"..value[i], chn, index})
 		else
-			SendChatMessage(i..". "..name[i].." -"..value[i], chn, nil, index)
+			SendChatMessage("BULK", "DPSMateChat", i..". "..name[i].." -"..value[i], chn, nil, index)
 		end
 	end
 	DPSMate_Report:Hide()
@@ -1476,7 +1477,7 @@ function DPSMate.Options:ReportUserDetails(obj, channel, name)
 	if b~=0 then
 		bb = " - "..strformat("%.2f", b)
 	end
-	SendChatMessage(DPSMate.L["name"].." - "..DPSMate.L["reportof"].." "..user.."'s ".._G("DPSMate_"..DPSMateSettings["windows"][Key]["name"].."_Head_Font"):GetText().." - "..DPSMate:GetModeName(Key)..bb, chn, nil, index)
+	SendChatMessage("BULK", "DPSMateChat", DPSMate.L["name"].." - "..DPSMate.L["reportof"].." "..user.."'s ".._G("DPSMate_"..DPSMateSettings["windows"][Key]["name"].."_Head_Font"):GetText().." - "..DPSMate:GetModeName(Key)..bb, chn, nil, index)
 	for i=1, 10 do
 		if (not a[i]) then break end
 		local p
@@ -1489,13 +1490,13 @@ function DPSMate.Options:ReportUserDetails(obj, channel, name)
 				if DPSMateSettings["reportdelay"] then
 					tinsert(DPSMate.DelayMsg, {i..". |cFF8cff80"..DPSMate:GetAbilityById(a[i]).." => ".."+"..c[i][1]..type.."|r", chn, index})
 				else
-					SendChatMessage(i..". |cFF8cff80"..DPSMate:GetAbilityById(a[i]).." => ".."+"..c[i][1]..type.."|r", chn, nil, index)
+					SendChatMessage("BULK", "DPSMateChat", i..". |cFF8cff80"..DPSMate:GetAbilityById(a[i]).." => ".."+"..c[i][1]..type.."|r", chn, nil, index)
 				end
 			else
 				if DPSMateSettings["reportdelay"] then
 					tinsert(DPSMate.DelayMsg, {i..". |cFFFF8080"..DPSMate:GetAbilityById(a[i]).." => ".."-"..c[i][1]..type.."|r", chn, index})
 				else
-					SendChatMessage(i..". |cFFFF8080"..DPSMate:GetAbilityById(a[i]).." => ".."-"..c[i][1]..type.."|r", chn, nil, index)
+					SendChatMessage("BULK", "DPSMateChat", i..". |cFFFF8080"..DPSMate:GetAbilityById(a[i]).." => ".."-"..c[i][1]..type.."|r", chn, nil, index)
 				end
 			end
 		else
@@ -1503,20 +1504,20 @@ function DPSMate.Options:ReportUserDetails(obj, channel, name)
 				if DPSMateSettings["reportdelay"] then
 					tinsert(DPSMate.DelayMsg, {i..". "..DPSMate.Modules.Fails:Type(a[i]).." - "..p, chn, index})
 				else
-					SendChatMessage(i..". "..DPSMate.Modules.Fails:Type(a[i]).." - "..p, chn, nil, index)
+					SendChatMessage("BULK", "DPSMateChat", i..". "..DPSMate.Modules.Fails:Type(a[i]).." - "..p, chn, nil, index)
 				end
 			else
 				if DPSMate:TContains(AbilityModes, DPSMateSettings["windows"][Key]["CurMode"]) then
 					if DPSMateSettings["reportdelay"] then
 						tinsert(DPSMate.DelayMsg, {i..". "..DPSMate:GetAbilityById(a[i]).." - "..p, chn, index})
 					else
-						SendChatMessage(i..". "..DPSMate:GetAbilityById(a[i]).." - "..p, chn, nil, index)
+						SendChatMessage("BULK", "DPSMateChat", i..". "..DPSMate:GetAbilityById(a[i]).." - "..p, chn, nil, index)
 					end
 				else
 					if DPSMateSettings["reportdelay"] then
 						tinsert(DPSMate.DelayMsg, {i..". "..DPSMate:GetUserById(a[i]).." - "..p, chn, index})
 					else
-						SendChatMessage(i..". "..DPSMate:GetUserById(a[i]).." - "..p, chn, nil, index)
+						SendChatMessage("BULK", "DPSMateChat", i..". "..DPSMate:GetUserById(a[i]).." - "..p, chn, nil, index)
 					end
 				end
 			end
@@ -2136,7 +2137,7 @@ function DPSMate.Options:OnUpdate()
 	if DPSMateSettings["reportdelay"] and DPSMate.DelayMsg[1] then
 		reportuptime = reportuptime + arg1
 		if reportuptime>reportdelay then
-			SendChatMessage(DPSMate.DelayMsg[1][1], DPSMate.DelayMsg[1][2], nil, DPSMate.DelayMsg[1][3])
+			SendChatMessage("BULK", "DPSMateChat", DPSMate.DelayMsg[1][1], DPSMate.DelayMsg[1][2], nil, DPSMate.DelayMsg[1][3])
 			tremove(DPSMate.DelayMsg, 1)
 			reportuptime = 0
 		end

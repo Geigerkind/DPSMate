@@ -14,7 +14,7 @@ local strgfind = string.gfind
 local tinsert = table.insert
 local tremove = table.remove
 local tnbr = tonumber
-local SDM = SendAddonMessage
+local SDM = ChatThrottleLib.SendAddonMessage
 local func = function(c) tinsert(t,c) end
 local LastMouseover = nil
 local DB = DPSMate.DB
@@ -141,7 +141,7 @@ function DPSMate.Sync:OnUpdate()
 			iterator, time = 1, 0
 		end
 		if Buffer[co] and updater>0.1 and not UnitAffectingCombat("player") then
-			SDM(Buffer[co][1]..sKey, Buffer[co][2], "RAID")
+			SDM("NORMAL", Buffer[co][1]..sKey, Buffer[co][2], "RAID")
 			Buffer[co] = nil
 			co = co + 1
 			updater = 0
@@ -182,7 +182,7 @@ end
 
 function DPSMate.Sync:Vote()
 	DPSMate_Vote:Hide()
-	SDM("DPSMate_Vote"..DPSMate.SYNCVERSION, nil, "RAID")
+	SDM("BULK", "DPSMate_Vote"..DPSMate.SYNCVERSION, nil, "RAID")
 end
 
 local voteCount = 1
@@ -191,7 +191,7 @@ local abort = 0
 function DPSMate.Sync:StartVote()
 	if not voteStarter then
 		self.synckey = player..(random(1,1000))
-		SDM("DPSMate_StartVote"..DPSMate.SYNCVERSION, nil, "RAID")
+		SDM("BULK", "DPSMate_StartVote"..DPSMate.SYNCVERSION, nil, "RAID")
 		voteStarter = true
 		participants = 1
 	else
@@ -203,7 +203,7 @@ function DPSMate.Sync:CountVote()
 	if voteStarter then
 		voteCount=voteCount+1
 		if voteCount >= (participants/2) then
-			SDM("DPSMate_VoteSuccess"..DPSMate.SYNCVERSION, self.synckey, "RAID")
+			SDM("BULK", "DPSMate_VoteSuccess"..DPSMate.SYNCVERSION, self.synckey, "RAID")
 			sKey = DPSMate.SYNCVERSION..self.synckey
 			Execute = {}
 			for cat, val in pairs(important) do
@@ -215,7 +215,7 @@ function DPSMate.Sync:CountVote()
 			local num = GetNumRaidMembers()
 			if num > 0 then
 				for i=1, num-1 do
-					SDM("DPSMate_SyncTimer"..DPSMate.SYNCVERSION, UnitName("raid"..i)..","..(ceil(i/8)*30 - 30)..",", "RAID")
+					SDM("NORMAL", "DPSMate_SyncTimer"..DPSMate.SYNCVERSION, UnitName("raid"..i)..","..(ceil(i/8)*30 - 30)..",", "RAID")
 				end
 			end
 			DB.MainUpdate = ceil(num/8)*30 - 30
@@ -229,7 +229,7 @@ function DPSMate.Sync:DismissVote(elapsed)
 	if voteStarter then
 		voteTime=voteTime+elapsed
 		if voteTime>=30 then
-			SDM("DPSMate_VoteFail"..DPSMate.SYNCVERSION, nil, "RAID")
+			SDM("BULK", "DPSMate_VoteFail"..DPSMate.SYNCVERSION, nil, "RAID")
 			voteStarter = false
 			voteCount = 1
 			voteTime = 0
@@ -295,7 +295,7 @@ function DPSMate.Sync:CountParticipants()
 end
 
 function DPSMate.Sync:Participate()
-	SDM("DPSMate_Participate"..DPSMate.SYNCVERSION, nil, "RAID")
+	SDM("NORMAL", "DPSMate_Participate"..DPSMate.SYNCVERSION, nil, "RAID")
 end
 
 function DPSMate.Sync:ReceiveStartVote() 
@@ -309,7 +309,7 @@ end
 
 function DPSMate.Sync:AbortVote()
 	if IsPartyLeader() or IsRaidOfficer() then
-		SDM("DPSMate_AbortVote"..DPSMate.SYNCVERSION, "NaN", "RAID")
+		SDM("BULK", "DPSMate_AbortVote"..DPSMate.SYNCVERSION, "NaN", "RAID")
 		DPSMate:SendMessage(DPSMate.L["resetaborted"])
 	end
 end
@@ -326,12 +326,12 @@ function DPSMate.Sync:HelloWorld()
 	if (GetTime()-bc)>=3 then
 		bc = GetTime()
 		am = 1
-		SDM("DPSMate_HelloWorld", "NaN", "RAID")
+		SDM("BULK", "DPSMate_HelloWorld", "NaN", "RAID")
 	end
 end
 
 function DPSMate.Sync:GreetBack()
-	SDM("DPSMate_Greet", DPSMate.SYNCVERSION, "RAID")
+	SDM("BULK", "DPSMate_Greet", DPSMate.SYNCVERSION, "RAID")
 end
 
 local old = 0
@@ -963,7 +963,7 @@ DPSMate.Parser.UseAction = function(slot, checkCursor, onSelf)
 	local aura = DPSMate_TooltipTextLeft1:GetText()
 	local target = GetTargetP()
 	if aura and target and (DPSMate.Sync.OverTimeDispels[aura] or DPSMate.Sync.AbsorbAbilities[aura] or DPSMate.Sync.OtherAbilities[aura]) and not DPSMate.Parser.SendSpell[aura] then
-		SDM("DPSMate"..sKey, aura..","..target..",", "RAID")
+		SDM("ALERT", "DPSMate"..sKey, aura..","..target..",", "RAID")
 		DPSMate.Parser.SendSpell[aura] = true
 	end
 	if aura then
@@ -982,7 +982,7 @@ local oldCastSpellByName = CastSpellByName
 DPSMate.Parser.CastSpellByName = function(spellName, onSelf)
 	local target = GetTargetP()
 	if target and (DPSMate.Sync.OverTimeDispels[spellName] or DPSMate.Sync.AbsorbAbilities[spellName] or DPSMate.Sync.OtherAbilities[spellName]) and not DPSMate.Parser.SendSpell[spellName] then 
-		SDM("DPSMate"..sKey, spellName..","..target..",", "RAID")
+		SDM("ALERT", "DPSMate"..sKey, spellName..","..target..",", "RAID")
 		DPSMate.Parser.SendSpell[spellName] = true
 	end
 	local time = GetTime()
@@ -1000,7 +1000,7 @@ DPSMate.Parser.CastSpell = function(spellID, spellbookType)
 	local spellName, spellRank = GetSpellName(spellID, spellbookType)
 	local target = GetTargetP()
 	if target and (DPSMate.Sync.OverTimeDispels[spellName] or DPSMate.Sync.AbsorbAbilities[spellName] or DPSMate.Sync.OtherAbilities[spellName]) and not DPSMate.Parser.SendSpell[spellName] then 
-		SDM("DPSMate"..sKey, spellName..","..target..",", "RAID")
+		SDM("ALERT", "DPSMate"..sKey, spellName..","..target..",", "RAID")
 		DPSMate.Parser.SendSpell[spellName] = true
 	end
 	local time = GetTime()

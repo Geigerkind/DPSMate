@@ -1,5 +1,6 @@
 -- Events
 DPSMate.DB:RegisterEvent("VARIABLES_LOADED")
+DPSMate.DB:RegisterEvent("PLAYER_LOGIN")
 DPSMate.DB:RegisterEvent("PLAYER_REGEN_DISABLED")
 DPSMate.DB:RegisterEvent("PLAYER_REGEN_ENABLED")
 DPSMate.DB:RegisterEvent("PLAYER_AURAS_CHANGED")
@@ -158,6 +159,7 @@ local UnitIsPlayer = UnitIsPlayer
 local UnitIsDead = UnitIsDead
 local UnitBuff = UnitBuff
 local UnitInRaid = UnitInRaid
+local SendAddonMessage = ChatThrottleLib.SendAddonMessage
 local pairs = pairs
 local floor = floor
 local UnitIsConnected = UnitIsConnected
@@ -657,6 +659,54 @@ DPSMate.DB.VARIABLES_LOADED = function()
 	end
 end
 
+DPSMate.DB.PLAYER_LOGIN = function()
+	if GetCVar("CombatLogPeriodicSpells") then 
+		SetCVar("CombatLogPeriodicSpells", 1) 
+	else 
+		RegisterCVar("CombatLogPeriodicSpells", 1) 
+	end
+	if GetCVar("CombatLogRangeParty") then 
+		SetCVar("CombatLogRangeParty", 200) 
+	else 
+		RegisterCVar("CombatLogRangeParty", 200) 
+	end
+	if GetCVar("CombatLogRangePartyPet") then 
+		SetCVar("CombatLogRangePartyPet", 200) 
+	else 
+		RegisterCVar("CombatLogRangePartyPet", 200) 
+	end
+	if GetCVar("CombatLogRangeFriendlyPlayers") then 
+		SetCVar("CombatLogRangeFriendlyPlayers", 200) 
+	else 
+		RegisterCVar("CombatLogRangeFriendlyPlayers", 200) 
+	end
+	if GetCVar("CombatLogRangeFriendlyPlayersPets") then 
+		SetCVar("CombatLogRangeFriendlyPlayersPets", 200) 
+	else 
+		RegisterCVar("CombatLogRangeFriendlyPlayersPets", 200) 
+	end
+	if GetCVar("CombatLogRangeHostilePlayers") then 
+		SetCVar("CombatLogRangeHostilePlayers", 200) 
+	else 
+		RegisterCVar("CombatLogRangeHostilePlayers", 200) 
+	end
+	if GetCVar("CombatLogRangeHostilePlayersPets") then 
+		SetCVar("CombatLogRangeHostilePlayersPets", 200) 
+	else 
+		RegisterCVar("CombatLogRangeHostilePlayersPets", 200) 
+	end
+	if GetCVar("CombatLogRangeCreature") then 
+		SetCVar("CombatLogRangeCreature", 200) 
+	else 
+		RegisterCVar("CombatLogRangeCreature", 200) 
+	end
+	if GetCVar("CombatDeathLogRange") then 
+		SetCVar("CombatDeathLogRange", 200) 
+	else 
+		RegisterCVar("CombatDeathLogRange", 200) 
+	end
+end
+
 DPSMate.DB.PLAYER_REGEN_DISABLED = function()
 	if DPSMateSettings["hideincombat"] then
 		for _, val in pairs(DPSMateSettings["windows"]) do
@@ -904,7 +954,7 @@ function DPSMate.DB:UpdateThreat()
 		end
 		if str then
 			self.KTMHOOK = {}
-			SendAddonMessage("KLHTMHOOK", str, "RAID")
+			SendAddonMessage("ALERT", "KLHTMHOOK", str, "RAID")
 		end
 	end
 end
