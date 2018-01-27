@@ -2301,6 +2301,10 @@ function DPSMate.DB:OnUpdate()
 				end
 				self.ktmavail = true
 			end
+
+			-- Loading player data to make sure its fetched correctly!
+			DPSMate.Parser:OnLoad()
+
 			init = false
 		end
 	end

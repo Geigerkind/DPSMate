@@ -492,6 +492,7 @@ function DPSMate.Parser:OnLoad()
 	self.player = UnitName("player")
 	_,playerclass = UnitClass("player")
 	DPSMate.DB:BuildUser(self.player, strlower(playerclass))
+	DPSMateUser[self.player][2] = strlower(playerclass)
 	DPSMateUser[self.player][8] = UL("player")
 	-- Prevent this addon from causing issues
 	if SW_FixLogStrings then
