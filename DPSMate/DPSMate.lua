@@ -562,15 +562,16 @@ function DPSMate:EvalTable(k)
 end
 
 function DPSMate:GetClassColor(class)
-	if not classcolor[class] then
-		if class and DPSMateUser[class] then
-			class = DPSMateUser[class][2] or "warrior"
-		else
-			class = "warrior"
-		end
+	if not class then
+		class = "warrior"
 	end
-	if classcolor[class]==nil then class="warrior" end
-	return classcolor[class].r, classcolor[class].g, classcolor[class].b, class
+	if DPSMateUser[class] then
+		class = DPSMateUser[class][2] or "warrior"
+	end
+	if classcolor[class] then
+		return classcolor[class].r, classcolor[class].g, classcolor[class].b, class
+	end
+	return classcolor["warrior"].r, classcolor["warrior"].g, classcolor["warrior"].b, "warrior"
 end
 
 function DPSMate:GetMode(k)

@@ -735,7 +735,7 @@ function DPSMate.Options:HideWhenSolo()
 	for _, val in pairs(DPSMateSettings["windows"]) do
 		local frame = _G("DPSMate_"..val["name"])
 		if DPSMateSettings["hidewhensolo"] and not DPSMate.Options:IsInBattleground() then
-			if GetNumPartyMembers() == 0 then
+			if GetNumPartyMembers() == 0 and GetNumRaidMembers() == 0 then
 				frame:Hide()
 				if DPSMateSettings["disablewhilehidden"] then
 					DPSMate:Disable()
