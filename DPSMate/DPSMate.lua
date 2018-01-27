@@ -1,6 +1,6 @@
 -- Global Variables
 DPSMate = {}
-DPSMate.VERSION = 127
+DPSMate.VERSION = 128
 DPSMate.LOCALE = GetLocale()
 DPSMate.SYNCVERSION = DPSMate.VERSION..DPSMate.LOCALE
 DPSMate.Parser = CreateFrame("Frame", nil, UIParent)
@@ -107,6 +107,9 @@ local strsub = strsub
 local tonumber = tonumber
 local getn = getn
 local tconcat = table.concat
+local SendChatMessage = function(prio, prefix, text, chattype, language, destination) 
+	ChatThrottleLib:SendChatMessage(prio, prefix, text, chattype, language, destination) 
+end
 
 
 -- Begin functions
@@ -662,24 +665,24 @@ function DPSMate:Broadcast(type, who, what, with, value, failtype)
 				ch = "RAID_WARNING"
 			end
 			if DPSMateSettings["bccd"] and type == 1 then
-				SendChatMessage(self.L["bccdo"](who, what), ch, nil, nil)
+				SendChatMessage("BULK", "DPSMateChat", self.L["bccdo"](who, what), ch, nil, nil)
 				return
 			elseif DPSMateSettings["bccd"] and type == 6 then
-				SendChatMessage(self.L["bccdt"](who, what), ch, nil, nil)
+				SendChatMessage("BULK", "DPSMateChat", self.L["bccdt"](who, what), ch, nil, nil)
 				return
 			elseif DPSMateSettings["bcress"] and type == 2 then
-				SendChatMessage(self.L["bcress"](who, what), ch, nil, nil)
+				SendChatMessage("BULK", "DPSMateChat", self.L["bcress"](who, what), ch, nil, nil)
 				return
 			elseif DPSMateSettings["bckb"] and type == 4 then
-				SendChatMessage(self.L["bckb"](who, what, with, value), ch, nil, nil)
+				SendChatMessage("BULK", "DPSMateChat", self.L["bckb"](who, what, with, value), ch, nil, nil)
 				return
 			elseif DPSMateSettings["bcfail"] and type == 3 then
 				if failtype == 1 then
-					SendChatMessage(self.L["bcfailo"](what, who, value, with), ch, nil, nil)
+					SendChatMessage("BULK", "DPSMateChat", self.L["bcfailo"](what, who, value, with), ch, nil, nil)
 				elseif failtype == 3 then
-					SendChatMessage(self.L["bcfailt"](who, with), ch, nil, nil)
+					SendChatMessage("BULK", "DPSMateChat", self.L["bcfailt"](who, with), ch, nil, nil)
 				else
-					SendChatMessage(self.L["bcfailth"](who, value, with, what), ch, nil, nil)
+					SendChatMessage("BULK", "DPSMateChat", self.L["bcfailth"](who, value, with, what), ch, nil, nil)
 				end
 				return
 			end
