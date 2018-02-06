@@ -184,7 +184,7 @@ end
 
 function DPSMate.Sync:Vote()
 	DPSMate_Vote:Hide()
-	SDM("BULK", "DPSMate_Vote"..DPSMate.SYNCVERSION, nil, "RAID")
+	SDM("BULK", "DPSMate_Vote"..DPSMate.SYNCVERSION, "NaN", "RAID")
 end
 
 local voteCount = 1
@@ -193,7 +193,7 @@ local abort = 0
 function DPSMate.Sync:StartVote()
 	if not voteStarter then
 		self.synckey = player..(random(1,1000))
-		SDM("BULK", "DPSMate_StartVote"..DPSMate.SYNCVERSION, nil, "RAID")
+		SDM("BULK", "DPSMate_StartVote"..DPSMate.SYNCVERSION, "NaN", "RAID")
 		voteStarter = true
 		participants = 1
 	else
@@ -231,7 +231,7 @@ function DPSMate.Sync:DismissVote(elapsed)
 	if voteStarter then
 		voteTime=voteTime+elapsed
 		if voteTime>=30 then
-			SDM("BULK", "DPSMate_VoteFail"..DPSMate.SYNCVERSION, nil, "RAID")
+			SDM("BULK", "DPSMate_VoteFail"..DPSMate.SYNCVERSION, "NaN", "RAID")
 			voteStarter = false
 			voteCount = 1
 			voteTime = 0
@@ -297,7 +297,7 @@ function DPSMate.Sync:CountParticipants()
 end
 
 function DPSMate.Sync:Participate()
-	SDM("NORMAL", "DPSMate_Participate"..DPSMate.SYNCVERSION, nil, "RAID")
+	SDM("NORMAL", "DPSMate_Participate"..DPSMate.SYNCVERSION, "NaN", "RAID")
 end
 
 function DPSMate.Sync:ReceiveStartVote() 
