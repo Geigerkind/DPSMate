@@ -82,6 +82,8 @@ DPSMate.DelayMsg = {}
 DPSMate.BabbleSpell = BabbleSpell
 DPSMate.BabbleBoss = BabbleBoss
 
+-- Knife was wrong - 11.06.2018
+
 -- Local Variables
 local _G = getglobal
 local classcolor = {
