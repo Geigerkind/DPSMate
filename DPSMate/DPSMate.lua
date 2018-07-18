@@ -735,7 +735,6 @@ function DPSMate:Register(prefix, table, name)
 	self.ModuleNames[name] = prefix
 	self.RegistredModules[prefix] = table
 end
-=======
 -- Global Variables
 DPSMate = {}
 DPSMate.VERSION = 129
