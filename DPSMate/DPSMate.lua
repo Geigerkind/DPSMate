@@ -1438,4 +1438,3 @@ function DPSMate:Register(prefix, table, name)
 	self.ModuleNames[name] = prefix
 	self.RegistredModules[prefix] = table
 end
->>>>>>> 489dc6c35f18f8cfef712cc425a34d2550c505ec
