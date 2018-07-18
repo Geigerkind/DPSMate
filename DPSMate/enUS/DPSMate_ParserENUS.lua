@@ -455,6 +455,10 @@ function DPSMate.Parser:SelfHits(msg)
 	local i,j,k = 0,0,5
 	local nextword, choice;
 	_, choice, k = GetNextWord(msg, k, SHChoices, true)
+	if choice == -1 then
+		DPSMate:SendMessage("Event not parsed yet, inform Shino! => "..msg)
+		return
+	end
 	if choice < 3 then
 		local hit, crit = 0, 0
 		if choice == 1 then hit = 1 else crit = 1 end
@@ -522,6 +526,10 @@ function DPSMate.Parser:SelfMisses(msg)
 	local i,j,k = 0,0,5
 	local nextword, choice;
 	_, choice, k = GetNextWord(msg, k, SMChoices, true)
+	if choice == -1 then
+		DPSMate:SendMessage("Event not parsed yet, inform Shino! => "..msg)
+		return
+	end
 	if choice == 1 then
 		i, j = strfind(msg, ".", k, true)
 		local target = strsub(msg, k, i-1)
@@ -549,6 +557,10 @@ function DPSMate.Parser:SelfSpellDMG(msg)
 	local i,j,k = 0,0,6
 	local nextword, choice, ability;
 	ability, choice, k = GetNextWord(msg, k, SSDChoices, false)
+	if choice == -1 then
+		DPSMate:SendMessage("Event not parsed yet, inform Shino! => "..msg)
+		return
+	end
 	if choice < 3 then
 		local hit, crit = 0,0
 		if choice == 1 then hit = 1 else crit = 1 end
@@ -619,6 +631,10 @@ function DPSMate.Parser:PeriodicDamage(msg)
 	local i,j,k = 0,0,0
 	local nextword, choice, source;
 	source, choice, k = GetNextWord(msg, k, PDChoices, false)
+	if choice == -1 then
+		DPSMate:SendMessage("Event not parsed yet, inform Shino! => "..msg)
+		return
+	end
 	if choice == 1 then
 		i,j = strfind(msg, " from ", k, true)
 		nextword = strsub(msg, k, i-1)
@@ -685,6 +701,10 @@ function DPSMate.Parser:FriendlyPlayerDamage(msg)
 		k = j+1
 		
 		ability, choice, k = GetNextWord(msg, k, FPDList, false)
+		if choice == -1 then
+			DPSMate:SendMessage("Event not parsed yet, inform Shino! => "..msg)
+			return
+		end
 		if choice < 3 then
 			local hit = 0
 			if choice == 1 then hit=1 end
@@ -783,6 +803,10 @@ function DPSMate.Parser:FriendlyPlayerHits(msg)
 	local i,j,k = 0,0,0
 	local nextword, choice, source;
 	source, choice, k = GetNextWord(msg, k, FPHChoices, false)
+	if choice == -1 then
+		DPSMate:SendMessage("Event not parsed yet, inform Shino! => "..msg)
+		return
+	end
 	if choice < 3 then
 		local hit, crit = 0, 0
 		if choice == 1 then hit = 1 else crit = 1 end
@@ -857,6 +881,10 @@ function DPSMate.Parser:FriendlyPlayerMisses(msg)
 	local i,j,k = 0,0,0
 	local nextword, choice, source;
 	source, choice, k = GetNextWord(msg, k, FPMChoices, false)
+	if choice == -1 then
+		DPSMate:SendMessage("Event not parsed yet, inform Shino! => "..msg)
+		return
+	end
 	if choice == 1 then
 		i, j = strfind(msg, ".", k, true)
 		local target = strsub(msg, k, i-1);
@@ -932,6 +960,10 @@ function DPSMate.Parser:CreatureVsSelfHits(msg)
 	local i,j,k = 0,0,0
 	local source, choice, nextword;
 	source, choice, k = GetNextWord(msg, k, CVSHChoices, false)
+	if choice == -1 then
+		DPSMate:SendMessage("Event not parsed yet, inform Shino! => "..msg)
+		return
+	end
 	local hit, crit = 0,0
 	if choice == 1 then hit = 1 else crit = 1 end
 	i,j = strfind(msg, ".", k, true)
@@ -959,6 +991,10 @@ function DPSMate.Parser:CreatureVsSelfMisses(msg)
 	local source, choice;
 	source, choice, k = GetNextWord(msg, k, CVSMChoices, false)
 	
+	if choice == -1 then
+		DPSMate:SendMessage("Event not parsed yet, inform Shino! => "..msg)
+		return
+	end
 	if choice == 1 then
 		DB:EnemyDamage(false, nil, Player, AAttack, 0, 0, 1, 0, 0, 0, 0, source, 0, 0)
 		DB:DamageTaken(Player, AAttack, 0, 0, 1, 0, 0, 0, 0, source, 0, 0)
@@ -982,6 +1018,10 @@ function DPSMate.Parser:CreatureVsSelfSpellDamage(msg)
 	local i,j,k = 0,0,0
 	local nextword, choice;
 	nextword, choice, k = GetNextWord(msg, k, CVSSDChoices, false)
+	if choice == -1 then
+		DPSMate:SendMessage("Event not parsed yet, inform Shino! => "..msg)
+		return
+	end
 	if choice < 3 then
 		local hit,crit = 0,0
 		if choice == 1 then hit=1 else crit=1 end
@@ -1054,6 +1094,10 @@ function DPSMate.Parser:PeriodicSelfDamage(msg)
 	local i,j,k = 0,0,0
 	local nextword, choice;
 	_, choice, k = GetNextWord(msg, k, PSDChoices, true)
+	if choice == -1 then
+		DPSMate:SendMessage("Event not parsed yet, inform Shino! => "..msg)
+		return
+	end
 	if choice == 1 then
 		i,j = strfind(msg, " from ", k, true);
 		nextword = strsub(msg, k, i-1);
@@ -1112,6 +1156,10 @@ function DPSMate.Parser:CreatureVsCreatureHits(msg)
 	local i,j,k = 0,0,0
 	local nextword, choice, source;
 	source, choice, k = GetNextWord(msg, k, CVCHChoices, false)
+	if choice == -1 then
+		DPSMate:SendMessage("Event not parsed yet, inform Shino! => "..msg)
+		return
+	end
 	local hit, crit = 0,0
 	if choice == 1 then hit = 1 else crit = 1 end
 	i,j = strfind(msg, " for ", k, true)
@@ -1145,6 +1193,10 @@ function DPSMate.Parser:CreatureVsCreatureMisses(msg)
 	local nextword, choice, source;
 	source, choice, k = GetNextWord(msg, k, CVCMChoices, false)
 	
+	if choice == -1 then
+		DPSMate:SendMessage("Event not parsed yet, inform Shino! => "..msg)
+		return
+	end
 	if choice == 1 then
 		i,j = strfind(msg, " absorbs ", k, true)
 		if i then
@@ -1177,6 +1229,10 @@ function DPSMate.Parser:SpellPeriodicDamageTaken(msg)
 	local i,j,k = 0,0,0
 	local nextword, choice, source;
 	source, choice, k = GetNextWord(msg, k, SPDTChoices, false)
+	if choice == -1 then
+		DPSMate:SendMessage("Event not parsed yet, inform Shino! => "..msg)
+		return
+	end
 	
 	if choice == 1 then
 		i,j = strfind(msg, " from ", k, true);
@@ -1240,6 +1296,10 @@ function DPSMate.Parser:CreatureVsCreatureSpellDamage(msg)
 	local i,j,k = 0,0,0
 	local nextword, choice, source, ability;
 	nextword, choice, k = GetNextWord(msg, k, CVCSDChoices, false)
+	if choice == -1 then
+		DPSMate:SendMessage("Event not parsed yet, inform Shino! => "..msg)
+		return
+	end
 	i,j = strfind(nextword, " 's ", 1, true)
 	source = strsub(nextword, 1, i-1)
 	ability = strsub(nextword, j+1)
@@ -1305,6 +1365,10 @@ function DPSMate.Parser:SpellSelfBuff(msg)
 	local i,j,k = 0,0,0
 	local nextword, choice;
 	_, choice, k = GetNextWord(msg, k, SSBChoices, true)
+	if choice == -1 then
+		DPSMate:SendMessage("Event not parsed yet, inform Shino! => "..msg)
+		return
+	end
 	
 	if choice == 1 then
 		local ability
@@ -1379,6 +1443,10 @@ function DPSMate.Parser:SpellPeriodicSelfBuff(msg)
 	local i,j,k = 0,0,10
 	local nextword, choice;
 	nextword, choice, k = GetNextWord(msg, k, SPSBChoices, false)
+	if choice == -1 then
+		DPSMate:SendMessage("Event not parsed yet, inform Shino! => "..msg)
+		return
+	end
 	
 	if choice == 1 then
 		local amount = tnbr(nextword)
@@ -1491,6 +1559,11 @@ function DPSMate.Parser:SpellHostilePlayerBuff(msg)
 	local i,j,k = 0,0,0
 	local nextword, choice;
 	nextword, choice, k = GetNextWord(msg, k, SHPBChoices, false)
+	if choice == -1 then
+		DPSMate:SendMessage("Event not parsed yet, inform Shino! => "..msg)
+		return
+	end
+	
 	if choice < 3 then
 		i,j = strfind(nextword, " 's ", 1, true)
 		local source = strsub(nextword, 1, i-1)
