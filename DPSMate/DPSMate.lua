@@ -1,6 +1,6 @@
 -- Global Variables
 DPSMate = {}
-DPSMate.VERSION = 129
+DPSMate.VERSION = 130
 DPSMate.LOCALE = GetLocale()
 DPSMate.SYNCVERSION = DPSMate.VERSION..DPSMate.LOCALE
 DPSMate.Parser = CreateFrame("Frame", nil, UIParent)
@@ -113,15 +113,24 @@ local SendChatMessage = function(prio, prefix, text, chattype, language, destina
 	ChatThrottleLib:SendChatMessage(prio, prefix, text, chattype, language, destination) 
 end
 
+local DPSSettings = {}
+local DPSHist = {}
 
 -- Begin functions
 
 function DPSMate:OnLoad()
 	SLASH_DPSMate1 = "/dps"
 	SlashCmdList["DPSMate"] = function(msg) DPSMate:SlashCMDHandler(msg) end
-
+	
+	DPSMate:UpdatePointer()
+	
 	DPSMate:InitializeFrames()
 	DPSMate.Options:InitializeConfigMenu()
+end
+
+function DPSMate:UpdatePointer()
+	DPSSettings = DPSMateSettings
+	DPSHist = DPSMateHistory
 end
 
 function DPSMate:SlashCMDHandler(msg)
@@ -134,16 +143,16 @@ function DPSMate:SlashCMDHandler(msg)
 		elseif cmd == "config" then
 			DPSMate_ConfigMenu:Show()
 		elseif cmd == "showAll" then
-			for _, val in DPSMateSettings["windows"] do DPSMate.Options:Show(getglobal("DPSMate_"..val["name"])) end
+			for _, val in DPSSettings["windows"] do DPSMate.Options:Show(getglobal("DPSMate_"..val["name"])) end
 		elseif cmd == "hideAll" then
-			for _, val in DPSMateSettings["windows"] do DPSMate.Options:Hide(getglobal("DPSMate_"..val["name"])) end
+			for _, val in DPSSettings["windows"] do DPSMate.Options:Hide(getglobal("DPSMate_"..val["name"])) end
 		elseif strsub(cmd, 1, 4) == "show" then
 			local frame = _G("DPSMate_"..strsub(cmd, 6))
 			if frame then
 				DPSMate.Options:Show(frame)
 			else
 				DPSMate:SendMessage(DPSMate.L["framesavailable"])
-				for _, val in pairs(DPSMateSettings["windows"]) do
+				for _, val in pairs(DPSSettings["windows"]) do
 					DPSMate:SendMessage("|c3ffddd80- "..val["name"].."|r")
 				end
 			end
@@ -153,7 +162,7 @@ function DPSMate:SlashCMDHandler(msg)
 				DPSMate.Options:Hide(frame)
 			else
 				DPSMate:SendMessage(DPSMate.L["framesavailable"])
-				for _, val in pairs(DPSMateSettings["windows"]) do
+				for _, val in pairs(DPSSettings["windows"]) do
 					DPSMate:SendMessage("|c3ffddd80- "..val["name"].."|r")
 				end
 			end
@@ -172,15 +181,14 @@ function DPSMate:SlashCMDHandler(msg)
 end
 
 function DPSMate:InitializeFrames()
-	if not DPSMateSettings["windows"][1] then return end
-	for k, val in pairs(DPSMateSettings["windows"]) do
+	if not DPSSettings["windows"][1] then return end
+	for k, val in pairs(DPSSettings["windows"]) do
 		if not _G("DPSMate_"..val["name"]) then
 			local f=CreateFrame("Frame", "DPSMate_"..val["name"], UIParent, "DPSMate_Statusframe")
 			f.Key=k
 		end
 		local frame = _G("DPSMate_"..val["name"])
 		frame.fborder = _G("DPSMate_"..val["name"].."_Border")
-		DPSMateSettings["windows"][k]["hidden"] = false
 		frame:SetToplevel(true)
 
 		_G("DPSMate_"..val["name"].."_ScrollFrame_Child_Total_Name"):SetText(self.L["total"])
@@ -211,13 +219,13 @@ function DPSMate:InitializeFrames()
 		head.bg = _G("DPSMate_"..val["name"].."_Head_Background")
 		head.sync = _G("DPSMate_"..val["name"].."_Head_Sync")
 
-		if DPSMateSettings["sync"] then
+		if DPSSettings["sync"] then
 			head.sync:GetNormalTexture():SetVertexColor(0.67,0.83,0.45,1)
 		else
 			head.sync:GetNormalTexture():SetVertexColor(1,0,0,1)
 		end
 
-		if DPSMateSettings["lock"] then
+		if DPSSettings["lock"] then
 			_G("DPSMate_"..val["name"].."_Resize"):Hide()
 		end
 		if not val["titlebar"] then
@@ -234,13 +242,13 @@ function DPSMate:InitializeFrames()
 		_G("DPSMate_"..val["name"].."_ScrollFrame_Background"):SetVertexColor(val["contentbgcolor"][1], val["contentbgcolor"][2], val["contentbgcolor"][3])
 		_G("DPSMate_"..val["name"].."_ScrollFrame_Background"):SetAlpha(val["bgopacity"] or 1)
 		frame:SetScale(val["scale"])
-		_G("DPSMate_"..val["name"].."_Head_Enable"):SetChecked(DPSMateSettings["enable"])
+		_G("DPSMate_"..val["name"].."_Head_Enable"):SetChecked(DPSSettings["enable"])
 
 		-- Styles // Bars
 		local child = _G("DPSMate_"..val["name"].."_ScrollFrame_Child")
 		_G("DPSMate_"..val["name"].."_ScrollFrame_Child_Total"):SetPoint("TOPLEFT", child, "TOPLEFT")
 		_G("DPSMate_"..val["name"].."_ScrollFrame_Child_Total"):SetPoint("TOPRIGHT", child, "TOPRIGHT")
-		if DPSMateSettings["showtotals"] then
+		if DPSSettings["showtotals"] then
 			_G("DPSMate_"..val["name"].."_ScrollFrame_Child_Total"):SetHeight(val["barheight"])
 		else
 			_G("DPSMate_"..val["name"].."_ScrollFrame_Child_Total"):SetHeight(0.00001)
@@ -264,7 +272,7 @@ function DPSMate:InitializeFrames()
 			if i>1 then
 				bar:SetPoint("TOPLEFT", _G("DPSMate_"..val["name"].."_ScrollFrame_Child_StatusBar"..(i-1)), "BOTTOMLEFT", 0, -1*val["barspacing"])
 			else
-				if DPSMateSettings["showtotals"] then
+				if DPSSettings["showtotals"] then
 					bar:SetPoint("TOPLEFT", _G("DPSMate_"..val["name"].."_ScrollFrame_Child_Total"), "BOTTOMLEFT", 0, -1*val["barspacing"])
 				else
 					bar:SetPoint("TOPLEFT", _G("DPSMate_"..val["name"].."_ScrollFrame_Child_Total"), "BOTTOMLEFT", 0, -1)
@@ -292,19 +300,25 @@ function DPSMate:InitializeFrames()
 			else
 				bar.bg:SetVertexColor(val["bgbarcolor"][1],val["bgbarcolor"][2],val["bgbarcolor"][3], 0.5)
 			end
+			
 		end
 		DPSMate.Options:SelectRealtime(frame, val["realtime"])
+		
+		if (val["hidden"] == true) then
+			frame:Hide()
+		end
 	end
 	DPSMate.Options:ToggleTitleBarButtonState()
 	DPSMate.Options:HideWhenSolo()
-	if not DPSMateSettings["enable"] then
+	if not DPSSettings["enable"] then
 		self:Disable()
 	else
 		self:Enable()
 	end
 
+	
 	-- Report delay button
-	DPSMate_Report_Delay:SetChecked(DPSMateSettings["reportdelay"])
+	DPSMate_Report_Delay:SetChecked(DPSSettings["reportdelay"])
 
 	DPSMate_MiniMap:SetToplevel(true)
 	DPSMate_PopUp:SetToplevel(true)
@@ -390,7 +404,7 @@ function DPSMate:CopyTable(t)
 end
 
 function DPSMate:GetUserById(id)
-	if not self.UserId then
+	if not self.UserId or not self.UserId[id] then
 		self.UserId = {}
 		for cat, val in DPSMateUser do
 			self.UserId[val[1]] = cat
@@ -400,7 +414,7 @@ function DPSMate:GetUserById(id)
 end
 
 function DPSMate:GetAbilityById(id)
-	if not self.AbilityId then
+	if not self.AbilityId or not self.AbilityId[id] then
 		self.AbilityId = {}
 		for cat, val in DPSMateAbility do
 			self.AbilityId[val[1]] = cat
@@ -437,32 +451,53 @@ function DPSMate:ScaleDown(arr, start)
 	return t
 end
 
+local framePointerCache = {}
 function DPSMate:SetStatusBarValue()
-	if not DPSMateSettings["windows"][1] or self.Options.TestMode then return end
+	
+	if not DPSSettings["windows"][1] or self.Options.TestMode then return end
 	local arr, cbt, ecbt, user, val, perc, strt, statusbar, r, g, b, img, len
-	for k,c in pairs(DPSMateSettings.windows) do
+	for k,c in pairs(DPSSettings.windows) do
 		arr, cbt, ecbt = self:GetMode(k)
 		user, val, perc, strt = self:GetSettingValues(arr,cbt,k,ecbt)
-		if DPSMateSettings["showtotals"] then
-			_G("DPSMate_"..c["name"].."_ScrollFrame_Child_Total_Value"):SetText(strt[1]..strt[2])
+		
+		-- Caching the global lookups
+		if not framePointerCache[k] then
+			framePointerCache[k] = {}
+			framePointerCache[k][1] = _G("DPSMate_"..c["name"].."_ScrollFrame_Child_Total_Value")
+			framePointerCache[k][2] = _G("DPSMate_"..c["name"].."_Head_Font")
+			framePointerCache[k][3] = _G("DPSMate_"..c["name"].."_ScrollFrame_Child")
+			framePointerCache[k][4] = _G("DPSMate_"..c["name"].."_ScrollFrame_Child_Total")
+			for i=1, 40 do
+				framePointerCache[k][4+i] = {}
+				framePointerCache[k][4+i][1] = _G("DPSMate_"..c["name"].."_ScrollFrame_Child_StatusBar"..i)
+				framePointerCache[k][4+i][2] = _G("DPSMate_"..c["name"].."_ScrollFrame_Child_StatusBar"..i.."_Name")
+				framePointerCache[k][4+i][3] = _G("DPSMate_"..c["name"].."_ScrollFrame_Child_StatusBar"..i.."_Value")
+				framePointerCache[k][4+i][4] = _G("DPSMate_"..c["name"].."_ScrollFrame_Child_StatusBar"..i.."_Icon")
+			end
+		end
+		
+		local FPC = framePointerCache[k];
+		
+		if DPSSettings["showtotals"] then
+			FPC[1]:SetText(strt[1]..strt[2])
 		end
 		if not c["cbtdisplay"] then
-			_G("DPSMate_"..c["name"].."_Head_Font"):SetText(self.Options.Options[1]["args"][c["CurMode"]].name.." ["..self.Options:FormatTime(cbt).."]")
+			FPC[2]:SetText(self.Options.Options[1]["args"][c["CurMode"]].name.." ["..self.Options:FormatTime(cbt).."]")
 		end
 		len = 0
 		for i=1, 40 do
-			statusbar = _G("DPSMate_"..c["name"].."_ScrollFrame_Child_StatusBar"..i)
+			statusbar = FPC[4+i][1]
 			if user[i] then
 				r,g,b,img = self:GetClassColor(user[i])
 				statusbar:SetStatusBarColor(r,g,b, 1)
 
 				if c["ranks"] then 
-					_G("DPSMate_"..c["name"].."_ScrollFrame_Child_StatusBar"..i.."_Name"):SetText(i..". "..user[i])
+					FPC[4+i][2]:SetText(i..". "..user[i])
 				else
-					_G("DPSMate_"..c["name"].."_ScrollFrame_Child_StatusBar"..i.."_Name"):SetText(user[i])
+					FPC[4+i][2]:SetText(user[i])
 				end
-				_G("DPSMate_"..c["name"].."_ScrollFrame_Child_StatusBar"..i.."_Value"):SetText(val[i])
-				_G("DPSMate_"..c["name"].."_ScrollFrame_Child_StatusBar"..i.."_Icon"):SetTexture("Interface\\AddOns\\DPSMate\\images\\class\\"..img)
+				FPC[4+i][3]:SetText(val[i])
+				FPC[4+i][4]:SetTexture("Interface\\AddOns\\DPSMate\\images\\class\\"..img)
 				statusbar:SetValue(perc[i])
 
 				statusbar.user = user[i]
@@ -472,10 +507,10 @@ function DPSMate:SetStatusBarValue()
 				statusbar:Hide()
 			end
 		end
-		_G("DPSMate_"..c["name"].."_ScrollFrame_Child"):SetHeight((len+1)*(c["barheight"]+c["barspacing"]))
-		_G("DPSMate_"..c["name"].."_ScrollFrame_Child_Total"):Show()
+		FPC[3]:SetHeight((len+1)*(c["barheight"]+c["barspacing"]))
+		FPC[4]:Show()
 		if len == 0 then
-			_G("DPSMate_"..c["name"].."_ScrollFrame_Child_Total"):Hide()
+			FPC[4]:Hide()
 		end
 	end
 end
@@ -489,7 +524,7 @@ function DPSMate:strrev(str)
 end
 
 function DPSMate:Commas(n,k)
-	if DPSMateSettings["windows"][k]["numberformat"] == 3 then
+	if DPSSettings["windows"][k]["numberformat"] == 3 then
 		n = strformat("%.0f", n)
 		for left, num, right in strgfind(n, '([^%d]*%d)(%d+)') do
 			return left and left..self:strrev(strgsub(self:strrev(num), '(%d%d%d)','%1,'))
@@ -500,7 +535,7 @@ end
 
 function DPSMate:FormatNumbers(dmg,total,sort,k)
 	local oldd, oldt, olds = dmg, total, sort
-	if DPSMateSettings["windows"][k]["numberformat"] == 2 then
+	if DPSSettings["windows"][k]["numberformat"] == 2 then
 		if dmg>10000 then
 			dmg = strformat("%.0f", (dmg/1000))
 		end
@@ -510,7 +545,7 @@ function DPSMate:FormatNumbers(dmg,total,sort,k)
 		if sort>10000 then
 			sort = strformat("%.0f", (sort/1000))
 		end
-	elseif DPSMateSettings["windows"][k]["numberformat"] == 4 then
+	elseif DPSSettings["windows"][k]["numberformat"] == 4 then
 		if dmg>10000 then
 			dmg = strformat("%.1f", (dmg/1000))
 		end
@@ -527,7 +562,7 @@ end
 function DPSMate:ApplyFilter(key, name)
 	if not key or not name or not DPSMateUser[name] then return true end
 	local class = DPSMateUser[name][2] or "warrior"
-	local path = DPSMateSettings["windows"][key]
+	local path = DPSSettings["windows"][key]
 	if path["grouponly"] then
 		if not DPSMate.Parser.TargetParty[name] and DPSMate.Parser.TargetParty ~= {} then
 			return false
@@ -558,12 +593,12 @@ end
 
 function DPSMate:GetSettingValues(arr, cbt, k, ecbt)
 	k = k or 1
-	return self.RegistredModules[DPSMateSettings["windows"][k]["CurMode"]]:GetSettingValues(arr, cbt, k, ecbt)
+	return self.RegistredModules[DPSSettings["windows"][k]["CurMode"]]:GetSettingValues(arr, cbt, k, ecbt)
 end
 
 function DPSMate:EvalTable(k)
 	k = k or 1
-	return self.RegistredModules[DPSMateSettings["windows"][k]["CurMode"]]:EvalTable(DPSMateUser[UnitName("player")], k)
+	return self.RegistredModules[DPSSettings["windows"][k]["CurMode"]]:EvalTable(DPSMateUser[UnitName("player")], k)
 end
 
 function DPSMate:GetClassColor(class)
@@ -581,15 +616,15 @@ end
 
 function DPSMate:GetMode(k)
 	k = k or 1
-	local Handler = DPSMate.RegistredModules[DPSMateSettings["windows"][k]["CurMode"]]
+	local Handler = DPSMate.RegistredModules[DPSSettings["windows"][k]["CurMode"]]
 	local result = {total={Handler.DB[1], DPSMateCombatTime["total"], DPSMateCombatTime["effective"][1]}, currentfight={Handler.DB[2], DPSMateCombatTime["current"], DPSMateCombatTime["effective"][2]}}
 	local num
-	for cat, val in pairs(DPSMateSettings["windows"][k]["options"][2]) do
+	for cat, val in pairs(DPSSettings["windows"][k]["options"][2]) do
 		if val then
 			if strfind(cat, "segment") then
 				num = tonumber(strsub(cat, 8))
-				if DPSMateHistory[Handler.Hist][num] then
-					return DPSMateHistory[Handler.Hist][num], DPSMateCombatTime["segments"][num][1], DPSMateCombatTime["segments"][num][2]
+				if (Handler.Hist) and DPSHist[Handler.Hist] and self:TableLength(DPSHist[Handler.Hist]) >= num then
+					return DPSHist[Handler.Hist][num], DPSMateCombatTime["segments"][num][1], DPSMateCombatTime["segments"][num][2]
 				else
 					return {}, 0, 0
 				end
@@ -603,12 +638,12 @@ end
 function DPSMate:GetModeByArr(arr, k, Hist)
 	local result = {total={arr[1], DPSMateCombatTime["total"], DPSMateCombatTime["effective"][1]}, currentfight={arr[2], DPSMateCombatTime["current"], DPSMateCombatTime["effective"][2]}}
 	local num
-	for cat, val in pairs(DPSMateSettings["windows"][k]["options"][2]) do
+	for cat, val in pairs(DPSSettings["windows"][k]["options"][2]) do
 		if val then
 			if strfind(cat, "segment") then
 				num = tonumber(strsub(cat, 8))
-				if DPSMateHistory[Hist or arr.Hist][num] then
-					return DPSMateHistory[Hist or arr.Hist][num], DPSMateCombatTime["segments"][num][1], DPSMateCombatTime["segments"][num][2]
+				if (Hist or arr.Hist) and DPSHist[Hist or arr.Hist] and self:TableLength(DPSHist[Hist or arr.Hist]) >= num then
+					return DPSHist[Hist or arr.Hist][num], DPSMateCombatTime["segments"][num][1], DPSMateCombatTime["segments"][num][2]
 				else
 					return {}, 0, 0
 				end
@@ -623,11 +658,11 @@ function DPSMate:GetModeName(k)
 	k = k or 1
 	local result = {total="Total", currentfight="Current fight"}
 	local num
-	for cat, val in pairs(DPSMateSettings["windows"][k]["options"][2]) do
+	for cat, val in pairs(DPSSettings["windows"][k]["options"][2]) do
 		if val then
 			if strfind(cat, "segment") then
 				num = tonumber(strsub(cat, 8))
-				return DPSMateHistory["names"][num]
+				return DPSHist["names"][num]
 			else
 				return result[cat]
 			end
@@ -660,25 +695,25 @@ function DPSMate:Enable()
 end
 
 function DPSMate:Broadcast(type, who, what, with, value, failtype)
-	if DPSMateSettings["broadcasting"] then
+	if DPSSettings["broadcasting"] then
 		if IsRaidLeader() or IsRaidOfficer() then
 			ch = "RAID"
-			if DPSMateSettings["bcrw"] then
+			if DPSSettings["bcrw"] then
 				ch = "RAID_WARNING"
 			end
-			if DPSMateSettings["bccd"] and type == 1 then
+			if DPSSettings["bccd"] and type == 1 then
 				SendChatMessage("BULK", "DPSMateChat", self.L["bccdo"](who, what), ch, nil, nil)
 				return
-			elseif DPSMateSettings["bccd"] and type == 6 then
+			elseif DPSSettings["bccd"] and type == 6 then
 				SendChatMessage("BULK", "DPSMateChat", self.L["bccdt"](who, what), ch, nil, nil)
 				return
-			elseif DPSMateSettings["bcress"] and type == 2 then
+			elseif DPSSettings["bcress"] and type == 2 then
 				SendChatMessage("BULK", "DPSMateChat", self.L["bcress"](who, what), ch, nil, nil)
 				return
-			elseif DPSMateSettings["bckb"] and type == 4 then
+			elseif DPSSettings["bckb"] and type == 4 then
 				SendChatMessage("BULK", "DPSMateChat", self.L["bckb"](who, what, with, value), ch, nil, nil)
 				return
-			elseif DPSMateSettings["bcfail"] and type == 3 then
+			elseif DPSSettings["bcfail"] and type == 3 then
 				if failtype == 1 then
 					SendChatMessage("BULK", "DPSMateChat", self.L["bcfailo"](what, who, value, with), ch, nil, nil)
 				elseif failtype == 3 then

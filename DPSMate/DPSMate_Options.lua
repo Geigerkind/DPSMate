@@ -577,13 +577,13 @@ Logout = function()
 end
 
 function DPSMate.Options:ToggleVisibility()
-	for _, val in DPSMateSettings["windows"] do
+	for key, val in DPSMateSettings["windows"] do
 		if val["hidden"] then
 			getglobal("DPSMate_"..val["name"]):Show()
-			val["hidden"] = false
+			DPSMateSettings["windows"][key]["hidden"] = false
 		else
 			getglobal("DPSMate_"..val["name"]):Hide()
-			val["hidden"] = true
+			DPSMateSettings["windows"][key]["hidden"] = true
 		end
 	end
 end
@@ -827,6 +827,9 @@ function DPSMate.Options:PopUpAccept(bool, bypass)
 				},
 			}
 			
+			--DPSMate:UpdatePointer()
+			--DPSMate.DB:UpdatePointer()
+			
 			-- Get buffs of people after reset
 			local type = "party"
 			local num = GetNumPartyMembers()
@@ -876,6 +879,9 @@ function DPSMate.Options:PopUpAccept(bool, bypass)
 			DPSMateFails[2] = {}
 			DPSMateCCBreaker[2] = {}
 			DPSMateCombatTime["current"] = 0.0001
+			
+			--DPSMate:UpdatePointer()
+			--DPSMate.DB:UpdatePointer()
 		end
 		
 		if DPSMate.Modules.DPS then DPSMate.Modules.DPS.DB = DPSMateDamageDone end
@@ -927,6 +933,10 @@ function DPSMate.Options:PopUpAccept(bool, bypass)
 				val["options"][2]["total"] = true
 			end
 		end
+		
+		DPSMate:UpdatePointer()
+		DPSMate.DB:UpdatePointer()
+		
 		DPSMate.DB:DamageDone(UnitName("player"), "Init", 0, 0, 0, 0, 0, 0, 0, 0, 0) -- Hackfix to fix the hunter issue where the player is not shown if pet damage is merged
 		DPSMate.Options:InitializeSegments()
 		DPSMate:SetStatusBarValue()
@@ -1454,7 +1464,7 @@ function DPSMate.Options:Report()
 	DPSMate_Report:Hide()
 end
 
-local AbilityModes = {"damage", "dps", "healing", "hps", "OHPS", "overhealing", "effectivehealing", "effectivehps", "deaths", "interrupts", "dispels", "decurses", "curedisease", "curepoison", "liftmagic", "aurasgained", "auraslost", "aurasuptime", "procs", "casts", "ccbreaker"}
+local AbilityModes = {"damage", "dps", "healing", "hps", "OHPS", "overhealing", "effectivehealing", "effectivehps", "deaths", "interrupts", "dispels", "decurses", "curedisease", "curepoison", "liftmagic", "aurasgained", "auraslost", "aurasuptime", "procs", "casts", "ccbreaker", "healingandabsorbs"}
 function DPSMate.Options:ReportUserDetails(obj, channel, name)
 	local Key, user = obj:GetParent():GetParent():GetParent().Key, obj.user
 	local _, cbt, ecbt = DPSMate:GetMode(Key)

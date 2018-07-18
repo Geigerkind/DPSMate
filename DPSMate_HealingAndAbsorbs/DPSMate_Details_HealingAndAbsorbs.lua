@@ -434,7 +434,7 @@ function DPSMate.Modules.DetailsHealingAndAbsorbs:SelectDetails_HealingAndAbsorb
 	end
 	_G(pathh.."_ScrollButton"..i.."_selected"):Show()
 	local hit, crit, hitav, critav, hitMin, hitMax, critMin, critMax, total, max = 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-	if dArr[lineplusoffset][2] and not toggle then -- IsAbsorb
+	if dArr[lineplusoffset] and dArr[lineplusoffset][2] and not toggle then -- IsAbsorb
 		local abString = DPSMate:GetAbilityById(tonumber(uArr[lineplusoffset]))
 		for cat, val in DPSMateAbsorbs[curKey] do 
 			for ca, va in val do
@@ -493,7 +493,7 @@ function DPSMate.Modules.DetailsHealingAndAbsorbs:SelectDetails_HealingAndAbsorb
 			end
 		end
 		total, max = hit, hit
-	else
+	elseif path then
 		hit, crit, hitav, critav, hitMin, hitMax, critMin, critMax = path[2], path[3], path[4], path[5], path[6], path[7], path[8], path[9]
 		total, max = hit+crit, DPSMate:TMax({hit, crit})
 	end

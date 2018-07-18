@@ -486,6 +486,10 @@ local _,playerclass = UnitClass("player")
 local fac = UnitFactionGroup("player")
 local UL = UnitLevel
 
+local DPSTool = {}
+local DPSToolTextLeft1 = {}
+local GetPlayerBuff = GetPlayerBuff
+
 -- Begin Functions
 
 function DPSMate.Parser:OnLoad()
@@ -498,8 +502,16 @@ function DPSMate.Parser:OnLoad()
 	if SW_FixLogStrings then
 		DPSMate:SendMessage("Please disable SW_StatsFixLogStrings and SW_Stats. Those addons cause issues.")
 	end
+	
+	DPSTool = DPSMate_Tooltip
+	DPSToolTextLeft1 = DPSMate_TooltipTextLeft1
+	
+	if self.InitParser then
+		self:InitParser()
+	end
 end
 
+local UnitName = UnitName
 function DPSMate.Parser:GetUnitByName(target)
 	local unit = self.TargetParty[target]
 	if not unit then
@@ -512,6 +524,8 @@ function DPSMate.Parser:GetUnitByName(target)
 	return unit
 end
 
+local UnitHealthMax = UnitHealthMax
+local UnitHealth = UnitHealth
 function DPSMate.Parser:GetOverhealByName(amount, target)
 	local result, unit = 0, self:GetUnitByName(target)
 	if unit then result = amount-(UnitHealthMax(unit)-UnitHealth(unit)) end
@@ -554,12 +568,13 @@ function DPSMate.Parser:AssociateShaman(name, old, update)
 end
 -- The totem aura just reports a removed event in the chat.
 -- Maybe we can guess here?
+local UnitDebuff = UnitDebuff
 DPSMate.Parser.PLAYER_AURAS_CHANGED = function(unit)
 	local aura, debuffDispelType
 	for i=1, 4 do
-		DPSMate_Tooltip:SetPlayerBuff(GetPlayerBuff(i, "HARMFUL"))
-		aura = DPSMate_TooltipTextLeft1:GetText()
-		DPSMate_Tooltip:Hide()
+		DPSTool:SetPlayerBuff(GetPlayerBuff(i, "HARMFUL"))
+		aura = DPSToolTextLeft1:GetText()
+		DPSTool:Hide()
 		if not aura then break end
 		_, _, debuffDispelType = UnitDebuff("player", i);
 		if debuffDispelType and DPSMateAbility[aura] then

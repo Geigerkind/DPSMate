@@ -118,7 +118,7 @@ function DPSMate.Modules.HealingAndAbsorbs:GetSortedTable(arr, k)
 		
 		-- Evaluate E Healing table
 		local d, total2 = {}, 0
-		local arr = DPSMate:GetModeByArr(DPSMateEHealing, k)
+		local arr = DPSMate:GetModeByArr(DPSMateEHealing, k, "EHealing")
 		for c, v in pairs(arr) do
 			if DPSMate:ApplyFilter(k, DPSMate:GetUserById(c)) then
 				d[c] = v["i"]
@@ -164,7 +164,7 @@ end
 function DPSMate.Modules.HealingAndAbsorbs:EvalTable(user, k)
 	local b, total = {}, 0
 	local temp = {}
-	local arr = DPSMate:GetModeByArr(DPSMateAbsorbs, k)
+	local arr = DPSMate:GetModeByArr(DPSMateAbsorbs, k, "Absorbs")
 	local ownername = DPSMate:GetUserById(user[1])
 	for cat, val in pairs(arr) do -- 28 Target
 		for ca, va in pairs(val) do -- 28 Owner
@@ -225,7 +225,7 @@ function DPSMate.Modules.HealingAndAbsorbs:EvalTable(user, k)
 	
 	-- Evaluate E Healing table
 	local d = {}
-	local arr = DPSMate:GetModeByArr(DPSMateEHealing, k)
+	local arr = DPSMate:GetModeByArr(DPSMateEHealing, k, "EHealing")
 	if arr[user[1]] then
 		for c, v in pairs(arr[user[1]]) do
 			if c~="i" then
@@ -254,6 +254,7 @@ function DPSMate.Modules.HealingAndAbsorbs:EvalTable(user, k)
 		end
 		total=total+val
 	end
+	
 
 	for cat, val in pairs(b) do
 		local i = 1
