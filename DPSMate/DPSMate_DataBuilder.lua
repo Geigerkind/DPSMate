@@ -1357,6 +1357,11 @@ end
 local ActiveMob = {}
 function DPSMate.DB:EnemyDamage(mode, arr, Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, Ddodge, Dresist, Damount, cause, Dblock, Dcrush)
 	ActiveMob[cause] = true
+	
+	local saveUser = Duser
+	local saveCause = cause
+	local saveAb = Dname
+	
 	Duser = self:BuildUser(Duser)
 	cause = self:BuildUser(cause)
 	
@@ -1379,6 +1384,11 @@ function DPSMate.DB:EnemyDamage(mode, arr, Duser, Dname, Dhit, Dcrit, Dmiss, Dpa
 	end
 
 	Dname = self:BuildAbility(Dname)
+	
+	if Dname == nil or cause == nil or Duser == nil or Damount == nil then
+		DPSMate:SendMessage("Ab/Cause/Duser/amount: one of them is nil: "..(saveAb or "NONE").."/"..(saveCause or "NONE").."/"..(saveUser or "NONE").."/"..(Damount or "NONE"))
+		return
+	end
 	
 	for cat=1,2 do 
 		gen = arr[cat]

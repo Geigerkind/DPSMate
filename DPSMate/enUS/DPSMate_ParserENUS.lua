@@ -425,6 +425,7 @@ local function GetDamage(nextword)
 	else
 		return tnbr(nextword), ""
 	end	
+	DPSMate:SendMessage("GetDamage returns nil: Input:"..(nextword or "INPUT NIL"))
 	return nil, nil
 end
 
@@ -456,7 +457,7 @@ function DPSMate.Parser:SelfHits(msg)
 	local nextword, choice;
 	_, choice, k = GetNextWord(msg, k, SHChoices, true)
 	if choice == -1 then
-		DPSMate:SendMessage("Event not parsed yet, inform Shino! => "..msg)
+		DPSMate:SendMessage("1: Event not parsed yet, inform Shino! => "..msg)
 		return
 	end
 	if choice < 3 then
@@ -527,7 +528,7 @@ function DPSMate.Parser:SelfMisses(msg)
 	local nextword, choice;
 	_, choice, k = GetNextWord(msg, k, SMChoices, true)
 	if choice == -1 then
-		DPSMate:SendMessage("Event not parsed yet, inform Shino! => "..msg)
+		DPSMate:SendMessage("2: Event not parsed yet, inform Shino! => "..msg)
 		return
 	end
 	if choice == 1 then
@@ -552,15 +553,18 @@ function DPSMate.Parser:SelfMisses(msg)
 	end
 end
 
-local SSDChoices = {" hits ", " crits ", " was ", " is parried by ", " missed ", " is absorbed by "}
+local SSDChoices = {" hits ", " crits ", " was ", " is parried by ", " missed ", " is absorbed by ", "ast ", " failed.", "You interrupt ", " is reflected back "}
 function DPSMate.Parser:SelfSpellDMG(msg)
 	local i,j,k = 0,0,6
 	local nextword, choice, ability;
 	ability, choice, k = GetNextWord(msg, k, SSDChoices, false)
 	if choice == -1 then
-		DPSMate:SendMessage("Event not parsed yet, inform Shino! => "..msg)
+		DPSMate:SendMessage("3: Event not parsed yet, inform Shino! => "..msg)
 		return
 	end
+	if choice == 8 then return end
+	if choice == 10 then return end
+	
 	if choice < 3 then
 		local hit, crit = 0,0
 		if choice == 1 then hit = 1 else crit = 1 end
@@ -618,10 +622,51 @@ function DPSMate.Parser:SelfSpellDMG(msg)
 		DB:EnemyDamage(true, nil, Player, ability, 0, 0, 1, 0, 0, 0, 0, target, 0, 0)
 		DB:DamageDone(Player, ability, 0, 0, 1, 0, 0, 0, 0, 0, 0)
 		return
-	else
+	elseif choice == 6 then
 		i,j = strfind(msg, ".", k, true);
 		local target = strsub(msg, k, j-1);
 		DB:Absorb(ability, target, Player)
+		return
+	elseif choice == 7 then
+		i,j = strfind(msg, " on ", k, true)
+		if i then
+			ability = strsub(msg, k, i-1)
+			k = j+1
+			i,j = strfind(msg, ".", k, true)
+			local target = strsub(msg, k, i-1)
+			if target=="you" then target = Player end
+			if Dispels[ability] then DB:AwaitDispel(ability, target, Player, GetTime()) end
+			if RCD[ability] then DPSMate:Broadcast(2, Player, target, ability) end
+			return
+		else
+			i,j = strfind(msg, ".", k, true)
+			ability = strsub(msg, k, i-1)
+			if Dispels[ability] then DB:AwaitDispel(ability, "Unknown", Player, GetTime()) end
+			return
+		end	
+		return
+	elseif choice == 9 then
+		i,j = strfind(msg, ".", k, true);
+		nextword = strsub(msg, k, j-1);
+		i,j = strfind(nextword, " 's ", 1, true)
+		local target = strsub(nextword, 1, i-1)
+		ability = strsub(nextword, j+1)
+		
+		local causeAbility = "Counterspell"
+		local usr = DPSMateUser[source]
+		if usr then
+			if usr[2] == "priest" then
+				causeAbility = "Silence"
+			end
+			if usr[4] and usr[6] then
+				local owner = DPSMate:GetUserById(usr[6])
+				if owner and DPSMateUser[owner] then
+					causeAbility = "Spell Lock"
+					source = owner
+				end
+			end
+		end
+		DB:Kick(Player, target, causeAbility, ability)
 		return
 	end
 end
@@ -632,7 +677,7 @@ function DPSMate.Parser:PeriodicDamage(msg)
 	local nextword, choice, source;
 	source, choice, k = GetNextWord(msg, k, PDChoices, false)
 	if choice == -1 then
-		DPSMate:SendMessage("Event not parsed yet, inform Shino! => "..msg)
+		DPSMate:SendMessage("4: Event not parsed yet, inform Shino! => "..msg)
 		return
 	end
 	if choice == 1 then
@@ -689,87 +734,145 @@ function DPSMate.Parser:PeriodicDamage(msg)
 	end
 end
 
-local FPDList = {" hits ", " crits ", " was ", " is parried by ", " missed "}
+local FPDList = {" hits ", " crits ", " was ", " is parried by ", " missed ", " misses ", " is absorbed by ", " fails.", " is reflected back "}
+local FPDList2 = {" begins to cast ", " begins to perform ", " is killed by ", " casts ", " performs "}
 function DPSMate.Parser:FriendlyPlayerDamage(msg)
 	local i,j,k = 0,0,0;
 	local nextword, choice;
 	i,j = strfind(msg, " interrupts ", 1, true);
 	if not i then
 		i,j = strfind(msg, " 's ", 1, true);
-		local ability;
-		local source = strsub(msg, 1, j-4);
-		k = j+1
-		
-		ability, choice, k = GetNextWord(msg, k, FPDList, false)
-		if choice == -1 then
-			DPSMate:SendMessage("Event not parsed yet, inform Shino! => "..msg)
-			return
-		end
-		if choice < 3 then
-			local hit = 0
-			if choice == 1 then hit=1 end
-			local crit = 0
-			if choice == 2 then crit=1 end
-			
-			i,j = strfind(msg, " for ", k, true);
-			local target = strsub(msg, k, i-1);
-			k = j+1
-			i,j = strfind(msg, ".", k, true);
-			nextword = strsub(msg, k, j-1);
-			
-			i,j = strfind(nextword, " ", 1, true);
-			
-			if target=="you" then target=Player end
-			
-			local prefixAmount, prefixCase, k = GetPrefix(msg, k)
-			if prefixCase and prefixCase == "absorbed" then
-				DB:SetUnregisterVariables(prefixAmount, ability, source)
+		if not i then
+			local source
+			source, choice, k = GetNextWord(msg, k, FPDList2, false)
+			if choice == -1 then
+				DPSMate:SendMessage("5: Event not parsed yet, inform Shino! => "..msg)
+				return
 			end
 			
-			if Kicks[ability] then DB:AssignPotentialKick(source, ability, target, GetTime()) end
-			if DmgProcs[ability] then DB:BuildBuffs(source, source, ability, true) end
-			DB:EnemyDamage(true, nil, source, ability, hit, crit, 0, 0, 0, 0, amount, target, 0, 0)
-			DB:DamageDone(source, ability, hit, crit, 0, 0, 0, 0, amount, 0, 0)
-			
-			if self.TargetParty[target] then -- Fixes the issue for pvp death logging
-				if self.TargetParty[source] then
-					DB:BuildFail(1, target, source, ability, amount);
-				end
-				DB:DeathHistory(target, source, ability, amount, hit, crit, 0, 0) 
-			end
-			DB:AddSpellSchool(ability,prefix)
-			
-			return
-		elseif (choice == 3) then
-			i,j = strfind(msg, " by ", k, true);
-			local case = strsub(msg, k, i-1);
-			k = j+1
-			i,j = strfind(msg, ".", k, true);
-			local target = strsub(msg, k, j-1);
-			
-			if case == "dodged" then
-				DB:EnemyDamage(true, nil, source, ability, 0, 0, 0, 0, 1, 0, 0, target, 0, 0)
-				DB:DamageDone(source, ability, 0, 0, 0, 0, 1, 0, 0, 0, 0)
-			elseif case == "blocked" then
-				DB:EnemyDamage(true, nil, source, ability, 0, 0, 0, 0, 0, 0, 0, target, 1, 0)
-				DB:DamageDone(source, ability, 0, 0, 0, 0, 0, 0, 0, 0, 1)
+			if choice < 3 then
+				i,j = strfind(msg, ".", k, true)
+				local ability = strsub(msg, k, i-1)
+				DB:RegisterPotentialKick(source, ability, GetTime());
+			elseif choice == 3 then
+				return -- Not handled
 			else
-				DB:EnemyDamage(true, nil, source, ability, 0, 0, 0, 0, 0, 1, 0, target, 0, 0)
-				DB:DamageDone(source, ability, 0, 0, 0, 0, 0, 1, 0, 0, 0)
+				i,j = strfind(msg, " on ", k, true)
+				if i then
+					local ability = strsub(msg, k, i-1)
+					k = j+1
+					i,j = strfind(msg, ".", k, true)
+					local target = strsub(msg, k, i-1)
+					if target=="you" then target = Player end
+					if Dispels[ability] then DB:AwaitDispel(ability, target, source, GetTime()) end
+					if RCD[ability] then DPSMate:Broadcast(2, source, target, ability) end
+					return
+				else
+					i,j = strfind(msg, ".", k, true)
+					local ability = strsub(msg, k, i-1)
+					if Dispels[ability] then DB:AwaitDispel(ability, "Unknown", source, GetTime()) end
+					return
+				end	
 			end
-			return
-		elseif (choice == 4) then
-			i,j = strfind(msg, ".", k, true);
-			local target = strsub(msg, k, j-1);
-			DB:EnemyDamage(true, nil, source, ability, 0, 0, 0, 1, 0, 0, 0, target, 0, 0)
-			DB:DamageDone(source, ability, 0, 0, 0, 1, 0, 0, 0, 0, 0)
 			return
 		else
-			i,j = strfind(msg, ".", k, true);
-			local target = strsub(msg, k, j-1);
-			DB:EnemyDamage(true, nil, source, ability, 0, 0, 1, 0, 0, 0, 0, target, 0, 0)
-			DB:DamageDone(source, ability, 0, 0, 1, 0, 0, 0, 0, 0, 0)
-			return
+			if strfind(msg, "You absorb ", 1, true) then
+				i,j = strfind(msg, " 's ", 1, true);
+				local target = strsub(msg, 1, i-1)
+				k = j+1
+				i,j = strfind(msg, ".", k, true)
+				local ability = strsub(msg, k, i-1)
+				DB:Absorb(ability, Player, target)
+				return
+			else
+				local ability;
+				local source = strsub(msg, 1, j-4);
+				k = j+1
+				
+				ability, choice, k = GetNextWord(msg, k, FPDList, false)
+				if choice == -1 then
+					DPSMate:SendMessage("6: Event not parsed yet, inform Shino! => "..msg)
+					return
+				end
+				if choice == 8 then return end -- fails
+				if choice == 9 then return end -- is reflected back
+				
+				if choice < 3 then
+					local hit = 0
+					if choice == 1 then hit=1 end
+					local crit = 0
+					if choice == 2 then crit=1 end
+					
+					i,j = strfind(msg, " for ", k, true);
+					local target = strsub(msg, k, i-1);
+					k = j+1
+					i,j = strfind(msg, ".", k, true);
+					nextword = strsub(msg, k, j-1);
+					local amount, school = GetDamage(nextword)
+					
+					if target=="you" then target=Player end
+					
+					local prefixAmount, prefixCase, k = GetPrefix(msg, k)
+					if prefixCase and prefixCase == "absorbed" then
+						DB:SetUnregisterVariables(prefixAmount, ability, source)
+					end
+					
+					if Kicks[ability] then DB:AssignPotentialKick(source, ability, target, GetTime()) end
+					if DmgProcs[ability] then DB:BuildBuffs(source, source, ability, true) end
+					DB:EnemyDamage(true, nil, source, ability, hit, crit, 0, 0, 0, 0, amount, target, 0, 0)
+					DB:DamageDone(source, ability, hit, crit, 0, 0, 0, 0, amount, 0, 0)
+					
+					if self.TargetParty[target] then -- Fixes the issue for pvp death logging
+						if self.TargetParty[source] then
+							DB:BuildFail(1, target, source, ability, amount);
+						end
+						DB:DeathHistory(target, source, ability, amount, hit, crit, 0, 0) 
+					end
+					DB:AddSpellSchool(ability,school)
+					
+					return
+				elseif (choice == 3) then
+					i,j = strfind(msg, " by ", k, true);
+					if not i then
+						DPSMate:SendMessage("i is nil, inform Shino: "..msg);
+						return
+					end
+				
+					local case = strsub(msg, k, i-1);
+					k = j+1
+					i,j = strfind(msg, ".", k, true);
+					local target = strsub(msg, k, j-1);
+					
+					if case == "dodged" then
+						DB:EnemyDamage(true, nil, source, ability, 0, 0, 0, 0, 1, 0, 0, target, 0, 0)
+						DB:DamageDone(source, ability, 0, 0, 0, 0, 1, 0, 0, 0, 0)
+					elseif case == "blocked" then
+						DB:EnemyDamage(true, nil, source, ability, 0, 0, 0, 0, 0, 0, 0, target, 1, 0)
+						DB:DamageDone(source, ability, 0, 0, 0, 0, 0, 0, 0, 0, 1)
+					else
+						DB:EnemyDamage(true, nil, source, ability, 0, 0, 0, 0, 0, 1, 0, target, 0, 0)
+						DB:DamageDone(source, ability, 0, 0, 0, 0, 0, 1, 0, 0, 0)
+					end
+					return
+				elseif (choice == 4) then
+					i,j = strfind(msg, ".", k, true);
+					local target = strsub(msg, k, j-1);
+					DB:EnemyDamage(true, nil, source, ability, 0, 0, 0, 1, 0, 0, 0, target, 0, 0)
+					DB:DamageDone(source, ability, 0, 0, 0, 1, 0, 0, 0, 0, 0)
+					return
+				elseif choice < 7 then
+					i,j = strfind(msg, ".", k, true);
+					local target = strsub(msg, k, j-1);
+					DB:EnemyDamage(true, nil, source, ability, 0, 0, 1, 0, 0, 0, 0, target, 0, 0)
+					DB:DamageDone(source, ability, 0, 0, 1, 0, 0, 0, 0, 0, 0)
+					return
+				elseif choice == 7 then
+					i,j = strfind(msg, ".", k, true);
+					local target = strsub(msg, k, j-1);
+					DB:Absorb(ability, target, source)
+					return
+				end
+			end
 		end
 	else
 		local source = strsub(msg, k, i-1);
@@ -804,7 +907,7 @@ function DPSMate.Parser:FriendlyPlayerHits(msg)
 	local nextword, choice, source;
 	source, choice, k = GetNextWord(msg, k, FPHChoices, false)
 	if choice == -1 then
-		DPSMate:SendMessage("Event not parsed yet, inform Shino! => "..msg)
+		DPSMate:SendMessage("7: Event not parsed yet, inform Shino! => "..msg)
 		return
 	end
 	if choice < 3 then
@@ -875,14 +978,14 @@ function DPSMate.Parser:FriendlyPlayerHits(msg)
 	end
 end
 
-local FPMChoices = {" misses ", " attacks. "}
+local FPMChoices = {" misses ", " attacks. ", " attacks but "}
 local FPMChoices2 = {" dodge", " parr", " block"}
 function DPSMate.Parser:FriendlyPlayerMisses(msg)
 	local i,j,k = 0,0,0
 	local nextword, choice, source;
 	source, choice, k = GetNextWord(msg, k, FPMChoices, false)
 	if choice == -1 then
-		DPSMate:SendMessage("Event not parsed yet, inform Shino! => "..msg)
+		DPSMate:SendMessage("8: Event not parsed yet, inform Shino! => "..msg)
 		return
 	end
 	if choice == 1 then
@@ -893,7 +996,7 @@ function DPSMate.Parser:FriendlyPlayerMisses(msg)
 		DB:EnemyDamage(true, nil, source, AAttack, 0, 0, 1, 0, 0, 0, 0, target, 0, 0)
 		DB:DamageDone(source, AAttack, 0, 0, 1, 0, 0, 0, 0, 0, 0)
 		return
-	else
+	elseif choice == 2 then
 		i, j = strfind(msg, "absorb", k, true)
 		local target;
 		if i then
@@ -913,6 +1016,9 @@ function DPSMate.Parser:FriendlyPlayerMisses(msg)
 			DB:DamageDone(source, AAttack, 0, 0, 0, parry, dodge, 0, 0, 0, block)
 			return
 		end
+	else
+		-- Ignore but is immune etc
+		return
 	end
 end
 
@@ -932,6 +1038,11 @@ end
 function DPSMate.Parser:SpellDamageShieldsOnOthers(msg)
 	local k;
 	local i,j = strfind(msg, " reflects ", 1, true)
+	if not i then
+		-- There may be resist events, but dont think they are relevant
+		return
+	end
+	
 	local source = strsub(msg, 1, i-1)
 	k = j+1
 	i,j = strfind(msg, " to ", k, true)
@@ -955,33 +1066,53 @@ end
 --------------                    Damage taken                      --------------                                  
 ----------------------------------------------------------------------------------
 
-local CVSHChoices = {" hits you for ", " crits you for "}
+local CVSHChoices = {" hits you for ", " crits you for ", " performs "}
 function DPSMate.Parser:CreatureVsSelfHits(msg)
 	local i,j,k = 0,0,0
 	local source, choice, nextword;
 	source, choice, k = GetNextWord(msg, k, CVSHChoices, false)
 	if choice == -1 then
-		DPSMate:SendMessage("Event not parsed yet, inform Shino! => "..msg)
+		DPSMate:SendMessage("9: Event not parsed yet, inform Shino! => "..msg)
 		return
 	end
-	local hit, crit = 0,0
-	if choice == 1 then hit = 1 else crit = 1 end
-	i,j = strfind(msg, ".", k, true)
-	nextword = strsub(msg, k, i-1)
-	k = j+1
-	local amount, _ = GetDamage(nextword)
-	local prefixAmount, prefixCase, _ = GetPrefix(msg, k)
-	local crush, block = 0,0
-	if prefixCase then
-		if prefixCase == "crushing" then crush = 1; hit=0; crit=0;
-		elseif prefixCase == "blocked" then block = 1; hit=0; crit=0;
-		elseif prefixCase == "absorbed" then
-			DB:SetUnregisterVariables(prefixAmount, AAttack, source)
+	if choice < 3 then
+		local hit, crit = 0,0
+		if choice == 1 then hit = 1 else crit = 1 end
+		i,j = strfind(msg, ".", k, true)
+		nextword = strsub(msg, k, i-1)
+		k = j+1
+		local amount, _ = GetDamage(nextword)
+		local prefixAmount, prefixCase, _ = GetPrefix(msg, k)
+		local crush, block = 0,0
+		if prefixCase then
+			if prefixCase == "crushing" then crush = 1; hit=0; crit=0;
+			elseif prefixCase == "blocked" then block = 1; hit=0; crit=0;
+			elseif prefixCase == "absorbed" then
+				DB:SetUnregisterVariables(prefixAmount, AAttack, source)
+			end
 		end
+		DB:EnemyDamage(false, nil, Player, AAttack, hit, crit, 0, 0, 0, 0, amount, source, block, crush)
+		DB:DamageTaken(Player, AAttack, hit, crit, 0, 0, 0, 0, amount, source, crush)
+		DB:DeathHistory(Player, a, AAttack, amount, hit, crit, 0, crush)
+	else
+		i,j = strfind(msg, " on ", k, true)
+		if i then
+			local ability = strsub(msg, k, i-1)
+			k = j+1
+			i,j = strfind(msg, ".", k, true)
+			local target = strsub(msg, k, i-1)
+			if target=="you" then target = Player end
+			if Dispels[ability] then DB:AwaitDispel(ability, target, source, GetTime()) end
+			if RCD[ability] then DPSMate:Broadcast(2, source, target, ability) end
+			return
+		else
+			i,j = strfind(msg, ".", k, true)
+			local ability = strsub(msg, k, i-1)
+			if Dispels[ability] then DB:AwaitDispel(ability, "Unknown", source, GetTime()) end
+			return
+		end	
+		return
 	end
-	DB:EnemyDamage(false, nil, Player, AAttack, hit, crit, 0, 0, 0, 0, amount, source, block, crush)
-	DB:DamageTaken(Player, AAttack, hit, crit, 0, 0, 0, 0, amount, source, crush)
-	DB:DeathHistory(Player, a, AAttack, amount, hit, crit, 0, crush)
 	return
 end
 
@@ -992,7 +1123,7 @@ function DPSMate.Parser:CreatureVsSelfMisses(msg)
 	source, choice, k = GetNextWord(msg, k, CVSMChoices, false)
 	
 	if choice == -1 then
-		DPSMate:SendMessage("Event not parsed yet, inform Shino! => "..msg)
+		DPSMate:SendMessage("10: Event not parsed yet, inform Shino! => "..msg)
 		return
 	end
 	if choice == 1 then
@@ -1013,13 +1144,13 @@ function DPSMate.Parser:CreatureVsSelfMisses(msg)
 	return
 end 
 
-local CVSSDChoices = {" hits you for ", " crits you for ", " misses you.", " was parried.", " was dodged.", " was resisted.", "You interrupt ", "You absorb "}
+local CVSSDChoices = {" hits you for ", " crits you for ", " misses you.", " was parried.", " was dodged.", " was resisted.", "You interrupt ", "You absorb ", " performs "}
 function DPSMate.Parser:CreatureVsSelfSpellDamage(msg)
 	local i,j,k = 0,0,0
 	local nextword, choice;
 	nextword, choice, k = GetNextWord(msg, k, CVSSDChoices, false)
 	if choice == -1 then
-		DPSMate:SendMessage("Event not parsed yet, inform Shino! => "..msg)
+		DPSMate:SendMessage("11: Event not parsed yet, inform Shino! => "..msg)
 		return
 	end
 	if choice < 3 then
@@ -1065,7 +1196,7 @@ function DPSMate.Parser:CreatureVsSelfSpellDamage(msg)
 		DB:EnemyDamage(false, nil, Player, ability, 0, 0, miss, parry, dodge, resist, 0, source, 0, 0)
 		DB:DamageTaken(Player, ability, 0, 0, miss, parry, dodge, resist, 0, source, 0, 0)
 		return
-	else
+	elseif choice == 8 then
 		i,j = strfind(msg, ".", k, true)
 		nextword = strsub(msg, k, i-1)
 		
@@ -1086,6 +1217,20 @@ function DPSMate.Parser:CreatureVsSelfSpellDamage(msg)
 			DB:Absorb(ability, Player, source)
 		end
 		return
+	else  
+		i,j = strfind(msg, " on ", k, true)
+		if i then
+			local ability = strsub(msg, k, i-1)
+			if Dispels[ability] then DB:AwaitDispel(ability, Player, source, GetTime()) end
+			if RCD[ability] then DPSMate:Broadcast(2, source, Player, ability) end
+			return
+		else
+			i,j = strfind(msg, ".", k, true)
+			local ability = strsub(msg, k, i-1)
+			if Dispels[ability] then DB:AwaitDispel(ability, Player, source, GetTime()) end
+			return
+		end	
+		return
 	end
 end
 
@@ -1095,7 +1240,7 @@ function DPSMate.Parser:PeriodicSelfDamage(msg)
 	local nextword, choice;
 	_, choice, k = GetNextWord(msg, k, PSDChoices, true)
 	if choice == -1 then
-		DPSMate:SendMessage("Event not parsed yet, inform Shino! => "..msg)
+		DPSMate:SendMessage("12: Event not parsed yet, inform Shino! => "..msg)
 		return
 	end
 	if choice == 1 then
@@ -1157,7 +1302,7 @@ function DPSMate.Parser:CreatureVsCreatureHits(msg)
 	local nextword, choice, source;
 	source, choice, k = GetNextWord(msg, k, CVCHChoices, false)
 	if choice == -1 then
-		DPSMate:SendMessage("Event not parsed yet, inform Shino! => "..msg)
+		DPSMate:SendMessage("13: Event not parsed yet, inform Shino! => "..msg)
 		return
 	end
 	local hit, crit = 0,0
@@ -1186,7 +1331,7 @@ function DPSMate.Parser:CreatureVsCreatureHits(msg)
 	return
 end
 
-local CVCMChoices = {" attacks. ", " misses "}
+local CVCMChoices = {" attacks. ", " misses ", " attacks but "}
 local CVCMChoices2 = {" parries.", " dodges.", " blocks."}
 function DPSMate.Parser:CreatureVsCreatureMisses(msg)
 	local i,j,k = 0,0,0
@@ -1194,7 +1339,7 @@ function DPSMate.Parser:CreatureVsCreatureMisses(msg)
 	source, choice, k = GetNextWord(msg, k, CVCMChoices, false)
 	
 	if choice == -1 then
-		DPSMate:SendMessage("Event not parsed yet, inform Shino! => "..msg)
+		DPSMate:SendMessage("14: Event not parsed yet, inform Shino! => "..msg)
 		return
 	end
 	if choice == 1 then
@@ -1215,22 +1360,25 @@ function DPSMate.Parser:CreatureVsCreatureMisses(msg)
 			DB:DamageTaken(target, AAttack, 0, 0, 0, parry, dodge, 0, 0, source, 0, block)
 			return
 		end
-	else
+	elseif choice == 2 then
 		i,j = strfind(msg, ".", k, true)
 		local target = strsub(msg, k, i-1)
 		DB:EnemyDamage(false, nil, target, AAttack, 0, 0, 1, 0, 0, 0, 0, source, 0, 0)
 		DB:DamageTaken(target, AAttack, 0, 0, 1, 0, 0, 0, 0, source, 0, 0)
 		return
+	else
+		-- Is immune stuff
+		return
 	end
 end
 
-local SPDTChoices = {" suffers ", " is afflicted by ", " is absorbed by ", " was resisted by "}
+local SPDTChoices = {" suffers ", " is afflicted by ", " is absorbed by ", " was resisted by ", " Mana "}
 function DPSMate.Parser:SpellPeriodicDamageTaken(msg)
 	local i,j,k = 0,0,0
 	local nextword, choice, source;
 	source, choice, k = GetNextWord(msg, k, SPDTChoices, false)
 	if choice == -1 then
-		DPSMate:SendMessage("Event not parsed yet, inform Shino! => "..msg)
+		DPSMate:SendMessage("15: Event not parsed yet, inform Shino! => "..msg)
 		return
 	end
 	
@@ -1278,7 +1426,7 @@ function DPSMate.Parser:SpellPeriodicDamageTaken(msg)
 		local target = strsub(msg, k, i-1)
 		DB:Absorb(ability.."(Periodic)", source, target)
 		return
-	else
+	elseif choice == 4 then
 		i,j = strfind(msg, ".", k, true)
 		local target = strsub(msg, k, i-1)
 		
@@ -1288,69 +1436,104 @@ function DPSMate.Parser:SpellPeriodicDamageTaken(msg)
 		local ability = strsub(nextword, j+1)
 		DB:EnemyDamage(false, nil, target, ability, 0, 0, 0, 0, 0, 1, 0, source, 0, 0)
 		DB:DamageTaken(target, ability, 0, 0, 0, 0, 0, 1, 0, source, 0, 0)
+		return
+	else
+		-- Ignore mana events, we dont track them yet
+		return
 	end
 end
 
-local CVCSDChoices = {" hits ", " crits ", " was dodged by ", " was parried by ", " missed ", " was resisted by ", " is absorbed by ", " begins to cast ", " begins to perform "}
+local CVCSDChoices = {" hits ", " crits ", " was dodged by ", " was parried by ", " missed ", " was resisted by ", " is absorbed by ", " begins to cast ", " begins to perform ", " performs ", " casts ", " fails.", " was blocked by "}
 function DPSMate.Parser:CreatureVsCreatureSpellDamage(msg)
 	local i,j,k = 0,0,0
 	local nextword, choice, source, ability;
 	nextword, choice, k = GetNextWord(msg, k, CVCSDChoices, false)
 	if choice == -1 then
-		DPSMate:SendMessage("Event not parsed yet, inform Shino! => "..msg)
+		DPSMate:SendMessage("16: Event not parsed yet, inform Shino! => "..msg)
 		return
 	end
-	i,j = strfind(nextword, " 's ", 1, true)
-	source = strsub(nextword, 1, i-1)
-	ability = strsub(nextword, j+1)
+	if choice == 12 then return end -- Fail events
 	
-	if choice < 3 then
-		local hit,crit = 0,0
-		if choice == 1 then hit=1 else crit = 1 end
-		i,j = strfind(msg, " for ", k, true)
-		local target = strsub(msg, k, i-1)
-		k = j+1
-		i,j = strfind(msg, ".", k, true)
-		nextword = strsub(msg, k, i-1)
-		local amount, school = GetDamage(nextword)
-		local prefixAmount, prefixCase = GetPrefix(msg, k)
+	if choice == 10 or choice == 11 then
+		source = nextword
+		i,j = strfind(msg, " on ", k, true)
+		if i then
+			local ability = strsub(msg, k, i-1)
+			k = j+1
+			i,j = strfind(msg, ".", k, true)
+			local target = strsub(msg, k, i-1)
+			if target=="you" then target = Player end
+			if Dispels[ability] then DB:AwaitDispel(ability, target, source, GetTime()) end
+			if RCD[ability] then DPSMate:Broadcast(2, source, target, ability) end
+			return
+		else
+			i,j = strfind(msg, ".", k, true)
+			local ability = strsub(msg, k, i-1)
+			if Dispels[ability] then DB:AwaitDispel(ability, "Unknown", source, GetTime()) end
+			return
+		end	
+	else
+		i,j = strfind(nextword, " 's ", 1, true)
 		
-		local block = 0
-		if prefixCase then 
-			if prefixCase == "blocked" then block = 1
-			elseif prefixCase == "absorbed" then
-				DB:SetUnregisterVariables(prefixAmount, ability, source)
-			end
+		if not i then
+			i,j = strfind(msg, ".", k, true)
+			local ability = strsub(msg, k, i-1)
+			DB:RegisterPotentialKick(nextword, ability, GetTime());
+			return
 		end
 		
-		DB:UnregisterPotentialKick(target, ability, GetTime())
-		DB:EnemyDamage(false, nil, target, ability, hit, crit, 0, 0, 0, 0, amount, source, block, 0)
-		DB:DamageTaken(target, ability, hit, crit, 0, 0, 0, 0, amount, source, 0, block)
-		DB:DeathHistory(target, source, ability, amount, hit, crit, 0, 0)
-		if FailDT[ability] then DB:BuildFail(2, source, target, ability, amount) end
-		DB:AddSpellSchool(ability,school)
-		return
-	elseif choice < 7 then
-		i,j = strfind(msg, ".", k, true)
-		local target = strsub(msg, k, i-1)
-		local miss, parry, dodge, resist = 0,0,0,0
-		if choice == 3 then dodge = 1
-		elseif choice == 4 then parry = 1
-		elseif choice == 5 then miss = 1
-		else resist = 1 end
-		DB:EnemyDamage(false, nil, target, ability, 0, 0, miss, parry, dodge, resist, 0, source, 0, 0)
-		DB:DamageTaken(target, ability, 0, 0, miss, parry, dodge, resist, 0, source, 0, 0)
-		return
-	elseif choice == 7 then
-		i,j = strfind(msg, ".", k, true)
-		local target = strsub(msg, k, i-1)
-		DB:Absorb(ability, source, target)
-		return
-	else
-		i,j = strfind(msg, ".", k, true)
-		local ability = strsub(msg, k, i-1)
-		DB:RegisterPotentialKick(source, ability, GetTime());
-		return
+		source = strsub(nextword, 1, i-1)
+		ability = strsub(nextword, j+1)
+		
+		if choice < 3 then
+			local hit,crit = 0,0
+			if choice == 1 then hit=1 else crit = 1 end
+			i,j = strfind(msg, " for ", k, true)
+			local target = strsub(msg, k, i-1)
+			k = j+1
+			i,j = strfind(msg, ".", k, true)
+			nextword = strsub(msg, k, i-1)
+			local amount, school = GetDamage(nextword)
+			local prefixAmount, prefixCase = GetPrefix(msg, k)
+			
+			local block = 0
+			if prefixCase then 
+				if prefixCase == "blocked" then block = 1
+				elseif prefixCase == "absorbed" then
+					DB:SetUnregisterVariables(prefixAmount, ability, source)
+				end
+			end
+			
+			DB:UnregisterPotentialKick(target, ability, GetTime())
+			DB:EnemyDamage(false, nil, target, ability, hit, crit, 0, 0, 0, 0, amount, source, block, 0)
+			DB:DamageTaken(target, ability, hit, crit, 0, 0, 0, 0, amount, source, 0, block)
+			DB:DeathHistory(target, source, ability, amount, hit, crit, 0, 0)
+			if FailDT[ability] then DB:BuildFail(2, source, target, ability, amount) end
+			DB:AddSpellSchool(ability,school)
+			return
+		elseif choice < 7 then
+			i,j = strfind(msg, ".", k, true)
+			local target = strsub(msg, k, i-1)
+			local miss, parry, dodge, resist = 0,0,0,0
+			if choice == 3 then dodge = 1
+			elseif choice == 4 then parry = 1
+			elseif choice == 5 then miss = 1
+			else resist = 1 end
+			DB:EnemyDamage(false, nil, target, ability, 0, 0, miss, parry, dodge, resist, 0, source, 0, 0)
+			DB:DamageTaken(target, ability, 0, 0, miss, parry, dodge, resist, 0, source, 0, 0)
+			return
+		elseif choice == 7 then
+			i,j = strfind(msg, ".", k, true)
+			local target = strsub(msg, k, i-1)
+			DB:Absorb(ability, source, target)
+			return
+		else
+			i,j = strfind(msg, ".", k, true)
+			local target = strsub(msg, k, i-1)
+			DB:EnemyDamage(false, nil, target, ability, 0, 0, 0, 0, 0, 0, 0, source, 1, 0)
+			DB:DamageTaken(target, ability, 0, 0, 0, 0, 0, 0, 0, source, 0, 1)
+			return
+		end
 	end
 end
 
@@ -1366,7 +1549,7 @@ function DPSMate.Parser:SpellSelfBuff(msg)
 	local nextword, choice;
 	_, choice, k = GetNextWord(msg, k, SSBChoices, true)
 	if choice == -1 then
-		DPSMate:SendMessage("Event not parsed yet, inform Shino! => "..msg)
+		DPSMate:SendMessage("17: Event not parsed yet, inform Shino! => "..msg)
 		return
 	end
 	
@@ -1444,7 +1627,7 @@ function DPSMate.Parser:SpellPeriodicSelfBuff(msg)
 	local nextword, choice;
 	nextword, choice, k = GetNextWord(msg, k, SPSBChoices, false)
 	if choice == -1 then
-		DPSMate:SendMessage("Event not parsed yet, inform Shino! => "..msg)
+		DPSMate:SendMessage("18: Event not parsed yet, inform Shino! => "..msg)
 		return
 	end
 	
@@ -1494,6 +1677,13 @@ end
 function DPSMate.Parser:SpellPeriodicFriendlyPlayerBuffs(msg)
 	local i,j,k = 0,0,0
 	i,j = strfind(msg, " gains ", 1, true)
+	if not i then
+		-- Drain event
+		-- Also you gain whatever
+		-- Is Slain whatever
+		return
+	end
+	
 	local source = strsub(msg, 1, i-1)
 	k = j+1
 	i,j = strfind(msg, " health from ", k, true)
@@ -1553,14 +1743,14 @@ function DPSMate.Parser:SpellPeriodicFriendlyPlayerBuffs(msg)
 	end
 end
 
-local SHPBChoices = {" critically heals ", " heals ", " begins to cast ", " begins to perform ", " gains ", " casts "}
+local SHPBChoices = {" critically heals ", " heals ", " begins to cast ", " begins to perform ", " gains ", " casts ", " performs "}
 local SHPBChoices2 = {" extra attack through ", " extra attacks through ", " Energy from ", " Rage from ", " Mana from "}
 function DPSMate.Parser:SpellHostilePlayerBuff(msg)
 	local i,j,k = 0,0,0
 	local nextword, choice;
 	nextword, choice, k = GetNextWord(msg, k, SHPBChoices, false)
 	if choice == -1 then
-		DPSMate:SendMessage("Event not parsed yet, inform Shino! => "..msg)
+		DPSMate:SendMessage("19: Event not parsed yet, inform Shino! => "..msg)
 		return
 	end
 	
@@ -1632,7 +1822,7 @@ function DPSMate.Parser:SpellHostilePlayerBuff(msg)
 			end
 		end
 		return
-	elseif choice == 6 then
+	else
 		i,j = strfind(msg, " on ", k, true)
 		if i then
 			local ability = strsub(msg, k, i-1)
@@ -1706,6 +1896,7 @@ function DPSMate.Parser:SpellAuraGoneParty(msg)
 	local i = strfind(msg, ".", j+1, true)
 	local target = strsub(msg, j+1, i-1)
 	
+	i,j = strfind(ability, "(", 1, true)
 	if i then ability = strsub(ability, 1, i-2) end
 	if self.BuffExceptions[ability] then return end
 	if ShieldFlags[ability] then DB:UnregisterAbsorb(ability, target) end
@@ -1722,6 +1913,7 @@ function DPSMate.Parser:SpellAuraGoneOther(msg)
 	local i = strfind(msg, ".", j+1, true)
 	local target = strsub(msg, j+1, i-1)
 	
+	i,j = strfind(ability, "(", 1, true)
 	if i then ability = strsub(ability, 1, i-2) end
 	if BuffExceptions[ability] then return end
 	if ShieldFlags[ability] then DB:UnregisterAbsorb(ability, target) end
@@ -1783,6 +1975,9 @@ function DPSMate.Parser:CombatHostileDeaths(msg)
 	if i then return end
 	
 	i,j = strfind(msg, " dies.", 1, true)
+	if not i then
+		return
+	end
 	local source = strsub(msg, 1, i-1)
 	DB:UnregisterDeath(source)
 	return
