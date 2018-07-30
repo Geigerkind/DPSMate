@@ -734,7 +734,7 @@ function DPSMate.Parser:PeriodicDamage(msg)
 	end
 end
 
-local FPDList = {" hits ", " crits ", " was ", " is parried by ", " missed ", " misses ", " is absorbed by ", " fails.", " is reflected back "}
+local FPDList = {" hits ", " crits ", " was ", " is parried by ", " missed ", " misses ", " is absorbed by ", " fail", " is reflected back "}
 local FPDList2 = {" begins to cast ", " begins to perform ", " is killed by ", " casts ", " performs "}
 function DPSMate.Parser:FriendlyPlayerDamage(msg)
 	local i,j,k = 0,0,0;
@@ -878,6 +878,11 @@ function DPSMate.Parser:FriendlyPlayerDamage(msg)
 		local source = strsub(msg, k, i-1);
 		k = j+1
 		i,j = strfind(msg, " 's ", k, true);
+		if not i then
+			DPSMate:SendMessage("26: Event not parsed, inform Shino: "..msg)
+			return
+		end
+		
 		local target = strsub(msg, k, j-4);
 		k = j+1
 		i,j = strfind(msg, ".", k, true);
@@ -1024,6 +1029,9 @@ end
 
 function DPSMate.Parser:SpellDamageShieldsOnSelf(msg)
 	local i,j = strfind(msg, " to ", 1, true)
+	if not i then
+		return
+	end
 	local nextword = strsub(msg, 13, i-1)
 	local amount, _ = GetDamage(nextword)
 	_,i = strfind(msg, ".", j+1, true)
