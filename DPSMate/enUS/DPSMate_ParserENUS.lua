@@ -671,7 +671,7 @@ function DPSMate.Parser:SelfSpellDMG(msg)
 	end
 end
 
-local PDChoices = {" suffers ", " is afflicted by ", " is absorbed by "}
+local PDChoices = {" suffers ", " is afflicted by ", " is absorbed by ", " drains "}
 function DPSMate.Parser:PeriodicDamage(msg)
 	local i,j,k = 0,0,0
 	local nextword, choice, source;
@@ -680,6 +680,8 @@ function DPSMate.Parser:PeriodicDamage(msg)
 		DPSMate:SendMessage("4: Event not parsed yet, inform Shino! => "..msg)
 		return
 	end
+	if choice == 4 then return end
+	
 	if choice == 1 then
 		i,j = strfind(msg, " from ", k, true)
 		nextword = strsub(msg, k, i-1)
@@ -1124,7 +1126,7 @@ function DPSMate.Parser:CreatureVsSelfHits(msg)
 	return
 end
 
-local CVSMChoices = {" misses you.", " attacks. You absorb ", " attacks. You "}
+local CVSMChoices = {" misses you.", " attacks. You absorb ", " attacks. You ", " attacks but "}
 function DPSMate.Parser:CreatureVsSelfMisses(msg)
 	local i,j,k = 0,0,0
 	local source, choice;
@@ -1134,6 +1136,8 @@ function DPSMate.Parser:CreatureVsSelfMisses(msg)
 		DPSMate:SendMessage("10: Event not parsed yet, inform Shino! => "..msg)
 		return
 	end
+	if choice == 4 then return end
+	
 	if choice == 1 then
 		DB:EnemyDamage(false, nil, Player, AAttack, 0, 0, 1, 0, 0, 0, 0, source, 0, 0)
 		DB:DamageTaken(Player, AAttack, 0, 0, 1, 0, 0, 0, 0, source, 0, 0)
@@ -1152,7 +1156,7 @@ function DPSMate.Parser:CreatureVsSelfMisses(msg)
 	return
 end 
 
-local CVSSDChoices = {" hits you for ", " crits you for ", " misses you.", " was parried.", " was dodged.", " was resisted.", "You interrupt ", "You absorb ", " performs "}
+local CVSSDChoices = {" hits you for ", " crits you for ", " misses you.", " was parried.", " was dodged.", " was resisted.", "You interrupt ", "You absorb ", " performs ", " fail"}
 function DPSMate.Parser:CreatureVsSelfSpellDamage(msg)
 	local i,j,k = 0,0,0
 	local nextword, choice;
@@ -1161,6 +1165,8 @@ function DPSMate.Parser:CreatureVsSelfSpellDamage(msg)
 		DPSMate:SendMessage("11: Event not parsed yet, inform Shino! => "..msg)
 		return
 	end
+	if choice == 10 then return end
+	
 	if choice < 3 then
 		local hit,crit = 0,0
 		if choice == 1 then hit=1 else crit=1 end
