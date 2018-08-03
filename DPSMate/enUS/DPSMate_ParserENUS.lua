@@ -1076,7 +1076,7 @@ end
 --------------                    Damage taken                      --------------                                  
 ----------------------------------------------------------------------------------
 
-local CVSHChoices = {" hits you for ", " crits you for ", " performs "}
+local CVSHChoices = {" hits ", " crits ", " performs "}
 function DPSMate.Parser:CreatureVsSelfHits(msg)
 	local i,j,k = 0,0,0
 	local source, choice, nextword;
@@ -1088,6 +1088,10 @@ function DPSMate.Parser:CreatureVsSelfHits(msg)
 	if choice < 3 then
 		local hit, crit = 0,0
 		if choice == 1 then hit = 1 else crit = 1 end
+		i,j = strfind(msg, " for ", k, true)
+		local target = strsub(msg, k, i-1);
+		k = j+1
+		if target == "you" then target = Player end
 		i,j = strfind(msg, ".", k, true)
 		nextword = strsub(msg, k, i-1)
 		k = j+1
@@ -1101,9 +1105,9 @@ function DPSMate.Parser:CreatureVsSelfHits(msg)
 				DB:SetUnregisterVariables(prefixAmount, AAttack, source)
 			end
 		end
-		DB:EnemyDamage(false, nil, Player, AAttack, hit, crit, 0, 0, 0, 0, amount, source, block, crush)
-		DB:DamageTaken(Player, AAttack, hit, crit, 0, 0, 0, 0, amount, source, crush)
-		DB:DeathHistory(Player, a, AAttack, amount, hit, crit, 0, crush)
+		DB:EnemyDamage(false, nil, target, AAttack, hit, crit, 0, 0, 0, 0, amount, source, block, crush)
+		DB:DamageTaken(target, AAttack, hit, crit, 0, 0, 0, 0, amount, source, crush)
+		DB:DeathHistory(target, a, AAttack, amount, hit, crit, 0, crush)
 	else
 		i,j = strfind(msg, " on ", k, true)
 		if i then
