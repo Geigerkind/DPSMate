@@ -1130,7 +1130,8 @@ function DPSMate.Parser:CreatureVsSelfHits(msg)
 	return
 end
 
-local CVSMChoices = {" misses you.", " attacks. You absorb ", " attacks. You ", " attacks but "}
+local CVSMChoices = {" misses ", " attacks. You absorb ", " attacks. ", " attacks but "}
+local CVSMChoices2 = {" dodge", " parry", " block", " crush"}
 function DPSMate.Parser:CreatureVsSelfMisses(msg)
 	local i,j,k = 0,0,0
 	local source, choice;
@@ -1143,19 +1144,23 @@ function DPSMate.Parser:CreatureVsSelfMisses(msg)
 	if choice == 4 then return end
 	
 	if choice == 1 then
-		DB:EnemyDamage(false, nil, Player, AAttack, 0, 0, 1, 0, 0, 0, 0, source, 0, 0)
-		DB:DamageTaken(Player, AAttack, 0, 0, 1, 0, 0, 0, 0, source, 0, 0)
+		i,j = strfind(msg, k, ".", true)
+		local target = strsub(msg, k, i-1);
+		if target == "you" then target = Player end
+		DB:EnemyDamage(false, nil, target, AAttack, 0, 0, 1, 0, 0, 0, 0, source, 0, 0)
+		DB:DamageTaken(target, AAttack, 0, 0, 1, 0, 0, 0, 0, source, 0, 0)
 	elseif choice == 2 then
 		DB:Absorb(AAttack, Player, source)
 	else
-		i,j = strfind(msg, ".", k, true)
-		local kind = strsub(msg, k, i-1)
+		local target;
+		target, choice, k = GetNextWord(msg, k, CVSMChoices2, false)
+		if target == "You" then target = Player end
 		local parry, dodge, crush = 0,0,0
-		if kind == "parry" then parry = 1
-		elseif kind == "dodge" then dodge = 1
+		if choice == 2 then parry = 1
+		elseif choice == 1 then dodge = 1
 		else crush = 1 end
-		DB:EnemyDamage(false, nil, Player, AAttack, 0, 0, 0, parry, dodge, 0, 0, source, crush, 0)
-		DB:DamageTaken(Player, AAttack, 0, 0, 0, parry, dodge, 0, 0, source, 0, crush)
+		DB:EnemyDamage(false, nil, target, AAttack, 0, 0, 0, parry, dodge, 0, 0, source, crush, 0)
+		DB:DamageTaken(target, AAttack, 0, 0, 0, parry, dodge, 0, 0, source, 0, crush)
 	end
 	return
 end 
@@ -1252,16 +1257,18 @@ function DPSMate.Parser:CreatureVsSelfSpellDamage(msg)
 	end
 end
 
-local PSDChoices = {"You suffer ", "You are afflicted by ", "You absorb ", " was resisted."}
+local PSDChoices = {"You suffer ", " suffers ", "You are afflicted by ", " is afflicted by ", "You absorb ", " absorbs ", " was resisted."}
 function DPSMate.Parser:PeriodicSelfDamage(msg)
 	local i,j,k = 0,0,0
 	local nextword, choice;
-	_, choice, k = GetNextWord(msg, k, PSDChoices, true)
+	local target;
+	target, choice, k = GetNextWord(msg, k, PSDChoices, false)
 	if choice == -1 then
 		DPSMate:SendMessage("12: Event not parsed yet, inform Shino! => "..msg)
 		return
 	end
-	if choice == 1 then
+	if choice < 3 then
+		if choice == 1 then target = Player end
 		i,j = strfind(msg, " from ", k, true);
 		nextword = strsub(msg, k, i-1);
 		local amount, school = GetDamage(nextword)
@@ -1283,26 +1290,28 @@ function DPSMate.Parser:PeriodicSelfDamage(msg)
 		-- Not used
 		--local prefixAmount, prefixCase = GetPrefix(msg, k)
 		
-		DB:EnemyDamage(false, nil, Player, ability.."(Periodic)", 1, 0, 0, 0, 0, 0, amount, source, 0, 0)
-		DB:DamageTaken(Player, ability.."(Periodic)", 1, 0, 0, 0, 0, 0, amount, source, 0, 0)
-		DB:DeathHistory(Player, source, ability.."(Periodic)", amount, 1, 0, 0, 0)
-		if FailDT[ability] then DB:BuildFail(2, source, Player, ability, amount) end
+		DB:EnemyDamage(false, nil, target, ability.."(Periodic)", 1, 0, 0, 0, 0, 0, amount, source, 0, 0)
+		DB:DamageTaken(target, ability.."(Periodic)", 1, 0, 0, 0, 0, 0, amount, source, 0, 0)
+		DB:DeathHistory(target, source, ability.."(Periodic)", amount, 1, 0, 0, 0)
+		if FailDT[ability] then DB:BuildFail(2, source, target, ability, amount) end
 		DB:AddSpellSchool(ability.."(Periodic)",school)
 		return
-	elseif choice == 2 then
+	elseif choice < 5 then
+		if choice == 3 then target = Player end
 		i,j = strfind(msg, ".", k, true)
 		local ability = strsub(msg, k, i-1)
 		i,j = strfind(ability, "(", 1, true)
 		if i then ability=strsub(ability, 1, i-2) end
 		
-		DB:BuildBuffs("Unknown", Player, ability, false)
-		if CC[ability] then DB:BuildActiveCC(Player, ability) end
+		DB:BuildBuffs("Unknown", target, ability, false)
+		if CC[ability] then DB:BuildActiveCC(target, ability) end
 		return
-	elseif choice == 3 then
+	elseif choice < 7 then
+		if choice == 5 then target = Player end
 		i,j = strfind(msg, " 's ", k, true);
 		local source = strsub(msg, k, i-1);
 		local ability = strsub(msg, j+1)
-		DB:Absorb(ability.."(Periodic)", Player, source)
+		DB:Absorb(ability.."(Periodic)", target, source)
 		return
 	else
 		i,j = strfind(msg, " 's ", 1, true);
