@@ -1570,7 +1570,7 @@ end
 --------------                       Healing                        --------------                                  
 ----------------------------------------------------------------------------------
 
-local SSBChoices = {"Your ", "You gain ", "You cast "}
+local SSBChoices = {"Your ", "You gain ", "You cast ", "You perform "}
 local SSBChoices2 = {" critically heals ", " heals "}
 local SSBChoices3 = {" Energy from ", " extra attack through ", " extra attacks through ", " Rage from ", " Mana from "}
 function DPSMate.Parser:SpellSelfBuff(msg)
@@ -1630,7 +1630,7 @@ function DPSMate.Parser:SpellSelfBuff(msg)
 			end
 		end
 		return
-	elseif choice == 3 then
+	elseif choice >= 3 then
 		i,j = strfind(msg, " on ", k, true)
 		if i then
 			local ability = strsub(msg, k, i-1)
@@ -1772,7 +1772,7 @@ function DPSMate.Parser:SpellPeriodicFriendlyPlayerBuffs(msg)
 	end
 end
 
-local SHPBChoices = {" critically heals ", " heals ", " begins to cast ", " begins to perform ", " gains ", " casts ", " performs "}
+local SHPBChoices = {" critically heals ", " heals ", " begins to cast ", " begins to perform ", " gains ", " casts ", " performs ", " were resisted by "}
 local SHPBChoices2 = {" extra attack through ", " extra attacks through ", " Energy from ", " Rage from ", " Mana from "}
 function DPSMate.Parser:SpellHostilePlayerBuff(msg)
 	local i,j,k = 0,0,0
@@ -1782,6 +1782,10 @@ function DPSMate.Parser:SpellHostilePlayerBuff(msg)
 		DPSMate:SendMessage("19: Event not parsed yet, inform Shino! => "..msg)
 		return
 	end
+	
+	-- Ignoring for now
+	-- Saltpillar's Thorns were resisted by Blackhand Veteran
+	if choice == 8 then return end
 	
 	if choice < 3 then
 		i,j = strfind(nextword, " 's ", 1, true)
@@ -1995,6 +1999,11 @@ function DPSMate.Parser:CombatFriendlyDeath(msg)
 	if choice == 2 then
 		source = Player
 	end
+	if not source then
+		DPSMate:SendMessage("30: Event not parsed correctly, inform Shino!: "..msg);
+		return;
+	end
+	
 	DB:UnregisterDeath(source)
 	return
 end
@@ -2008,6 +2017,10 @@ function DPSMate.Parser:CombatHostileDeaths(msg)
 		return
 	end
 	local source = strsub(msg, 1, i-1)
+	if not source then
+		DPSMate:SendMessage("30: Event not parsed correctly, inform Shino!: "..msg);
+		return;
+	end
 	DB:UnregisterDeath(source)
 	return
 end
