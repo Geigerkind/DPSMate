@@ -1144,7 +1144,7 @@ function DPSMate.Parser:CreatureVsSelfMisses(msg)
 	if choice == 4 then return end
 	
 	if choice == 1 then
-		i,j = strfind(msg, k, ".", true)
+		i,j = strfind(msg, ".", k, true)
 		local target = strsub(msg, k, i-1);
 		if target == "you" then target = Player end
 		DB:EnemyDamage(false, nil, target, AAttack, 0, 0, 1, 0, 0, 0, 0, source, 0, 0)
@@ -1165,7 +1165,7 @@ function DPSMate.Parser:CreatureVsSelfMisses(msg)
 	return
 end 
 
-local CVSSDChoices = {" hits you for ", " crits you for ", " misses you.", " was parried.", " was dodged.", " was resisted.", "You interrupt ", "You absorb ", " performs ", " fail"}
+local CVSSDChoices = {" hits ", " crits ", " misses you.", " was parried.", " was dodged.", " was resisted.", "You interrupt ", "You absorb ", " performs ", " fail"}
 function DPSMate.Parser:CreatureVsSelfSpellDamage(msg)
 	local i,j,k = 0,0,0
 	local nextword, choice;
@@ -1179,11 +1179,13 @@ function DPSMate.Parser:CreatureVsSelfSpellDamage(msg)
 	if choice < 3 then
 		local hit,crit = 0,0
 		if choice == 1 then hit=1 else crit=1 end
-		
 		i,j = strfind(nextword, " 's ", 1, true);
 		local source = strsub(nextword, 1, i-1);
 		local ability = strsub(nextword, j+1)
-		
+		i,j = strfind(msg, " for ", k, true);
+		local target = strsub(msg, k, i-1)
+		if target == "you" then target = Player end
+		k = j+1
 		i,j = strfind(msg, ".", k, true)
 		nextword = strsub(msg, k, i-1)
 		k = j+1
@@ -1198,11 +1200,11 @@ function DPSMate.Parser:CreatureVsSelfSpellDamage(msg)
 			end
 		end
 		
-		DB:UnregisterPotentialKick(Player, ability, GetTime())
-		DB:EnemyDamage(false, nil, Player, ability, hit, crit, 0, 0, 0, 0, amount, source, block, 0)
-		DB:DamageTaken(Player, ability, hit, crit, 0, 0, 0, 0, amount, source, 0, block)
-		DB:DeathHistory(Player, source, ability, amount, hit, crit, 0, 0)
-		if FailDT[ability] then DB:BuildFail(2, source, Player, ability, amount) end
+		DB:UnregisterPotentialKick(target, ability, GetTime())
+		DB:EnemyDamage(false, nil, target, ability, hit, crit, 0, 0, 0, 0, amount, source, block, 0)
+		DB:DamageTaken(target, ability, hit, crit, 0, 0, 0, 0, amount, source, 0, block)
+		DB:DeathHistory(target, source, ability, amount, hit, crit, 0, 0)
+		if FailDT[ability] then DB:BuildFail(2, source, target, ability, amount) end
 		DB:AddSpellSchool(ability,school)
 		return
 	elseif choice < 7 then
