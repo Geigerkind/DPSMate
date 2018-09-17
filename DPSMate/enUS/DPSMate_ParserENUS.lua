@@ -1996,12 +1996,12 @@ function DPSMate.Parser:CombatFriendlyDeath(msg)
 	local i,j,k = 0,0,0
 	local source, choice
 	source, choice = GetNextWord(msg, k, CFDChoices, false)
-	if choice == 2 then
-		source = Player
-	end
 	if not source then
 		DPSMate:SendMessage("30: Event not parsed correctly, inform Shino!: "..msg);
 		return;
+	end
+	if choice == 2 then
+		source = Player
 	end
 	
 	DB:UnregisterDeath(source)
@@ -2018,7 +2018,7 @@ function DPSMate.Parser:CombatHostileDeaths(msg)
 	end
 	local source = strsub(msg, 1, i-1)
 	if not source then
-		DPSMate:SendMessage("30: Event not parsed correctly, inform Shino!: "..msg);
+		DPSMate:SendMessage("31: Event not parsed correctly, inform Shino!: "..msg);
 		return;
 	end
 	DB:UnregisterDeath(source)
