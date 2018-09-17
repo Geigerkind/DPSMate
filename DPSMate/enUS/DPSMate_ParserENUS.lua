@@ -1991,7 +1991,7 @@ end
 --------------                       Deaths                         --------------                                  
 ----------------------------------------------------------------------------------
 
-local CFDChoices = {" dies. ", " die."}
+local CFDChoices = {" dies. ", " die.", " dies."}
 function DPSMate.Parser:CombatFriendlyDeath(msg)
 	local i,j,k = 0,0,0
 	local source, choice

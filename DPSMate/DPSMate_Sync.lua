@@ -1347,7 +1347,7 @@ function DPSMate.Sync:DeathsOut()
 		for ca, va in pairs(val) do -- each part
 			if ca~="i" then -- Testing if this prevents the error
 				
-				DPSMate:SendMessage((cat or "cat nil!").."/"..(ca or "ca nil!").."/"..(va[3] or "va 3 nil!").."/"..(va[4] or "va 3 nil!").."/"..(va[5] or "va 3 nil!").."/"..(va[6] or "va 3 nil!").."/"..(va[7] or "va 3 nil!"))
+				--DPSMate:SendMessage((cat or "cat nil!").."/"..(ca or "ca nil!").."/"..(va[3] or "va 3 nil!").."/"..(va[4] or "va 3 nil!").."/"..(va[5] or "va 3 nil!").."/"..(va[6] or "va 3 nil!").."/"..(va[7] or "va 3 nil!"))
 				
 				Buffer[cou] = {"DPSMate_Deaths", cat..","..ca..","..DPSMate:GetUserById(va[1])..","..DPSMate:GetAbilityById(va[2])..","..va[3]..","..va[4]..","..va[5]..","..va[6]..","..va[7]..","}
 				cou = cou + 1
