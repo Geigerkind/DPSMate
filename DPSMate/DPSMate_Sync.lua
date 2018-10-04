@@ -1346,7 +1346,7 @@ function DPSMate.Sync:DeathsOut()
 	for cat, val in pairs(DPSMateDeaths[1][pid]) do -- death count
 		for ca, va in pairs(val) do -- each part
 			if ca~="i" then -- Testing if this prevents the error
-				Buffer[cou] = {"DPSMate_Deaths", cat..","..ca..","..DPSMate:GetUserById(va[1])..","..DPSMate:GetAbilityById(va[2])..","..(va[3] or "0")..","..(va[4] or "0")..","..(va[5] or "0")..","..(va[6] or "0")..","..(va[7] or "0")..","}
+				Buffer[cou] = {"DPSMate_Deaths", cat..","..ca..","..(DPSMate:GetUserById(va[1]) or "Unknown")..","..(DPSMate:GetAbilityById(va[2]) or "Unknown")..","..(va[3] or "0")..","..(va[4] or "0")..","..(va[5] or "0")..","..(va[6] or "0")..","..(va[7] or "0")..","}
 				cou = cou + 1
 			end
 		end
