@@ -836,7 +836,9 @@ function DPSMate.Parser:FriendlyPlayerDamage(msg)
 				elseif (choice == 3) then
 					i,j = strfind(msg, " by ", k, true);
 					if not i then
-						DPSMate:SendMessage("i is nil, inform Shino: "..msg);
+						-- Resisted
+						DB:EnemyDamage(true, nil, source, ability, 0, 0, 0, 0, 0, 1, 0, "Unknown", 0, 0)
+						DB:DamageDone(source, ability, 0, 0, 0, 0, 0, 1, 0, 0, 0)
 						return
 					end
 				
@@ -1772,7 +1774,7 @@ function DPSMate.Parser:SpellPeriodicFriendlyPlayerBuffs(msg)
 	end
 end
 
-local SHPBChoices = {" critically heals ", " heals ", " begins to cast ", " begins to perform ", " gains ", " casts ", " performs ", " were resisted by "}
+local SHPBChoices = {" critically heals ", " heals ", " begins to cast ", " begins to perform ", " gains ", " casts ", " performs ", " were resisted by ", " was resisted by "}
 local SHPBChoices2 = {" extra attack through ", " extra attacks through ", " Energy from ", " Rage from ", " Mana from "}
 function DPSMate.Parser:SpellHostilePlayerBuff(msg)
 	local i,j,k = 0,0,0
@@ -1785,7 +1787,7 @@ function DPSMate.Parser:SpellHostilePlayerBuff(msg)
 	
 	-- Ignoring for now
 	-- Saltpillar's Thorns were resisted by Blackhand Veteran
-	if choice == 8 then return end
+	if choice >= 8 then return end
 	
 	if choice < 3 then
 		i,j = strfind(nextword, " 's ", 1, true)
