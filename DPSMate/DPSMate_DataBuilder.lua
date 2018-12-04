@@ -1280,6 +1280,11 @@ function DPSMate.DB:DamageTaken(Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, Ddodge
 	Duser = self:BuildUser(Duser)
 	cause = self:BuildUser(cause)
 	Dname = self:BuildAbility(Dname)
+
+	if not Duser then
+		return
+	end
+
 	for cat=1,2 do
 		gen = DPSDMGTaken[cat]
 		if not gen[Duser] then gen[Duser] = {i=0} end

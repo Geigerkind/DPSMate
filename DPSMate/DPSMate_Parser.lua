@@ -528,6 +528,9 @@ local UnitHealthMax = UnitHealthMax
 local UnitHealth = UnitHealth
 function DPSMate.Parser:GetOverhealByName(amount, target)
 	local result, unit = 0, self:GetUnitByName(target)
+	if not amount then
+		return 0;
+	end
 	if unit then result = amount-(UnitHealthMax(unit)-UnitHealth(unit)) end
 	if result<0 then return 0 else return result end 
 end

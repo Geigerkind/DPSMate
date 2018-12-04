@@ -553,7 +553,7 @@ function DPSMate.Parser:SelfMisses(msg)
 	end
 end
 
-local SSDChoices = {" hits ", " crits ", " was ", " is parried by ", " missed ", " is absorbed by ", "ast ", " failed.", "You interrupt ", " is reflected back "}
+local SSDChoices = {" hits ", " crits ", " was ", " is parried by ", " missed ", " is absorbed by ", "ast ", " failed.", "You interrupt ", " is reflected back ", "You perform "}
 function DPSMate.Parser:SelfSpellDMG(msg)
 	local i,j,k = 0,0,6
 	local nextword, choice, ability;
@@ -564,6 +564,7 @@ function DPSMate.Parser:SelfSpellDMG(msg)
 	end
 	if choice == 8 then return end
 	if choice == 10 then return end
+	if choice == 11 then return end
 	
 	if choice < 3 then
 		local hit, crit = 0,0
@@ -1167,7 +1168,7 @@ function DPSMate.Parser:CreatureVsSelfMisses(msg)
 	return
 end 
 
-local CVSSDChoices = {" hits ", " crits ", " misses you.", " was parried.", " was dodged.", " was resisted.", "You interrupt ", "You absorb ", " performs ", " fail"}
+local CVSSDChoices = {" hits ", " crits ", " misses you.", " was parried.", " was dodged.", " was resisted.", "You interrupt ", "You absorb ", " performs ", " fail", " was resisted by "}
 function DPSMate.Parser:CreatureVsSelfSpellDamage(msg)
 	local i,j,k = 0,0,0
 	local nextword, choice;
@@ -1244,7 +1245,7 @@ function DPSMate.Parser:CreatureVsSelfSpellDamage(msg)
 			DB:Absorb(ability, Player, source)
 		end
 		return
-	else  
+	elseif choice < 11 then
 		i,j = strfind(msg, " on ", k, true)
 		if i then
 			local ability = strsub(msg, k, i-1)
@@ -1257,6 +1258,15 @@ function DPSMate.Parser:CreatureVsSelfSpellDamage(msg)
 			if Dispels[ability] then DB:AwaitDispel(ability, Player, source, GetTime()) end
 			return
 		end	
+		return
+	else
+		i,j = strfind(nextword, " 's ", 1, true);
+		local source = strsub(nextword, 1, i-1);
+		local ability = strsub(nextword, j+1);
+		i,j = strfind(msg, ".", k, true);
+		local target = strsub(msg, k, i-1);
+		DB:EnemyDamage(false, nil, target, ability, 0, 0, 0, 0, 0, 1, 0, source, 0, 0);
+		DB:DamageTaken(target, ability, 0, 0, 0, 0, 0, 1, 0, source, 0, 0);
 		return
 	end
 end
