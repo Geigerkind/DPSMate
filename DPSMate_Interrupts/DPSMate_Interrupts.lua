@@ -61,7 +61,7 @@ function DPSMate.Modules.Interrupts:GetSortedTable(arr,k)
 		if (not DPSMateUser[name][4] or (DPSMateUser[name][4] and not DPSMateSettings["mergepets"])) then
 			if DPSMate:ApplyFilter(k, name) then
 				local CV = val["i"][1]
-				if DPSMateUser[name][5] and arr[DPSMateUser[DPSMateUser[name][5]][1]] and DPSMateSettings["mergepets"] and DPSMateUser[name][5]~=name then
+				if DPSMateUser[name][5] and DPSMateUser[DPSMateUser[name][5]] and DPSMateUser[DPSMateUser[name][5]][1] and arr[DPSMateUser[DPSMateUser[name][5]][1]] and DPSMateSettings["mergepets"] and DPSMateUser[name][5]~=name then
 					CV=CV+arr[DPSMateUser[DPSMateUser[name][5]][1]]["i"][1]
 				end
 				local i = 1
