@@ -555,7 +555,7 @@ function DPSMate.Parser:SelfMisses(msg)
 	end
 end
 
-local SSDChoices = {" hits ", " crits ", " was ", " is parried by ", " missed ", " is absorbed by ", "ast ", " failed.", "You interrupt ", " is reflected back ", "You perform "}
+local SSDChoices = {" hits ", " crits ", " was ", " is parried by ", " missed ", " is absorbed by ", "ast ", " failed.", "You interrupt ", " is reflected back ", " perform "}
 function DPSMate.Parser:SelfSpellDMG(msg)
 	local i,j,k = 0,0,6
 	local nextword, choice, ability;
@@ -675,7 +675,7 @@ function DPSMate.Parser:SelfSpellDMG(msg)
 	end
 end
 
-local PDChoices = {" suffers ", " is afflicted by ", " is absorbed by ", " drains "}
+local PDChoices = {" suffers ", " is afflicted by ", " is absorbed by ", " drains ", " was resisted by "}
 function DPSMate.Parser:PeriodicDamage(msg)
 	local i,j,k = 0,0,0
 	local nextword, choice, source;
@@ -721,6 +721,15 @@ function DPSMate.Parser:PeriodicDamage(msg)
 		if CC[ability] then 
 			DB:BuildActiveCC(source, ability)
 		end
+		return
+	elseif choice == 5 then
+		i,j = strfind(source, " 's ", 1, true)
+		local ability = strsub(source, j+1)
+		source = strsub(msg, 1, i-1)
+		i,j = strfind(msg, ".", k, true)
+		local target = strsub(msg, k, i-1)
+		DB:EnemyDamage(true, nil, source, ability.."(Periodic)", 0, 0, 0, 0, 0, 1, amount, target, 0, 0)
+		DB:DamageDone(source, ability.."(Periodic)", 0, 0, 0, 0, 0, 1, amount, 0, 0)
 		return
 	else
 		nextword = source
@@ -1181,7 +1190,7 @@ function DPSMate.Parser:CreatureVsSelfMisses(msg)
 	return
 end 
 
-local CVSSDChoices = {" hits ", " crits ", " misses you.", " was parried.", " was dodged.", " was resisted.", "You interrupt ", "You absorb ", " performs ", " fail", " was resisted by "}
+local CVSSDChoices = {" hits ", " crits ", " misses you.", " was parried.", " was dodged.", " was resisted.", "You interrupt ", "You absorb ", " performs ", " fail", " was resisted by ", " was blocked."}
 function DPSMate.Parser:CreatureVsSelfSpellDamage(msg)
 	local i,j,k = 0,0,0
 	local nextword, choice;
@@ -1223,19 +1232,20 @@ function DPSMate.Parser:CreatureVsSelfSpellDamage(msg)
 		if FailDT[ability] then DB:BuildFail(2, source, target, ability, amount) end
 		DB:AddSpellSchool(ability,school)
 		return
-	elseif choice < 7 then
-		local miss, parry, dodge, resist = 0,0,0,0
+	elseif choice < 7 or choice == 12 then
+		local miss, parry, dodge, resist, block = 0,0,0,0,0
 		if choice == 3 then miss = 1
 		elseif choice == 4 then parry = 1
 		elseif choice == 5 then dodge = 1
+		elseif choice == 12 then block = 1
 		else resist = 1 end
 		
 		i,j = strfind(nextword, " 's ", 1, true);
 		local source = strsub(nextword, 1, i-1);
 		local ability = strsub(nextword, j+1)
 		
-		DB:EnemyDamage(false, nil, Player, ability, 0, 0, miss, parry, dodge, resist, 0, source, 0, 0)
-		DB:DamageTaken(Player, ability, 0, 0, miss, parry, dodge, resist, 0, source, 0, 0)
+		DB:EnemyDamage(false, nil, Player, ability, 0, 0, miss, parry, dodge, resist, 0, source, block, 0)
+		DB:DamageTaken(Player, ability, 0, 0, miss, parry, dodge, resist, 0, source, 0, block)
 		return
 	elseif choice == 8 then
 		i,j = strfind(msg, ".", k, true)
@@ -1497,7 +1507,7 @@ function DPSMate.Parser:SpellPeriodicDamageTaken(msg)
 	end
 end
 
-local CVCSDChoices = {" hits ", " crits ", " was dodged by ", " was parried by ", " missed ", " was resisted by ", " is absorbed by ", " begins to cast ", " begins to perform ", " performs ", " casts ", " fails.", " was blocked by ", " interrupts "}
+local CVCSDChoices = {" hits ", " crits ", " was dodged by ", " was parried by ", " missed ", " was resisted by ", " is absorbed by ", " begins to cast ", " begins to perform ", " performs ", " casts ", " fails.", " was blocked by ", " interrupts ", " causes "}
 function DPSMate.Parser:CreatureVsCreatureSpellDamage(msg)
 	local i,j,k = 0,0,0
 	local nextword, choice, source, ability;
@@ -1507,6 +1517,7 @@ function DPSMate.Parser:CreatureVsCreatureSpellDamage(msg)
 		return
 	end
 	if choice == 12 then return end -- Fail events
+	if choice == 15 then return end -- BoS causes damage (Negligable?)
 	
 	if choice == 10 or choice == 11 then
 		source = nextword
@@ -1805,7 +1816,7 @@ function DPSMate.Parser:SpellPeriodicFriendlyPlayerBuffs(msg)
 	end
 end
 
-local SHPBChoices = {" critically heals ", " heals ", " begins to cast ", " begins to perform ", " gains ", " casts ", " performs ", " were resisted by ", " was resisted by "}
+local SHPBChoices = {" critically heals ", " heals ", " begins to cast ", " begins to perform ", " gains ", " casts ", " performs ", " were resisted by ", " was resisted by ", " resists "}
 local SHPBChoices2 = {" extra attack through ", " extra attacks through ", " Energy from ", " Rage from ", " Mana from "}
 function DPSMate.Parser:SpellHostilePlayerBuff(msg)
 	local i,j,k = 0,0,0
@@ -2024,7 +2035,7 @@ end
 --------------                       Deaths                         --------------                                  
 ----------------------------------------------------------------------------------
 
-local CFDChoices = {" dies. ", " die.", " dies.", " is slain by "}
+local CFDChoices = {" dies. ", " die.", " dies.", " is slain by ", " is destroyed."}
 function DPSMate.Parser:CombatFriendlyDeath(msg)
 	local i,j,k = 0,0,0
 	local source, choice

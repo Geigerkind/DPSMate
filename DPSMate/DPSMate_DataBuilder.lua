@@ -934,34 +934,34 @@ function DPSMate.DB:OnGroupUpdate()
 end
 
 function DPSMate.DB:BuildUser(Dname, Dclass)
-	if Dname then
-		if not DPSUser[Dname] then
-			self.userlen = self.userlen + 1
-			DPSUser[Dname] = {
-				[1] = self.userlen,
-				[2] = Dclass,
-			}
-			DPSMate.UserId = nil
-			return self.userlen
-		end
-		return DPSUser[Dname][1]
+	if not Dname then Dname = "?!NIL Name?!" end
+
+	if not DPSUser[Dname] then
+		self.userlen = self.userlen + 1
+		DPSUser[Dname] = {
+			[1] = self.userlen,
+			[2] = Dclass,
+		}
+		DPSMate.UserId = nil
+		return self.userlen
 	end
+	return DPSUser[Dname][1]
 end
 
 function DPSMate.DB:BuildAbility(name, kind, school)
-	if name then
-		if not DPSAbility[name] then
-			self.abilitylen = self.abilitylen + 1
-			DPSAbility[name] = {
-				[1] = self.abilitylen,
-				[2] = kind,
-				[3] = school,
-			}
-			DPSMate.AbilityId = nil
-			return self.abilitylen
-		end
-		return DPSAbility[name][1]
+	if not name then name = "?!NIL Ability?!" end
+
+	if not DPSAbility[name] then
+		self.abilitylen = self.abilitylen + 1
+		DPSAbility[name] = {
+			[1] = self.abilitylen,
+			[2] = kind,
+			[3] = school,
+		}
+		DPSMate.AbilityId = nil
+		return self.abilitylen
 	end
+	return DPSAbility[name][1]
 end
 
 -- KTMHOOK
