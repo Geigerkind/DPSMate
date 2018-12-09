@@ -1190,7 +1190,7 @@ function DPSMate.Parser:CreatureVsSelfMisses(msg)
 	return
 end 
 
-local CVSSDChoices = {" hits ", " crits ", " misses you.", " was parried.", " was dodged.", " was resisted.", "You interrupt ", "You absorb ", " performs ", " fail", " was resisted by ", " was blocked."}
+local CVSSDChoices = {" hits ", " crits ", " misses you.", " was parried.", " was dodged.", " was resisted.", "You interrupt ", "You absorb ", " performs ", " fail", " was resisted by ", " was blocked.", " missed ", " was dodged by ", " was parried by ", " was blocked by "}
 function DPSMate.Parser:CreatureVsSelfSpellDamage(msg)
 	local i,j,k = 0,0,0
 	local nextword, choice;
@@ -1283,13 +1283,20 @@ function DPSMate.Parser:CreatureVsSelfSpellDamage(msg)
 		end	
 		return
 	else
+		local miss, dodge, parry, block, resist = 0,0,0,0,0
+		if choice == 13 then miss = 1
+		elseif choice == 14 then dodge = 1
+		elseif choice == 15 then parry = 1
+		elseif choice == 16 then block = 1
+		else resist = 1 end
+
 		i,j = strfind(nextword, " 's ", 1, true);
 		local source = strsub(nextword, 1, i-1);
 		local ability = strsub(nextword, j+1);
 		i,j = strfind(msg, ".", k, true);
 		local target = strsub(msg, k, i-1);
-		DB:EnemyDamage(false, nil, target, ability, 0, 0, 0, 0, 0, 1, 0, source, 0, 0);
-		DB:DamageTaken(target, ability, 0, 0, 0, 0, 0, 1, 0, source, 0, 0);
+		DB:EnemyDamage(false, nil, target, ability, 0, 0, miss, parry, dodge, resist, 0, source, 0, block);
+		DB:DamageTaken(target, ability, 0, 0, miss, parry, dodge, resist, 0, source, 0, block);
 		return
 	end
 end
