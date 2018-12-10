@@ -624,6 +624,7 @@ DPSMate.DB.VARIABLES_LOADED = function()
 		if DPSMate.Modules.OHPS then DPSMate.Modules.OHPS.DB = DPSMateOverhealing end
 		if DPSMate.Modules.OHealingTaken then DPSMate.Modules.OHealingTaken.DB = DPSMateOverhealingTaken end
 		if DPSMate.Modules.Activity then DPSMate.Modules.Activity.DB = DPSMateCombatTime end
+		if DPSMate.Modules.Debug then DPSMate.Debug = DPSMate.Modules.Debug end
 		
 		if DPSMateCombatTime == nil then
 			DPSMateCombatTime = {
@@ -1391,7 +1392,7 @@ function DPSMate.DB:EnemyDamage(mode, arr, Duser, Dname, Dhit, Dcrit, Dmiss, Dpa
 	Dname = self:BuildAbility(Dname)
 	
 	if Dname == nil or cause == nil or Duser == nil or Damount == nil then
-		DPSMate:SendMessage("Ab/Cause/Duser/amount: one of them is nil: "..(saveAb or "NONE").."/"..(saveCause or "NONE").."/"..(saveUser or "NONE").."/"..(Damount or "NONE"))
+		local debug = DSPMate.Debug and DPSMate.Debug:Store("Ab/Cause/Duser/amount: one of them is nil: "..(saveAb or "NONE").."/"..(saveCause or "NONE").."/"..(saveUser or "NONE").."/"..(Damount or "NONE")) or DPSMate:SendMessage("Ab/Cause/Duser/amount: one of them is nil: "..(saveAb or "NONE").."/"..(saveCause or "NONE").."/"..(saveUser or "NONE").."/"..(Damount or "NONE"))
 		return
 	end
 	

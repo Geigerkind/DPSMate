@@ -1,0 +1,7 @@
+## Interface: 11200
+## Title: DPSMate +|cFFFFFFFFDebug|r
+## Notes: Adds the debug module.
+## Author: Shino <Synced> - Kronos
+## Dependencies: DPSMate
+
+DPSMate_Debug.lua
