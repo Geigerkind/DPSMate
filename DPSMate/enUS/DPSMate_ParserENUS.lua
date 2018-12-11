@@ -555,19 +555,24 @@ function DPSMate.Parser:SelfMisses(msg)
 	end
 end
 
-local SSDChoices = {" hits ", " crits ", " was ", " is parried by ", " missed ", " is absorbed by ", "ast ", " failed.", "You interrupt ", " is reflected back ", " perform "}
+local SSDChoices = {" hits ", " crits ", " was ", " is parried by ", " missed ", " is absorbed by ", "ast ", " failed.", "You interrupt ", " is reflected back ", "You perform "}
 function DPSMate.Parser:SelfSpellDMG(msg)
-	local i,j,k = 0,0,6
+	local i,j,k = 0,0,0
 	local nextword, choice, ability;
 	ability, choice, k = GetNextWord(msg, k, SSDChoices, false)
 	if choice == -1 then
 		local debug = DPSMate.Debug and DPSMate.Debug:Store("3: Event not parsed yet => "..msg) or DPSMate:SendMessage("3: Event not parsed yet, inform Shino! => "..msg)
 		return
 	end
+	local o,p = strfind(ability, "Your ", true);
+	if o then
+		ability = strsub(ability, p+1);
+	end
+
 	if choice == 8 then return end
 	if choice == 10 then return end
 	if choice == 11 then return end
-	if choice == 13 then return end
+	--if choice == 13 then return end
 	
 	if choice < 3 then
 		local hit, crit = 0,0
@@ -749,7 +754,7 @@ function DPSMate.Parser:PeriodicDamage(msg)
 	end
 end
 
-local FPDList = {" hits ", " crits ", " was ", " is parried by ", " missed ", " misses ", " is absorbed by ", " fail", " is reflected back ", " resists "}
+local FPDList = {" hits ", " crits ", " was ", " is parried by ", " missed ", " misses ", " is absorbed by ", " fail", " is reflected back "}
 local FPDList2 = {" begins to cast ", " begins to perform ", " is killed by ", " casts ", " performs "}
 function DPSMate.Parser:FriendlyPlayerDamage(msg)
 	local i,j,k = 0,0,0;
@@ -800,6 +805,18 @@ function DPSMate.Parser:FriendlyPlayerDamage(msg)
 				DB:Absorb(ability, Player, target)
 				return
 			else
+				local o,p = strfind(msg, " resists ", 1, true);
+				if o then
+					local tar = strsub(msg, 1, o-1);
+					i,j = strfind(msg, " 's ", 1, true);
+					local src = strsub(msg, p+1, i-1)
+					i,j = strfind(msg, ".", j+1, true)
+					local ab = strsub(msg, j+1, i-1)
+					DB:EnemyDamage(true, nil, src, ability, 0, 0, 0, 0, 0, 1, 0, tar, 0, 0)
+					DB:DamageDone(src, ability, 0, 0, 0, 0, 0, 1, 0, 0, 0)
+					return
+				end
+
 				local ability;
 				local source = strsub(msg, 1, j-4);
 				k = j+1
@@ -887,16 +904,6 @@ function DPSMate.Parser:FriendlyPlayerDamage(msg)
 					i,j = strfind(msg, ".", k, true);
 					local target = strsub(msg, k, j-1);
 					DB:Absorb(ability, target, source)
-					return
-				elseif choice == 10 then
-					source = ability;
-					i,j = strfind(msg, " 's ", 1, true);
-					local target = strsub(msg, k, i-1)
-					k = j+1
-					i,j = strfind(msg, ".", k, true)
-					ability = strsub(msg, k, i-1)
-					DB:EnemyDamage(true, nil, target, ability, 0, 0, 0, 0, 0, 1, 0, source, 0, 0)
-					DB:DamageDone(target, ability, 0, 0, 0, 0, 0, 1, 0, 0, 0)
 					return
 				end
 			end
@@ -1823,7 +1830,7 @@ function DPSMate.Parser:SpellPeriodicFriendlyPlayerBuffs(msg)
 	end
 end
 
-local SHPBChoices = {" critically heals ", " heals ", " begins to cast ", " begins to perform ", " gains ", " casts ", " performs ", " were resisted by ", " was resisted by ", " resists "}
+local SHPBChoices = {" critically heals ", " heals ", " begins to cast ", " begins to perform ", " gains ", " casts ", " performs ", " were resisted by ", " was resisted by ", " resists ", " fail"}
 local SHPBChoices2 = {" extra attack through ", " extra attacks through ", " Energy from ", " Rage from ", " Mana from "}
 function DPSMate.Parser:SpellHostilePlayerBuff(msg)
 	local i,j,k = 0,0,0
