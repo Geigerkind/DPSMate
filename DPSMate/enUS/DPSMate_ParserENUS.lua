@@ -564,7 +564,7 @@ function DPSMate.Parser:SelfSpellDMG(msg)
 		local debug = DPSMate.Debug and DPSMate.Debug:Store("3: Event not parsed yet => "..msg) or DPSMate:SendMessage("3: Event not parsed yet, inform Shino! => "..msg)
 		return
 	end
-	local o,p = strfind(ability, "Your ", true);
+	local o,p = strfind(ability, "Your ", 1, true);
 	if o then
 		ability = strsub(ability, p+1);
 	end
@@ -754,7 +754,7 @@ function DPSMate.Parser:PeriodicDamage(msg)
 	end
 end
 
-local FPDList = {" hits ", " crits ", " was ", " is parried by ", " missed ", " misses ", " is absorbed by ", " fail", " is reflected back "}
+local FPDList = {" hits ", " crits ", " was ", " is parried by ", " missed ", " misses ", " is absorbed by ", " fail", " is reflected back ", " immune "}
 local FPDList2 = {" begins to cast ", " begins to perform ", " is killed by ", " casts ", " performs "}
 function DPSMate.Parser:FriendlyPlayerDamage(msg)
 	local i,j,k = 0,0,0;
@@ -828,6 +828,7 @@ function DPSMate.Parser:FriendlyPlayerDamage(msg)
 				end
 				if choice == 8 then return end -- fails
 				if choice == 9 then return end -- is reflected back
+				if choice == 10 then return end -- immune
 				
 				if choice < 3 then
 					local hit = 0
@@ -1830,7 +1831,7 @@ function DPSMate.Parser:SpellPeriodicFriendlyPlayerBuffs(msg)
 	end
 end
 
-local SHPBChoices = {" critically heals ", " heals ", " begins to cast ", " begins to perform ", " gains ", " casts ", " performs ", " were resisted by ", " was resisted by ", " resists ", " fail"}
+local SHPBChoices = {" critically heals ", " heals ", " begins to cast ", " begins to perform ", " gains ", " casts ", " performs ", " were resisted by ", " was resisted by ", " resists ", " fail", "You gain "}
 local SHPBChoices2 = {" extra attack through ", " extra attacks through ", " Energy from ", " Rage from ", " Mana from "}
 function DPSMate.Parser:SpellHostilePlayerBuff(msg)
 	local i,j,k = 0,0,0
@@ -1879,8 +1880,11 @@ function DPSMate.Parser:SpellHostilePlayerBuff(msg)
 		local ability = strsub(msg, k, i-1)
 		DB:RegisterPotentialKick(nextword, ability, GetTime())
 		return
-	elseif choice == 5 then
+	elseif choice == 5 or choice == 12 then
 		local source = nextword
+		if choice == 12 then
+			source = Player
+		end
 		nextword, choice, k = GetNextWord(msg, k, SHPBChoices2, false)
 		local amount = tnbr(nextword)
 		i,j = strfind(msg, ".", k, true)
