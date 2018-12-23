@@ -10,7 +10,7 @@ DPSMate.Modules.Debug.Cache = setmetatable({},
 DPSMate.Modules.Debug.FRAMES = {}
 
 function DPSMate.Modules.Debug:Store(msg)
-  local earliest = self.Cache[msg]
+  return self.Cache[msg]
 end
 
 function DPSMate.Modules.Debug:Out()
