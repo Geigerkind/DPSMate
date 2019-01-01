@@ -521,7 +521,7 @@ function DPSMate.Parser:SelfHits(msg)
 	end
 end
 
-local SMChoices = {"miss ", "attack. ", "You attack but "}
+local SMChoices = {"miss ", "attack. ", "tack but "}
 local SMChoices2 = {" absorbs ", " dodges.", " parries.", " blocks.", " deflects."}
 function DPSMate.Parser:SelfMisses(msg)
 	local i,j,k = 0,0,5
@@ -555,7 +555,7 @@ function DPSMate.Parser:SelfMisses(msg)
 	end
 end
 
-local SSDChoices = {" hits ", " crits ", " was ", " is parried by ", " missed ", " is absorbed by ", "ast ", " failed.", "You interrupt ", " is reflected back ", "You perform "}
+local SSDChoices = {" hits ", " crits ", " was ", " is parried by ", " missed ", " is absorbed by ", "ast ", " failed.", "You interrupt ", " is reflected back ", "You perform ", "You resisted "}
 function DPSMate.Parser:SelfSpellDMG(msg)
 	local i,j,k = 0,0,0
 	local nextword, choice, ability;
@@ -573,6 +573,11 @@ function DPSMate.Parser:SelfSpellDMG(msg)
 	if choice == 10 then return end
 	if choice == 11 then return end
 	--if choice == 13 then return end
+
+	-- TODO: You resisted your Flames.
+	if choice == 12 then
+		return
+	end
 	
 	if choice < 3 then
 		local hit, crit = 0,0
@@ -698,7 +703,7 @@ function DPSMate.Parser:PeriodicDamage(msg)
 		local amount, school = GetDamage(nextword)
 		i,j = strfind(msg, " 's ", k, true)
 		local target;
-		if i then
+		if i and j then
 			target = strsub(msg, k, i-1)
 			k = j+1
 		else
@@ -805,9 +810,13 @@ function DPSMate.Parser:FriendlyPlayerDamage(msg)
 				DB:Absorb(ability, Player, target)
 				return
 			else
-				local o,p = strfind(msg, " resists ", 1, true);
+				local o,p = strfind(msg, " resists? ", 1);
 				if o then
 					local tar = strsub(msg, 1, o-1);
+					if tar == "You" then
+						tar = Player;
+					end
+
 					i,j = strfind(msg, " 's ", 1, true);
 					local src = strsub(msg, p+1, i-1)
 					i,j = strfind(msg, ".", j+1, true)
@@ -1198,7 +1207,7 @@ function DPSMate.Parser:CreatureVsSelfMisses(msg)
 	return
 end 
 
-local CVSSDChoices = {" hits ", " crits ", " misses you.", " was parried.", " was dodged.", " was resisted.", "You interrupt ", "You absorb ", " performs ", " fail", " was resisted by ", " was blocked.", " missed ", " was dodged by ", " was parried by ", " was blocked by "}
+local CVSSDChoices = {" hits ", " crits ", " misses you.", " was parried.", " was dodged.", " was resisted.", "You interrupt ", "You absorb ", " performs ", " fail", " was resisted by ", " was blocked.", " missed ", " was dodged by ", " was parried by ", " was blocked by ", "You resist "}
 function DPSMate.Parser:CreatureVsSelfSpellDamage(msg)
 	local i,j,k = 0,0,0
 	local nextword, choice;
@@ -1240,7 +1249,7 @@ function DPSMate.Parser:CreatureVsSelfSpellDamage(msg)
 		if FailDT[ability] then DB:BuildFail(2, source, target, ability, amount) end
 		DB:AddSpellSchool(ability,school)
 		return
-	elseif choice < 7 or choice == 12 then
+	elseif choice < 7 or choice == 12 or choice == 17 then
 		local miss, parry, dodge, resist, block = 0,0,0,0,0
 		if choice == 3 then miss = 1
 		elseif choice == 4 then parry = 1
@@ -1309,7 +1318,7 @@ function DPSMate.Parser:CreatureVsSelfSpellDamage(msg)
 	end
 end
 
-local PSDChoices = {"You suffer ", " suffers ", "You are afflicted by ", " is afflicted by ", "You absorb ", " absorbs ", " was resisted."}
+local PSDChoices = {"You suffer ", " suffers ", "You are afflicted by ", " is afflicted by ", "You absorb ", " absorbs ", " was resisted.", " was resisted by ", " drains "}
 function DPSMate.Parser:PeriodicSelfDamage(msg)
 	local i,j,k = 0,0,0
 	local nextword, choice;
@@ -1319,6 +1328,10 @@ function DPSMate.Parser:PeriodicSelfDamage(msg)
 		local debug = DPSMate.Debug and DPSMate.Debug:Store("12: Event not parsed yet => "..msg) or DPSMate:SendMessage("12: Event not parsed yet, inform Shino! => "..msg)
 		return
 	end
+
+	-- Do not track drain gains
+	if choice == 9 then return end
+
 	if choice < 3 then
 		if choice == 1 then target = Player end
 		i,j = strfind(msg, " from ", k, true);
@@ -1364,6 +1377,16 @@ function DPSMate.Parser:PeriodicSelfDamage(msg)
 		local source = strsub(msg, k, i-1);
 		local ability = strsub(msg, j+1)
 		DB:Absorb(ability.."(Periodic)", target, source)
+		return
+	elseif choice == 8 then
+		i,j = strfind(nextword, " 's ", 1, true);
+		local source = strsub(nextword, 1, i-1);
+		local ability = strsub(nextword, j+1);
+		i,j = strfind(msg, ".", k, true)
+		local target = strsub(msg, k, i-1)
+
+		DB:EnemyDamage(false, nil, target, ability.."(Periodic)", 0, 0, 0, 0, 0, 1, 0, source, 0, 0)
+		DB:DamageTaken(target, ability.."(Periodic)", 0, 0, 0, 0, 0, 1, 0, source, 0, 0)
 		return
 	else
 		i,j = strfind(msg, " 's ", 1, true);
@@ -1522,7 +1545,7 @@ function DPSMate.Parser:SpellPeriodicDamageTaken(msg)
 	end
 end
 
-local CVCSDChoices = {" hits ", " crits ", " was dodged by ", " was parried by ", " missed ", " was resisted by ", " is absorbed by ", " begins to cast ", " begins to perform ", " performs ", " casts ", " fails.", " was blocked by ", " interrupts ", " causes "}
+local CVCSDChoices = {" hits ", " crits ", " was dodged by ", " was parried by ", " missed ", " was resisted by ", " is absorbed by ", " begins to cast ", " begins to perform ", " performs ", " casts ", " fails.", " was blocked by ", " interrupts ", " causes ", " is immune to ", " is killed by ", " was evaded by "}
 function DPSMate.Parser:CreatureVsCreatureSpellDamage(msg)
 	local i,j,k = 0,0,0
 	local nextword, choice, source, ability;
@@ -1531,8 +1554,12 @@ function DPSMate.Parser:CreatureVsCreatureSpellDamage(msg)
 		local debug = DPSMate.Debug and DPSMate.Debug:Store("16: Event not parsed yet => "..msg) or DPSMate:SendMessage("16: Event not parsed yet, inform Shino! => "..msg)
 		return
 	end
-	if choice == 12 then return end -- Fail events
+	if choice == 12 or choice == 16 then return end -- Fail events
 	if choice == 15 then return end -- BoS causes damage (Negligable?)
+	-- We do not track monster deaths
+	if choice == 17 then return end
+	-- We do not track evades
+	if choice == 18 then return end
 	
 	if choice == 10 or choice == 11 then
 		source = nextword
@@ -1560,6 +1587,7 @@ function DPSMate.Parser:CreatureVsCreatureSpellDamage(msg)
 		i,j = strfind(msg, ".", k, true)
 		ability = strsub(msg, k, i-1)
 		DB:Kick(source, target, "Unknown", ability)
+		return
 	else
 		i,j = strfind(nextword, " 's ", 1, true)
 		
@@ -1709,7 +1737,7 @@ function DPSMate.Parser:SpellSelfBuff(msg)
 end
 
 local HealingStream = "Healing Stream"
-local SPSBChoices = {" health from ", "."}
+local SPSBChoices = {" gains ", " health from ", "."}
 function DPSMate.Parser:SpellPeriodicSelfBuff(msg)
 	local i,j,k = 0,0,10
 	local nextword, choice;
@@ -1719,7 +1747,14 @@ function DPSMate.Parser:SpellPeriodicSelfBuff(msg)
 		return
 	end
 	
-	if choice == 1 then
+	if choice <= 2 then
+		local source = Player;
+		local i,j = strfind(nextword, " gains ", 1, true)
+		if i and j then
+			source = strsub(nextword, 1, i-1);
+			nextword = strsub(nextword, j+1);
+		end
+
 		local amount = tnbr(nextword)
 		i,j = strfind(msg, ".", k, true)
 		nextword = strsub(msg, k, i-1)
@@ -1831,7 +1866,7 @@ function DPSMate.Parser:SpellPeriodicFriendlyPlayerBuffs(msg)
 	end
 end
 
-local SHPBChoices = {" critically heals ", " heals ", " begins to cast ", " begins to perform ", " gains ", " casts ", " performs ", " were resisted by ", " was resisted by ", " resists ", " fail", "You gain "}
+local SHPBChoices = {" critically heals ", " heals ", " begins to cast ", " begins to perform ", " gains ", " casts ", " performs ", " were resisted by ", " was resisted by ", " resists ", " fail", "You gain ", " is reflected back by ", "You resist ", " was evaded by "}
 local SHPBChoices2 = {" extra attack through ", " extra attacks through ", " Energy from ", " Rage from ", " Mana from "}
 function DPSMate.Parser:SpellHostilePlayerBuff(msg)
 	local i,j,k = 0,0,0
@@ -1845,6 +1880,13 @@ function DPSMate.Parser:SpellHostilePlayerBuff(msg)
 	-- Ignoring for now
 	-- Saltpillar's Thorns were resisted by Blackhand Veteran
 	if choice >= 8 then return end
+	-- TODO: Spell reflect handling
+	if choice == 12 then return end
+	-- TODO: Spell resists
+	if choice == 13 then return end
+
+	-- Do not track
+	if choice == 14 then return end
 	
 	if choice < 3 then
 		i,j = strfind(nextword, " 's ", 1, true)
@@ -1889,6 +1931,8 @@ function DPSMate.Parser:SpellHostilePlayerBuff(msg)
 		local amount = tnbr(nextword)
 		i,j = strfind(msg, ".", k, true)
 		nextword = strsub(msg, k, i-1)
+
+		-- TODO: Dafuq? => This will never happen
 		if choice < 3 then
 			local ability = nextword
 			
@@ -2053,7 +2097,7 @@ end
 --------------                       Deaths                         --------------                                  
 ----------------------------------------------------------------------------------
 
-local CFDChoices = {" dies. ", " die.", " dies.", " is slain by ", " is destroyed."}
+local CFDChoices = {" dies. ", " die.", " dies.", " is slain by ", " is destroyed.", "You have slain "}
 function DPSMate.Parser:CombatFriendlyDeath(msg)
 	local i,j,k = 0,0,0
 	local source, choice
@@ -2064,6 +2108,10 @@ function DPSMate.Parser:CombatFriendlyDeath(msg)
 	end
 	if choice == 2 then
 		source = Player
+	end
+
+	if choice == 6 then
+		source = strsub(msg, k, -1);
 	end
 	
 	DB:UnregisterDeath(source)
