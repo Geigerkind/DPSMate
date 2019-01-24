@@ -1392,7 +1392,7 @@ function DPSMate.DB:EnemyDamage(mode, arr, Duser, Dname, Dhit, Dcrit, Dmiss, Dpa
 	Dname = self:BuildAbility(Dname)
 	
 	if Dname == nil or cause == nil or Duser == nil or Damount == nil then
-		local debug = DSPMate.Debug and DPSMate.Debug:Store("Ab/Cause/Duser/amount: one of them is nil: "..(saveAb or "NONE").."/"..(saveCause or "NONE").."/"..(saveUser or "NONE").."/"..(Damount or "NONE")) or DPSMate:SendMessage("Ab/Cause/Duser/amount: one of them is nil: "..(saveAb or "NONE").."/"..(saveCause or "NONE").."/"..(saveUser or "NONE").."/"..(Damount or "NONE"))
+		local debug = DPSMate.Debug and DPSMate.Debug:Store("Ab/Cause/Duser/amount: one of them is nil: "..(saveAb or "NONE").."/"..(saveCause or "NONE").."/"..(saveUser or "NONE").."/"..(Damount or "NONE")) or DPSMate:SendMessage("Ab/Cause/Duser/amount: one of them is nil: "..(saveAb or "NONE").."/"..(saveCause or "NONE").."/"..(saveUser or "NONE").."/"..(Damount or "NONE"))
 		return
 	end
 	
