@@ -1739,7 +1739,7 @@ end
 local HealingStream = "Healing Stream"
 local SPSBChoices = {" gains ", " health from ", "."}
 function DPSMate.Parser:SpellPeriodicSelfBuff(msg)
-	local i,j,k = 0,0,10
+	local i,j,k = 0,0,12
 	local nextword, choice;
 	nextword, choice, k = GetNextWord(msg, k, SPSBChoices, false)
 	if choice == -1 then
