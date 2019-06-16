@@ -493,7 +493,7 @@ local GetPlayerBuff = GetPlayerBuff
 -- Begin Functions
 
 function DPSMate.Parser:OnLoad()
-	self.player = UnitName("player")
+	self.player, self.realm = UnitName("player")
 	_,playerclass = UnitClass("player")
 	DPSMate.DB:BuildUser(self.player, strlower(playerclass))
 	DPSMateUser[self.player][2] = strlower(playerclass)
