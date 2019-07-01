@@ -4,7 +4,7 @@
 -- Fails
 
 -- Local Variables
-local player = UnitName("player")
+local player = (UnitName("player"))
 local _, playerclass = UnitClass("player")
 local pid = 0
 local time, iterator, voteStarter = 0, 1, false
