@@ -1,4 +1,4 @@
-﻿--[[
+--[[
 Name: Babble-Spell-2.2
 Revision: $Rev: 15059 $
 Author(s): ckknight (ckknight@gmail.com)
@@ -11,9 +11,9 @@ Dependencies: AceLibrary, AceLocale-2.2
 Rewritten a little and added some "bosses" by Shino
 ]]
 
-if (GetLocale()=="ruRU") then
-
+if (GetLocale()=="ruRU") then	
 local spellIcons = {
+	-- Adding missing ones
 	['Пища'] = "",
 	['Массивное точило'] = "",
 	['Сильное зелье защиты от огня'] = "",
@@ -30,7 +30,7 @@ local spellIcons = {
 	['Whiteslash'] = "",
 	['Enamored Water Spirit'] = "",
 	['Грубое точило'] = "",
-	['Атака берсерка'] = "ability_warrior_charge",
+
 	['Беспощадность'] = "",
 	['Безрассудная атака'] = "",
 	['Кожевничество: сила стихий'] = "",
@@ -55,6 +55,8 @@ local spellIcons = {
 	['Вскрытие замков'] = "",
 	['Energy'] = "",
 	['Зернистое точило'] = "",
+	
+	-- Costum Icons
 	['Зелье очищения'] = "inv_potion_01",
 	['Приводящее в сознание зелье'] = "inv_potion_01",
 	['Отрицательный заряд'] = "spell_chargenegative",
@@ -287,6 +289,7 @@ local spellIcons = {
 	['Невидимость'] = "inv_potion_18",
 	['Призыв инферналов'] = "temp",
 	['Изнурение разума'] = "spell_shadow_teleport",
+	['Атака берсерка'] = "ability_warrior_charge",
 	['Темная руна'] = "inv_misc_rune_04",
 	['Благодать Земли'] = "ability_physical_taunt",
 	['Черное прощение'] = "spell_fire_flamebolt",
@@ -408,7 +411,7 @@ local spellIcons = {
 	['Ядовитая слюна'] = "spell_nature_corrosivebreath",
 	['Призыв иллюзорных волков'] = "spell_shadow_teleport",
 	['Глубокое сбивание'] = "ability_warrior_cleave",
-	['Зелье защиты от сил природы'] = "inv_misc_herb_11",
+
 	['Бурешкура'] = "spell_nature_lightningshield",
 	['Призыв пожинающего роя'] = "ability_stealth",
 	['Исцеление брата'] = "spell_nature_healingwavegreater",
@@ -742,6 +745,7 @@ local spellIcons = {
 	['Хрустальный заряд'] = "inv_misc_gem_opal_01",
 	['Демоническая руна'] = "inv_misc_rune_04",
 	['Яд'] = "spell_nature_corrosivebreath",
+	
 	['Эликсир мангуста'] = "inv_potion_32",
 	['Большая ловкость'] = "inv_potion_94",
 	['Скорость'] = "ability_kick",
@@ -883,8 +887,8 @@ local spellIcons = {
 	['Знак детонации'] = "spell_fire_selfdestruct",
 	['Теневой приказ'] = "spell_shadow_unholyfrenzy",
 	['Горящее желание'] = "spell_shadow_psychicscream",
-	['Shadow Protection'] = "Spell_Shadow_AntiShadow",
-	['Shadow Protection '] = "spell_shadow_ragingscream",
+	['Защита от темной магии'] = "spell_shadow_ragingscream",
+	['Защита от темной магии '] = "spell_shadow_ragingscream",
 	['Дух Занзы'] = "inv_potion_30",
 	['Резкий уход в тень'] = "spell_magic_lesserinvisibilty",
 	['Второе дыхание'] = "inv_jewelry_talisman_06",
@@ -941,6 +945,8 @@ local spellIcons = {
 	['Благословление вождя'] = "spell_arcane_teleportorgrimmar",
 	['Йааааррррр'] = "ability_rogue_disguise",
 	['Защита от льда'] = "spell_frost_frostarmor02",
+	['Зелье защиты от сил природы'] = "inv_potion_06",
+	['Зелье защиты от темной магии'] = "inv_potion_44",
 	['Святая защита'] = "inv_potion_09",
 	['Беспокойство джуджу'] = "inv_misc_monsterscales_17",
 	['Цветной настой'] = "spell_holy_mindvision",
@@ -961,6 +967,7 @@ local spellIcons = {
 	['Отравляющий плевок'] = "spell_nature_corrosivebreath",
 	['Иллюзии Джин\'до'] = "spell_shadow_unholyfrenzy",
 	['Устрашающий рев'] = "ability_golemthunderclap",
+
 	['Сглаз'] = "spell_shaman_hex",
 	['Опутывающие сети'] = "spell_nature_earthbind",
 	['Воля Хаккара'] = "spell_shadow_shadowworddominate",
@@ -1033,7 +1040,7 @@ local spellIcons = {
 	['Влияние тайной магии'] = "spell_nature_wispsplode",
 	['Обезглавить'] = "temp",
 	['Потрошитель Гутгора'] = "spell_shadow_shadowbolt",
-	['Окоченение'] = "Spell_Frost_IceStorm",
+	['Окоченение'] = "spell_frost_wisp",
 	['Вспышка безумия'] = "spell_shadow_mindsteal",
 	['Поглощающая Тьма'] = "spell_shadow_lifedrain02",
 	['Уязвимость к стихиям'] = "temp",
@@ -1043,7 +1050,7 @@ local spellIcons = {
 	['Стигийская хватка'] = "spell_shadow_blackplague",
 	['Живая свобода'] = "inv_potion_07",
 	['Неистовство девизавра'] = "ability_hunter_pet_raptor",
-	['Оружие неистовства ветра'] = "Spell_Nature_Cyclone",
+	
 	['Великая ярость'] = "ability_warrior_warcry",
 	['Аура защиты'] = "spell_holy_devotionaura",
 	['Поглощение урона'] = "inv_jewelry_talisman_05",
@@ -1055,6 +1062,8 @@ local spellIcons = {
 	['Всецветная защита: Природа'] = "inv_ore_arcanite_01",
 	['Холод'] = "temp",
 	['Атака щитом'] = "ability_warrior_charge",
+
+	-- Original Icons
 	['Устранение болезни'] = "Spell_Nature_NullifyDisease",
 	['Эффект устранения яда'] = "Spell_Nature_NullifyPoison_02",
 	['Устранение яда'] = "Spell_Nature_NullifyPoison_02",
@@ -1169,6 +1178,7 @@ local spellIcons = {
 	['Рывок'] = "Ability_Warrior_Charge",
 	['Атака-оглушение'] = "Ability_Warrior_Charge",
 	['Подлый трюк'] = "Ability_CheapShot",
+	['Стужа'] = "Spell_Frost_IceStorm",
 	['Цапнуть'] = "Ability_Druid_Rake",
 	['Очищение'] = "Spell_Holy_Renew",
 	['Ясность мысли'] = "Spell_Shadow_ManaBurn",
@@ -1880,6 +1890,7 @@ local spellIcons = {
 	['Стрела Тьмы'] = "Spell_Shadow_ShadowBolt",
 	['Средоточие Тьмы'] = "Spell_Shadow_BurningSpirit",
 	['Власть над Тенями'] = "Spell_Shadow_ShadeTrueSight",
+	['Защита от темной магии'] = "Spell_Shadow_AntiShadow",
 	['Предел Тьмы'] = "Spell_Shadow_ChillTouch",
 	['Аура сопротивления темной магии'] = "Spell_Shadow_SealOfKings",
 	['Сопротивление темной магии'] = "Spell_Shadow_AntiShadow",
@@ -2039,6 +2050,7 @@ local spellIcons = {
 	['Вихрь'] = "Ability_Whirlwind",
 	['Воля Отрекшихся'] = "Spell_Shadow_RaiseDead",
 	['Тотем неистовства ветра'] = "Spell_Nature_Windfury",
+	['Оружие неистовства ветра'] = "Spell_Nature_Cyclone",
 	['Тотем стены ветра'] = "Spell_Nature_EarthBind",
 	['Подрезать крылья'] = "Ability_Rogue_Trip",
 	['Зимняя стужа'] = "Spell_Frost_ChillingBlast",
@@ -2059,6 +2071,7 @@ function BabbleSpell:GetSpellIcon(spell)
 	end
 	return nil
 end
+
 function BabbleSpell:GetTranslation(spell)
 	if translation[spell] then
 		return translation[spell]
