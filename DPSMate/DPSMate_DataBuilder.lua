@@ -1240,7 +1240,7 @@ function DPSMate.DB:DamageDone(Duser, Dname, Dhit, Dcrit, Dmiss, Dparry, Ddodge,
 		path = gen[Dname]
 		if Damount > 0 then 
 			path[13] = path[13] + Damount
-			if Dhit == 1 then
+			if Dhit == 1 and Dblock ~= 1 then
 				if (Damount < path[2] or path[2] == 0) then path[2] = Damount end
 				if Damount > path[3] then path[3] = Damount end
 				path[4] = path[4] + Damount
