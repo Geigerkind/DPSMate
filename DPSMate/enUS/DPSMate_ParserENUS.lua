@@ -1741,13 +1741,11 @@ local SPSBChoices = {" gains ", " health from ", "."}
 function DPSMate.Parser:SpellPeriodicSelfBuff(msg)
 	local i,j,k = 0,0,0
 	local nextword, choice;
-	Print(msg)
 	nextword, choice, k = GetNextWord(msg, k, SPSBChoices, false)
 	if choice == -1 then
 		local debug = DPSMate.Debug and DPSMate.Debug:Store("18: Event not parsed yet => "..msg) or DPSMate:SendMessage("18: Event not parsed yet, inform Shino! => "..msg)
 		return
 	end
-	
 	if choice <= 2 then
 		local source = Player;
 		local i,j = strfind(msg, " gains ", 1, true)
@@ -1759,12 +1757,9 @@ function DPSMate.Parser:SpellPeriodicSelfBuff(msg)
 		else
 			nextword = tnbr(strsub(nextword, 10)) or 0
 		end
-
 		local amount = GetDamage(nextword)
-		
 		i,j = strfind(msg, ".", k, true)
 		nextword = strsub(msg, k, i-1)
-		Print(nextword)
 		i,j = strfind(nextword, " 's ", 1, true)
 		local target, ability
 		if i then
