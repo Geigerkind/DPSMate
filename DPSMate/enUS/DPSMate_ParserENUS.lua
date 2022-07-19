@@ -1753,7 +1753,10 @@ function DPSMate.Parser:SpellPeriodicSelfBuff(msg)
 			source = strsub(msg, 1, i-1);
 			nextword = strsub(msg, j+1);
 			i, j = strfind(msg, " health from ", 1, true)
-			k = j + 1
+			if j == nil then 
+				return
+			end
+			k = j + 6
 		else
 			nextword = tnbr(strsub(nextword, 10)) or 0
 		end
@@ -1771,18 +1774,18 @@ function DPSMate.Parser:SpellPeriodicSelfBuff(msg)
 		end
 		
 		if ability==HealingStream then
-			target = self:AssociateShaman(Player, target, false)
+			target = self:AssociateShaman(source, target, false)
 		end
-		local overheal = self:GetOverhealByName(amount, Player)
-		DB:HealingTaken(0, nil, Player, ability.."(Periodic)", 1, 0, amount, target)
-		DB:HealingTaken(1, nil, Player, ability.."(Periodic)", 1, 0, amount-overheal, target)
-		DB:Healing(0, nil, target, ability.."(Periodic)", 1, 0, amount-overheal, Player)
+		local overheal = self:GetOverhealByName(amount, source)
+		DB:HealingTaken(0, nil, source, ability.."(Periodic)", 1, 0, amount, target)
+		DB:HealingTaken(1, nil, source, ability.."(Periodic)", 1, 0, amount-overheal, target)
+		DB:Healing(0, nil, target, ability.."(Periodic)", 1, 0, amount-overheal, source)
 		if overheal>0 then 
-			DB:Healing(2, nil, target, ability.."(Periodic)", 1, 0, overheal, Player)
-			DB:HealingTaken(2, nil, Player, ability.."(Periodic)", 1, 0, overheal, target)
+			DB:Healing(2, nil, target, ability.."(Periodic)", 1, 0, overheal, source)
+			DB:HealingTaken(2, nil, source, ability.."(Periodic)", 1, 0, overheal, target)
 		end
-		DB:Healing(1, nil, target, ability.."(Periodic)", 1, 0, amount, Player)
-		DB:DeathHistory(Player, target, ability.."(Periodic)", amount, 1, 0, 1, 0)
+		DB:Healing(1, nil, target, ability.."(Periodic)", 1, 0, amount, source)
+		DB:DeathHistory(source, target, ability.."(Periodic)", amount, 1, 0, 1, 0)
 		return
 	else
 		i,j = strfind(nextword, "(", 1, true)
