@@ -1737,30 +1737,28 @@ function DPSMate.Parser:SpellSelfBuff(msg)
 end
 
 local HealingStream = "Healing Stream"
-local SPSBChoices = { " health from ", "."}
-local SPSBChoices1 = { "Happiness", "fades"}
+local SPSBChoices = {" gains ", " health from ", "."}
 function DPSMate.Parser:SpellPeriodicSelfBuff(msg)
-	local i,j,k = 0,0,0
-	local nextword, choice, _;
-		local source = Player;
-		local i,j = strfind(msg, " gains ", 1, true)
-		if i and j then
-			source = strsub(msg, 1, i-1);
-			nextword = strsub(msg, j+1);
-			k = j + 1
-	else
-			k = 10
-	end
-	
+	local i,j,k = 0,0,12
+	local nextword, choice;
 	nextword, choice, k = GetNextWord(msg, k, SPSBChoices, false)
 	if choice == -1 then
 		local debug = DPSMate.Debug and DPSMate.Debug:Store("18: Event not parsed yet => "..msg) or DPSMate:SendMessage("18: Event not parsed yet, inform Shino! => "..msg)
-				return
-			end
-	if choice == 1 then
-		local amount = GetDamage(nextword)
+		return
+	end
+	
+	if choice <= 2 then
+		local source = Player;
+		local i,j = strfind(nextword, " gains ", 1, true)
+		if i and j then
+			source = strsub(nextword, 1, i-1);
+			nextword = strsub(nextword, j+1);
+		end
+
+		local amount = tnbr(nextword)
 		i,j = strfind(msg, ".", k, true)
 		nextword = strsub(msg, k, i-1)
+		
 		i,j = strfind(nextword, " 's ", 1, true)
 		local target, ability
 		if i then
@@ -1772,32 +1770,29 @@ function DPSMate.Parser:SpellPeriodicSelfBuff(msg)
 		end
 		
 		if ability==HealingStream then
-			target = self:AssociateShaman(source, target, false)
+			target = self:AssociateShaman(Player, target, false)
 		end
-		local overheal = self:GetOverhealByName(amount, source)
-		DB:HealingTaken(0, nil, source, ability.."(Periodic)", 1, 0, amount, target)
-		DB:HealingTaken(1, nil, source, ability.."(Periodic)", 1, 0, amount-overheal, target)
-		DB:Healing(0, nil, target, ability.."(Periodic)", 1, 0, amount-overheal, source)
+		local overheal = self:GetOverhealByName(amount, Player)
+		DB:HealingTaken(0, nil, Player, ability.."(Periodic)", 1, 0, amount, target)
+		DB:HealingTaken(1, nil, Player, ability.."(Periodic)", 1, 0, amount-overheal, target)
+		DB:Healing(0, nil, target, ability.."(Periodic)", 1, 0, amount-overheal, Player)
 		if overheal>0 then 
-			DB:Healing(2, nil, target, ability.."(Periodic)", 1, 0, overheal, source)
-			DB:HealingTaken(2, nil, source, ability.."(Periodic)", 1, 0, overheal, target)
+			DB:Healing(2, nil, target, ability.."(Periodic)", 1, 0, overheal, Player)
+			DB:HealingTaken(2, nil, Player, ability.."(Periodic)", 1, 0, overheal, target)
 		end
-		DB:Healing(1, nil, target, ability.."(Periodic)", 1, 0, amount, source)
-		DB:DeathHistory(source, target, ability.."(Periodic)", amount, 1, 0, 1, 0)
+		DB:Healing(1, nil, target, ability.."(Periodic)", 1, 0, amount, Player)
+		DB:DeathHistory(Player, target, ability.."(Periodic)", amount, 1, 0, 1, 0)
 		return
 	else
-		_, choice, k = GetNextWord(msg, 1, SPSBChoices1, false)
-
-		if choice > 0 then return end
 		i,j = strfind(nextword, "(", 1, true)
 		if i then nextword = strsub(nextword, 1, i-2) end
-		DB:ConfirmBuff(source, nextword, GetTime())
+		DB:ConfirmBuff(Player, nextword, GetTime())
 		if Dispels[nextword] then 
-			DB:RegisterHotDispel(source, nextword)
+			DB:RegisterHotDispel(Player, nextword)
 		end
-		if ShieldFlags[nextword] then DB:ConfirmAbsorbApplication(nextword, source, GetTime()) end
-		if RCD[nextword] then DPSMate:Broadcast(1, source, nextword) end
-		if FailDB[nextword] then DB:BuildFail(3, "Environment", source, nextword, 0) end
+		if ShieldFlags[nextword] then DB:ConfirmAbsorbApplication(nextword, Player, GetTime()) end
+		if RCD[nextword] then DPSMate:Broadcast(1, Player, nextword) end
+		if FailDB[nextword] then DB:BuildFail(3, "Environment", Player, nextword, 0) end
 		return
 	end
 end
@@ -2021,20 +2016,16 @@ function DPSMate.Parser:SpellPeriodicFriendlyPlayerBuffsAbsorb(msg)
 end
 
 function DPSMate.Parser:SpellAuraGoneSelf(msg)
-	local i,j = strfind(msg, " from ", 1, true)
-	i = strfind(msg, ".", j+1, true)
-	local source = strsub(msg, j+1, i -1)
-	if source == "you" then source = Player end
 	local i,j = strfind(msg, " fades ", 1, true)
 	local ability = strsub(msg, 1, i-1)
 	i,j = strfind(ability, "(", 1, true)
 	if i then ability = strsub(ability, 1, i-2) end
 	if BuffExceptions[ability] then return end
-	if ShieldFlags[ability] then DB:UnregisterAbsorb(ability, source) end
-	if RCD[ability] then DPSMate:Broadcast(6, source, ability) end
-	DB:DestroyBuffs(source, ability)
-	DB:UnregisterHotDispel(source, ability)
-	DB:RemoveActiveCC(source, ability)
+	if ShieldFlags[ability] then DB:UnregisterAbsorb(ability, Player) end
+	if RCD[ability] then DPSMate:Broadcast(6, Player, ability) end
+	DB:DestroyBuffs(Player, ability)
+	DB:UnregisterHotDispel(Player, ability)
+	DB:RemoveActiveCC(Player, ability)
 	return
 end
 
@@ -2106,11 +2097,11 @@ end
 --------------                       Deaths                         --------------                                  
 ----------------------------------------------------------------------------------
 
-local CFDChoices = {" dies. ", " die.", " dies.", " is slain by ", " is destroyed.", "You have slain ", " slays "}
+local CFDChoices = {" dies. ", " die.", " dies.", " is slain by ", " is destroyed.", "You have slain "}
 function DPSMate.Parser:CombatFriendlyDeath(msg)
 	local i,j,k = 0,0,0
 	local source, choice
-	source, choice, k = GetNextWord(msg, k, CFDChoices, false)
+	source, choice = GetNextWord(msg, k, CFDChoices, false)
 	if not source then
 		local debug = DPSMate.Debug and DPSMate.Debug:Store("30: Event not parsed correctly : "..msg) or DPSMate:SendMessage("30: Event not parsed correctly, inform Shino!: "..msg);
 		return;
@@ -2121,10 +2112,6 @@ function DPSMate.Parser:CombatFriendlyDeath(msg)
 
 	if choice == 6 then
 		source = strsub(msg, k, -1);
-	end
-	
-	if choice == 7 then
-		return;
 	end
 	
 	DB:UnregisterDeath(source)
