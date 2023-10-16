@@ -669,6 +669,9 @@ DPSMate.DB.VARIABLES_LOADED = function()
 			end
 		end
 		
+		-- Saving pointer locally to reduce global lookup overhead
+		this:UpdatePointer();
+		
 		DPSMate.Parser:OnLoad()
 		this:OnGroupUpdate()
 		DPSMate:SetStatusBarValue()
@@ -687,8 +690,7 @@ DPSMate.DB.VARIABLES_LOADED = function()
 		this.loaded = true
 		DPSMate.Options.PLAYER_ENTERING_WORLD()
 		
-		-- Saving pointer locally to reduce global lookup overhead
-		this:UpdatePointer();
+		
 	end
 end
 
